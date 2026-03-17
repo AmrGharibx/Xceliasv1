@@ -1,0 +1,1725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RED Report Generator — AI-Powered Trainee Performance Reports</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        /* ============================================================
+           BASE RESET & VARIABLES
+           ============================================================ */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --red: #c1121f;
+            --red-dark: #9f0f19;
+            --red-light: #fee2e2;
+            --green: #16a34a;
+            --orange: #f97316;
+            --blue: #2563eb;
+            --na: #64748b;
+            --accent: #b91c1c;
+            --score-line: #cbd5f5;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Sora', sans-serif;
+            background: linear-gradient(160deg, #f0f0f0 0%, #e2e2e2 50%, #d9d9d9 100%);
+            color: var(--gray-800);
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+
+        /* ============================================================
+           TOAST NOTIFICATIONS
+           ============================================================ */
+        #toast-container {
+            position: fixed; top: 20px; right: 20px; z-index: 10000;
+            display: flex; flex-direction: column; gap: 8px; pointer-events: none;
+        }
+        .toast {
+            padding: 14px 22px; border-radius: 10px; font-size: 0.88rem; font-weight: 500;
+            color: white; box-shadow: var(--shadow-lg); pointer-events: auto;
+            animation: toastIn 0.35s ease-out; max-width: 420px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .toast-success { background: linear-gradient(135deg, #16a34a, #15803d); }
+        .toast-error { background: linear-gradient(135deg, #dc2626, #b91c1c); }
+        .toast-info { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
+        .toast.removing { animation: toastOut 0.3s ease-in forwards; }
+        @keyframes toastIn { from { opacity: 0; transform: translateX(80px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes toastOut { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(80px); } }
+
+        /* ============================================================
+           PROCESSING OVERLAY
+           ============================================================ */
+        #processing-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.55); backdrop-filter: blur(6px);
+            display: none; align-items: center; justify-content: center; z-index: 9999;
+        }
+        #processing-overlay.active { display: flex; }
+        .processing-box {
+            background: white; padding: 50px 60px; border-radius: 20px; text-align: center;
+            box-shadow: var(--shadow-xl); animation: fadeScaleIn 0.3s ease-out;
+        }
+        .processing-box h3 { font-size: 1.2rem; color: var(--gray-800); margin-top: 20px; }
+        .processing-box p { font-size: 0.88rem; color: var(--gray-500); margin-top: 6px; }
+        .spinner {
+            width: 52px; height: 52px; border: 4px solid var(--gray-200);
+            border-top-color: var(--red); border-radius: 50%;
+            animation: spin 0.75s linear infinite; margin: 0 auto;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes fadeScaleIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+
+        /* ============================================================
+           PDF DOWNLOAD OVERLAY
+           ============================================================ */
+        #pdf-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.55); backdrop-filter: blur(6px);
+            display: none; align-items: center; justify-content: center; z-index: 9999;
+        }
+        #pdf-overlay.active { display: flex; }
+        .pdf-progress-box {
+            background: white; padding: 50px 60px; border-radius: 20px; text-align: center;
+            box-shadow: var(--shadow-xl); min-width: 350px;
+        }
+        .pdf-progress-box h3 { font-size: 1.2rem; color: var(--gray-800); margin-bottom: 16px; }
+        .progress-bar-outer {
+            width: 100%; height: 8px; background: var(--gray-200); border-radius: 999px; overflow: hidden;
+        }
+        .progress-bar-inner {
+            height: 100%; background: linear-gradient(90deg, var(--red), var(--red-dark));
+            border-radius: 999px; transition: width 0.3s ease; width: 0%;
+        }
+        .pdf-progress-box .progress-text { font-size: 0.85rem; color: var(--gray-500); margin-top: 10px; }
+
+        /* ============================================================
+           APP HEADER
+           ============================================================ */
+        .app-header {
+            background: white; border-bottom: 3px solid var(--red);
+            padding: 14px 32px; display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow-sm);
+        }
+        .app-logo { display: flex; align-items: center; gap: 12px; }
+        .logo-mark {
+            width: 40px; height: 40px; background: var(--red); border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Playfair Display', serif; font-weight: 800; font-size: 1rem;
+            color: white; letter-spacing: 0.05em;
+        }
+        .logo-text-group { display: flex; flex-direction: column; }
+        .logo-title { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 1.1rem; color: var(--gray-800); line-height: 1.2; }
+        .logo-subtitle { font-size: 0.72rem; color: var(--gray-400); font-weight: 400; letter-spacing: 0.03em; }
+
+        /* Step indicator */
+        .steps { display: flex; align-items: center; gap: 0; }
+        .step-dot {
+            width: 36px; height: 36px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 0.82rem;
+            border: 2.5px solid var(--gray-300); color: var(--gray-400);
+            background: white; transition: var(--transition); cursor: default;
+            position: relative;
+        }
+        .step-dot.active { border-color: var(--red); color: white; background: var(--red); box-shadow: 0 0 0 4px rgba(193,18,31,0.15); }
+        .step-dot.completed { border-color: var(--green); color: white; background: var(--green); cursor: pointer; }
+        .step-dot.completed:hover { transform: scale(1.1); }
+        .step-line { width: 48px; height: 2.5px; background: var(--gray-300); transition: var(--transition); }
+        .step-line.completed { background: var(--green); }
+        .step-label {
+            position: absolute; top: 42px; left: 50%; transform: translateX(-50%);
+            font-size: 0.65rem; color: var(--gray-400); white-space: nowrap; font-weight: 500;
+        }
+        .step-dot.active .step-label { color: var(--red); font-weight: 600; }
+        .step-dot.completed .step-label { color: var(--green); }
+
+        /* ============================================================
+           WIZARD MAIN
+           ============================================================ */
+        .wizard-main { max-width: 960px; margin: 0 auto; padding: 40px 24px 80px; }
+        .step-content { animation: fadeUp 0.4s ease-out; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+
+        .step-card {
+            background: white; border-radius: 16px; padding: 36px 40px;
+            box-shadow: var(--shadow-md); border: 1px solid var(--gray-100);
+        }
+        .step-title {
+            font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 700;
+            color: var(--gray-800); margin-bottom: 4px;
+        }
+        .step-desc { font-size: 0.9rem; color: var(--gray-500); margin-bottom: 28px; }
+
+        /* Form fields */
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 28px; }
+        .form-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+        .form-grid.cols-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+        .field { display: flex; flex-direction: column; gap: 5px; }
+        .field.full-width { grid-column: 1 / -1; }
+        .field label {
+            font-size: 0.78rem; font-weight: 600; color: var(--gray-600);
+            text-transform: uppercase; letter-spacing: 0.04em;
+        }
+        .field input, .field select, .field textarea {
+            padding: 10px 14px; border: 1.5px solid var(--gray-200); border-radius: 10px;
+            font-family: 'Sora', sans-serif; font-size: 0.9rem; color: var(--gray-800);
+            transition: var(--transition); background: white;
+        }
+        .field input:focus, .field select:focus, .field textarea:focus {
+            outline: none; border-color: var(--red); box-shadow: 0 0 0 3px rgba(193,18,31,0.08);
+        }
+        .field textarea { resize: vertical; min-height: 80px; }
+        .field .hint { font-size: 0.72rem; color: var(--gray-400); margin-top: 2px; }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 12px 28px; border: none; border-radius: 10px;
+            font-family: 'Sora', sans-serif; font-weight: 600; font-size: 0.9rem;
+            cursor: pointer; transition: var(--transition); text-decoration: none;
+        }
+        .btn-primary { background: var(--red); color: white; }
+        .btn-primary:hover { background: var(--red-dark); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+        .btn-secondary { background: var(--gray-100); color: var(--gray-700); border: 1.5px solid var(--gray-200); }
+        .btn-secondary:hover { background: var(--gray-200); }
+        .btn-success { background: var(--green); color: white; }
+        .btn-success:hover { background: #15803d; transform: translateY(-1px); box-shadow: var(--shadow-md); }
+        .btn-ghost { background: transparent; color: var(--gray-600); padding: 10px 16px; }
+        .btn-ghost:hover { background: var(--gray-100); }
+        .btn-danger { background: transparent; color: #dc2626; border: 1.5px solid #fecaca; }
+        .btn-danger:hover { background: #fee2e2; }
+        .btn-icon { padding: 8px; border-radius: 8px; border: none; background: transparent; color: var(--gray-400); cursor: pointer; transition: var(--transition); }
+        .btn-icon:hover { background: var(--gray-100); color: var(--red); }
+        .btn[disabled] { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+        .btn-sm { padding: 8px 16px; font-size: 0.8rem; border-radius: 8px; }
+        .action-row { display: flex; gap: 12px; align-items: center; margin-top: 28px; }
+        .action-row.right { justify-content: flex-end; }
+        .action-row.between { justify-content: space-between; }
+        .spacer { flex: 1; }
+
+        /* ============================================================
+           UPLOAD ZONE
+           ============================================================ */
+        .upload-zone {
+            border: 3px dashed var(--gray-300); border-radius: 16px;
+            padding: 50px 40px; text-align: center; cursor: pointer;
+            transition: var(--transition); background: var(--gray-50);
+            position: relative;
+        }
+        .upload-zone:hover, .upload-zone.dragover {
+            border-color: var(--red); background: rgba(193,18,31,0.03);
+        }
+        .upload-zone.dragover { transform: scale(1.01); border-style: solid; }
+        .upload-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+        .upload-icon { margin-bottom: 14px; }
+        .upload-icon svg { width: 52px; height: 52px; color: var(--gray-400); }
+        .upload-zone h3 { font-size: 1.1rem; color: var(--gray-700); margin-bottom: 4px; }
+        .upload-zone p { font-size: 0.85rem; color: var(--gray-400); }
+
+        /* Upload gallery */
+        .upload-gallery {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 14px; margin-top: 24px;
+        }
+        .upload-thumb {
+            position: relative; border-radius: 10px; overflow: hidden;
+            border: 1.5px solid var(--gray-200); aspect-ratio: 4/3;
+            background: var(--gray-50); transition: var(--transition);
+        }
+        .upload-thumb:hover { border-color: var(--red); box-shadow: var(--shadow-md); }
+        .upload-thumb img { width: 100%; height: 100%; object-fit: cover; }
+        .upload-thumb .remove-btn {
+            position: absolute; top: 4px; right: 4px; width: 24px; height: 24px;
+            background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            font-size: 0.7rem; opacity: 0; transition: var(--transition);
+        }
+        .upload-thumb:hover .remove-btn { opacity: 1; }
+        .upload-thumb .remove-btn:hover { background: #dc2626; }
+
+        /* ============================================================
+           TRAINEE REVIEW CARDS
+           ============================================================ */
+        .trainee-card {
+            background: white; border: 1.5px solid var(--gray-200); border-radius: 14px;
+            margin-bottom: 20px; overflow: hidden; box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+        .trainee-card:hover { box-shadow: var(--shadow-md); }
+        .trainee-card-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 16px 22px; background: var(--gray-50);
+            border-bottom: 1px solid var(--gray-200); cursor: pointer;
+            user-select: none; transition: var(--transition);
+        }
+        .trainee-card-header:hover { background: var(--gray-100); }
+        .trainee-card-header .left { display: flex; align-items: center; gap: 12px; }
+        .trainee-card-header .card-num {
+            width: 30px; height: 30px; border-radius: 50%; background: var(--red);
+            color: white; display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 0.8rem; flex-shrink: 0;
+        }
+        .trainee-card-header .card-name { font-weight: 600; font-size: 0.95rem; color: var(--gray-800); }
+        .trainee-card-header .right { display: flex; align-items: center; gap: 10px; }
+        .trainee-card-header .chevron {
+            transition: transform 0.3s ease; color: var(--gray-400); font-size: 1.2rem;
+        }
+        .trainee-card.collapsed .chevron { transform: rotate(-90deg); }
+        .trainee-card-body { padding: 22px; }
+        .trainee-card.collapsed .trainee-card-body { display: none; }
+        .card-section { margin-bottom: 20px; }
+        .card-section:last-child { margin-bottom: 0; }
+        .card-section h4 {
+            font-size: 0.82rem; font-weight: 700; color: var(--gray-500);
+            text-transform: uppercase; letter-spacing: 0.06em;
+            margin-bottom: 12px; padding-bottom: 6px;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-block; padding: 3px 14px; border-radius: 999px;
+            font-size: 0.76rem; font-weight: 600;
+        }
+        .badge-green { background: #bbf7d0; color: #166534; }
+        .badge-blue { background: #bfdbfe; color: #1e40af; }
+        .badge-yellow { background: #fef08a; color: #854d0e; }
+        .badge-red { background: #fecaca; color: #991b1b; }
+        .badge-gray { background: var(--gray-200); color: var(--gray-700); }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center; padding: 48px 24px; color: var(--gray-400);
+        }
+        .empty-state svg { width: 64px; height: 64px; margin-bottom: 16px; opacity: 0.4; }
+        .empty-state h3 { font-size: 1.1rem; color: var(--gray-500); margin-bottom: 6px; }
+        .empty-state p { font-size: 0.85rem; }
+
+        /* ============================================================
+           REPORT VIEW TOOLBAR
+           ============================================================ */
+        .report-toolbar {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            background: rgba(255,255,255,0.95); backdrop-filter: blur(8px);
+            border-bottom: 3px solid var(--red); padding: 12px 32px;
+            display: flex; align-items: center; justify-content: space-between;
+            box-shadow: var(--shadow-md);
+        }
+        .report-toolbar .left { display: flex; align-items: center; gap: 16px; }
+        .report-toolbar .right { display: flex; align-items: center; gap: 10px; }
+        .report-toolbar h2 {
+            font-family: 'Playfair Display', serif; font-size: 1.15rem;
+            font-weight: 700; color: var(--gray-800);
+        }
+        #report-view { padding-top: 70px; }
+
+        /* ============================================================
+           REPORT PAGE STYLES (from original — pixel-perfect A4)
+           ============================================================ */
+        .page {
+            width: 210mm; min-height: 297mm; margin: 30px auto;
+            background: white; box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+            border-radius: 8px; overflow: hidden; position: relative;
+        }
+        .cover-layout { display: flex; height: 297mm; }
+        .cover-sidebar {
+            width: 25%; background: var(--red);
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+        .cover-sidebar h2 {
+            color: white; font-family: 'Playfair Display', serif;
+            font-weight: 800; font-size: 3.5rem; transform: rotate(-90deg);
+            letter-spacing: 0.2em; white-space: nowrap;
+        }
+        .cover-content {
+            width: 75%; padding: 50px 50px 30px 50px;
+            display: flex; flex-direction: column;
+        }
+        .cover-logo { max-width: 360px; }
+        .cover-logo svg { width: 100%; height: auto; display: block; }
+        .cover-title { margin-top: 70px; }
+        .cover-title h1 {
+            font-family: 'Playfair Display', serif; font-size: 3rem;
+            font-weight: 800; line-height: 1.15; letter-spacing: -0.02em;
+        }
+        .text-dark { color: var(--gray-800); }
+        .text-red { color: var(--red); }
+        .cover-info { margin-top: 80px; }
+        .cover-info-row {
+            display: flex; justify-content: space-between; align-items: baseline;
+            border-bottom: 2px solid var(--gray-200); padding-bottom: 12px; margin-bottom: 20px;
+        }
+        .cover-info-label { font-size: 1.1rem; color: var(--gray-500); }
+        .cover-info-value { font-size: 1.1rem; color: var(--gray-500); font-weight: 300; text-align: right; }
+        .cover-footer {
+            margin-top: auto; padding-top: 24px; border-top: 1px solid var(--gray-100);
+            font-size: 0.78rem; color: var(--gray-400);
+        }
+        .outro-text { margin-top: 40px; }
+        .outro-text p { font-size: 1.05rem; color: var(--gray-700); line-height: 1.7; margin-bottom: 18px; }
+        .quote-section { margin-top: 30px; padding-top: 24px; border-top: 2px solid var(--gray-200); }
+        .quote-label { font-size: 0.85rem; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px; }
+        .quote-text { font-size: 1.3rem; font-style: italic; color: var(--gray-600); font-weight: 300; line-height: 1.5; }
+        .quote-author { margin-top: 10px; text-align: right; font-size: 1rem; color: var(--red); font-weight: 600; }
+
+        /* Trainee report pages */
+        .report-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 28px; border-bottom: 1px solid var(--gray-200); background: white;
+        }
+        .report-header-logo { height: 48px; }
+        .report-header-logo svg { height: 100%; width: auto; display: block; }
+        .report-header-right { text-align: right; }
+        .report-header-right h1 {
+            font-family: 'Playfair Display', serif; font-size: 1.4rem;
+            font-weight: 700; color: var(--accent);
+        }
+        .report-header-right p { font-size: 1rem; font-weight: 600; color: var(--gray-600); }
+        .report-body { padding: 20px 28px; }
+        .details-card {
+            display: flex; justify-content: space-between; align-items: flex-start;
+            background: var(--gray-50); border: 1px solid var(--gray-200);
+            border-radius: 8px; padding: 18px 22px; margin-bottom: 20px;
+        }
+        .details-card h3 { font-size: 0.95rem; font-weight: 700; color: var(--gray-800); margin-bottom: 5px; }
+        .details-card p { font-size: 0.85rem; color: var(--gray-600); }
+        .details-card .label { font-weight: 600; }
+        .score-big {
+            font-size: 2.8rem; font-weight: 700; line-height: 1;
+            position: relative; padding-bottom: 10px;
+        }
+        .score-big::after {
+            content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 3px;
+            background: linear-gradient(90deg, rgba(193,18,31,0.25), rgba(193,18,31,0.7));
+            border-radius: 999px;
+        }
+        .score-big span { font-size: 1.6rem; }
+        .score-green { color: var(--green); }
+        .score-red { color: #dc2626; }
+        .section-title {
+            font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 700;
+            color: var(--gray-800); border-left: 4px solid var(--accent);
+            border-bottom: 1px solid var(--score-line); padding-left: 12px;
+            padding-bottom: 6px; margin-bottom: 10px;
+        }
+        .assessment-box {
+            background: var(--gray-50); border: 1px solid var(--gray-200);
+            border-radius: 8px; padding: 12px 16px; margin-bottom: 20px;
+        }
+        .assessment-box p { font-size: 0.85rem; color: var(--gray-700); line-height: 1.6; }
+        .two-col { display: flex; gap: 20px; margin-bottom: 20px; }
+        .two-col > div { flex: 1; }
+        .data-table {
+            width: 100%; border-collapse: collapse; border: 1px solid var(--gray-200);
+            border-radius: 8px; overflow: hidden; font-size: 0.8rem;
+        }
+        .data-table th {
+            background: var(--gray-50); padding: 8px 12px; font-weight: 600;
+            color: var(--gray-600); text-align: left;
+        }
+        .data-table th:last-child { text-align: right; }
+        .data-table td { padding: 8px 12px; border-top: 1px solid var(--score-line); color: var(--gray-700); }
+        .data-table td:last-child { text-align: right; font-weight: 500; }
+        .data-table .row-total { background: var(--gray-50); }
+        .data-table .row-total td { font-weight: 700; color: var(--gray-800); }
+        .data-table .row-percent td { font-weight: 600; font-style: italic; color: var(--gray-800); background: var(--gray-50); }
+        .data-table .row-percent-border td { border-bottom: 2px solid var(--gray-300); }
+        .text-green { color: var(--green); font-weight: 600; }
+        .text-orange { color: var(--orange); font-weight: 600; }
+        .text-na { color: var(--na); font-weight: 600; }
+        .text-attend-good { color: var(--green); font-weight: 700; }
+        .text-attend-warn { color: var(--orange); font-weight: 700; }
+        .comments-box {
+            background: var(--gray-50); border-left: 4px solid var(--gray-300);
+            border-radius: 8px; padding: 12px 16px; margin-bottom: 20px;
+        }
+        .comments-box p { font-size: 0.85rem; color: var(--gray-700); font-style: italic; }
+        .report-footer {
+            text-align: center; padding: 14px 28px; border-top: 1px solid var(--gray-200);
+            font-size: 0.68rem; color: var(--gray-400);
+        }
+
+        /* ============================================================
+           PRINT / PDF STYLES
+           ============================================================ */
+        @page { size: A4 portrait; margin: 0; }
+        @media print {
+            html, body {
+                width: 210mm; height: auto; margin: 0 !important; padding: 0 !important;
+                background: white !important; -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important; color-adjust: exact !important;
+            }
+            #app-shell, .report-toolbar, #toast-container, #processing-overlay, #pdf-overlay {
+                display: none !important;
+            }
+            #report-view { display: block !important; padding-top: 0 !important; }
+            .page {
+                width: 210mm; height: 297mm; min-height: 297mm; max-height: 297mm;
+                margin: 0 !important; padding: 0; box-shadow: none !important;
+                border-radius: 0 !important; overflow: hidden;
+                page-break-after: always; break-after: page;
+                page-break-inside: avoid; break-inside: avoid;
+            }
+            .page:last-child { page-break-after: auto; break-after: auto; }
+            .cover-layout { height: 297mm !important; min-height: 297mm !important; max-height: 297mm !important; overflow: hidden; }
+            .cover-sidebar { background: var(--red) !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            .details-card, .assessment-box, .comments-box, .data-table th, .data-table .row-total td, .data-table .row-percent td {
+                -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
+            }
+            .badge-green { background: #bbf7d0 !important; color: #166534 !important; -webkit-print-color-adjust: exact !important; }
+            .badge-blue { background: #bfdbfe !important; color: #1e40af !important; -webkit-print-color-adjust: exact !important; }
+            .badge-red { background: #fecaca !important; color: #991b1b !important; -webkit-print-color-adjust: exact !important; }
+            .badge-yellow { background: #fef08a !important; color: #854d0e !important; -webkit-print-color-adjust: exact !important; }
+            svg { overflow: visible !important; }
+            #all-pages { margin: 0 !important; padding: 0 !important; }
+        }
+
+        /* ============================================================
+           RESPONSIVE (basic)
+           ============================================================ */
+        @media (max-width: 780px) {
+            .wizard-main { padding: 20px 12px 60px; }
+            .step-card { padding: 24px 20px; }
+            .form-grid { grid-template-columns: 1fr; }
+            .form-grid.cols-3, .form-grid.cols-4 { grid-template-columns: 1fr 1fr; }
+            .step-label { display: none; }
+            .step-line { width: 24px; }
+            .app-header { padding: 12px 16px; }
+        }
+
+        /* ============================================================
+           MISC UTILITIES
+           ============================================================ */
+        .divider { height: 1px; background: var(--gray-200); margin: 24px 0; }
+        .text-center { text-align: center; }
+        .mt-4 { margin-top: 16px; }
+        .mb-4 { margin-bottom: 16px; }
+        .tag {
+            display: inline-flex; align-items: center; gap: 4px;
+            background: var(--gray-100); padding: 4px 10px; border-radius: 6px;
+            font-size: 0.75rem; color: var(--gray-600); font-weight: 500;
+        }
+        .info-box {
+            background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px;
+            padding: 14px 18px; font-size: 0.85rem; color: #1e40af;
+            display: flex; align-items: flex-start; gap: 10px; margin-bottom: 20px;
+        }
+        .info-box svg { flex-shrink: 0; margin-top: 2px; }
+    </style>
+</head>
+<body>
+
+<!-- ============================================================
+     TOAST CONTAINER
+     ============================================================ -->
+<div id="toast-container"></div>
+
+<!-- ============================================================
+     PROCESSING OVERLAY (AI analysis)
+     ============================================================ -->
+<div id="processing-overlay">
+    <div class="processing-box">
+        <div class="spinner"></div>
+        <h3>Analyzing Screenshots...</h3>
+        <p id="processing-text">AI is extracting trainee data from your images</p>
+    </div>
+</div>
+
+<!-- ============================================================
+     PDF DOWNLOAD OVERLAY
+     ============================================================ -->
+<div id="pdf-overlay">
+    <div class="pdf-progress-box">
+        <h3>Generating PDF...</h3>
+        <div class="progress-bar-outer">
+            <div class="progress-bar-inner" id="pdf-progress-bar"></div>
+        </div>
+        <p class="progress-text" id="pdf-progress-text">Preparing pages...</p>
+    </div>
+</div>
+
+<!-- ============================================================
+     APP SHELL (Wizard)
+     ============================================================ -->
+<div id="app-shell">
+    <header class="app-header">
+        <div class="app-logo">
+            <div class="logo-mark">RED</div>
+            <div class="logo-text-group">
+                <span class="logo-title">Report Generator</span>
+                <span class="logo-subtitle">AI-Powered Trainee Reports</span>
+            </div>
+        </div>
+        <div class="steps" id="step-indicator">
+            <div class="step-dot active" data-step="1" onclick="navigateStep(1)">1<span class="step-label">Setup</span></div>
+            <div class="step-line" data-line="1"></div>
+            <div class="step-dot" data-step="2" onclick="navigateStep(2)">2<span class="step-label">Upload</span></div>
+            <div class="step-line" data-line="2"></div>
+            <div class="step-dot" data-step="3" onclick="navigateStep(3)">3<span class="step-label">Review</span></div>
+            <div class="step-line" data-line="3"></div>
+            <div class="step-dot" data-step="4" onclick="navigateStep(4)">4<span class="step-label">Report</span></div>
+        </div>
+    </header>
+
+    <main class="wizard-main">
+
+        <!-- ====== STEP 1: SETUP ====== -->
+        <section id="step-1" class="step-content">
+            <div class="step-card">
+                <h2 class="step-title">Project Setup</h2>
+                <p class="step-desc">Configure report details and connect your AI provider for automatic data extraction.</p>
+                
+                <div class="form-grid">
+                    <div class="field">
+                        <label>Company Name</label>
+                        <input type="text" id="cfg-company" placeholder="e.g. Roots Real Estate">
+                    </div>
+                    <div class="field">
+                        <label>Batch Number</label>
+                        <input type="text" id="cfg-batch" placeholder="e.g. 31">
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <h3 style="font-size:1rem; font-weight:700; color:var(--gray-700); margin-bottom:14px;">AI Configuration</h3>
+                <div class="info-box">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+                    <span>Your API key is stored locally in your browser and never sent anywhere except the AI provider you select. <strong>Gemini</strong> offers a generous free tier.</span>
+                </div>
+                <div class="form-grid">
+                    <div class="field">
+                        <label>AI Provider</label>
+                        <select id="cfg-provider">
+                            <option value="gemini">Google Gemini (Recommended — Free)</option>
+                            <option value="openai">OpenAI GPT-4o</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>API Key</label>
+                        <input type="password" id="cfg-apikey" placeholder="Paste your API key here">
+                        <span class="hint" id="apikey-hint">Get a free key at <a href="https://aistudio.google.com/apikey" target="_blank" style="color:var(--blue)">aistudio.google.com</a></span>
+                    </div>
+                </div>
+
+                <div class="action-row right">
+                    <button class="btn btn-primary" onclick="completeStep1()">
+                        Continue to Upload
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ====== STEP 2: UPLOAD ====== -->
+        <section id="step-2" class="step-content" style="display:none">
+            <div class="step-card">
+                <h2 class="step-title">Upload Screenshots</h2>
+                <p class="step-desc">Upload evaluation spreadsheet screenshots. AI will extract all trainee data automatically.</p>
+
+                <div class="upload-zone" id="upload-zone">
+                    <input type="file" multiple accept="image/*" id="file-input" onchange="handleFileSelect(event)">
+                    <div class="upload-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    </div>
+                    <h3>Drop screenshots here or click to browse</h3>
+                    <p>Supports PNG, JPG, WebP — multiple files allowed</p>
+                </div>
+
+                <div class="upload-gallery" id="upload-gallery"></div>
+
+                <div class="action-row between" style="margin-top:28px">
+                    <button class="btn btn-ghost" onclick="goToStep(1)">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                        Back
+                    </button>
+                    <div style="display:flex; gap:10px;">
+                        <button class="btn btn-secondary" onclick="skipToManual()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                            Manual Entry
+                        </button>
+                        <button class="btn btn-primary" id="btn-analyze" onclick="analyzeScreenshots()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 014 4c0 1.95-2 4-4 8-2-4-4-6.05-4-8a4 4 0 014-4z"/><circle cx="12" cy="18" r="3"/></svg>
+                            Analyze with AI
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ====== STEP 3: REVIEW & EDIT ====== -->
+        <section id="step-3" class="step-content" style="display:none">
+            <div class="step-card">
+                <h2 class="step-title">Review & Edit Data</h2>
+                <p class="step-desc">Verify the extracted data. Click on any card to expand and edit fields.</p>
+
+                <div id="trainee-cards"></div>
+
+                <div style="text-align:center; margin-top:20px;">
+                    <button class="btn btn-secondary" onclick="addBlankTrainee()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        Add Trainee Manually
+                    </button>
+                </div>
+
+                <div class="action-row between" style="margin-top:28px;">
+                    <button class="btn btn-ghost" onclick="goToStep(2)">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                        Back
+                    </button>
+                    <div style="display:flex; gap:10px;">
+                        <button class="btn btn-secondary" onclick="recalcAllScores()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+                            Recalculate Scores
+                        </button>
+                        <button class="btn btn-success" id="btn-generate" onclick="generateReport()">
+                            Generate Report
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<!-- ============================================================
+     REPORT VIEW (full preview + toolbar)
+     ============================================================ -->
+<div id="report-view" style="display:none">
+    <div class="report-toolbar">
+        <div class="left">
+            <button class="btn btn-ghost btn-sm" onclick="backToEdit()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                Edit Data
+            </button>
+            <h2>Report Preview</h2>
+            <span class="tag" id="report-tag"></span>
+        </div>
+        <div class="right">
+            <button class="btn btn-secondary btn-sm" onclick="startOver()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+                New Report
+            </button>
+            <button class="btn btn-secondary btn-sm" onclick="window.print()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                Print
+            </button>
+            <button class="btn btn-primary btn-sm" onclick="downloadPDF()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Download PDF
+            </button>
+        </div>
+    </div>
+    <div id="all-pages"></div>
+</div>
+
+
+<script>
+// ============================================================
+//  SVG LOGO — inline constant for reliable rendering
+// ============================================================
+const LOGO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3508 1240"><defs><style>.c1{fill:#cb1419;}</style></defs><g><g><g><path d="M510.5,201.9l-216.9,100.6-105.8,183c-132.4,229.1-129.2,223.5-128.6,224.1s53.3-26.4,134.5-68.1l14.2-7.3-.6,9.1c-.6,10,.9,28.6,3.2,40,5.4,26,19,51.9,37.1,70.7l6.3,6.6-2.9,8.5c-6,17.2-4.9,30.4,3.1,37.2,5.6,4.8,11.6,6.1,25.2,5.4l10.9-.5,2.8,6.2c7.2,15.9,11.9,35.1,12.7,51.6.8,17.5-2.4,31.4-10.2,44.5-2,3.2-3.3,6-3.1,6.3.8.7,9.2-1.6,19.6-5.5,33.7-12.6,55.4-30.6,63.2-52.5,3.2-9.1,3.2-25.3,0-35.8-6.7-21.3-19.7-37.5-37.2-46.3-3.6-1.7-6.6-3.2-6.7-3.2s1-4.3,2.3-9.5c4.6-17.7,2.9-30.5-4.8-36.3-6.5-5-11.1-6.1-25.3-5.8-7.1.1-14.3.2-16,.4-2.6.2-3.5-.6-8.7-7.8-36.7-51.1-33.3-125,9.3-202.9,18.4-33.6,50.9-77.3,81.2-109.1,1-1.1-1.5,3.2-5.6,9.5-41.5,64.3-73.5,128.3-80.2,160.4-1.7,8.4-2,17.9-.5,17.4.5-.2,43.7-24.4,96.1-53.8l95.1-53.5,127.9-191.7c70.4-105.5,127.9-192,127.9-192.3s-.6-.5-1.2-.4c-.7.1-98.9,45.4-218.3,100.8Z"/><path d="M552.3,429.8l-61.8,81.8-92.2,55.8c-50.8,30.7-92.3,56.3-92.3,56.8s7.3,11.7,16.2,25l16.1,24,5.1-.6c7.4-1,27.2-6.1,41.6-10.8,88-28.6,172.4-98.4,239.6-198.3,15.8-23.4,37.3-60.4,39-66.9.4-1.9-3-5.7-23.5-25.4-13.2-12.8-24.4-23.2-24.9-23.2s-28.8,36.8-62.9,81.8Z"/><path class="c1" d="M699.4,414.7l-7,.4-4.4,7.7c-17,30.1-46.2,72.3-72.4,104.7-25.4,31.3-62.3,69.4-88.5,91-66.7,55.2-130.9,82-197.6,82.6h-9l3.5,1.6c19.9,9.1,22.6,10.7,29.1,17.2s7.1,8.1,8.7,12.4c3.2,8.3,3,18.4-.5,28.9l-2.7,8.1,4,3c7,5.4,21.8,21.1,26.2,27.7,9.8,15,14.2,28.3,14.2,43.5,0,23.8-10.4,44.1-35.2,68.8l-13.8,13.7v155h718.2l-.6-324.8c-.3-178.6-.9-328.6-1.2-333.5l-.6-8.7-181.7.2c-99.9.1-184.8.4-188.7.5ZM993.3,752.4c7.1,3.4,13.9,11,16.7,18.4,3,7.9,2.4,18.5-1.4,26-13,25.4-48.3,24.7-60.3-1.3-6.7-14.6-1.1-33.3,12.4-41.2,7.6-4.4,11.2-5.4,19.4-5,5.8.3,9,1,13.2,3.1ZM929,870.7c0,72.5.4,116.1,1,118.4,1.2,4.2,4.2,7.7,7.3,8.3,1.2.3,5.3.8,9,1.1l6.8.7-.3,4.6-.3,4.7-6.5.3c-3.6.2-24.2.1-45.7-.3l-39.3-.7v-5.9c0-3.3-.2-5.9-.4-5.9s-3.3,1.7-6.7,3.8c-14.7,8.9-28.9,12.7-44.9,11.9-12.2-.6-20.3-3-30-8.7-6.7-3.9-16.3-12.4-19.4-17.2q-1.7-2.7,2.2-8.5c3.9-5.8,8.6-14.5,11.5-21.5l1.6-3.7-10.6-5.1c-5.8-2.7-10.9-5-11.2-5s-1.5,2.4-2.4,5.2c-.9,2.9-2.8,7.5-4.1,10.3l-2.4,5-1.5-3.6c-2.5-5.7-5.7-18.8-6.4-26.2l-.6-6.7h35.3v-8.9c0-16.6-4.7-35-12-46.4-1.6-2.6-3-5.2-3-5.7s3-4.1,6.6-8c8-8.4,18.1-14.9,28.9-18.6,18.7-6.2,48.4-3.2,63.8,6.6,2.6,1.6,5,3,5.3,3s.4-16.3.2-36.3c-.2-29.3-.6-36.6-1.7-38.3-2.3-3.4-8-5.6-15.8-6.2l-7.3-.5v-4.7c0-2.6.3-5,.7-5.3.3-.4,21.3-.7,46.5-.7h45.8v114.7ZM703.5,838.4c11.9,3.6,27.1,11.7,34.6,18.4,14.6,13.3,23.4,31.8,25.3,53.4l.7,7.8h-101.1v15.9c0,17.1.7,22.5,4,31.4,6.6,17.6,19.6,26.1,39.5,26.1,20.4-.1,36.5-10.6,46.2-30l4.5-9.2,3.7,1.5c2,.8,3.7,1.6,3.9,1.8.5.5-5.8,12.6-9.1,17.5-19.5,28.7-50.8,42.3-87.6,38.1-39.3-4.6-67.1-25.2-76.9-57.3-2.3-7.3-4.7-25.8-3.8-29.3.4-1.7,2-2.6,6.9-3.9,26.9-7.3,41.2-35,31.2-60.1-2-4.8-2.4-6.9-1.6-7.9,1.6-1.9,19.8-11.1,26.1-13.2,11.4-3.7,16.3-4.3,30.5-4,11.6.3,15.5.8,23,3ZM596.3,840.7c8.4,4,16.5,11.5,20.8,19.6,3.2,5.9,3.4,6.7,3.4,16.2s-.3,10.7-2.7,15.7c-5.2,11.2-15.7,19.2-28.3,21.8-16,3.3-31.7-4.4-38.3-18.9-2.1-4.6-2.6-7.1-2.5-13.6,0-4.9.6-9.8,1.6-12.5l1.7-4.5-6.1,6.4c-3.4,3.5-7.3,8.9-8.8,12l-2.6,5.6-.3,43.5c-.2,23.9,0,45.8.3,48.7,1.2,9.8,6.9,14.7,18.3,15.9l6.2.7v9.7h-118v-4.9c0-5.6.6-6.1,8.1-6.1s11.6-2.6,13.9-6.2c1.3-2,1.5-11,1.8-62.1.2-37.9-.1-61.9-.8-65.5-1.5-8.8-7.7-13.2-18.7-13.2h-4.3v-4.9c0-4.6.1-4.9,3.1-5.5,1.7-.3,21-.6,42.9-.6s41.2.3,42.9.6l3.1.6v12.7c.1,12.2.2,12.5,1.8,10.1,7.8-11.4,17.9-19.5,28.7-23,4.7-1.6,8.2-1.9,16-1.7,8.8.2,10.8.6,16.8,3.4Z"/><path class="c1" d="M969.9,767.3c-10,6.7-11.5,19.6-3.2,27.4,8,7.6,19.8,6.3,26.6-2.9,3.2-4.3,3.4-13.2.5-18.3-4.7-8-16.6-11.1-23.9-6.2Z"/><path class="c1" d="M827,851.7c-3.8,2-6.2,4.1-7.7,6.9l-2.3,3.9v60c0,55.2.1,60.3,1.8,63.4,2.3,4.6,7.7,8.7,13.3,10.2,4,1.1,5.3,1,9.1-.4,4.9-1.9,10-6.4,12.6-11.1,1.5-2.8,1.7-8.8,1.7-62.6s0-59.6-2-63c-3.2-5.3-9.5-9.3-15.7-9.8-4.4-.3-6.2.1-10.8,2.5Z"/><path class="c1" d="M669.9,848c-4.7,2.5-8.6,7.1-9.9,11.8-.5,2-1,13.5-1,25.4v21.8h39.1l-.3-24.3-.3-24.4-2.8-3.6c-5.9-7.7-17.2-10.7-24.8-6.7Z"/><path d="M3107.6,415.1c-34.6,3.6-66.2,18.1-90.4,41.3-31.9,30.7-47.5,68.9-47.6,116.6,0,19.5.9,27.9,5,44.5,14.5,57.9,59.6,100.7,119.1,112.6,13.7,2.7,41,3.7,55,1.9,51.2-6.4,93-35.2,115.6-79.8,11.5-22.7,17-43.4,19.2-72.5l.7-8.7h-166.2v44h109.2l-.6,2.7c-1.5,6.1-9.6,21.2-15.5,28.6-14.1,17.7-37.2,30.9-62.1,35.3-9.9,1.7-30.7,2-40,.5-40.4-6.6-71.1-33.4-82.3-72.1-6.6-22.6-6.2-52.8.8-74.5,5.3-16.2,12.7-28.6,23.9-40.4,8.9-9.2,16.6-14.7,28.7-20.6,43.8-21.1,101.6-9.2,130.5,26.9,5.4,6.8,12.6,19.4,14.8,25.8.5,1.7,2.7,1.8,27.2,1.8h26.6l-.6-3.5c-1.3-7-5.8-19.2-10.5-29-27-55.6-92.2-88.6-160.5-81.4Z"/><path d="M1420,573v154h51v-113l29.2.2,29.2.3,32.3,55.5c17.8,30.5,32.7,55.8,33.1,56.2s13.7.7,29.5.6l28.7-.3-35.3-59.9-35.3-59.9,10.6-5.3c24.8-12.7,41.3-33,48.6-59.9,2.6-9.2,3.1-34.2.9-44.7-7.3-36-34.4-64-71-73.3-14.7-3.8-28.6-4.4-93.2-4.5h-58.3v154ZM1554.4,470c10.1,2.5,16.7,6.2,23.6,13,22.8,22.3,16.7,61.5-11.8,75.9-11.7,5.9-15,6.3-56.9,6.8l-38.3.5v-98.2h37.8c34.5,0,38.6.2,45.6,2Z"/><path d="M1131,443.5v23.5h91v260h51v-260h91v-47h-233v23.5Z"/><path d="M1742,571.7c-33.7,83.5-61.5,152.6-61.8,153.5-.4,1.7,1.4,1.8,26.9,1.8h27.4l13-33.3,13-33.2h136.7l13.1,33.2,13.2,33.3h56.4l-4.9-11.8c-2.7-6.4-31.3-75.5-63.7-153.4l-58.8-141.7h-24.6c0-.1-24.6-.1-24.6-.1l-61.3,151.7ZM1854,551.4c13.8,34.5,24.9,63,24.7,63.2s-22.9.3-50.3.2l-50-.3,15.4-39c31.3-79.7,34.4-87.6,34.7-87.3s11.6,28.6,25.5,63.2Z"/><path d="M2033,573.5v153.5h51v-307h-51v153.5Z"/><path d="M2171,573.5v153.5h50l.2-108.7.3-108.6,79.4,108.6,79.4,108.7h43.7v-307h-50l-.2,106.8-.3,106.9-77.6-106.6-77.6-106.6-23.6-.3-23.7-.2v153.5Z"/><path d="M2511,573.5v153.5h51v-307h-51v153.5Z"/><path d="M2649,573.5v153.5h50l.2-108.7.3-108.6,79.4,108.6,79.4,108.7h43.7v-307h-50l-.2,106.8-.3,106.9-77.6-106.6-77.6-106.6-23.6-.3-23.7-.2v153.5Z"/><path d="M1579,756.7c-73.9,7.2-126.6,54.4-141.2,126.5-2,10-2.3,14.1-2.3,36.3.1,22.2.3,26.2,2.3,35.4,14.4,65.8,57.2,109.4,121.2,123.3,9.3,2,13.3,2.2,34.5,2.2s25.2-.2,34.2-2.2c46.2-10.1,82.8-38.3,103.3-79.7,3.2-6.6,7.3-15.9,8.9-20.7,2.7-7.9,7.1-27.2,8.5-37.1l.5-3.7h-100.5l-1.3,5.1c-4,15.6-16.9,32.2-30,38.8-20.9,10.6-45.4,6.2-61.6-11-11.9-12.7-17.6-29.2-17.5-51.1,0-18,3.2-30.2,11.1-43.4,6.6-10.9,19.8-20.5,31.9-23.3,2.5-.6,8.6-1.1,13.5-1.1,15.5,0,27.2,5.5,39,18.2,5.9,6.4,13.1,18.4,14.7,24.6l.6,2.2h99.3l-.6-3.8c-3.3-20.3-8.7-37.7-16.6-53.5-14.6-29.3-39-53.6-67.3-67.2-25.1-12-56.9-17.5-84.6-14.8Z"/><path d="M2391,919.5v154.5h200v-84h-105v-32h92v-76h-92v-33h103v-84h-198v154.5Z"/><path d="M1231.5,767.7c-5.5,14.1-113.5,303.7-113.5,304.4s21.4.9,52,.9h51.9l3.1-10.3c1.8-5.6,4.6-14.9,6.4-20.7l3.2-10.5,45.5-.3,45.4-.2,6,21,5.9,21h53.8c29.6,0,53.8-.3,53.8-.6s-105.1-279.8-114.7-305.2c-.4-.9-11.2-1.2-49.3-1.2s-48.8.1-49.5,1.7ZM1293.8,917.8c7.2,21.8,13.2,40.1,13.2,40.5s-12.2.7-27.1.7h-27l.6-2.3c3.2-10.6,26.1-78.7,26.5-78.7s6.5,17.9,13.8,39.8Z"/><path d="M1851.5,767.7c-5.5,14.1-113.5,303.7-113.5,304.4s21.4.9,52,.9h51.9l3.1-10.3c1.8-5.6,4.6-14.9,6.4-20.7l3.2-10.5,45.5-.3,45.4-.2,6,21,5.9,21h53.8c29.6,0,53.8-.3,53.8-.6s-105.1-279.8-114.7-305.2c-.4-.9-11.2-1.2-49.3-1.2s-48.8.1-49.5,1.7ZM1913.8,917.8c7.2,21.8,13.2,40.1,13.2,40.5s-12.2.7-27.1.7h-27l.6-2.3c3.2-10.6,26.1-78.7,26.5-78.7s6.5,17.9,13.8,39.8Z"/><path d="M2083,919.5v153.6l74.8-.4c73.2-.3,74.9-.4,84.7-2.6,30.2-6.8,52.2-18.1,72-37.2,21.3-20.6,35.4-46.8,41.6-77.6,2.7-13.7,3.7-43.7,1.9-59.2-7.7-66.1-50.9-113.6-115.7-127.3-10.6-2.2-12.3-2.3-85-2.6l-74.3-.3v153.6ZM2217.5,860.5c27.3,6.9,42.6,28.2,42.6,59s-10.5,44.7-29.5,54c-11.1,5.4-16.9,6.5-34.8,6.5h-15.8v-121h15.8c10.8,0,17.7.5,21.7,1.5Z"/><path d="M2654.6,769.7c-1.2,7.2-41.6,301-41.6,302.2s12.9,1.1,48.4,1.1h48.4l.6-3.8c.3-2,3.7-34.3,7.6-71.7,3.8-37.4,7.3-69.8,7.7-71.9.8-3.8,2.2-.8,33.4,71.5l32.6,75.4,17.4.2,17.4.3,32.5-75.5c17.9-41.5,32.7-75.5,33-75.5s4,32.5,8.3,72.2c4.3,39.8,8.1,73.8,8.4,75.5l.5,3.3h47.9c47.7,0,47.9,0,47.9-2.1s-9.2-69.5-20.5-151.9-20.5-150.6-20.5-151.4c0-1.4-5.1-1.6-48.2-1.6h-48.3l-29,72.5c-15.9,39.8-29.3,72.1-29.7,71.7s-13.5-32.9-29.1-72.2l-28.5-71.5-48-.3-48-.2-.6,3.7Z"/><path d="M2990.6,771.2c1.5,2.9,24.2,46.6,50.5,97l47.9,91.8v113h97v-113.6l50.5-96.4c27.8-53,50.5-96.5,50.5-96.7s-25.1-.3-55.7-.3h-55.8l-18.9,46.6c-10.4,25.6-19.3,45.9-19.6,45.2-.4-.7-8.9-21.7-19-46.6l-18.4-45.2h-111.6l2.6,5.2Z"/></g></g></g></svg>`;
+
+
+// ============================================================
+//  APP STATE
+// ============================================================
+const APP = {
+    currentStep: 1,
+    config: {
+        companyName: '',
+        batchNumber: '',
+        aiProvider: 'gemini',
+        apiKey: ''
+    },
+    uploadedFiles: [],   // { id, file, preview, base64, mimeType }
+    trainees: [],         // structured trainee objects
+    maxStep: 1
+};
+
+
+// ============================================================
+//  INITIALIZATION
+// ============================================================
+window.addEventListener('DOMContentLoaded', () => {
+    // Load saved config
+    try {
+        const saved = JSON.parse(localStorage.getItem('red_report_config') || '{}');
+        if (saved.companyName) document.getElementById('cfg-company').value = saved.companyName;
+        if (saved.batchNumber) document.getElementById('cfg-batch').value = saved.batchNumber;
+        if (saved.aiProvider) document.getElementById('cfg-provider').value = saved.aiProvider;
+        if (saved.apiKey) document.getElementById('cfg-apikey').value = saved.apiKey;
+        Object.assign(APP.config, saved);
+    } catch(e) {}
+
+    // Provider change → update hint
+    document.getElementById('cfg-provider').addEventListener('change', updateProviderHint);
+    updateProviderHint();
+
+    // Upload zone drag-drop
+    const zone = document.getElementById('upload-zone');
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+    zone.addEventListener('drop', e => {
+        e.preventDefault(); zone.classList.remove('dragover');
+        handleFiles(e.dataTransfer.files);
+    });
+});
+
+function updateProviderHint() {
+    const provider = document.getElementById('cfg-provider').value;
+    const hint = document.getElementById('apikey-hint');
+    if (provider === 'gemini') {
+        hint.innerHTML = 'Get a free key at <a href="https://aistudio.google.com/apikey" target="_blank" style="color:var(--blue)">aistudio.google.com</a>';
+    } else {
+        hint.innerHTML = 'Get your key at <a href="https://platform.openai.com/api-keys" target="_blank" style="color:var(--blue)">platform.openai.com</a>';
+    }
+}
+
+
+// ============================================================
+//  TOAST NOTIFICATIONS
+// ============================================================
+function showToast(message, type = 'info') {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.textContent = message;
+    container.appendChild(toast);
+    setTimeout(() => {
+        toast.classList.add('removing');
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+
+// ============================================================
+//  STEP NAVIGATION
+// ============================================================
+function goToStep(step) {
+    if (step < 1 || step > 4) return;
+
+    // Show/hide wizard vs report view
+    if (step === 4) {
+        document.getElementById('app-shell').style.display = 'none';
+        document.getElementById('report-view').style.display = 'block';
+    } else {
+        document.getElementById('app-shell').style.display = 'block';
+        document.getElementById('report-view').style.display = 'none';
+    }
+
+    // Toggle step sections
+    for (let i = 1; i <= 3; i++) {
+        const el = document.getElementById(`step-${i}`);
+        if (el) el.style.display = i === step ? 'block' : 'none';
+    }
+
+    // Update step indicator
+    if (step > APP.maxStep) APP.maxStep = step;
+    document.querySelectorAll('.step-dot').forEach(dot => {
+        const s = parseInt(dot.dataset.step);
+        dot.classList.remove('active', 'completed');
+        if (s === step) dot.classList.add('active');
+        else if (s < step || s <= APP.maxStep) dot.classList.add('completed');
+    });
+    document.querySelectorAll('.step-line').forEach(line => {
+        const l = parseInt(line.dataset.line);
+        line.classList.toggle('completed', l < step || l < APP.maxStep);
+    });
+
+    APP.currentStep = step;
+}
+
+function navigateStep(step) {
+    if (step <= APP.maxStep) goToStep(step);
+}
+
+
+// ============================================================
+//  STEP 1: SETUP
+// ============================================================
+function completeStep1() {
+    const company = document.getElementById('cfg-company').value.trim();
+    const batch = document.getElementById('cfg-batch').value.trim();
+    const provider = document.getElementById('cfg-provider').value;
+    const apiKey = document.getElementById('cfg-apikey').value.trim();
+
+    if (!company) { showToast('Please enter a company name', 'error'); return; }
+    if (!batch) { showToast('Please enter a batch number', 'error'); return; }
+
+    APP.config = { companyName: company, batchNumber: batch, aiProvider: provider, apiKey };
+
+    // Save to localStorage
+    localStorage.setItem('red_report_config', JSON.stringify(APP.config));
+
+    showToast('Setup saved!', 'success');
+    goToStep(2);
+}
+
+
+// ============================================================
+//  STEP 2: FILE UPLOAD
+// ============================================================
+function handleFileSelect(event) {
+    handleFiles(event.target.files);
+    event.target.value = '';
+}
+
+async function handleFiles(fileList) {
+    const files = Array.from(fileList).filter(f => f.type.startsWith('image/'));
+    if (files.length === 0) { showToast('Only image files are supported', 'error'); return; }
+
+    for (const file of files) {
+        const compressed = await compressImage(file);
+        APP.uploadedFiles.push({
+            id: Date.now().toString(36) + Math.random().toString(36).substr(2, 6),
+            file: file,
+            preview: compressed.dataUrl,
+            base64: compressed.base64,
+            mimeType: compressed.mimeType
+        });
+    }
+    renderUploadGallery();
+    showToast(`${files.length} image(s) added`, 'success');
+}
+
+function compressImage(file, maxDim = 1600, quality = 0.85) {
+    return new Promise(resolve => {
+        const img = new Image();
+        img.onload = () => {
+            let { width, height } = img;
+            if (width > maxDim || height > maxDim) {
+                if (width > height) { height = (height / width) * maxDim; width = maxDim; }
+                else { width = (width / height) * maxDim; height = maxDim; }
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = width; canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            const dataUrl = canvas.toDataURL('image/jpeg', quality);
+            resolve({ dataUrl, base64: dataUrl.split(',')[1], mimeType: 'image/jpeg' });
+        };
+        img.src = URL.createObjectURL(file);
+    });
+}
+
+function renderUploadGallery() {
+    const gallery = document.getElementById('upload-gallery');
+    gallery.innerHTML = APP.uploadedFiles.map(f => `
+        <div class="upload-thumb" data-id="${f.id}">
+            <img src="${f.preview}" alt="Screenshot">
+            <button class="remove-btn" onclick="event.stopPropagation(); removeFile('${f.id}')">✕</button>
+        </div>
+    `).join('');
+}
+
+function removeFile(id) {
+    APP.uploadedFiles = APP.uploadedFiles.filter(f => f.id !== id);
+    renderUploadGallery();
+}
+
+function skipToManual() {
+    APP.trainees = [];
+    addBlankTrainee();
+    goToStep(3);
+    showToast('Add trainee data manually', 'info');
+}
+
+
+// ============================================================
+//  AI INTEGRATION
+// ============================================================
+async function analyzeScreenshots() {
+    if (APP.uploadedFiles.length === 0) {
+        showToast('Please upload at least one screenshot first', 'error');
+        return;
+    }
+    if (!APP.config.apiKey) {
+        showToast('Please add your API key in Setup', 'error');
+        goToStep(1);
+        return;
+    }
+
+    showProcessing(true, 'Analyzing screenshots with AI...');
+
+    try {
+        const prompt = buildExtractionPrompt();
+        let result;
+
+        if (APP.config.aiProvider === 'gemini') {
+            result = await callGemini(prompt, APP.uploadedFiles);
+        } else {
+            result = await callOpenAI(prompt, APP.uploadedFiles);
+        }
+
+        const trainees = parseAIResponse(result);
+        APP.trainees = trainees;
+
+        renderTraineeCards();
+        goToStep(3);
+        showToast(`Extracted ${trainees.length} trainee(s) successfully!`, 'success');
+    } catch (error) {
+        console.error('AI Error:', error);
+        showToast(`AI Error: ${error.message}`, 'error');
+    } finally {
+        showProcessing(false);
+    }
+}
+
+function buildExtractionPrompt() {
+    return `You are an expert data extraction assistant for RED Real Estate Domain Training Academy.
+
+Analyze the provided screenshot(s) from a trainee evaluation/scoring system. Extract ALL trainee data visible in the image(s).
+
+IMPORTANT RULES:
+1. Extract exact values as shown in the screenshots
+2. If a field is not visible, use reasonable defaults or "N/A"
+3. Calculate derived fields:
+   - totalCore = mapping score + product knowledge score
+   - techScorePercent = (totalCore / 10) * 100
+   - professionalConductRating.score = presentability score + soft skills score
+   - softScorePercent = (professionalConductRating.score / 10) * 100
+   - overallScore = (techScorePercent + softScorePercent) / 2
+4. Assessment Result tiers based on overallScore:
+   - >= 90: "Aced"
+   - >= 80: "Excellent"
+   - >= 70: "Good"
+   - >= 60: "Passed"
+   - < 60: "Failed"
+5. Write a professional 2-3 sentence overall assessment for each trainee. Mention their name, result tier, overall score, key strengths (from highest scores), and improvement areas (from lowest scores). Reference specific scores.
+6. Company: "${APP.config.companyName}"
+7. Batch: "Batch ${APP.config.batchNumber}"
+
+Return ONLY a valid JSON array with NO markdown code fences. Each element:
+[{
+  "name": "Full name",
+  "company": "${APP.config.companyName}",
+  "batch": "Batch ${APP.config.batchNumber}",
+  "overallScore": 87.5,
+  "assessmentResult": "Excellent",
+  "overallAssessment": "Professional 2-3 sentence assessment paragraph.",
+  "scores": {
+    "presentability": {"score": 5, "max": 5},
+    "softSkills": {"score": 4.5, "max": 5},
+    "mapping": {"score": 3.5, "max": 5},
+    "productKnowledge": {"score": 4.5, "max": 5},
+    "techScorePercent": 80,
+    "softScorePercent": 95,
+    "totalCore": 8.0,
+    "professionalConductRating": {"score": 9.5, "max": 10}
+  },
+  "attendance": {"late": "N/A", "absent": 0, "missedContent": "N/A"},
+  "comments": "Trainer comments if visible, otherwise a brief note"
+}]`;
+}
+
+async function callGemini(prompt, files) {
+    const parts = [{ text: prompt }];
+    files.forEach(f => {
+        parts.push({ inlineData: { mimeType: f.mimeType, data: f.base64 } });
+    });
+
+    const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${APP.config.apiKey}`,
+        {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{ parts }],
+                generationConfig: { temperature: 0.1, maxOutputTokens: 16384 }
+            })
+        }
+    );
+
+    if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err.error?.message || `Gemini API error (${response.status})`);
+    }
+
+    const data = await response.json();
+    if (!data.candidates?.[0]?.content?.parts?.[0]?.text) {
+        throw new Error('No response from Gemini. The image may not contain recognizable data.');
+    }
+    return data.candidates[0].content.parts[0].text;
+}
+
+async function callOpenAI(prompt, files) {
+    const content = [{ type: 'text', text: prompt }];
+    files.forEach(f => {
+        content.push({
+            type: 'image_url',
+            image_url: { url: `data:${f.mimeType};base64,${f.base64}`, detail: 'high' }
+        });
+    });
+
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${APP.config.apiKey}`
+        },
+        body: JSON.stringify({
+            model: 'gpt-4o',
+            messages: [{ role: 'user', content }],
+            temperature: 0.1,
+            max_tokens: 16384
+        })
+    });
+
+    if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err.error?.message || `OpenAI API error (${response.status})`);
+    }
+
+    const data = await response.json();
+    return data.choices[0].message.content;
+}
+
+function parseAIResponse(text) {
+    let jsonStr = text.trim();
+    // Remove markdown fences
+    jsonStr = jsonStr.replace(/^```(?:json)?\s*\n?/i, '').replace(/\n?\s*```$/i, '');
+
+    let data;
+    try {
+        data = JSON.parse(jsonStr);
+    } catch(e) {
+        // Try to find JSON array in the text
+        const match = jsonStr.match(/\[[\s\S]*\]/);
+        if (match) {
+            data = JSON.parse(match[0]);
+        } else {
+            throw new Error('Could not parse AI response as JSON. Please try again.');
+        }
+    }
+
+    const arr = Array.isArray(data) ? data : [data];
+    return arr.map(t => ({
+        name: t.name || 'Unknown Trainee',
+        company: t.company || APP.config.companyName,
+        batch: t.batch || `Batch ${APP.config.batchNumber}`,
+        overallScore: Number(t.overallScore) || 0,
+        assessmentResult: t.assessmentResult || getAssessmentResult(Number(t.overallScore) || 0),
+        badgeClass: getBadgeClass(t.assessmentResult || getAssessmentResult(Number(t.overallScore) || 0)),
+        overallAssessment: t.overallAssessment || '',
+        scores: {
+            presentability: { score: Number(t.scores?.presentability?.score) || 0, max: 5 },
+            softSkills: { score: Number(t.scores?.softSkills?.score) || 0, max: 5 },
+            mapping: { score: Number(t.scores?.mapping?.score) || 0, max: 5 },
+            productKnowledge: { score: Number(t.scores?.productKnowledge?.score) || 0, max: 5 },
+            techScorePercent: Number(t.scores?.techScorePercent) || 0,
+            softScorePercent: Number(t.scores?.softScorePercent) || 0,
+            totalCore: Number(t.scores?.totalCore) || 0,
+            professionalConductRating: {
+                score: Number(t.scores?.professionalConductRating?.score) || 0,
+                max: 10
+            }
+        },
+        attendance: {
+            late: t.attendance?.late ?? 'N/A',
+            absent: Number(t.attendance?.absent) || 0,
+            missedContent: t.attendance?.missedContent ?? 'N/A'
+        },
+        comments: t.comments || ''
+    }));
+}
+
+function showProcessing(show, text) {
+    const overlay = document.getElementById('processing-overlay');
+    if (text) document.getElementById('processing-text').textContent = text;
+    overlay.classList.toggle('active', show);
+}
+
+
+// ============================================================
+//  HELPERS
+// ============================================================
+function getAssessmentResult(score) {
+    if (score >= 90) return 'Aced';
+    if (score >= 80) return 'Excellent';
+    if (score >= 70) return 'Good';
+    if (score >= 60) return 'Passed';
+    return 'Failed';
+}
+
+function getBadgeClass(result) {
+    return { 'Aced': 'badge-green', 'Excellent': 'badge-blue', 'Good': 'badge-yellow', 'Passed': 'badge-gray', 'Failed': 'badge-red' }[result] || 'badge-gray';
+}
+
+function esc(str) {
+    const d = document.createElement('div');
+    d.textContent = String(str ?? '');
+    return d.innerHTML;
+}
+
+function getFormattedDate() {
+    return new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+}
+
+function getCopyrightText() {
+    return `\u00A9 ${new Date().getFullYear()} RED Real Estate Domain Training Academy. All rights reserved.`;
+}
+
+
+// ============================================================
+//  STEP 3: TRAINEE REVIEW CARDS
+// ============================================================
+function addBlankTrainee() {
+    APP.trainees.push({
+        name: '',
+        company: APP.config.companyName || '',
+        batch: `Batch ${APP.config.batchNumber || ''}`,
+        overallScore: 0,
+        assessmentResult: 'Passed',
+        badgeClass: 'badge-gray',
+        overallAssessment: '',
+        scores: {
+            presentability: { score: 0, max: 5 },
+            softSkills: { score: 0, max: 5 },
+            mapping: { score: 0, max: 5 },
+            productKnowledge: { score: 0, max: 5 },
+            techScorePercent: 0,
+            softScorePercent: 0,
+            totalCore: 0,
+            professionalConductRating: { score: 0, max: 10 }
+        },
+        attendance: { late: 'N/A', absent: 0, missedContent: 'N/A' },
+        comments: ''
+    });
+    renderTraineeCards();
+}
+
+function removeTrainee(idx) {
+    if (APP.trainees.length <= 1) { showToast('Need at least one trainee', 'error'); return; }
+    APP.trainees.splice(idx, 1);
+    renderTraineeCards();
+    showToast('Trainee removed', 'info');
+}
+
+function toggleCard(idx) {
+    document.getElementById(`trainee-card-${idx}`).classList.toggle('collapsed');
+}
+
+function renderTraineeCards() {
+    const container = document.getElementById('trainee-cards');
+    if (APP.trainees.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+                <h3>No Trainees Yet</h3>
+                <p>Upload screenshots for AI extraction or add trainees manually.</p>
+            </div>`;
+        return;
+    }
+
+    container.innerHTML = APP.trainees.map((t, i) => buildTraineeCard(t, i)).join('');
+}
+
+function buildTraineeCard(t, idx) {
+    return `
+    <div class="trainee-card" id="trainee-card-${idx}">
+        <div class="trainee-card-header" onclick="toggleCard(${idx})">
+            <div class="left">
+                <div class="card-num">${idx + 1}</div>
+                <span class="card-name">${esc(t.name) || 'New Trainee'}</span>
+                <span class="badge ${t.badgeClass}">${esc(t.assessmentResult)} — ${t.overallScore}%</span>
+            </div>
+            <div class="right">
+                <button class="btn-icon" onclick="event.stopPropagation(); regenerateAssessment(${idx})" title="Regenerate assessment with AI">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 014 4c0 1.95-2 4-4 8-2-4-4-6.05-4-8a4 4 0 014-4z"/><circle cx="12" cy="18" r="3"/></svg>
+                </button>
+                <button class="btn-icon" onclick="event.stopPropagation(); removeTrainee(${idx})" title="Remove trainee" style="color:#dc2626">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14"/></svg>
+                </button>
+                <span class="chevron">&#9660;</span>
+            </div>
+        </div>
+        <div class="trainee-card-body" id="trainee-body-${idx}">
+            <div class="card-section">
+                <h4>Personal Information</h4>
+                <div class="form-grid cols-3">
+                    <div class="field">
+                        <label>Full Name</label>
+                        <input type="text" value="${esc(t.name)}" onchange="updateField(${idx}, 'name', this.value)">
+                    </div>
+                    <div class="field">
+                        <label>Company</label>
+                        <input type="text" value="${esc(t.company)}" onchange="updateField(${idx}, 'company', this.value)">
+                    </div>
+                    <div class="field">
+                        <label>Batch</label>
+                        <input type="text" value="${esc(t.batch)}" onchange="updateField(${idx}, 'batch', this.value)">
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-section">
+                <h4>Score Breakdown</h4>
+                <div class="form-grid cols-4">
+                    <div class="field">
+                        <label>Product Knowledge (/5)</label>
+                        <input type="number" step="0.5" min="0" max="5" value="${t.scores.productKnowledge.score}" onchange="updateScore(${idx}, 'productKnowledge', this.value)">
+                    </div>
+                    <div class="field">
+                        <label>Mapping (/5)</label>
+                        <input type="number" step="0.5" min="0" max="5" value="${t.scores.mapping.score}" onchange="updateScore(${idx}, 'mapping', this.value)">
+                    </div>
+                    <div class="field">
+                        <label>Soft Skills (/5)</label>
+                        <input type="number" step="0.5" min="0" max="5" value="${t.scores.softSkills.score}" onchange="updateScore(${idx}, 'softSkills', this.value)">
+                    </div>
+                    <div class="field">
+                        <label>Presentability (/5)</label>
+                        <input type="number" step="0.5" min="0" max="5" value="${t.scores.presentability.score}" onchange="updateScore(${idx}, 'presentability', this.value)">
+                    </div>
+                </div>
+                <div class="form-grid cols-3" style="margin-top:12px">
+                    <div class="field">
+                        <label>Tech Score %</label>
+                        <input type="number" step="0.5" min="0" max="100" value="${t.scores.techScorePercent}" onchange="updateField(${idx}, 'scores.techScorePercent', parseFloat(this.value))">
+                    </div>
+                    <div class="field">
+                        <label>Professionalism Score %</label>
+                        <input type="number" step="0.5" min="0" max="100" value="${t.scores.softScorePercent}" onchange="updateField(${idx}, 'scores.softScorePercent', parseFloat(this.value))">
+                    </div>
+                    <div class="field">
+                        <label>Overall Score %</label>
+                        <input type="number" step="0.5" min="0" max="100" value="${t.overallScore}" onchange="updateField(${idx}, 'overallScore', parseFloat(this.value)); recalcTier(${idx});">
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-section">
+                <h4>Attendance</h4>
+                <div class="form-grid cols-3">
+                    <div class="field">
+                        <label>Late Days</label>
+                        <input type="text" value="${esc(t.attendance.late)}" onchange="updateField(${idx}, 'attendance.late', this.value)">
+                    </div>
+                    <div class="field">
+                        <label>Absent Days</label>
+                        <input type="number" min="0" value="${t.attendance.absent}" onchange="updateField(${idx}, 'attendance.absent', parseInt(this.value) || 0)">
+                    </div>
+                    <div class="field">
+                        <label>Missed Content %</label>
+                        <input type="text" value="${esc(t.attendance.missedContent)}" onchange="updateField(${idx}, 'attendance.missedContent', this.value)">
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-section">
+                <h4>Overall Assessment <button class="btn btn-secondary btn-sm" onclick="regenerateAssessment(${idx})" style="float:right;margin-top:-4px">Regenerate with AI</button></h4>
+                <div class="field">
+                    <textarea rows="4" onchange="updateField(${idx}, 'overallAssessment', this.value)">${esc(t.overallAssessment)}</textarea>
+                </div>
+            </div>
+
+            <div class="card-section">
+                <h4>Trainer's Comments</h4>
+                <div class="field">
+                    <textarea rows="2" onchange="updateField(${idx}, 'comments', this.value)">${esc(t.comments)}</textarea>
+                </div>
+            </div>
+        </div>
+    </div>`;
+}
+
+
+// ============================================================
+//  DATA UPDATE FUNCTIONS
+// ============================================================
+function updateField(idx, path, value) {
+    const parts = path.split('.');
+    let obj = APP.trainees[idx];
+    for (let i = 0; i < parts.length - 1; i++) obj = obj[parts[i]];
+    obj[parts[parts.length - 1]] = value;
+}
+
+function updateScore(idx, field, value) {
+    APP.trainees[idx].scores[field].score = parseFloat(value) || 0;
+}
+
+function recalcTier(idx) {
+    const t = APP.trainees[idx];
+    t.assessmentResult = getAssessmentResult(t.overallScore);
+    t.badgeClass = getBadgeClass(t.assessmentResult);
+    renderTraineeCards();
+}
+
+function recalcAllScores() {
+    APP.trainees.forEach(t => {
+        const pk = t.scores.productKnowledge.score;
+        const mp = t.scores.mapping.score;
+        const ss = t.scores.softSkills.score;
+        const pr = t.scores.presentability.score;
+
+        t.scores.totalCore = pk + mp;
+        t.scores.techScorePercent = ((pk + mp) / 10) * 100;
+        t.scores.professionalConductRating.score = ss + pr;
+        t.scores.softScorePercent = ((ss + pr) / 10) * 100;
+        t.overallScore = (t.scores.techScorePercent + t.scores.softScorePercent) / 2;
+        t.assessmentResult = getAssessmentResult(t.overallScore);
+        t.badgeClass = getBadgeClass(t.assessmentResult);
+    });
+    renderTraineeCards();
+    showToast('All scores recalculated!', 'success');
+}
+
+
+// ============================================================
+//  REGENERATE ASSESSMENT (per trainee)
+// ============================================================
+async function regenerateAssessment(idx) {
+    if (!APP.config.apiKey) {
+        showToast('Add your API key in Setup first', 'error');
+        return;
+    }
+
+    const t = APP.trainees[idx];
+    showProcessing(true, `Generating assessment for ${t.name || 'trainee'}...`);
+
+    const prompt = `Write a professional 2-3 sentence overall assessment for this real estate trainee.
+
+Name: ${t.name}
+Company: ${t.company}
+Batch: ${t.batch}
+Overall Score: ${t.overallScore}%
+Assessment Result: ${t.assessmentResult}
+Product Knowledge: ${t.scores.productKnowledge.score}/5
+Mapping: ${t.scores.mapping.score}/5
+Soft Skills: ${t.scores.softSkills.score}/5
+Presentability: ${t.scores.presentability.score}/5
+Tech Score: ${t.scores.techScorePercent}%
+Professionalism Score: ${t.scores.softScorePercent}%
+Attendance — Late: ${t.attendance.late}, Absent: ${t.attendance.absent} days, Missed Content: ${t.attendance.missedContent}
+Trainer Comments: ${t.comments}
+
+Write in this style: "[Name] achieved an '[Result]' result with an overall score of [X]%. [He/She] demonstrated [specific strengths from highest scores]. [Specific area for improvement or positive attendance note]."
+
+Return ONLY the assessment paragraph text, no quotes, no JSON, no formatting.`;
+
+    try {
+        let result;
+        if (APP.config.aiProvider === 'gemini') {
+            const response = await fetch(
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${APP.config.apiKey}`,
+                {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: prompt }] }],
+                        generationConfig: { temperature: 0.3, maxOutputTokens: 1024 }
+                    })
+                }
+            );
+            const data = await response.json();
+            result = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        } else {
+            const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${APP.config.apiKey}` },
+                body: JSON.stringify({
+                    model: 'gpt-4o',
+                    messages: [{ role: 'user', content: prompt }],
+                    temperature: 0.3, max_tokens: 1024
+                })
+            });
+            const data = await response.json();
+            result = data.choices?.[0]?.message?.content || '';
+        }
+
+        result = result.replace(/^["']|["']$/g, '').trim();
+        APP.trainees[idx].overallAssessment = result;
+        renderTraineeCards();
+        showToast('Assessment regenerated!', 'success');
+    } catch (error) {
+        showToast(`Error: ${error.message}`, 'error');
+    } finally {
+        showProcessing(false);
+    }
+}
+
+
+// ============================================================
+//  STEP 4: GENERATE REPORT
+// ============================================================
+function generateReport() {
+    // Validate
+    const empty = APP.trainees.filter(t => !t.name.trim());
+    if (empty.length) {
+        showToast('Please fill in all trainee names', 'error');
+        return;
+    }
+
+    // Build report pages
+    const container = document.getElementById('all-pages');
+    let html = buildIntroPage();
+    APP.trainees.forEach(t => { html += buildTraineePage(t); });
+    html += buildOutroPage();
+    container.innerHTML = html;
+
+    // Update tag
+    document.getElementById('report-tag').textContent = `${APP.config.companyName} — Batch ${APP.config.batchNumber} — ${APP.trainees.length} Trainee(s)`;
+
+    goToStep(4);
+    showToast('Report generated!', 'success');
+}
+
+
+// ============================================================
+//  REPORT PAGE BUILDERS (pixel-perfect A4)
+// ============================================================
+function buildIntroPage() {
+    return `
+    <div class="page">
+        <div class="cover-layout">
+            <div class="cover-sidebar"><h2>RED</h2></div>
+            <div class="cover-content">
+                <div class="cover-logo">${LOGO_SVG}</div>
+                <div class="cover-title">
+                    <h1 class="text-dark">Trainee Performance</h1>
+                    <h1 class="text-red">Report</h1>
+                </div>
+                <div class="cover-info">
+                    <div class="cover-info-row">
+                        <span class="cover-info-label">Company Name</span>
+                        <span class="cover-info-value">${esc(APP.config.companyName)}</span>
+                    </div>
+                    <div class="cover-info-row">
+                        <span class="cover-info-label">Batch Number</span>
+                        <span class="cover-info-value">${esc(APP.config.batchNumber)}</span>
+                    </div>
+                    <div class="cover-info-row">
+                        <span class="cover-info-label">Number of Trainees</span>
+                        <span class="cover-info-value">${APP.trainees.length}</span>
+                    </div>
+                </div>
+                <div class="cover-footer">
+                    <p>Report Generated on: ${getFormattedDate()}</p>
+                    <p>${getCopyrightText()}</p>
+                </div>
+            </div>
+        </div>
+    </div>`;
+}
+
+function buildTraineePage(t) {
+    const lateDisp = (t.attendance.late === 'N/A' || t.attendance.late === undefined) ? 'N/A' : `${t.attendance.late} Days`;
+    const missedDisp = (t.attendance.missedContent === 'N/A' || t.attendance.missedContent === undefined) ? 'N/A' : `${t.attendance.missedContent}%`;
+    const totalCoreMax = t.scores.mapping.max + t.scores.productKnowledge.max;
+    const conductMax = t.scores.presentability.max + t.scores.softSkills.max;
+    const scoreColorClass = t.assessmentResult === 'Failed' ? 'score-red' : 'score-green';
+    const lateColorClass = (t.attendance.late === 'N/A' || t.attendance.late === undefined) ? 'text-na' : (t.attendance.late == 0 ? 'text-attend-good' : 'text-attend-warn');
+    const absentColorClass = t.attendance.absent === 0 ? 'text-attend-good' : 'text-attend-warn';
+    const missedColorClass = (t.attendance.missedContent === 'N/A' || t.attendance.missedContent === undefined) ? 'text-na' : (t.attendance.missedContent == 0 ? 'text-attend-good' : 'text-attend-warn');
+
+    return `
+    <div class="page">
+        <div class="report-header">
+            <div class="report-header-logo">${LOGO_SVG}</div>
+            <div class="report-header-right">
+                <h1>Trainee Performance Report</h1>
+                <p>${esc(t.batch)}</p>
+            </div>
+        </div>
+        <div class="report-body">
+            <div class="details-card">
+                <div>
+                    <h3>Trainee Details</h3>
+                    <p><span class="label">Name:</span> ${esc(t.name)}</p>
+                    <p><span class="label">Company:</span> ${esc(t.company)}</p>
+                </div>
+                <div style="text-align:right;">
+                    <h3>Overall Performance</h3>
+                    <div class="score-big ${scoreColorClass}">${t.overallScore}<span>%</span></div>
+                    <div class="badge ${t.badgeClass}">${esc(t.assessmentResult)}</div>
+                </div>
+            </div>
+
+            <h3 class="section-title">Overall Assessment</h3>
+            <div class="assessment-box"><p>${esc(t.overallAssessment)}</p></div>
+
+            <div class="two-col">
+                <div>
+                    <h3 class="section-title">Detailed Score Breakdown</h3>
+                    <table class="data-table">
+                        <thead><tr><th>Performance Area</th><th>Score</th></tr></thead>
+                        <tbody>
+                            <tr><td>Product Knowledge</td><td>${t.scores.productKnowledge.score} out of ${t.scores.productKnowledge.max}</td></tr>
+                            <tr><td>Mapping</td><td>${t.scores.mapping.score} out of ${t.scores.mapping.max}</td></tr>
+                            <tr class="row-total"><td>Total (Core Skills)</td><td>${t.scores.totalCore} out of ${totalCoreMax}</td></tr>
+                            <tr class="row-percent row-percent-border"><td>Tech Score %</td><td>${t.scores.techScorePercent}%</td></tr>
+                            <tr><td>Soft Skills</td><td>${t.scores.softSkills.score} out of ${t.scores.softSkills.max}</td></tr>
+                            <tr><td>Presentability</td><td>${t.scores.presentability.score} out of ${t.scores.presentability.max}</td></tr>
+                            <tr class="row-total"><td>Professional Conduct Rating</td><td>${t.scores.professionalConductRating.score} out of ${conductMax}</td></tr>
+                            <tr class="row-percent"><td>Professionalism Score %</td><td>${t.scores.softScorePercent}%</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div>
+                    <h3 class="section-title">Attendance & Professionalism</h3>
+                    <table class="data-table">
+                        <thead><tr><th>Metric</th><th>Record</th></tr></thead>
+                        <tbody>
+                            <tr><td>Punctuality (Late Arrivals)</td><td class="${lateColorClass}">${lateDisp}</td></tr>
+                            <tr><td>Attendance (Absent Days)</td><td class="${absentColorClass}">${t.attendance.absent} Day${t.attendance.absent !== 1 ? 's' : ''}</td></tr>
+                            <tr><td>Missed Content Percentage</td><td class="${missedColorClass}">${missedDisp}</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <h3 class="section-title">Trainer's Comments</h3>
+            <div class="comments-box"><p>"${esc(t.comments)}"</p></div>
+        </div>
+        <div class="report-footer">
+            <p>Report Generated on: ${getFormattedDate()}</p>
+            <p>${getCopyrightText()}</p>
+        </div>
+    </div>`;
+}
+
+function buildOutroPage() {
+    // Generate dynamic outro text
+    const names = APP.trainees.map(t => t.name);
+    const nameList = names.length <= 2
+        ? names.join(' and ')
+        : names.slice(0, -1).join(', ') + ', and ' + names[names.length - 1];
+
+    const para1 = `This report concludes the performance evaluation for the ${APP.trainees.length > 1 ? APP.trainees.length + ' trainees' : 'trainee'}: ${nameList}.`;
+
+    const tiers = { Aced: [], Excellent: [], Good: [], Passed: [], Failed: [] };
+    APP.trainees.forEach(t => { if (tiers[t.assessmentResult]) tiers[t.assessmentResult].push(t); });
+    const fmt = arr => arr.map(t => t.name).join(arr.length === 2 ? ' and ' : ', ');
+    const fmtS = arr => arr.map(t => `${t.overallScore}%`).join(arr.length === 2 ? ' and ' : ', ');
+
+    let p2 = [];
+    if (tiers.Aced.length) p2.push(`We are pleased to report that ${fmt(tiers.Aced)} achieved an 'Aced' result with ${tiers.Aced.length > 1 ? 'scores' : 'a score'} of ${fmtS(tiers.Aced)}. Their outstanding performance confirms their readiness to immediately begin professional roles in the real estate domain.`);
+    if (tiers.Excellent.length) p2.push(`${fmt(tiers.Excellent)} achieved an 'Excellent' result with ${tiers.Excellent.length > 1 ? 'scores' : 'a score'} of ${fmtS(tiers.Excellent)}, demonstrating strong overall competency and a high level of professionalism. They are well-prepared for the field with only minor areas identified for continued development.`);
+    if (tiers.Good.length) p2.push(`${fmt(tiers.Good)} received a 'Good' assessment with ${tiers.Good.length > 1 ? 'scores' : 'a score'} of ${fmtS(tiers.Good)}, showing solid foundational skills and readiness for practical application with some guided support.`);
+    if (tiers.Passed.length) p2.push(`${fmt(tiers.Passed)} achieved a 'Passed' result with ${tiers.Passed.length > 1 ? 'scores' : 'a score'} of ${fmtS(tiers.Passed)}, meeting the minimum competency requirements.`);
+    if (tiers.Failed.length) p2.push(`However, ${fmt(tiers.Failed)} did not meet the passing criteria and ${tiers.Failed.length > 1 ? 'are' : 'is'} required to re-attend the training program.`);
+
+    return `
+    <div class="page">
+        <div class="cover-layout">
+            <div class="cover-sidebar"><h2>RED</h2></div>
+            <div class="cover-content">
+                <div class="cover-logo">${LOGO_SVG}</div>
+                <div class="cover-title">
+                    <h1 class="text-dark">Concluding</h1>
+                    <h1 class="text-red">Remarks</h1>
+                </div>
+                <div class="outro-text">
+                    <p>${esc(para1)}</p>
+                    <p>${esc(p2.join(' '))}</p>
+                </div>
+                <div class="quote-section">
+                    <div class="quote-label">A Final Thought</div>
+                    <div class="quote-text">"The only way to do great work is to love what you do."</div>
+                    <div class="quote-author">&mdash; Steve Jobs</div>
+                </div>
+                <div class="cover-footer">
+                    <p>Report Generated on: ${getFormattedDate()}</p>
+                    <p>${getCopyrightText()}</p>
+                </div>
+            </div>
+        </div>
+    </div>`;
+}
+
+
+// ============================================================
+//  PDF DOWNLOAD (html2canvas + jsPDF)
+// ============================================================
+async function downloadPDF() {
+    const pages = document.querySelectorAll('#all-pages .page');
+    if (!pages.length) { showToast('No report to download', 'error'); return; }
+
+    const overlay = document.getElementById('pdf-overlay');
+    const progressBar = document.getElementById('pdf-progress-bar');
+    const progressText = document.getElementById('pdf-progress-text');
+    overlay.classList.add('active');
+
+    try {
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+        for (let i = 0; i < pages.length; i++) {
+            progressText.textContent = `Rendering page ${i + 1} of ${pages.length}...`;
+            progressBar.style.width = `${((i + 1) / pages.length) * 100}%`;
+
+            // Force visible for rendering
+            const page = pages[i];
+            const canvas = await html2canvas(page, {
+                scale: 2,
+                useCORS: true,
+                backgroundColor: '#ffffff',
+                logging: false,
+                width: page.scrollWidth,
+                height: page.scrollHeight
+            });
+
+            if (i > 0) pdf.addPage();
+            const imgData = canvas.toDataURL('image/jpeg', 0.95);
+            pdf.addImage(imgData, 'JPEG', 0, 0, 210, 297);
+        }
+
+        const filename = `RED_Report_${APP.config.companyName.replace(/\s+/g, '_')}_Batch${APP.config.batchNumber}.pdf`;
+        pdf.save(filename);
+        showToast('PDF downloaded!', 'success');
+    } catch (error) {
+        console.error('PDF Error:', error);
+        showToast('PDF generation failed. Try using Print instead.', 'error');
+    } finally {
+        overlay.classList.remove('active');
+        progressBar.style.width = '0%';
+    }
+}
+
+
+// ============================================================
+//  NAVIGATION ACTIONS
+// ============================================================
+function backToEdit() {
+    goToStep(3);
+}
+
+function startOver() {
+    if (!confirm('Start a new report? All current data will be cleared.')) return;
+    APP.trainees = [];
+    APP.uploadedFiles = [];
+    APP.maxStep = 1;
+    document.getElementById('upload-gallery').innerHTML = '';
+    document.getElementById('trainee-cards').innerHTML = '';
+    document.getElementById('all-pages').innerHTML = '';
+    goToStep(1);
+    showToast('Ready for a new report', 'info');
+}
+</script>
+</body>
+</html>

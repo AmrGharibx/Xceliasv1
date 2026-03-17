@@ -1,0 +1,11 @@
+# 2025-12-07 - Samy Mohamed Amer
+
+Arrival Time: December 7, 2025 11:00 AM (GMT+2)
+Batch: Batch 29 (../%F0%9F%8E%93%20Batches%20(Master%20DB)/Batch%2029%202c4a824234cc8027b744f6714bbb681f.md)
+Date: December 7, 2025
+Departure Time: December 7, 2025 6:00 PM (GMT+2)
+Is Late?: No
+Minutes Late: 0
+Status: Tour Day
+Trainee 1: Samy Mohamed Amer (../%F0%9F%91%A4%20Trainees%20(Master%20DB)/Samy%20Mohamed%20Amer%202c4a824234cc80848ee4c212dc3416d3.md)
+Was Late?: No

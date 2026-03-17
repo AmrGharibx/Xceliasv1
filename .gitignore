@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+.venv/
+__pycache__/
+
+# Next.js
+.next/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Databases
+*.db
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# IDE
+.vscode/
+*.swp
+*.swo
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Package locks (optional - keep if desired)
+# package-lock.json

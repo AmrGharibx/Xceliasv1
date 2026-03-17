@@ -1,0 +1,713 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Batch 28</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+/* Override strong tags inside headings to maintain consistent weight */
+h1 strong,
+h2 strong,
+h3 strong {
+	font-weight: 600;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 10px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.callout img.notion-static-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout h1,
+.callout h2,
+.callout h3 {
+	margin: 0 0 0.6rem;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.highlight-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.highlight-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.highlight-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.highlight-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.highlight-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.highlight-default_background {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray_background {
+	background: rgba(42, 28, 0, 0.07);
+}
+.highlight-brown_background {
+	background: rgba(139, 46, 0, 0.086);
+}
+.highlight-orange_background {
+	background: rgba(224, 101, 1, 0.129);
+}
+.highlight-yellow_background {
+	background: rgba(211, 168, 0, 0.137);
+}
+.highlight-teal_background {
+	background: rgba(0, 100, 45, 0.09);
+}
+.highlight-blue_background {
+	background: rgba(0, 124, 215, 0.094);
+}
+.highlight-purple_background {
+	background: rgba(102, 0, 178, 0.078);
+}
+.highlight-pink_background {
+	background: rgba(197, 0, 93, 0.086);
+}
+.highlight-red_background {
+	background: rgba(223, 22, 0, 0.094);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.block-color-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.block-color-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.block-color-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.block-color-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.block-color-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(240, 239, 237, 1);
+}
+.block-color-brown_background {
+	background: rgba(245, 237, 233, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 235, 222, 1);
+}
+.block-color-yellow_background {
+	background: rgba(249, 243, 220, 1);
+}
+.block-color-teal_background {
+	background: rgba(232, 241, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(229, 242, 252, 1);
+}
+.block-color-purple_background {
+	background: rgba(243, 235, 249, 1);
+}
+.block-color-pink_background {
+	background: rgba(250, 233, 241, 1);
+}
+.block-color-red_background {
+	background: rgba(252, 233, 231, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 118, 217, 0.203); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="2aea8242-34cc-805d-9f00-d3f6cdf316a7" class="page sans"><header><h1 class="page-title" dir="auto">Batch 28</h1><p class="page-description" dir="auto"></p><table class="properties"><tbody><tr class="property-row property-row-relation"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/arrow-northeast_gray.svg" style="width:14px;height:14px;display:block"/></span>Assessments</th><td><a href="../%F0%9F%93%88%20Assessments%20(Master%20DB)/Final%20cbd65ad59e8c4711afacceb6eed1f2b0.html">Final</a>, <a href="../%F0%9F%93%88%20Assessments%20(Master%20DB)/Final%20cbcad9977aea4a189c3d0914fca9f36c.html">Final</a>, <a href="../%F0%9F%93%88%20Assessments%20(Master%20DB)/Final%2005c79b47f59c4d718f3cd6921b4825f4.html">Final</a>, <a href="../%F0%9F%93%88%20Assessments%20(Master%20DB)/Final%2006f2cba6718a4003b50da4ab97f0905a.html">Final</a>, <a href="../%F0%9F%93%88%20Assessments%20(Master%20DB)/Final%209ecb6ae3778c4b7d9a6ffdc2b4c5a3c4.html">Final</a>, <a href="../%F0%9F%93%88%20Assessments%20(Master%20DB)/Final%20f92706e0ba5646bca6ad94419a7df3b8.html">Final</a>, <a href="../%F0%9F%93%88%20Assessments%20(Master%20DB)/Final%200792d9b9ca7d4dd48b0051daea2751a4.html">Final</a>, <a href="../%F0%9F%93%88%20Assessments%20(Master%20DB)/Final%2009a6f148f50b415b8663c05936e98409.html">Final</a>, <a href="../%F0%9F%93%88%20Assessments%20(Master%20DB)/Final%20Batch%2028%20a43fd0b5749c4b2eafb985d106d39a34.html">Final Batch 28</a>, <a href="../%F0%9F%93%88%20Assessments%20(Master%20DB)/Final%20b6f7d5ec882a404ab95ac77bf77a85d1.html">Final</a>, <a href="../%F0%9F%93%88%20Assessments%20(Master%20DB)/Final%20ae7104399d364963bcf8d1a9ba822ddb.html">Final</a>, <a href="../%F0%9F%93%88%20Assessments%20(Master%20DB)/Final%20460673434c404600b8bd73cbde16a6d2.html">Final</a>, <a href="../%F0%9F%93%88%20Assessments%20(Master%20DB)/Final%208ca9f5a021764721bf51596579323f22.html">Final</a></td></tr><tr class="property-row property-row-relation"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/arrow-northeast_gray.svg" style="width:14px;height:14px;display:block"/></span>Attendance Logs</th><td><a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-17%20-%20Mohand%20Ismaiel%206b7d9cfeea3f44fba3db47d441e981a3.html">2025-11-17 - Mohand Ismaiel</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-17%20-%20Mohamed%20Nasser%20410a4606290645be9cf66f66ebe5b4ab.html">2025-11-17 - Mohamed Nasser</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-17%20-%20Basma%20Ibrahim%20ef39439d65fc4f45b82c405f6b835290.html">2025-11-17 - Basma Ibrahim</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-17%20-%20Youssef%20Emad%204c8c02127d274ca69f5321751026ca66.html">2025-11-17 - Youssef Emad</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-17%20-%20Nada%20Ayman%20cd806548e1ee4cc4b824004bd058ff64.html">2025-11-17 - Nada Ayman</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-17%20-%20Basmala%20Hassan%2083984076fab6438cb67cb7b959e0f4f2.html">2025-11-17 - Basmala Hassan</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-17%20-%20Asmaa%20Saed%206d439394f1d047f1a776d951f949ed5d.html">2025-11-17 - Asmaa Saed</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-17%20-%20Mina%20Boshra%209892dc883182401d94c833ea892835e9.html">2025-11-17 - Mina Boshra</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-17%20-%20Ali%20Mohamed%20325d83b5be274e1f8d6880a7656c325b.html">2025-11-17 - Ali Mohamed</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-17%20-%20Fekry%20Fawzy%208fd5e54cc06841b280499fcbf0346989.html">2025-11-17 - Fekry Fawzy</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-17%20-%20Noura%20Mohamed%20afd0c880544e44c680ea63bcc17f48da.html">2025-11-17 - Noura Mohamed</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-17%20-%20Mohamed%20Shawky%20f711036725a64b6cb38618bca157bc63.html">2025-11-17 - Mohamed Shawky</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-17%20-%20Abdelrehem%20Saeed%20853616e8349c459bbb074ab6bb927911.html">2025-11-17 - Abdelrehem Saeed</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-19%20-%20Mohand%20Ismaiel%20838ede4116394ca0807afd61c0a7b821.html">2025-11-19 - Mohand Ismaiel</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-19%20-%20Mohamed%20Nasser%201dd59908b1644b54bde251979a95e752.html">2025-11-19 - Mohamed Nasser</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-19%20-%20Basma%20Ibrahim%20584e35522e124d2fb678d5e811426f1c.html">2025-11-19 - Basma Ibrahim</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-19%20-%20Youssef%20Emad%20a30ba1df059c452aa5ba577a07c15b87.html">2025-11-19 - Youssef Emad</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-19%20-%20Nada%20Ayman%20b9c9c97100cf4dae819cfd0d660dde7f.html">2025-11-19 - Nada Ayman</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-19%20-%20Basmala%20Hassan%20c6ef695175d34a819aa1105ea584d73c.html">2025-11-19 - Basmala Hassan</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-19%20-%20Asmaa%20Saed%20282370496a0f4219b5aec3ac6424e968.html">2025-11-19 - Asmaa Saed</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-19%20-%20Mina%20Boshra%202d8afd1ca61d40cca86bdc7417da629a.html">2025-11-19 - Mina Boshra</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-19%20-%20Ali%20Mohamed%2049851df5e49347b1a1777282da27c3a0.html">2025-11-19 - Ali Mohamed</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-19%20-%20Fekry%20Fawzy%20717c4bcbf8034bc9b2ed8f2594f710b0.html">2025-11-19 - Fekry Fawzy</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-19%20-%20Noura%20Mohamed%203826ca182af9453bafb53d5658f086c9.html">2025-11-19 - Noura Mohamed</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-19%20-%20Mohamed%20Shawky%2022b859ee9d014eca8f7f26063dab7473.html">2025-11-19 - Mohamed Shawky</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-19%20-%20Abdelrehem%20Saeed%20fb4222e305aa4becad0f7ac461bb8ff2.html">2025-11-19 - Abdelrehem Saeed</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-16%20-%20Mohand%20Ismaiel%206172098697da47ae811373736a79658f.html">2025-11-16 - Mohand Ismaiel</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-16%20-%20Mohamed%20Nasser%20f597972096644efaa34b7b3af2774101.html">2025-11-16 - Mohamed Nasser</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-16%20-%20Basma%20Ibrahim%20357eb29143224f2b8bb1cd0bf36f4ae8.html">2025-11-16 - Basma Ibrahim</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-16%20-%20Youssef%20Emad%20afb7dbf92d2f48108d626cd9c4755580.html">2025-11-16 - Youssef Emad</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-16%20-%20Nada%20Ayman%20a853034858d74272a63ea05006353d5b.html">2025-11-16 - Nada Ayman</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-16%20-%20Basmala%20Hassan%208692368a96dd40ca91be5d2e0c22dc1b.html">2025-11-16 - Basmala Hassan</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-16%20-%20Asmaa%20Saed%20a900d61ecc7f474bb7e4ec201f79b632.html">2025-11-16 - Asmaa Saed</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-16%20-%20Mina%20Boshra%202ec0921d9cad460a9c520c369eb21133.html">2025-11-16 - Mina Boshra</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-16%20-%20Ali%20Mohamed%2037e994bc926b44378062bb448532b570.html">2025-11-16 - Ali Mohamed</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-16%20-%20Fekry%20Fawzy%207e6562a4e9ab40a9a1598960fb221f9b.html">2025-11-16 - Fekry Fawzy</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-16%20-%20Noura%20Mohamed%2033ff5a81c2b646cc82b6fb50252fba32.html">2025-11-16 - Noura Mohamed</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-16%20-%20Mohamed%20Shawky%20a2b77f37dd4a43239df587d55f43752d.html">2025-11-16 - Mohamed Shawky</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-16%20-%20Abdelrehem%20Saeed%20a84d9fb22c9b4a88bb9ef80c2a1377d0.html">2025-11-16 - Abdelrehem Saeed</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-18%20-%20Mohand%20Ismaiel%20c0c417692b0646a3a3a8274f433964d2.html">2025-11-18 - Mohand Ismaiel</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-18%20-%20Mohamed%20Nasser%20e914c1346db34237bd236d6fb3487a92.html">2025-11-18 - Mohamed Nasser</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-18%20-%20Basma%20Ibrahim%201d0b2ab87b5b44c1a64d882820ed4e46.html">2025-11-18 - Basma Ibrahim</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-18%20-%20Youssef%20Emad%2080d764ed74e846b3a9552d3cc7c121dd.html">2025-11-18 - Youssef Emad</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-18%20-%20Nada%20Ayman%20c1f213bb0f414f06ab5c35ad37ee3c88.html">2025-11-18 - Nada Ayman</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-18%20-%20Basmala%20Hassan%20993cdcbbb02143f38999ccb8ab52e79a.html">2025-11-18 - Basmala Hassan</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-18%20-%20Asmaa%20Saed%20339f8586ba3748aaad23bd1adc71b0ad.html">2025-11-18 - Asmaa Saed</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-18%20-%20Mina%20Boshra%20a734e9b82739419f97e18ad42be36b38.html">2025-11-18 - Mina Boshra</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-18%20-%20Ali%20Mohamed%20cea07b4b7679407cb9fcf6d4b88f4a9c.html">2025-11-18 - Ali Mohamed</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-18%20-%20Fekry%20Fawzy%20ac4c43dc28a949cbba9617dd82192eb3.html">2025-11-18 - Fekry Fawzy</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-18%20-%20Noura%20Mohamed%2090a6f1b841844ea6927364a02b469f94.html">2025-11-18 - Noura Mohamed</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-18%20-%20Mohamed%20Shawky%20fde97492422146b2b40f0ee9eba33767.html">2025-11-18 - Mohamed Shawky</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-18%20-%20Abdelrehem%20Saeed%20de77f4ea2aae4af5baea75c82c58227f.html">2025-11-18 - Abdelrehem Saeed</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-20%20-%20Noura%20Mohamed%20d9ca40da42ae48ffb7c975cfb1c82c58.html">2025-11-20 - Noura Mohamed</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-20%20-%20Mohamed%20Shawky%202a00686c07424908a16b50f0c603304b.html">2025-11-20 - Mohamed Shawky</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-20%20-%20Abdelrehem%20Saeed%20884250c97e92400093f2ce95a5e36278.html">2025-11-20 - Abdelrehem Saeed</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-20%20-%20Mohand%20Ismaiel%20bc2aa729b8f04cbead1e771f118037ed.html">2025-11-20 - Mohand Ismaiel</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-20%20-%20Mohamed%20Nasser%20ab35f02bd582482baf1613c1e799b045.html">2025-11-20 - Mohamed Nasser</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-20%20-%20Basma%20Ibrahim%20d1e504babf864b238036c039038cc3a6.html">2025-11-20 - Basma Ibrahim</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-20%20-%20Youssef%20Emad%20998f89566e60409bbb11ee1ede3a2b7f.html">2025-11-20 - Youssef Emad</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-20%20-%20Nada%20Ayman%20217d3dd5ea1c4973ad907e2a1da19b7f.html">2025-11-20 - Nada Ayman</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-20%20-%20Basmala%20Hassan%2025b868b6c95345b8bcbed24d7b3d5822.html">2025-11-20 - Basmala Hassan</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-20%20-%20Asmaa%20Saed%20cd38c6a5c9a8429fb19e8f6f221f9b88.html">2025-11-20 - Asmaa Saed</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-20%20-%20Mina%20Boshra%2050a38ef1c83f4da4bcb0271a9c7d863b.html">2025-11-20 - Mina Boshra</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-20%20-%20Ali%20Mohamed%206c0418f3be0541bd888a1f40ca52efe3.html">2025-11-20 - Ali Mohamed</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-20%20-%20Fekry%20Fawzy%209b44f301a55642809bdba584df50127a.html">2025-11-20 - Fekry Fawzy</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-22%20-%20Mohand%20Ismaiel%20d85407d7c3554ea79bf533008461efd1.html">2025-11-22 - Mohand Ismaiel</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-22%20-%20Mohamed%20Nasser%20d19c716a99dc434b9a61389d153c4852.html">2025-11-22 - Mohamed Nasser</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-22%20-%20Basma%20Ibrahim%207d84ad0e5bf747d7b4a7dd5cfbb664d4.html">2025-11-22 - Basma Ibrahim</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-22%20-%20Youssef%20Emad%203dcfb8f0a2634fa8bdccec609495eb71.html">2025-11-22 - Youssef Emad</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-22%20-%20Nada%20Ayman%20d8e5a63b67cd4cc2b873ac3f84b0080b.html">2025-11-22 - Nada Ayman</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-22%20-%20Basmala%20Hassan%20e3e6a31f3f0a4860a9205148e5383265.html">2025-11-22 - Basmala Hassan</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-22%20-%20Asmaa%20Saed%2010034559e65c4bdfb41e6a9a1bf62b06.html">2025-11-22 - Asmaa Saed</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-22%20-%20Mina%20Boshra%206ac1cf12f6f34e3895d2de36841e6507.html">2025-11-22 - Mina Boshra</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-22%20-%20Ali%20Mohamed%20d55307f731f048ada923a1125a48ceaa.html">2025-11-22 - Ali Mohamed</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-22%20-%20Fekry%20Fawzy%200297aac7896e4e51aaf1db9dec4a8c05.html">2025-11-22 - Fekry Fawzy</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-23%20-%20Noura%20Mohamed%208285b36b1a5a419991e32cbf6ea5085b.html">2025-11-23 - Noura Mohamed</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-23%20-%20Mohamed%20Shawky%20f62e03a7c861484f8140aa15058ef2a8.html">2025-11-23 - Mohamed Shawky</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-23%20-%20Abdelrehem%20Saeed%2012f752fb55b244388d50cb8b635e7089.html">2025-11-23 - Abdelrehem Saeed</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-23%20-%20Mohand%20Ismaiel%203bdc3c9b356e4852b525a183b4913c16.html">2025-11-23 - Mohand Ismaiel</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-23%20-%20Mohamed%20Nasser%20101399c676344d04ba175b04f416feee.html">2025-11-23 - Mohamed Nasser</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-23%20-%20Basma%20Ibrahim%20f86cab964fd742358fd72c4213025c18.html">2025-11-23 - Basma Ibrahim</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-23%20-%20Youssef%20Emad%20406ee56feee34ee69059d007337fb298.html">2025-11-23 - Youssef Emad</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-23%20-%20Nada%20Ayman%20258a5e51dc67412fa25d9a8e20afb6b5.html">2025-11-23 - Nada Ayman</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-23%20-%20Basmala%20Hassan%206d21ee7045674d03a01ae927265bff3b.html">2025-11-23 - Basmala Hassan</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-23%20-%20Asmaa%20Saed%2090da452e52254c68b993301ef9fc6fdf.html">2025-11-23 - Asmaa Saed</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-23%20-%20Mina%20Boshra%201f80a401c49642a3a015aa3b6cf77629.html">2025-11-23 - Mina Boshra</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-23%20-%20Ali%20Mohamed%20bbc8f9a266254e9c8fcd575cc6811c3b.html">2025-11-23 - Ali Mohamed</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-23%20-%20Fekry%20Fawzy%2096fc229f15c44f80a72e982b3ebbc8e6.html">2025-11-23 - Fekry Fawzy</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-24%20-%20Noura%20Mohamed%206c9fa76fc6b8453eaec2ab3f9bc437b5.html">2025-11-24 - Noura Mohamed</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-24%20-%20Mohamed%20Shawky%20742890d40d444477b1560adc6e0ca744.html">2025-11-24 - Mohamed Shawky</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-24%20-%20Abdelrehem%20Saeed%206eaa43203d814e149d3445ed2650fb06.html">2025-11-24 - Abdelrehem Saeed</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-24%20-%20Mohand%20Ismaiel%20a9d8a7675a5941c5b63325cab1bd4fef.html">2025-11-24 - Mohand Ismaiel</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-24%20-%20Mohamed%20Nasser%2054d82513fe3f48cfacc66693531cc91c.html">2025-11-24 - Mohamed Nasser</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-24%20-%20Basma%20Ibrahim%206fc6c23308c64637b6af89941b718cec.html">2025-11-24 - Basma Ibrahim</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-24%20-%20Youssef%20Emad%20fd96723ab45046128780e8af79ec901e.html">2025-11-24 - Youssef Emad</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-24%20-%20Nada%20Ayman%20148bb574ae744727b5be296b83a17190.html">2025-11-24 - Nada Ayman</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-24%20-%20Basmala%20Hassan%20e1617df23fd147d8bc6f9bedf862a74c.html">2025-11-24 - Basmala Hassan</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-24%20-%20Asmaa%20Saed%20808bddadd9ac4705a6162625c2fd33ba.html">2025-11-24 - Asmaa Saed</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-24%20-%20Mina%20Boshra%2018268b5f19a14e27ac0d40024fbb5110.html">2025-11-24 - Mina Boshra</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-24%20-%20Ali%20Mohamed%20599adb4cebf545179627d6beec750657.html">2025-11-24 - Ali Mohamed</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-24%20-%20Fekry%20Fawzy%208fbfcb4f9cb94036be37a920e126fbf0.html">2025-11-24 - Fekry Fawzy</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-21%20-%20Noura%20Mohamed%2084cc3c73e0454d8ab22f182ec9c7a3c9.html">2025-11-21 - Noura Mohamed</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-21%20-%20Mohamed%20Shawky%20b6a4e5c8afb742289ae1e89fa6f4af28.html">2025-11-21 - Mohamed Shawky</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-21%20-%20Abdelrehem%20Saeed%2087c704b99ac246fea2b8cf6d2ecb6e15.html">2025-11-21 - Abdelrehem Saeed</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-26%20-%20Mohand%20Ismaiel%203fd1d4e83fc34595ba4b527f7a6e2d4b.html">2025-11-26 - Mohand Ismaiel</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-26%20-%20Mohamed%20Nasser%2008c46233d76a478c8d2cafc9244db390.html">2025-11-26 - Mohamed Nasser</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-26%20-%20Basma%20Ibrahim%20614891f4f52e4b4bb56e2b2881af8d15.html">2025-11-26 - Basma Ibrahim</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-26%20-%20Youssef%20Emad%202828104529104391a5d527f491e1ad4d.html">2025-11-26 - Youssef Emad</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-26%20-%20Nada%20Ayman%206db86e628eae4e80b056df00659fb487.html">2025-11-26 - Nada Ayman</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-26%20-%20Basmala%20Hassan%204e17b60f7ecf4122986b7708f2a9181a.html">2025-11-26 - Basmala Hassan</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-26%20-%20Asmaa%20Saed%20b86d942b61d04b839be447f8ebfc7fbd.html">2025-11-26 - Asmaa Saed</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-26%20-%20Mina%20Boshra%20fe93b527f45d47b38476db9910abf0b7.html">2025-11-26 - Mina Boshra</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-26%20-%20Ali%20Mohamed%20de7fdd2461734db0bc58738a1197df14.html">2025-11-26 - Ali Mohamed</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-26%20-%20Fekry%20Fawzy%20fa5af697984b460aa7b0beae6be0c1ad.html">2025-11-26 - Fekry Fawzy</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-25%20-%20Noura%20Mohamed%20ab9a73c3611444bc9033bfa53c41a950.html">2025-11-25 - Noura Mohamed</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-25%20-%20Mohamed%20Shawky%2020c133443d184050af6c84bfd0e6b4f0.html">2025-11-25 - Mohamed Shawky</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-25%20-%20Abdelrehem%20Saeed%201c0094da6e364275bf09d683eb201ad4.html">2025-11-25 - Abdelrehem Saeed</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-25%20-%20Mohand%20Ismaiel%204a27fae313ac4f00ac20d78a0071ff9f.html">2025-11-25 - Mohand Ismaiel</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-25%20-%20Mohamed%20Nasser%20c108edf6062c459d891c626bee454e97.html">2025-11-25 - Mohamed Nasser</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-25%20-%20Basma%20Ibrahim%203524ff4ab1594564965938dbea8fabaf.html">2025-11-25 - Basma Ibrahim</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-25%20-%20Youssef%20Emad%20c01c544fc2654d199d12f9ebcaac4621.html">2025-11-25 - Youssef Emad</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-25%20-%20Nada%20Ayman%2033eb30541b0e4237a49bd9477afcff55.html">2025-11-25 - Nada Ayman</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-25%20-%20Basmala%20Hassan%20421e1bbe444044e693a00a6ac9176fc4.html">2025-11-25 - Basmala Hassan</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-25%20-%20Asmaa%20Saed%20a3c7317b4e0e41489b6b6aee943babea.html">2025-11-25 - Asmaa Saed</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-25%20-%20Mina%20Boshra%20df2a4e7525634efe9c39eee628afa062.html">2025-11-25 - Mina Boshra</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-25%20-%20Ali%20Mohamed%202cee0ada9ff2436fa0871f986d171989.html">2025-11-25 - Ali Mohamed</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-25%20-%20Fekry%20Fawzy%20bd7ba030eb604c2a80c2be7ff9b1e6ac.html">2025-11-25 - Fekry Fawzy</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-26%20-%20Noura%20Mohamed%2072131596beee43db9523843ba1177ec8.html">2025-11-26 - Noura Mohamed</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-26%20-%20Mohamed%20Shawky%20b20b4396bf5345c18dc44b34fca18261.html">2025-11-26 - Mohamed Shawky</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-26%20-%20Abdelrehem%20Saeed%202cbc2289e1464d32bba8ca2fdb2f8043.html">2025-11-26 - Abdelrehem Saeed</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-21%20-%20Mohand%20Ismaiel%20c10ee3cea6994e69b19e9760b99045c6.html">2025-11-21 - Mohand Ismaiel</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-21%20-%20Mohamed%20Nasser%20c8d462cd5e8a4ada837dbe20d4abd40e.html">2025-11-21 - Mohamed Nasser</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-21%20-%20Basma%20Ibrahim%20f950ac9bf29e423bbf3e2d3164a49c17.html">2025-11-21 - Basma Ibrahim</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-21%20-%20Youssef%20Emad%20ff1f5d556e3444a09c7f968ea13f06e7.html">2025-11-21 - Youssef Emad</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-21%20-%20Nada%20Ayman%2065a3386317454458be70d60ba0c86ba7.html">2025-11-21 - Nada Ayman</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-21%20-%20Basmala%20Hassan%20bb954ba6c1f64bbb8c9c008f9448a62a.html">2025-11-21 - Basmala Hassan</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-21%20-%20Asmaa%20Saed%20b52920de66e446b289d4185d84483add.html">2025-11-21 - Asmaa Saed</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-21%20-%20Mina%20Boshra%20071e3bf87c0a437da3020455ac4ae39c.html">2025-11-21 - Mina Boshra</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-21%20-%20Ali%20Mohamed%2041176589260248fbbb5d257510ad446c.html">2025-11-21 - Ali Mohamed</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-21%20-%20Fekry%20Fawzy%205918091f66ec45b18fb199cd5998ed33.html">2025-11-21 - Fekry Fawzy</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-22%20-%20Noura%20Mohamed%202032b06d16684c018aacac687b6cfb07.html">2025-11-22 - Noura Mohamed</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-22%20-%20Mohamed%20Shawky%2009c16c557cc24576b48ca51a52d5d677.html">2025-11-22 - Mohamed Shawky</a>, <a href="../%F0%9F%97%93%EF%B8%8F%20Daily%20Attendance%20Log%20(Master%20DB)/2025-11-22%20-%20Abdelrehem%20Saeed%205ca6c5308174400e94ae23b78f1e9e27.html">2025-11-22 - Abdelrehem Saeed</a></td></tr><tr class="property-row property-row-date"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/calendar_gray.svg" style="width:14px;height:14px;display:block"/></span>Date Range</th><td><time>@November 16, 2025 → November 26, 2025</time></td></tr><tr class="property-row property-row-select"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/arrow-circle-down_gray.svg" style="width:14px;height:14px;display:block"/></span>Status</th><td><span class="selected-value select-value-color-pink">Active</span></td></tr><tr class="property-row property-row-relation"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/arrow-northeast_gray.svg" style="width:14px;height:14px;display:block"/></span>Trainees</th><td><a href="../%F0%9F%91%A4%20Trainees%20(Master%20DB)/Mohand%20Ismaiel%202aea824234cc80809f8cd3be980f566c.html">Mohand Ismaiel</a>, <a href="../%F0%9F%91%A4%20Trainees%20(Master%20DB)/Mohamed%20Nasser%202aea824234cc8011a6b3cc6fb12bc315.html">Mohamed Nasser </a>, <a href="../%F0%9F%91%A4%20Trainees%20(Master%20DB)/Basma%20Ibrahim%202aea824234cc804ba23cead084c9cce3.html">Basma Ibrahim</a>, <a href="../%F0%9F%91%A4%20Trainees%20(Master%20DB)/Youssef%20Emad%202aea824234cc80159c13dfb6585affa7.html">Youssef Emad </a>, <a href="../%F0%9F%91%A4%20Trainees%20(Master%20DB)/Nada%20Ayman%202aea824234cc8044bb4ed360fe0b7025.html">Nada Ayman</a>, <a href="../%F0%9F%91%A4%20Trainees%20(Master%20DB)/Basmala%20Hassan%202aea824234cc80bdb070ff36973729c5.html">Basmala Hassan </a>, <a href="../%F0%9F%91%A4%20Trainees%20(Master%20DB)/Asmaa%20Saed%202aea824234cc80f4877bd24911a12055.html">Asmaa Saed</a>, <a href="../%F0%9F%91%A4%20Trainees%20(Master%20DB)/Mina%20Boshra%202aea824234cc80cf8b8bc9e62ed433db.html">Mina Boshra </a>, <a href="../%F0%9F%91%A4%20Trainees%20(Master%20DB)/Ali%20Mohamed%202aea824234cc8077871bce8ccaf6332a.html">Ali Mohamed</a>, <a href="../%F0%9F%91%A4%20Trainees%20(Master%20DB)/Fekry%20Fawzy%202aea824234cc800f9687fb91bbe86f62.html">Fekry Fawzy</a>, <a href="../%F0%9F%91%A4%20Trainees%20(Master%20DB)/Noura%20Mohamed%202aea824234cc80688aa2c27e447e769e.html">Noura Mohamed</a>, <a href="../%F0%9F%91%A4%20Trainees%20(Master%20DB)/Mohamed%20Shawky%202aea824234cc80a08488fe20b4c3115c.html">Mohamed Shawky</a>, <a href="../%F0%9F%91%A4%20Trainees%20(Master%20DB)/Abdelrehem%20Saeed%202aea824234cc80c09368e2ecb45c5334.html">Abdelrehem Saeed</a></td></tr></tbody></table></header><div class="page-body"></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>

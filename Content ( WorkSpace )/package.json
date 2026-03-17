@@ -1,0 +1,10 @@
+{
+  "name": "content-workspace",
+  "private": true,
+  "scripts": {
+    "install:app": "npm --prefix red-materials-app install",
+    "start": "npm --prefix red-materials-app start",
+    "build": "npm --prefix red-materials-app run build",
+    "test": "npm --prefix red-materials-app test"
+  }
+}

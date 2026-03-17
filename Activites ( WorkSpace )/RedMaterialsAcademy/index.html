@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Red</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --rm-bg0: #05060a;
+            --rm-bg1: #070a12;
+            --rm-text: rgba(255,255,255,0.92);
+            --rm-muted: rgba(255,255,255,0.66);
+            --rm-faint: rgba(255,255,255,0.40);
+            --rm-red: #ff3b3b;
+            --rm-red2: #ff2d55;
+            --rm-cyan: #00d4ff;
+            --rm-violet: #8b5cf6;
+            --rm-amber: #ffb020;
+            --rm-green: #22c55e;
+
+            --rm-glass: rgba(255,255,255,0.06);
+            --rm-glass2: rgba(255,255,255,0.10);
+            --rm-border: rgba(255,255,255,0.10);
+            --rm-border2: rgba(255,255,255,0.16);
+            --rm-shadow: 0 24px 80px rgba(0,0,0,0.55);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(1200px 800px at 15% 10%, rgba(255,59,59,0.12), transparent 55%),
+                        radial-gradient(900px 700px at 85% 20%, rgba(0,212,255,0.12), transparent 58%),
+                        radial-gradient(900px 700px at 65% 90%, rgba(139,92,246,0.12), transparent 60%),
+                        linear-gradient(180deg, var(--rm-bg1) 0%, var(--rm-bg0) 100%);
+            min-height: 100vh;
+            color: var(--rm-text);
+            overflow-x: hidden;
+        }
+
+        /* Performance + Classroom overrides */
+        body.rm-bg-off::before {
+            opacity: 0.55;
+            animation: none;
+            filter: blur(16px) saturate(110%);
+        }
+        body.rm-bg-off .rm-grain {
+            opacity: 0.08;
+        }
+
+        body.rm-projector::before {
+            opacity: 0.55;
+            animation: none;
+            filter: blur(18px) saturate(115%);
+        }
+        body.rm-projector .rm-grain {
+            opacity: 0.08;
+        }
+        body.rm-projector {
+            overflow-x: hidden;
+        }
+        body.rm-projector .rm-app-shell {
+            transform: scale(1.06);
+            transform-origin: top center;
+        }
+        body.rm-projector #root {
+            padding-bottom: 80px;
+        }
+
+        /* Animated Aurora + Noise overlays */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: -20vh -20vw;
+            z-index: -2;
+            background:
+                radial-gradient(60vmax 40vmax at 20% 20%, rgba(255,59,59,0.18), transparent 60%),
+                radial-gradient(55vmax 45vmax at 85% 25%, rgba(0,212,255,0.16), transparent 62%),
+                radial-gradient(55vmax 55vmax at 65% 90%, rgba(139,92,246,0.16), transparent 62%);
+            filter: blur(22px) saturate(120%);
+            opacity: 0.95;
+            transform: translate3d(0,0,0);
+            animation: auroraShift 14s ease-in-out infinite alternate;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.045) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.045) 1px, transparent 1px);
+            background-size: 56px 56px;
+            mask-image: radial-gradient(60% 55% at 50% 25%, rgba(0,0,0,1) 10%, rgba(0,0,0,0) 72%);
+            opacity: 0.35;
+        }
+
+        /* Subtle grain */
+        .rm-grain {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.34'/%3E%3C/svg%3E");
+            background-size: 180px 180px;
+            mix-blend-mode: overlay;
+            opacity: 0.15;
+        }
+
+        #root {
+            min-height: 100vh;
+        }
+
+        /* Better defaults */
+        a { color: inherit; }
+        button, input, textarea, select {
+            font-family: inherit;
+        }
+        button {
+            transform: translateZ(0);
+            will-change: transform, filter;
+        }
+        button:hover { filter: brightness(1.06); transform: translateY(-1px); }
+        button:active { transform: translateY(0px) scale(0.99); }
+        button:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+        :focus-visible {
+            outline: 2px solid rgba(0, 212, 255, 0.55);
+            outline-offset: 3px;
+        }
+
+        input, textarea, select {
+            transition: border-color 180ms ease, background 180ms ease, box-shadow 180ms ease;
+        }
+        input:focus, textarea:focus, select:focus {
+            box-shadow: 0 0 0 6px rgba(0, 212, 255, 0.10);
+            border-color: rgba(0, 212, 255, 0.45) !important;
+            background: rgba(255,255,255,0.09) !important;
+            outline: none;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px rgba(229, 62, 62, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(229, 62, 62, 0.8), 0 0 30px rgba(229, 62, 62, 0.4); }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes confetti {
+            0% { transform: translateY(0) rotateZ(0deg); opacity: 1; }
+            100% { transform: translateY(1000px) rotateZ(720deg); opacity: 0; }
+        }
+
+        @keyframes auroraShift {
+            0% { transform: translate3d(-2%, -2%, 0) scale(1.02); }
+            50% { transform: translate3d(2%, 1%, 0) scale(1.05); }
+            100% { transform: translate3d(-1%, 2%, 0) scale(1.03); }
+        }
+
+        @keyframes rmCardBreath {
+            0% { transform: translateY(0px) scale(1); filter: saturate(105%); }
+            50% { transform: translateY(-3px) scale(1.01); filter: saturate(135%); }
+            100% { transform: translateY(0px) scale(1); filter: saturate(112%); }
+        }
+
+        @keyframes rmGradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes rmPulseGlow {
+            0% { box-shadow: 0 10px 30px rgba(0,0,0,0.35), 0 0 0 rgba(255,59,59,0.0); }
+            50% { box-shadow: 0 18px 65px rgba(0,0,0,0.55), 0 0 40px rgba(255,59,59,0.12); }
+            100% { box-shadow: 0 10px 30px rgba(0,0,0,0.35), 0 0 0 rgba(255,59,59,0.0); }
+        }
+
+        .animate-fadeIn {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        .animate-pulse {
+            animation: pulse 2s infinite;
+        }
+
+        .animate-shake {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        .animate-glow {
+            animation: glow 2s infinite;
+        }
+
+        .animate-bounceIn {
+            animation: bounceIn 0.6s ease-out forwards;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+            body::before { animation: none !important; }
+        }
+    </style>
+</head>
+<body>
+    <div class="rm-grain" aria-hidden="true"></div>
+    <div id="root"></div>
+    <script type="text/babel" src="app.jsx"></script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+# 2025-11-24 - Basmala Hassan
+
+Arrival Time: November 24, 2025 11:27 AM (GMT+2)
+Batch: Batch 28 (../%F0%9F%8E%93%20Batches%20(Master%20DB)/Batch%2028%202aea824234cc805d9f00d3f6cdf316a7.md)
+Date: November 24, 2025
+Departure Time: November 24, 2025 6:00 PM (GMT+2)
+Is Late?: No
+Minutes Late: 27
+Status: Present
+Trainee 1: Basmala Hassan  (../%F0%9F%91%A4%20Trainees%20(Master%20DB)/Basmala%20Hassan%202aea824234cc80bdb070ff36973729c5.md)
+Was Late?: Yes

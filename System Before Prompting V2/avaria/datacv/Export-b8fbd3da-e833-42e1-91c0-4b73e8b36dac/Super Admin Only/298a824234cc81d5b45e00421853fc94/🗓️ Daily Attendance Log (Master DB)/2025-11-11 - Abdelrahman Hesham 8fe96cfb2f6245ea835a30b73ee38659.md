@@ -1,0 +1,11 @@
+# 2025-11-11 - Abdelrahman Hesham
+
+Arrival Time: November 11, 2025 11:45 AM (GMT+2)
+Batch: Batch 27 (../%F0%9F%8E%93%20Batches%20(Master%20DB)/Batch%2027%202a0a824234cc8027ab38c5a9d2bc9b04.md)
+Date: November 11, 2025
+Departure Time: November 11, 2025 6:00 PM (GMT+2)
+Is Late?: No
+Minutes Late: 45
+Status: Present
+Trainee 1: Abdelrahman Hesham (../%F0%9F%91%A4%20Trainees%20(Master%20DB)/Abdelrahman%20Hesham%202a0a824234cc8005b320cbf25e256c4d.md)
+Was Late?: Yes

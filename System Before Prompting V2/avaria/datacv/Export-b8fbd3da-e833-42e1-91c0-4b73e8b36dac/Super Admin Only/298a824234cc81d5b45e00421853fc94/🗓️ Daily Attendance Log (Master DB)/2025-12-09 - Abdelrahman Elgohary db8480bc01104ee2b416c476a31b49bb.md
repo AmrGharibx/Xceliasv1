@@ -1,0 +1,11 @@
+# 2025-12-09 - Abdelrahman Elgohary
+
+Arrival Time: December 9, 2025 11:19 AM (GMT+2)
+Batch: Batch 29 (../%F0%9F%8E%93%20Batches%20(Master%20DB)/Batch%2029%202c4a824234cc8027b744f6714bbb681f.md)
+Date: December 9, 2025
+Departure Time: December 9, 2025 6:00 PM (GMT+2)
+Is Late?: No
+Minutes Late: 19
+Status: Present
+Trainee 1: Abdelrahman Elgohary (../%F0%9F%91%A4%20Trainees%20(Master%20DB)/Abdelrahman%20Elgohary%202c4a824234cc80d19491d9f5f766690e.md)
+Was Late?: Yes

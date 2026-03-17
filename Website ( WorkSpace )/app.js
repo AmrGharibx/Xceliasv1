@@ -1,0 +1,7999 @@
+if (!window.gsap) {
+    const noopTimeline = {
+        to() { return this; },
+        fromTo() { return this; },
+        set() { return this; },
+        add() { return this; }
+    };
+
+    window.gsap = {
+        registerPlugin() {},
+        to() {},
+        from() {},
+        fromTo() {},
+        set() {},
+        timeline() { return Object.create(noopTimeline); }
+    };
+}
+
+if (window.gsap && window.ScrollTrigger && typeof window.gsap.registerPlugin === 'function') {
+    window.gsap.registerPlugin(window.ScrollTrigger);
+}
+
+// Initialize global data containers to prevent crashes before data.js loads
+window.projects = window.projects || [];
+window.projectDetails = window.projectDetails || {};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 🌍 INTERNATIONALIZATION (i18n) SYSTEM - Arabic/English Toggle
+// ═══════════════════════════════════════════════════════════════════════════
+const i18n = {
+    currentLang: localStorage.getItem('appLanguage') || 'en',
+    
+    translations: {
+        en: {
+            // Header & Navigation
+            searchPlaceholder: "Ask AI Concierge (e.g., 'Villas in Sahel with 8 years')",
+            
+            // Filter Buttons
+            filterAll: "All",
+            filterDelivered: "Delivered",
+            filterConstruction: "Under Construction",
+            filterChalets: "Chalets",
+            filterVillas: "Villas",
+            
+            // View Toggle
+            viewLabel: "View:",
+            clusterView: "Cluster View",
+            normalView: "Normal View",
+            
+            // Mode Switcher
+            byZone: "By Zone",
+            byDeveloper: "By Developer",
+            favorites: "Favorites",
+            
+            // Zones
+            zoneNorthCoast: "North Coast",
+            zoneSokhna: "Ain Sokhna",
+            zoneGouna: "El Gouna",
+            zoneCapital: "New Capital",
+            zoneOctober: "6th of October",
+            zoneNewCairo: "New Cairo",
+            
+            // Legend
+            legendTitle: "Project Types",
+            legendResidential: "Residential",
+            legendCoastal: "Coastal",
+            legendCommercial: "Commercial",
+            
+            // Loading
+            loadingMap: "Loading Map...",
+            
+            // Tour
+            startTour: "Start Tour",
+            stopTour: "Stop Tour",
+            
+            // Amenities
+            amenityGolf: "Golf",
+            amenitySeaView: "Sea View",
+            amenityNightlife: "Nightlife",
+            amenityKids: "Kids Area",
+            
+            // Favorites
+            noFavorites: "No favorites yet. Click the ♡ on any project to save it here.",
+            
+            // Modal
+            modalOverview: "Overview",
+            modalMasterplan: "Masterplan",
+            modalLayouts: "Layouts",
+            modalDescription: "Description",
+            modalPrice: "Price Range",
+            modalUnitTypes: "Unit Types",
+            modalAreas: "Areas / Sizes",
+            modalPaymentPlan: "Payment Plan",
+            modalStatus: "Status",
+            modalAmenities: "Amenities",
+            modalLandmarks: "Nearby Landmarks (within 10km)",
+            noMasterplan: "No Masterplan Available",
+            noLayouts: "No Layouts Available",
+            paymentCalculator: "PAYMENT CALCULATOR",
+            totalPrice: "Total Unit Price (EGP)",
+            interestRate: "Interest Rate (%)",
+            downPayment: "Down Payment",
+            installmentDuration: "Installment Duration",
+            downPaymentAmount: "Down Payment Amount",
+            monthlyInstallment: "Monthly Installment",
+            aiInsights: "AI INVESTMENT INSIGHTS",
+            opportunityScore: "Golden Opportunity Score",
+            projAppreciation: "Proj. Appreciation (5Y)",
+            estRentalYield: "Est. Rental Yield",
+            downloadPdf: "Download PDF",
+            whatsappDetails: "WhatsApp Details",
+            projectData: "Project Data",
+            calculatorLabel: "Calculator",
+            aiInsightsLabel: "AI Insights",
+            aiInvestmentInsights: "AI INVESTMENT INSIGHTS",
+            goldenOpportunityScore: "Golden Opportunity Score",
+            calcUnitPrice: "Total Unit Price (EGP)",
+            calcInterestRate: "Interest Rate (%)",
+            calcDownPayment: "Down Payment",
+            calcInstallmentDuration: "Installment Duration",
+            
+            // Comparison
+            compareNow: "Compare Now",
+            projectComparison: "Project Comparison",
+            feature: "Feature",
+            developer: "Developer",
+            location: "Location",
+            minArea: "Min Area",
+            installments: "Installments",
+            
+            // Chat
+            askRita: "Ask RITA",
+            readyToHelp: "Ready to help you",
+            clearChat: "Clear Chat",
+            closeChat: "Close Chat",
+            chatPlaceholder: "Ask me anything...",
+            
+            // No Results
+            noProjectsFound: "No projects found",
+            tryAdjusting: "Try adjusting your search or filters",
+            
+            // Popup
+            addToCompare: "Add to Compare",
+            
+            // Years
+            years: "Years",
+            
+            // Recently Viewed
+            recentlyViewed: "Recently Viewed",
+            clearRecent: "Clear",
+            removeRecent: "Remove",
+            
+            // Price Alerts
+            priceAlerts: "Price Alerts",
+            noAlerts: "No price alerts set",
+            noAlertsHint: "Set alerts on projects to get notified when prices drop",
+            targetPrice: "Target Price",
+            currentPrice: "Current Price",
+            alertTriggered: "Price Reached!",
+            alertActive: "Monitoring",
+            alertCreated: "Price alert created!",
+            removeAlert: "Remove Alert",
+            confirmClearAlerts: "Are you sure you want to clear all alerts?",
+            setAlert: "Set Price Alert",
+            setPriceAlert: "Set Price Alert",
+            enterTargetPrice: "Enter your target price (EGP)",
+            save: "Save",
+            cancel: "Cancel",
+            
+            // Advanced Filters
+            advancedFilters: "Advanced Filters",
+            priceRange: "Price Range (EGP)",
+            areaRange: "Area Range (m²)",
+            bedrooms: "Bedrooms",
+            maxDownPayment: "Max Down Payment",
+            minInstallments: "Min Installment Years",
+            applyFilters: "Apply Filters",
+            resetFilters: "Reset",
+            any: "Any"
+        },
+        ar: {
+            // Header & Navigation
+            searchPlaceholder: "اسأل ريتا (مثال: 'فيلات في الساحل بتقسيط 8 سنين')",
+            
+            // Filter Buttons
+            filterAll: "الكل",
+            filterDelivered: "تم التسليم",
+            filterConstruction: "تحت الإنشاء",
+            filterChalets: "شاليهات",
+            filterVillas: "فيلات",
+            
+            // View Toggle
+            viewLabel: "العرض:",
+            clusterView: "عرض مجمع",
+            normalView: "عرض عادي",
+            
+            // Mode Switcher
+            byZone: "حسب المنطقة",
+            byDeveloper: "حسب المطور",
+            favorites: "المفضلة",
+            
+            // Zones
+            zoneNorthCoast: "الساحل الشمالي",
+            zoneSokhna: "العين السخنة",
+            zoneGouna: "الجونة",
+            zoneCapital: "العاصمة الإدارية",
+            zoneOctober: "6 أكتوبر",
+            zoneNewCairo: "القاهرة الجديدة",
+            
+            // Legend
+            legendTitle: "أنواع المشاريع",
+            legendResidential: "سكني",
+            legendCoastal: "ساحلي",
+            legendCommercial: "تجاري",
+            
+            // Loading
+            loadingMap: "جاري تحميل الخريطة...",
+            
+            // Tour
+            startTour: "بدء الجولة",
+            stopTour: "إيقاف الجولة",
+            
+            // Amenities
+            amenityGolf: "جولف",
+            amenitySeaView: "إطلالة بحر",
+            amenityNightlife: "حياة ليلية",
+            amenityKids: "منطقة أطفال",
+            
+            // Favorites
+            noFavorites: "لا توجد مفضلات بعد. اضغط على ♡ في أي مشروع لحفظه هنا.",
+            
+            // Modal
+            modalOverview: "نظرة عامة",
+            modalMasterplan: "المخطط الرئيسي",
+            modalLayouts: "المخططات",
+            modalDescription: "الوصف",
+            modalPrice: "نطاق الأسعار",
+            modalUnitTypes: "أنواع الوحدات",
+            modalAreas: "المساحات",
+            modalPaymentPlan: "خطة السداد",
+            modalStatus: "الحالة",
+            modalAmenities: "المرافق",
+            modalLandmarks: "المعالم القريبة (في نطاق 10 كم)",
+            noMasterplan: "لا يوجد مخطط رئيسي",
+            noLayouts: "لا توجد مخططات",
+            paymentCalculator: "حاسبة الأقساط",
+            totalPrice: "إجمالي سعر الوحدة (جنيه)",
+            interestRate: "نسبة الفائدة (%)",
+            downPayment: "المقدم",
+            installmentDuration: "مدة التقسيط",
+            downPaymentAmount: "قيمة المقدم",
+            monthlyInstallment: "القسط الشهري",
+            aiInsights: "تحليلات الاستثمار الذكية",
+            opportunityScore: "نقاط الفرصة الذهبية",
+            projAppreciation: "الارتفاع المتوقع (5 سنوات)",
+            estRentalYield: "العائد الإيجاري المتوقع",
+            downloadPdf: "تحميل PDF",
+            whatsappDetails: "تفاصيل واتساب",
+            projectData: "بيانات المشروع",
+            calculatorLabel: "الحاسبة",
+            aiInsightsLabel: "تحليلات ذكية",
+            aiInvestmentInsights: "تحليلات الاستثمار الذكية",
+            goldenOpportunityScore: "نقاط الفرصة الذهبية",
+            calcUnitPrice: "إجمالي سعر الوحدة (جنيه)",
+            calcInterestRate: "نسبة الفائدة (%)",
+            calcDownPayment: "المقدم",
+            calcInstallmentDuration: "مدة التقسيط",
+            
+            // Comparison
+            compareNow: "قارن الآن",
+            projectComparison: "مقارنة المشاريع",
+            feature: "الميزة",
+            developer: "المطور",
+            location: "الموقع",
+            minArea: "أقل مساحة",
+            installments: "التقسيط",
+            
+            // Chat
+            askRita: "اسأل ريتا",
+            readyToHelp: "جاهزة لمساعدتك",
+            clearChat: "مسح المحادثة",
+            closeChat: "إغلاق المحادثة",
+            chatPlaceholder: "اسألني أي حاجة...",
+            
+            // No Results
+            noProjectsFound: "لا توجد مشاريع",
+            tryAdjusting: "حاول تعديل البحث أو الفلاتر",
+            
+            // Popup
+            addToCompare: "إضافة للمقارنة",
+            
+            // Years
+            years: "سنوات",
+            
+            // Recently Viewed
+            recentlyViewed: "شوهد مؤخراً",
+            clearRecent: "مسح",
+            removeRecent: "إزالة",
+            
+            // Price Alerts
+            priceAlerts: "تنبيهات الأسعار",
+            noAlerts: "لا توجد تنبيهات",
+            noAlertsHint: "قم بتعيين تنبيهات للمشاريع للإشعار عند انخفاض الأسعار",
+            targetPrice: "السعر المستهدف",
+            currentPrice: "السعر الحالي",
+            alertTriggered: "تم الوصول للسعر!",
+            alertActive: "جاري المراقبة",
+            alertCreated: "تم إنشاء التنبيه!",
+            removeAlert: "إزالة التنبيه",
+            confirmClearAlerts: "هل أنت متأكد من مسح جميع التنبيهات؟",
+            setAlert: "تعيين تنبيه",
+            setPriceAlert: "تعيين تنبيه السعر",
+            enterTargetPrice: "أدخل السعر المستهدف (جنيه)",
+            save: "حفظ",
+            cancel: "إلغاء",
+            
+            // Advanced Filters
+            advancedFilters: "فلاتر متقدمة",
+            priceRange: "نطاق السعر (جنيه)",
+            areaRange: "نطاق المساحة (م²)",
+            bedrooms: "غرف النوم",
+            maxDownPayment: "أقصى مقدم",
+            minInstallments: "أقل سنوات تقسيط",
+            applyFilters: "تطبيق الفلاتر",
+            resetFilters: "إعادة ضبط",
+            any: "أي"
+        }
+    },
+    
+    // Get translation
+    t(key) {
+        return this.translations[this.currentLang][key] || this.translations['en'][key] || key;
+    },
+    
+    // Set language
+    setLanguage(lang) {
+        this.currentLang = lang;
+        localStorage.setItem('appLanguage', lang);
+        document.documentElement.setAttribute('lang', lang);
+        document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+        this.updateUI();
+    },
+    
+    // Toggle between languages
+    toggle() {
+        this.setLanguage(this.currentLang === 'en' ? 'ar' : 'en');
+    },
+    
+    // Update all UI elements with translations
+    updateUI() {
+        // Update elements with data-i18n attribute
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (this.translations[this.currentLang][key]) {
+                el.textContent = this.t(key);
+            }
+        });
+        
+        // Update elements with data-i18n-placeholder attribute
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+            const key = el.getAttribute('data-i18n-placeholder');
+            if (this.translations[this.currentLang][key]) {
+                el.placeholder = this.t(key);
+            }
+        });
+        
+        // Update language toggle button
+        const langIcon = document.getElementById('lang-icon');
+        if (langIcon) {
+            langIcon.textContent = this.currentLang === 'en' ? 'AR' : 'EN';
+        }
+        
+        // Update RITA chatbot
+        this.updateChatbot();
+        
+        // Update Recently Viewed section
+        if (typeof RecentlyViewed !== 'undefined') {
+            RecentlyViewed.render();
+        }
+        
+        // Trigger re-render if projects loaded
+        if (window.projects && window.projects.length > 0) {
+            // Re-apply filter to update any dynamic content
+            if (typeof filterProjects === 'function') {
+                filterProjects();
+            }
+        }
+    },
+    
+    // Update chatbot elements
+    updateChatbot() {
+        const toggleLabel = document.querySelector('.ai-toggle-label');
+        if (toggleLabel) {
+            toggleLabel.textContent = this.currentLang === 'ar' ? '✨ اسأل ريتا' : '✨ Ask RITA';
+        }
+        
+        const statusText = document.querySelector('.ai-status');
+        if (statusText) {
+            statusText.innerHTML = `<span class="ai-status-dot"></span> ${this.t('readyToHelp')}`;
+        }
+        
+        const chatInput = document.getElementById('aiChatInput');
+        if (chatInput) {
+            chatInput.placeholder = this.t('chatPlaceholder');
+        }
+    },
+    
+    // Initialize on page load
+    init() {
+        // Set initial language attributes
+        document.documentElement.setAttribute('lang', this.currentLang);
+        document.documentElement.setAttribute('dir', this.currentLang === 'ar' ? 'rtl' : 'ltr');
+        
+        // Update UI after a short delay to ensure DOM is ready
+        setTimeout(() => this.updateUI(), 100);
+    }
+};
+
+// Language toggle function (called from HTML)
+function toggleLanguage() {
+    i18n.toggle();
+}
+
+// Initialize i18n on DOM ready
+document.addEventListener('DOMContentLoaded', () => {
+    i18n.init();
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 🕐 RECENTLY VIEWED SYSTEM - Track and display recently viewed projects
+// ═══════════════════════════════════════════════════════════════════════════
+const RecentlyViewed = {
+    storageKey: 'recentlyViewedProjects',
+    maxItems: 8,
+    
+    // Get recently viewed from localStorage
+    get() {
+        try {
+            const stored = localStorage.getItem(this.storageKey);
+            return stored ? JSON.parse(stored) : [];
+        } catch (e) {
+            console.warn('Error reading recently viewed:', e);
+            return [];
+        }
+    },
+    
+    // Add a project to recently viewed
+    add(project) {
+        if (!project || !project.name) return;
+        
+        let recent = this.get();
+        
+        // Create a minimal project object for storage
+        const recentProject = {
+            name: project.name,
+            dev: project.dev || '',
+            zone: project.zone || '',
+            lat: project.lat,
+            lng: project.lng,
+            status: project.status || '',
+            unitTypes: project.unitTypes || '',
+            timestamp: Date.now()
+        };
+        
+        // Remove if already exists (will be re-added at top)
+        recent = recent.filter(p => p.name !== project.name);
+        
+        // Add to beginning
+        recent.unshift(recentProject);
+        
+        // Limit to maxItems
+        if (recent.length > this.maxItems) {
+            recent = recent.slice(0, this.maxItems);
+        }
+        
+        // Save to localStorage
+        try {
+            localStorage.setItem(this.storageKey, JSON.stringify(recent));
+        } catch (e) {
+            console.warn('Error saving recently viewed:', e);
+        }
+        
+        // Update UI
+        this.render();
+    },
+    
+    // Clear all recently viewed
+    clear() {
+        localStorage.removeItem(this.storageKey);
+        this.render();
+    },
+    
+    // Remove a specific project
+    remove(projectName) {
+        let recent = this.get();
+        recent = recent.filter(p => p.name !== projectName);
+        localStorage.setItem(this.storageKey, JSON.stringify(recent));
+        this.render();
+    },
+    
+    // Render the recently viewed section
+    render() {
+        const container = document.getElementById('recently-viewed-list');
+        const section = document.getElementById('recently-viewed-section');
+        if (!container || !section) return;
+        
+        const recent = this.get();
+        
+        if (recent.length === 0) {
+            section.style.display = 'none';
+            return;
+        }
+        
+        section.style.display = 'block';
+        
+        container.innerHTML = recent.map((proj, index) => `
+            <div class="recent-item" onclick="openRecentProject('${proj.name.replace(/'/g, "\\'")}')" role="button" tabindex="0">
+                <div class="recent-item-info">
+                    <div class="recent-item-name">${proj.name}</div>
+                    <div class="recent-item-meta">
+                        ${proj.dev ? `<span class="recent-dev">${proj.dev}</span>` : ''}
+                        ${proj.zone ? `<span class="recent-zone">${proj.zone}</span>` : ''}
+                    </div>
+                </div>
+                <button class="recent-item-remove" onclick="event.stopPropagation(); RecentlyViewed.remove('${proj.name.replace(/'/g, "\\'")}')" title="${i18n.t('removeRecent')}" aria-label="Remove from recently viewed">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+        `).join('');
+    },
+    
+    // Initialize on page load
+    init() {
+        // Render after a short delay to ensure DOM is ready
+        setTimeout(() => this.render(), 200);
+    }
+};
+
+// Open a project from recently viewed
+function openRecentProject(projectName) {
+    const project = window.projects.find(p => p.name === projectName);
+    if (project) {
+        openModal(project);
+        // Also fly to the project location
+        if (project.lat && project.lng) {
+            map.flyTo([project.lat, project.lng], 14, { duration: 1.5 });
+        }
+    }
+}
+
+// Clear recently viewed (called from HTML)
+function clearRecentlyViewed() {
+    RecentlyViewed.clear();
+}
+
+// Initialize Recently Viewed on DOM ready
+document.addEventListener('DOMContentLoaded', () => {
+    RecentlyViewed.init();
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 🔔 PRICE ALERTS SYSTEM - Track price drops and notify users
+// ═══════════════════════════════════════════════════════════════════════════
+const PriceAlerts = {
+    storageKey: 'priceAlerts',
+    notificationPermission: false,
+    
+    // Get all alerts from localStorage
+    get() {
+        try {
+            const stored = localStorage.getItem(this.storageKey);
+            return stored ? JSON.parse(stored) : [];
+        } catch (e) {
+            console.warn('Error reading price alerts:', e);
+            return [];
+        }
+    },
+    
+    // Save alerts to localStorage
+    save(alerts) {
+        try {
+            localStorage.setItem(this.storageKey, JSON.stringify(alerts));
+        } catch (e) {
+            console.warn('Error saving price alerts:', e);
+        }
+    },
+    
+    // Add a new price alert
+    add(projectName, targetPrice, currentPrice = null) {
+        if (!projectName || !targetPrice) return false;
+        
+        let alerts = this.get();
+        
+        // Check if alert already exists for this project
+        const existingIndex = alerts.findIndex(a => a.projectName === projectName);
+        
+        const alert = {
+            id: existingIndex >= 0 ? alerts[existingIndex].id : Date.now(),
+            projectName: projectName,
+            targetPrice: parseFloat(targetPrice),
+            currentPrice: currentPrice ? parseFloat(currentPrice) : null,
+            createdAt: existingIndex >= 0 ? alerts[existingIndex].createdAt : Date.now(),
+            updatedAt: Date.now(),
+            triggered: false,
+            notified: false
+        };
+        
+        if (existingIndex >= 0) {
+            alerts[existingIndex] = alert;
+        } else {
+            alerts.unshift(alert);
+        }
+        
+        this.save(alerts);
+        this.updateBadge();
+        this.renderAlertsList();
+        
+        // Show confirmation toast
+        this.showToast(i18n.t('alertCreated'), 'success');
+        
+        return true;
+    },
+    
+    // Remove an alert
+    remove(alertId) {
+        let alerts = this.get();
+        alerts = alerts.filter(a => a.id !== alertId);
+        this.save(alerts);
+        this.updateBadge();
+        this.renderAlertsList();
+    },
+    
+    // Clear all alerts
+    clearAll() {
+        this.save([]);
+        this.updateBadge();
+        this.renderAlertsList();
+    },
+    
+    // Update the notification badge count
+    updateBadge() {
+        const badge = document.getElementById('alerts-badge');
+        if (!badge) return;
+        
+        const alerts = this.get();
+        const activeCount = alerts.filter(a => !a.triggered).length;
+        
+        if (activeCount > 0) {
+            badge.textContent = activeCount > 9 ? '9+' : activeCount;
+            badge.style.display = 'flex';
+        } else {
+            badge.style.display = 'none';
+        }
+    },
+    
+    // Request notification permission
+    async requestNotificationPermission() {
+        if (!('Notification' in window)) {
+            console.warn('Notifications not supported');
+            return false;
+        }
+        
+        if (Notification.permission === 'granted') {
+            this.notificationPermission = true;
+            return true;
+        }
+        
+        if (Notification.permission !== 'denied') {
+            const permission = await Notification.requestPermission();
+            this.notificationPermission = permission === 'granted';
+            return this.notificationPermission;
+        }
+        
+        return false;
+    },
+    
+    // Send browser notification
+    sendNotification(title, body, projectName) {
+        if (!this.notificationPermission) return;
+        
+        const notification = new Notification(title, {
+            body: body,
+            icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🏠</text></svg>',
+            badge: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">📉</text></svg>',
+            tag: `price-alert-${projectName}`,
+            requireInteraction: true
+        });
+        
+        notification.onclick = () => {
+            window.focus();
+            const project = window.projects.find(p => p.name === projectName);
+            if (project) openModal(project);
+            notification.close();
+        };
+    },
+    
+    // Show toast notification
+    showToast(message, type = 'info') {
+        // Remove existing toast
+        const existing = document.querySelector('.price-alert-toast');
+        if (existing) existing.remove();
+        
+        const toast = document.createElement('div');
+        toast.className = `price-alert-toast toast-${type}`;
+        toast.innerHTML = `
+            <span class="toast-icon">${type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ'}</span>
+            <span class="toast-message">${message}</span>
+        `;
+        document.body.appendChild(toast);
+        
+        // Animate in
+        requestAnimationFrame(() => toast.classList.add('show'));
+        
+        // Remove after 3 seconds
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    },
+    
+    // Render the alerts panel
+    renderAlertsList() {
+        const container = document.getElementById('price-alerts-list');
+        if (!container) return;
+        
+        const alerts = this.get();
+        
+        if (alerts.length === 0) {
+            container.innerHTML = `
+                <div class="alerts-empty">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                    </svg>
+                    <p data-i18n="noAlerts">${i18n.t('noAlerts')}</p>
+                    <span data-i18n="noAlertsHint">${i18n.t('noAlertsHint')}</span>
+                </div>
+            `;
+            return;
+        }
+        
+        container.innerHTML = alerts.map(alert => `
+            <div class="alert-item ${alert.triggered ? 'triggered' : ''}" data-id="${alert.id}">
+                <div class="alert-item-header">
+                    <span class="alert-project-name">${alert.projectName}</span>
+                    <button class="alert-remove-btn" onclick="PriceAlerts.remove(${alert.id})" title="${i18n.t('removeAlert')}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                </div>
+                <div class="alert-item-body">
+                    <div class="alert-price-info">
+                        <span class="alert-label">${i18n.t('targetPrice')}:</span>
+                        <span class="alert-target-price">${this.formatPrice(alert.targetPrice)} EGP</span>
+                    </div>
+                    ${alert.currentPrice ? `
+                    <div class="alert-price-info">
+                        <span class="alert-label">${i18n.t('currentPrice')}:</span>
+                        <span class="alert-current-price">${this.formatPrice(alert.currentPrice)} EGP</span>
+                    </div>
+                    ` : ''}
+                    <div class="alert-status">
+                        ${alert.triggered 
+                            ? `<span class="alert-triggered"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> ${i18n.t('alertTriggered')}</span>`
+                            : `<span class="alert-active"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle></svg> ${i18n.t('alertActive')}</span>`
+                        }
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    },
+    
+    // Format price with commas
+    formatPrice(price) {
+        return new Intl.NumberFormat('en-EG').format(price);
+    },
+    
+    // Open the set alert modal for a project
+    openSetAlertModal(projectName, suggestedPrice = 5000000) {
+        const modal = document.getElementById('priceAlertModal');
+        if (!modal) return;
+        
+        const projectNameEl = document.getElementById('alert-project-name');
+        const priceInput = document.getElementById('alert-target-price');
+        
+        if (projectNameEl) projectNameEl.textContent = projectName;
+        if (priceInput) priceInput.value = suggestedPrice;
+        
+        modal.classList.add('active');
+        modal.setAttribute('data-project', projectName);
+        
+        // Focus the input
+        setTimeout(() => priceInput?.focus(), 100);
+    },
+    
+    // Close the set alert modal
+    closeSetAlertModal() {
+        const modal = document.getElementById('priceAlertModal');
+        if (modal) {
+            modal.classList.remove('active');
+            modal.removeAttribute('data-project');
+        }
+    },
+    
+    // Save alert from modal
+    saveAlertFromModal() {
+        const modal = document.getElementById('priceAlertModal');
+        const priceInput = document.getElementById('alert-target-price');
+        
+        if (!modal || !priceInput) return;
+        
+        const projectName = modal.getAttribute('data-project');
+        const targetPrice = priceInput.value;
+        
+        if (projectName && targetPrice) {
+            this.add(projectName, targetPrice);
+            this.closeSetAlertModal();
+        }
+    },
+    
+    // Toggle alerts panel
+    togglePanel() {
+        const panel = document.getElementById('price-alerts-panel');
+        if (panel) {
+            panel.classList.toggle('active');
+            if (panel.classList.contains('active')) {
+                this.renderAlertsList();
+            }
+        }
+    },
+    
+    // Initialize
+    init() {
+        this.requestNotificationPermission();
+        this.updateBadge();
+        
+        // Close panel when clicking outside
+        document.addEventListener('click', (e) => {
+            const panel = document.getElementById('price-alerts-panel');
+            const toggle = document.getElementById('alerts-toggle-btn');
+            if (panel && panel.classList.contains('active')) {
+                if (!panel.contains(e.target) && !toggle?.contains(e.target)) {
+                    panel.classList.remove('active');
+                }
+            }
+        });
+        
+        // Render alerts list after DOM ready
+        setTimeout(() => this.renderAlertsList(), 300);
+    }
+};
+
+// Global functions for HTML onclick handlers
+function togglePriceAlertsPanel() {
+    PriceAlerts.togglePanel();
+}
+
+function closePriceAlertModal() {
+    PriceAlerts.closeSetAlertModal();
+}
+
+function savePriceAlert() {
+    PriceAlerts.saveAlertFromModal();
+}
+
+// Open price alert modal for current project (from modal button)
+function openProjectPriceAlert() {
+    if (currentProject && currentProject.name) {
+        PriceAlerts.openSetAlertModal(currentProject.name);
+    }
+}
+
+function clearAllAlerts() {
+    if (confirm(i18n.t('confirmClearAlerts'))) {
+        PriceAlerts.clearAll();
+    }
+}
+
+// Initialize Price Alerts on DOM ready
+document.addEventListener('DOMContentLoaded', () => {
+    PriceAlerts.init();
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 🔍 ADVANCED FILTERS SYSTEM - Price, Area, Bedrooms, Down Payment, Installments
+// ═══════════════════════════════════════════════════════════════════════════
+const AdvancedFilters = {
+    isOpen: false,
+    activeFilters: {
+        priceMin: null,
+        priceMax: null,
+        areaMin: null,
+        areaMax: null,
+        bedrooms: 'any',
+        maxDownPayment: 30,
+        minInstallments: 0
+    },
+    
+    // Toggle the advanced filters panel
+    toggle() {
+        const panel = document.getElementById('advancedFiltersPanel');
+        const toggle = document.getElementById('advFiltersToggle');
+        
+        this.isOpen = !this.isOpen;
+        
+        if (panel) {
+            panel.classList.toggle('open', this.isOpen);
+        }
+        if (toggle) {
+            toggle.classList.toggle('active', this.isOpen);
+        }
+    },
+    
+    // Update down payment slider display
+    updateDownPaymentDisplay() {
+        const slider = document.getElementById('downPaymentSlider');
+        const display = document.getElementById('downPaymentValue');
+        if (slider && display) {
+            const value = parseInt(slider.value);
+            display.textContent = value === 30 ? i18n.t('any') || 'Any' : value + '%';
+        }
+    },
+    
+    // Update installments slider display
+    updateInstallmentsDisplay() {
+        const slider = document.getElementById('installmentsSlider');
+        const display = document.getElementById('installmentsValue');
+        if (slider && display) {
+            const value = parseInt(slider.value);
+            display.textContent = value === 0 ? i18n.t('any') || 'Any' : value + ' ' + i18n.t('years');
+        }
+    },
+    
+    // Select bedrooms
+    selectBedrooms(value) {
+        this.activeFilters.bedrooms = value;
+        
+        // Update button states
+        document.querySelectorAll('.bedroom-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.beds === value);
+        });
+    },
+    
+    // Get current filter values from inputs
+    getFilterValues() {
+        const priceMin = document.getElementById('priceMin')?.value;
+        const priceMax = document.getElementById('priceMax')?.value;
+        const areaMin = document.getElementById('areaMin')?.value;
+        const areaMax = document.getElementById('areaMax')?.value;
+        const downPayment = document.getElementById('downPaymentSlider')?.value;
+        const installments = document.getElementById('installmentsSlider')?.value;
+        
+        return {
+            priceMin: priceMin ? parseFloat(priceMin) : null,
+            priceMax: priceMax ? parseFloat(priceMax) : null,
+            areaMin: areaMin ? parseFloat(areaMin) : null,
+            areaMax: areaMax ? parseFloat(areaMax) : null,
+            bedrooms: this.activeFilters.bedrooms,
+            maxDownPayment: parseInt(downPayment) === 30 ? null : parseInt(downPayment),
+            minInstallments: parseInt(installments) === 0 ? null : parseInt(installments)
+        };
+    },
+    
+    // Count active filters
+    countActiveFilters() {
+        const filters = this.getFilterValues();
+        let count = 0;
+        
+        if (filters.priceMin !== null) count++;
+        if (filters.priceMax !== null) count++;
+        if (filters.areaMin !== null) count++;
+        if (filters.areaMax !== null) count++;
+        if (filters.bedrooms !== 'any') count++;
+        if (filters.maxDownPayment !== null) count++;
+        if (filters.minInstallments !== null) count++;
+        
+        return count;
+    },
+    
+    // Update the active filters count display
+    updateFilterCount() {
+        const count = this.countActiveFilters();
+        const countEl = document.getElementById('activeFiltersCount');
+        const textEl = document.getElementById('filterCountText');
+        const toggleBtn = document.getElementById('advFiltersToggle');
+        
+        if (countEl && textEl) {
+            if (count > 0) {
+                countEl.style.display = 'flex';
+                textEl.textContent = count + ' ' + (i18n.currentLang === 'ar' ? 'فلتر نشط' : 'filter' + (count > 1 ? 's' : '') + ' active');
+            } else {
+                countEl.style.display = 'none';
+            }
+        }
+        
+        // Add badge to toggle button
+        if (toggleBtn) {
+            let badge = toggleBtn.querySelector('.filter-badge');
+            if (count > 0) {
+                if (!badge) {
+                    badge = document.createElement('span');
+                    badge.className = 'filter-badge';
+                    toggleBtn.appendChild(badge);
+                }
+                badge.textContent = count;
+            } else if (badge) {
+                badge.remove();
+            }
+        }
+    },
+    
+    // Apply filters
+    apply() {
+        this.activeFilters = this.getFilterValues();
+        this.updateFilterCount();
+        
+        // Trigger the main filter function
+        filterProjects();
+        
+        // Show feedback toast
+        const count = this.countActiveFilters();
+        if (count > 0) {
+            PriceAlerts.showToast(
+                (i18n.currentLang === 'ar' ? 'تم تطبيق ' + count + ' فلتر' : count + ' filter' + (count > 1 ? 's' : '') + ' applied'),
+                'success'
+            );
+        }
+    },
+    
+    // Reset all filters
+    reset() {
+        // Reset input values
+        const priceMin = document.getElementById('priceMin');
+        const priceMax = document.getElementById('priceMax');
+        const areaMin = document.getElementById('areaMin');
+        const areaMax = document.getElementById('areaMax');
+        const downPayment = document.getElementById('downPaymentSlider');
+        const installments = document.getElementById('installmentsSlider');
+        
+        if (priceMin) priceMin.value = '';
+        if (priceMax) priceMax.value = '';
+        if (areaMin) areaMin.value = '';
+        if (areaMax) areaMax.value = '';
+        if (downPayment) downPayment.value = 30;
+        if (installments) installments.value = 0;
+        
+        // Reset bedrooms
+        this.selectBedrooms('any');
+        
+        // Update displays
+        this.updateDownPaymentDisplay();
+        this.updateInstallmentsDisplay();
+        
+        // Reset active filters
+        this.activeFilters = {
+            priceMin: null,
+            priceMax: null,
+            areaMin: null,
+            areaMax: null,
+            bedrooms: 'any',
+            maxDownPayment: null,
+            minInstallments: null
+        };
+        
+        this.updateFilterCount();
+        
+        // Re-run filter
+        filterProjects();
+    },
+    
+    // Filter projects based on advanced filters
+    filterResults(projects) {
+        const filters = this.activeFilters;
+        
+        return projects.filter(p => {
+            // Price filter (using project data)
+            if (filters.priceMin !== null || filters.priceMax !== null) {
+                // Check if project has price data
+                const projectPriceMin = p.priceMin;
+                const projectPriceMax = p.priceMax;
+                
+                if (projectPriceMin !== undefined) {
+                    // If user's min price is higher than project's max price, exclude
+                    if (filters.priceMin !== null && projectPriceMax && filters.priceMin > projectPriceMax) return false;
+                    // If user's max price is lower than project's min price, exclude
+                    if (filters.priceMax !== null && filters.priceMax < projectPriceMin) return false;
+                }
+            }
+            
+            // Area filter (using project data)
+            if (filters.areaMin !== null || filters.areaMax !== null) {
+                const projectAreaMin = p.areaMin;
+                const projectAreaMax = p.areaMax;
+                
+                if (projectAreaMin !== undefined) {
+                    // If user's min area is higher than project's max area, exclude
+                    if (filters.areaMin !== null && projectAreaMax && filters.areaMin > projectAreaMax) return false;
+                    // If user's max area is lower than project's min area, exclude
+                    if (filters.areaMax !== null && filters.areaMax < projectAreaMin) return false;
+                }
+            }
+            
+            // Bedrooms filter (using project bedrooms array)
+            if (filters.bedrooms !== 'any') {
+                const bedrooms = p.bedrooms || [];
+                const targetBedrooms = filters.bedrooms === '4+' ? 4 : parseInt(filters.bedrooms);
+                
+                if (bedrooms.length > 0) {
+                    if (filters.bedrooms === '4+') {
+                        // Check if project has 4+ bedrooms
+                        if (!bedrooms.some(b => b >= 4)) return false;
+                    } else {
+                        // Check if project has the specific bedroom count
+                        if (!bedrooms.includes(targetBedrooms)) return false;
+                    }
+                }
+            }
+            
+            // Down payment filter - use project's downPayment field directly
+            if (filters.maxDownPayment !== null) {
+                const dp = p.downPayment !== undefined ? p.downPayment : 
+                           (p.minDownPayment !== undefined ? p.minDownPayment : null);
+                if (dp !== null && dp > filters.maxDownPayment) return false;
+            }
+            
+            // Installments filter - use project's installmentYears field directly
+            if (filters.minInstallments !== null) {
+                const years = p.installmentYears !== undefined ? p.installmentYears :
+                              (p.maxInstallmentYears !== undefined ? p.maxInstallmentYears : null);
+                if (years !== null && years < filters.minInstallments) return false;
+            }
+            
+            return true;
+        });
+    },
+    
+    // Helper: Parse area from details string like "70m - 400m"
+    parseAreaFromDetails(areasStr) {
+        if (!areasStr) return null;
+        const match = areasStr.match(/(\d+)/);
+        return match ? parseInt(match[1]) : null;
+    },
+    
+    // Helper: Parse down payment from string like "10% Down Payment"
+    parseDownPayment(paymentPlan) {
+        if (!paymentPlan) return null;
+        const match = paymentPlan.match(/(\d+)%\s*down/i);
+        return match ? parseInt(match[1]) : null;
+    },
+    
+    // Helper: Parse installment years from string like "Installments over 8 Years"
+    parseInstallmentYears(paymentPlan) {
+        if (!paymentPlan) return null;
+        const match = paymentPlan.match(/(\d+)\s*years/i);
+        return match ? parseInt(match[1]) : null;
+    },
+    
+    // Initialize
+    init() {
+        // Set initial bedrooms button state
+        this.selectBedrooms('any');
+        this.updateDownPaymentDisplay();
+        this.updateInstallmentsDisplay();
+    }
+};
+
+// Global functions for HTML onclick handlers
+function toggleAdvancedFilters() {
+    AdvancedFilters.toggle();
+}
+
+function updateDownPaymentValue() {
+    AdvancedFilters.updateDownPaymentDisplay();
+}
+
+function updateInstallmentsValue() {
+    AdvancedFilters.updateInstallmentsDisplay();
+}
+
+function selectBedrooms(value) {
+    AdvancedFilters.selectBedrooms(value);
+}
+
+function applyAdvancedFilters() {
+    AdvancedFilters.apply();
+}
+
+function resetAdvancedFilters() {
+    AdvancedFilters.reset();
+}
+
+// Initialize Advanced Filters on DOM ready
+document.addEventListener('DOMContentLoaded', () => {
+    AdvancedFilters.init();
+});
+
+// --- TILE CACHING SYSTEM (IndexedDB) ---
+const TileCache = {
+    dbName: 'MapTileCache',
+    dbVersion: 1,
+    storeName: 'tiles',
+    db: null,
+    maxCacheSize: 500 * 1024 * 1024, // 500MB max cache
+    maxTileAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    
+    async init() {
+        return new Promise((resolve, reject) => {
+            if (!window.indexedDB) {
+                console.warn('IndexedDB not supported, tile caching disabled');
+                resolve(false);
+                return;
+            }
+            
+            const request = indexedDB.open(this.dbName, this.dbVersion);
+            
+            request.onerror = () => {
+                console.warn('Failed to open tile cache DB');
+                resolve(false);
+            };
+            
+            request.onsuccess = (e) => {
+                this.db = e.target.result;
+                console.log('Tile cache initialized');
+                this.cleanOldTiles(); // Clean old tiles on startup
+                resolve(true);
+            };
+            
+            request.onupgradeneeded = (e) => {
+                const db = e.target.result;
+                if (!db.objectStoreNames.contains(this.storeName)) {
+                    const store = db.createObjectStore(this.storeName, { keyPath: 'url' });
+                    store.createIndex('timestamp', 'timestamp', { unique: false });
+                }
+            };
+        });
+    },
+    
+    async get(url) {
+        if (!this.db) return null;
+        
+        return new Promise((resolve) => {
+            try {
+                const transaction = this.db.transaction([this.storeName], 'readonly');
+                const store = transaction.objectStore(this.storeName);
+                const request = store.get(url);
+                
+                request.onsuccess = () => {
+                    const result = request.result;
+                    if (result && (Date.now() - result.timestamp < this.maxTileAge)) {
+                        resolve(result.blob);
+                    } else {
+                        resolve(null);
+                    }
+                };
+                
+                request.onerror = () => resolve(null);
+            } catch (e) {
+                resolve(null);
+            }
+        });
+    },
+    
+    async set(url, blob) {
+        if (!this.db) return;
+        
+        try {
+            const transaction = this.db.transaction([this.storeName], 'readwrite');
+            const store = transaction.objectStore(this.storeName);
+            store.put({ url, blob, timestamp: Date.now() });
+        } catch (e) {
+            console.warn('Failed to cache tile:', e);
+        }
+    },
+    
+    async cleanOldTiles() {
+        if (!this.db) return;
+        
+        try {
+            const transaction = this.db.transaction([this.storeName], 'readwrite');
+            const store = transaction.objectStore(this.storeName);
+            const index = store.index('timestamp');
+            const cutoff = Date.now() - this.maxTileAge;
+            
+            const request = index.openCursor(IDBKeyRange.upperBound(cutoff));
+            request.onsuccess = (e) => {
+                const cursor = e.target.result;
+                if (cursor) {
+                    store.delete(cursor.primaryKey);
+                    cursor.continue();
+                }
+            };
+        } catch (e) {
+            console.warn('Failed to clean old tiles:', e);
+        }
+    }
+};
+
+// Initialize tile cache
+TileCache.init();
+
+// Custom cached tile layer class
+L.TileLayer.Cached = L.TileLayer.extend({
+    createTile: function(coords, done) {
+        const tile = document.createElement('img');
+        const url = this.getTileUrl(coords);
+        
+        tile.alt = '';
+        tile.setAttribute('role', 'presentation');
+        
+        // Try to load from cache first
+        TileCache.get(url).then(cachedBlob => {
+            if (cachedBlob) {
+                // Load from cache
+                tile.src = URL.createObjectURL(cachedBlob);
+                tile.onload = () => {
+                    URL.revokeObjectURL(tile.src);
+                    done(null, tile);
+                };
+            } else {
+                // Fetch and cache
+                fetch(url)
+                    .then(response => response.blob())
+                    .then(blob => {
+                        TileCache.set(url, blob);
+                        tile.src = URL.createObjectURL(blob);
+                        tile.onload = () => {
+                            URL.revokeObjectURL(tile.src);
+                            done(null, tile);
+                        };
+                    })
+                    .catch(() => {
+                        // Fallback to direct loading
+                        tile.src = url;
+                        tile.onload = () => done(null, tile);
+                        tile.onerror = () => done(new Error('Tile load error'), tile);
+                    });
+            }
+        });
+        
+        return tile;
+    }
+});
+
+L.tileLayer.cached = function(url, options) {
+    return new L.TileLayer.Cached(url, options);
+};
+
+// --- 1. INITIALIZE MAP ---
+// Center focused on Egypt
+const map = L.map("map", {
+  zoomControl: false,
+  attributionControl: false,
+  preferCanvas: true, // Use Canvas renderer for performance
+  fadeAnimation: true,
+  zoomAnimation: true,
+  updateWhenZooming: false, // Don't update tiles while zooming (smoother)
+  updateWhenIdle: true, // Update tiles when map stops moving
+  keepBuffer: 4, // Keep 4 tiles buffer around viewport (more cached tiles visible)
+}).setView([30.0, 31.0], 7);
+
+// Map Tile Layers
+const darkTiles = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
+const lightTiles = "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
+
+// --- 4. MAP LAYERS (Moved up for initialization) ---
+const layers = {
+  street: L.tileLayer(darkTiles, { 
+      maxZoom: 22, 
+      subdomains: "abcd",
+      detectRetina: true,
+      className: 'high-quality-tiles',
+      keepBuffer: 4,
+      updateWhenZooming: false
+  }),
+  satellite: L.tileLayer.cached('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    attribution: 'Tiles &copy; Esri',
+    maxZoom: 22,
+    detectRetina: true,
+    className: 'high-quality-tiles',
+    keepBuffer: 6, // Extra buffer for satellite (more caching)
+    updateWhenZooming: false,
+    crossOrigin: 'anonymous'
+  }),
+  hybrid: L.layerGroup([
+    L.tileLayer.cached('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        maxZoom: 22,
+        detectRetina: true,
+        keepBuffer: 6,
+        updateWhenZooming: false,
+        crossOrigin: 'anonymous'
+    }),
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png', {
+      subdomains: 'abcd',
+      maxZoom: 22,
+      detectRetina: true,
+      keepBuffer: 4
+    })
+  ])
+};
+
+// Initialize with Street layer
+layers.street.addTo(map);
+
+let hasCompletedInitialLoad = false;
+
+function updateLoadingStatus(message) {
+    const statusEl = document.getElementById('loadingStatus');
+    if (statusEl && message) {
+        statusEl.textContent = message;
+    }
+}
+
+function completeInitialLoad() {
+    if (hasCompletedInitialLoad) return;
+    hasCompletedInitialLoad = true;
+    const loader = document.getElementById('mapLoader');
+    if (loader) loader.style.display = 'none';
+}
+
+// Remove loader when map is ready
+map.whenReady(() => {
+    updateLoadingStatus('Map ready. Rendering projects...');
+    completeInitialLoad();
+});
+
+// Hard fallback so the UI never stays trapped behind the loading overlay.
+window.setTimeout(() => {
+    if (!hasCompletedInitialLoad) {
+        updateLoadingStatus('Finishing startup...');
+        completeInitialLoad();
+    }
+}, 4500);
+
+L.control.zoom({ position: "bottomright" }).addTo(map);
+
+// Initialize Marker Cluster Group globally so it's accessible
+const markerClusterGroup = typeof L.markerClusterGroup === 'function' ? L.markerClusterGroup({
+  // IMPORTANT: Keep markers in DOM even when outside visible bounds
+  // This prevents markers from disappearing when zooming/panning
+  removeOutsideVisibleBounds: false,
+  
+  // Disable animation for better performance
+  animate: true,
+  animateAddingMarkers: false,
+  
+  // Spiderfy settings for better UX
+  spiderfyOnMaxZoom: true,
+  showCoverageOnHover: false,
+  zoomToBoundsOnClick: true,
+  
+  // Maximum cluster radius - affects how aggressively markers cluster
+  maxClusterRadius: 60,
+  
+  // Disable removing clusters outside viewport
+  disableClusteringAtZoom: 16,
+  
+  iconCreateFunction: function(cluster) {
+    const childCount = cluster.getChildCount();
+    
+    // Calculate size based on count
+    let size = 40;
+    if (childCount > 10) size = 50;
+    if (childCount > 100) size = 60;
+
+    return L.divIcon({
+      html: `<div style="
+        background-color: var(--avaria-bg);
+        color: var(--avaria-gold);
+        border: 2px solid var(--avaria-gold);
+        border-radius: 50%;
+        width: ${size}px;
+        height: ${size}px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        box-shadow: 0 0 15px var(--avaria-gold);
+        font-family: 'Montserrat', sans-serif;
+        font-size: 14px;
+      "><span>${childCount}</span></div>`,
+      className: 'custom-marker-cluster',
+      iconSize: L.point(size, size)
+    });
+    }
+}).addTo(map) : L.layerGroup().addTo(map);
+
+// Initialize Standard Marker Layer (initially not added to map)
+const markerLayer = L.layerGroup();
+let isClusterView = true; // Default view state
+
+// Heatmap Layer
+let heatmapLayer = null;
+let isHeatmapMode = false;
+let isLabelsAlwaysVisible = false;
+
+// Store all markers for quick label toggle
+let allMarkersWithTooltips = [];
+
+function toggleLabels() {
+    isLabelsAlwaysVisible = !isLabelsAlwaysVisible;
+    const btn = document.getElementById('btn-labels');
+    if (btn) {
+        if (isLabelsAlwaysVisible) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    }
+    
+    // Optimized: Toggle tooltips directly without re-rendering
+    // Use requestAnimationFrame for smooth UI
+    requestAnimationFrame(() => {
+        const markers = allMarkersWithTooltips;
+        const batchSize = 50; // Process in batches to avoid blocking
+        let index = 0;
+        
+        function processBatch() {
+            const end = Math.min(index + batchSize, markers.length);
+            for (let i = index; i < end; i++) {
+                const marker = markers[i];
+                if (marker && marker.getTooltip) {
+                    const tooltip = marker.getTooltip();
+                    if (tooltip) {
+                        if (isLabelsAlwaysVisible) {
+                            marker.openTooltip();
+                        } else {
+                            marker.closeTooltip();
+                        }
+                    }
+                }
+            }
+            index = end;
+            if (index < markers.length) {
+                requestAnimationFrame(processBatch);
+            }
+        }
+        
+        processBatch();
+    });
+}
+
+function toggleHeatmap() {
+  const btn = document.getElementById('btn-heatmap');
+  isHeatmapMode = !isHeatmapMode;
+
+  if (isHeatmapMode) {
+    if (btn) btn.classList.add('active');
+    // Hide markers
+    if (map && map.hasLayer(markerClusterGroup)) map.removeLayer(markerClusterGroup);
+    if (map && map.hasLayer(markerLayer)) map.removeLayer(markerLayer);
+    
+    // Show heatmap (data will be populated in renderProjects or updated here)
+    // We need to trigger a re-render or just add the layer if data exists
+    // But renderProjects handles the data source.
+    // Let's just call renderProjects with the current filtered list?
+    // We don't have easy access to the current filtered list unless we store it.
+    // Let's trigger the filter function again to refresh the view.
+    filterProjects();
+  } else {
+    if (btn) btn.classList.remove('active');
+    // Remove heatmap
+    if (heatmapLayer && map && map.hasLayer(heatmapLayer)) map.removeLayer(heatmapLayer);
+    
+    // Restore previous view
+    if (map) {
+        if (isClusterView) {
+          map.addLayer(markerClusterGroup);
+        } else {
+          map.addLayer(markerLayer);
+        }
+    }
+  }
+}
+
+// --- 3D MODE TOGGLE ---
+let is3DMode = false;
+function toggle3DMode() {
+  is3DMode = !is3DMode;
+  const mapContainer = document.getElementById('map');
+  const btn = document.getElementById('btn-3d');
+  const vignette = document.getElementById('vignette');
+  
+  if (!mapContainer || !btn) return;
+  
+  if (is3DMode) {
+      mapContainer.classList.add('map-3d');
+      btn.classList.add('active');
+      if (vignette) vignette.classList.add('active');
+      // Set max zoom to 18 (standard max for most tiles) to prevent "Map data not available"
+      // Even though we are supersampling, we can't request tiles that don't exist.
+      map.setMaxZoom(18); 
+  } else {
+      mapContainer.classList.remove('map-3d');
+      btn.classList.remove('active');
+      if (vignette) vignette.classList.remove('active');
+      // Reset max zoom
+      map.setMaxZoom(18);
+  }
+  
+  // Force map resize to ensure tiles render correctly after transform
+  // We call it multiple times during transition to keep it updated if possible, 
+  // but mostly at the end.
+  setTimeout(() => {
+      map.invalidateSize();
+  }, 800);
+}
+
+// --- 1.5 ROAD LAYERS ---
+let mainRoadsLayer = null;
+let secondaryRoadsLayer = null;
+
+async function fetchAndDrawRoads() {
+  // Bounding box covering the North Coast project area
+  const bbox = "30.80,27.60,31.30,30.00"; 
+  const query = `
+    [out:json][timeout:25];
+    (
+      way["highway"~"motorway|trunk|primary"](${bbox});
+      way["highway"~"secondary|tertiary"](${bbox});
+    );
+    out body;
+    >;
+    out skel qt;
+  `;
+
+  try {
+    const response = await fetch("https://overpass-api.de/api/interpreter", {
+      method: "POST",
+      body: query
+    });
+    const data = await response.json();
+    
+    if (!window.osmtogeojson) {
+       console.error("osmtogeojson library not loaded");
+       return;
+    }
+    
+    const geojson = osmtogeojson(data);
+
+    // Filter features
+    const mainRoads = {
+      type: "FeatureCollection",
+      features: geojson.features.filter(f => 
+        f.properties.highway && ["motorway", "trunk", "primary", "motorway_link", "trunk_link", "primary_link"].includes(f.properties.highway)
+      )
+    };
+
+    const secondaryRoads = {
+      type: "FeatureCollection",
+      features: geojson.features.filter(f => 
+        f.properties.highway && ["secondary", "tertiary", "secondary_link", "tertiary_link"].includes(f.properties.highway)
+      )
+    };
+
+    // Get current colors - Premium purple theme
+    const computedStyle = getComputedStyle(document.documentElement);
+    const goldColor = computedStyle.getPropertyValue('--avaria-gold').trim() || '#667eea';
+    const redColor = computedStyle.getPropertyValue('--avaria-red').trim() || '#f093fb';
+
+    // Create Layers
+    if (mainRoadsLayer) map.removeLayer(mainRoadsLayer);
+    mainRoadsLayer = L.geoJSON(mainRoads, {
+      style: {
+        color: goldColor,
+        weight: 3,
+        opacity: 0.9,
+        lineCap: 'round'
+      },
+      interactive: false
+    }).addTo(map);
+
+    if (secondaryRoadsLayer) map.removeLayer(secondaryRoadsLayer);
+    secondaryRoadsLayer = L.geoJSON(secondaryRoads, {
+      style: {
+        color: redColor,
+        weight: 1.5,
+        opacity: 0.7,
+        lineCap: 'round'
+      },
+      interactive: false
+    }).addTo(map);
+    
+    // Ensure markers stay on top
+    if (typeof markerClusterGroup !== 'undefined') {
+      // markerClusterGroup doesn't have bringToFront, but we can try to bring the pane to front or rely on z-index
+      // However, Leaflet clusters are usually on the marker pane which is high up.
+      // If we really need to, we can iterate layers, but for clusters it's different.
+      // Let's just check if the group exists.
+      // Actually, markerClusterGroup is a LayerGroup, but it manages its own layers.
+      // The standard way to ensure z-index is usually sufficient.
+      // But let's keep the check consistent with the variable name change.
+    }
+
+  } catch (e) {
+    console.error("Error fetching roads:", e);
+  }
+}
+
+// Defer road loading to improve initial load performance
+const loadRoads = () => {
+  if (!window.roadsLoaded) {
+    window.roadsLoaded = true;
+    // Use requestIdleCallback if available for better performance
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(() => fetchAndDrawRoads());
+    } else {
+      setTimeout(fetchAndDrawRoads, 100);
+    }
+    
+    // Remove listeners
+    if (map) {
+      map.off('moveend', loadRoads);
+      map.off('zoomend', loadRoads);
+    }
+    document.removeEventListener('touchstart', loadRoads);
+    document.removeEventListener('click', loadRoads);
+  }
+};
+
+// Load on interaction
+map.on('moveend', loadRoads);
+map.on('zoomend', loadRoads);
+document.addEventListener('touchstart', loadRoads, { passive: true, once: true });
+document.addEventListener('mousemove', loadRoads, { passive: true, once: true });
+document.addEventListener('click', loadRoads, { passive: true, once: true });
+
+// Fallback: load after 5 seconds if no interaction
+setTimeout(loadRoads, 5000);
+
+// --- 2. DATASET (North Coast Projects) ---
+
+// --- UTILITY: Parse Data for Filtering & Enrich Missing Data ---
+function parseProjectData() {
+  if (typeof window.projects === 'undefined') return;
+
+  // Filter out projects with invalid coordinates
+  window.projects = window.projects.filter(p => {
+      const lat = parseFloat(p.lat);
+      const lng = parseFloat(p.lng);
+      return !isNaN(lat) && !isNaN(lng) && lat !== null && lng !== null;
+  });
+
+  window.projects.forEach(p => {
+    // Ensure coordinates are numbers
+    p.lat = parseFloat(p.lat);
+    p.lng = parseFloat(p.lng);
+
+    // Ensure type exists
+    if (!p.type) p.type = "residential";
+
+    // --- ENRICHMENT: Generate Missing Details ---
+    if (!window.projectDetails[p.name]) {
+        let defaultDetails = {
+            unitTypes: "Apartments, Villas",
+            areas: "100m - 300m",
+            paymentPlan: "10% Down Payment, Installments over 6 Years",
+            status: "Under Construction",
+            amenities: "Security, Green Spaces, Parking",
+            description: `A premium ${p.type || 'residential'} project by ${p.dev || 'Unknown'} located in ${p.zone}.`
+        };
+
+        // Zone-Specific Heuristics
+        const z = (p.zone || "").toLowerCase();
+        const t = (p.type || "").toLowerCase();
+
+        if (z.includes("north") || z.includes("sahel") || z.includes("ras") || z.includes("sidi") || z.includes("alamein") || z.includes("galala") || z.includes("sokhna")) {
+            defaultDetails.unitTypes = "Chalets, Villas, Twin Houses, Townhouses";
+            defaultDetails.areas = "70m - 400m";
+            defaultDetails.paymentPlan = "10% Down Payment, Installments over 8 Years";
+            defaultDetails.amenities = "Beach Access, Lagoons, Clubhouse, Swimming Pools, 5-Star Hotel";
+            if (t.includes("commercial")) {
+                defaultDetails.unitTypes = "Commercial Units, Retail, Clinics, Serviced Apartments";
+                defaultDetails.amenities = "Sea View, High Traffic Area, Parking";
+            }
+        } else if (z.includes("capital")) {
+            defaultDetails.unitTypes = "Apartments, Duplexes";
+            defaultDetails.paymentPlan = "10% Down Payment, Installments over 10 Years";
+            defaultDetails.amenities = "Green River View, Smart City Features, Underground Parking";
+            if (t.includes("commercial")) {
+                defaultDetails.unitTypes = "Commercial Units, Administrative Offices, Retail Shops, Medical Clinics";
+                defaultDetails.paymentPlan = "10% Down Payment, Installments over 8 Years";
+                defaultDetails.amenities = "Meeting Rooms, Sky Lounge, Plaza, High Speed Internet";
+            }
+        } else if (z.includes("cairo") || z.includes("october") || z.includes("zayed")) {
+            defaultDetails.unitTypes = "Apartments, Penthouses, Duplexes";
+            defaultDetails.paymentPlan = "10% Down Payment, Installments over 7 Years";
+            defaultDetails.amenities = "Clubhouse, Gym, Spa, Kids Area, Commercial Strip";
+            if (t.includes("commercial")) {
+                defaultDetails.unitTypes = "Commercial Units, Offices, Retail, Clinics";
+                defaultDetails.amenities = "Security, Parking, Central AC, Food Court";
+            }
+        }
+
+        // Developer Heuristics
+        const d = (p.dev || "").toLowerCase();
+        if (d.includes("emaar") || d.includes("ora") || d.includes("sodic") || d.includes("palm hills")) {
+            defaultDetails.paymentPlan = "5% Down Payment, Installments over 8 Years";
+            defaultDetails.amenities += ", Golf Course, International School";
+        }
+
+        window.projectDetails[p.name] = defaultDetails;
+    }
+
+    const details = window.projectDetails[p.name];
+    
+    // --- MOCK DATA GENERATION (1000x Intelligence) ---
+    // Assign Delivery Year (2020-2030) based on status
+    if (!p.deliveryYear) {
+        if (details && details.status) {
+            const s = details.status.toLowerCase();
+            if (s.includes('delivered') || s.includes('ready')) {
+                p.deliveryYear = Math.floor(Math.random() * (2024 - 2020 + 1)) + 2020; // 2020-2024
+            } else {
+                p.deliveryYear = Math.floor(Math.random() * (2030 - 2025 + 1)) + 2025; // 2025-2030
+            }
+        } else {
+            p.deliveryYear = 2026; // Default
+        }
+    }
+
+    // Assign Radar Chart Scores (1-10) - More differentiated algorithm
+    if (!p.radarScores) {
+        const zone = p.zone ? p.zone.toLowerCase() : "";
+        const dev = p.dev ? p.dev.toLowerCase() : "";
+        const nameHash = p.name.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+        
+        // Base scores with project-specific variance
+        const variance = (num) => Math.max(1, Math.min(10, num + ((nameHash % 5) - 2)));
+        
+        // Price Score (higher = more affordable) - inverse of luxury usually
+        let priceScore = 6;
+        if (zone.includes("october") || zone.includes("mostakbal")) priceScore = 8;
+        else if (zone.includes("new cairo") || zone.includes("capital")) priceScore = 6;
+        else if (zone.includes("sokhna")) priceScore = 5;
+        else if (zone.includes("gouna")) priceScore = 4;
+        else if (zone.includes("north") || zone.includes("sahel")) priceScore = 3;
+        
+        // Luxury Score
+        let luxuryScore = 5;
+        const premiumDevs = ["emaar", "ora", "sodic", "tatweer misr", "palm hills"];
+        const strongDevs = ["mountain view", "hassan allam", "orascom", "hyde park"];
+        if (premiumDevs.some(d => dev.includes(d))) luxuryScore = 10;
+        else if (strongDevs.some(d => dev.includes(d))) luxuryScore = 8;
+        else if (zone.includes("north") || zone.includes("gouna")) luxuryScore = 7;
+        
+        // Amenities Score
+        let amenitiesScore = 5;
+        const details = projectDetails[p.name];
+        if (details && details.amenities) {
+            const count = details.amenities.split(',').length;
+            if (count >= 12) amenitiesScore = 10;
+            else if (count >= 9) amenitiesScore = 8;
+            else if (count >= 6) amenitiesScore = 7;
+            else if (count >= 4) amenitiesScore = 6;
+        }
+        if (premiumDevs.some(d => dev.includes(d))) amenitiesScore = Math.min(10, amenitiesScore + 2);
+        
+        // Location Score (accessibility, demand)
+        let locationScore = 5;
+        if (zone.includes("ras el hekma") || zone.includes("alamein")) locationScore = 10;
+        else if (zone.includes("north coast") || zone.includes("sahel")) locationScore = 9;
+        else if (zone.includes("capital")) locationScore = 8;
+        else if (zone.includes("gouna")) locationScore = 8;
+        else if (zone.includes("new cairo")) locationScore = 7;
+        else if (zone.includes("sokhna") || zone.includes("galala")) locationScore = 7;
+        else if (zone.includes("zayed")) locationScore = 6;
+        else if (zone.includes("october")) locationScore = 5;
+        
+        // Delivery Speed Score
+        let speedScore = 5;
+        const deliveryYear = p.deliveryYear || 2026;
+        const yearsToDelivery = deliveryYear - new Date().getFullYear();
+        if (yearsToDelivery <= 0) speedScore = 10;
+        else if (yearsToDelivery === 1) speedScore = 8;
+        else if (yearsToDelivery === 2) speedScore = 6;
+        else if (yearsToDelivery === 3) speedScore = 5;
+        else if (yearsToDelivery === 4) speedScore = 4;
+        else speedScore = 3;
+        
+        p.radarScores = {
+            price: variance(priceScore),
+            luxury: variance(luxuryScore),
+            amenities: variance(amenitiesScore),
+            location: variance(locationScore),
+            speed: variance(speedScore)
+        };
+    }
+    // -------------------------------------------------
+
+    if (details) {
+      // Parse Payment Plan
+      if (details.paymentPlan) {
+        // Max Installment Years (e.g., "over 8 years", "8 Years")
+        const yearsMatch = details.paymentPlan.match(/over\s+(\d+)\s+years/i) || details.paymentPlan.match(/(\d+)\s*Years/i);
+        if (yearsMatch) {
+          p.maxInstallmentYears = parseInt(yearsMatch[1], 10);
+        }
+
+        // Min Down Payment (e.g., "5% Down Payment")
+        const dpMatch = details.paymentPlan.match(/(\d+(?:\.\d+)?)%\s*Down\s*Payment/i);
+        if (dpMatch) {
+          p.minDownPayment = parseFloat(dpMatch[1]);
+        }
+      }
+
+      // Parse Areas (e.g., "70m - 250m")
+      if (details.areas) {
+        const areaMatch = details.areas.match(/(\d+)\s*m/i);
+        if (areaMatch) {
+          p.minArea = parseInt(areaMatch[1], 10);
+        }
+      }
+    }
+  });
+
+}
+
+// Execute parsing immediately
+// parseProjectData();
+
+// --- COMPARISON LOGIC ---
+let compareList = [];
+
+function addToCompare(projectName) {
+  if (compareList.length >= 3) {
+    alert("You can only compare up to 3 projects.");
+    return;
+  }
+  if (compareList.find(p => p.name === projectName)) {
+    alert("Project already in comparison list.");
+    return;
+  }
+  
+  const project = projects.find(p => p.name === projectName);
+  if (project) {
+    compareList.push(project);
+    updateComparisonDrawer();
+  }
+}
+
+function removeFromCompare(projectName) {
+  compareList = compareList.filter(p => p.name !== projectName);
+  updateComparisonDrawer();
+}
+
+function updateComparisonDrawer() {
+  const drawer = document.getElementById('comparison-drawer');
+  const itemsContainer = document.getElementById('drawer-items');
+  const actionBtn = document.getElementById('compare-action-btn');
+  
+  if (!itemsContainer) return;
+  
+  itemsContainer.innerHTML = '';
+  
+  compareList.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'comparison-card';
+    card.innerHTML = `
+      <span>${p.name}</span>
+      <button class="remove-btn" onclick="removeFromCompare('${p.name}')">×</button>
+    `;
+    itemsContainer.appendChild(card);
+  });
+  
+  if (compareList.length > 0) {
+    if (drawer) drawer.classList.add('active');
+    if (actionBtn) actionBtn.disabled = false;
+  } else {
+    if (drawer) drawer.classList.remove('active');
+    if (actionBtn) actionBtn.disabled = true;
+  }
+}
+
+function openComparisonModal() {
+  const modal = document.getElementById('comparisonModal');
+  const table = document.getElementById('comparison-table');
+  
+  if (!modal || !table) return;
+  
+  // Build Table
+  let html = `
+    <thead>
+      <tr>
+        <th>Feature</th>
+        ${compareList.map(p => `<th>${p.name}</th>`).join('')}
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Developer</td>
+        ${compareList.map(p => `<td>${p.dev || '-'}</td>`).join('')}
+      </tr>
+      <tr>
+        <td>Location</td>
+        ${compareList.map(p => `<td>${p.zone || '-'}</td>`).join('')}
+      </tr>
+      <tr>
+        <td>Unit Types</td>
+        ${compareList.map(p => `<td>${projectDetails[p.name]?.unitTypes || '-'}</td>`).join('')}
+      </tr>
+      <tr>
+        <td>Min Area</td>
+        ${compareList.map(p => `<td>${p.minArea ? p.minArea + ' m²' : '-'}</td>`).join('')}
+      </tr>
+      <tr>
+        <td>Down Payment</td>
+        ${compareList.map(p => `<td>${p.minDownPayment ? p.minDownPayment + '%' : '-'}</td>`).join('')}
+      </tr>
+      <tr>
+        <td>Installments</td>
+        ${compareList.map(p => `<td>${p.maxInstallmentYears ? p.maxInstallmentYears + ' Years' : '-'}</td>`).join('')}
+      </tr>
+    </tbody>
+  `;
+  
+  table.innerHTML = html;
+  
+  modal.classList.add('active');
+  
+  const modalContent = modal.querySelector('.modal-content');
+  if (modalContent && typeof gsap !== 'undefined') {
+      gsap.fromTo(modalContent, 
+        { y: 50, opacity: 0 }, 
+        { y: 0, opacity: 1, duration: 0.4, ease: "power3.out" }
+      );
+  }
+}
+
+function closeComparisonModal() {
+  const modal = document.getElementById('comparisonModal');
+  if (modal) modal.classList.remove('active');
+}
+
+// --- 3. FUSE.JS SETUP & WORKER ---
+const fuseOptions = {
+  keys: ['name', 'dev', 'zone'],
+  threshold: 0.3,
+  distance: 100
+};
+let fuse; // Kept for fallback or synchronous needs if any
+let searchWorker;
+
+function initSearchWorker() {
+    if (window.Worker) {
+        try {
+            searchWorker = new Worker('search.worker.js');
+            
+            searchWorker.onmessage = function(e) {
+                const { type, results, filters } = e.data;
+                
+                if (type === 'INIT_COMPLETE') {
+                    console.log('Search Worker Initialized');
+                } else if (type === 'SEARCH_RESULTS') {
+                    // Clear the timeout since we got a response
+                    if (window._searchWorkerTimeout) {
+                        clearTimeout(window._searchWorkerTimeout);
+                        window._searchWorkerTimeout = null;
+                    }
+                    
+                    console.log('Search Results received:', results ? results.length : 0, 'items');
+                    // Render results from worker
+                    let finalResults = results || [];
+                    
+                    // Apply active category filter (buttons)
+                    if (typeof activeFilter !== 'undefined' && activeFilter !== 'all') {
+                        finalResults = finalResults.filter(p => {
+                            const details = window.projectDetails[p.name] || {};
+                            const status = (details.status || "").toLowerCase();
+                            const type = (details.unitTypes || "").toLowerCase();
+                            
+                            if (activeFilter === 'delivered') return status.includes('delivered') || status.includes('ready');
+                            if (activeFilter === 'construction') return status.includes('construction');
+                            if (activeFilter === 'chalets') return type.includes('chalets');
+                            if (activeFilter === 'villas') return type.includes('villas');
+                            return true;
+                        });
+                    }
+
+                    try {
+                        renderProjects(finalResults);
+                    } catch (renderErr) {
+                        console.error("Render Projects Error:", renderErr);
+                    }
+                } else if (type === 'DETECTED_FILTERS') {
+                    // Update UI feedback
+                    const feedbackContainer = document.getElementById("ai-feedback");
+                    if (feedbackContainer) {
+                        feedbackContainer.innerHTML = "";
+                        filters.forEach(filter => {
+                            const tag = document.createElement("span");
+                            tag.innerText = filter;
+                            feedbackContainer.appendChild(tag);
+                        });
+                    }
+                }
+            };
+            
+            searchWorker.onerror = function(err) {
+                console.error("Worker Error:", err);
+                searchWorker = null; // Fallback to main thread
+            };
+        } catch (e) {
+            console.error("Failed to create worker:", e);
+            searchWorker = null;
+        }
+    }
+}
+
+// Initialize Worker
+initSearchWorker();
+
+// --- 4. MAP LAYERS ---
+// layers object is defined above in initialization section
+
+function switchMapLayer(layerName) {
+  // Remove all layers
+  Object.values(layers).forEach(layer => {
+    if (map && map.hasLayer(layer)) map.removeLayer(layer);
+  });
+  
+  // Add selected layer
+  if (layers[layerName] && map) {
+      layers[layerName].addTo(map);
+  }
+
+  // Update buttons
+  document.querySelectorAll('.map-btn').forEach(btn => btn.classList.remove('active'));
+  const activeBtn = document.getElementById(`btn-${layerName}`);
+  if (activeBtn) activeBtn.classList.add('active');
+}
+
+// --- 5. RENDER & SEARCH LOGIC ---
+const listContainer = document.getElementById("list-container");
+const searchInput = document.getElementById("searchInput");
+const filterBtns = document.querySelectorAll(".filter-btn");
+let activeFilter = 'all';
+// markerLayer is already defined globally
+let sidebarAutoCollapsed = false;
+
+function toggleMapView() {
+  const btn = document.getElementById('view-toggle-btn');
+  if (!map) return;
+  
+  if (isClusterView) {
+    // Switch to Normal View
+    if (map.hasLayer(markerClusterGroup)) map.removeLayer(markerClusterGroup);
+    if (!map.hasLayer(markerLayer)) map.addLayer(markerLayer);
+    if (btn) {
+        btn.innerText = "Normal View";
+        btn.classList.remove('active');
+    }
+    isClusterView = false;
+  } else {
+    // Switch to Cluster View
+    if (map.hasLayer(markerLayer)) map.removeLayer(markerLayer);
+    if (!map.hasLayer(markerClusterGroup)) map.addLayer(markerClusterGroup);
+    if (btn) {
+        btn.innerText = "Cluster View";
+        btn.classList.add('active');
+    }
+    isClusterView = true;
+  }
+}
+
+// --- NEURAL VIEW FEATURE ---
+const NeuralView = {
+  canvas: null,
+  ctx: null,
+  active: false,
+  animationFrame: null,
+  sourceProject: null,
+  targetProjects: [],
+  
+  init: function(mapInstance) {
+      this.canvas = document.createElement('canvas');
+      this.canvas.id = 'neural-canvas';
+      this.canvas.style.position = 'absolute';
+      this.canvas.style.top = '0';
+      this.canvas.style.left = '0';
+      this.canvas.style.width = '100%';
+      this.canvas.style.height = '100%';
+      this.canvas.style.pointerEvents = 'none';
+      this.canvas.style.zIndex = '500'; // Above map (z-index 1) but below UI
+      
+      const mapContainer = mapInstance.getContainer();
+      mapContainer.appendChild(this.canvas);
+      
+      this.ctx = this.canvas.getContext('2d');
+      this.resize();
+      
+      window.addEventListener('resize', () => this.resize());
+      mapInstance.on('move', () => this.update());
+      mapInstance.on('zoom', () => this.update());
+  },
+  
+  resize: function() {
+      if (!this.canvas) return;
+      this.canvas.width = this.canvas.offsetWidth;
+      this.canvas.height = this.canvas.offsetHeight;
+      if (this.active) this.update();
+  },
+  
+  calculateSimilarity: function(source) {
+      if (!source) return [];
+      
+      const sourceDetails = projectDetails[source.name] || {};
+      const sourceUnits = (sourceDetails.unitTypes || "").toLowerCase().split(',').map(s => s.trim());
+      
+      return projects
+          .filter(p => p.name !== source.name)
+          .map(p => {
+              let score = 0;
+              
+              // Zone Similarity
+              if (p.zone === source.zone) score += 5;
+              
+              // Unit Type Similarity
+              const pDetails = projectDetails[p.name] || {};
+              const pUnits = (pDetails.unitTypes || "").toLowerCase();
+              
+              sourceUnits.forEach(u => {
+                  if (pUnits.includes(u)) score += 3;
+              });
+              
+              return { project: p, score: score };
+          })
+          .sort((a, b) => b.score - a.score)
+          .slice(0, 3)
+          .map(item => item.project);
+  },
+  
+  activate: function(project) {
+      this.sourceProject = project;
+      this.targetProjects = this.calculateSimilarity(project);
+      this.active = true;
+      this.animate();
+  },
+  
+  deactivate: function() {
+      this.active = false;
+      this.sourceProject = null;
+      this.targetProjects = [];
+      if (this.animationFrame) cancelAnimationFrame(this.animationFrame);
+      if (this.ctx) this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+  },
+  
+  update: function() {
+      if (!this.active) return;
+      // Just trigger a redraw in the animation loop
+  },
+
+  hexToRgba: function(hex, alpha) {
+      let r = 0, g = 0, b = 0;
+      hex = hex.trim();
+      if (hex.length === 4) {
+          r = parseInt(hex[1] + hex[1], 16);
+          g = parseInt(hex[2] + hex[2], 16);
+          b = parseInt(hex[3] + hex[3], 16);
+      } else if (hex.length === 7) {
+          r = parseInt(hex.slice(1, 3), 16);
+          g = parseInt(hex.slice(3, 5), 16);
+          b = parseInt(hex.slice(5, 7), 16);
+      }
+      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  },
+  
+  animate: function() {
+      if (!this.active) return;
+      
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      
+      if (!this.sourceProject || this.targetProjects.length === 0) return;
+      
+      const sourcePoint = map.latLngToContainerPoint([this.sourceProject.lat, this.sourceProject.lng]);
+      
+      const time = Date.now() / 1000;
+
+      // Get theme colors - Premium purple theme
+      const styles = getComputedStyle(document.documentElement);
+      const themeColor = styles.getPropertyValue('--avaria-gold').trim() || '#667eea';
+      
+      this.targetProjects.forEach((target, index) => {
+          const targetPoint = map.latLngToContainerPoint([target.lat, target.lng]);
+          
+          // Draw Line
+          this.ctx.beginPath();
+          this.ctx.moveTo(sourcePoint.x, sourcePoint.y);
+          this.ctx.lineTo(targetPoint.x, targetPoint.y);
+          
+          // Pulse Effect
+          const alpha = (Math.sin(time * 3 + index) + 1) / 2 * 0.6 + 0.2;
+          this.ctx.strokeStyle = this.hexToRgba(themeColor, alpha);
+          this.ctx.lineWidth = 2;
+          this.ctx.shadowBlur = 10;
+          this.ctx.shadowColor = themeColor;
+          this.ctx.stroke();
+          
+          // Draw Glowing Dot at Target
+          this.ctx.beginPath();
+          this.ctx.arc(targetPoint.x, targetPoint.y, 4, 0, Math.PI * 2);
+          this.ctx.fillStyle = themeColor;
+          this.ctx.fill();
+      });
+      
+      this.animationFrame = requestAnimationFrame(() => this.animate());
+  }
+};
+
+function updateBrowseTelemetry(visibleCount, totalCount = (window.projects || []).length) {
+  const countEl = document.getElementById('browseProjectCount');
+  const routeEl = document.getElementById('browseRouteContext');
+  const tourEl = document.getElementById('browseTourContext');
+
+  if (countEl && Number.isFinite(visibleCount)) {
+      countEl.dataset.visible = `${visibleCount}`;
+      countEl.dataset.total = `${totalCount}`;
+  }
+
+  const resolvedVisible = Number(countEl?.dataset.visible || 0);
+  const resolvedTotal = Number(countEl?.dataset.total || totalCount || 0);
+
+  if (countEl) {
+      countEl.textContent = resolvedTotal > 0 && resolvedVisible !== resolvedTotal
+          ? `${resolvedVisible} of ${resolvedTotal} projects`
+          : `${resolvedVisible || resolvedTotal} curated projects`;
+  }
+
+  const planner = window.RoutePlanner;
+  const selectedCount = planner
+      ? [planner.state.origin, ...planner.state.stops, planner.state.destination].filter(Boolean).length
+      : 0;
+
+  if (routeEl) {
+      if (planner?.state?.activeRoute?.primaryRoute) {
+          routeEl.textContent = `${planner.formatDistance(planner.state.activeRoute.primaryRoute.distance)} route ready`;
+      } else if (selectedCount > 0) {
+          routeEl.textContent = `${selectedCount} route points armed`;
+      } else {
+          routeEl.textContent = 'Route idle';
+      }
+  }
+
+  if (tourEl) {
+      if (planner?.state?.tourActive) {
+          tourEl.textContent = planner.state.tourNarrative || `${String(planner.state.tourMode || 'tour').replace(/^./, letter => letter.toUpperCase())} tour live`;
+      } else {
+          tourEl.textContent = 'Tour idle';
+      }
+  }
+}
+
+async function renderProjects(projectList) {
+  // Validate input
+  if (!Array.isArray(projectList)) {
+      console.warn('renderProjects called with invalid input');
+      projectList = [];
+  }
+  
+  console.log(`Rendering ${projectList.length} projects`);
+  
+  // Clear the markers tracking array for label toggle
+  allMarkersWithTooltips = [];
+  
+  // Cache DOM references
+  const listContainerEl = listContainer || document.getElementById("list-container");
+  if (!listContainerEl) {
+      console.warn('List container not found');
+      return;
+  }
+  
+  // Batch DOM operations
+  listContainerEl.innerHTML = "";
+    const totalProjects = window.projects ? window.projects.length : projectList.length;
+    updateBrowseTelemetry(projectList.length, totalProjects);
+  
+  // Clear marker layers
+  if (markerClusterGroup) markerClusterGroup.clearLayers();
+  if (markerLayer) markerLayer.clearLayers();
+  
+  // Handle Heatmap
+  if (heatmapLayer && map) {
+      map.removeLayer(heatmapLayer);
+      heatmapLayer = null;
+  }
+
+  if (isHeatmapMode && map) {
+      const styles = getComputedStyle(document.documentElement);
+      const gold = styles.getPropertyValue('--avaria-gold').trim() || '#667eea';
+      const red = styles.getPropertyValue('--avaria-red').trim() || '#f093fb';
+
+      const heatPoints = projectList.map(p => [p.lat, p.lng, 1]);
+      heatmapLayer = L.heatLayer(heatPoints, {
+          radius: 25,
+          blur: 15,
+          maxZoom: 10,
+          gradient: { 0.4: 'blue', 0.65: gold, 1.0: red }
+      }).addTo(map);
+  }
+
+  // Handle empty results - show "No results" message
+  if (projectList.length === 0) {
+      const noResults = document.createElement("div");
+      noResults.className = "no-results";
+      noResults.style.cssText = "text-align: center; padding: 40px 20px; color: var(--avaria-text-muted); font-size: 0.95rem;";
+      noResults.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.5; margin-bottom: 15px;">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              <line x1="8" y1="11" x2="14" y2="11"></line>
+          </svg>
+          <div style="font-weight: 600; margin-bottom: 5px;">No projects found</div>
+          <div style="font-size: 0.85rem;">Try adjusting your search or filters</div>
+      `;
+      listContainerEl.appendChild(noResults);
+      return;
+  }
+
+  // Group by Zone using reduce for better performance
+  const zones = projectList.reduce((acc, p) => {
+      const zone = p.zone || "Other";
+      if (!acc[zone]) acc[zone] = [];
+      acc[zone].push(p);
+      return acc;
+  }, {});
+
+  // Sort Zones
+  const sortedZoneKeys = Object.keys(zones).sort((a, b) => {
+      const order = ["North Coast", "Sokhna", "Gouna", "Somabay", "New Capital", "New Cairo", "October", "Zayed", "Shorouk"];
+      const idxA = order.indexOf(a);
+      const idxB = order.indexOf(b);
+      if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+      if (idxA !== -1) return -1;
+      if (idxB !== -1) return 1;
+      return a.localeCompare(b);
+  });
+
+  const allClusterMarkers = [];
+  const allStandardMarkers = [];
+  const mainFragment = document.createDocumentFragment();
+
+  for (const zone of sortedZoneKeys) {
+      // Removed await requestAnimationFrame to ensure synchronous full render
+      // await new Promise(resolve => requestAnimationFrame(resolve));
+
+    const header = document.createElement("div");
+    header.className = "zone-header";
+    const zoneCount = zones[zone].length;
+    header.innerHTML = `<span class="zone-label">${zone}</span><span class="zone-header-meta"><span class="zone-count">${zoneCount}</span><span class="arrow"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></span>`;
+      
+      const content = document.createElement("div");
+      content.className = "zone-content";
+      
+      const totalProjects = window.projects ? window.projects.length : 0;
+      const isFiltered = projectList.length < totalProjects;
+      // Expand major zones by default to avoid confusion
+      const majorZones = ["North Coast", "New Cairo", "New Capital", "6th of October", "Ain Sokhna", "El Gouna"];
+      const isCollapsed = !isFiltered && !majorZones.includes(zone);
+      
+      if (isCollapsed) {
+          header.classList.add("collapsed");
+          content.style.height = "0";
+      } else {
+          content.style.height = "auto";
+      }
+
+      header.onclick = (e) => {
+          if (e) e.stopPropagation();
+          const isClosed = header.classList.contains("collapsed");
+          if (isClosed) {
+              header.classList.remove("collapsed");
+              gsap.to(content, { height: "auto", duration: 0.4, ease: "power2.out" });
+          } else {
+              header.classList.add("collapsed");
+              gsap.to(content, { height: 0, duration: 0.4, ease: "power2.in" });
+          }
+      };
+
+      mainFragment.appendChild(header);
+      mainFragment.appendChild(content);
+
+      const zoneProjects = zones[zone];
+      
+      // Simplified rendering (Synchronous) to debug missing projects
+      const fragment = document.createDocumentFragment();
+      
+      zoneProjects.forEach(p => {
+            try {
+              // Validate Coordinates
+              if (isNaN(p.lat) || isNaN(p.lng) || p.lat === 0 || p.lng === 0) {
+                  // console.warn(`Skipping project ${p.name} due to invalid coordinates: ${p.lat}, ${p.lng}`);
+                  return;
+              }
+
+              // List Item
+                            const item = document.createElement("div");
+                            item.className = "list-item";
+                            item.dataset.projectName = p.name;
+              const isLongName = (p.name || "").length > 18; 
+              const nameClass = isLongName ? "long-text" : "";
+              const devName = p.dev || "";
+              const isLongDev = devName.length > 15;
+              const devClass = isLongDev ? "dev-name long" : "dev-name";
+                            const routePlanner = window.RoutePlanner;
+                            const routeMeta = routePlanner && typeof routePlanner.getProjectRouteMeta === 'function'
+                                    ? routePlanner.getProjectRouteMeta(p.name)
+                                    : { classes: [], badges: [] };
+
+                            if (routeMeta.classes?.length) {
+                                    item.classList.add(...routeMeta.classes);
+                            }
+
+                            const formatPrice = (price) => {
+                                if (!price) return '';
+                                if (price >= 1000000) return `${(price / 1000000).toFixed(1)}M`;
+                                if (price >= 1000) return `${(price / 1000).toFixed(0)}K`;
+                                return `${price}`;
+                            };
+                            const titleCase = (value) => String(value || '').replace(/[-_]/g, ' ').replace(/\b\w/g, letter => letter.toUpperCase());
+                            const unitPreview = Array.isArray(p.unitTypes) && p.unitTypes.length
+                                ? p.unitTypes.slice(0, 2).join(' / ')
+                                : titleCase(p.type || 'Project');
+                            const sizePreview = Number.isFinite(p.areaMin)
+                                ? `${p.areaMin}${Number.isFinite(p.areaMax) ? `-${p.areaMax}` : '+'} sqm`
+                                : '';
+                            const financeLine = p.priceMin
+                                ? `From ${formatPrice(p.priceMin)} EGP`
+                                : 'Pricing on request';
+                            const planLine = [
+                                Number.isFinite(p.downPayment) ? `${p.downPayment}% DP` : '',
+                                Number.isFinite(p.installmentYears) && p.installmentYears > 0 ? `${p.installmentYears}Y plan` : sizePreview
+                            ].filter(Boolean).join(' • ') || 'Tap to inspect payment options';
+                            const escapedProjectName = p.name.replace(/'/g, "\\'");
+                            const badgesHtml = (routeMeta.badges || []).map(badge => `<span class="list-item-badge">${badge}</span>`).join('');
+                            item.innerHTML = `
+                                <div class="list-item-top">
+                                    <span class="list-item-headline ${nameClass}">${p.name}</span>
+                                    <span class="list-item-badges">${badgesHtml}</span>
+                                </div>
+                                <span class="${devClass}">${devName || p.zone || 'Developer pending'}</span>
+                                <div class="list-item-meta">
+                                    <span class="list-item-chip emphasis">${p.zone || 'Egypt'}</span>
+                                    <span class="list-item-chip">${titleCase(p.status || 'Available')}</span>
+                                    <span class="list-item-chip subtle">${unitPreview}</span>
+                                </div>
+                                <div class="list-item-finance">
+                                    <strong class="list-item-price">${financeLine}</strong>
+                                    <span class="list-item-plan">${planLine}</span>
+                                </div>
+                                <div class="list-item-actions">
+                                    <button type="button" class="list-action-btn" onclick="event.stopPropagation(); routeProjectAction('${escapedProjectName}', 'origin')">Start</button>
+                                    <button type="button" class="list-action-btn" onclick="event.stopPropagation(); routeProjectAction('${escapedProjectName}', 'stop')">Stop</button>
+                                    <button type="button" class="list-action-btn" onclick="event.stopPropagation(); routeProjectAction('${escapedProjectName}', 'destination')">Finish</button>
+                                </div>
+                            `;
+              item.onclick = () => focusOnProject(p);
+              fragment.appendChild(item);
+
+              // Marker Logic
+              const isLandmark = p.type === "landmark";
+              let baseClass = isLandmark ? "custom-marker landmark" : "custom-marker";
+              const z = (p.zone || "").toLowerCase();
+              const t = (p.type || "").toLowerCase();
+              if (z.includes("north coast") || z.includes("sokhna") || z.includes("galala") || z.includes("ras")) {
+                  baseClass += " coastal";
+              } else if (t.includes("commercial") || t.includes("mall") || t.includes("office") || t.includes("admin")) {
+                  baseClass += " commercial";
+              } else {
+                  if (!isLandmark) baseClass += " residential";
+              }
+
+              const iconSize = isLandmark ? [16, 16] : [12, 12];
+              let inlineStyle = "";
+              if (p.tempColor) {
+                  inlineStyle = `background-color: ${p.tempColor} !important; box-shadow: 0 0 10px ${p.tempColor} !important; border-color: #fff;`;
+              }
+              const markerHtml = `<div class="${baseClass}" style="${inlineStyle} width:100%; height:100%;"></div>`;
+
+              const marker = L.marker([p.lat, p.lng], {
+                icon: L.divIcon({
+                  className: '',
+                  html: markerHtml,
+                  iconSize: iconSize,
+                  iconAnchor: [6, 6]
+                })
+              });
+              
+              const standardMarker = L.marker([p.lat, p.lng], {
+                icon: L.divIcon({
+                  className: '',
+                  html: markerHtml,
+                  iconSize: iconSize,
+                  iconAnchor: [6, 6]
+                })
+              });
+
+              // Popups and Events
+              const waLink = getWhatsAppLink(p);
+              const isFav = isFavorite(p.name);
+              const heartClass = isFav ? "fas" : "far";
+              const heartColor = isFav ? "var(--avaria-red)" : "var(--avaria-gold)";
+              
+              const priceDisplay = p.priceMin ? `
+                <div class="popup-price">
+                  <i class="fas fa-tag"></i> ${i18n.currentLang === 'ar' ? 'يبدأ من' : 'From'} <strong>${formatPrice(p.priceMin)} EGP</strong>
+                </div>` : '';
+              
+              // Payment plan display
+              const paymentDisplay = p.paymentPlan ? `
+                <div class="popup-payment">
+                  <i class="fas fa-credit-card"></i> ${p.paymentPlan}
+                </div>` : '';
+              
+                            const popupContent = `
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <div class="popup-title" style="margin-bottom: 0;">${p.name}</div>
+                                    <button class="fav-btn" data-project="${p.name}" onclick="toggleFavorite('${escapedProjectName}')" style="background: none; border: none; cursor: pointer; font-size: 1.2rem;">
+                      <i class="${heartClass} fa-heart" style="color: ${heartColor};"></i>
+                  </button>
+                </div>
+                <div class="popup-dev">${p.dev}</div>
+                ${priceDisplay}
+                ${paymentDisplay}
+                                <button onclick="addToCompare('${escapedProjectName}')" class="popup-btn">Add to Compare</button>
+                                <div class="route-popup-actions">
+                                    <button onclick="routeProjectAction('${escapedProjectName}', 'origin')" class="popup-route-btn">Start</button>
+                                    <button onclick="routeProjectAction('${escapedProjectName}', 'destination')" class="popup-route-btn">Destination</button>
+                                    <button onclick="routeProjectAction('${escapedProjectName}', 'stop')" class="popup-route-btn">Stop</button>
+                                </div>
+                <a href="${waLink}" target="_blank" class="whatsapp-btn" style="text-decoration: none;">
+                  <i class="fab fa-whatsapp"></i> WhatsApp
+                </a>
+              `;
+
+              marker.bindPopup(popupContent, { 
+                  closeOnClick: false,
+                  autoClose: false 
+              });
+              standardMarker.bindPopup(popupContent, { 
+                  closeOnClick: false,
+                  autoClose: false 
+              });
+
+              const tooltipOptions = {
+                  direction: 'top',
+                  offset: [0, -10],
+                  className: 'custom-tooltip',
+                  opacity: 0.9,
+                  permanent: isLabelsAlwaysVisible
+              };
+              marker.bindTooltip(p.name, tooltipOptions);
+              standardMarker.bindTooltip(p.name, tooltipOptions);
+              
+              const clickHandler = () => {
+                  focusOnProject(p);
+              };
+              marker.on('click', clickHandler);
+              standardMarker.on('click', clickHandler);
+
+              // Hover for 3 seconds to show popup with options
+              let hoverTimeout = null;
+              let closeTimeout = null;
+              let isPopupHovered = false;
+              
+              const setupPopupHoverListeners = (targetMarker) => {
+                  targetMarker.on('popupopen', (e) => {
+                      const popupEl = e.popup.getElement();
+                      if (popupEl) {
+                          popupEl.addEventListener('mouseenter', () => {
+                              isPopupHovered = true;
+                              if (closeTimeout) {
+                                  clearTimeout(closeTimeout);
+                                  closeTimeout = null;
+                              }
+                          });
+                          popupEl.addEventListener('mouseleave', () => {
+                              isPopupHovered = false;
+                              closeTimeout = setTimeout(() => {
+                                  if (!isPopupHovered) {
+                                      targetMarker.closePopup();
+                                  }
+                              }, 300);
+                          });
+                      }
+                  });
+              };
+              
+              setupPopupHoverListeners(marker);
+              setupPopupHoverListeners(standardMarker);
+              
+              const hoverHandler = (e) => {
+                  NeuralView.activate(p);
+                  // Cancel any pending close
+                  if (closeTimeout) {
+                      clearTimeout(closeTimeout);
+                      closeTimeout = null;
+                  }
+                  // Start 1.3-second timer to show popup
+                  if (!hoverTimeout) {
+                      hoverTimeout = setTimeout(() => {
+                          e.target.openPopup();
+                          hoverTimeout = null;
+                      }, 1300);
+                  }
+              };
+              
+              const outHandler = (e) => {
+                  NeuralView.deactivate();
+                  // Cancel timer if mouse leaves before 1.3 seconds
+                  if (hoverTimeout) {
+                      clearTimeout(hoverTimeout);
+                      hoverTimeout = null;
+                  }
+                  // Delay popup close to allow moving to popup
+                  closeTimeout = setTimeout(() => {
+                      if (!isPopupHovered) {
+                          e.target.closePopup();
+                      }
+                  }, 300);
+              };
+              
+              marker.on('mouseover', hoverHandler);
+              marker.on('mouseout', outHandler);
+              standardMarker.on('mouseover', hoverHandler);
+              standardMarker.on('mouseout', outHandler);
+              
+              p.clusterMarker = marker;
+              p.normalMarker = standardMarker;
+              p.marker = marker;
+
+              allClusterMarkers.push(marker);
+              allStandardMarkers.push(standardMarker);
+              
+              // Track markers for quick label toggle (only markers with tooltips)
+              allMarkersWithTooltips.push(marker, standardMarker);
+
+              if (p.type === "landmark") {
+                  const labelIcon = L.divIcon({
+                      className: "landmark-label",
+                      html: p.name,
+                      iconSize: [120, 20],
+                      iconAnchor: [60, -10],
+                  });
+                  const labelMarker = L.marker([p.lat, p.lng], { icon: labelIcon });
+                  const stdLabelMarker = L.marker([p.lat, p.lng], { icon: labelIcon });
+                  allClusterMarkers.push(labelMarker);
+                  allStandardMarkers.push(stdLabelMarker);
+              }
+            } catch (err) {
+                console.error(`Error rendering project ${p.name}:`, err);
+            }
+      });
+      
+      content.appendChild(fragment);
+  }
+  
+  listContainerEl.appendChild(mainFragment);
+  
+  // Ensure layers are cleared before adding new ones
+  markerClusterGroup.clearLayers();
+  markerLayer.clearLayers();
+
+  markerClusterGroup.addLayers(allClusterMarkers);
+  allStandardMarkers.forEach(m => m.addTo(markerLayer));
+  
+  if (isHeatmapMode) {
+      if (map.hasLayer(markerClusterGroup)) map.removeLayer(markerClusterGroup);
+      if (map.hasLayer(markerLayer)) map.removeLayer(markerLayer);
+  } else {
+      if (isClusterView) {
+          if (!map.hasLayer(markerClusterGroup)) map.addLayer(markerClusterGroup);
+          if (map.hasLayer(markerLayer)) map.removeLayer(markerLayer);
+      } else {
+          if (!map.hasLayer(markerLayer)) map.addLayer(markerLayer);
+          if (map.hasLayer(markerClusterGroup)) map.removeLayer(markerClusterGroup);
+      }
+  }
+}
+
+// --- CINEMATIC TOUR ---
+let tourInterval;
+let isTouring = false;
+const featuredProjects = [
+  "Marassi", 
+  "Silversands", 
+  "Il Monte Galala", 
+  "Badya", 
+  "Hacienda Bay" 
+];
+
+function startTour() {
+  if (isTouring) return;
+  isTouring = true;
+  const playBtn = document.getElementById("btn-play-tour");
+  const stopBtn = document.getElementById("btn-stop-tour");
+  if (playBtn) playBtn.style.display = "none";
+  if (stopBtn) stopBtn.style.display = "flex";
+  
+  let index = 0;
+  
+  const visitNext = () => {
+      if (!isTouring) return;
+      
+      if (index >= featuredProjects.length) {
+          stopTour();
+          return;
+      }
+      
+      const pName = featuredProjects[index];
+      const p = projects.find(proj => proj.name === pName);
+      
+      if (p) {
+          // Close any open modal/popup first
+          closeModal();
+          map.closePopup();
+
+          // Fly to project
+          map.flyTo([p.lat, p.lng], 15, {
+              animate: true,
+              duration: 4, // Slow, cinematic flight
+              easeLinearity: 0.1
+          });
+          
+          // Wait for flight to finish, then reveal the project with the lightweight popup
+          setTimeout(() => {
+              if (!isTouring) return;
+              
+              openProjectHover(p);
+              
+              // Wait briefly on the current stop, then move to the next reveal
+              tourInterval = setTimeout(() => {
+                  if (!isTouring) return;
+                  map.closePopup();
+                  index++;
+                  visitNext();
+              }, 4000); 
+              
+          }, 4200); // Wait 4.2s (flight duration + buffer)
+      } else {
+          // Skip if project not found
+          index++;
+          visitNext();
+      }
+  };
+  
+  visitNext();
+}
+
+function stopTour() {
+  isTouring = false;
+  clearTimeout(tourInterval);
+  const playBtn = document.getElementById("btn-play-tour");
+  const stopBtn = document.getElementById("btn-stop-tour");
+  if (playBtn) playBtn.style.display = "flex";
+  if (stopBtn) stopBtn.style.display = "none";
+  if (map) map.stop(); // Stop animation
+    if (map) map.closePopup();
+  closeModal();
+  if (map) map.closePopup();
+}
+
+// --- AI CONCIERGE SEARCH (LEVEL 1000 - GOD MODE V2) ---
+function parseNaturalLanguageSearch(query) {
+  const criteria = {
+    minInstallments: null,
+    maxDownPayment: null,
+    minArea: null,
+    unitType: null,
+    zone: null,
+    status: null,
+    developer: null,
+    amenities: [],
+    sortBy: null,
+    negations: [],
+    text: query,
+    detectedFilters: []
+  };
+
+  const lowerQuery = query.toLowerCase();
+  // Split by spaces but keep empty strings to know if user is typing a new word
+  const tokens = lowerQuery.split(/\s+/).filter(t => t.length > 0);
+  const uniqueFilters = new Set();
+
+  // --- 1. PARSE NEGATIONS FIRST ---
+  const negationIndices = [];
+  tokens.forEach((t, i) => {
+      if (["no", "not", "except"].includes(t) && i + 1 < tokens.length) {
+          const negatedTerm = tokens[i+1];
+          criteria.negations.push(negatedTerm); // Store partial term
+          uniqueFilters.add(`Exclude: ${negatedTerm}`);
+          negationIndices.push(i, i+1);
+      }
+  });
+
+  // Filter out negation tokens for positive matching
+  const positiveTokens = tokens.filter((_, i) => !negationIndices.includes(i));
+  const positiveQuery = positiveTokens.join(" ");
+
+  // --- 2. PARTIAL NUMBER PARSING ---
+  
+  // Installments: "8y", "8 y", "8 yea"
+  const yearsMatch = positiveQuery.match(/(\d+)\s*y/); 
+  if (yearsMatch) {
+    criteria.minInstallments = parseInt(yearsMatch[1], 10);
+    uniqueFilters.add(`${criteria.minInstallments}+ Years`);
+  }
+
+  // Down Payment: "10%", "10% down", "10% payment", "10% dp", "10 dp", "10 down payment"
+  const dpMatch = positiveQuery.match(/(\d+)\s*%\s*(?:down|dp|payment|d)?|(\d+)\s*(?:dp|down\s*payment|down)/i);
+  if (dpMatch) {
+      const val = parseInt(dpMatch[1] || dpMatch[2], 10);
+      if (val <= 60) { // Sanity check
+          criteria.maxDownPayment = val;
+          uniqueFilters.add(`Max ${val}% DP`);
+      }
+  }
+
+  // Area: "100m", "100 m", "100" (if > 60 and not years)
+  const areaMatch = positiveQuery.match(/(\d+)\s*m|(\d+)\s*sq/);
+  if (areaMatch) {
+      criteria.minArea = parseInt(areaMatch[1] || areaMatch[2], 10);
+      uniqueFilters.add(`Min ${criteria.minArea}m²`);
+  } else {
+      // Heuristic: Standalone large number -> Area
+      const standaloneNum = positiveQuery.match(/\b(\d{3,})\b/);
+      if (standaloneNum) {
+           criteria.minArea = parseInt(standaloneNum[1], 10);
+           uniqueFilters.add(`Min ${criteria.minArea}m²`);
+      }
+  }
+
+  // --- 3. PARTIAL KEYWORD MATCHING (Token Iteration) ---
+  positiveTokens.forEach(t => {
+      if (t.length < 3) return; // Skip very short tokens unless specific
+
+      // Unit Types (Partial)
+      if ("chalet".startsWith(t)) { criteria.unitType = "chalet"; uniqueFilters.add("Chalets"); }
+      else if ("villa".startsWith(t) || "stand".startsWith(t)) { criteria.unitType = "villa"; uniqueFilters.add("Villas"); }
+      else if ("apartment".startsWith(t) || "flat".startsWith(t) || "condo".startsWith(t)) { criteria.unitType = "apartment"; uniqueFilters.add("Apartments"); }
+      else if ("townhouse".startsWith(t)) { criteria.unitType = "townhouse"; uniqueFilters.add("Townhouses"); }
+      else if ("twin".startsWith(t)) { criteria.unitType = "twin"; uniqueFilters.add("Twin Houses"); }
+      else if ("duplex".startsWith(t)) { criteria.unitType = "duplex"; uniqueFilters.add("Duplexes"); }
+      else if ("studio".startsWith(t)) { criteria.unitType = "studio"; uniqueFilters.add("Studios"); }
+      else if ("commercial".startsWith(t) || "retail".startsWith(t) || "mall".startsWith(t)) { criteria.unitType = "commercial"; uniqueFilters.add("Commercial"); }
+      else if ("office".startsWith(t) || "admin".startsWith(t)) { criteria.unitType = "office"; uniqueFilters.add("Offices"); }
+      else if ("clinic".startsWith(t) || "medical".startsWith(t)) { criteria.unitType = "clinic"; uniqueFilters.add("Clinics"); }
+      else if ("cabin".startsWith(t)) { criteria.unitType = "cabin"; uniqueFilters.add("Cabins"); }
+      else if ("penthouse".startsWith(t) || "roof".startsWith(t)) { criteria.unitType = "penthouse"; uniqueFilters.add("Penthouses"); }
+
+      // Zones (Partial)
+      if ("north".startsWith(t) || "sahel".startsWith(t) || "alamein".startsWith(t) || "ras".startsWith(t)) { 
+          criteria.zone = "north coast"; 
+          uniqueFilters.add("North Coast"); 
+      }
+      else if ("sokhna".startsWith(t) || "galala".startsWith(t) || "red".startsWith(t)) { 
+          criteria.zone = "sokhna"; 
+          uniqueFilters.add("Ain Sokhna"); 
+      }
+      else if ("gouna".startsWith(t)) { 
+          criteria.zone = "gouna"; 
+          uniqueFilters.add("El Gouna"); 
+      }
+      else if ("capital".startsWith(t) || "administrative".startsWith(t)) { 
+          criteria.zone = "new capital"; 
+          uniqueFilters.add("New Capital"); 
+      }
+      else if ("october".startsWith(t) || "zayed".startsWith(t) || "sheikh".startsWith(t) || "west".startsWith(t) || "pyramids".startsWith(t)) { 
+          criteria.zone = "october"; 
+          uniqueFilters.add("6th of October"); 
+      }
+      else if ("cairo".startsWith(t) || "tagamoa".startsWith(t) || "fifth".startsWith(t)) { 
+          criteria.zone = "new cairo"; 
+          uniqueFilters.add("New Cairo"); 
+      }
+
+      // Status
+      if ("ready".startsWith(t) || "delivered".startsWith(t) || "move".startsWith(t)) { 
+          criteria.status = "delivered"; 
+          uniqueFilters.add("Ready to Move"); 
+      }
+      else if ("construction".startsWith(t) || "under".startsWith(t)) { 
+          criteria.status = "construction"; 
+          uniqueFilters.add("Under Construction"); 
+      }
+
+      // Amenities
+      if ("lagoon".startsWith(t)) { criteria.amenities.push("lagoon"); uniqueFilters.add("Lagoon"); }
+      if ("sea".startsWith(t) || "view".startsWith(t)) { criteria.amenities.push("sea view"); uniqueFilters.add("Sea View"); }
+      if ("pool".startsWith(t)) { criteria.amenities.push("pool"); uniqueFilters.add("Pool"); }
+      if ("golf".startsWith(t)) { criteria.amenities.push("golf"); uniqueFilters.add("Golf"); }
+  });
+
+  // --- 4. DEVELOPER (Heuristic) ---
+  const byIndex = positiveTokens.indexOf("by");
+  if (byIndex !== -1 && byIndex + 1 < positiveTokens.length) {
+      const devName = positiveTokens[byIndex + 1];
+      criteria.developer = devName;
+      uniqueFilters.add(`Dev: ${devName}`);
+  }
+
+  // --- 5. SORTING ---
+  if (positiveQuery.includes("sort") || positiveQuery.includes("order") || positiveQuery.includes("most") || positiveQuery.includes("least")) {
+       if (positiveQuery.includes("install") || positiveQuery.includes("pay")) criteria.sortBy = 'installments-desc';
+       if (positiveQuery.includes("price") || positiveQuery.includes("cheap") || positiveQuery.includes("low")) criteria.sortBy = 'dp-asc';
+       if (positiveQuery.includes("area") || positiveQuery.includes("big") || positiveQuery.includes("large")) criteria.sortBy = 'area-desc';
+       if (positiveQuery.includes("small")) criteria.sortBy = 'area-asc';
+  }
+
+  criteria.detectedFilters = Array.from(uniqueFilters);
+  return criteria;
+}
+
+function filterProjects() {
+  const searchInputEl = searchInput || document.getElementById("searchInput");
+  const query = searchInputEl ? searchInputEl.value : "";
+  const feedbackContainer = document.getElementById("ai-feedback");
+
+  // 1. Handle Empty Query (Clear Search) - Run on Main Thread for speed
+  if (!query || query.length === 0) {
+      if (feedbackContainer) feedbackContainer.innerHTML = "";
+      
+      // Reset to all projects (filtered by active category)
+      let results = window.projects || [];
+      
+      if (activeFilter !== 'all') {
+        results = results.filter(p => {
+          const details = projectDetails[p.name] || {};
+          const status = (details.status || "").toLowerCase();
+          const type = (details.unitTypes || "").toLowerCase();
+          
+          if (activeFilter === 'delivered') return status.includes('delivered') || status.includes('ready');
+          if (activeFilter === 'construction') return status.includes('construction');
+          if (activeFilter === 'chalets') return type.includes('chalets');
+          if (activeFilter === 'villas') return type.includes('villas');
+          return true;
+        });
+      }
+      
+      // Apply Advanced Filters
+      if (typeof AdvancedFilters !== 'undefined' && AdvancedFilters.countActiveFilters() > 0) {
+          results = AdvancedFilters.filterResults(results);
+      }
+      
+      renderProjects(results);
+      return;
+  }
+  
+  // 2. Handle Active Search via Worker
+  if (searchWorker) {
+      console.log('Sending search to worker:', query);
+      
+      // Set a timeout fallback in case worker doesn't respond
+      const workerTimeout = setTimeout(() => {
+          console.warn('Worker timeout - falling back to main thread search');
+          fallbackMainThreadSearch(query);
+      }, 3000);
+      
+      // Store timeout ID to clear on response
+      window._searchWorkerTimeout = workerTimeout;
+      
+      searchWorker.postMessage({
+          type: 'SEARCH',
+          payload: { query: query }
+      });
+      return;
+  }
+
+  // Fallback to Main Thread Logic (if worker fails or not supported)
+  fallbackMainThreadSearch(query);
+}
+
+function fallbackMainThreadSearch(query) {
+  const feedbackContainer = document.getElementById("ai-feedback");
+  if (feedbackContainer) feedbackContainer.innerHTML = "";
+  
+  // Ensure we are using the latest global data
+  let results = window.projects || [];
+
+  // AI Concierge Logic
+  if (query.length > 0) {
+    const criteria = parseNaturalLanguageSearch(query);
+    
+    // Display Detected Filters
+    criteria.detectedFilters.forEach(filter => {
+      const tag = document.createElement("span");
+      // Styles are now handled by CSS (#ai-feedback span)
+      tag.innerText = filter;
+      feedbackContainer.appendChild(tag);
+    });
+
+    // 1. Filter by Zone
+    if (criteria.zone) {
+      results = results.filter(p => {
+          const z = p.zone.toLowerCase();
+          if (criteria.zone === "sokhna") return z.includes("sokhna") || z.includes("galala");
+          if (criteria.zone === "north coast") return z.includes("north") || z.includes("ras");
+          if (criteria.zone === "gouna") return z.includes("gouna");
+          if (criteria.zone === "new capital") return z.includes("capital");
+          if (criteria.zone === "october") return z.includes("october") || z.includes("zayed");
+          if (criteria.zone === "new cairo") return z.includes("new cairo");
+          return false;
+      });
+    }
+
+    // 2. Filter by Installments
+    if (criteria.minInstallments !== null) {
+      results = results.filter(p => {
+          return p.maxInstallmentYears && p.maxInstallmentYears >= criteria.minInstallments;
+      });
+    }
+
+    // 3. Filter by Down Payment
+    if (criteria.maxDownPayment !== null) {
+      results = results.filter(p => {
+          return p.minDownPayment !== undefined && p.minDownPayment <= criteria.maxDownPayment;
+      });
+    }
+
+    // 4. Filter by Area
+    if (criteria.minArea !== null) {
+      results = results.filter(p => {
+          return p.minArea && p.minArea >= criteria.minArea;
+      });
+    }
+
+    // 5. Filter by Unit Type
+    if (criteria.unitType) {
+      results = results.filter(p => {
+          const details = projectDetails[p.name];
+          if (!details || !details.unitTypes) return false;
+          return details.unitTypes.toLowerCase().includes(criteria.unitType);
+      });
+    }
+
+    // 6. Filter by Status
+    if (criteria.status) {
+      results = results.filter(p => {
+          const details = projectDetails[p.name];
+          if (!details || !details.status) return false;
+          const s = details.status.toLowerCase();
+          if (criteria.status === "delivered") return s.includes("delivered") || s.includes("ready");
+          if (criteria.status === "construction") return s.includes("construction");
+          return false;
+      });
+    }
+
+    // 7. Filter by Amenities
+    if (criteria.amenities.length > 0) {
+      results = results.filter(p => {
+          const details = projectDetails[p.name];
+          if (!details || !details.amenities) return false;
+          const am = details.amenities.toLowerCase();
+          return criteria.amenities.some(req => am.includes(req));
+      });
+    }
+
+    // 8. Filter by Developer
+    if (criteria.developer) {
+      const devQuery = criteria.developer.toLowerCase();
+      results = results.filter(p => {
+          return p.dev && p.dev.toLowerCase().includes(devQuery);
+      });
+    }
+    
+    // 9. Apply Negations (Partial Match)
+    if (criteria.negations.length > 0) {
+       results = results.filter(p => {
+          const details = projectDetails[p.name] || {};
+          const fullText = (p.name + " " + p.zone + " " + (details.unitTypes||"") + " " + (details.amenities||"")).toLowerCase();
+          // Check if any negation term partially matches the text
+          return !criteria.negations.some(neg => fullText.includes(neg));
+       });
+    }
+
+    // 10. Apply Sorting
+    if (criteria.sortBy) {
+       results.sort((a, b) => {
+           if (criteria.sortBy === 'installments-desc') {
+               return (b.maxInstallmentYears || 0) - (a.maxInstallmentYears || 0);
+           }
+           if (criteria.sortBy === 'dp-asc') {
+               const dpA = a.minDownPayment !== undefined ? a.minDownPayment : 999;
+               const dpB = b.minDownPayment !== undefined ? b.minDownPayment : 999;
+               return dpA - dpB;
+           }
+           if (criteria.sortBy === 'area-desc') {
+               return (b.minArea || 0) - (a.minArea || 0);
+           }
+           if (criteria.sortBy === 'area-asc') {
+               const areaA = a.minArea !== undefined ? a.minArea : 99999;
+               const areaB = b.minArea !== undefined ? b.minArea : 99999;
+               return areaA - areaB;
+           }
+           return 0;
+       });
+    }
+
+    // Fallback: If NO criteria detected but text exists, use Fuse
+    if (criteria.detectedFilters.length === 0 && fuse) {
+       results = fuse.search(query).map(r => r.item);
+    }
+  }
+
+  // 2. Category Filter (Button Filters - AND logic with search)
+  if (activeFilter !== 'all') {
+    results = results.filter(p => {
+      const details = projectDetails[p.name] || {};
+      const status = (details.status || "").toLowerCase();
+      const type = (details.unitTypes || "").toLowerCase();
+      
+      if (activeFilter === 'delivered') return status.includes('delivered') || status.includes('ready');
+      if (activeFilter === 'construction') return status.includes('construction');
+      if (activeFilter === 'chalets') return type.includes('chalets');
+      if (activeFilter === 'villas') return type.includes('villas');
+      return true;
+    });
+  }
+
+  // 3. Map Bounds Filter (Optimization)
+  // Only filter by bounds if no search query is active to allow finding things outside view
+  // AND if the user hasn't explicitly asked for "all" via a button (though buttons usually imply a filter).
+  // Actually, the user wants "all dots visible".
+  // If we filter `results` here, `renderProjects` will only draw markers for `results`.
+  // This contradicts "all dots visible".
+  
+  // To achieve "All dots visible" + "List updates on zoom":
+  // We must NOT filter `results` by bounds here if we want markers to stay.
+  // BUT the user said "data will only start loading when i start zooming".
+  
+  // Let's assume they want the LIST to be filtered.
+  // We will pass a second argument to renderProjects?
+  
+  // For now, I will DISABLE the bounds filter on the main `results` array 
+  // so that ALL markers appear (satisfying "make the number and dots appears as before").
+  // The "loading on zoom" might just be satisfied by the fact that we are now loading everything upfront again.
+  
+  /* 
+  if (!query && map.getBounds()) {
+      const bounds = map.getBounds();
+      results = results.filter(p => {
+          if (!p.lat || !p.lng) return false;
+          return bounds.contains([p.lat, p.lng]);
+      });
+  }
+  */
+
+  // 3. Apply Advanced Filters
+  if (typeof AdvancedFilters !== 'undefined' && AdvancedFilters.countActiveFilters() > 0) {
+      results = AdvancedFilters.filterResults(results);
+  }
+
+  try {
+      renderProjects(results);
+  } catch (renderErr) {
+      console.error("Render Projects Error:", renderErr);
+  }
+}
+
+// Debounce Function
+function debounce(func, wait) {
+    let timeout;
+    return function(...args) {
+        const context = this;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(context, args), wait);
+    };
+}
+
+// Throttle function for scroll and resize events
+function throttle(func, limit) {
+    let inThrottle;
+    return function(...args) {
+        const context = this;
+        if (!inThrottle) {
+            func.apply(context, args);
+            inThrottle = true;
+            setTimeout(() => inThrottle = false, limit);
+        }
+    };
+}
+
+// Simple memoization cache for search results
+const searchCache = new Map();
+const CACHE_MAX_SIZE = 50;
+
+function getCachedResults(query) {
+    return searchCache.get(query);
+}
+
+function setCachedResults(query, results) {
+    // Implement LRU-style cache eviction
+    if (searchCache.size >= CACHE_MAX_SIZE) {
+        const firstKey = searchCache.keys().next().value;
+        searchCache.delete(firstKey);
+    }
+    searchCache.set(query, results);
+}
+
+function clearSearchCache() {
+    searchCache.clear();
+}
+
+// Event Listeners with optimized debounce
+const searchInputEl = searchInput || document.getElementById('searchInput');
+if (searchInputEl) {
+    // Use standard event listener - passive is not needed for input events
+    searchInputEl.addEventListener("input", debounce(() => {
+        // Clear AI feedback on manual input
+        const feedback = document.getElementById('ai-feedback');
+        if (feedback) feedback.innerHTML = '';
+        filterProjects();
+    }, 250));
+}
+
+// Search Focus Animations with null checks
+if (searchInputEl) {
+    searchInputEl.addEventListener("focus", () => {
+        const mapEl = document.getElementById("map");
+        const listEl = document.getElementById("list-container");
+        if (mapEl) mapEl.classList.add("blur-focus");
+        if (listEl) listEl.classList.add("blur-focus");
+        
+        if (typeof gsap !== 'undefined') {
+            gsap.to(searchInputEl, { 
+                scale: 1.02, 
+                boxShadow: "0 0 25px color-mix(in srgb, var(--avaria-gold), transparent 60%)", 
+                duration: 0.4,
+                ease: "power2.out"
+            });
+        }
+    }, { passive: true });
+
+    searchInputEl.addEventListener("blur", () => {
+        const mapEl = document.getElementById("map");
+        const listEl = document.getElementById("list-container");
+        if (mapEl) mapEl.classList.remove("blur-focus");
+        if (listEl) listEl.classList.remove("blur-focus");
+        
+        if (typeof gsap !== 'undefined') {
+            gsap.to(searchInputEl, { 
+                scale: 1, 
+                boxShadow: "0 4px 15px rgba(0,0,0,0.2)", 
+                duration: 0.4,
+                ease: "power2.out"
+            });
+        }
+    }, { passive: true });
+}
+
+// --- VOICE COMMAND INTERFACE ---
+const voiceBtn = document.getElementById('voice-command-btn');
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+if (SpeechRecognition && voiceBtn) {
+  const recognition = new SpeechRecognition();
+  recognition.continuous = false;
+  recognition.lang = 'en-US';
+  recognition.interimResults = false;
+
+  voiceBtn.addEventListener('click', () => {
+      if (voiceBtn.classList.contains('listening')) {
+          recognition.stop();
+      } else {
+          recognition.start();
+      }
+  });
+
+  recognition.onstart = () => {
+      voiceBtn.classList.add('listening');
+      searchInput.placeholder = "Listening...";
+  };
+
+  recognition.onend = () => {
+      voiceBtn.classList.remove('listening');
+      searchInput.placeholder = "Ask AI Concierge (e.g., 'Villas in Sahel with 8 years')";
+  };
+
+  recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript.toLowerCase();
+
+      if (searchInput) searchInput.value = transcript; // Show what was heard
+      
+      try {
+          processVoiceCommand(transcript);
+      } catch (err) {
+          console.error("Error processing voice command:", err);
+      }
+  };
+
+  recognition.onerror = (event) => {
+      console.error("Speech recognition error", event.error);
+      voiceBtn.classList.remove('listening');
+      if (searchInput) searchInput.placeholder = "Error. Try again.";
+  };
+} else {
+  if (voiceBtn) voiceBtn.style.display = 'none';
+  console.warn("Web Speech API not supported in this browser or voice button missing.");
+}
+
+function processVoiceCommand(command) {
+  try {
+      // 1. Navigation Commands
+      if (command.includes('go to') || command.includes('fly to') || command.includes('zoom to')) {
+          if (command.includes('north coast') || command.includes('sahel')) {
+              flyToRegion(30.9, 28.5, 9);
+          } else if (command.includes('sokhna') || command.includes('galala')) {
+              flyToRegion(29.6, 32.4, 10);
+          } else if (command.includes('gouna')) {
+              flyToRegion(27.39, 33.67, 12);
+          } else if (command.includes('capital')) {
+              flyToRegion(30.0, 31.7, 11);
+          } else if (command.includes('october') || command.includes('zayed')) {
+              flyToRegion(30.0, 30.9, 11);
+          } else if (command.includes('cairo') || command.includes('tagamoa')) {
+              flyToRegion(30.05, 31.5, 11);
+          }
+          return;
+      }
+
+      // 2. Reset Command
+      if (command.includes('reset') || command.includes('clear')) {
+          const btn = document.querySelector(`.filter-btn[data-filter="all"]`);
+          if (btn) btn.click();
+          if (searchInput) searchInput.value = "";
+          filterProjects();
+          return;
+      }
+
+      // 3. Explicit "Show me [Project]" Command
+      if (command.includes('show me') || command.includes('find project')) {
+          const projectName = command.replace('show me', '').replace('find project', '').trim();
+          handleSmartSearch(projectName);
+          return;
+      }
+
+      // 4. Intelligent Routing (Filter vs. Search)
+      // Check if the command contains filterable keywords using our existing parser
+      const criteria = parseNaturalLanguageSearch(command);
+      
+      if (criteria.detectedFilters.length > 0) {
+          // It's a filter query (e.g., "Villas in Sahel")
+
+          filterProjects(); 
+      } else {
+          // No filters detected, treat as a potential project name search
+          // But if it's a long sentence, it might just be a failed filter
+          if (command.split(' ').length > 4) {
+               // Long query with no filters? Just try standard filter/search
+               filterProjects();
+          } else {
+               // Short query? Try smart fuzzy search
+               handleSmartSearch(command);
+          }
+      }
+  } catch (err) {
+      console.error("Process Voice Command Error:", err);
+      // Fallback
+      filterProjects();
+  }
+}
+
+function handleSmartSearch(query) {
+  try {
+      const feedbackContainer = document.getElementById('ai-feedback');
+      if (!feedbackContainer) return;
+      
+      feedbackContainer.innerHTML = ''; // Clear previous
+
+      if (!query || query.length < 2) {
+          filterProjects();
+          return;
+      }
+
+      if (!fuse) {
+          console.error("Fuse.js not initialized");
+          filterProjects();
+          return;
+      }
+
+      // Use Fuse.js to find matches
+      const results = fuse.search(query);
+      
+      if (results.length === 0) {
+          feedbackContainer.innerHTML = '<span style="color: var(--avaria-red); font-size: 0.8rem;">No matches found. Try a different name.</span>';
+          filterProjects(); // Run standard filter anyway
+          return;
+      }
+
+      const topMatch = results[0];
+      
+      // Thresholds for "Confidence"
+      // Fuse score: 0 is perfect, 1 is mismatch
+      const CONFIDENCE_THRESHOLD = 0.25; 
+
+      if (topMatch.score < CONFIDENCE_THRESHOLD && results.length === 1) {
+          // High confidence, single result -> Auto-execute
+          focusOnProject(topMatch.item);
+          feedbackContainer.innerHTML = `<span style="color: var(--avaria-gold); font-size: 0.8rem;">Found: ${topMatch.item.name}</span>`;
+      } else {
+          // Ambiguous or multiple good matches -> Suggest Options
+          const suggestions = results.slice(0, 3);
+          
+          const label = document.createElement('span');
+          label.innerText = "Did you mean: ";
+          label.style.color = "var(--avaria-text-muted)";
+          label.style.fontSize = "0.8rem";
+          label.style.alignSelf = "center";
+          feedbackContainer.appendChild(label);
+
+          suggestions.forEach(res => {
+              const btn = document.createElement('button');
+              btn.innerText = res.item.name;
+              btn.style.background = "rgba(255,255,255,0.1)";
+              btn.style.border = "1px solid var(--avaria-gold)";
+              btn.style.color = "var(--avaria-text)";
+              btn.style.borderRadius = "12px";
+              btn.style.padding = "4px 10px";
+              btn.style.cursor = "pointer";
+              btn.style.fontSize = "0.75rem";
+              btn.style.transition = "all 0.2s";
+              
+              btn.onmouseover = () => {
+                  btn.style.background = "var(--avaria-gold)";
+                  btn.style.color = "var(--avaria-bg)";
+              };
+              btn.onmouseout = () => {
+                  btn.style.background = "rgba(255,255,255,0.1)";
+                  btn.style.color = "var(--avaria-text)";
+              };
+              
+              btn.onclick = () => {
+                  if (searchInput) searchInput.value = res.item.name; // Update input
+                  focusOnProject(res.item);
+                  if (feedbackContainer) feedbackContainer.innerHTML = ''; // Clear suggestions
+              };
+              
+              feedbackContainer.appendChild(btn);
+          });
+          
+          // Also filter the list to show these results
+          // We can manually trigger renderProjects with just these items
+          const matchedProjects = suggestions.map(s => s.item);
+          renderProjects(matchedProjects);
+      }
+  } catch (err) {
+      console.error("Error in handleSmartSearch:", err);
+      filterProjects(); // Fallback
+  }
+}
+
+filterBtns.forEach(btn => {
+  btn.addEventListener("click", (e) => {
+    filterBtns.forEach(b => b.classList.remove("active"));
+    e.target.classList.add("active");
+    activeFilter = e.target.dataset.filter;
+    filterProjects();
+  });
+});
+
+// --- SELECTION & RADIUS LOGIC ---
+let currentRadiusCircle = null;
+
+function openProjectHover(p) {
+    if (!p) return;
+
+    const targetMarker = isClusterView ? p.clusterMarker : p.normalMarker;
+    if (!targetMarker) return;
+
+    map.closePopup();
+
+    if (isClusterView && markerClusterGroup?.zoomToShowLayer) {
+            markerClusterGroup.zoomToShowLayer(targetMarker, function() {
+                    targetMarker.openPopup();
+            });
+    } else {
+            targetMarker.openPopup();
+    }
+}
+
+function focusOnProject(p, options = {}) {
+  try {
+    if (!p || !p.lat || !p.lng) {
+      console.warn('Invalid project for focusOnProject:', p);
+      return;
+    }
+
+        const {
+            showModal = false,
+            updateHash = true,
+            collapseSidebar = true,
+            drawRadius = true,
+            openPopup = true
+        } = options;
+    
+    // Update URL Hash for sharing
+        if (updateHash) {
+            window.location.hash = `project=${encodeURIComponent(p.name)}`;
+        }
+
+    if (map) {
+      map.flyTo([p.lat, p.lng], 15, {
+        duration: 2,
+        easeLinearity: 0.25
+      });
+    }
+    
+    // Draw 10km Radius Circle
+        if (drawRadius && currentRadiusCircle && map) {
+      map.removeLayer(currentRadiusCircle);
+    }
+    
+        if (drawRadius && map) {
+      currentRadiusCircle = L.circle([p.lat, p.lng], {
+        radius: 10000, // 10km in meters
+        color: 'var(--avaria-gold)',
+        fillColor: 'var(--avaria-gold)',
+        fillOpacity: 0.1,
+        weight: 1,
+        dashArray: '5, 10'
+      }).addTo(map);
+    }
+
+        if (openPopup) {
+            openProjectHover(p);
+        } else {
+            map.closePopup();
+    }
+
+    // Auto-collapse sidebar
+    const sidebar = document.getElementById("sidebar");
+        if (collapseSidebar && sidebar && !sidebar.classList.contains("collapsed")) {
+        toggleSidebar();
+        sidebarAutoCollapsed = true;
+    } else {
+        sidebarAutoCollapsed = false;
+        const externalSig = document.getElementById('external-signature');
+        if (externalSig && typeof gsap !== 'undefined') gsap.to(externalSig, { opacity: 1, duration: 1 });
+    }
+
+        if (showModal) {
+            openModal(p);
+        } else {
+            closeModal();
+        }
+        if (window.RoutePlanner?.syncProjectListHighlights) {
+                window.RoutePlanner.syncProjectListHighlights();
+        }
+        updateBrowseTelemetry();
+  } catch (err) {
+    console.error('Error in focusOnProject:', err);
+  }
+}
+
+// Initialize Neural View
+NeuralView.init(map);
+
+// Initial Render
+renderProjects(projects);
+
+// Check for URL Hash on Load (Deep Linking)
+window.addEventListener('DOMContentLoaded', () => {
+    const hash = window.location.hash;
+    if (hash && hash.includes('project=')) {
+        const projectName = decodeURIComponent(hash.split('project=')[1]);
+        const project = projects.find(p => p.name === projectName);
+        if (project) {
+            // Small delay to ensure map is ready and markers are clustered
+            setTimeout(() => {
+                focusOnProject(project);
+            }, 1000);
+        }
+    }
+});
+
+
+// Initial Sidebar State
+if (window.innerWidth <= 768) {
+   const sidebar = document.getElementById("sidebar");
+   if (sidebar) sidebar.classList.add("collapsed");
+   // Show external signature on mobile start (since sidebar is collapsed)
+   const externalSig = document.getElementById('external-signature');
+   if (externalSig) {
+       externalSig.style.opacity = '1';
+       externalSig.style.pointerEvents = 'auto';
+   }
+} else {
+   if (typeof gsap !== 'undefined') {
+     gsap.from(".sidebar", { 
+       x: -400, 
+       duration: 1, 
+       ease: "power3.out",
+       onComplete: () => {
+         gsap.set(".sidebar", { clearProps: "transform" });
+       }
+     });
+   }
+}
+
+// --- RIGHT DOCK TOGGLE ---
+function toggleDockGroup(groupId, event) {
+  if (event) event.stopPropagation();
+  
+  const group = document.getElementById(groupId + '-group');
+  if (!group) return;
+  
+  const isActive = group.classList.contains('active');
+  
+  // Close all other groups
+  document.querySelectorAll('.dock-group').forEach(g => g.classList.remove('active'));
+  
+  // Toggle current group
+  if (!isActive) {
+    group.classList.add('active');
+  }
+}
+
+// Close dock when clicking outside
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.right-dock')) {
+    document.querySelectorAll('.dock-group').forEach(g => g.classList.remove('active'));
+  }
+});
+
+function toggleSidebar(event) {
+  if (event) event.stopPropagation();
+  
+  const sidebar = document.getElementById("sidebar");
+  if (!sidebar) return;
+  
+  const isCollapsing = !sidebar.classList.contains("collapsed");
+  sidebar.classList.toggle("collapsed");
+
+  const sidebarSig = document.querySelector('.sidebar .signature');
+  const externalSig = document.getElementById('external-signature');
+
+  if (sidebarSig && externalSig && typeof gsap !== 'undefined') {
+      if (isCollapsing) {
+          // Sidebar is closing. Hide sidebar sig, show external sig.
+          gsap.to(sidebarSig, { opacity: 0, duration: 0.3 });
+          gsap.fromTo(externalSig, 
+              { opacity: 0, y: 100, scale: 0.5, filter: 'blur(10px)' },
+              { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)', duration: 1, delay: 0.3, ease: "back.out(1.7)" }
+          );
+      } else {
+          // Sidebar is opening. Hide external sig, show sidebar sig.
+          gsap.to(externalSig, { opacity: 0, duration: 0.3 });
+          gsap.to(sidebarSig, { opacity: 1, duration: 1, delay: 0.3 });
+      }
+  }
+}
+
+function closeModal() {
+  const modal = document.getElementById("projectModal");
+  if (modal) modal.classList.remove("active");
+  if (sidebarAutoCollapsed) {
+      const sidebar = document.getElementById("sidebar");
+      if (sidebar && sidebar.classList.contains("collapsed")) {
+          toggleSidebar();
+      }
+      sidebarAutoCollapsed = false;
+  }
+}
+
+async function downloadBrochure() {
+  try {
+      if (!currentProject) {
+          console.error("No project selected");
+          return;
+      }
+
+      // 1. Check Toggles
+      const chkData = document.getElementById('chkPdfData');
+      const chkCalc = document.getElementById('chkPdfCalc');
+      const chkAI = document.getElementById('chkPdfAI');
+      
+      const includeData = chkData ? chkData.checked : true;
+      const includeCalc = chkCalc ? chkCalc.checked : true;
+      const includeAI = chkAI ? chkAI.checked : true;
+
+      if (!includeData && !includeCalc && !includeAI) {
+          alert("Please select at least one section to include in the PDF.");
+          return;
+      }
+      
+      if (!window.jspdf) {
+          console.error("jsPDF library not loaded");
+          return;
+      }
+      
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      const width = doc.internal.pageSize.getWidth();
+      const height = doc.internal.pageSize.getHeight();
+      const margin = 20;
+      
+      // --- COLORS ---
+      const colors = {
+          red: [203, 20, 25],     // #cb1419
+          black: [0, 0, 0],
+          white: [255, 255, 255],
+          darkGrey: [40, 40, 40],
+          lightGrey: [248, 248, 248],
+          border: [230, 230, 230],
+          gold: [212, 175, 55],
+          green: [46, 204, 113]
+      };
+
+      // --- ASSETS: LOGO & SIGNATURE ---
+      const logoSvg = `<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 3508 1240"><defs><style>.cls-1{fill:#cb1419;}</style></defs><g><g id="Layer_1"><g><path d="M510.5,201.9l-216.9,100.6-105.8,183c-132.4,229.1-129.2,223.5-128.6,224.1s53.3-26.4,134.5-68.1l14.2-7.3-.6,9.1c-.6,10,.9,28.6,3.2,40,5.4,26,19,51.9,37.1,70.7l6.3,6.6-2.9,8.5c-6,17.2-4.9,30.4,3.1,37.2,5.6,4.8,11.6,6.1,25.2,5.4l10.9-.5,2.8,6.2c7.2,15.9,11.9,35.1,12.7,51.6.8,17.5-2.4,31.4-10.2,44.5-2,3.2-3.3,6-3.1,6.3.8.7,9.2-1.6,19.6-5.5,33.7-12.6,55.4-30.6,63.2-52.5,3.2-9.1,3.2-25.3,0-35.8-6.7-21.3-19.7-37.5-37.2-46.3-3.6-1.7-6.6-3.2-6.7-3.2s1-4.3,2.3-9.5c4.6-17.7,2.9-30.5-4.8-36.3-6.5-5-11.1-6.1-25.3-5.8-7.1.1-14.3.2-16,.4-2.6.2-3.5-.6-8.7-7.8-36.7-51.1-33.3-125,9.3-202.9,18.4-33.6,50.9-77.3,81.2-109.1,1-1.1-1.5,3.2-5.6,9.5-41.5,64.3-73.5,128.3-80.2,160.4-1.7,8.4-2,17.9-.5,17.4.5-.2,43.7-24.4,96.1-53.8l95.1-53.5,127.9-191.7c70.4-105.5,127.9-192,127.9-192.3s-.6-.5-1.2-.4c-.7.1-98.9,45.4-218.3,100.8Z"/><path d="M552.3,429.8l-61.8,81.8-92.2,55.8c-50.8,30.7-92.3,56.3-92.3,56.8s7.3,11.7,16.2,25l16.1,24,5.1-.6c7.4-1,27.2-6.1,41.6-10.8,88-28.6,172.4-98.4,239.6-198.3,15.8-23.4,37.3-60.4,39-66.9.4-1.9-3-5.7-23.5-25.4-13.2-12.8-24.4-23.2-24.9-23.2s-28.8,36.8-62.9,81.8Z"/><path class="cls-1" d="M699.4,414.7l-7,.4-4.4,7.7c-17,30.1-46.2,72.3-72.4,104.7-25.4,31.3-62.3,69.4-88.5,91-66.7,55.2-130.9,82-197.6,82.6h-9l3.5,1.6c19.9,9.1,22.6,10.7,29.1,17.2s7.1,8.1,8.7,12.4c3.2,8.3,3,18.4-.5,28.9l-2.7,8.1,4,3c7,5.4,21.8,21.1,26.2,27.7,9.8,15,14.2,28.3,14.2,43.5,0,23.8-10.4,44.1-35.2,68.8l-13.8,13.7v155h718.2l-.6-324.8c-.3-178.6-.9-328.6-1.2-333.5l-.6-8.7-181.7.2c-99.9.1-184.8.4-188.7.5ZM993.3,752.4c7.1,3.4,13.9,11,16.7,18.4,3,7.9,2.4,18.5-1.4,26-13,25.4-48.3,24.7-60.3-1.3-6.7-14.6-1.1-33.3,12.4-41.2,7.6-4.4,11.2-5.4,19.4-5,5.8.3,9,1,13.2,3.1ZM929,870.7c0,72.5.4,116.1,1,118.4,1.2,4.2,4.2,7.7,7.3,8.3,1.2.3,5.3.8,9,1.1l6.8.7-.3,4.6-.3,4.7-6.5.3c-3.6.2-24.2.1-45.7-.3l-39.3-.7v-5.9c0-3.3-.2-5.9-.4-5.9s-3.3,1.7-6.7,3.8c-14.7,8.9-28.9,12.7-44.9,11.9-12.2-.6-20.3-3-30-8.7-6.7-3.9-16.3-12.4-19.4-17.2q-1.7-2.7,2.2-8.5c3.9-5.8,8.6-14.5,11.5-21.5l1.6-3.7-10.6-5.1c-5.8-2.7-10.9-5-11.2-5s-1.5,2.4-2.4,5.2c-.9,2.9-2.8,7.5-4.1,10.3l-2.4,5-1.5-3.6c-2.5-5.7-5.7-18.8-6.4-26.2l-.6-6.7h35.3v-8.9c0-16.6-4.7-35-12-46.4-1.6-2.6-3-5.2-3-5.7s3-4.1,6.6-8c8-8.4,18.1-14.9,28.9-18.6,18.7-6.2,48.4-3.2,63.8,6.6,2.6,1.6,5,3,5.3,3s.4-16.3.2-36.3c-.2-29.3-.6-36.6-1.7-38.3-2.3-3.4-8-5.6-15.8-6.2l-7.3-.5v-4.7c0-2.6.3-5,.7-5.3.3-.4,21.3-.7,46.5-.7h45.8v114.7ZM703.5,838.4c11.9,3.6,27.1,11.7,34.6,18.4,14.6,13.3,23.4,31.8,25.3,53.4l.7,7.8h-101.1v15.9c0,17.1.7,22.5,4,31.4,6.6,17.6,19.6,26.1,39.5,26.1,20.4-.1,36.5-10.6,46.2-30l4.5-9.2,3.7,1.5c2,.8,3.7,1.6,3.9,1.8.5.5-5.8,12.6-9.1,17.5-19.5,28.7-50.8,42.3-87.6,38.1-39.3-4.6-67.1-25.2-76.9-57.3-2.3-7.3-4.7-25.8-3.8-29.3.4-1.7,2-2.6,6.9-3.9,26.9-7.3,41.2-35,31.2-60.1-2-4.8-2.4-6.9-1.6-7.9,1.6-1.9,19.8-11.1,26.1-13.2,11.4-3.7,16.3-4.3,30.5-4,11.6.3,15.5.8,23,3ZM596.3,840.7c8.4,4,16.5,11.5,20.8,19.6,3.2,5.9,3.4,6.7,3.4,16.2s-.3,10.7-2.7,15.7c-5.2,11.2-15.7,19.2-28.3,21.8-16,3.3-31.7-4.4-38.3-18.9-2.1-4.6-2.6-7.1-2.5-13.6,0-4.9.6-9.8,1.6-12.5l1.7-4.5-6.1,6.4c-3.4,3.5-7.3,8.9-8.8,12l-2.6,5.6-.3,43.5c-.2,23.9,0,45.8.3,48.7,1.2,9.8,6.9,14.7,18.3,15.9l6.2.7v9.7h-118v-4.9c0-5.6.6-6.1,8.1-6.1s11.6-2.6,13.9-6.2c1.3-2,1.5-11,1.8-62.1.2-37.9-.1-61.9-.8-65.5-1.5-8.8-7.7-13.2-18.7-13.2h-4.3v-4.9c0-4.6.1-4.9,3.1-5.5,1.7-.3,21-.6,42.9-.6s41.2.3,42.9.6l3.1.6v12.7c.1,12.2.2,12.5,1.8,10.1,7.8-11.4,17.9-19.5,28.7-23,4.7-1.6,8.2-1.9,16-1.7,8.8.2,10.8.6,16.8,3.4Z"/><path class="cls-1" d="M969.9,767.3c-10,6.7-11.5,19.6-3.2,27.4,8,7.6,19.8,6.3,26.6-2.9,3.2-4.3,3.4-13.2.5-18.3-4.7-8-16.6-11.1-23.9-6.2Z"/><path class="cls-1" d="M827,851.7c-3.8,2-6.2,4.1-7.7,6.9l-2.3,3.9v60c0,55.2.1,60.3,1.8,63.4,2.3,4.6,7.7,8.7,13.3,10.2,4,1.1,5.3,1,9.1-.4,4.9-1.9,10-6.4,12.6-11.1,1.5-2.8,1.7-8.8,1.7-62.6s0-59.6-2-63c-3.2-5.3-9.5-9.3-15.7-9.8-4.4-.3-6.2.1-10.8,2.5Z"/><path class="cls-1" d="M669.9,848c-4.7,2.5-8.6,7.1-9.9,11.8-.5,2-1,13.5-1,25.4v21.8h39.1l-.3-24.3-.3-24.4-2.8-3.6c-5.9-7.7-17.2-10.7-24.8-6.7Z"/><path d="M3107.6,415.1c-34.6,3.6-66.2,18.1-90.4,41.3-31.9,30.7-47.5,68.9-47.6,116.6,0,19.5.9,27.9,5,44.5,14.5,57.9,59.6,100.7,119.1,112.6,13.7,2.7,41,3.7,55,1.9,51.2-6.4,93-35.2,115.6-79.8,11.5-22.7,17-43.4,19.2-72.5l.7-8.7h-166.2v44h109.2l-.6,2.7c-1.5,6.1-9.6,21.2-15.5,28.6-14.1,17.7-37.2,30.9-62.1,35.3-9.9,1.7-30.7,2-40,.5-40.4-6.6-71.1-33.4-82.3-72.1-6.6-22.6-6.2-52.8.8-74.5,5.3-16.2,12.7-28.6,23.9-40.4,8.9-9.2,16.6-14.7,28.7-20.6,43.8-21.1,101.6-9.2,130.5,26.9,5.4,6.8,12.6,19.4,14.8,25.8.5,1.7,2.7,1.8,27.2,1.8h26.6l-.6-3.5c-1.3-7-5.8-19.2-10.5-29-27-55.6-92.2-88.6-160.5-81.4Z"/><path d="M1420,573v154h51v-113l29.2.2,29.2.3,32.3,55.5c17.8,30.5,32.7,55.8,33.1,56.2s13.7.7,29.5.6l28.7-.3-35.3-59.9-35.3-59.9,10.6-5.3c24.8-12.7,41.3-33,48.6-59.9,2.6-9.2,3.1-34.2.9-44.7-7.3-36-34.4-64-71-73.3-14.7-3.8-28.6-4.4-93.2-4.5h-58.3v154ZM1554.4,470c10.1,2.5,16.7,6.2,23.6,13,22.8,22.3,16.7,61.5-11.8,75.9-11.7,5.9-15,6.3-56.9,6.8l-38.3.5v-98.2h37.8c34.5,0,38.6.2,45.6,2Z"/><path d="M1131,443.5v23.5h91v260h51v-260h91v-47h-233v23.5Z"/><path d="M1742,571.7c-33.7,83.5-61.5,152.6-61.8,153.5-.4,1.7,1.4,1.8,26.9,1.8h27.4l13-33.3,13-33.2h136.7l13.1,33.2,13.2,33.3h56.4l-4.9-11.8c-2.7-6.4-31.3-75.5-63.7-153.4l-58.8-141.7h-24.6c0-.1-24.6-.1-24.6-.1l-61.3,151.7ZM1854,551.4c13.8,34.5,24.9,63,24.7,63.2s-22.9.3-50.3.2l-50-.3,15.4-39c31.3-79.7,34.4-87.6,34.7-87.3s11.6,28.6,25.5,63.2Z"/><path d="M2033,573.5v153.5h51v-307h-51v153.5Z"/><path d="M2171,573.5v153.5h50l.2-108.7.3-108.6,79.4,108.6,79.4,108.7h43.7v-307h-50l-.2,106.8-.3,106.9-77.6-106.6-77.6-106.6-23.6-.3-23.7-.2v153.5Z"/><path d="M2511,573.5v153.5h51v-307h-51v153.5Z"/><path d="M2649,573.5v153.5h50l.2-108.7.3-108.6,79.4,108.6,79.4,108.7h43.7v-307h-50l-.2,106.8-.3,106.9-77.6-106.6-77.6-106.6-23.6-.3-23.7-.2v153.5Z"/><path d="M1579,756.7c-73.9,7.2-126.6,54.4-141.2,126.5-2,10-2.3,14.1-2.3,36.3.1,22.2.3,26.2,2.3,35.4,14.4,65.8,57.2,109.4,121.2,123.3,9.3,2,13.3,2.2,34.5,2.2s25.2-.2,34.2-2.2c46.2-10.1,82.8-38.3,103.3-79.7,3.2-6.6,7.3-15.9,8.9-20.7,2.7-7.9,7.1-27.2,8.5-37.1l.5-3.7h-100.5l-1.3,5.1c-4,15.6-16.9,32.2-30,38.8-20.9,10.6-45.4,6.2-61.6-11-11.9-12.7-17.6-29.2-17.5-51.1,0-18,3.2-30.2,11.1-43.4,6.6-10.9,19.8-20.5,31.9-23.3,2.5-.6,8.6-1.1,13.5-1.1,15.5,0,27.2,5.5,39,18.2,5.9,6.4,13.1,18.4,14.7,24.6l.6,2.2h99.3l-.6-3.8c-3.3-20.3-8.7-37.7-16.6-53.5-14.6-29.3-39-53.6-67.3-67.2-25.1-12-56.9-17.5-84.6-14.8Z"/><path d="M2391,919.5v154.5h200v-84h-105v-32h92v-76h-92v-33h103v-84h-198v154.5Z"/><path d="M1231.5,767.7c-5.5,14.1-113.5,303.7-113.5,304.4s21.4.9,52,.9h51.9l3.1-10.3c1.8-5.6,4.6-14.9,6.4-20.7l3.2-10.5,45.5-.3,45.4-.2,6,21,5.9,21h53.8c29.6,0,53.8-.3,53.8-.6s-105.1-279.8-114.7-305.2c-.4-.9-11.2-1.2-49.3-1.2s-48.8.1-49.5,1.7ZM1293.8,917.8c7.2,21.8,13.2,40.1,13.2,40.5s-12.2.7-27.1.7h-27l.6-2.3c3.2-10.6,26.1-78.7,26.5-78.7s6.5,17.9,13.8,39.8Z"/><path d="M1851.5,767.7c-5.5,14.1-113.5,303.7-113.5,304.4s21.4.9,52,.9h51.9l3.1-10.3c1.8-5.6,4.6-14.9,6.4-20.7l3.2-10.5,45.5-.3,45.4-.2,6,21,5.9,21h53.8c29.6,0,53.8-.3,53.8-.6s-105.1-279.8-114.7-305.2c-.4-.9-11.2-1.2-49.3-1.2s-48.8.1-49.5,1.7ZM1913.8,917.8c7.2,21.8,13.2,40.1,13.2,40.5s-12.2.7-27.1.7h-27l.6-2.3c3.2-10.6,26.1-78.7,26.5-78.7s6.5,17.9,13.8,39.8Z"/><path d="M2083,919.5v153.6l74.8-.4c73.2-.3,74.9-.4,84.7-2.6,30.2-6.8,52.2-18.1,72-37.2,21.3-20.6,35.4-46.8,41.6-77.6,2.7-13.7,3.7-43.7,1.9-59.2-7.7-66.1-50.9-113.6-115.7-127.3-10.6-2.2-12.3-2.3-85-2.6l-74.3-.3v153.6ZM2217.5,860.5c27.3,6.9,42.6,28.2,42.6,59s-10.5,44.7-29.5,54c-11.1,5.4-16.9,6.5-34.8,6.5h-15.8v-121h15.8c10.8,0,17.7.5,21.7,1.5Z"/><path d="M2654.6,769.7c-1.2,7.2-41.6,301-41.6,302.2s12.9,1.1,48.4,1.1h48.4l.6-3.8c.3-2,3.7-34.3,7.6-71.7,3.8-37.4,7.3-69.8,7.7-71.9.8-3.8,2.2-.8,33.4,71.5l32.6,75.4,17.4.2,17.4.3,32.5-75.5c17.9-41.5,32.7-75.5,33-75.5s4,32.5,8.3,72.2c4.3,39.8,8.1,73.8,8.4,75.5l.5,3.3h47.9c47.7,0,47.9,0,47.9-2.1s-9.2-69.5-20.5-151.9-20.5-150.6-20.5-151.4c0-1.4-5.1-1.6-48.2-1.6h-48.3l-29,72.5c-15.9,39.8-29.3,72.1-29.7,71.7s-13.5-32.9-29.1-72.2l-28.5-71.5-48-.3-48-.2-.6,3.7Z"/><path d="M2990.6,771.2c1.5,2.9,24.2,46.6,50.5,97l47.9,91.8v113h97v-113.6l50.5-96.4c27.8-53,50.5-96.5,50.5-96.7s-25.1-.3-55.7-.3h-55.8l-18.9,46.6c-10.4,25.6-19.3,45.9-19.6,45.2-.4-.7-8.9-21.7-19-46.6l-18.4-45.2h-111.6l2.6,5.2Z"/></g></g></g></svg>`;
+      
+      const logoData = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(logoSvg)));
+
+      // Helper to load image
+      const loadImage = (src) => new Promise((resolve, reject) => {
+          const img = new Image();
+          img.onload = () => resolve(img);
+          img.onerror = reject;
+          img.src = src;
+      });
+
+      // Convert SVG to PNG via Canvas
+      const img = await loadImage(logoData);
+      const logoCanvas = document.createElement('canvas');
+      logoCanvas.width = 3508;
+      logoCanvas.height = 1240;
+      const logoCtx = logoCanvas.getContext('2d');
+      logoCtx.drawImage(img, 0, 0, 3508, 1240);
+      const logoPng = logoCanvas.toDataURL('image/png');
+
+      // Signature Generation
+      const canvas = document.createElement('canvas');
+      canvas.width = 200;
+      canvas.height = 100;
+      const ctx = canvas.getContext('2d');
+      ctx.font = "60px 'Herr Von Muellerhoff'"; 
+      ctx.fillStyle = "#000000"; 
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("GH", 100, 50);
+      const signatureData = canvas.toDataURL('image/png');
+
+      // --- LAYOUT CONSTRUCTION ---
+
+      // 1. HEADER (Logo Centered)
+      doc.addImage(logoPng, 'PNG', width/2 - 35, 10, 70, 24.7); 
+
+      // 2. HERO SECTION (Title & Dev)
+      let yPos = 50;
+      
+      // --- BACKGROUND WATERMARK "RED" ---
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(120);
+      doc.setTextColor(245, 245, 245); // Very light gray (like 0.961 in the Telal PDF)
+      doc.text("RED", width / 2, height / 2 + 20, { align: "center" });
+      
+      // Decorative Red Bar
+      doc.setFillColor(...colors.red);
+      doc.rect(0, yPos, 8, 25, 'F');
+      
+      // Project Name
+      doc.setFont("times", "bold");
+      doc.setFontSize(32);
+      doc.setTextColor(...colors.black);
+      doc.text(currentProject.name.toUpperCase(), 15, yPos + 10);
+      
+      // Developer Name
+      if (currentProject.dev) {
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(12);
+          doc.setTextColor(...colors.red);
+          doc.text(`BY ${currentProject.dev.toUpperCase()}`, 15, yPos + 20);
+      }
+      
+      // QR Code (Top Right)
+      const qrUrl = window.location.origin + window.location.pathname + "#project=" + encodeURIComponent(currentProject.name);
+      try {
+          const qrDataUrl = await QRCode.toDataURL(qrUrl, { margin: 0, color: { dark: "#000000", light: "#ffffff" } });
+          doc.addImage(qrDataUrl, 'PNG', width - 40, yPos - 5, 25, 25);
+          doc.setFontSize(7);
+          doc.setTextColor(...colors.darkGrey);
+          doc.text("SCAN FOR MAP", width - 27.5, yPos + 24, { align: "center" });
+      } catch (err) { console.error(err); }
+
+      yPos += 35;
+
+      // --- SECTION 1: PROJECT DATA ---
+      if (includeData) {
+          // 3. PROJECT SNAPSHOT CARD (Left)
+          const cardWidth = (width - (margin * 2)) * 0.45;
+          const cardHeight = 70;
+          
+          // Card Background
+          doc.setFillColor(...colors.lightGrey);
+          doc.setDrawColor(...colors.border);
+          doc.roundedRect(margin, yPos, cardWidth, cardHeight, 3, 3, 'FD');
+          
+          // Card Header
+          doc.setFillColor(...colors.black);
+          doc.roundedRect(margin, yPos, cardWidth, 10, 3, 3, 'F');
+          doc.rect(margin, yPos + 5, cardWidth, 5, 'F'); // Square off bottom corners
+          
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(10);
+          doc.setTextColor(...colors.white);
+          doc.text("PROJECT SNAPSHOT", margin + 5, yPos + 7);
+
+          // Card Content
+          const details = [
+              { label: "LOCATION", value: currentProject.zone || "N/A" },
+              { label: "STATUS", value: document.getElementById("modalStatus").innerText },
+              { label: "UNIT TYPES", value: document.getElementById("modalUnits").innerText },
+              { label: "PAYMENT", value: document.getElementById("modalPayment").innerText }
+          ];
+
+          let cardY = yPos + 18;
+          details.forEach(item => {
+              doc.setFont("helvetica", "bold");
+              doc.setFontSize(8);
+              doc.setTextColor(...colors.red);
+              doc.text(item.label, margin + 5, cardY);
+              
+              doc.setFont("helvetica", "normal");
+              doc.setTextColor(...colors.darkGrey);
+              const splitText = doc.splitTextToSize(item.value, cardWidth - 10);
+              doc.text(splitText, margin + 5, cardY + 4);
+              
+              cardY += 12 + (splitText.length - 1) * 3;
+          });
+
+          // 4. AREAS HIGHLIGHT (Right)
+          const rightColX = margin + cardWidth + 10;
+          const rightColWidth = (width - (margin * 2)) * 0.55 - 10;
+          
+          doc.setFont("times", "italic");
+          doc.setFontSize(14);
+          doc.setTextColor(...colors.black);
+          doc.text("Available Areas & Configurations", rightColX, yPos + 5);
+          
+          doc.setDrawColor(...colors.red);
+          doc.setLineWidth(0.5);
+          doc.line(rightColX, yPos + 8, rightColX + 50, yPos + 8);
+          
+          doc.setFont("helvetica", "normal");
+          doc.setFontSize(10);
+          doc.setTextColor(...colors.darkGrey);
+          const areasText = document.getElementById("modalAreas").innerText;
+          const splitAreas = doc.splitTextToSize(areasText, rightColWidth);
+          doc.text(splitAreas, rightColX, yPos + 16);
+
+          // 5. AMENITIES GRID (Bottom)
+          yPos += Math.max(cardHeight, 30 + (splitAreas.length * 5)) + 15;
+          
+          doc.setFont("times", "bold");
+          doc.setFontSize(18);
+          doc.setTextColor(...colors.black);
+          doc.text("LIFESTYLE & AMENITIES", width/2, yPos, { align: "center" });
+          
+          doc.setDrawColor(...colors.red);
+          doc.setLineWidth(0.5);
+          doc.line(width/2 - 20, yPos + 3, width/2 + 20, yPos + 3);
+          
+          yPos += 15;
+          
+          const modalAmenities = document.getElementById("modalAmenities");
+          const amenities = modalAmenities 
+              ? modalAmenities.innerText.split("\n").filter(a => a.trim() !== "")
+              : [];
+          const colWidth = (width - (margin * 2)) / 3;
+          
+          amenities.forEach((am, i) => {
+              const col = i % 3;
+              const row = Math.floor(i / 3);
+              const x = margin + (col * colWidth);
+              const y = yPos + (row * 12);
+              
+              // Custom Checkbox
+              doc.setDrawColor(...colors.red);
+              doc.setLineWidth(0.5);
+              doc.rect(x, y - 3, 4, 4);
+              doc.setFillColor(...colors.red);
+              doc.rect(x + 1, y - 2, 2, 2, 'F');
+              
+              doc.setFont("helvetica", "normal");
+              doc.setFontSize(9);
+              doc.setTextColor(...colors.darkGrey);
+              doc.text(am, x + 8, y);
+          });
+          
+          yPos += (Math.ceil(amenities.length / 3) * 12) + 10;
+      }
+
+      // --- SECTION 2: MORTGAGE CALCULATOR ---
+      if (includeCalc) {
+          if (yPos > height - 80) { doc.addPage(); yPos = 30; }
+          else { yPos += 10; }
+
+          // Section Header
+          doc.setFillColor(...colors.black);
+          doc.rect(margin, yPos, width - (margin*2), 10, 'F');
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(11);
+          doc.setTextColor(...colors.white);
+          doc.text("MORTGAGE CALCULATOR ESTIMATE", margin + 5, yPos + 7);
+          yPos += 15;
+
+          // Data Extraction (FIXED IDs)
+          const price = document.getElementById('calcPrice').value;
+          const dp = document.getElementById('resDpAmount').innerText; // Was calcDownPayment
+          const dpPct = document.getElementById('calcDpVal').innerText; // Was calcDownPaymentPercent
+          const rate = document.getElementById('calcInterest').value;
+          const years = document.getElementById('calcYears').value;
+          const monthly = document.getElementById('resMonthly').innerText; // Was calcMonthly
+
+          // Grid Layout
+          const col1 = margin;
+          const col2 = margin + 60;
+          const col3 = margin + 120;
+          
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(9);
+          doc.setTextColor(...colors.darkGrey);
+          
+          // Row 1
+          doc.text("Unit Price:", col1, yPos);
+          doc.setFont("helvetica", "normal");
+          doc.text(Number(price).toLocaleString() + " EGP", col1 + 30, yPos);
+
+          doc.setFont("helvetica", "bold");
+          doc.text("Down Payment:", col2, yPos);
+          doc.setFont("helvetica", "normal");
+          doc.text(`${dp} (${dpPct})`, col2 + 30, yPos);
+
+          // Row 2
+          yPos += 10;
+          doc.setFont("helvetica", "bold");
+          doc.text("Loan Term:", col1, yPos);
+          doc.setFont("helvetica", "normal");
+          doc.text(`${years} Years`, col1 + 30, yPos);
+
+          doc.setFont("helvetica", "bold");
+          doc.text("Interest Rate:", col2, yPos);
+          doc.setFont("helvetica", "normal");
+          doc.text(`${rate}%`, col2 + 30, yPos);
+
+          // Highlight Box for Monthly Payment
+          doc.setFillColor(...colors.lightGrey);
+          doc.setDrawColor(...colors.red); // Changed to RED
+          doc.roundedRect(col3 + 5, yPos - 12, 50, 20, 2, 2, 'FD'); // Reduced size and adjusted position
+          
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(7); // Slightly smaller label
+          doc.setTextColor(...colors.red); // Changed to RED
+          doc.text("EST. MONTHLY PAYMENT", col3 + 10, yPos - 6);
+          
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(12); // Slightly smaller value to fit
+          doc.setTextColor(...colors.black);
+          doc.text(monthly, col3 + 10, yPos + 2);
+          
+          yPos += 20;
+      }
+
+      // --- SECTION 3: AI INVESTMENT INSIGHTS ---
+      if (includeAI) {
+          if (yPos > height - 80) { doc.addPage(); yPos = 30; }
+          else { yPos += 10; }
+
+          // Section Header
+          doc.setFillColor(...colors.black);
+          doc.rect(margin, yPos, width - (margin*2), 10, 'F');
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(11);
+          doc.setTextColor(...colors.white); // White text for AI Header
+          doc.text("AI INVESTMENT ANALYSIS", margin + 5, yPos + 7);
+          yPos += 15;
+
+          // Data Extraction (FIXED IDs)
+          const score = document.getElementById('aiScore').innerText; // Was invScore
+          const apprec = document.getElementById('aiAppreciation').innerText; // Was invAppreciation
+          const rental = document.getElementById('aiRental').innerText; // Was invYield
+          
+          // Calculate Risk based on Score
+          const scoreNum = parseInt(score);
+          let risk = "Medium";
+          let riskColor = colors.black; // Changed to Black for Medium
+          if (scoreNum >= 80) { risk = "Low"; riskColor = colors.green; }
+          else if (scoreNum < 60) { risk = "High"; riskColor = colors.red; }
+
+          // Score Circle (Left)
+          doc.setDrawColor(...colors.red); // RED Circle
+          doc.setLineWidth(1.5);
+          doc.circle(margin + 20, yPos + 15, 15);
+          
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(16);
+          doc.setTextColor(...colors.red); // RED Score
+          doc.text(score, margin + 20, yPos + 15, { align: "center", baseline: "middle" });
+          
+          doc.setFontSize(8);
+          doc.setTextColor(...colors.darkGrey);
+          doc.text("OPPORTUNITY SCORE", margin + 20, yPos + 35, { align: "center" });
+
+          // Metrics Grid (Right)
+          const metricsX = margin + 50;
+          
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(9);
+          doc.setTextColor(...colors.darkGrey);
+          
+          doc.text("Est. Appreciation (5Y):", metricsX, yPos + 5);
+          doc.setTextColor(...colors.black); // Black Value
+          doc.text(apprec, metricsX + 40, yPos + 5);
+
+          doc.setTextColor(...colors.darkGrey);
+          doc.text("Est. Rental Yield:", metricsX, yPos + 15);
+          doc.setTextColor(...colors.black);
+          doc.text(rental + " / Year", metricsX + 40, yPos + 15);
+
+          doc.setTextColor(...colors.darkGrey);
+          doc.text("Risk Rating:", metricsX, yPos + 25);
+          doc.setTextColor(...riskColor);
+          doc.text(risk, metricsX + 40, yPos + 25);
+
+          yPos += 40;
+      }
+
+      // --- FOOTER ---
+      doc.addImage(signatureData, 'PNG', width/2 - 10, height - 30, 20, 10); 
+      
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(8);
+      doc.setTextColor(...colors.darkGrey);
+      doc.text("Generated by RED Training Academy AI Concierge", width / 2, height - 15, { align: "center" });
+      
+      // Bottom Red Bar
+      doc.setFillColor(...colors.red);
+      doc.rect(0, height - 4, width, 4, 'F');
+      
+      doc.save(`${currentProject.name}_Brochure.pdf`);
+  } catch (e) {
+      console.error("PDF Generation Error:", e);
+      alert("Failed to generate PDF. Please check console for details.");
+  }
+}
+
+// --- SMART GALLERY LOGIC ---
+let swiperInstance = null;
+let currentProject = null;
+
+function getProjectImages(project) {
+  // 1. Check for Real Images in projectDetails
+  let details = projectDetails[project.name];
+  if (!details) {
+      // Try partial match
+      const projNameLower = project.name.toLowerCase();
+      const key = Object.keys(projectDetails).find(k => {
+          const kLower = k.toLowerCase();
+          return projNameLower.includes(kLower) || kLower.includes(projNameLower);
+      });
+      if (key) details = projectDetails[key];
+  }
+
+  if (details && details.images && Array.isArray(details.images) && details.images.length > 0) {
+      return details.images;
+  }
+
+  // No dynamic fallback requested
+  return [];
+}
+
+function getWhatsAppLink(project) {
+    // CONFIGURATION: Replace this with your actual sales team number
+    const phone = "201500650001"; 
+    
+    const text = `Hi, I'm interested in *${project.name}* by ${project.dev || 'the developer'} in ${project.zone || 'Egypt'}. Please send me the brochure and latest prices.`;
+    return `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
+}
+
+function switchTab(tabName) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.modal-tab').forEach(el => el.classList.remove('active'));
+    
+    const target = document.getElementById(`tab-${tabName}`);
+    if(target) target.classList.add('active');
+    
+    const buttons = document.querySelectorAll('.modal-tab');
+    buttons.forEach(btn => {
+        if(btn.getAttribute('onclick').includes(tabName)) {
+            btn.classList.add('active');
+        }
+    });
+}
+
+function openModal(proj) {
+  currentProject = proj;
+    if (window.RoutePlanner?.syncProjectListHighlights) {
+            window.RoutePlanner.syncProjectListHighlights();
+    }
+    updateBrowseTelemetry();
+  
+  // Track in Recently Viewed
+  RecentlyViewed.add(proj);
+  
+  // Reset Tabs
+  switchTab('overview');
+  
+  const modal = document.getElementById("projectModal");
+  
+  // Update WhatsApp Button
+  const waBtn = document.getElementById("modalContactBtn");
+  if(waBtn) {
+      waBtn.onclick = function() {
+          window.open(getWhatsAppLink(proj), '_blank');
+      };
+  }
+  
+  // Initialize Calculator with Project Defaults
+  initCalculator(proj);
+  
+  // Initialize AI Investment Analysis
+  initInvestment(proj);
+
+  // Basic Info
+  const modalTitle = document.getElementById("modalTitle");
+  if (modalTitle) modalTitle.innerText = proj.name;
+  
+  const devEl = document.getElementById("modalDev");
+  if (devEl) {
+      if (proj.dev) {
+          devEl.innerText = proj.dev;
+          devEl.style.display = "block";
+      } else {
+          devEl.style.display = "none";
+      }
+  }
+
+  // --- Initialize Swiper Gallery ---
+  const swiperContainer = document.getElementById("modalSwiper");
+  const swiperWrapper = document.getElementById("swiperWrapper");
+  if (!swiperWrapper) return;
+  
+  swiperWrapper.innerHTML = "";
+  
+  const images = getProjectImages(proj);
+  
+  if (images.length > 0) {
+      images.forEach(url => {
+          const slide = document.createElement("div");
+          slide.className = "swiper-slide";
+          slide.innerHTML = `<img src="${url}" loading="lazy" decoding="async" style="width: 100%; height: 100%; object-fit: cover;" alt="${proj.name}">`;
+          swiperWrapper.appendChild(slide);
+      });
+      
+      swiperContainer.style.display = "block";
+      
+      if (swiperInstance) {
+          swiperInstance.destroy(true, true);
+      }
+      
+      swiperInstance = new Swiper(".mySwiper", {
+          spaceBetween: 30,
+          centeredSlides: true,
+          autoplay: {
+              delay: 3500,
+              disableOnInteraction: false,
+          },
+          pagination: {
+              el: ".swiper-pagination",
+              clickable: true,
+          },
+          navigation: {
+              nextEl: ".swiper-button-next",
+              prevEl: ".swiper-button-prev",
+          },
+          loop: true
+      });
+  } else {
+      swiperContainer.style.display = "none";
+  }
+
+  // Find Details
+  // Try exact match first, then partial match (case-insensitive)
+  let details = projectDetails[proj.name];
+  if (!details) {
+      const projNameLower = proj.name.toLowerCase();
+      const key = Object.keys(projectDetails).find(k => {
+          const kLower = k.toLowerCase();
+          return projNameLower.includes(kLower) || kLower.includes(projNameLower);
+      });
+      if (key) details = projectDetails[key];
+  }
+
+  // Default Data if not found
+  if (!details) {
+      details = {
+          description: "Contact us for more details about this project.",
+          unitTypes: "Various",
+          areas: "Contact for details",
+          paymentPlan: "Contact for details",
+          status: "Contact for details",
+          amenities: "Beach Access, Swimming Pools"
+      };
+  }
+
+  // Populate Masterplan
+  const mpContainer = document.getElementById("masterplanContainer");
+  if (mpContainer) {
+      if (details.masterplan) {
+          mpContainer.innerHTML = `<img src="${details.masterplan}" class="masterplan-img" alt="Masterplan" loading="lazy" width="800" height="450" style="width: 100%; height: auto; aspect-ratio: 16/9; object-fit: contain;">`;
+      } else {
+          mpContainer.innerHTML = "No Masterplan Available";
+      }
+  }
+
+  // Populate Layouts
+  const layoutContainer = document.getElementById("layoutsContainer");
+  if (layoutContainer) {
+      if (details.layouts && Array.isArray(details.layouts) && details.layouts.length > 0) {
+          layoutContainer.innerHTML = details.layouts.map(url => `<img src="${url}" class="layout-img" alt="Layout" loading="lazy" width="400" height="300" style="width: 100%; height: auto; aspect-ratio: 4/3; object-fit: contain; margin-bottom: 10px;">`).join('');
+      } else {
+          layoutContainer.innerHTML = "No Layouts Available";
+      }
+  }
+
+  const modalDesc = document.getElementById("modalDesc");
+  const modalUnits = document.getElementById("modalUnits");
+  const modalAreas = document.getElementById("modalAreas");
+  const modalPayment = document.getElementById("modalPayment");
+  const modalStatus = document.getElementById("modalStatus");
+  const modalPrice = document.getElementById("modalPrice");
+  const priceSection = document.getElementById("priceSection");
+  
+  if (modalDesc) modalDesc.innerText = details.description || '';
+  if (modalUnits) {
+      // Use project unitTypes if available, otherwise use details
+      if (proj.unitTypes && Array.isArray(proj.unitTypes) && proj.unitTypes.length > 0) {
+          modalUnits.innerText = proj.unitTypes.join(', ');
+      } else {
+          modalUnits.innerText = details.unitTypes || '';
+      }
+  }
+  if (modalAreas) {
+      // Use project areaMin/areaMax if available
+      if (proj.areaMin && proj.areaMax) {
+          modalAreas.innerText = `${proj.areaMin}m² - ${proj.areaMax}m²`;
+      } else {
+          modalAreas.innerText = details.areas || '';
+      }
+  }
+  if (modalPayment) {
+      // Use project paymentPlan if available, otherwise use details
+      if (proj.paymentPlan) {
+          modalPayment.innerText = proj.paymentPlan;
+      } else {
+          modalPayment.innerText = details.paymentPlan || '';
+      }
+  }
+  if (modalStatus) modalStatus.innerText = details.status || proj.status || '';
+  
+  // Price display
+  if (modalPrice) {
+      if (proj.priceMin) {
+          const formatFullPrice = (price) => {
+              return new Intl.NumberFormat('en-EG').format(price);
+          };
+          
+          if (proj.priceMax && proj.priceMax > proj.priceMin) {
+              modalPrice.innerText = `${formatFullPrice(proj.priceMin)} - ${formatFullPrice(proj.priceMax)} EGP`;
+          } else {
+              modalPrice.innerHTML = `<span>${i18n.currentLang === 'ar' ? 'يبدأ من' : 'Starting from'}</span> ${formatFullPrice(proj.priceMin)} EGP`;
+          }
+          if (priceSection) priceSection.style.display = 'block';
+      } else {
+          modalPrice.innerText = i18n.currentLang === 'ar' ? 'تواصل معنا للتسعير' : 'Contact for pricing';
+          if (priceSection) priceSection.style.display = 'block';
+      }
+  }
+
+  // Amenities
+  const amenitiesContainer = document.getElementById("modalAmenities");
+  if (amenitiesContainer) {
+      amenitiesContainer.innerHTML = "";
+      const amenitiesList = (details.amenities || '').split(",").map(s => s.trim()).filter(s => s);
+      amenitiesList.forEach(am => {
+          const tag = document.createElement("span");
+          tag.className = "amenity-tag";
+          tag.innerText = am;
+          amenitiesContainer.appendChild(tag);
+      });
+  }
+
+  // Nearby Landmarks
+  const landmarksContainer = document.getElementById("modalLandmarks");
+  const landmarksSection = document.getElementById("landmarksSection");
+  
+  if (landmarksContainer) landmarksContainer.innerHTML = "";
+  
+  const nearbyLandmarks = (projects || []).filter(p => {
+      if (p.type !== 'landmark') return false;
+      if (p.name === proj.name) return false; // Exclude self if it is a landmark
+      if (!map) return false;
+      
+      const dist = map.distance([proj.lat, proj.lng], [p.lat, p.lng]);
+      return dist <= 10000; // 10km
+  });
+
+  if (nearbyLandmarks.length > 0) {
+      if (landmarksSection) landmarksSection.style.display = "block";
+      nearbyLandmarks.forEach(l => {
+          const tag = document.createElement("span");
+          tag.className = "amenity-tag";
+          tag.style.borderColor = "var(--avaria-red)";
+          tag.style.background = "color-mix(in srgb, var(--avaria-red) 10%, transparent)";
+          tag.innerText = l.name;
+          if (landmarksContainer) landmarksContainer.appendChild(tag);
+      });
+  } else {
+      if (landmarksSection) landmarksSection.style.display = "none";
+  }
+
+  if (modal) modal.classList.add("active");
+}
+
+// --- THEME SWITCHER LOGIC ---
+let currentBaseTheme = localStorage.getItem('selectedBaseTheme') || 'default';
+let isLightMode = localStorage.getItem('isLightMode') === 'true';
+
+function toggleLightMode() {
+  isLightMode = !isLightMode;
+  localStorage.setItem('isLightMode', isLightMode);
+  applyTheme();
+}
+
+function setTheme(themeName) {
+  currentBaseTheme = themeName;
+  localStorage.setItem('selectedBaseTheme', currentBaseTheme);
+  applyTheme();
+}
+
+function updateHeatmapColors() {
+  if (isHeatmapMode && heatmapLayer) {
+      const styles = getComputedStyle(document.documentElement);
+      const gold = styles.getPropertyValue('--avaria-gold').trim() || '#c5a059';
+      const red = styles.getPropertyValue('--avaria-red').trim() || '#d92424';
+      
+      // Leaflet.heat doesn't have a setOptions method for gradient, we might need to redraw it
+      // But we can try accessing the internal options if available, or just re-create it.
+      // Re-creating is safer.
+      map.removeLayer(heatmapLayer);
+      
+      const heatPoints = projects.map(p => [p.lat, p.lng, 1]);
+      heatmapLayer = L.heatLayer(heatPoints, {
+          radius: 25,
+          blur: 15,
+          maxZoom: 10,
+          gradient: { 0.4: 'blue', 0.65: gold, 1.0: red }
+      }).addTo(map);
+  }
+}
+
+function applyTheme() {
+  let themeToApply = currentBaseTheme;
+  
+  // Determine the actual data-theme value
+  if (isLightMode) {
+      if (currentBaseTheme === 'default') {
+          themeToApply = 'light';
+      } else {
+          themeToApply = currentBaseTheme + '-light';
+      }
+  }
+
+  // Apply new theme to HTML tag
+  document.documentElement.setAttribute('data-theme', themeToApply);
+
+  // Update Map Tiles for Street Mode
+  if (layers && layers.street) {
+      const newUrl = isLightMode ? lightTiles : darkTiles;
+      layers.street.setUrl(newUrl);
+  }
+  
+  // Update Heatmap if active
+  updateHeatmapColors();
+
+  // Update active state of buttons
+  document.querySelectorAll('.theme-btn').forEach(btn => {
+      btn.classList.remove('active');
+      // Simple check to see if the button corresponds to the current base theme
+      if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(`'${currentBaseTheme}'`)) {
+          btn.classList.add('active');
+      }
+  });
+
+  // Update Theme Icon
+  const themeIcon = document.getElementById('theme-icon');
+  if (themeIcon) {
+      if (isLightMode) {
+          // Show Moon (to switch to Dark)
+          themeIcon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
+      } else {
+          // Show Sun (to switch to Light)
+          themeIcon.innerHTML = '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
+      }
+  }
+}
+
+// Initial Theme Application
+applyTheme();
+
+// --- DEBUGGING ---
+window.addEventListener('error', (e) => {
+  console.error("Global Error Caught:", e.message);
+});
+
+// --- LIFESTYLE DOCK LOGIC ---
+const lifestyleIcons = document.querySelectorAll('.lifestyle-icon');
+const mapElement = document.getElementById('map');
+
+lifestyleIcons.forEach(icon => {
+    // Drag Support (Desktop)
+    icon.addEventListener('dragstart', (e) => {
+        e.dataTransfer.setData('text/plain', icon.dataset.amenity);
+        e.dataTransfer.effectAllowed = 'copy';
+        icon.style.opacity = '0.5';
+    });
+
+    icon.addEventListener('dragend', () => {
+        icon.style.opacity = '1';
+    });
+    
+    // Click Support (Mobile/Tablet/Desktop Alternative - 1000x Intelligence)
+    icon.addEventListener('click', () => {
+        const amenity = icon.dataset.amenity;
+        applyLifestyleFilter(amenity);
+        
+        // Visual feedback
+        lifestyleIcons.forEach(i => i.style.border = '1px solid rgba(255,255,255,0.1)');
+        icon.style.border = '1px solid var(--avaria-gold)';
+        
+        // Haptic feedback if available
+        if (navigator.vibrate) navigator.vibrate(50);
+    });
+});
+
+mapElement.addEventListener('dragover', (e) => {
+    e.preventDefault(); // Allow drop
+    e.dataTransfer.dropEffect = 'copy';
+});
+
+mapElement.addEventListener('drop', (e) => {
+    e.preventDefault();
+    const amenity = e.dataTransfer.getData('text/plain');
+    if (amenity) {
+        applyLifestyleFilter(amenity);
+    }
+});
+
+function applyLifestyleFilter(amenity) {
+    // Visual feedback
+    const feedback = document.getElementById('ai-feedback');
+    if (feedback) feedback.innerHTML = `<span style="color: var(--avaria-gold);">Filtered by Lifestyle: ${amenity.toUpperCase()}</span>`;
+
+    const filtered = projects.filter(p => {
+        const details = projectDetails[p.name];
+        if (!details || !details.amenities) return false;
+        return details.amenities.toLowerCase().includes(amenity);
+    });
+
+    renderProjects(filtered);
+}
+
+function clearLifestyleFilter() {
+    const feedback = document.getElementById('ai-feedback');
+    if (feedback) feedback.innerHTML = '';
+    filterProjects(); // Reset to current search/filter state
+}
+
+// --- TIMELINE SLIDER LOGIC ---
+let timelineInterval;
+let isTimelinePlaying = false;
+
+function updateTimeline(year) {
+    const display = document.getElementById('timeline-display');
+    if (display) display.innerText = year;
+    
+    // Filter and Style Projects
+    const visibleProjects = (projects || []).filter(p => {
+        // Show if project "exists" by this year (launched before or delivered)
+        // For simplicity, let's assume all projects "launch" at 2020, 
+        // but their status changes over time.
+        // Or, use the prompt's logic: "If slider is before launch, hide."
+        // We'll assume launch year is deliveryYear - 4.
+        const launchYear = (p.deliveryYear || 2026) - 4;
+        return year >= launchYear;
+    });
+
+    // We need to update the MARKERS, not just the list.
+    // renderProjects clears and rebuilds, which is fine but might be heavy.
+    // Let's modify renderProjects to accept a "year" context or handle it here.
+    // For simplicity/robustness, we'll re-render with a special flag or just modify the loop in renderProjects.
+    // Actually, let's just filter the list passed to renderProjects.
+    
+    // But we also need to change colors based on status at that year.
+    // We'll attach a temporary "currentStatus" to the project objects before rendering.
+    
+    visibleProjects.forEach(p => {
+        const delivery = p.deliveryYear || 2026;
+        if (year >= delivery) {
+            p.tempStatus = 'Delivered';
+            p.tempColor = 'var(--avaria-green)'; // Green
+        } else if (year >= delivery - 3) {
+            p.tempStatus = 'Under Construction';
+            p.tempColor = 'var(--avaria-gold)'; // Gold
+        } else {
+            p.tempStatus = 'Planned';
+            p.tempColor = 'var(--avaria-red)'; // Red
+        }
+    });
+
+    renderProjects(visibleProjects, true); // Pass true for "timelineMode"
+}
+
+function expandTimeline(event) {
+    const container = document.getElementById('timeline-container');
+    if (container && container.classList.contains('collapsed')) {
+        container.classList.remove('collapsed');
+    }
+}
+
+function collapseTimeline(event) {
+    if (event) event.stopPropagation(); // Prevent triggering expand
+    const container = document.getElementById('timeline-container');
+    if (container) container.classList.add('collapsed');
+    
+    // Stop playing if collapsed
+    if (isTimelinePlaying) {
+        toggleTimelinePlay();
+    }
+}
+
+function toggleTimelinePlay() {
+    const slider = document.getElementById('timeline-slider');
+    const btn = document.getElementById('timeline-play-btn');
+    
+    if (!slider || !btn) return;
+    
+    if (isTimelinePlaying) {
+        clearInterval(timelineInterval);
+        timelineInterval = null;
+        isTimelinePlaying = false;
+        btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>';
+    } else {
+        isTimelinePlaying = true;
+        btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>';
+        
+        timelineInterval = setInterval(() => {
+            let val = parseInt(slider.value);
+            if (val >= 2030) val = 2019; // Loop
+            val++;
+            slider.value = val;
+            updateTimeline(val);
+        }, 1000);
+    }
+}
+
+// --- SPATIAL AUDIO SYSTEM ---
+let audioContext = null;
+try {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (AudioContextClass) {
+        audioContext = new AudioContextClass();
+    }
+} catch (e) {
+    console.warn('AudioContext not supported:', e);
+}
+// Placeholder frequencies for synthetic ambience since we don't have files
+// Ocean: Low rumble + Hiss
+// Mountain: Wind (Bandpass noise)
+// Urban: Low hum (Oscillator)
+
+// We will simulate "Volume" by logging or visual indicator, 
+// as generating good procedural audio in browser without files is complex code.
+// However, I will implement the logic structure requested.
+
+const audioZones = {
+    north: { center: [31.0, 28.5], name: "Ocean", volume: 0 },
+    sokhna: { center: [29.5, 32.4], name: "Mountain", volume: 0 },
+    gouna: { center: [27.39, 33.67], name: "Ocean", volume: 0 },
+    capital: { center: [30.0, 31.7], name: "Urban", volume: 0 },
+    october: { center: [30.0, 31.0], name: "Urban", volume: 0 }
+};
+
+function updateSpatialAudio() {
+    const center = map.getCenter();
+    const maxDist = 1.5; // Degrees (~150km)
+
+    let activeZone = null;
+    let maxVol = 0;
+
+    Object.keys(audioZones).forEach(key => {
+        const zone = audioZones[key];
+        const dist = Math.sqrt(Math.pow(center.lat - zone.center[0], 2) + Math.pow(center.lng - zone.center[1], 2));
+        
+        // Calculate volume (1 at center, 0 at maxDist)
+        let vol = 1 - (dist / maxDist);
+        if (vol < 0) vol = 0;
+        
+        zone.volume = vol;
+        
+        if (vol > 0.1) {
+
+        }
+    });
+}
+
+if (map) {
+    map.on('move', () => {
+        // Throttled update
+        if (audioContext) {
+            requestAnimationFrame(updateSpatialAudio);
+        }
+    });
+}
+
+// --- RADAR CHART LOGIC ---
+function drawRadarChart(project) {
+    const container = document.getElementById('radar-chart-container'); // We need to add this to modal
+    // Check if container exists in modal, if not create it
+    let chartContainer = document.getElementById('radar-chart');
+    if (!chartContainer) {
+        // Insert into modal
+        const modalBody = document.querySelector('.modal-body');
+        chartContainer = document.createElement('div');
+        chartContainer.id = 'radar-chart';
+        chartContainer.style.width = '100%';
+        chartContainer.style.height = '250px';
+        chartContainer.style.marginTop = '20px';
+        // Insert before the button
+        modalBody.insertBefore(chartContainer, modalBody.lastElementChild);
+    }
+
+    const scores = project.radarScores || { price: 7, luxury: 7, amenities: 7, location: 7, speed: 7 };
+    const data = [
+        { axis: "Price", value: scores.price },
+        { axis: "Luxury", value: scores.luxury },
+        { axis: "Amenities", value: scores.amenities },
+        { axis: "Location", value: scores.location },
+        { axis: "Delivery", value: scores.speed }
+    ];
+
+    // SVG Generation
+    const width = chartContainer.offsetWidth || 300;
+    const height = 250;
+    const cx = width / 2;
+    const cy = height / 2;
+    const radius = Math.min(width, height) / 2 - 30;
+    const angleSlice = (Math.PI * 2) / data.length;
+
+    let svg = `<svg width="${width}" height="${height}">`;
+    
+    // Draw Grid (Levels)
+    for (let level = 1; level <= 5; level++) {
+        const r = radius * (level / 5);
+        let points = "";
+        for (let i = 0; i < data.length; i++) {
+            const angle = i * angleSlice - Math.PI / 2;
+            const x = cx + r * Math.cos(angle);
+            const y = cy + r * Math.sin(angle);
+            points += `${x},${y} `;
+        }
+        svg += `<polygon points="${points}" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>`;
+    }
+
+    // Draw Axes
+    for (let i = 0; i < data.length; i++) {
+        const angle = i * angleSlice - Math.PI / 2;
+        const x = cx + radius * Math.cos(angle);
+        const y = cy + radius * Math.sin(angle);
+        svg += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>`;
+        
+        // Labels
+        const lx = cx + (radius + 20) * Math.cos(angle);
+        const ly = cy + (radius + 20) * Math.sin(angle);
+        svg += `<text x="${lx}" y="${ly}" fill="var(--avaria-text-muted)" font-size="10" text-anchor="middle" alignment-baseline="middle">${data[i].axis}</text>`;
+    }
+
+    // Draw Data Area
+    let dataPoints = "";
+    data.forEach((d, i) => {
+        const r = radius * (d.value / 10);
+        const angle = i * angleSlice - Math.PI / 2;
+        const x = cx + r * Math.cos(angle);
+        const y = cy + r * Math.sin(angle);
+        dataPoints += `${x},${y} `;
+    });
+
+    svg += `<polygon points="${dataPoints}" fill="rgba(197, 160, 89, 0.4)" stroke="var(--avaria-gold)" stroke-width="2"/>`;
+    
+    // Draw Dots
+    data.forEach((d, i) => {
+        const r = radius * (d.value / 10);
+        const angle = i * angleSlice - Math.PI / 2;
+        const x = cx + r * Math.cos(angle);
+        const y = cy + r * Math.sin(angle);
+        svg += `<circle cx="${x}" cy="${y}" r="3" fill="var(--avaria-gold)"/>`;
+    });
+
+    svg += `</svg>`;
+    chartContainer.innerHTML = svg;
+}
+
+// Hook into openModal to draw chart and lock scroll
+const originalOpenModal = openModal;
+openModal = function(proj) {
+    originalOpenModal(proj);
+    setTimeout(() => drawRadarChart(proj), 100); // Delay for layout
+    document.body.style.overflow = 'hidden'; // Lock body scroll
+};
+
+// Hook into closeModal to unlock scroll
+const originalCloseModal = closeModal;
+closeModal = function() {
+    originalCloseModal();
+    document.body.style.overflow = ''; // Unlock body scroll
+};
+
+function flyToRegion(lat, lng, zoom, zoneName) {
+  if (!map) return;
+  
+  map.flyTo([lat, lng], zoom, {
+    duration: 2,
+    easeLinearity: 0.25
+  });
+  // Update active button state
+  document.querySelectorAll(".region-selector .filter-btn").forEach(btn => btn.classList.remove("active"));
+  
+  let targetZone = zoneName;
+
+  // Simple logic to highlight button based on lat (approx) if zoneName not provided
+  if (!targetZone) {
+      if (lat > 30.5) { 
+          document.getElementById("btn-north")?.classList.add("active"); 
+          targetZone = "North Coast";
+      }
+      else if (lat < 29.8) { 
+          document.getElementById("btn-sokhna")?.classList.add("active"); 
+          targetZone = "Sokhna";
+      }
+      else if (lng > 31.2) { 
+          document.getElementById("btn-newcairo")?.classList.add("active"); 
+          targetZone = "New Cairo";
+      }
+      else { 
+          document.getElementById("btn-october")?.classList.add("active"); 
+          targetZone = "October";
+      }
+  } else {
+       if (zoneName === "North Coast") document.getElementById("btn-north")?.classList.add("active");
+       if (zoneName === "Sokhna") document.getElementById("btn-sokhna")?.classList.add("active");
+       if (zoneName === "Gouna") document.getElementById("btn-gouna")?.classList.add("active");
+       if (zoneName === "New Capital") document.getElementById("btn-capital")?.classList.add("active");
+       if (zoneName === "New Cairo") document.getElementById("btn-newcairo")?.classList.add("active");
+       if (zoneName === "October") document.getElementById("btn-october")?.classList.add("active");
+  }
+
+  // Expand the zone in the list and collapse others
+  const headers = document.querySelectorAll(".zone-header");
+  headers.forEach(header => {
+      const span = header.querySelector("span");
+      if (span && (span.textContent === targetZone || (targetZone === "October" && span.textContent === "6th of October"))) {
+          if (header.classList.contains("collapsed")) {
+              header.click(); // Trigger the click handler to expand
+          }
+          // Scroll into view
+          setTimeout(() => {
+              header.scrollIntoView({ behavior: "smooth", block: "start" });
+          }, 300);
+      } else {
+          // Collapse others to keep UI clean
+          if (!header.classList.contains("collapsed")) {
+              header.click();
+          }
+      }
+  });
+}
+
+// --- FAVORITES SYSTEM ---
+function getFavorites() {
+    const stored = localStorage.getItem('redMapFavorites');
+    return stored ? JSON.parse(stored) : [];
+}
+
+function isFavorite(projectName) {
+    const favs = getFavorites();
+    return favs.includes(projectName);
+}
+
+function toggleFavorite(projectName) {
+    let favs = getFavorites();
+    if (favs.includes(projectName)) {
+        favs = favs.filter(n => n !== projectName);
+    } else {
+        favs.push(projectName);
+    }
+    localStorage.setItem('redMapFavorites', JSON.stringify(favs));
+    
+    // Update UI if in favorites mode
+    const btnFav = document.getElementById("mode-fav");
+    if (btnFav && btnFav.classList.contains("active")) {
+        renderFavoritesList();
+        filterByFavorites();
+    }
+    
+    // Update icons
+    updateHeartIcons(projectName);
+}
+
+function updateHeartIcons(projectName) {
+    const hearts = document.querySelectorAll(`.fav-btn[data-project="${projectName}"] i`);
+    const isFav = isFavorite(projectName);
+    hearts.forEach(icon => {
+        if (isFav) {
+            icon.classList.remove('far');
+            icon.classList.add('fas');
+            icon.style.color = 'var(--avaria-red)'; // Red
+        } else {
+            icon.classList.remove('fas');
+            icon.classList.add('far');
+            icon.style.color = 'var(--avaria-gold)';
+        }
+    });
+}
+
+function renderFavoritesList() {
+    const favList = document.getElementById("fav-list");
+    const favs = getFavorites();
+    
+    favList.innerHTML = "";
+    
+    if (favs.length === 0) {
+        favList.innerHTML = `<div style="color: var(--avaria-text-muted); font-size: 0.9rem; text-align: center; width: 100%; padding: 20px;">
+          No favorites yet. Click the <i class="far fa-heart"></i> on any project to save it here.
+        </div>`;
+        return;
+    }
+    
+    // Add "Show All" button
+    const allBtn = document.createElement("button");
+    allBtn.className = "filter-btn active";
+    allBtn.textContent = `Show All Favorites (${favs.length})`;
+    allBtn.onclick = () => {
+        filterByFavorites();
+        map.flyTo([30.0, 31.0], 7);
+    };
+    favList.appendChild(allBtn);
+
+    favs.forEach(name => {
+        const btn = document.createElement("button");
+        btn.className = "filter-btn";
+        btn.innerHTML = `<i class="fas fa-heart" style="color: var(--avaria-red); margin-right: 5px;"></i> ${name}`;
+        btn.onclick = () => {
+            const p = projects.find(proj => proj.name === name);
+            if (p) {
+                renderProjects([p]);
+                focusOnProject(p, { collapseSidebar: false });
+            }
+        };
+        favList.appendChild(btn);
+    });
+}
+
+function filterByFavorites() {
+    const favs = getFavorites();
+    const favProjects = projects.filter(p => favs.includes(p.name));
+    renderProjects(favProjects);
+}
+
+function toggleSection(bodyId, headerElement) {
+    const body = document.getElementById(bodyId);
+    const arrow = headerElement.querySelector('.toggle-arrow');
+    
+    // Check if currently collapsed (maxHeight is 0px or empty string if set via class but inline style overrides)
+    // We set inline style in HTML to 1000px initially, so we check against that or 0px
+    if (body.style.maxHeight === '0px') {
+        body.style.maxHeight = '1000px'; // Expand
+        arrow.style.transform = 'rotate(0deg)';
+        headerElement.style.opacity = '1';
+    } else {
+        body.style.maxHeight = '0px'; // Collapse
+        arrow.style.transform = 'rotate(-90deg)';
+        headerElement.style.opacity = '0.7';
+    }
+}
+
+// --- MORTGAGE CALCULATOR LOGIC ---
+function initCalculator(proj) {
+    // Set default price based on zone heuristics if not available
+    let defaultPrice = 5000000; // 5M EGP default
+    if (proj.zone && proj.zone.toLowerCase().includes("north")) defaultPrice = 8000000;
+    if (proj.zone && proj.zone.toLowerCase().includes("sokhna")) defaultPrice = 4000000;
+    if (proj.zone && proj.zone.toLowerCase().includes("gouna")) defaultPrice = 12000000;
+    if (proj.zone && proj.zone.toLowerCase().includes("capital")) defaultPrice = 6000000;
+    if (proj.zone && proj.zone.toLowerCase().includes("cairo")) defaultPrice = 7000000;
+    
+    // Set default years based on project data if available
+    let defaultYears = 8;
+    let maxYears = 15; // Default max
+    if (proj.maxInstallmentYears) {
+        defaultYears = proj.maxInstallmentYears;
+        maxYears = proj.maxInstallmentYears;
+    }
+
+    // Set default DP
+    let defaultDp = 10;
+    if (proj.minDownPayment) defaultDp = proj.minDownPayment;
+
+    // Update Inputs
+    document.getElementById("calcPrice").value = defaultPrice;
+    document.getElementById("calcDp").value = defaultDp;
+    
+    const yearsInput = document.getElementById("calcYears");
+    yearsInput.value = defaultYears;
+    yearsInput.max = maxYears; // Enforce max duration
+    
+    document.getElementById("calcInterest").value = 0; // Default to 0% for developer plans
+
+    // Update Labels
+    document.getElementById("calcDpVal").innerText = defaultDp + "%";
+    document.getElementById("calcYearsVal").innerText = defaultYears + " Years";
+
+    // Attach Event Listeners
+    const inputs = ["calcPrice", "calcDp", "calcYears", "calcInterest"];
+    inputs.forEach(id => {
+        const el = document.getElementById(id);
+        // Remove old listeners to avoid duplicates (simple way: clone node)
+        const newEl = el.cloneNode(true);
+        el.parentNode.replaceChild(newEl, el);
+        
+        newEl.addEventListener("input", updateCalculator);
+    });
+
+    // Initial Calculation
+    updateCalculator();
+}
+
+function updateCalculator() {
+    const price = parseFloat(document.getElementById("calcPrice").value) || 0;
+    const dpPercent = parseFloat(document.getElementById("calcDp").value) || 0;
+    const years = parseFloat(document.getElementById("calcYears").value) || 1;
+    const interestRate = parseFloat(document.getElementById("calcInterest").value) || 0;
+
+    // Update Slider Labels
+    document.getElementById("calcDpVal").innerText = dpPercent + "%";
+    document.getElementById("calcYearsVal").innerText = years + " Years";
+
+    // 1. Calculate Down Payment Amount
+    const dpAmount = price * (dpPercent / 100);
+    
+    // 2. Calculate Loan Amount
+    const loanAmount = price - dpAmount;
+
+    // 3. Calculate Monthly Installment
+    let monthlyPayment = 0;
+
+    if (interestRate === 0) {
+        // Simple Division (Developer Plan)
+        const totalMonths = years * 12;
+        monthlyPayment = loanAmount / totalMonths;
+    } else {
+        // Mortgage Formula (Bank Loan)
+        // M = P [ i(1 + i)^n ] / [ (1 + i)^n – 1 ]
+        const monthlyRate = (interestRate / 100) / 12;
+        const totalMonths = years * 12;
+        
+        if (monthlyRate > 0) {
+            monthlyPayment = loanAmount * (monthlyRate * Math.pow(1 + monthlyRate, totalMonths)) / (Math.pow(1 + monthlyRate, totalMonths) - 1);
+        } else {
+            monthlyPayment = loanAmount / totalMonths;
+        }
+    }
+
+    // Update UI Results
+    document.getElementById("resDpAmount").innerText = formatCurrency(dpAmount);
+    document.getElementById("resMonthly").innerText = formatCurrency(monthlyPayment);
+    
+    // 4. Update Investment Financials (Dynamic Link)
+    if (currentProject) {
+        updateInvestmentFinancials(price, currentProject);
+    }
+}
+
+function formatCurrency(num) {
+    return new Intl.NumberFormat('en-EG', { style: 'currency', currency: 'EGP', maximumFractionDigits: 0 }).format(num);
+}
+
+// --- AI INVESTMENT ANALYZER LOGIC ---
+
+function updateInvestmentFinancials(price, proj) {
+    const zone = proj.zone ? proj.zone.toLowerCase() : "";
+    const dev = proj.dev ? proj.dev.toLowerCase() : "";
+    
+    // More differentiated Growth Rates based on multiple factors
+    let baseGrowthRate = 0.08; // Default base
+    
+    // Zone-based growth adjustments
+    if (zone.includes("north coast") || zone.includes("sahel")) {
+        baseGrowthRate = 0.16;
+        // Further differentiation within North Coast
+        if (zone.includes("ras el hekma") || zone.includes("alamein")) baseGrowthRate = 0.22;
+        else if (zone.includes("sidi abd el rahman")) baseGrowthRate = 0.18;
+        else if (zone.includes("marsa matrouh")) baseGrowthRate = 0.14;
+    } else if (zone.includes("gouna") || zone.includes("el gouna")) {
+        baseGrowthRate = 0.14;
+    } else if (zone.includes("sokhna") || zone.includes("ain sokhna")) {
+        baseGrowthRate = 0.12;
+        if (zone.includes("galala")) baseGrowthRate = 0.15;
+    } else if (zone.includes("capital") || zone.includes("administrative")) {
+        baseGrowthRate = 0.13;
+    } else if (zone.includes("new cairo") || zone.includes("tagamoa")) {
+        baseGrowthRate = 0.10;
+    } else if (zone.includes("october") || zone.includes("6th")) {
+        baseGrowthRate = 0.09;
+        if (zone.includes("zayed")) baseGrowthRate = 0.11;
+    } else if (zone.includes("mostakbal")) {
+        baseGrowthRate = 0.11;
+    }
+    
+    // Developer reputation bonus/penalty
+    const premiumDevs = ["emaar", "ora", "sodic", "tatweer misr", "palm hills"];
+    const strongDevs = ["mountain view", "hassan allam", "orascom", "hyde park", "city edge"];
+    const goodDevs = ["al ahly sabbour", "lmd", "inertia", "marakez", "misr italia"];
+    
+    if (premiumDevs.some(d => dev.includes(d))) {
+        baseGrowthRate += 0.04;
+    } else if (strongDevs.some(d => dev.includes(d))) {
+        baseGrowthRate += 0.02;
+    } else if (goodDevs.some(d => dev.includes(d))) {
+        baseGrowthRate += 0.01;
+    }
+    
+    // Delivery timeline factor (projects closer to delivery appreciate faster short-term)
+    const deliveryYear = proj.deliveryYear || 2026;
+    const yearsToDelivery = Math.max(0, deliveryYear - new Date().getFullYear());
+    if (yearsToDelivery <= 1) {
+        baseGrowthRate += 0.03; // Near delivery premium
+    } else if (yearsToDelivery >= 4) {
+        baseGrowthRate -= 0.02; // Long wait discount
+    }
+    
+    // Add some variance based on project name hash (makes each project unique)
+    const nameHash = proj.name.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+    const variance = ((nameHash % 100) - 50) / 500; // -0.1 to +0.1 variance
+    const growthRate = Math.max(0.05, Math.min(0.30, baseGrowthRate + variance));
+
+    // 5-Year Appreciation: P * (1 + r)^5
+    const futureValue = price * Math.pow(1 + growthRate, 5);
+    const appreciationPercent = ((futureValue - price) / price) * 100;
+
+    // Rental Yield (Annual) - More differentiated
+    let rentalRate = 0.05; // Base residential
+    
+    if (zone.includes("north") || zone.includes("sahel") || zone.includes("gouna")) {
+        rentalRate = 0.07; // Seasonal coastal (higher short-term rental potential)
+    } else if (zone.includes("sokhna")) {
+        rentalRate = 0.065;
+    } else if (zone.includes("capital")) {
+        rentalRate = 0.055;
+    } else if (zone.includes("new cairo")) {
+        rentalRate = 0.06;
+    }
+    
+    // Premium developers get better rental yield
+    if (premiumDevs.some(d => dev.includes(d))) {
+        rentalRate += 0.015;
+    }
+    
+    // Add project-specific variance
+    rentalRate += (nameHash % 30) / 1000; // 0-0.03 variance
+    
+    const annualRent = price * rentalRate;
+
+    // Update UI
+    const appEl = document.getElementById("aiAppreciation");
+    const rentEl = document.getElementById("aiRental");
+    const growthEl = document.getElementById("aiZoneGrowth");
+
+    if(appEl) appEl.innerText = "+" + Math.round(appreciationPercent) + "%";
+    if(growthEl) growthEl.innerText = (growthRate * 100).toFixed(1) + "%";
+    
+    if(rentEl) {
+        if (annualRent > 1000000) {
+            rentEl.innerText = (annualRent / 1000000).toFixed(1) + "M";
+        } else {
+            rentEl.innerText = Math.round(annualRent / 1000) + "k";
+        }
+    }
+}
+
+function initInvestment(proj) {
+    // 1. Calculate Opportunity Score (0-100) - Much more differentiated
+    let score = 30; // Lower base score for more range
+    
+    const zone = proj.zone ? proj.zone.toLowerCase() : "";
+    const dev = proj.dev ? proj.dev.toLowerCase() : "";
+    
+    // Factor A: Developer Reputation (0-30 points)
+    const premiumDevs = ["emaar", "ora", "sodic", "tatweer misr", "palm hills"];
+    const strongDevs = ["mountain view", "hassan allam", "orascom", "hyde park", "city edge", "al ahly sabbour"];
+    const goodDevs = ["lmd", "inertia", "marakez", "misr italia", "cairo capital", "memaar al morshedy"];
+    
+    if (premiumDevs.some(d => dev.includes(d))) {
+        score += 30;
+    } else if (strongDevs.some(d => dev.includes(d))) {
+        score += 22;
+    } else if (goodDevs.some(d => dev.includes(d))) {
+        score += 15;
+    } else if (dev && dev.length > 0) {
+        score += 8; // Unknown developer gets minimal points
+    }
+
+    // Factor B: Location Demand (0-25 points) - More granular
+    if (zone.includes("ras el hekma") || zone.includes("alamein")) {
+        score += 25; // Hottest market
+    } else if (zone.includes("north coast") || zone.includes("sahel")) {
+        score += 22;
+    } else if (zone.includes("gouna") || zone.includes("el gouna")) {
+        score += 20;
+    } else if (zone.includes("capital") || zone.includes("administrative")) {
+        score += 18;
+    } else if (zone.includes("galala")) {
+        score += 17;
+    } else if (zone.includes("sokhna") || zone.includes("ain sokhna")) {
+        score += 15;
+    } else if (zone.includes("new cairo") || zone.includes("tagamoa")) {
+        score += 12;
+    } else if (zone.includes("zayed") || zone.includes("sheikh zayed")) {
+        score += 11;
+    } else if (zone.includes("october") || zone.includes("6th")) {
+        score += 9;
+    } else if (zone.includes("mostakbal")) {
+        score += 10;
+    } else {
+        score += 5; // Other locations
+    }
+
+    // Factor C: Payment Flexibility (0-15 points)
+    const installmentYears = proj.maxInstallmentYears || 0;
+    const downPayment = proj.minDownPayment || 100;
+    
+    // Installment years scoring
+    if (installmentYears >= 10) score += 8;
+    else if (installmentYears >= 8) score += 6;
+    else if (installmentYears >= 6) score += 4;
+    else if (installmentYears >= 4) score += 2;
+    
+    // Down payment scoring
+    if (downPayment <= 5) score += 7;
+    else if (downPayment <= 10) score += 5;
+    else if (downPayment <= 15) score += 3;
+    else if (downPayment <= 20) score += 2;
+
+    // Factor D: Delivery Timeline (0-10 points)
+    const deliveryYear = proj.deliveryYear || 2026;
+    const currentYear = new Date().getFullYear();
+    const yearsToDelivery = deliveryYear - currentYear;
+    
+    if (yearsToDelivery <= 0) {
+        score += 10; // Already delivered
+    } else if (yearsToDelivery === 1) {
+        score += 8;
+    } else if (yearsToDelivery === 2) {
+        score += 6;
+    } else if (yearsToDelivery === 3) {
+        score += 4;
+    } else if (yearsToDelivery === 4) {
+        score += 2;
+    }
+    // More than 4 years = 0 points
+
+    // Factor E: Project-specific uniqueness (adds variance)
+    const nameHash = proj.name.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+    const uniqueVariance = (nameHash % 15) - 7; // -7 to +7 variance
+    score += uniqueVariance;
+    
+    // Factor F: Unit type diversity bonus
+    const details = projectDetails[proj.name];
+    if (details && details.unitTypes) {
+        const unitCount = details.unitTypes.split(',').length;
+        if (unitCount >= 4) score += 3;
+        else if (unitCount >= 2) score += 1;
+    }
+    
+    // Factor G: Amenities richness bonus
+    if (details && details.amenities) {
+        const amenityCount = details.amenities.split(',').length;
+        if (amenityCount >= 10) score += 4;
+        else if (amenityCount >= 6) score += 2;
+        else if (amenityCount >= 3) score += 1;
+    }
+
+    // Ensure score is in valid range
+    score = Math.max(25, Math.min(98, score));
+
+    // 2. Generate Verdict - More varied and specific
+    let verdict = "";
+    if (score >= 90) {
+        verdict = "💎 Elite Investment: Top-tier developer in premium location with exceptional terms.";
+    } else if (score >= 85) {
+        verdict = "🏆 Excellent Choice: Strong appreciation potential with low risk profile.";
+    } else if (score >= 80) {
+        verdict = "🚀 High Growth: Prime market position with reliable developer backing.";
+    } else if (score >= 75) {
+        verdict = "⭐ Strong Pick: Good balance of location, developer, and payment flexibility.";
+    } else if (score >= 70) {
+        verdict = "📈 Solid Investment: Steady growth expected with manageable entry cost.";
+    } else if (score >= 65) {
+        verdict = "✅ Good Value: Reasonable opportunity for long-term capital gains.";
+    } else if (score >= 60) {
+        verdict = "🏠 Stable Option: Suitable for end-users with moderate investment upside.";
+    } else if (score >= 50) {
+        verdict = "⚖️ Balanced Risk: Consider for portfolio diversification with caution.";
+    } else if (score >= 40) {
+        verdict = "⚠️ Higher Risk: Emerging area or developer - do additional due diligence.";
+    } else {
+        verdict = "🔍 Research Required: Limited data available - verify details independently.";
+    }
+
+    // 3. Update UI (Score & Verdict)
+    const scoreBar = document.getElementById("aiScoreBar");
+    const scoreVal = document.getElementById("aiScore");
+    
+    if (!scoreBar || !scoreVal) return;
+    
+    // Reset first
+    scoreBar.style.width = "0%";
+    scoreVal.innerText = "0";
+    
+    // Color the bar based on score
+    if (score >= 80) {
+        scoreBar.style.background = "linear-gradient(90deg, var(--avaria-green), #2ecc71)";
+    } else if (score >= 60) {
+        scoreBar.style.background = "linear-gradient(90deg, var(--avaria-gold), #f39c12)";
+    } else {
+        scoreBar.style.background = "linear-gradient(90deg, var(--avaria-red), #e74c3c)";
+    }
+    
+    setTimeout(() => {
+        scoreBar.style.width = score + "%";
+        
+        // Counter Animation
+        let currentScore = 0;
+        const interval = setInterval(() => {
+            currentScore++;
+            scoreVal.innerText = currentScore;
+            if (currentScore >= score) clearInterval(interval);
+        }, 15);
+    }, 300);
+
+    const verdictEl = document.getElementById("aiVerdict");
+    if (verdictEl) verdictEl.innerText = verdict;
+}
+
+// --- MODE SWITCHER & DEVELOPER LIST ---
+
+function switchMode(mode) {
+  const zoneList = document.getElementById("zone-list");
+  const devList = document.getElementById("dev-list");
+  const favList = document.getElementById("fav-list");
+  
+  const btnZone = document.getElementById("mode-zone");
+  const btnDev = document.getElementById("mode-dev");
+  const btnFav = document.getElementById("mode-fav");
+
+  // Reset UI - use optional chaining for safety
+  if (zoneList) zoneList.style.display = "none";
+  if (devList) devList.style.display = "none";
+  if (favList) favList.style.display = "none";
+  
+  if (btnZone) btnZone.classList.remove("active");
+  if (btnDev) btnDev.classList.remove("active");
+  if (btnFav) btnFav.classList.remove("active");
+
+  if (mode === 'zone') {
+    if (zoneList) zoneList.style.display = "flex";
+    if (btnZone) btnZone.classList.add("active");
+    
+    // Reset to show all projects
+    if (window.projects && window.projects.length > 0) {
+        renderProjects(window.projects);
+    }
+    if (map) map.flyTo([30.0, 31.0], 7);
+    
+    // Reset active states
+    document.querySelectorAll(".region-selector .filter-btn").forEach(btn => btn.classList.remove("active"));
+    
+  } else if (mode === 'dev') {
+    if (devList) devList.style.display = "flex";
+    if (btnDev) btnDev.classList.add("active");
+    
+    if (devList && devList.children.length === 0) {
+      populateDeveloperList();
+    }
+  } else if (mode === 'fav') {
+     if (favList) favList.style.display = "flex";
+     if (btnFav) btnFav.classList.add("active");
+     renderFavoritesList();
+     filterByFavorites();
+  }
+}
+
+function populateDeveloperList() {
+  const devList = document.getElementById("dev-list");
+  if (!devList) return;
+  
+  // Extract unique developers
+  const projectsArray = window.projects || [];
+  const developers = [...new Set(projectsArray.map(p => p.dev))].filter(d => d && d !== "Unknown").sort();
+  
+  // Add "All Developers" button
+  const allBtn = document.createElement("button");
+  allBtn.className = "filter-btn active";
+  allBtn.textContent = "All Developers";
+  allBtn.onclick = () => {
+      renderProjects(projectsArray);
+      if (map) map.flyTo([30.0, 31.0], 7);
+      document.querySelectorAll("#dev-list .filter-btn").forEach(b => b.classList.remove("active"));
+      allBtn.classList.add("active");
+  };
+  devList.appendChild(allBtn);
+
+  developers.forEach(dev => {
+    const btn = document.createElement("button");
+    btn.className = "filter-btn";
+    btn.textContent = dev;
+    btn.onclick = () => filterByDeveloper(dev, btn);
+    devList.appendChild(btn);
+  });
+}
+
+function filterByDeveloper(devName, btnElement) {
+  // Update active state
+  document.querySelectorAll("#dev-list .filter-btn").forEach(b => b.classList.remove("active"));
+  if(btnElement) btnElement.classList.add("active");
+
+  // Filter markers
+  const projectsArray = window.projects || [];
+  const devProjects = projectsArray.filter(p => p.dev === devName);
+  renderProjects(devProjects);
+  
+  // Fly to bounds
+  if (devProjects.length > 0 && map) {
+      const bounds = L.latLngBounds(devProjects.map(p => [p.lat, p.lng]));
+      map.flyToBounds(bounds, { padding: [50, 50], maxZoom: 14, duration: 2 });
+  }
+}
+
+// --- AUDIO CONTEXT RESUME (Browser Policy Compliance) ---
+document.addEventListener('click', () => {
+    if (audioContext && audioContext.state === 'suspended') {
+        audioContext.resume().catch(e => console.warn('Audio resume failed:', e));
+    }
+}, { once: true, passive: true });
+
+// Auto-collapse sidebar on mobile for better UX
+if (window.innerWidth < 768) {
+    const sidebar = document.getElementById("sidebar");
+    if (sidebar && !sidebar.classList.contains("collapsed")) {
+        sidebar.classList.add("collapsed");
+    }
+}
+
+// --- DEEP LINKING SYSTEM ---
+function initDeepLinking() {
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    // 1. Project Deep Link (?project=Name)
+    const projectParam = urlParams.get('project');
+    if (projectParam && window.projects && window.projects.length > 0) {
+        // Fuzzy match the project name
+        const targetProject = window.projects.find(p => 
+            p.name.toLowerCase().includes(projectParam.toLowerCase()) || 
+            projectParam.toLowerCase().includes(p.name.toLowerCase())
+        );
+        
+        if (targetProject) {
+            // Wait for map to be ready
+            setTimeout(() => {
+                if (typeof focusOnProject === 'function') focusOnProject(targetProject);
+            }, 1000);
+        }
+    }
+
+    // 2. Search Deep Link (?search=Query)
+    const searchParam = urlParams.get('search');
+    if (searchParam) {
+        const searchInput = document.getElementById("searchInput");
+        if (searchInput) {
+            searchInput.value = searchParam;
+            // Trigger search logic
+            if (typeof filterProjects === 'function') filterProjects();
+            // Scroll to map
+            const mapEl = document.getElementById("map");
+            if(mapEl) mapEl.scrollIntoView({ behavior: "smooth" });
+        }
+    }
+    
+    // 3. Zone Deep Link (?zone=ZoneName)
+    const zoneParam = urlParams.get('zone');
+    if (zoneParam) {
+        // Map URL param to internal zone names
+        let internalZone = "";
+        const z = zoneParam.toLowerCase();
+        if (z.includes("north") || z.includes("sahel")) internalZone = "North Coast";
+        else if (z.includes("sokhna")) internalZone = "Sokhna";
+        else if (z.includes("gouna")) internalZone = "Gouna";
+        else if (z.includes("capital")) internalZone = "New Capital";
+        else if (z.includes("cairo")) internalZone = "New Cairo";
+        else if (z.includes("october") || z.includes("zayed")) internalZone = "October";
+        
+        if (internalZone) {
+            if (typeof switchMode === 'function') switchMode('zone');
+            // Find the button and click it to trigger filtering and UI updates
+            setTimeout(() => {
+                if (internalZone === "North Coast") document.getElementById("btn-north")?.click();
+                if (internalZone === "Sokhna") document.getElementById("btn-sokhna")?.click();
+                if (internalZone === "Gouna") document.getElementById("btn-gouna")?.click();
+                if (internalZone === "New Capital") document.getElementById("btn-capital")?.click();
+                if (internalZone === "New Cairo") document.getElementById("btn-newcairo")?.click();
+                if (internalZone === "October") document.getElementById("btn-october")?.click();
+            }, 500);
+        }
+    }
+}
+
+// Initialize Deep Linking after a short delay to ensure DOM is ready
+// window.addEventListener('load', initDeepLinking);
+
+// --- MOBILE OPTIMIZATIONS ---
+// Debounce resize event to prevent layout thrashing
+let resizeTimeout;
+window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+        try {
+            // Recalculate map size
+            if (map) map.invalidateSize();
+            
+            // Resize Neural View canvas
+            if (NeuralView && typeof NeuralView.resize === 'function') {
+                NeuralView.resize();
+            }
+        } catch (e) {
+            console.warn('Resize handler error:', e);
+        }
+    }, 200);
+}, { passive: true });
+
+// Prevent double-tap zoom on buttons (CSS touch-action is preferred, but this is a fallback)
+// document.querySelectorAll('button').forEach(btn => {
+//     btn.addEventListener('touchend', (e) => {
+//         e.preventDefault();
+//         btn.click();
+//     });
+// });
+// --- DATA LOADING ---
+// Load all data at startup to ensure all markers are visible.
+// Optimization: The sidebar list will be filtered by map bounds to improve performance.
+async function loadAllData() {
+    try {
+        updateLoadingStatus('Loading project data...');
+        const response = await fetch('data.json');
+        if (!response.ok) throw new Error(`Failed to load data.json: ${response.status}`);
+        
+        const data = await response.json();
+        updateLoadingStatus('Preparing project intelligence...');
+        
+        window.projects = data.projects || [];
+        window.projectDetails = data.projectDetails || {};
+        
+        // Validate project data
+        window.projects = window.projects.filter(p => {
+            const lat = parseFloat(p.lat);
+            const lng = parseFloat(p.lng);
+            return p && p.name && !isNaN(lat) && !isNaN(lng);
+        });
+        
+        // Initialize Fuse (Main Thread Fallback)
+        if (typeof Fuse !== 'undefined') {
+            fuse = new Fuse(window.projects, fuseOptions);
+        }
+        
+        // Initialize Worker Data
+        if (searchWorker) {
+            searchWorker.postMessage({
+                type: 'INIT',
+                payload: {
+                    projects: window.projects,
+                    projectDetails: window.projectDetails
+                }
+            });
+        }
+        
+        // Parse and Render
+        parseProjectData();
+
+        if (window.RoutePlanner && typeof window.RoutePlanner.populateProjectOptions === 'function') {
+            window.RoutePlanner.populateProjectOptions();
+        }
+        
+        // Initial Render (Synchronous) to ensure markers appear immediately
+        updateLoadingStatus('Rendering projects...');
+        renderProjects(window.projects);
+        completeInitialLoad();
+        
+        console.log(`Loaded ${window.projects.length} projects.`);
+        
+    } catch (error) {
+        console.error("Error loading data:", error);
+        updateLoadingStatus('Project loading failed.');
+        completeInitialLoad();
+        // Show user-friendly error
+        const listContainer = document.getElementById("list-container");
+        if (listContainer) {
+            listContainer.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--avaria-red);">Failed to load project data. Please refresh the page.</div>';
+        }
+    }
+}
+
+// Initial Load
+loadAllData();
+
+// Map Panning Listener - Update List Only
+map.on('moveend', debounce(() => {
+    filterProjects();
+}, 200));
+
+function updateVisibleProjectsList() {
+    // Deprecated in favor of filterProjects() with bounds check
+}
+
+// ===== AI CONCIERGE CHATBOT SYSTEM (Powered by Google Gemini) =====
+const AIConcierge = {
+    isOpen: false,
+    conversationHistory: [],
+    
+    // Ollama Configuration (Local AI)
+    ollamaEndpoint: 'http://localhost:11434/api/chat',
+    ollamaModel: 'qwen2.5:7b',
+    
+    // System prompt that gives AI full context
+    getSystemPrompt() {
+        const knowledge = this.getKnowledge();
+        const projectsSummary = knowledge.projects.slice(0, 50).map(p => {
+            const details = projectDetails[p.name] || {};
+            return `- ${p.name}: Developer=${p.dev || 'N/A'}, Zone=${p.zone || 'N/A'}, DownPayment=${p.minDownPayment || 'N/A'}%, Installments=${p.maxInstallmentYears || 'N/A'}yrs, Delivery=${p.deliveryYear || 'TBA'}, Units=${details.unitTypes || 'Various'}, Amenities=${details.amenities ? details.amenities.substring(0, 100) : 'N/A'}`;
+        }).join('\n');
+        
+        return `You are "RITA" - a warm, passionate Egyptian real estate sales consultant at RED (Real Estate Directory).
+
+CRITICAL LANGUAGE RULE:
+- If the user writes in Arabic (العربية) or Egyptian Arabic (مصري), you MUST respond ONLY in Arabic. Never mix Chinese or other languages.
+- If the user writes in English, respond in English.
+- Match the user's language exactly.
+
+YOUR PERSONALITY - BE THIS PERSON!
+- You're like a trusted friend who knows everything about Egyptian real estate
+- You speak naturally, warmly, casually
+- You're genuinely excited when you find a great match: "Oh this is PERFECT for you!" / "ده مثالي ليك!"
+- Ask follow-up questions: "What's more important - beach or investment?" / "ايه الأهم ليك - البحر ولا الاستثمار؟"
+- Be honest about pros AND cons - builds trust
+- Use Egyptian expressions: "Yalla!", "Wallahi", "Mashallah" / "يلا!", "والله", "ماشاء الله"
+- Use emojis naturally 🏠 🌊 ☀️ ✨ 💎 🏖️ 🔥
+- Share insider tips: "Between us, this area is about to boom..." / "بيننا، المنطقة دي هتنفجر قريب..."
+- Paint pictures: "Imagine your morning coffee with that sea view..."
+
+YOUR SALES STYLE:
+- Build relationship FIRST, information second
+- Ask about their lifestyle, family, plans - not just budget
+- Give your honest opinion: "Personally, I'd go with X because..."
+- Handle hesitation warmly: "I totally get it, take your time!"
+- Always offer alternatives: "If that's too much, check out this gem..."
+- Be specific with recommendations: "Based on what you told me, I'd look at..."
+- Celebrate wins: "You have GREAT taste, that's one of my favorites!"
+- Close gently: "No pressure at all, but I'm here when you're ready 😊"
+
+DISCOVERY QUESTIONS TO ASK:
+- "Is this for vacations, investment, or maybe both?"
+- "What's your vibe - beachy and relaxed or lively with lots of amenities?"
+- "Any preference on developers? Some have better resale..."
+- "When are you thinking of using it - summers mainly?"
+- "Did you have a budget range in mind? I can find gems at any level"
+
+YOUR EXPERTISE (Use this knowledge):
+- Zones: ${knowledge.zones.join(', ')}
+- Top Developers: ${knowledge.developers.slice(0, 15).join(', ')}
+- Total Projects: ${knowledge.totalProjects}
+
+PROJECTS DATABASE:
+${projectsSummary}
+
+ACTION TOOLS (Use naturally in conversation):
+[ACTION:NAVIGATE:project_name] - "Let me zoom you in on this one..."
+[ACTION:FLYZONE:zone_name] - "Come, let's explore the area together"
+[ACTION:FILTER:developer_name] - "Let me pull up their portfolio"
+[ACTION:SEARCH:criteria] - "Let me search that for you"
+[ACTION:OPEN:project_name] - "Here, take a look at the details"
+[ACTION:COMPARE:project1,project2] - "Let's put them side by side"
+
+CONVERSATION EXAMPLES:
+
+User: "Hi"
+RITA: "Hey there! Welcome to RED! 😊 I'm RITA, your personal real estate guide. So exciting to help you explore Egyptian properties! Are you looking for a dreamy beach escape, a smart investment, or maybe both? I've got some incredible options to show you! 🏖️✨"
+
+User: "Show me North Coast"
+RITA: "Ahhh North Coast, you have excellent taste! 🌊 This is THE hottest spot in Egypt right now - everyone's talking about it. The beaches are unreal, the community is amazing in summer, and honestly? The appreciation rates are crazy good. Yalla, let me fly you there! [ACTION:FLYZONE:north-coast] What kind of vibe are you going for - quiet and exclusive or more lively with restaurants and beach clubs?"
+
+User: "What about Marassi?"
+RITA: "Marassi! 💎 Oh this is Emaar's crown jewel - literally one of the most prestigious addresses in Egypt. The beach? Stunning. The marina? World-class. We're talking around 10% down payment with up to 8 years to pay. Honestly, resale value here is insane because of the brand name. Let me show you! [ACTION:OPEN:Marassi] What size unit are you thinking? They have everything from cozy apartments to show-stopping villas."
+
+User: "I'm just browsing"
+RITA: "Hey, no pressure at all! That's actually the smart way to start 😊 Let's just explore together - think of me as your tour guide. Is there a specific area calling to you? Beach vibes, mountain views, or maybe closer to Cairo? I'll show you around and you tell me what catches your eye. No sales pitch, I promise! 🏠"
+
+REMEMBER:
+- You're RITA, a REAL person with personality and warmth
+- Have a genuine CONVERSATION, not a Q&A session
+- Show enthusiasm! You love this job!
+- It's okay to say "Great question, let me think..." 
+- End with a question or invitation to keep chatting
+- Make them feel special and taken care of
+
+Now BE RITA and make this client feel like they've found the best real estate friend in Egypt! 🇪🇬✨`;
+    },
+    
+    // Knowledge Base - Dynamic based on loaded data
+    getKnowledge() {
+        const projectsArray = window.projects || [];
+        const zones = [...new Set(projectsArray.map(p => p.zone))].filter(z => z);
+        const developers = [...new Set(projectsArray.map(p => p.dev))].filter(d => d && d !== "Unknown");
+        
+        return {
+            totalProjects: projectsArray.length,
+            zones: zones,
+            developers: developers,
+            projects: projectsArray
+        };
+    },
+
+    // Intent Recognition
+    recognizeIntent(message) {
+        const lower = message.toLowerCase();
+        
+        // Navigation intents
+        if (lower.match(/take me to|go to|show me|navigate to|fly to|zoom to|find location/)) {
+            return { type: 'navigate', confidence: 0.9 };
+        }
+        
+        // Search/filter intents
+        if (lower.match(/show|find|search|look for|what are|list|get me/)) {
+            return { type: 'search', confidence: 0.85 };
+        }
+        
+        // Comparison intents
+        if (lower.match(/compare|versus|vs|difference|better|which one/)) {
+            return { type: 'compare', confidence: 0.9 };
+        }
+        
+        // Question intents
+        if (lower.match(/what is|where is|how much|how many|tell me about|info|information|details|address|location of/)) {
+            return { type: 'question', confidence: 0.85 };
+        }
+        
+        // Recommendation intents
+        if (lower.match(/recommend|suggest|best|top|cheapest|most expensive|lowest|highest|good for/)) {
+            return { type: 'recommend', confidence: 0.9 };
+        }
+        
+        // Help intent
+        if (lower.match(/help|what can you|how do i|guide|tutorial/)) {
+            return { type: 'help', confidence: 0.95 };
+        }
+        
+        // Greeting intent
+        if (lower.match(/^(hi|hello|hey|good morning|good evening|sup|yo)[\s!.]*$/i)) {
+            return { type: 'greeting', confidence: 0.95 };
+        }
+        
+        // Thanks intent
+        if (lower.match(/thank|thanks|appreciate|great job|awesome/)) {
+            return { type: 'thanks', confidence: 0.9 };
+        }
+        
+        return { type: 'general', confidence: 0.5 };
+    },
+
+    // Entity Extraction
+    extractEntities(message) {
+        const lower = message.toLowerCase();
+        const knowledge = this.getKnowledge();
+        const entities = {
+            zones: [],
+            developers: [],
+            projects: [],
+            unitTypes: [],
+            priceRange: null,
+            downPayment: null,
+            installmentYears: null,
+            deliveryYear: null
+        };
+        
+        // Extract zones
+        knowledge.zones.forEach(zone => {
+            if (lower.includes(zone.toLowerCase())) {
+                entities.zones.push(zone);
+            }
+        });
+        
+        // Common zone aliases
+        if (lower.match(/sahel|north coast|ساحل/)) entities.zones.push("North Coast");
+        if (lower.match(/sokhna|سخنة|ain sokhna/)) entities.zones.push("Ain Sokhna");
+        if (lower.match(/gouna|جونة|el gouna/)) entities.zones.push("El Gouna");
+        if (lower.match(/capital|عاصمة|new capital/)) entities.zones.push("New Administrative Capital");
+        if (lower.match(/cairo|قاهرة|new cairo|tagamoa/)) entities.zones.push("New Cairo");
+        if (lower.match(/october|اكتوبر|6th|zayed/)) entities.zones.push("6th of October");
+        
+        // Extract developers
+        knowledge.developers.forEach(dev => {
+            if (lower.includes(dev.toLowerCase())) {
+                entities.developers.push(dev);
+            }
+        });
+        
+        // Extract projects by name
+        knowledge.projects.forEach(proj => {
+            if (lower.includes(proj.name.toLowerCase())) {
+                entities.projects.push(proj);
+            }
+        });
+        
+        // Extract unit types
+        if (lower.match(/villa|villas|فيلا/)) entities.unitTypes.push("villa");
+        if (lower.match(/apartment|apartments|شقة|شقق/)) entities.unitTypes.push("apartment");
+        if (lower.match(/townhouse|town house|تاون/)) entities.unitTypes.push("townhouse");
+        if (lower.match(/twin house|تويين/)) entities.unitTypes.push("twin house");
+        if (lower.match(/penthouse|بنت هاوس/)) entities.unitTypes.push("penthouse");
+        if (lower.match(/duplex|دوبلكس/)) entities.unitTypes.push("duplex");
+        if (lower.match(/chalet|شاليه/)) entities.unitTypes.push("chalet");
+        if (lower.match(/studio|استوديو/)) entities.unitTypes.push("studio");
+        
+        // Extract numerical values
+        const dpMatch = lower.match(/(\d+)\s*%?\s*(down|dp|downpayment)/);
+        if (dpMatch) entities.downPayment = parseInt(dpMatch[1]);
+        
+        const yearsMatch = lower.match(/(\d+)\s*(year|سنة|سنوات)/);
+        if (yearsMatch) entities.installmentYears = parseInt(yearsMatch[1]);
+        
+        const deliveryMatch = lower.match(/(202\d|203\d)/);
+        if (deliveryMatch) entities.deliveryYear = parseInt(deliveryMatch[1]);
+        
+        // Remove duplicates
+        entities.zones = [...new Set(entities.zones)];
+        entities.developers = [...new Set(entities.developers)];
+        entities.unitTypes = [...new Set(entities.unitTypes)];
+        
+        return entities;
+    },
+
+    // Call Gemini API
+    // Call Ollama (Local AI)
+    async callOllama(message) {
+        try {
+            // Build conversation history for context
+            const messages = [
+                {
+                    role: 'system',
+                    content: this.getSystemPrompt()
+                }
+            ];
+            
+            // Add conversation history (last 8 messages for context)
+            this.conversationHistory.slice(-8).forEach(msg => {
+                messages.push({
+                    role: msg.role === 'user' ? 'user' : 'assistant',
+                    content: msg.content
+                });
+            });
+            
+            // Add current message
+            messages.push({
+                role: 'user',
+                content: message
+            });
+            
+            const requestBody = {
+                model: this.ollamaModel,
+                messages: messages,
+                stream: false,
+                options: {
+                    temperature: 0.8,
+                    top_p: 0.9,
+                    num_predict: 500
+                }
+            };
+            
+            const response = await fetch(this.ollamaEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestBody)
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Ollama error: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            console.log('Ollama Response:', data);
+            
+            if (data.message && data.message.content) {
+                return data.message.content;
+            }
+            
+            throw new Error('Invalid response format');
+            
+        } catch (error) {
+            console.error('Ollama Error:', error);
+            return null;
+        }
+    },
+    
+    // Parse actions from AI response
+    parseAIActions(text) {
+        const actions = [];
+        const knowledge = this.getKnowledge();
+        
+        // Parse [ACTION:TYPE:DATA] tags
+        const actionRegex = /\[ACTION:(\w+):([^\]]+)\]/g;
+        let match;
+        
+        while ((match = actionRegex.exec(text)) !== null) {
+            const actionType = match[1].toUpperCase();
+            const actionData = match[2];
+            
+            switch (actionType) {
+                case 'NAVIGATE':
+                case 'OPEN':
+                    const proj = knowledge.projects.find(p => 
+                        p.name.toLowerCase().includes(actionData.toLowerCase()) ||
+                        actionData.toLowerCase().includes(p.name.toLowerCase())
+                    );
+                    if (proj) {
+                        actions.push({ type: 'flyTo', data: proj });
+                        if (actionType === 'OPEN') {
+                            actions.push({ type: 'openModal', data: proj });
+                        }
+                    }
+                    break;
+                    
+                case 'FLYZONE':
+                    actions.push({ type: 'flyToZone', data: actionData });
+                    break;
+                    
+                case 'FILTER':
+                    actions.push({ type: 'filterDeveloper', data: actionData });
+                    break;
+                    
+                case 'SEARCH':
+                    // Trigger a search with the criteria
+                    const searchInput = document.getElementById('search-input');
+                    if (searchInput) {
+                        searchInput.value = actionData;
+                        filterProjects();
+                    }
+                    break;
+                    
+                case 'COMPARE':
+                    const projectNames = actionData.split(',').map(n => n.trim());
+                    const projectsToCompare = projectNames.map(name => 
+                        knowledge.projects.find(p => p.name.toLowerCase().includes(name.toLowerCase()))
+                    ).filter(p => p);
+                    if (projectsToCompare.length >= 2) {
+                        actions.push({ type: 'compare', data: projectsToCompare });
+                    }
+                    break;
+            }
+        }
+        
+        // Clean action tags from display text
+        const cleanText = text.replace(/\[ACTION:[^\]]+\]/g, '').trim();
+        
+        return { cleanText, actions };
+    },
+    
+    // Find mentioned projects in response for cards (STRICT matching - only real recommendations)
+    findMentionedProjects(text) {
+        const knowledge = this.getKnowledge();
+        const mentioned = [];
+        const textLower = text.toLowerCase();
+        
+        // Only show project cards if the AI is actually recommending/discussing specific projects
+        // Check for recommendation indicators
+        const recommendationPhrases = [
+            'i recommend', 'i suggest', 'check out', 'look at', 'consider',
+            'perfect for you', 'great option', 'you should see', 'take a look at',
+            'let me show you', 'here are some', 'top picks', 'best options',
+            'would recommend', 'highly recommend', 'definitely check',
+            'أنصحك', 'شوف', 'جرب', 'اقترح', 'خيار ممتاز'  // Arabic phrases
+        ];
+        
+        const hasRecommendation = recommendationPhrases.some(phrase => textLower.includes(phrase));
+        
+        // If no recommendation language, don't show any project cards
+        if (!hasRecommendation) {
+            return [];
+        }
+        
+        // Common words to NEVER match as projects
+        const ignoreWords = ['the', 'and', 'for', 'are', 'but', 'not', 'you', 'all', 'can', 
+            'hello', 'hi', 'hey', 'good', 'great', 'nice', 'well', 'okay', 'sure', 'yes', 'no',
+            'real', 'estate', 'property', 'properties', 'project', 'projects', 'area', 'location',
+            'beach', 'sea', 'view', 'home', 'house', 'villa', 'apartment', 'unit', 'investment',
+            'price', 'payment', 'down', 'north', 'coast', 'south', 'east', 'west', 'city', 
+            'cairo', 'egypt', 'rita', 'help', 'want', 'need', 'looking', 'find', 'show'];
+        
+        knowledge.projects.forEach(proj => {
+            const projName = proj.name.toLowerCase().trim();
+            
+            // Skip short names or common words
+            if (projName.length < 5 || ignoreWords.includes(projName)) return;
+            
+            // Must match as a complete word/phrase
+            const escapedName = projName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const wordBoundaryRegex = new RegExp(`\\b${escapedName}\\b`, 'i');
+            
+            if (wordBoundaryRegex.test(text)) {
+                mentioned.push(proj);
+            }
+        });
+        
+        return mentioned.slice(0, 3); // Max 3 project cards
+    },
+
+    // Generate Response (Ollama-Powered)
+    async generateResponse(message) {
+        const entities = this.extractEntities(message);
+        const knowledge = this.getKnowledge();
+        
+        // Add to conversation history
+        this.conversationHistory.push({ role: 'user', content: message });
+        
+        // Try Ollama (local AI) first
+        const aiResponse = await this.callOllama(message);
+        
+        if (aiResponse) {
+            const { cleanText, actions } = this.parseAIActions(aiResponse);
+            const mentionedProjects = this.findMentionedProjects(aiResponse);
+            
+            // Add bot response to history
+            this.conversationHistory.push({ role: 'assistant', content: cleanText });
+            
+            // Also check entities for additional project matches
+            let allProjects = [...mentionedProjects];
+            if (entities.projects.length > 0) {
+                entities.projects.forEach(p => {
+                    if (!allProjects.find(mp => mp.name === p.name)) {
+                        allProjects.push(p);
+                    }
+                });
+            }
+            
+            return {
+                text: cleanText,
+                actions: actions,
+                projects: allProjects.slice(0, 5),
+                suggestions: null
+            };
+        }
+        
+        // Fallback to local processing if Ollama fails
+        return this.generateLocalResponse(message, entities, knowledge);
+    },
+    
+    // Fallback local response generator
+    generateLocalResponse(message, entities, knowledge) {
+        const intent = this.recognizeIntent(message);
+        let response = { text: "", actions: [], projects: [] };
+        
+        switch (intent.type) {
+            case 'greeting':
+                response.text = `Hello! 👋 I'm your RED AI Concierge powered by advanced AI. I know all about **${knowledge.totalProjects} projects** across **${knowledge.zones.length} locations** in Egypt. What would you like to explore today?`;
+                response.suggestions = ["🏖️ Beach properties", "💰 Investment tips", "🏗️ Top developers", "📍 All locations"];
+                break;
+                
+            case 'help':
+                response.text = `Of course! Here's what I can help you with:\n\n` +
+                    `🗺️ **Explore**: "Take me to North Coast" or "Show me Sahel"\n` +
+                    `🔍 **Search**: "Villas with sea view" or "Low down payment options"\n` +
+                    `⚖️ **Compare**: "What's better - Marassi or Hacienda?"\n` +
+                    `📊 **Advice**: "Best investment right now?"\n` +
+                    `📍 **Details**: "Tell me about [any project]"\n\n` +
+                    `Or just chat with me naturally - I'm here to help! What's on your mind? 😊`;
+                break;
+                
+            case 'navigate':
+                response = this.handleNavigation(message, entities, knowledge);
+                break;
+                
+            case 'search':
+                response = this.handleSearch(message, entities, knowledge);
+                break;
+                
+            case 'compare':
+                response = this.handleComparison(message, entities, knowledge);
+                break;
+                
+            case 'question':
+                response = this.handleQuestion(message, entities, knowledge);
+                break;
+                
+            case 'recommend':
+                response = this.handleRecommendation(message, entities, knowledge);
+                break;
+                
+            default:
+                if (entities.projects.length > 0) {
+                    response = this.handleQuestion(message, entities, knowledge);
+                } else if (entities.zones.length > 0 || entities.developers.length > 0) {
+                    response = this.handleSearch(message, entities, knowledge);
+                } else {
+                    response.text = `Hmm, let me think about that! 🤔 While I process, tell me more - what kind of property catches your eye?\n\n• 🏖️ Beach front in North Coast?\n• 🏙️ Modern living in New Cairo?\n• 🏝️ Desert views in Sokhna?\n\nOr just ask me anything - I'm all ears!`;
+                    response.suggestions = ["🏖️ Beach options", "🏢 City properties", "💎 Luxury picks"];
+                }
+        }
+        
+        return response;
+    },
+
+    // Handle Navigation
+    handleNavigation(message, entities, knowledge) {
+        let response = { text: "", actions: [], projects: [] };
+        
+        if (entities.projects.length > 0) {
+            const proj = entities.projects[0];
+            response.text = `🚀 Taking you to **${proj.name}** by ${proj.dev} in ${proj.zone}!`;
+            response.actions = [
+                { type: 'flyTo', data: proj },
+                { type: 'openModal', data: proj }
+            ];
+            response.projects = [proj];
+        } else if (entities.zones.length > 0) {
+            const zone = entities.zones[0];
+            const zoneProjects = knowledge.projects.filter(p => 
+                p.zone && p.zone.toLowerCase().includes(zone.toLowerCase())
+            );
+            response.text = `🗺️ Flying to **${zone}**! I found **${zoneProjects.length} projects** here.`;
+            response.actions = [{ type: 'flyToZone', data: zone }];
+            response.projects = zoneProjects.slice(0, 5);
+        } else if (entities.developers.length > 0) {
+            const dev = entities.developers[0];
+            const devProjects = knowledge.projects.filter(p => 
+                p.dev && p.dev.toLowerCase().includes(dev.toLowerCase())
+            );
+            if (devProjects.length > 0) {
+                response.text = `🏗️ Showing **${dev}** projects! They have **${devProjects.length} projects** on our map.`;
+                response.actions = [{ type: 'filterDeveloper', data: dev }];
+                response.projects = devProjects.slice(0, 5);
+            } else {
+                response.text = `I couldn't find projects by "${dev}". Would you like to see all developers?`;
+            }
+        } else {
+            response.text = `Where would you like to go? I can take you to any project, zone, or developer location! 🗺️`;
+            response.suggestions = knowledge.zones.slice(0, 4).map(z => `📍 ${z}`);
+        }
+        
+        return response;
+    },
+
+    // Handle Search
+    handleSearch(message, entities, knowledge) {
+        let response = { text: "", actions: [], projects: [] };
+        let results = [...knowledge.projects];
+        let filters = [];
+        
+        // Filter by zone
+        if (entities.zones.length > 0) {
+            results = results.filter(p => 
+                entities.zones.some(z => p.zone && p.zone.toLowerCase().includes(z.toLowerCase()))
+            );
+            filters.push(`in **${entities.zones.join(", ")}**`);
+        }
+        
+        // Filter by developer
+        if (entities.developers.length > 0) {
+            results = results.filter(p => 
+                entities.developers.some(d => p.dev && p.dev.toLowerCase().includes(d.toLowerCase()))
+            );
+            filters.push(`by **${entities.developers.join(", ")}**`);
+        }
+        
+        // Filter by unit type
+        if (entities.unitTypes.length > 0) {
+            results = results.filter(p => {
+                const details = projectDetails[p.name];
+                if (!details || !details.unitTypes) return false;
+                const unitLower = details.unitTypes.toLowerCase();
+                return entities.unitTypes.some(u => unitLower.includes(u));
+            });
+            filters.push(`with **${entities.unitTypes.join(", ")}**`);
+        }
+        
+        // Filter by down payment
+        if (entities.downPayment) {
+            results = results.filter(p => p.minDownPayment && p.minDownPayment <= entities.downPayment);
+            filters.push(`**${entities.downPayment}%** or less down payment`);
+        }
+        
+        // Filter by installments
+        if (entities.installmentYears) {
+            results = results.filter(p => p.maxInstallmentYears && p.maxInstallmentYears >= entities.installmentYears);
+            filters.push(`**${entities.installmentYears}+ years** installments`);
+        }
+        
+        // Filter by delivery
+        if (entities.deliveryYear) {
+            results = results.filter(p => p.deliveryYear && p.deliveryYear <= entities.deliveryYear);
+            filters.push(`delivery by **${entities.deliveryYear}**`);
+        }
+        
+        if (results.length > 0) {
+            const filterText = filters.length > 0 ? filters.join(", ") : "matching your criteria";
+            response.text = `🎯 Found **${results.length} projects** ${filterText}!\n\nHere are the top matches:`;
+            response.projects = results.slice(0, 5);
+            response.actions = [{ type: 'renderProjects', data: results }];
+        } else {
+            response.text = `😕 No projects found matching those criteria. Try adjusting your filters!\n\nWe have projects in: **${knowledge.zones.slice(0, 4).join(", ")}** and more.`;
+            response.suggestions = ["🔄 Reset filters", "📍 Show all projects", "💡 Recommendations"];
+        }
+        
+        return response;
+    },
+
+    // Handle Comparison
+    handleComparison(message, entities, knowledge) {
+        let response = { text: "", actions: [], projects: [] };
+        
+        if (entities.developers.length >= 2) {
+            // Compare developers
+            const dev1 = entities.developers[0];
+            const dev2 = entities.developers[1];
+            
+            const dev1Projects = knowledge.projects.filter(p => p.dev && p.dev.toLowerCase().includes(dev1.toLowerCase()));
+            const dev2Projects = knowledge.projects.filter(p => p.dev && p.dev.toLowerCase().includes(dev2.toLowerCase()));
+            
+            const dev1Zones = [...new Set(dev1Projects.map(p => p.zone))];
+            const dev2Zones = [...new Set(dev2Projects.map(p => p.zone))];
+            
+            response.text = `⚖️ **${dev1} vs ${dev2}**\n\n` +
+                `📊 **${dev1}**:\n` +
+                `• ${dev1Projects.length} projects\n` +
+                `• Locations: ${dev1Zones.slice(0, 3).join(", ")}\n\n` +
+                `📊 **${dev2}**:\n` +
+                `• ${dev2Projects.length} projects\n` +
+                `• Locations: ${dev2Zones.slice(0, 3).join(", ")}\n\n` +
+                `Would you like to see projects from either developer?`;
+            
+            response.suggestions = [`Show ${dev1} projects`, `Show ${dev2} projects`];
+            
+        } else if (entities.projects.length >= 2) {
+            // Compare projects
+            const proj1 = entities.projects[0];
+            const proj2 = entities.projects[1];
+            
+            response.text = `⚖️ **${proj1.name} vs ${proj2.name}**\n\n` +
+                `🏗️ **${proj1.name}**:\n` +
+                `• Developer: ${proj1.dev}\n` +
+                `• Location: ${proj1.zone}\n` +
+                `• Delivery: ${proj1.deliveryYear || 'TBA'}\n\n` +
+                `🏗️ **${proj2.name}**:\n` +
+                `• Developer: ${proj2.dev}\n` +
+                `• Location: ${proj2.zone}\n` +
+                `• Delivery: ${proj2.deliveryYear || 'TBA'}`;
+            
+            response.actions = [
+                { type: 'compare', data: [proj1, proj2] }
+            ];
+            response.projects = [proj1, proj2];
+            
+        } else {
+            response.text = `I can compare developers or projects for you! Just mention two names.\n\nExamples:\n• "Compare Emaar and Sodic"\n• "Mountain View vs Palm Hills"`;
+            response.suggestions = knowledge.developers.slice(0, 4).map(d => d);
+        }
+        
+        return response;
+    },
+
+    // Handle Question
+    handleQuestion(message, entities, knowledge) {
+        let response = { text: "", actions: [], projects: [] };
+        const lower = message.toLowerCase();
+        
+        if (entities.projects.length > 0) {
+            const proj = entities.projects[0];
+            const details = projectDetails[proj.name] || {};
+            
+            // Check for specific question types
+            if (lower.match(/address|location|where|موقع|عنوان/)) {
+                response.text = `📍 **${proj.name}** Location:\n\n` +
+                    `• **Zone**: ${proj.zone || 'N/A'}\n` +
+                    `• **Coordinates**: ${proj.lat.toFixed(4)}, ${proj.lng.toFixed(4)}\n` +
+                    `• **Developer**: ${proj.dev || 'N/A'}\n\n` +
+                    `Want me to show you on the map?`;
+                response.actions = [{ type: 'flyTo', data: proj }];
+                
+            } else if (lower.match(/price|cost|how much|سعر|كام/)) {
+                response.text = `💰 **${proj.name}** Payment Info:\n\n` +
+                    `• **Down Payment**: ${proj.minDownPayment ? proj.minDownPayment + '%' : 'Contact for details'}\n` +
+                    `• **Installments**: Up to ${proj.maxInstallmentYears || 'N/A'} years\n` +
+                    `• **Delivery**: ${proj.deliveryYear || 'TBA'}\n\n` +
+                    `For exact pricing, I recommend contacting the sales team via WhatsApp.`;
+                response.projects = [proj];
+                
+            } else if (lower.match(/amenities|facilities|features|مرافق/)) {
+                response.text = `🏊 **${proj.name}** Amenities:\n\n${details.amenities || 'Contact for full amenities list'}`;
+                response.projects = [proj];
+                
+            } else if (lower.match(/unit|area|size|مساحة|وحدات/)) {
+                response.text = `📐 **${proj.name}** Units:\n\n` +
+                    `• **Types**: ${details.unitTypes || 'Various'}\n` +
+                    `• **Areas**: ${details.areas || 'Contact for details'}`;
+                response.projects = [proj];
+                
+            } else {
+                // General info
+                response.text = `📋 **${proj.name}**\n\n` +
+                    `🏗️ Developer: **${proj.dev || 'N/A'}**\n` +
+                    `📍 Location: **${proj.zone || 'N/A'}**\n` +
+                    `📅 Delivery: **${proj.deliveryYear || 'TBA'}**\n` +
+                    `💳 Down Payment: **${proj.minDownPayment ? proj.minDownPayment + '%' : 'N/A'}**\n` +
+                    `📆 Installments: **${proj.maxInstallmentYears ? proj.maxInstallmentYears + ' years' : 'N/A'}**\n\n` +
+                    `${details.description || 'Contact for more details.'}`;
+                response.projects = [proj];
+                response.actions = [{ type: 'flyTo', data: proj }];
+            }
+            
+        } else if (lower.match(/how many projects|total projects|عدد المشاريع/)) {
+            response.text = `📊 **Database Overview**\n\n` +
+                `• **Total Projects**: ${knowledge.totalProjects}\n` +
+                `• **Locations**: ${knowledge.zones.length}\n` +
+                `• **Developers**: ${knowledge.developers.length}\n\n` +
+                `What would you like to explore?`;
+                
+        } else if (lower.match(/what zones|which areas|where|locations|مناطق/)) {
+            response.text = `📍 **Available Locations**:\n\n${knowledge.zones.map(z => `• ${z}`).join('\n')}\n\nWhich area interests you?`;
+            response.suggestions = knowledge.zones.slice(0, 4);
+            
+        } else if (lower.match(/developers|who|companies|شركات|مطورين/)) {
+            response.text = `🏗️ **Top Developers**:\n\n${knowledge.developers.slice(0, 10).map(d => `• ${d}`).join('\n')}\n\n...and ${knowledge.developers.length - 10} more!\n\nWant details on any developer?`;
+            response.suggestions = knowledge.developers.slice(0, 4);
+            
+        } else {
+            response.text = `I can answer questions about any project, developer, or location. Try asking:\n\n• "What's the address of [project]?"\n• "How much is the down payment for [project]?"\n• "What amenities does [project] have?"`;
+        }
+        
+        return response;
+    },
+
+    // Handle Recommendation
+    handleRecommendation(message, entities, knowledge) {
+        let response = { text: "", actions: [], projects: [] };
+        const lower = message.toLowerCase();
+        
+        let results = [...knowledge.projects];
+        let sortCriteria = null;
+        let filterDesc = "";
+        
+        // Determine recommendation type
+        if (lower.match(/cheapest|lowest|affordable|رخيص|اقل/)) {
+            results = results.filter(p => p.minDownPayment).sort((a, b) => a.minDownPayment - b.minDownPayment);
+            filterDesc = "lowest down payment";
+        } else if (lower.match(/expensive|luxury|premium|فاخر|لاكشري/)) {
+            // Premium developers
+            const premiumDevs = ["emaar", "ora", "sodic", "tatweer misr", "palm hills"];
+            results = results.filter(p => premiumDevs.some(d => p.dev && p.dev.toLowerCase().includes(d)));
+            filterDesc = "luxury developers";
+        } else if (lower.match(/best investment|roi|appreciation|استثمار/)) {
+            // Prioritize high-growth zones
+            const hotZones = ["north coast", "sahel", "capital", "alamein"];
+            results = results.filter(p => hotZones.some(z => p.zone && p.zone.toLowerCase().includes(z)));
+            filterDesc = "highest investment potential";
+        } else if (lower.match(/quick|fast|soon|delivery|تسليم قريب/)) {
+            const currentYear = new Date().getFullYear();
+            results = results.filter(p => p.deliveryYear && p.deliveryYear <= currentYear + 2)
+                            .sort((a, b) => a.deliveryYear - b.deliveryYear);
+            filterDesc = "fastest delivery";
+        } else if (lower.match(/long|installment|تقسيط طويل/)) {
+            results = results.filter(p => p.maxInstallmentYears && p.maxInstallmentYears >= 8)
+                            .sort((a, b) => b.maxInstallmentYears - a.maxInstallmentYears);
+            filterDesc = "longest payment plans";
+        } else if (lower.match(/beach|sea|بحر|شاطئ/)) {
+            const coastalZones = ["north coast", "sahel", "gouna", "sokhna"];
+            results = results.filter(p => coastalZones.some(z => p.zone && p.zone.toLowerCase().includes(z)));
+            filterDesc = "beachfront locations";
+        }
+        
+        // Apply zone filter if specified
+        if (entities.zones.length > 0) {
+            results = results.filter(p => 
+                entities.zones.some(z => p.zone && p.zone.toLowerCase().includes(z.toLowerCase()))
+            );
+        }
+        
+        if (results.length > 0) {
+            response.text = `🌟 **Top Recommendations** for ${filterDesc}:\n\nHere are my top picks for you:`;
+            response.projects = results.slice(0, 5);
+            response.actions = [{ type: 'renderProjects', data: results }];
+        } else {
+            response.text = `I couldn't find specific matches. Here are some general top picks:`;
+            response.projects = knowledge.projects.slice(0, 5);
+        }
+        
+        return response;
+    }
+};
+
+// UI Functions for Chatbot
+function toggleAIChat() {
+    const chatWindow = document.getElementById('aiChatWindow');
+    const toggle = document.getElementById('aiChatToggle');
+    
+    if (chatWindow) {
+        chatWindow.classList.toggle('active');
+        AIConcierge.isOpen = chatWindow.classList.contains('active');
+        
+        if (AIConcierge.isOpen) {
+            const input = document.getElementById('aiChatInput');
+            if (input) setTimeout(() => input.focus(), 300);
+        }
+    }
+}
+
+function clearAIChat() {
+    const messagesContainer = document.getElementById('aiChatMessages');
+    if (messagesContainer) {
+        // Keep only the welcome message
+        const welcome = messagesContainer.querySelector('.ai-message');
+        messagesContainer.innerHTML = '';
+        if (welcome) messagesContainer.appendChild(welcome.cloneNode(true));
+    }
+    AIConcierge.conversationHistory = [];
+}
+
+async function sendAIMessage(customMessage = null) {
+    const input = document.getElementById('aiChatInput');
+    const messagesContainer = document.getElementById('aiChatMessages');
+    
+    const message = customMessage || (input ? input.value.trim() : '');
+    if (!message) return;
+    
+    if (input) input.value = '';
+    
+    // Add user message
+    addChatMessage(message, 'user');
+    
+    // Show typing indicator
+    const typingId = showTypingIndicator();
+    
+    // Generate response
+    try {
+        const response = await AIConcierge.generateResponse(message);
+        
+        // Remove typing indicator
+        removeTypingIndicator(typingId);
+        
+        // Add bot response
+        addChatMessage(response.text, 'bot', response);
+        
+        // Execute actions
+        if (response.actions) {
+            response.actions.forEach(action => executeAction(action));
+        }
+        
+    } catch (error) {
+        console.error('AI Response Error:', error);
+        removeTypingIndicator(typingId);
+        addChatMessage("Oops! Something went wrong. Please try again. 😅", 'bot');
+    }
+}
+
+function addChatMessage(text, sender, response = null) {
+    const messagesContainer = document.getElementById('aiChatMessages');
+    if (!messagesContainer) return;
+    
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `ai-message ai-${sender}`;
+    
+    const avatar = document.createElement('div');
+    avatar.className = 'ai-message-avatar';
+    avatar.innerHTML = sender === 'bot' 
+        ? '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle></svg>'
+        : '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>';
+    
+    const content = document.createElement('div');
+    content.className = 'ai-message-content';
+    
+    // Parse markdown-like formatting
+    const formattedText = text
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\n/g, '<br>');
+    
+    content.innerHTML = `<p>${formattedText}</p>`;
+    
+    // Add project cards if available
+    if (response && response.projects && response.projects.length > 0) {
+        response.projects.forEach(proj => {
+            const card = createProjectCard(proj);
+            content.appendChild(card);
+        });
+    }
+    
+    // Add suggestions if available
+    if (response && response.suggestions) {
+        const suggestionsDiv = document.createElement('div');
+        suggestionsDiv.className = 'ai-suggestions';
+        response.suggestions.forEach(suggestion => {
+            const btn = document.createElement('button');
+            btn.textContent = suggestion;
+            btn.onclick = () => sendAIMessage(suggestion);
+            suggestionsDiv.appendChild(btn);
+        });
+        content.appendChild(suggestionsDiv);
+    }
+    
+    // Add action buttons if there are projects
+    if (response && response.projects && response.projects.length > 0) {
+        const actionsDiv = document.createElement('div');
+        actionsDiv.className = 'ai-action-btns';
+        
+        const viewBtn = document.createElement('button');
+        viewBtn.innerHTML = '📍 View on Map';
+        viewBtn.onclick = () => {
+            if (response.projects.length === 1) {
+                focusOnProject(response.projects[0]);
+            } else {
+                renderProjects(response.projects);
+            }
+        };
+        actionsDiv.appendChild(viewBtn);
+        
+        if (response.projects.length === 1) {
+            const detailsBtn = document.createElement('button');
+            detailsBtn.className = 'primary';
+            detailsBtn.innerHTML = '📋 Full Details';
+            detailsBtn.onclick = () => openModal(response.projects[0]);
+            actionsDiv.appendChild(detailsBtn);
+        }
+        
+        content.appendChild(actionsDiv);
+    }
+    
+    messageDiv.appendChild(avatar);
+    messageDiv.appendChild(content);
+    messagesContainer.appendChild(messageDiv);
+    
+    // Scroll to bottom
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+function createProjectCard(proj) {
+    const card = document.createElement('div');
+    card.className = 'ai-project-card';
+    card.onclick = () => {
+        focusOnProject(proj);
+        openModal(proj);
+    };
+    
+    card.innerHTML = `
+        <div class="ai-project-card-header">
+            <span class="ai-project-card-name">${proj.name}</span>
+            <span class="ai-project-card-score">${proj.minDownPayment ? proj.minDownPayment + '% DP' : 'N/A'}</span>
+        </div>
+        <div class="ai-project-card-details">
+            <span>🏗️ ${proj.dev || 'N/A'}</span>
+            <span>📍 ${proj.zone || 'N/A'}</span>
+            <span>📅 ${proj.deliveryYear || 'TBA'}</span>
+        </div>
+    `;
+    
+    return card;
+}
+
+function showTypingIndicator() {
+    const messagesContainer = document.getElementById('aiChatMessages');
+    if (!messagesContainer) return null;
+    
+    const id = 'typing-' + Date.now();
+    const typingDiv = document.createElement('div');
+    typingDiv.id = id;
+    typingDiv.className = 'ai-message ai-bot';
+    typingDiv.innerHTML = `
+        <div class="ai-message-avatar">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle></svg>
+        </div>
+        <div class="ai-message-content">
+            <div class="ai-typing">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+    `;
+    
+    messagesContainer.appendChild(typingDiv);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    
+    return id;
+}
+
+function removeTypingIndicator(id) {
+    if (id) {
+        const typing = document.getElementById(id);
+        if (typing) typing.remove();
+    }
+}
+
+function executeAction(action) {
+    switch (action.type) {
+        case 'flyTo':
+            if (action.data && map) {
+                focusOnProject(action.data);
+            }
+            break;
+            
+        case 'flyToZone':
+            if (action.data) {
+                flyToRegion(action.data.toLowerCase().replace(/\s+/g, '-'));
+            }
+            break;
+            
+        case 'filterDeveloper':
+            if (action.data) {
+                const projectsArray = window.projects || [];
+                const devProjects = projectsArray.filter(p => 
+                    p.dev && p.dev.toLowerCase().includes(action.data.toLowerCase())
+                );
+                renderProjects(devProjects);
+            }
+            break;
+            
+        case 'renderProjects':
+            if (action.data) {
+                renderProjects(action.data);
+            }
+            break;
+            
+        case 'openModal':
+            if (action.data) {
+                openModal(action.data);
+            }
+            break;
+            
+        case 'compare':
+            if (action.data && action.data.length >= 2) {
+                // Add to comparison
+                compareList = action.data.slice(0, 3);
+                updateComparisonDrawer();
+            }
+            break;
+    }
+}
+
+// Voice input for AI Chat
+let aiVoiceRecognition = null;
+
+function toggleAIVoice() {
+    const voiceBtn = document.getElementById('aiVoiceBtn');
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    
+    if (!SpeechRecognition) {
+        addChatMessage("Voice input is not supported in your browser. Please type your question instead.", 'bot');
+        return;
+    }
+    
+    if (!aiVoiceRecognition) {
+        aiVoiceRecognition = new SpeechRecognition();
+        aiVoiceRecognition.continuous = false;
+        aiVoiceRecognition.lang = 'en-US';
+        aiVoiceRecognition.interimResults = false;
+        
+        aiVoiceRecognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            document.getElementById('aiChatInput').value = transcript;
+            sendAIMessage(transcript);
+        };
+        
+        aiVoiceRecognition.onend = () => {
+            if (voiceBtn) voiceBtn.classList.remove('listening');
+        };
+        
+        aiVoiceRecognition.onerror = () => {
+            if (voiceBtn) voiceBtn.classList.remove('listening');
+        };
+    }
+    
+    if (voiceBtn && voiceBtn.classList.contains('listening')) {
+        aiVoiceRecognition.stop();
+        voiceBtn.classList.remove('listening');
+    } else {
+        aiVoiceRecognition.start();
+        if (voiceBtn) voiceBtn.classList.add('listening');
+    }
+}
+
+// Initialize project count in welcome message
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+        const knowledge = AIConcierge.getKnowledge();
+        const welcomeMsg = document.querySelector('.ai-message.ai-bot .ai-message-content p:nth-child(2)');
+        if (welcomeMsg && knowledge.totalProjects > 0) {
+            welcomeMsg.innerHTML = `أعرف كل شيء عن <strong>${knowledge.totalProjects} مشروع</strong> في أفضل مواقع مصر. اسألني أي حاجة!`;
+            welcomeMsg.style.direction = 'rtl';
+            welcomeMsg.style.textAlign = 'right';
+        }
+    }, 2000);
+});
+
+// ===== ROUTE INTELLIGENCE SYSTEM =====
+function notifyRouteMessage(message, type = 'info') {
+    if (typeof PriceAlerts !== 'undefined' && typeof PriceAlerts.showToast === 'function') {
+        PriceAlerts.showToast(message, type);
+        return;
+    }
+
+    console[type === 'error' ? 'error' : 'log'](message);
+}
+
+const RoutePlanner = {
+    state: {
+        origin: null,
+        destination: null,
+        stops: [],
+        profile: 'driving',
+        activeRoute: null,
+        activeAlternatives: [],
+        isRouting: false,
+        tourMode: 'air',
+        tourActive: false,
+        routeAnimationFrame: null,
+        routeAnimationIndex: 0,
+        routeAnimationCoords: [],
+        optimizedOrder: null,
+        forced3DForTour: false,
+        airTourSequence: [],
+        currentTourProjectName: '',
+        nextTourProjectName: '',
+        tourNarrative: ''
+    },
+
+    layers: {
+        glow: null,
+        primary: null,
+        alternatives: null,
+        stops: null,
+        connectors: null,
+        movingMarker: null
+    },
+
+    dom: {},
+
+    init() {
+        if (!map) return;
+
+        map.createPane('routeAltPane');
+        map.getPane('routeAltPane').style.zIndex = 451;
+        map.createPane('routeGlowPane');
+        map.getPane('routeGlowPane').style.zIndex = 452;
+        map.createPane('routePane');
+        map.getPane('routePane').style.zIndex = 453;
+        map.createPane('routeStopsPane');
+        map.getPane('routeStopsPane').style.zIndex = 620;
+
+        this.layers.alternatives = L.geoJSON(null, {
+            pane: 'routeAltPane',
+            style: () => ({
+                color: getComputedStyle(document.documentElement).getPropertyValue('--route-alt').trim() || 'rgba(162, 176, 194, 0.24)',
+                weight: 4,
+                opacity: 0.85,
+                lineCap: 'round',
+                lineJoin: 'round',
+                dashArray: '8 14',
+                className: 'route-line-alt'
+            })
+        }).addTo(map);
+
+        this.layers.glow = L.geoJSON(null, {
+            pane: 'routeGlowPane',
+            style: () => ({
+                color: getComputedStyle(document.documentElement).getPropertyValue('--route-glow').trim() || 'rgba(96, 188, 255, 0.34)',
+                weight: 15,
+                opacity: 0.35,
+                lineCap: 'round',
+                lineJoin: 'round',
+                className: 'route-line-shadow'
+            })
+        }).addTo(map);
+
+        this.layers.primary = L.geoJSON(null, {
+            pane: 'routePane',
+            style: () => ({
+                color: getComputedStyle(document.documentElement).getPropertyValue('--route-primary').trim() || '#8fd3ff',
+                weight: 8,
+                opacity: 0.95,
+                lineCap: 'round',
+                lineJoin: 'round',
+                className: 'route-line-main'
+            })
+        }).addTo(map);
+
+        this.layers.connectors = L.layerGroup().addTo(map);
+        this.layers.stops = L.layerGroup().addTo(map);
+
+        this.cacheDom();
+        this.bindDomEvents();
+        this.populateProjectOptions();
+        this.renderStops();
+        this.renderSummary();
+        this.toggleMenu(true);
+    },
+
+    cacheDom() {
+        this.dom.originInput = document.getElementById('routeOriginInput');
+        this.dom.destinationInput = document.getElementById('routeDestinationInput');
+        this.dom.stopInput = document.getElementById('routeStopInput');
+        this.dom.projectOptions = document.getElementById('routeProjectOptions');
+        this.dom.stopsList = document.getElementById('routeStopsList');
+        this.dom.profileSelect = document.getElementById('routeProfileSelect');
+        this.dom.tourModeSelect = document.getElementById('tourModeSelect');
+        this.dom.menu = document.getElementById('routeMenu');
+        this.dom.menuToggle = document.getElementById('routeMenuToggle');
+        this.dom.menuToggleMeta = document.getElementById('routeMenuToggleMeta');
+        this.dom.panel = document.getElementById('routePlannerSection');
+        this.dom.summaryEmpty = document.getElementById('routeSummaryEmpty');
+        this.dom.summaryContent = document.getElementById('routeSummaryContent');
+        this.dom.totalDistance = document.getElementById('routeTotalDistance');
+        this.dom.totalDuration = document.getElementById('routeTotalDuration');
+        this.dom.stopCount = document.getElementById('routeStopCount');
+        this.dom.primaryRoad = document.getElementById('routePrimaryRoad');
+        this.dom.strategyChip = document.getElementById('routeStrategyChip');
+        this.dom.sequenceChip = document.getElementById('routeSequenceChip');
+        this.dom.nextInstruction = document.getElementById('routeNextInstruction');
+        this.dom.tourNarrative = document.getElementById('routeTourNarrative');
+        this.dom.legsList = document.getElementById('routeLegsList');
+    },
+
+    renderTourNarrative() {
+        if (!this.dom.tourNarrative) return;
+
+        if (this.state.tourActive && this.state.tourNarrative) {
+            this.dom.tourNarrative.textContent = this.state.tourNarrative;
+            return;
+        }
+
+        if (this.state.activeRoute?.primaryRoute) {
+            const modeLabel = this.state.tourMode === 'smart' ? 'Smart Tour' : this.state.tourMode === 'drive' ? 'Drive Tour' : 'Air Tour';
+            this.dom.tourNarrative.textContent = `${modeLabel} is ready to explore this corridor with guided movement.`;
+            return;
+        }
+
+        this.dom.tourNarrative.textContent = 'Tour status will appear here while exploring.';
+    },
+
+    setTourContext(currentName, nextName, narrative) {
+        this.state.currentTourProjectName = currentName || '';
+        this.state.nextTourProjectName = nextName || '';
+        this.state.tourNarrative = narrative || '';
+        document.body.classList.add('touring');
+        document.body.dataset.tourMode = this.state.tourMode || 'air';
+        this.renderTourNarrative();
+        this.syncProjectListHighlights();
+        updateBrowseTelemetry();
+    },
+
+    clearTourContext() {
+        this.state.currentTourProjectName = '';
+        this.state.nextTourProjectName = '';
+        this.state.tourNarrative = '';
+        document.body.classList.remove('touring');
+        delete document.body.dataset.tourMode;
+        this.renderTourNarrative();
+        this.syncProjectListHighlights();
+        updateBrowseTelemetry();
+    },
+
+    toggleMenu(forceOpen) {
+        if (!this.dom.panel || !this.dom.menu || !this.dom.menuToggle) {
+            this.cacheDom();
+        }
+
+        if (!this.dom.panel || !this.dom.menu || !this.dom.menuToggle) return;
+
+        const nextOpen = typeof forceOpen === 'boolean' ? forceOpen : this.dom.panel.hidden;
+        this.dom.panel.hidden = !nextOpen;
+        this.dom.menu.classList.toggle('open', nextOpen);
+        this.dom.menuToggle.setAttribute('aria-expanded', nextOpen ? 'true' : 'false');
+        this.syncMenuState(nextOpen);
+    },
+
+    syncMenuState(isOpen = !this.dom.panel?.hidden) {
+        if (!this.dom.menuToggleMeta) return;
+
+        const selectedCount = [this.state.origin, ...this.state.stops, this.state.destination].filter(Boolean).length;
+
+        if (isOpen) {
+            if (this.state.activeRoute?.primaryRoute) {
+                this.dom.menuToggleMeta.textContent = `${this.formatDistance(this.state.activeRoute.primaryRoute.distance)} • ${this.formatDuration(this.state.activeRoute.primaryRoute.duration)}`;
+            } else if (selectedCount > 0) {
+                this.dom.menuToggleMeta.textContent = `${selectedCount} points selected`;
+            } else {
+                this.dom.menuToggleMeta.textContent = 'Ready';
+            }
+            updateBrowseTelemetry();
+            return;
+        }
+
+        this.dom.menuToggleMeta.textContent = this.state.activeRoute?.primaryRoute ? 'Route ready' : selectedCount > 0 ? `${selectedCount} points ready` : 'New';
+        updateBrowseTelemetry();
+    },
+
+    bindDomEvents() {
+        const bindEnter = (input, handler) => {
+            if (!input) return;
+            input.addEventListener('keydown', event => {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    handler();
+                }
+            });
+        };
+
+        bindEnter(this.dom.originInput, () => this.captureInputPoint('origin'));
+        bindEnter(this.dom.destinationInput, () => this.captureInputPoint('destination'));
+        bindEnter(this.dom.stopInput, () => this.addStopFromInput());
+
+        if (this.dom.profileSelect) {
+            this.dom.profileSelect.addEventListener('change', () => {
+                this.state.profile = this.dom.profileSelect.value || 'driving';
+                this.invalidateRoute();
+                if (this.state.origin && this.state.destination) {
+                    this.calculateRoute({ fitBounds: false });
+                }
+            });
+        }
+
+        if (this.dom.tourModeSelect) {
+            this.dom.tourModeSelect.addEventListener('change', () => {
+                this.state.tourMode = this.dom.tourModeSelect.value || 'air';
+            });
+        }
+    },
+
+    populateProjectOptions() {
+        if (!this.dom.projectOptions) {
+            this.cacheDom();
+        }
+
+        if (!this.dom.projectOptions) return;
+
+        const optionsHtml = (window.projects || [])
+            .slice()
+            .sort((left, right) => left.name.localeCompare(right.name))
+            .map(project => `<option value="${project.name}">${project.zone || ''}</option>`)
+            .join('');
+
+        this.dom.projectOptions.innerHTML = optionsHtml;
+    },
+
+    parseCoordinateValue(value) {
+        const match = String(value || '').trim().match(/^\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*$/);
+        if (!match) return null;
+
+        return {
+            name: `${match[1]}, ${match[2]}`,
+            lat: Number(match[1]),
+            lng: Number(match[2]),
+            source: 'manual'
+        };
+    },
+
+    findProjectByName(name) {
+        if (!name) return null;
+        const query = name.trim().toLowerCase();
+        if (!query) return null;
+
+        const exact = (window.projects || []).find(project => project.name.toLowerCase() === query);
+        if (exact) return { ...exact, source: 'project' };
+
+        const partial = (window.projects || []).find(project => project.name.toLowerCase().includes(query) || query.includes(project.name.toLowerCase()));
+        if (partial) return { ...partial, source: 'project' };
+
+        return null;
+    },
+
+    resolvePoint(value) {
+        const manualPoint = this.parseCoordinateValue(value);
+        if (manualPoint) return manualPoint;
+
+        return this.findProjectByName(value);
+    },
+
+    clonePoint(point) {
+        if (!point) return null;
+
+        return {
+            name: point.name,
+            lat: Number(point.lat),
+            lng: Number(point.lng),
+            source: point.source || 'project',
+            zone: point.zone || '',
+            dev: point.dev || ''
+        };
+    },
+
+    getProjectRouteMeta(projectName) {
+        const normalizedName = String(projectName || '').trim().toLowerCase();
+        const classes = [];
+        const badges = [];
+
+        if (currentProject?.name?.toLowerCase() === normalizedName) {
+            classes.push('route-focused');
+            badges.push('Open');
+        }
+
+        if (this.state.origin?.name?.toLowerCase() === normalizedName) {
+            classes.push('route-origin');
+            badges.push('Start');
+        }
+
+        if (this.state.destination?.name?.toLowerCase() === normalizedName) {
+            classes.push('route-destination');
+            badges.push('Finish');
+        }
+
+        const stopIndex = this.state.stops.findIndex(stop => stop.name?.toLowerCase() === normalizedName);
+        if (stopIndex !== -1) {
+            classes.push('route-stop');
+            badges.push(`Stop ${stopIndex + 1}`);
+        }
+
+        if (this.state.currentTourProjectName?.toLowerCase() === normalizedName) {
+            classes.push('route-tour-current');
+            badges.unshift('Now Touring');
+        } else if (this.state.nextTourProjectName?.toLowerCase() === normalizedName) {
+            classes.push('route-tour-next');
+            badges.push('Next');
+        }
+
+        return { classes, badges };
+    },
+
+    syncProjectListHighlights() {
+        document.querySelectorAll('.list-item[data-project-name]').forEach(item => {
+            const meta = this.getProjectRouteMeta(item.dataset.projectName);
+            item.classList.remove('route-origin', 'route-destination', 'route-stop', 'route-focused', 'route-tour-current', 'route-tour-next');
+            if (meta.classes.length) {
+                item.classList.add(...meta.classes);
+            }
+
+            const badgeContainer = item.querySelector('.list-item-badges');
+            if (badgeContainer) {
+                badgeContainer.innerHTML = meta.badges.map(badge => `<span class="list-item-badge">${badge}</span>`).join('');
+            }
+        });
+    },
+
+    deriveRouteInsights(routeData) {
+        const firstLeg = routeData?.primaryRoute?.legs?.[0];
+        const stepNames = (firstLeg?.steps || []).map(step => step.name).filter(Boolean);
+        const uniqueRoads = [...new Set(stepNames)].slice(0, 3);
+        const strategy = this.state.optimizedOrder
+            ? 'Smart optimized sequence'
+            : routeData?.alternatives?.length
+                ? 'Fastest primary corridor'
+                : 'Direct premium route';
+        const sequence = routeData?.requestedPoints?.map(point => point.name).join(' → ') || 'Select route points';
+
+        let nextInstruction = 'Next move will appear here after route build.';
+        const nextStep = (firstLeg?.steps || []).find(step => step.instruction || step.name);
+        if (nextStep) {
+            const descriptor = nextStep.instruction || `Continue via ${nextStep.name}`;
+            const roadSuffix = nextStep.name ? ` on ${nextStep.name}` : '';
+            nextInstruction = `${descriptor}${roadSuffix}`.trim();
+        }
+
+        return {
+            strategy,
+            sequence,
+            roadSummary: uniqueRoads.length ? `Via ${uniqueRoads.join(' • ')}` : routeData?.primaryRoute?.summary || 'Road summary ready',
+            nextInstruction
+        };
+    },
+
+    captureInputPoint(kind) {
+        const input = kind === 'origin' ? this.dom.originInput : this.dom.destinationInput;
+        const point = this.resolvePoint(input?.value);
+
+        if (!point) {
+            notifyRouteMessage('Use a valid project name or lat,lng value.', 'error');
+            return null;
+        }
+
+        this.setPoint(kind, point);
+        return point;
+    },
+
+    invalidateRoute() {
+        this.stopTour(true);
+        this.state.activeRoute = null;
+        this.state.activeAlternatives = [];
+        this.state.optimizedOrder = null;
+        this.state.routeAnimationCoords = [];
+        this.state.routeAnimationIndex = 0;
+        this.state.airTourSequence = [];
+
+        this.layers.glow?.clearLayers();
+        this.layers.primary?.clearLayers();
+        this.layers.alternatives?.clearLayers();
+        this.layers.connectors?.clearLayers();
+        this.layers.stops?.clearLayers();
+
+        this.renderSummary();
+        this.syncMenuState();
+        this.syncProjectListHighlights();
+    },
+
+    setPoint(kind, point) {
+        const normalized = this.clonePoint(point);
+        if (!normalized) return;
+
+        this.invalidateRoute();
+
+        if (kind === 'origin') {
+            this.state.origin = normalized;
+            if (this.dom.originInput) this.dom.originInput.value = normalized.name;
+        } else {
+            this.state.destination = normalized;
+            if (this.dom.destinationInput) this.dom.destinationInput.value = normalized.name;
+        }
+
+        this.renderSummary();
+        this.syncProjectListHighlights();
+        this.syncMenuState();
+    },
+
+    addStop(point) {
+        const normalized = this.clonePoint(point);
+        if (!normalized) return;
+
+        this.invalidateRoute();
+        this.state.stops.push(normalized);
+        if (this.dom.stopInput) this.dom.stopInput.value = '';
+        this.renderStops();
+        this.renderSummary();
+        this.syncProjectListHighlights();
+    },
+
+    addStopFromInput() {
+        const point = this.resolvePoint(this.dom.stopInput?.value);
+        if (!point) {
+            notifyRouteMessage('Stop must be a project name or lat,lng value.', 'error');
+            return;
+        }
+
+        this.addStop(point);
+    },
+
+    moveStop(index, delta) {
+        const targetIndex = index + delta;
+        if (targetIndex < 0 || targetIndex >= this.state.stops.length) return;
+
+        this.invalidateRoute();
+        const reordered = [...this.state.stops];
+        const [item] = reordered.splice(index, 1);
+        reordered.splice(targetIndex, 0, item);
+        this.state.stops = reordered;
+        this.renderStops();
+        this.renderSummary();
+        this.syncProjectListHighlights();
+    },
+
+    removeStop(index) {
+        this.invalidateRoute();
+        this.state.stops.splice(index, 1);
+        this.renderStops();
+        this.renderSummary();
+        this.syncProjectListHighlights();
+    },
+
+    reverse() {
+        this.invalidateRoute();
+        const oldOrigin = this.state.origin;
+        this.state.origin = this.state.destination;
+        this.state.destination = oldOrigin;
+        this.state.stops.reverse();
+
+        if (this.dom.originInput) this.dom.originInput.value = this.state.origin?.name || '';
+        if (this.dom.destinationInput) this.dom.destinationInput.value = this.state.destination?.name || '';
+
+        this.renderStops();
+        this.renderSummary();
+        this.syncProjectListHighlights();
+
+        if (this.state.origin && this.state.destination) {
+            this.calculateRoute();
+        }
+    },
+
+    clear(clearInputs = true) {
+        this.stopTour(true);
+        this.state.activeRoute = null;
+        this.state.activeAlternatives = [];
+        this.state.optimizedOrder = null;
+
+        if (clearInputs) {
+            this.state.origin = null;
+            this.state.destination = null;
+            this.state.stops = [];
+            if (this.dom.originInput) this.dom.originInput.value = '';
+            if (this.dom.destinationInput) this.dom.destinationInput.value = '';
+            if (this.dom.stopInput) this.dom.stopInput.value = '';
+        }
+
+        this.layers.glow?.clearLayers();
+        this.layers.primary?.clearLayers();
+        this.layers.alternatives?.clearLayers();
+        this.layers.connectors?.clearLayers();
+        this.layers.stops?.clearLayers();
+        if (this.layers.movingMarker && map.hasLayer(this.layers.movingMarker)) {
+            map.removeLayer(this.layers.movingMarker);
+        }
+        this.layers.movingMarker = null;
+
+        this.renderStops();
+        this.renderSummary();
+        this.syncMenuState();
+        this.syncProjectListHighlights();
+    },
+
+    getRequestedPoints() {
+        if (!this.state.origin || !this.state.destination) return [];
+
+        return [this.state.origin, ...this.state.stops, this.state.destination].map(point => ({
+            name: point.name,
+            lat: point.lat,
+            lng: point.lng
+        }));
+    },
+
+    formatDistance(distance) {
+        if (!Number.isFinite(distance)) return '0 km';
+        return distance >= 1000 ? `${(distance / 1000).toFixed(distance >= 10000 ? 0 : 1)} km` : `${Math.round(distance)} m`;
+    },
+
+    formatDuration(duration) {
+        if (!Number.isFinite(duration)) return '0 min';
+        const totalMinutes = Math.round(duration / 60);
+        const hours = Math.floor(totalMinutes / 60);
+        const minutes = totalMinutes % 60;
+        if (!hours) return `${minutes} min`;
+        if (!minutes) return `${hours} hr`;
+        return `${hours} hr ${minutes} min`;
+    },
+
+    normalizeOsrmRoutePayload(payload, requestedPoints) {
+        if (!payload || payload.code !== 'Ok' || !Array.isArray(payload.routes) || payload.routes.length === 0) {
+            throw new Error(payload?.message || 'No route found');
+        }
+
+        const primaryRoute = payload.routes[0];
+
+        return {
+            provider: 'osrm',
+            requestedPoints,
+            waypoints: (payload.waypoints || []).map((waypoint, index) => ({
+                name: requestedPoints[index]?.name || waypoint.name || `Point ${index + 1}`,
+                distance: waypoint.distance,
+                snappedLng: waypoint.location?.[0],
+                snappedLat: waypoint.location?.[1],
+                roadName: waypoint.name || ''
+            })),
+            primaryRoute: {
+                distance: primaryRoute.distance,
+                duration: primaryRoute.duration,
+                weight: primaryRoute.weight,
+                summary: primaryRoute.legs?.map(leg => leg.summary).filter(Boolean).join(' • ') || '',
+                geometry: primaryRoute.geometry,
+                legs: (primaryRoute.legs || []).map((leg, index) => ({
+                    index,
+                    distance: leg.distance,
+                    duration: leg.duration,
+                    summary: leg.summary || '',
+                    steps: (leg.steps || []).map(step => ({
+                        distance: step.distance,
+                        duration: step.duration,
+                        name: step.name || '',
+                        mode: step.mode || 'driving',
+                        instruction: step.maneuver?.instruction || '',
+                        type: step.maneuver?.type || '',
+                        modifier: step.maneuver?.modifier || '',
+                        location: step.maneuver?.location || null
+                    }))
+                }))
+            },
+            alternatives: payload.routes.slice(1).map(route => ({
+                distance: route.distance,
+                duration: route.duration,
+                weight: route.weight,
+                summary: route.legs?.map(leg => leg.summary).filter(Boolean).join(' • ') || '',
+                geometry: route.geometry
+            }))
+        };
+    },
+
+    normalizeOsrmTripPayload(payload, requestedPoints) {
+        if (!payload || payload.code !== 'Ok' || !Array.isArray(payload.trips) || payload.trips.length === 0) {
+            throw new Error(payload?.message || 'No optimized trip found');
+        }
+
+        const trip = payload.trips[0];
+        const orderedWaypoints = [...(payload.waypoints || [])].sort((left, right) => left.waypoint_index - right.waypoint_index);
+
+        return {
+            provider: 'osrm',
+            waypointOrder: orderedWaypoints.map(waypoint => waypoint.waypoint_index),
+            orderedPoints: orderedWaypoints.map((waypoint, index) => ({
+                name: requestedPoints[waypoint.waypoint_index]?.name || `Point ${index + 1}`,
+                originalIndex: waypoint.waypoint_index,
+                lat: requestedPoints[waypoint.waypoint_index]?.lat,
+                lng: requestedPoints[waypoint.waypoint_index]?.lng,
+                snappedLat: waypoint.location?.[1],
+                snappedLng: waypoint.location?.[0],
+                roadName: waypoint.name || ''
+            })),
+            trip: {
+                distance: trip.distance,
+                duration: trip.duration,
+                weight: trip.weight,
+                summary: trip.legs?.map(leg => leg.summary).filter(Boolean).join(' • ') || '',
+                geometry: trip.geometry,
+                legs: (trip.legs || []).map((leg, index) => ({
+                    index,
+                    distance: leg.distance,
+                    duration: leg.duration,
+                    summary: leg.summary || ''
+                }))
+            }
+        };
+    },
+
+    async directRouteFallback(endpoint, payload) {
+        const requestedPoints = payload.coordinates || [];
+        const coordinates = requestedPoints.map(point => `${point.lng},${point.lat}`).join(';');
+        const profile = payload.profile || 'driving';
+
+        if (endpoint === '/api/route/route') {
+            const alternatives = payload.alternatives ? 'true' : 'false';
+            const response = await fetch(`https://router.project-osrm.org/route/v1/${profile}/${coordinates}?overview=full&geometries=geojson&steps=true&annotations=distance,duration&alternatives=${alternatives}`);
+            if (!response.ok) {
+                throw new Error('Routing API is unavailable right now.');
+            }
+
+            return this.normalizeOsrmRoutePayload(await response.json(), requestedPoints);
+        }
+
+        if (endpoint === '/api/route/trip') {
+            const response = await fetch(`https://router.project-osrm.org/trip/v1/${profile}/${coordinates}?roundtrip=false&source=first&destination=last&overview=full&geometries=geojson&steps=false`);
+            if (!response.ok) {
+                throw new Error('Smart trip optimization is unavailable right now.');
+            }
+
+            return this.normalizeOsrmTripPayload(await response.json(), requestedPoints);
+        }
+
+        if (endpoint === '/api/route/table') {
+            const response = await fetch(`https://router.project-osrm.org/table/v1/${profile}/${coordinates}?annotations=distance,duration`);
+            if (!response.ok) {
+                throw new Error('Route matrix is unavailable right now.');
+            }
+
+            const data = await response.json();
+            if (!data || data.code !== 'Ok') {
+                throw new Error(data?.message || 'Route matrix failed');
+            }
+
+            return {
+                provider: 'osrm',
+                points: requestedPoints,
+                distances: data.distances || [],
+                durations: data.durations || []
+            };
+        }
+
+        throw new Error('Unsupported route request.');
+    },
+
+    async requestJson(url, payload) {
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const rawText = await response.text();
+            let result = null;
+
+            try {
+                result = rawText ? JSON.parse(rawText) : null;
+            } catch (parseError) {
+                if (rawText.trim().startsWith('<')) {
+                    return this.directRouteFallback(url, payload);
+                }
+
+                throw parseError;
+            }
+
+            if (!response.ok || !result?.success) {
+                const errorMessage = result?.error || `Request failed with status ${response.status}`;
+
+                if (response.status === 404 || response.status >= 500) {
+                    return this.directRouteFallback(url, payload);
+                }
+
+                throw new Error(errorMessage);
+            }
+
+            return result.data;
+        } catch (error) {
+            if (url.startsWith('/api/route/')) {
+                try {
+                    return await this.directRouteFallback(url, payload);
+                } catch (fallbackError) {
+                    throw new Error(fallbackError.message || error.message || 'Route request failed');
+                }
+            }
+
+            throw error;
+        }
+    },
+
+    async calculateRoute(options = {}) {
+        const fitBounds = options.fitBounds !== false;
+
+        this.toggleMenu(true);
+
+        if (!this.state.origin) this.captureInputPoint('origin');
+        if (!this.state.destination) this.captureInputPoint('destination');
+
+        if (!this.state.origin || !this.state.destination) {
+            notifyRouteMessage('Choose both a route start and destination first.', 'error');
+            return;
+        }
+
+        if (this.state.isRouting) return;
+        this.state.isRouting = true;
+
+        try {
+            const data = await this.requestJson('/api/route/route', {
+                profile: this.state.profile,
+                alternatives: true,
+                coordinates: this.getRequestedPoints()
+            });
+
+            this.state.activeRoute = data;
+            this.state.activeAlternatives = data.alternatives || [];
+            this.renderRoute(data);
+            this.renderSummary(data);
+
+            if (fitBounds) {
+                this.fitRouteToBounds();
+            }
+        } catch (error) {
+            notifyRouteMessage(error.message || 'Failed to build route.', 'error');
+        } finally {
+            this.state.isRouting = false;
+        }
+    },
+
+    async optimizeSmartRoute() {
+        if (!this.state.origin || !this.state.destination || this.state.stops.length === 0) {
+            return this.calculateRoute();
+        }
+
+        const data = await this.requestJson('/api/route/trip', {
+            profile: this.state.profile,
+            coordinates: this.getRequestedPoints()
+        });
+
+        const orderedPoints = data.orderedPoints || [];
+        if (orderedPoints.length >= 2) {
+            const middleStops = orderedPoints.slice(1, -1).map(point => ({
+                name: point.name,
+                lat: point.lat,
+                lng: point.lng,
+                source: 'project'
+            }));
+
+            this.state.stops = middleStops;
+            this.state.optimizedOrder = orderedPoints.map(point => point.name);
+            this.renderStops();
+        }
+
+        return this.calculateRoute({ fitBounds: true });
+    },
+
+    renderRoute(routeData) {
+        this.layers.glow?.clearLayers();
+        this.layers.primary?.clearLayers();
+        this.layers.alternatives?.clearLayers();
+        this.layers.connectors?.clearLayers();
+        this.layers.stops?.clearLayers();
+
+        if (!routeData?.primaryRoute?.geometry) return;
+
+        (routeData.alternatives || []).forEach(altRoute => {
+            this.layers.alternatives.addData(altRoute.geometry);
+        });
+
+        this.layers.glow?.addData(routeData.primaryRoute.geometry);
+        this.layers.primary.addData(routeData.primaryRoute.geometry);
+
+        (routeData.waypoints || []).forEach((waypoint, index) => {
+            if (!Number.isFinite(waypoint.snappedLat) || !Number.isFinite(waypoint.snappedLng)) return;
+
+            const marker = L.marker([waypoint.snappedLat, waypoint.snappedLng], {
+                pane: 'routeStopsPane',
+                icon: L.divIcon({
+                    className: '',
+                    html: `<div class="route-stop-marker" title="${waypoint.name}"></div>`,
+                    iconSize: [20, 20],
+                    iconAnchor: [10, 10]
+                })
+            });
+
+            marker.bindTooltip(`${index + 1}. ${waypoint.name}`, {
+                direction: 'top',
+                offset: [0, -10],
+                className: 'custom-tooltip',
+                opacity: 0.95
+            });
+
+            this.layers.stops.addLayer(marker);
+
+            const requested = routeData.requestedPoints?.[index];
+            if (requested && Number.isFinite(requested.lat) && Number.isFinite(requested.lng)) {
+                const snapDistance = map.distance([requested.lat, requested.lng], [waypoint.snappedLat, waypoint.snappedLng]);
+                if (snapDistance > 80) {
+                    const connector = L.polyline([
+                        [requested.lat, requested.lng],
+                        [waypoint.snappedLat, waypoint.snappedLng]
+                    ], {
+                        color: getComputedStyle(document.documentElement).getPropertyValue('--route-connector').trim() || 'rgba(184, 211, 229, 0.42)',
+                        weight: 2,
+                        dashArray: '6 8',
+                        pane: 'routeAltPane'
+                    });
+                    this.layers.connectors.addLayer(connector);
+                }
+            }
+        });
+    },
+
+    renderStops() {
+        if (!this.dom.stopsList) return;
+
+        if (this.state.stops.length === 0) {
+            this.dom.stopsList.innerHTML = '';
+            return;
+        }
+
+        this.dom.stopsList.innerHTML = this.state.stops.map((stop, index) => `
+            <div class="route-stop-chip">
+              <span class="route-stop-index">${index + 1}</span>
+              <span class="route-stop-name">${stop.name}</span>
+              <span class="route-stop-actions">
+                <button type="button" onclick="moveRouteStop(${index}, -1)" aria-label="Move stop up">↑</button>
+                <button type="button" onclick="moveRouteStop(${index}, 1)" aria-label="Move stop down">↓</button>
+                <button type="button" onclick="removeRouteStop(${index})" aria-label="Remove stop">×</button>
+              </span>
+            </div>
+        `).join('');
+    },
+
+    renderSummary(routeData = this.state.activeRoute) {
+        const requestedPointCount = [this.state.origin, ...this.state.stops, this.state.destination].filter(Boolean).length;
+
+        if (!routeData?.primaryRoute) {
+            if (requestedPointCount > 0) {
+                if (this.dom.summaryEmpty) this.dom.summaryEmpty.style.display = 'none';
+                if (this.dom.summaryContent) this.dom.summaryContent.style.display = 'block';
+            } else {
+                if (this.dom.summaryEmpty) {
+                    this.dom.summaryEmpty.style.display = 'block';
+                    this.dom.summaryEmpty.textContent = 'Select a start and destination to draw a real road route.';
+                }
+                if (this.dom.summaryContent) this.dom.summaryContent.style.display = 'none';
+            }
+            if (this.dom.totalDistance) this.dom.totalDistance.textContent = requestedPointCount > 1 ? 'Ready' : '--';
+            if (this.dom.totalDuration) this.dom.totalDuration.textContent = requestedPointCount > 1 ? 'Pending' : '--';
+            if (this.dom.stopCount) this.dom.stopCount.textContent = `${Math.max(requestedPointCount - 2, 0)}`;
+            if (this.dom.primaryRoad) {
+                this.dom.primaryRoad.textContent = requestedPointCount > 1
+                    ? `Ready to route ${requestedPointCount} selected points on real roads.`
+                    : 'Choose a start and destination to unlock the road summary.';
+            }
+            if (this.dom.strategyChip) this.dom.strategyChip.textContent = requestedPointCount > 2 ? 'Multi-stop plan' : 'Strategy pending';
+            if (this.dom.sequenceChip) this.dom.sequenceChip.textContent = [this.state.origin, ...this.state.stops, this.state.destination].filter(Boolean).map(point => point.name).join(' → ') || 'Select route points';
+            if (this.dom.nextInstruction) this.dom.nextInstruction.textContent = requestedPointCount > 1 ? 'Route summary will include road names, ETA, and next maneuver after calculation.' : 'Next move will appear here after route build.';
+            if (this.dom.legsList) {
+                this.dom.legsList.innerHTML = requestedPointCount > 1
+                    ? '<div class="route-leg-item">Build the route to reveal road-by-road guidance and leg timing.</div>'
+                    : '';
+            }
+            this.renderTourNarrative();
+            this.syncMenuState();
+            this.syncProjectListHighlights();
+            return;
+        }
+
+        if (this.dom.summaryEmpty) this.dom.summaryEmpty.style.display = 'none';
+        if (this.dom.summaryContent) this.dom.summaryContent.style.display = 'block';
+        if (this.dom.totalDistance) this.dom.totalDistance.textContent = this.formatDistance(routeData.primaryRoute.distance);
+        if (this.dom.totalDuration) this.dom.totalDuration.textContent = this.formatDuration(routeData.primaryRoute.duration);
+        if (this.dom.stopCount) this.dom.stopCount.textContent = `${Math.max(requestedPointCount - 2, 0)}`;
+        const insights = this.deriveRouteInsights(routeData);
+        if (this.dom.primaryRoad) {
+            const summaryText = insights.roadSummary || routeData.primaryRoute.summary || (this.state.optimizedOrder ? `Smart order: ${this.state.optimizedOrder.join(' → ')}` : 'Primary road summary ready');
+            this.dom.primaryRoad.textContent = summaryText;
+        }
+        if (this.dom.strategyChip) this.dom.strategyChip.textContent = insights.strategy;
+        if (this.dom.sequenceChip) this.dom.sequenceChip.textContent = insights.sequence;
+        if (this.dom.nextInstruction) this.dom.nextInstruction.textContent = insights.nextInstruction;
+
+        if (this.dom.legsList) {
+            this.dom.legsList.innerHTML = (routeData.primaryRoute.legs || []).map((leg, index) => {
+                const fromName = routeData.requestedPoints?.[index]?.name || `Point ${index + 1}`;
+                const toName = routeData.requestedPoints?.[index + 1]?.name || `Point ${index + 2}`;
+                const leadStep = (leg.steps || []).find(step => step.instruction || step.name);
+                const summary = leg.summary ? `${leg.summary} • ` : '';
+                const instruction = leadStep ? `<br>${leadStep.instruction || `Follow ${leadStep.name}`}` : '';
+                return `<div class="route-leg-item"><strong>${fromName}</strong> → <strong>${toName}</strong><br>${summary}${this.formatDistance(leg.distance)} • ${this.formatDuration(leg.duration)}${instruction}</div>`;
+            }).join('');
+        }
+
+        this.renderTourNarrative();
+        this.syncMenuState();
+        this.syncProjectListHighlights();
+    },
+
+    fitRouteToBounds() {
+        const bounds = this.layers.primary?.getBounds?.();
+        if (bounds && bounds.isValid()) {
+            map.flyToBounds(bounds, { padding: [60, 60], maxZoom: 14, duration: 1.25 });
+        }
+    },
+
+    projectAction(projectName, action) {
+        const project = this.findProjectByName(projectName);
+        if (!project) {
+            notifyRouteMessage('Project not found for route action.', 'error');
+            return;
+        }
+
+        if (action === 'origin') {
+            this.setPoint('origin', project);
+            this.toggleMenu(true);
+            notifyRouteMessage(`${project.name} set as route start.`, 'success');
+        } else if (action === 'destination') {
+            this.setPoint('destination', project);
+            this.toggleMenu(true);
+            notifyRouteMessage(`${project.name} set as route destination.`, 'success');
+        } else if (action === 'stop') {
+            this.addStop(project);
+            this.toggleMenu(true);
+            notifyRouteMessage(`${project.name} added as route stop.`, 'success');
+        }
+    },
+
+    routeCurrentProjectAs(action) {
+        if (!currentProject) return;
+        this.projectAction(currentProject.name, action);
+    },
+
+    buildAnimationPath() {
+        const coordinates = this.state.activeRoute?.primaryRoute?.geometry?.coordinates || [];
+        return coordinates.map(([lng, lat]) => [lat, lng]);
+    },
+
+    getTourSequence() {
+        const routePoints = this.state.activeRoute?.requestedPoints || this.getRequestedPoints();
+        if (routePoints.length >= 2) {
+            return routePoints.map(point => {
+                const project = this.findProjectByName(point.name);
+                return project || point;
+            });
+        }
+
+        return featuredProjects
+            .map(name => this.findProjectByName(name))
+            .filter(Boolean);
+    },
+
+    startAirTourAnimation() {
+        const sequence = this.getTourSequence();
+        if (sequence.length < 2) {
+            legacyStartTour();
+            return;
+        }
+
+        this.stopTour(true);
+        legacyStopTour();
+        this.state.tourActive = true;
+        this.state.airTourSequence = sequence;
+        this.state.forced3DForTour = false;
+
+        let legIndex = 0;
+
+        const runLeg = () => {
+            if (!this.state.tourActive) return;
+
+            if (legIndex >= sequence.length - 1) {
+                this.setTourContext(sequence[sequence.length - 1]?.name || 'Final stop', '', 'Tour complete.');
+                this.stopTour();
+                return;
+            }
+
+            const current = sequence[legIndex];
+            const next = sequence[legIndex + 1];
+            const following = sequence[legIndex + 2];
+            const activeLeg = this.state.activeRoute?.primaryRoute?.legs?.[Math.min(legIndex, Math.max((this.state.activeRoute?.primaryRoute?.legs || []).length - 1, 0))];
+            const corridorLabel = activeLeg?.summary ? ` via ${activeLeg.summary}` : '';
+            const midpoint = {
+                lat: (current.lat + next.lat) / 2,
+                lng: (current.lng + next.lng) / 2
+            };
+
+            this.setTourContext(current.name, next.name, `Air Tour departing ${current.name} and revealing ${next.name}${corridorLabel}.`);
+
+            map.flyTo([current.lat, current.lng], 14.6, {
+                animate: true,
+                duration: 2.8,
+                easeLinearity: 0.12
+            });
+
+            if (current?.name) {
+                const currentProject = this.findProjectByName(current.name);
+                if (currentProject) {
+                    setTimeout(() => openProjectHover(currentProject), 1800);
+                }
+            }
+
+            this.state.routeAnimationFrame = window.setTimeout(() => {
+                if (!this.state.tourActive) return;
+
+                this.setTourContext(current.name, next.name, `Crossing the regional corridor between ${current.name} and ${next.name}${corridorLabel}.`);
+
+                map.flyTo([midpoint.lat, midpoint.lng], 11.1, {
+                    animate: true,
+                    duration: 2.4,
+                    easeLinearity: 0.08
+                });
+
+                this.state.routeAnimationFrame = window.setTimeout(() => {
+                    if (!this.state.tourActive) return;
+
+                    this.setTourContext(next.name, following?.name || current.name, `Arriving at ${next.name}${corridorLabel} with the next reveal lined up.`);
+
+                    map.flyTo([next.lat, next.lng], 15, {
+                        animate: true,
+                        duration: 3.2,
+                        easeLinearity: 0.14
+                    });
+
+                    const nextProject = next?.name ? this.findProjectByName(next.name) : null;
+                    if (nextProject) {
+                        setTimeout(() => openProjectHover(nextProject), 2000);
+                    }
+
+                    this.state.routeAnimationFrame = window.setTimeout(() => {
+                        legIndex += 1;
+                        runLeg();
+                    }, 3600);
+                }, 2400);
+            }, 2500);
+        };
+
+        runLeg();
+    },
+
+    startDriveAnimation() {
+        const coordinates = this.buildAnimationPath();
+        if (coordinates.length < 2) {
+            notifyRouteMessage('Create a route first for Drive Tour.', 'error');
+            return;
+        }
+
+        this.stopTour(true);
+        this.state.tourActive = true;
+        this.state.routeAnimationCoords = coordinates;
+        this.state.routeAnimationIndex = 0;
+        const sequence = this.getTourSequence();
+        let lastNarratedStopIndex = -1;
+
+        this.layers.movingMarker = L.marker(coordinates[0], {
+            pane: 'routeStopsPane',
+            icon: L.divIcon({
+                className: '',
+                html: '<div class="route-stop-marker route-tour-indicator"></div>',
+                iconSize: [24, 24],
+                iconAnchor: [12, 12]
+            })
+        }).addTo(map);
+
+        const step = () => {
+            if (!this.state.tourActive) return;
+
+            const currentCoord = this.state.routeAnimationCoords[this.state.routeAnimationIndex];
+            if (!currentCoord) {
+                this.stopTour();
+                return;
+            }
+
+            this.layers.movingMarker.setLatLng(currentCoord);
+            map.panTo(currentCoord, { animate: true, duration: 0.32, easeLinearity: 0.2 });
+
+            const progress = this.state.routeAnimationCoords.length > 1
+                ? this.state.routeAnimationIndex / (this.state.routeAnimationCoords.length - 1)
+                : 0;
+            const legProgress = sequence.length > 1 ? progress * (sequence.length - 1) : 0;
+            const activeStopIndex = Math.min(Math.floor(legProgress), Math.max(sequence.length - 2, 0));
+            const currentStop = sequence[activeStopIndex] || sequence[0];
+            const nextStop = sequence[Math.min(activeStopIndex + 1, sequence.length - 1)] || currentStop;
+            const pct = Math.max(1, Math.min(100, Math.round(progress * 100)));
+
+            if (activeStopIndex !== lastNarratedStopIndex) {
+                lastNarratedStopIndex = activeStopIndex;
+                const currentStopProject = currentStop?.name ? this.findProjectByName(currentStop.name) : null;
+                if (currentStopProject) {
+                    openProjectHover(currentStopProject);
+                }
+            }
+
+            if (this.state.routeAnimationIndex % 10 === 0 || this.state.routeAnimationIndex === 0) {
+                const driveLabel = this.state.tourMode === 'smart'
+                    ? `Smart Tour ${pct}% complete. Moving from ${currentStop?.name || 'current stop'} toward ${nextStop?.name || 'next stop'}.`
+                    : `Drive Tour ${pct}% complete. Following the route from ${currentStop?.name || 'current stop'} toward ${nextStop?.name || 'next stop'}.`;
+                this.setTourContext(currentStop?.name, nextStop?.name, driveLabel);
+            }
+
+            this.state.routeAnimationIndex += 1;
+            if (this.state.routeAnimationIndex >= this.state.routeAnimationCoords.length) {
+                this.stopTour();
+                return;
+            }
+
+            this.state.routeAnimationFrame = window.setTimeout(step, 85);
+        };
+
+        step();
+    },
+
+    async startTour() {
+        this.state.tourMode = this.dom.tourModeSelect?.value || this.state.tourMode || 'air';
+
+        if (this.state.tourMode === 'air') {
+            if (!this.state.activeRoute && this.state.origin && this.state.destination) {
+                await this.calculateRoute({ fitBounds: false });
+            }
+
+            if (!this.state.activeRoute?.primaryRoute) {
+                notifyRouteMessage('Build a valid route before starting the air tour.', 'error');
+                return;
+            }
+
+            this.startAirTourAnimation();
+            const playBtn = document.getElementById('btn-play-tour');
+            const stopBtn = document.getElementById('btn-stop-tour');
+            if (playBtn) playBtn.style.display = 'none';
+            if (stopBtn) stopBtn.style.display = 'flex';
+            return;
+        }
+
+        legacyStopTour();
+
+        try {
+            if (this.state.tourMode === 'smart') {
+                await this.optimizeSmartRoute();
+            } else if (!this.state.activeRoute) {
+                await this.calculateRoute();
+            }
+
+            if (!this.state.activeRoute?.primaryRoute) {
+                notifyRouteMessage('Build a valid route before starting the tour.', 'error');
+                return;
+            }
+
+            this.startDriveAnimation();
+            const playBtn = document.getElementById('btn-play-tour');
+            const stopBtn = document.getElementById('btn-stop-tour');
+            if (playBtn) playBtn.style.display = 'none';
+            if (stopBtn) stopBtn.style.display = 'flex';
+        } catch (error) {
+            notifyRouteMessage(error.message || 'Tour could not start.', 'error');
+        }
+    },
+
+    stopTour(silent = false) {
+        this.state.tourActive = false;
+        if (this.state.routeAnimationFrame) {
+            clearTimeout(this.state.routeAnimationFrame);
+            this.state.routeAnimationFrame = null;
+        }
+
+        if (this.layers.movingMarker && map.hasLayer(this.layers.movingMarker)) {
+            map.removeLayer(this.layers.movingMarker);
+        }
+        this.layers.movingMarker = null;
+
+        legacyStopTour();
+        this.state.forced3DForTour = false;
+        this.clearTourContext();
+        if (map) {
+            map.stop();
+            map.closePopup();
+        }
+
+        if (!silent) {
+            const playBtn = document.getElementById('btn-play-tour');
+            const stopBtn = document.getElementById('btn-stop-tour');
+            if (playBtn) playBtn.style.display = 'flex';
+            if (stopBtn) stopBtn.style.display = 'none';
+        }
+    }
+};
+
+window.RoutePlanner = RoutePlanner;
+
+const legacyStartTour = startTour;
+const legacyStopTour = stopTour;
+
+startTour = function() {
+    return RoutePlanner.startTour();
+};
+
+stopTour = function() {
+    return RoutePlanner.stopTour();
+};
+
+function calculatePlannedRoute() {
+    return RoutePlanner.calculateRoute();
+}
+
+function clearPlannedRoute() {
+    return RoutePlanner.clear();
+}
+
+function reversePlannedRoute() {
+    return RoutePlanner.reverse();
+}
+
+function fitRouteToBounds() {
+    return RoutePlanner.fitRouteToBounds();
+}
+
+function addRouteStopFromInput() {
+    return RoutePlanner.addStopFromInput();
+}
+
+function moveRouteStop(index, delta) {
+    return RoutePlanner.moveStop(index, delta);
+}
+
+function removeRouteStop(index) {
+    return RoutePlanner.removeStop(index);
+}
+
+function routeProjectAction(projectName, action) {
+    return RoutePlanner.projectAction(projectName, action);
+}
+
+function routeCurrentProjectAs(action) {
+    return RoutePlanner.routeCurrentProjectAs(action);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => RoutePlanner.init(), 150);
+});
+
+function toggleRouteMenu(forceOpen) {
+    return RoutePlanner.toggleMenu(forceOpen);
+}
+
+
+
+

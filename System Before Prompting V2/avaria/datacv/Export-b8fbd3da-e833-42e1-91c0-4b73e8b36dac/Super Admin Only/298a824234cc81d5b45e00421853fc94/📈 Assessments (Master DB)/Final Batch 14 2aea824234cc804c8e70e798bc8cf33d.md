@@ -1,0 +1,14 @@
+# Final Batch 14
+
+Assessment AI Report: Company RED received an assessment outcome of "Aced" with perfect scores in mapping, product knowledge, presentability, and soft skills, each rated 5.
+Assessment For (Trainee) 1:  Nourhan Mobarak (../%F0%9F%91%A4%20Trainees%20(Master%20DB)/Nourhan%20Mobarak%202aaa824234cc80fba733cf759fe8594b.md)
+Assessment Outcome: Aced
+Batch: Batch 14 (../%F0%9F%8E%93%20Batches%20(Master%20DB)/Batch%2014%202aaa824234cc808f8e3ffe192d061526.md)
+Mapping: 5
+Product Knowledge: 5
+Tech Score %: 100%
+Presentability: 5
+Soft Skills: 5
+Soft Score %: 100%
+Overall %: 100%
+Company: RED

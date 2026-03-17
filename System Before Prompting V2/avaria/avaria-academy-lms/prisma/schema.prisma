@@ -1,0 +1,60 @@
+// This file defines the database schema for the Avaria Academy Learning Management System using Prisma ORM.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql" // Change this to your database provider
+  url      = env("DATABASE_URL")
+}
+
+model Trainee {
+  id          Int       @id @default(autoincrement())
+  name        String
+  email       String    @unique
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  dataVersion Int       @default(1)
+  batches     Batch[]   @relation("TraineeBatches")
+  attendance   Attendance[]
+  assessments  Assessment[]
+}
+
+model Batch {
+  id          Int       @id @default(autoincrement())
+  name        String
+  startDate   DateTime
+  endDate     DateTime
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  dataVersion Int       @default(1)
+  trainees    Trainee[] @relation("TraineeBatches")
+}
+
+model Attendance {
+  id          Int       @id @default(autoincrement())
+  traineeId   Int
+  batchId     Int
+  date        DateTime
+  status      String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  dataVersion Int       @default(1)
+
+  trainee     Trainee   @relation(fields: [traineeId], references: [id])
+  batch       Batch     @relation(fields: [batchId], references: [id])
+}
+
+model Assessment {
+  id          Int       @id @default(autoincrement())
+  traineeId   Int
+  batchId     Int
+  score       Float
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  dataVersion Int       @default(1)
+
+  trainee     Trainee   @relation(fields: [traineeId], references: [id])
+  batch       Batch     @relation(fields: [batchId], references: [id])
+}

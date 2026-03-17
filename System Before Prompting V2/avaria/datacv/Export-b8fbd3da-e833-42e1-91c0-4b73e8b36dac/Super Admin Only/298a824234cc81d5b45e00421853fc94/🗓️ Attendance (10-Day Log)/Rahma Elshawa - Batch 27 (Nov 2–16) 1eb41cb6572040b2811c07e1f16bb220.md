@@ -1,0 +1,18 @@
+# Rahma Elshawa - Batch 27 (Nov 2–16)
+
+Batch: Batch 27 (../%F0%9F%8E%93%20Batches%20(Master%20DB)/Batch%2027%202a0a824234cc8027ab38c5a9d2bc9b04.md)
+Checklist Status: Not Started
+Completion %: 0
+Day 1: Yes
+Day 10: No
+Day 2: Yes
+Day 3: Yes
+Day 4: Yes
+Day 5: Yes
+Day 6: No
+Day 7: Yes
+Day 8: Yes
+Day 9: No
+Period End: November 16, 2025
+Period Start: November 2, 2025
+Trainee: Rahma Elshawa (../%F0%9F%91%A4%20Trainees%20(Master%20DB)/Rahma%20Elshawa%202a0a824234cc8058b582d6cea756441b.md)

@@ -1,0 +1,14 @@
+{
+  "name": "excelias-portal",
+  "version": "1.0.0",
+  "description": "Excelias — Unified RED Training Academy Platform Portal",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "http-proxy-middleware": "^3.0.0"
+  }
+}

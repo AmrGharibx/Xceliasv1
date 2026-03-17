@@ -1,0 +1,240 @@
+// ============================================================
+// AVARIA ACADEMY — PRISMA SCHEMA
+// The Immortal Data Engine
+// ============================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// ============================================================
+// CORE ENTITIES
+// ============================================================
+
+model Batch {
+  id          String   @id @default(cuid())
+  notionId    String?  @unique // Original Notion ID for deduplication
+  batchName   String
+  status      String   @default("Planning") // Planning | Active | Completed
+  startDate   DateTime
+  endDate     DateTime
+  
+  // Metadata
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  dataVersion Int      @default(1)
+  
+  // Relations
+  trainees         Trainee[]
+  dailyAttendance  DailyAttendance[]
+  tenDayAttendance TenDayAttendance[]
+  assessments      Assessment[]
+  
+  // Computed aggregations (cached for performance)
+  totalTrainees    Int @default(0)
+  avgAttendance    Float @default(0)
+  avgCompletion    Float @default(0)
+
+  @@index([status])
+  @@index([startDate, endDate])
+}
+
+model Trainee {
+  id           String   @id @default(cuid())
+  notionId     String?  @unique // Original Notion ID for deduplication
+  traineeName  String
+  company      String
+  email        String?
+  phone        String?
+  avatar       String?
+  
+  // Metadata
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  dataVersion  Int      @default(1)
+  
+  // Relations
+  batchId           String
+  batch             Batch @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  dailyAttendance   DailyAttendance[]
+  tenDayAttendance  TenDayAttendance[]
+  assessments       Assessment[]
+  
+  // Computed rollups (cached)
+  presentDays       Int   @default(0)
+  absentDays        Int   @default(0)
+  lateDays          Int   @default(0)
+  completionPercent Float @default(0)
+
+  @@index([batchId])
+  @@index([company])
+  @@index([traineeName])
+}
+
+model DailyAttendance {
+  id            String    @id @default(cuid())
+  notionId      String?   @unique // Original Notion entry ID
+  entryId       String    // Format: "YYYY-MM-DD - {Trainee Name}"
+  date          DateTime
+  arrivalTime   DateTime?
+  departureTime DateTime?
+  status        String    @default("Present") // Present | Absent | Tour Day | Off Day
+  absenceReason String?
+  isLate        Boolean   @default(false)
+  minutesLate   Int       @default(0)
+  
+  // Metadata
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  dataVersion   Int       @default(1)
+  
+  // Relations
+  traineeId     String
+  trainee       Trainee   @relation(fields: [traineeId], references: [id], onDelete: Cascade)
+  batchId       String
+  batch         Batch     @relation(fields: [batchId], references: [id], onDelete: Cascade)
+
+  @@unique([traineeId, date])
+  @@index([date])
+  @@index([status])
+  @@index([batchId])
+}
+
+model TenDayAttendance {
+  id               String   @id @default(cuid())
+  notionId         String?  @unique
+  record           String   // Format: "{Name} - Batch {N} ({startDate}–{endDate})"
+  periodStart      DateTime
+  periodEnd        DateTime
+  
+  // 10-Day Checkboxes
+  day1             Boolean  @default(false)
+  day2             Boolean  @default(false)
+  day3             Boolean  @default(false)
+  day4             Boolean  @default(false)
+  day5             Boolean  @default(false)
+  day6             Boolean  @default(false)
+  day7             Boolean  @default(false)
+  day8             Boolean  @default(false)
+  day9             Boolean  @default(false)
+  day10            Boolean  @default(false)
+  
+  // Computed
+  completionPercent Float   @default(0)
+  checklistStatus   String  @default("Not Started") // Not Started | In Progress | Complete
+  attendanceAIReport String?
+  
+  // Rollups
+  presentCount      Int     @default(0)
+  absentCount       Int     @default(0)
+  lateCount         Int     @default(0)
+  
+  // Metadata
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  dataVersion       Int      @default(1)
+  
+  // Relations
+  traineeId         String
+  trainee           Trainee  @relation(fields: [traineeId], references: [id], onDelete: Cascade)
+  batchId           String
+  batch             Batch    @relation(fields: [batchId], references: [id], onDelete: Cascade)
+
+  @@unique([traineeId, periodStart, periodEnd])
+  @@index([batchId])
+  @@index([checklistStatus])
+}
+
+model Assessment {
+  id                 String   @id @default(cuid())
+  notionId           String?  @unique
+  assessmentTitle    String
+  
+  // Scoring (0-5 scale)
+  mapping            Float    @default(0)
+  productKnowledge   Float    @default(0)
+  presentability     Float    @default(0)
+  softSkills         Float    @default(0)
+  
+  // Attendance metrics
+  attendance         Float    @default(0)
+  absence            Float    @default(0)
+  
+  // Results
+  assessmentOutcome  String   @default("Good") // Failed | Needs Improvement | Good | Very Good | Excellent | Aced
+  instructorComment  String?
+  assessmentAIReport String?
+  company            String
+  
+  // Computed scores
+  techScorePercent   Float    @default(0)
+  softScorePercent   Float    @default(0)
+  overallPercent     Float    @default(0)
+  
+  // Metadata
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  dataVersion        Int      @default(1)
+  
+  // Relations
+  traineeId          String
+  trainee            Trainee  @relation(fields: [traineeId], references: [id], onDelete: Cascade)
+  batchId            String
+  batch              Batch    @relation(fields: [batchId], references: [id], onDelete: Cascade)
+
+  @@index([batchId])
+  @@index([assessmentOutcome])
+  @@index([company])
+}
+
+// ============================================================
+// SYSTEM ENTITIES
+// ============================================================
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  role         String   @default("viewer") // admin | instructor | viewer
+  avatar       String?
+  isActive     Boolean  @default(true)
+  lastLoginAt  DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([role])
+  @@index([isActive])
+}
+
+model DataImport {
+  id           String   @id @default(cuid())
+  fileName     String
+  fileType     String   // batches | trainees | attendance | assessments
+  recordsTotal Int      @default(0)
+  recordsNew   Int      @default(0)
+  recordsUpdated Int    @default(0)
+  recordsSkipped Int    @default(0)
+  status       String   @default("pending") // pending | processing | completed | failed
+  errorLog     String?
+  importedAt   DateTime @default(now())
+  completedAt  DateTime?
+
+  @@index([status])
+  @@index([importedAt])
+}
+
+model SystemLog {
+  id        String   @id @default(cuid())
+  level     String   // info | warn | error
+  message   String
+  context   String?  // JSON string with additional data
+  createdAt DateTime @default(now())
+
+  @@index([level])
+  @@index([createdAt])
+}

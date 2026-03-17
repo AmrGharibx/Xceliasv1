@@ -5,5 +5,9 @@
   "scripts": {
     "build": "node build.js",
     "dev": "cd excelias-portal && node server.js"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.29.0",
+    "@babel/preset-react": "^7.28.5"
   }
 }

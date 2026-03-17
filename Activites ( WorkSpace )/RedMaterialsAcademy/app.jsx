@@ -2446,7 +2446,7 @@ const DefinitionMatching = ({ onBack, updateScore }) => {
               style={{
                 ...styles.optionBtn,
                 opacity: matches[item.term] ? 0.5 : 1,
-                borderColor: selectedTerm === item.term ? '#667eea' : 'rgba(255,255,255,0.2)',,
+                borderColor: selectedTerm === item.term ? '#667eea' : 'rgba(255,255,255,0.2)',
                 background: selectedTerm === item.term ? 'rgba(229,62,62,0.2)' : 'rgba(255,255,255,0.05)',
                 ...(showResults && matches[item.term] === item.definition ? styles.correctBtn : {}),
                 ...(showResults && matches[item.term] && matches[item.term] !== item.definition ? styles.incorrectBtn : {})

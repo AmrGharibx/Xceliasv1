@@ -190,22 +190,22 @@ const App = () => {
   }, []);
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-[var(--bg)] text-white selection:bg-[rgba(179,52,32,0.3)] selection:text-white">
+    <div className="min-h-screen overflow-x-hidden bg-[var(--bg)] text-white selection:bg-[rgba(102,126,234,0.3)] selection:text-white">
       <style>
         {`
           :root {
             --mx: 50%;
             --my: 50%;
-            --bg: #070709;
-            --panel: rgba(255,255,255,0.04);
-            --panel-strong: rgba(179,52,32,0.14);
-            --accent: #b33420;
-            --accent-strong: #7f1616;
-            --accent-soft: #efc1a8;
-            --gold: #c69354;
-            --line: rgba(179,52,32,0.34);
-            --text-soft: #d9d2cb;
-            --text-muted: #938b84;
+            --bg: #0f0f1a;
+            --panel: rgba(255,255,255,0.06);
+            --panel-strong: rgba(102,126,234,0.14);
+            --accent: #667eea;
+            --accent-strong: #764ba2;
+            --accent-soft: #f093fb;
+            --gold: #f093fb;
+            --line: rgba(102,126,234,0.34);
+            --text-soft: #e8e8f0;
+            --text-muted: #9898b8;
           }
         `}
       </style>
@@ -220,7 +220,7 @@ const App = () => {
       {!modalOpen ? <ParticleField reducedEffects={reducedEffects} /> : null}
       <div className="pointer-events-none fixed inset-0 z-[1]" aria-hidden="true">
         <div className={`absolute inset-0 ${reducedEffects ? 'bg-[radial-gradient(900px_circle_at_50%_18%,rgba(255,255,255,0.04),transparent_54%)]' : 'bg-[radial-gradient(900px_circle_at_var(--mx,50%)_var(--my,50%),rgba(255,255,255,0.07),transparent_48%)]'}`} />
-        <div className={`absolute inset-0 ${reducedEffects ? 'bg-[radial-gradient(1200px_circle_at_50%_18%,rgba(179,52,32,0.08),transparent_62%)]' : 'bg-[radial-gradient(1200px_circle_at_var(--mx,50%)_var(--my,50%),rgba(179,52,32,0.12),transparent_58%)]'}`} />
+        <div className={`absolute inset-0 ${reducedEffects ? 'bg-[radial-gradient(1200px_circle_at_50%_18%,rgba(102,126,234,0.08),transparent_62%)]' : 'bg-[radial-gradient(1200px_circle_at_var(--mx,50%)_var(--my,50%),rgba(102,126,234,0.12),transparent_58%)]'}`} />
       </div>
 
       <ProgressBar progress={scrollYProgress} />

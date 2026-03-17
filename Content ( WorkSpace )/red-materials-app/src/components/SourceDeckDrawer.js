@@ -105,7 +105,7 @@ const SourceDeckDrawer = ({ open, onClose }) => {
                 <button
                   type="button"
                   onClick={handleCopy}
-                  className="inline-flex items-center justify-center gap-2 rounded-full border border-[var(--line)] bg-[var(--panel-strong)] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[rgba(179,52,32,0.18)]"
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-[var(--line)] bg-[var(--panel-strong)] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[rgba(102,126,234,0.18)]"
                 >
                   <Copy className="h-4 w-4" />
                   {copied ? 'Copied' : 'Copy all'}

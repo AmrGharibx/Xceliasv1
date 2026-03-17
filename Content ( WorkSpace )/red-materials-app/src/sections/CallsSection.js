@@ -5,7 +5,7 @@ import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 import { CALLS_DATA } from '../data/content';
 import { Eyebrow, Panel, SectionShell } from '../components/ui';
 
-const pieColors = ['#b33420', '#d16f42', '#c69354'];
+const pieColors = ['#667eea', '#764ba2', '#f093fb'];
 
 const CallsSection = () => (
   <SectionShell
@@ -22,7 +22,7 @@ const CallsSection = () => (
     ]}
   >
     <div className="space-y-6">
-      <Panel className="bg-[linear-gradient(180deg,rgba(179,52,32,0.18),rgba(255,255,255,0.03))]">
+      <Panel className="bg-[linear-gradient(180deg,rgba(102,126,234,0.18),rgba(255,255,255,0.03))]">
         <Eyebrow>A.B.C. principle</Eyebrow>
         <div className="mt-4 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>

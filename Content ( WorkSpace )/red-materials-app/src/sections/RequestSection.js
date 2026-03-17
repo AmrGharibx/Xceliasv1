@@ -52,7 +52,7 @@ const RequestSection = () => {
                   key={pillar.label}
                   onClick={() => setActiveLabel(pillar.label)}
                   className={`rounded-[24px] border p-4 text-left transition ${
-                    isActive ? 'border-[var(--line)] bg-[rgba(179,52,32,0.16)]' : 'border-white/10 bg-black/20 hover:bg-white/[0.05]'
+                    isActive ? 'border-[var(--line)] bg-[rgba(102,126,234,0.16)]' : 'border-white/10 bg-black/20 hover:bg-white/[0.05]'
                   }`}
                 >
                   <div className="flex items-center gap-3">
@@ -71,7 +71,7 @@ const RequestSection = () => {
           </div>
         </Panel>
 
-        <Panel className="xl:sticky xl:top-32 xl:h-fit bg-[linear-gradient(180deg,rgba(179,52,32,0.12),rgba(255,255,255,0.03))]">
+        <Panel className="xl:sticky xl:top-32 xl:h-fit bg-[linear-gradient(180deg,rgba(102,126,234,0.12),rgba(255,255,255,0.03))]">
           <Eyebrow>Selected signal</Eyebrow>
           <h3 className="mt-3 font-display text-4xl text-white">{activePillar.label}</h3>
           <div className="mt-5 space-y-4 text-sm leading-6 text-[var(--text-soft)]">

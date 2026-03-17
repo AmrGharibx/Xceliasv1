@@ -37,7 +37,7 @@ const PsychologySection = () => {
       ]}
     >
       <div className="space-y-6">
-        <Panel className="bg-[linear-gradient(180deg,rgba(179,52,32,0.18),rgba(255,255,255,0.03))]">
+        <Panel className="bg-[linear-gradient(180deg,rgba(102,126,234,0.18),rgba(255,255,255,0.03))]">
           <Eyebrow>Core thesis</Eyebrow>
           <h3 className="mt-4 max-w-4xl font-display text-4xl leading-tight text-white md:text-5xl">
             People don’t buy the product. They buy to feel good or to solve a problem.

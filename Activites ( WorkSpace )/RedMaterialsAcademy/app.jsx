@@ -923,20 +923,20 @@ const EG_COACH_LINES = {
 };
 
 const RM_THEME = {
-  bg: '#05060a',
+  bg: '#0f0f1a',
   panel: 'rgba(255,255,255,0.06)',
   panel2: 'rgba(255,255,255,0.09)',
-  border: 'rgba(255,255,255,0.12)',
-  border2: 'rgba(255,255,255,0.18)',
-  text: 'rgba(255,255,255,0.92)',
-  muted: 'rgba(255,255,255,0.66)',
-  faint: 'rgba(255,255,255,0.42)',
-  red: '#ff3b3b',
-  red2: '#ff2d55',
-  cyan: '#00d4ff',
-  violet: '#8b5cf6',
+  border: 'rgba(102,126,234,0.15)',
+  border2: 'rgba(102,126,234,0.25)',
+  text: 'rgba(232,232,240,0.94)',
+  muted: 'rgba(152,152,184,0.80)',
+  faint: 'rgba(90,90,122,0.55)',
+  red: '#667eea',
+  red2: '#764ba2',
+  cyan: '#f093fb',
+  violet: '#764ba2',
   amber: '#ffb020',
-  green: '#22c55e'
+  green: '#50fa7b'
 };
 
 // ============================================
@@ -984,7 +984,7 @@ const styles = {
     justifyContent: 'center',
     fontSize: '24px',
     fontWeight: '800',
-    boxShadow: '0 14px 32px rgba(255,45,85,0.25), inset 0 0 0 1px rgba(255,255,255,0.14)'
+    boxShadow: '0 14px 32px rgba(102,126,234,0.25), inset 0 0 0 1px rgba(255,255,255,0.14)'
   },
   
   logoText: {
@@ -1043,9 +1043,9 @@ const styles = {
     position: 'relative',
     overflow: 'hidden',
     backgroundImage:
-      `radial-gradient(900px 420px at 10% 10%, rgba(255,59,59,0.16), transparent 60%),` +
-      `radial-gradient(900px 420px at 90% 20%, rgba(0,212,255,0.14), transparent 62%),` +
-      `radial-gradient(900px 520px at 60% 92%, rgba(139,92,246,0.14), transparent 62%),` +
+      `radial-gradient(900px 420px at 10% 10%, rgba(102,126,234,0.14), transparent 60%),` +
+      `radial-gradient(900px 420px at 90% 20%, rgba(240,147,251,0.12), transparent 62%),` +
+      `radial-gradient(900px 520px at 60% 92%, rgba(118,75,162,0.14), transparent 62%),` +
       `linear-gradient(180deg, rgba(255,255,255,0.075), rgba(255,255,255,0.035))`,
     backgroundSize: '200% 200%',
     backgroundPosition: '0% 50%',
@@ -1067,7 +1067,7 @@ const styles = {
     display: 'inline-flex',
     alignItems: 'center',
     gap: '10px',
-    boxShadow: '0 16px 40px rgba(255,45,85,0.24), inset 0 0 0 1px rgba(255,255,255,0.14)',
+    boxShadow: '0 16px 40px rgba(102,126,234,0.24), inset 0 0 0 1px rgba(255,255,255,0.14)',
     backgroundSize: '200% 200%',
     backgroundPosition: '0% 50%',
     animation: 'rmGradientShift 8s ease-in-out infinite, rmPulseGlow 6s ease-in-out infinite'
@@ -1112,7 +1112,7 @@ const styles = {
   
   optionBtnHover: {
     background: 'rgba(255,255,255,0.1)',
-    borderColor: '#e53e3e'
+    borderColor: '#667eea'
   },
   
   correctBtn: {
@@ -1256,7 +1256,7 @@ const styles = {
   
   progressFill: {
     height: '100%',
-    background: 'linear-gradient(90deg, #e53e3e, #f6ad55)',
+    background: 'linear-gradient(90deg, #667eea, #f093fb)',
     borderRadius: '4px',
     transition: 'width 0.3s ease'
   },
@@ -1265,7 +1265,7 @@ const styles = {
   timer: {
     fontSize: '48px',
     fontWeight: '700',
-    color: '#e53e3e',
+    color: '#667eea',
     textAlign: 'center',
     marginBottom: '20px'
   },
@@ -1282,8 +1282,8 @@ const styles = {
   },
   
   badgeRed: {
-    background: 'rgba(229, 62, 62, 0.2)',
-    color: '#e53e3e'
+    background: 'rgba(102, 126, 234, 0.2)',
+    color: '#667eea'
   },
   
   badgeGreen: {
@@ -1570,11 +1570,11 @@ const ScorePanel = ({ score, streak, totalQuestions, currentQuestion }) => {
 
 const RED_RANKS = [
   { minScore: 0, en: 'Rookie', eg: 'مبتدئ', accent: '#94a3b8' },
-  { minScore: 120, en: 'Operator', eg: 'أوبريتور', accent: '#00d4ff' },
+  { minScore: 120, en: 'Operator', eg: 'أوبريتور', accent: '#f093fb' },
   { minScore: 300, en: 'Closer', eg: 'كلوزر', accent: '#ffb020' },
-  { minScore: 650, en: 'Strategist', eg: 'استراتيجي', accent: '#8b5cf6' },
-  { minScore: 1100, en: 'Captain', eg: 'كابتن', accent: '#22c55e' },
-  { minScore: 1700, en: 'Legend', eg: 'أسطورة', accent: '#ff3b3b' }
+  { minScore: 650, en: 'Strategist', eg: 'استراتيجي', accent: '#764ba2' },
+  { minScore: 1100, en: 'Captain', eg: 'كابتن', accent: '#50fa7b' },
+  { minScore: 1700, en: 'Legend', eg: 'أسطورة', accent: '#667eea' }
 ];
 
 const getRedRank = (score) => {
@@ -1870,7 +1870,7 @@ const Timer = ({ seconds, onTimeUp }) => {
   }, [timeLeft, onTimeUp]);
   
   return (
-    <div style={{ ...styles.timer, color: timeLeft <= 5 ? '#f56565' : '#e53e3e' }}>
+    <div style={{ ...styles.timer, color: timeLeft <= 5 ? '#f093fb' : '#667eea' }}>
       {timeLeft}s
     </div>
   );
@@ -2437,7 +2437,7 @@ const DefinitionMatching = ({ onBack, updateScore }) => {
 
       <div style={styles.grid2}>
         <div>
-          <h4 style={{ marginBottom: '15px', color: '#e53e3e' }}>{lang === 'eg' ? 'مصطلحات' : 'Terms'}</h4>
+          <h4 style={{ marginBottom: '15px', color: '#667eea' }}>{lang === 'eg' ? 'مصطلحات' : 'Terms'}</h4>
           {items.map((item, idx) => (
             <button
               key={idx}
@@ -2446,7 +2446,7 @@ const DefinitionMatching = ({ onBack, updateScore }) => {
               style={{
                 ...styles.optionBtn,
                 opacity: matches[item.term] ? 0.5 : 1,
-                borderColor: selectedTerm === item.term ? '#e53e3e' : 'rgba(255,255,255,0.2)',
+                borderColor: selectedTerm === item.term ? '#667eea' : 'rgba(255,255,255,0.2)',,
                 background: selectedTerm === item.term ? 'rgba(229,62,62,0.2)' : 'rgba(255,255,255,0.05)',
                 ...(showResults && matches[item.term] === item.definition ? styles.correctBtn : {}),
                 ...(showResults && matches[item.term] && matches[item.term] !== item.definition ? styles.incorrectBtn : {})
@@ -2601,7 +2601,7 @@ const OddOneOut = ({ onBack, updateScore }) => {
       <ProgressBar current={currentQ + 1} total={questions.length} />
 
       <h2 style={styles.questionText}>
-        Find the ODD ONE OUT from the category: <span style={{ color: '#e53e3e' }}>{q.category}</span>
+        Find the ODD ONE OUT from the category: <span style={{ color: '#667eea' }}>{q.category}</span>
       </h2>
 
       <div style={styles.grid2}>
@@ -2846,7 +2846,7 @@ const AcronymDecoder = ({ onBack, updateScore }) => {
       <ProgressBar current={currentQ + 1} total={questions.length} />
 
       <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-        <span style={{ fontSize: '64px', fontWeight: '800', color: '#e53e3e' }}>{q.acronym}</span>
+        <span style={{ fontSize: '64px', fontWeight: '800', color: '#667eea' }}>{q.acronym}</span>
         <p style={{ color: 'rgba(255,255,255,0.7)', marginTop: '10px' }}>What does this acronym stand for?</p>
       </div>
 
@@ -3109,7 +3109,7 @@ const AccessoriesInspection = ({ onBack, updateScore }) => {
       <ProgressBar current={currentQ + 1} total={scenarios.length} />
 
       <div style={{ background: 'rgba(0,0,0,0.3)', padding: '25px', borderRadius: '12px', marginBottom: '25px' }}>
-        <h3 style={{ marginBottom: '15px', color: '#e53e3e' }}>{lang === 'eg' ? '👔 فحص المظهر' : '👔 Agent Appearance Check'}</h3>
+        <h3 style={{ marginBottom: '15px', color: '#667eea' }}>{lang === 'eg' ? '👔 فحص المظهر' : '👔 Agent Appearance Check'}</h3>
         <p style={{ lineHeight: '1.8', fontSize: '16px' }}>{scenario.description}</p>
         <p style={{ marginTop: '15px', color: 'rgba(255,255,255,0.6)' }}>
           {lang === 'eg' ? 'العدد:' : 'Count:'}{' '}
@@ -3364,7 +3364,7 @@ const FinishingVisualizer = ({ onBack, updateScore }) => {
           "{q.description}"
         </p>
         <div style={{ marginTop: '15px' }}>
-          <span style={{ ...styles.badge, background: 'rgba(229,62,62,0.2)', color: '#e53e3e' }}>
+          <span style={{ ...styles.badge, background: 'rgba(102,126,234,0.2)', color: '#667eea' }}>
             Level {q.level} of 4
           </span>
         </div>
@@ -5781,7 +5781,7 @@ const SkillsRadar = ({ onBack, updateScore }) => {
                     border: 'none',
                     cursor: showResult ? 'default' : 'pointer',
                     background: ratings[skill] >= value 
-                      ? 'linear-gradient(135deg, #e53e3e, #c53030)' 
+                      ? 'linear-gradient(135deg, #667eea, #764ba2)' 
                       : 'rgba(255,255,255,0.1)',
                     color: '#fff',
                     fontWeight: '600'
@@ -5958,7 +5958,7 @@ const FirstImpressionTrial = ({ onBack, updateScore }) => {
       <ProgressBar current={currentQ + 1} total={questions.length} />
 
       {!showFeedback && (
-        <div style={{ ...styles.timer, color: timeLeft <= 1 ? '#f56565' : '#e53e3e' }}>
+        <div style={{ ...styles.timer, color: timeLeft <= 1 ? '#f093fb' : '#667eea' }}>
           ⏱️ {timeLeft}{lang === 'eg' ? 'ث' : 's'}
         </div>
       )}
@@ -6407,7 +6407,7 @@ const LeadTriage = ({ onBack, updateScore }) => {
               width: '40px',
               height: '40px',
               borderRadius: '50%',
-              background: 'linear-gradient(135deg, #e53e3e, #c53030)',
+              background: 'linear-gradient(135deg, #667eea, #764ba2)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -6889,7 +6889,7 @@ const TwentyOneExperiences = ({ onBack, updateScore }) => {
             ? 'بسرعة! اضغط على كل ٢١ زرار تجربة كويسة عشان تصلّح الموقف!'
             : 'Quick! Click all 21 "Good Experience" buttons to redeem yourself!'}
         </p>
-        <p style={{ fontSize: '14px', color: '#e53e3e', marginTop: '5px' }}>
+        <p style={{ fontSize: '14px', color: '#667eea', marginTop: '5px' }}>
           {lang === 'eg'
             ? '(الدراسات بتقول إنك تحتاج ٢١ تجربة كويسة لتعويض انطباع أول وحش)'
             : '(Studies show it takes 21 good experiences to make up for a bad first impression)'}
@@ -6944,7 +6944,7 @@ const TwentyOneExperiences = ({ onBack, updateScore }) => {
               ? 'قدّمت ٢١ تجربة كويسة ورجّعت العلاقة!' 
               : "You've delivered 21 good experiences and restored the relationship!"}
           </p>
-          <p style={{ color: '#e53e3e', marginTop: '15px', fontStyle: 'italic' }}>
+          <p style={{ color: '#667eea', marginTop: '15px', fontStyle: 'italic' }}>
             “{TD.firstImpression.quote}”
           </p>
           <button onClick={onBack} style={{ ...styles.primaryBtn, marginTop: '20px' }}>{ui.back}</button>
@@ -9316,7 +9316,7 @@ const App = () => {
       id: 'knowledge',
       title: s.categories.knowledge,
       icon: '📚',
-      color: '#e53e3e',
+      color: '#667eea',
       activities: [
         { id: 'rapidfire', name: s.activityNames.rapidfire, component: RapidFireMCQ },
         { id: 'truefalse', name: s.activityNames.truefalse, component: TrueFalseSpeedRun },
@@ -9406,7 +9406,7 @@ const App = () => {
       id: 'classroom',
       title: s.categories.classroom,
       icon: '🏫',
-      color: '#00d4ff',
+      color: '#f093fb',
       activities: [
         { id: 'teambattle', name: s.activityNames.teambattle, component: TeamBattleArena },
         { id: 'facilitator', name: s.activityNames.facilitator, component: FacilitatorDeck },

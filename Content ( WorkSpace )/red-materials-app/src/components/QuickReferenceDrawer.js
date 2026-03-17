@@ -52,7 +52,7 @@ const QuickReferenceDrawer = ({ open, onClose }) => {
 
           <div className="flex-1 overflow-y-auto p-4 md:p-6">
             <div className="grid gap-4">
-              <div className="rounded-[28px] border border-[var(--line)] bg-[rgba(179,52,32,0.12)] p-4 md:p-5">
+              <div className="rounded-[28px] border border-[var(--line)] bg-[rgba(102,126,234,0.12)] p-4 md:p-5">
                 <div className="text-xs uppercase tracking-[0.3em] text-[var(--accent-soft)]">Chapter notes</div>
                 <div className="mt-4 grid gap-4 md:grid-cols-2">
                   {Object.entries(CHAPTER_BRIEFS).map(([key, items]) => (

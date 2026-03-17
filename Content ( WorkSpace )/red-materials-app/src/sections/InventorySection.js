@@ -52,7 +52,7 @@ const InventorySection = () => {
                   key={category.key}
                   onClick={() => setActiveKey(category.key)}
                   className={`rounded-[24px] border px-4 py-4 text-left transition ${
-                    isActive ? 'border-[var(--line)] bg-[rgba(179,52,32,0.16)]' : 'border-white/10 bg-white/[0.03] hover:bg-white/[0.05]'
+                    isActive ? 'border-[var(--line)] bg-[rgba(102,126,234,0.16)]' : 'border-white/10 bg-white/[0.03] hover:bg-white/[0.05]'
                   }`}
                 >
                   <div className="flex items-center gap-3">
@@ -90,7 +90,7 @@ const InventorySection = () => {
                 </div>
               </div>
 
-              <div className="rounded-[28px] border border-white/10 bg-[linear-gradient(180deg,rgba(179,52,32,0.16),rgba(0,0,0,0.06))] p-5">
+              <div className="rounded-[28px] border border-white/10 bg-[linear-gradient(180deg,rgba(102,126,234,0.16),rgba(0,0,0,0.06))] p-5">
                 <div className="text-xs uppercase tracking-[0.3em] text-[var(--accent-soft)]">Retention rule</div>
                 <div className="mt-4 text-2xl font-semibold text-white">Name the category first.</div>
                 <p className="mt-3 text-sm leading-6 text-[var(--text-soft)]">
@@ -119,7 +119,7 @@ const InventorySection = () => {
                     {type.subtypes.length ? (
                       <div className="mt-5 flex flex-wrap gap-2">
                         {type.subtypes.map((subtype) => (
-                          <span key={subtype} className="rounded-full border border-[var(--line)] bg-[rgba(179,52,32,0.16)] px-3 py-1 text-xs uppercase tracking-[0.2em] text-[var(--accent-soft)]">
+                          <span key={subtype} className="rounded-full border border-[var(--line)] bg-[rgba(102,126,234,0.16)] px-3 py-1 text-xs uppercase tracking-[0.2em] text-[var(--accent-soft)]">
                             {subtype}
                           </span>
                         ))}

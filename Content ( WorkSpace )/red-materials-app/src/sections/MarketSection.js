@@ -62,7 +62,7 @@ const MarketSection = () => {
                 const Icon = iconMap[key];
                 const isActive = key === activeMode;
                 return (
-                  <Panel key={key} className={isActive ? 'border-[var(--line)] bg-[linear-gradient(180deg,rgba(179,52,32,0.16),rgba(255,255,255,0.03))]' : ''}>
+                  <Panel key={key} className={isActive ? 'border-[var(--line)] bg-[linear-gradient(180deg,rgba(102,126,234,0.16),rgba(255,255,255,0.03))]' : ''}>
                     <div className="flex items-center gap-3">
                       <div className={`flex h-12 w-12 items-center justify-center rounded-full ${isActive ? 'bg-[linear-gradient(135deg,var(--accent),var(--accent-strong))]' : 'bg-white/10'}`}>
                         <Icon className="h-5 w-5 text-white" />
@@ -139,7 +139,7 @@ const MarketSection = () => {
                         </div>
                       ))}
                     </div>
-                    <div className="mt-5 rounded-2xl border border-[var(--line)] bg-[rgba(179,52,32,0.14)] p-4 text-sm leading-6 text-[var(--text-soft)]">
+                    <div className="mt-5 rounded-2xl border border-[var(--line)] bg-[rgba(102,126,234,0.14)] p-4 text-sm leading-6 text-[var(--text-soft)]">
                       <div className="text-xs uppercase tracking-[0.24em] text-[var(--accent-soft)]">Best used when</div>
                       <p className="mt-2">{profile.opportunity}</p>
                     </div>

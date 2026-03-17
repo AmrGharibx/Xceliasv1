@@ -21,7 +21,7 @@ const MasterySection = ({ onOpenSource }) => (
     ]}
   >
     <div className="space-y-6">
-      <Panel className="bg-[linear-gradient(180deg,rgba(179,52,32,0.16),rgba(255,255,255,0.03))]">
+      <Panel className="bg-[linear-gradient(180deg,rgba(102,126,234,0.16),rgba(255,255,255,0.03))]">
         <Eyebrow>Final doctrine</Eyebrow>
         <h3 className="mt-3 max-w-4xl font-display text-4xl leading-tight text-white md:text-5xl">
           Recognize clearly. Qualify precisely. Position intelligently. Present credibly. Close directionally.
@@ -72,7 +72,7 @@ const MasterySection = ({ onOpenSource }) => (
             </div>
           </div>
 
-          <div className="rounded-[28px] border border-[var(--line)] bg-[rgba(179,52,32,0.14)] p-5">
+          <div className="rounded-[28px] border border-[var(--line)] bg-[rgba(102,126,234,0.14)] p-5">
             <div className="text-xs uppercase tracking-[0.28em] text-[var(--accent-soft)]">Chapter-end payoff</div>
             <p className="mt-4 text-sm leading-7 text-[var(--text-soft)]">
               The experience should not end as inspiration. It should end as a usable sales routine the consultant can reopen, rehearse, and apply with less friction under pressure.

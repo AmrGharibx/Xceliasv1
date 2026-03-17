@@ -75,8 +75,8 @@ const RibbonField = ({ count = 1200 }) => {
   const { positions, colors } = useMemo(() => {
     const pos = new Float32Array(count * 3);
     const col = new Float32Array(count * 3);
-    const a = new THREE.Color('#b33420');
-    const b = new THREE.Color('#c69354');
+    const a = new THREE.Color('#667eea');
+    const b = new THREE.Color('#f093fb');
 
     for (let index = 0; index < count; index += 1) {
       const t = index / count;
@@ -133,7 +133,7 @@ const UltraCanvas = ({ reducedMotion = false }) => (
       <Monolith position={[0, -1.2, -2.2]} color="#5d1215" scale={1.25} />
     </Canvas>
 
-    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(179,52,32,0.18),transparent_45%),radial-gradient(ellipse_at_bottom,rgba(193,122,55,0.10),transparent_55%)]" />
+    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(102,126,234,0.18),transparent_45%),radial-gradient(ellipse_at_bottom,rgba(193,122,55,0.10),transparent_55%)]" />
     <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,7,9,0.18),rgba(7,7,9,0.46),rgba(7,7,9,0.88))]" />
   </div>
 );

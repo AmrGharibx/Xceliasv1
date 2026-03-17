@@ -73,7 +73,7 @@ const HeroSection = ({ onOpenSource, onOpenMap }) => {
               <TakeawayList items={HERO_PROMISES} className="mt-6" />
             </Panel>
 
-            <Panel className="bg-[linear-gradient(180deg,rgba(179,52,32,0.12),rgba(255,255,255,0.03))]">
+            <Panel className="bg-[linear-gradient(180deg,rgba(102,126,234,0.12),rgba(255,255,255,0.03))]">
               <Eyebrow>Training posture</Eyebrow>
               <div className="mt-5 space-y-4 text-sm leading-6 text-[var(--text-soft)]">
                 <div className="rounded-2xl border border-white/10 bg-black/20 p-4">

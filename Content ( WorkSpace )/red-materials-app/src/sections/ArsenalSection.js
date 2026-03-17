@@ -49,7 +49,7 @@ const ArsenalSection = () => (
                   <PolarGrid stroke="rgba(255,255,255,0.15)" />
                   <PolarAngleAxis dataKey="skill" tick={{ fill: '#e4d9cc', fontSize: 11 }} />
                   <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fill: '#8d8580', fontSize: 10 }} />
-                  <Radar dataKey="value" stroke="#b33420" fill="#b33420" fillOpacity={0.32} strokeWidth={2} />
+                  <Radar dataKey="value" stroke="#667eea" fill="#667eea" fillOpacity={0.32} strokeWidth={2} />
                   <Tooltip
                     contentStyle={{
                       backgroundColor: '#111214',
@@ -93,7 +93,7 @@ const ArsenalSection = () => (
           {ARSENAL_ACCESSORIES.map((item, index) => {
             const Icon = accessoryIcons[index] ?? Sparkles;
             return (
-              <div key={item} className={`rounded-[24px] border p-4 ${index < 7 ? 'border-[var(--line)] bg-[rgba(179,52,32,0.14)]' : 'border-white/10 bg-black/20'}`}>
+              <div key={item} className={`rounded-[24px] border p-4 ${index < 7 ? 'border-[var(--line)] bg-[rgba(102,126,234,0.14)]' : 'border-white/10 bg-black/20'}`}>
                 <Icon className={`h-5 w-5 ${index < 7 ? 'text-[var(--gold)]' : 'text-[var(--text-muted)]'}`} />
                 <div className="mt-4 text-sm leading-6 text-white">{item}</div>
               </div>

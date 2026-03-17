@@ -61,7 +61,7 @@ export const SectionShell = ({ id, chapter, title, subtitle, summary, takeaways 
               </div>
             ) : <div />}
             {sourceReferences.length ? (
-              <div className="rounded-[28px] border border-[var(--line)] bg-[rgba(179,52,32,0.12)] p-5">
+              <div className="rounded-[28px] border border-[var(--line)] bg-[rgba(102,126,234,0.12)] p-5">
                 <div className="mb-3 text-[11px] uppercase tracking-[0.32em] text-[var(--accent-soft)]">Source traceability</div>
                 <div className="flex flex-wrap gap-2">
                   {sourceReferences.map((item) => (
@@ -75,7 +75,7 @@ export const SectionShell = ({ id, chapter, title, subtitle, summary, takeaways 
           </div>
         ) : null}
         {nextChapter ? (
-          <div className="mt-8 rounded-[30px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.04),rgba(179,52,32,0.08))] p-5 md:p-6">
+          <div className="mt-8 rounded-[30px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.04),rgba(102,126,234,0.08))] p-5 md:p-6">
             <div className="text-[11px] uppercase tracking-[0.32em] text-[var(--accent-soft)]">Continue the route</div>
             <div className="mt-4 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
               <div>

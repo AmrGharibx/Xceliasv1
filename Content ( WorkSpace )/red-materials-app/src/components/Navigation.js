@@ -63,7 +63,7 @@ export const TopNavigation = ({ activeSection, onOpenMap, onOpenSource, onOpenBr
               aria-haspopup="dialog"
               aria-expanded={sourceOpen}
               aria-controls="source-deck-dialog"
-              className="inline-flex items-center gap-2 rounded-full border border-[var(--line)] bg-[var(--panel-strong)] px-4 py-2 text-sm font-medium text-white transition hover:bg-[rgba(179,52,32,0.18)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-soft)] focus:ring-offset-2 focus:ring-offset-[var(--bg)]"
+              className="inline-flex items-center gap-2 rounded-full border border-[var(--line)] bg-[var(--panel-strong)] px-4 py-2 text-sm font-medium text-white transition hover:bg-[rgba(102,126,234,0.18)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-soft)] focus:ring-offset-2 focus:ring-offset-[var(--bg)]"
             >
               <ScrollText className="h-4 w-4" />
               <span className="hidden md:inline">Source deck</span>
@@ -146,7 +146,7 @@ export const ChapterMapDrawer = ({ open, activeSection, onClose }) => {
                     onClose();
                   }}
                   className={`rounded-[24px] border px-5 py-5 text-left transition focus:outline-none focus:ring-2 focus:ring-[var(--accent-soft)] focus:ring-offset-2 focus:ring-offset-[#0a0a0d] ${
-                    isActive ? 'border-[var(--line)] bg-[rgba(179,52,32,0.14)]' : 'border-white/10 bg-white/[0.03] hover:bg-white/[0.05]'
+                    isActive ? 'border-[var(--line)] bg-[rgba(102,126,234,0.14)]' : 'border-white/10 bg-white/[0.03] hover:bg-white/[0.05]'
                   }`}
                 >
                   <div className="text-xs uppercase tracking-[0.28em] text-[var(--accent-soft)]">Chapter {item.chapter}</div>

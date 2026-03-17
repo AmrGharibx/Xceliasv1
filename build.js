@@ -63,24 +63,27 @@ const actJsx = path.join(DIST, 'activities', 'app.jsx');
 const actJs  = path.join(DIST, 'activities', 'app.js');
 if (fs.existsSync(actJsx)) {
   fs.renameSync(actJsx, actJs);
-  const actHtml = path.join(DIST, 'activities', 'index.html');
-  let aHtml = fs.readFileSync(actHtml, 'utf8');
-  aHtml = aHtml.replace('src="app.jsx"', 'src="app.js"');
-  fs.writeFileSync(actHtml, aHtml);
-  console.log('    → Renamed app.jsx → app.js for MIME compatibility');
 }
+// Add <base> tag + fix script path for Activities
+const actHtml = path.join(DIST, 'activities', 'index.html');
+let aHtml = fs.readFileSync(actHtml, 'utf8');
+aHtml = aHtml.replace('src="app.jsx"', 'src="app.js"');
+aHtml = aHtml.replace('<head>', '<head>\n    <base href="/activities/" />');
+fs.writeFileSync(actHtml, aHtml);
+console.log('    → Renamed app.jsx → app.js + added <base> tag');
 
 /* ════════ 3. Content / CRA Build (Project 2) ════════ */
 console.log('[3/5] Content (CRA build)...');
 const contentBuild = path.join(ROOT, 'Content ( WorkSpace )', 'red-materials-app', 'build');
 copyDir(contentBuild, path.join(DIST, 'content'));
 
-// Rewrite CRA HTML: /static/js/... → static/js/... (relative)
+// Add <base> tag so relative paths resolve to /content/
 const contentHtml = path.join(DIST, 'content', 'index.html');
 let cHtml = fs.readFileSync(contentHtml, 'utf8');
 cHtml = cHtml.replace(/(src|href)="\/static\//g, '$1="static/');
+cHtml = cHtml.replace('<head>', '<head>\n<base href="/content/" />');
 fs.writeFileSync(contentHtml, cHtml);
-console.log('    → Rewrote CRA absolute paths to relative');
+console.log('    → Added <base href="/content/"> + rewrote CRA paths');
 
 /* ════════ 4. Reports (Project 3) ════════ */
 console.log('[4/5] Reports...');
@@ -92,6 +95,12 @@ for (const f of fs.readdirSync(reportsSrc, { withFileTypes: true })) {
     copyFile(path.join(reportsSrc, f.name), path.join(reportsDest, f.name));
   }
 }
+// Add <base> tag for Reports
+const reportsHtml = path.join(reportsDest, 'index.html');
+let rHtml = fs.readFileSync(reportsHtml, 'utf8');
+rHtml = rHtml.replace('<head>', '<head>\n    <base href="/reports/" />');
+fs.writeFileSync(reportsHtml, rHtml);
+console.log('    → Added <base href="/reports/">');
 
 /* ════════ 5. Website / Property Explorer (Project 5) ════════ */
 console.log('[5/5] Website...');
@@ -113,16 +122,17 @@ for (const f of webFiles) {
 const iconsSrc = path.join(webSrc, 'icons');
 if (fs.existsSync(iconsSrc)) copyDir(iconsSrc, path.join(webDest, 'icons'));
 
-// Rewrite Website HTML: convert absolute /xxx paths to relative xxx
+// Add <base> tag + rewrite paths for Website
 const webHtml = path.join(webDest, 'index.html');
 let wHtml = fs.readFileSync(webHtml, 'utf8');
-// href="/manifest.json" → href="manifest.json", src="/app.js" → src="app.js", etc.
-// Negative lookahead avoids // (protocol-relative URLs)
+// Convert absolute /xxx → relative xxx (base tag handles resolution)
 wHtml = wHtml.replace(/(href|src)="\/(?!\/)/g, '$1="');
 // Fix service worker registration absolute path
 wHtml = wHtml.replace(/register\('\/sw\.js'\)/g, "register('sw.js')");
+// Add <base> so all relative paths resolve to /website/
+wHtml = wHtml.replace('<head>', '<head>\n    <base href="/website/" />');
 fs.writeFileSync(webHtml, wHtml);
-console.log('    → Rewrote Website absolute paths to relative');
+console.log('    → Added <base href="/website/"> + rewrote paths');
 
 /* ════════ Done ════════ */
 const total = countFiles(DIST);

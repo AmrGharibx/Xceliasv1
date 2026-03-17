@@ -166,7 +166,7 @@ function launchProject(key) {
 
   if (proj.mode === 'tab') {
     if (!proj.url) {
-      alert('Academy Operations (Avaria) requires a local Next.js server.\n\nRun locally:\n  cd "System Before Prompting V2/avaria" && npm run dev\n\nThen access at http://localhost:3005');
+      showAvariaBanner();
       return;
     }
     window.open(proj.url, '_blank', 'noopener');
@@ -252,6 +252,36 @@ window.addEventListener('popstate', (e) => {
     goHome();
   }
 });
+
+/* ═══════════════════════════════════════════════════
+   AVARIA BANNER (graceful server-required notice)
+   ═══════════════════════════════════════════════════ */
+function showAvariaBanner() {
+  // Remove existing banner if any
+  const existing = document.getElementById('avaria-banner');
+  if (existing) existing.remove();
+
+  const overlay = document.createElement('div');
+  overlay.id = 'avaria-banner';
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);animation:fadeIn .3s ease';
+  overlay.innerHTML = `
+    <div style="background:linear-gradient(180deg,rgba(30,30,50,0.97),rgba(15,15,26,0.98));border:1px solid rgba(102,126,234,0.25);border-radius:20px;padding:40px;max-width:480px;width:90%;box-shadow:0 24px 80px rgba(0,0,0,0.6),0 0 60px rgba(102,126,234,0.08);text-align:center">
+      <div style="width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 20px">🏛️</div>
+      <h3 style="font-size:20px;font-weight:700;color:#e8e8f0;margin-bottom:8px">Server Required</h3>
+      <p style="color:#9898b8;font-size:14px;line-height:1.6;margin-bottom:24px">Academy Operations runs on a local Next.js server with database and authentication. It requires a separate setup.</p>
+      <div style="background:rgba(0,0,0,0.3);border:1px solid rgba(102,126,234,0.15);border-radius:12px;padding:16px;margin-bottom:24px;text-align:left">
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:#667eea;margin-bottom:10px;font-weight:600">Run locally</div>
+        <code style="font-family:monospace;font-size:13px;color:#f093fb;line-height:1.8;display:block">cd "System Before Prompting V2/avaria"</code>
+        <code style="font-family:monospace;font-size:13px;color:#f093fb;display:block">npm run dev</code>
+      </div>
+      <button onclick="document.getElementById('avaria-banner').remove()" style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;padding:12px 36px;border-radius:50px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s ease;box-shadow:0 8px 24px rgba(102,126,234,0.3)">Got it</button>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) overlay.remove();
+  });
+}
 
 /* ─── Deep linking ─── */
 (function handleInitialHash() {

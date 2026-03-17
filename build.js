@@ -58,6 +58,18 @@ console.log('[2/5] Activities...');
 const actSrc = path.join(ROOT, 'Activites ( WorkSpace )', 'RedMaterialsAcademy');
 copyDir(actSrc, path.join(DIST, 'activities'));
 
+// Rename .jsx → .js so Vercel serves it with correct MIME type
+const actJsx = path.join(DIST, 'activities', 'app.jsx');
+const actJs  = path.join(DIST, 'activities', 'app.js');
+if (fs.existsSync(actJsx)) {
+  fs.renameSync(actJsx, actJs);
+  const actHtml = path.join(DIST, 'activities', 'index.html');
+  let aHtml = fs.readFileSync(actHtml, 'utf8');
+  aHtml = aHtml.replace('src="app.jsx"', 'src="app.js"');
+  fs.writeFileSync(actHtml, aHtml);
+  console.log('    → Renamed app.jsx → app.js for MIME compatibility');
+}
+
 /* ════════ 3. Content / CRA Build (Project 2) ════════ */
 console.log('[3/5] Content (CRA build)...');
 const contentBuild = path.join(ROOT, 'Content ( WorkSpace )', 'red-materials-app', 'build');

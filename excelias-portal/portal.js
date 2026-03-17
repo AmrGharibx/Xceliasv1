@@ -2,6 +2,8 @@
    EXCELIAS PORTAL — NAVIGATION LOGIC
    ═══════════════════════════════════════════════════ */
 
+const IS_LOCAL = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+
 const PROJECTS = {
   activities: {
     name:  'Training Academy',
@@ -15,7 +17,7 @@ const PROJECTS = {
   },
   avaria: {
     name:  'Academy Operations',
-    url:   'http://localhost:3005',
+    url:   IS_LOCAL ? 'http://localhost:3005' : null,
     mode:  'tab'
   },
   reports: {
@@ -48,6 +50,10 @@ function launchProject(key) {
 
   /* Avaria opens in a new tab (X-Frame-Options: DENY + absolute paths) */
   if (proj.mode === 'tab') {
+    if (!proj.url) {
+      alert('Academy Operations (Avaria) requires a local Next.js server.\n\nTo use it, run locally:\n  cd "System Before Prompting V2/avaria" && npm run dev\n\nThen access it at http://localhost:3005');
+      return;
+    }
     window.open(proj.url, '_blank', 'noopener');
     return;
   }

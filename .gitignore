@@ -6,6 +6,12 @@ __pycache__/
 # Next.js
 .next/
 
+# Build output
+dist/
+
+# Vercel
+.vercel
+
 # Environment files
 .env
 .env.local
@@ -30,3 +36,4 @@ yarn-error.log*
 
 # Package locks (optional - keep if desired)
 # package-lock.json
+.vercel

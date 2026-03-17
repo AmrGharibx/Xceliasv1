@@ -1,0 +1,28 @@
+{
+  "buildCommand": "node build.js",
+  "outputDirectory": "dist",
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+      ]
+    },
+    {
+      "source": "/website/(.*)",
+      "headers": [
+        { "key": "Service-Worker-Allowed", "value": "/website/" }
+      ]
+    }
+  ],
+  "rewrites": [
+    { "source": "/activities", "destination": "/activities/index.html" },
+    { "source": "/content", "destination": "/content/index.html" },
+    { "source": "/reports", "destination": "/reports/index.html" },
+    { "source": "/website", "destination": "/website/index.html" }
+  ]
+}

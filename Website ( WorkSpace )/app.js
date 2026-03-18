@@ -4438,8 +4438,8 @@ function setTheme(themeName) {
 function updateHeatmapColors() {
   if (isHeatmapMode && heatmapLayer) {
       const styles = getComputedStyle(document.documentElement);
-      const gold = styles.getPropertyValue('--avaria-gold').trim() || '#c5a059';
-      const red = styles.getPropertyValue('--avaria-red').trim() || '#d92424';
+      const gold = styles.getPropertyValue('--avaria-gold').trim() || '#667eea';
+      const red = styles.getPropertyValue('--avaria-red').trim() || '#f093fb';
       
       // Leaflet.heat doesn't have a setOptions method for gradient, we might need to redraw it
       // But we can try accessing the internal options if available, or just re-create it.

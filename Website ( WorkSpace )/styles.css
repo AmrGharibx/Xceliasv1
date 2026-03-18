@@ -897,26 +897,26 @@
       }
 
       .route-line-shadow {
-        filter: drop-shadow(0 0 10px var(--route-glow)) drop-shadow(0 0 24px rgba(118, 75, 162, 0.18));
+        filter: drop-shadow(0 0 10px rgba(118, 75, 162, 0.4)) drop-shadow(0 0 24px rgba(118, 75, 162, 0.18));
       }
 
       .leaflet-interactive.route-line-main {
-        stroke: var(--route-primary);
+        stroke: #a78bfa !important;
         stroke-dasharray: 18 10;
         stroke-linecap: round;
         stroke-linejoin: round;
         stroke-width: 8.5;
-        filter: drop-shadow(0 0 2px rgba(167, 139, 250, 0.45));
+        filter: drop-shadow(0 0 4px rgba(167, 139, 250, 0.5));
         animation: route-flow 18s linear infinite, route-color-shift 6s ease-in-out infinite;
       }
 
       .leaflet-interactive.route-line-alt {
-        stroke: var(--route-alt);
+        stroke: var(--route-alt) !important;
         stroke-dasharray: 8 14;
       }
 
       body.touring .leaflet-interactive.route-line-main {
-        stroke: var(--route-accent);
+        stroke: #e0b3ff !important;
         stroke-dasharray: 16 8;
         animation: route-flow 8s linear infinite, route-color-shift 4s ease-in-out infinite;
       }
@@ -931,9 +931,9 @@
       }
 
       @keyframes route-color-shift {
-        0%, 100% { stroke: #667eea; filter: drop-shadow(0 0 4px rgba(102, 126, 234, 0.5)); }
-        33% { stroke: #a78bfa; filter: drop-shadow(0 0 4px rgba(167, 139, 250, 0.5)); }
-        66% { stroke: #f093fb; filter: drop-shadow(0 0 4px rgba(240, 147, 251, 0.5)); }
+        0%, 100% { stroke: #667eea !important; filter: drop-shadow(0 0 6px rgba(102, 126, 234, 0.6)); }
+        33% { stroke: #a78bfa !important; filter: drop-shadow(0 0 6px rgba(167, 139, 250, 0.6)); }
+        66% { stroke: #f093fb !important; filter: drop-shadow(0 0 6px rgba(240, 147, 251, 0.6)); }
       }
 
       @media (max-width: 768px) {
@@ -1604,8 +1604,9 @@
       }
 
       .logo-main {
-        font-size: clamp(1.8rem, 5vw, 2.5rem);
+        font-size: clamp(1.3rem, 3.5vw, 1.8rem);
         font-weight: 800;
+        letter-spacing: 0.15em;
         background: var(--gradient-primary);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;

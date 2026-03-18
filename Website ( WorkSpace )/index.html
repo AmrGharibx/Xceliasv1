@@ -187,11 +187,13 @@
         align-items: center;
         justify-content: center;
         flex-shrink: 0;
+        overflow: hidden;
+        border-radius: 14px;
       }
       .logo-x-ring {
         position: absolute;
-        inset: -6px;
-        border-radius: 18px;
+        inset: 0;
+        border-radius: 14px;
         border: 1.5px solid transparent;
         background: linear-gradient(135deg, #667eea, #764ba2, #f093fb) border-box;
         -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
@@ -201,8 +203,8 @@
         animation: ringPulse 3s ease-in-out infinite;
       }
       @keyframes ringPulse {
-        0%, 100% { opacity: 0.3; transform: scale(1); }
-        50% { opacity: 0.6; transform: scale(1.06); }
+        0%, 100% { opacity: 0.3; transform: scale(0.92); }
+        50% { opacity: 0.7; transform: scale(1); }
       }
       .logo-sub {
         font-family: 'Montserrat', sans-serif;
@@ -933,15 +935,15 @@
             <label class="route-select-group" for="routeProfileSelect">
               <span class="route-input-label">Profile</span>
               <select id="routeProfileSelect" class="route-select">
-                <option value="driving">Driving</option>
+                <option value="driving">🚗 Driving</option>
               </select>
             </label>
             <label class="route-select-group" for="tourModeSelect">
               <span class="route-input-label">Tour Mode</span>
               <select id="tourModeSelect" class="route-select">
-                <option value="air">Air Tour</option>
-                <option value="drive">Drive Tour</option>
-                <option value="smart">Smart Tour</option>
+                <option value="air">✈️ Air Tour</option>
+                <option value="drive">🚗 Drive Tour</option>
+                <option value="smart">🧠 Smart Tour</option>
               </select>
             </label>
           </div>
@@ -950,6 +952,10 @@
             <button class="route-control-btn primary" type="button" onclick="calculatePlannedRoute()">Route Now</button>
             <button class="route-control-btn secondary" type="button" onclick="reversePlannedRoute()">Reverse</button>
             <button class="route-control-btn secondary" type="button" onclick="clearPlannedRoute()">Clear</button>
+          </div>
+          <div class="route-actions-row" style="grid-template-columns: repeat(2, minmax(0,1fr)); margin-top: 0.5rem;">
+            <button class="route-control-btn secondary" type="button" onclick="fitRouteToBounds()"><i class="fas fa-expand"></i> Fit View</button>
+            <button class="route-control-btn secondary" type="button" onclick="RoutePlanner.optimizeSmartRoute()"><i class="fas fa-magic"></i> Optimize</button>
           </div>
 
           <div class="route-stops-list" id="routeStopsList"></div>

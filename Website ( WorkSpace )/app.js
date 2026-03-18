@@ -1656,7 +1656,10 @@ async function fetchAndDrawRoads() {
     const goldColor = computedStyle.getPropertyValue('--avaria-gold').trim() || '#667eea';
     const redColor = computedStyle.getPropertyValue('--avaria-red').trim() || '#f093fb';
 
-    // Create Layers
+    // Store geojson for theme re-renders
+    window._roadsGeoJSON = geojson;
+
+    // Create Layers with interactive road names
     if (mainRoadsLayer) map.removeLayer(mainRoadsLayer);
     mainRoadsLayer = L.geoJSON(mainRoads, {
       style: {
@@ -1665,7 +1668,24 @@ async function fetchAndDrawRoads() {
         opacity: 0.9,
         lineCap: 'round'
       },
-      interactive: false
+      interactive: true,
+      onEachFeature: (feature, layer) => {
+        const name = feature.properties.name || feature.properties.ref || '';
+        const highway = feature.properties.highway || '';
+        const ref = feature.properties.ref || '';
+        if (name || ref) {
+          const label = [name, ref].filter(Boolean).join(' · ');
+          const typeLabel = highway.replace(/_/g, ' ').replace(/^./, c => c.toUpperCase());
+          layer.bindTooltip(`<strong>${label}</strong><br><span style="opacity:0.7;font-size:0.75rem">${typeLabel}</span>`, {
+            sticky: true,
+            direction: 'top',
+            className: 'road-name-tooltip',
+            opacity: 0.95
+          });
+        }
+        layer.on('mouseover', function() { this.setStyle({ weight: 5, opacity: 1 }); });
+        layer.on('mouseout', function() { this.setStyle({ weight: 3, opacity: 0.9 }); });
+      }
     }).addTo(map);
 
     if (secondaryRoadsLayer) map.removeLayer(secondaryRoadsLayer);
@@ -1676,7 +1696,24 @@ async function fetchAndDrawRoads() {
         opacity: 0.7,
         lineCap: 'round'
       },
-      interactive: false
+      interactive: true,
+      onEachFeature: (feature, layer) => {
+        const name = feature.properties.name || feature.properties.ref || '';
+        const highway = feature.properties.highway || '';
+        const ref = feature.properties.ref || '';
+        if (name || ref) {
+          const label = [name, ref].filter(Boolean).join(' · ');
+          const typeLabel = highway.replace(/_/g, ' ').replace(/^./, c => c.toUpperCase());
+          layer.bindTooltip(`<strong>${label}</strong><br><span style="opacity:0.7;font-size:0.75rem">${typeLabel}</span>`, {
+            sticky: true,
+            direction: 'top',
+            className: 'road-name-tooltip',
+            opacity: 0.95
+          });
+        }
+        layer.on('mouseover', function() { this.setStyle({ weight: 3, opacity: 1 }); });
+        layer.on('mouseout', function() { this.setStyle({ weight: 1.5, opacity: 0.7 }); });
+      }
     }).addTo(map);
     
     // Ensure markers stay on top
@@ -4441,9 +4478,6 @@ function updateHeatmapColors() {
       const gold = styles.getPropertyValue('--avaria-gold').trim() || '#667eea';
       const red = styles.getPropertyValue('--avaria-red').trim() || '#f093fb';
       
-      // Leaflet.heat doesn't have a setOptions method for gradient, we might need to redraw it
-      // But we can try accessing the internal options if available, or just re-create it.
-      // Re-creating is safer.
       map.removeLayer(heatmapLayer);
       
       const heatPoints = projects.map(p => [p.lat, p.lng, 1]);
@@ -4453,6 +4487,18 @@ function updateHeatmapColors() {
           maxZoom: 10,
           gradient: { 0.4: 'blue', 0.65: gold, 1.0: red }
       }).addTo(map);
+  }
+}
+
+function updateRoadColors() {
+  const styles = getComputedStyle(document.documentElement);
+  const goldColor = styles.getPropertyValue('--avaria-gold').trim() || '#667eea';
+  const redColor = styles.getPropertyValue('--avaria-red').trim() || '#f093fb';
+  if (mainRoadsLayer) {
+    mainRoadsLayer.setStyle({ color: goldColor });
+  }
+  if (secondaryRoadsLayer) {
+    secondaryRoadsLayer.setStyle({ color: redColor });
   }
 }
 
@@ -4479,6 +4525,9 @@ function applyTheme() {
   
   // Update Heatmap if active
   updateHeatmapColors();
+
+  // Update road layer colors to match new theme
+  updateRoadColors();
 
   // Update active state of buttons
   document.querySelectorAll('.theme-btn').forEach(btn => {
@@ -7516,8 +7565,37 @@ const RoutePlanner = {
 
         if (!routeData?.primaryRoute?.geometry) return;
 
-        (routeData.alternatives || []).forEach(altRoute => {
-            this.layers.alternatives.addData(altRoute.geometry);
+        // Render clickable alternative routes with labels
+        const alternatives = routeData.alternatives || [];
+        alternatives.forEach((altRoute, index) => {
+            const altLayer = L.geoJSON(altRoute.geometry, {
+                pane: 'routeAltPane',
+                style: () => ({
+                    color: getComputedStyle(document.documentElement).getPropertyValue('--route-alt').trim() || 'rgba(162, 176, 194, 0.24)',
+                    weight: 5,
+                    opacity: 0.7,
+                    lineCap: 'round',
+                    lineJoin: 'round',
+                    dashArray: '8 14',
+                    className: 'route-line-alt'
+                }),
+                interactive: true,
+                onEachFeature: (feature, layer) => {
+                    const altDist = this.formatDistance(altRoute.distance);
+                    const altTime = this.formatDuration(altRoute.duration);
+                    const altSummary = altRoute.summary || `Alternative ${index + 1}`;
+                    layer.bindTooltip(`<strong>${altSummary}</strong><br>${altDist} · ${altTime}<br><span style="opacity:0.6;font-size:0.72rem">Click to switch</span>`, {
+                        sticky: true,
+                        direction: 'top',
+                        className: 'road-name-tooltip',
+                        opacity: 0.95
+                    });
+                    layer.on('click', () => this.switchToAlternative(index));
+                    layer.on('mouseover', function() { this.setStyle({ weight: 8, opacity: 0.9, dashArray: '12 8' }); });
+                    layer.on('mouseout', function() { this.setStyle({ weight: 5, opacity: 0.7, dashArray: '8 14' }); });
+                }
+            });
+            this.layers.alternatives.addLayer(altLayer);
         });
 
         this.layers.glow?.addData(routeData.primaryRoute.geometry);
@@ -7562,6 +7640,38 @@ const RoutePlanner = {
                 }
             }
         });
+    },
+
+    switchToAlternative(altIndex) {
+        const routeData = this.state.activeRoute;
+        if (!routeData || !routeData.alternatives || !routeData.alternatives[altIndex]) return;
+
+        // Swap primary and the selected alternative
+        const currentPrimary = {
+            distance: routeData.primaryRoute.distance,
+            duration: routeData.primaryRoute.duration,
+            weight: routeData.primaryRoute.weight,
+            summary: routeData.primaryRoute.summary,
+            geometry: routeData.primaryRoute.geometry
+        };
+
+        const selectedAlt = routeData.alternatives[altIndex];
+
+        // Replace primary route with selected alternative
+        routeData.primaryRoute.distance = selectedAlt.distance;
+        routeData.primaryRoute.duration = selectedAlt.duration;
+        routeData.primaryRoute.weight = selectedAlt.weight;
+        routeData.primaryRoute.summary = selectedAlt.summary;
+        routeData.primaryRoute.geometry = selectedAlt.geometry;
+        // Steps/legs won't be available for alternatives from OSRM, keep originals
+        
+        // Put old primary as an alternative
+        routeData.alternatives[altIndex] = currentPrimary;
+
+        // Re-render
+        this.renderRoute(routeData);
+        this.renderSummary(routeData);
+        notifyRouteMessage(`Switched to: ${selectedAlt.summary || 'Alternative route'}`, 'success');
     },
 
     renderStops() {
@@ -7644,6 +7754,24 @@ const RoutePlanner = {
                 const instruction = leadStep ? `<br>${leadStep.instruction || `Follow ${leadStep.name}`}` : '';
                 return `<div class="route-leg-item"><strong>${fromName}</strong> → <strong>${toName}</strong><br>${summary}${this.formatDistance(leg.distance)} • ${this.formatDuration(leg.duration)}${instruction}</div>`;
             }).join('');
+
+            // Render alternative routes selector
+            const alts = routeData.alternatives || [];
+            if (alts.length > 0) {
+                const altsHtml = alts.map((alt, i) => {
+                    const timeDiff = alt.duration - routeData.primaryRoute.duration;
+                    const timeDiffStr = timeDiff > 0 ? `+${this.formatDuration(Math.abs(timeDiff))}` : `-${this.formatDuration(Math.abs(timeDiff))}`;
+                    const label = alt.summary || `Alternative ${i + 1}`;
+                    return `<div class="route-alt-option" onclick="RoutePlanner.switchToAlternative(${i})">
+                      <div class="route-alt-label"><i class="fas fa-route"></i> ${label}</div>
+                      <div class="route-alt-meta">${this.formatDistance(alt.distance)} · ${this.formatDuration(alt.duration)} <span class="route-alt-diff">${timeDiffStr}</span></div>
+                    </div>`;
+                }).join('');
+                this.dom.legsList.innerHTML += `<div class="route-alternatives-section">
+                  <div class="route-alt-header"><i class="fas fa-code-branch"></i> Alternative Routes</div>
+                  ${altsHtml}
+                </div>`;
+            }
         }
 
         this.renderTourNarrative();
@@ -7733,12 +7861,15 @@ const RoutePlanner = {
             const following = sequence[legIndex + 2];
             const activeLeg = this.state.activeRoute?.primaryRoute?.legs?.[Math.min(legIndex, Math.max((this.state.activeRoute?.primaryRoute?.legs || []).length - 1, 0))];
             const corridorLabel = activeLeg?.summary ? ` via ${activeLeg.summary}` : '';
+            const legDist = activeLeg ? this.formatDistance(activeLeg.distance) : '';
+            const legTime = activeLeg ? this.formatDuration(activeLeg.duration) : '';
+            const legInfo = legDist && legTime ? ` (${legDist}, ${legTime})` : '';
             const midpoint = {
                 lat: (current.lat + next.lat) / 2,
                 lng: (current.lng + next.lng) / 2
             };
 
-            this.setTourContext(current.name, next.name, `Air Tour departing ${current.name} and revealing ${next.name}${corridorLabel}.`);
+            this.setTourContext(current.name, next.name, `✈️ Departing ${current.name}${corridorLabel}${legInfo}. Next: ${next.name}.`);
 
             map.flyTo([current.lat, current.lng], 14.6, {
                 animate: true,
@@ -7756,7 +7887,9 @@ const RoutePlanner = {
             this.state.routeAnimationFrame = window.setTimeout(() => {
                 if (!this.state.tourActive) return;
 
-                this.setTourContext(current.name, next.name, `Crossing the regional corridor between ${current.name} and ${next.name}${corridorLabel}.`);
+                const legsTotal = (this.state.activeRoute?.primaryRoute?.legs || []).length;
+                const legProgress = `Leg ${legIndex + 1}/${legsTotal}`;
+                this.setTourContext(current.name, next.name, `🛫 ${legProgress} — Crossing corridor${corridorLabel}. ETA: ${legTime || 'calculating...'}.`);
 
                 map.flyTo([midpoint.lat, midpoint.lng], 11.1, {
                     animate: true,
@@ -7767,7 +7900,9 @@ const RoutePlanner = {
                 this.state.routeAnimationFrame = window.setTimeout(() => {
                     if (!this.state.tourActive) return;
 
-                    this.setTourContext(next.name, following?.name || current.name, `Arriving at ${next.name}${corridorLabel} with the next reveal lined up.`);
+                    const remainingStops = sequence.length - legIndex - 2;
+                    const arrivalNote = remainingStops > 0 ? `${remainingStops} stop${remainingStops > 1 ? 's' : ''} remaining.` : '🏁 Final destination!';
+                    this.setTourContext(next.name, following?.name || current.name, `📍 Arrived at ${next.name}${legInfo}. ${arrivalNote}`);
 
                     map.flyTo([next.lat, next.lng], 15, {
                         animate: true,
@@ -7802,8 +7937,13 @@ const RoutePlanner = {
         this.state.tourActive = true;
         this.state.routeAnimationCoords = coordinates;
         this.state.routeAnimationIndex = 0;
+        this.state.driveSpeed = 1; // 1x speed
         const sequence = this.getTourSequence();
         let lastNarratedStopIndex = -1;
+        let lastHeading = 0;
+
+        // Create drive HUD overlay
+        this.createDriveHUD();
 
         this.layers.movingMarker = L.marker(coordinates[0], {
             pane: 'routeStopsPane',
@@ -7815,26 +7955,52 @@ const RoutePlanner = {
             })
         }).addTo(map);
 
+        // Find current road name based on animation position
+        const getCurrentRoadName = (coordIndex) => {
+            const legs = this.state.activeRoute?.primaryRoute?.legs || [];
+            let totalCoords = 0;
+            for (const leg of legs) {
+                for (const step of (leg.steps || [])) {
+                    const stepCoords = step.distance ? Math.max(1, Math.round(step.distance / 50)) : 5;
+                    totalCoords += stepCoords;
+                    if (coordIndex <= totalCoords) {
+                        return step.name || step.instruction || '';
+                    }
+                }
+            }
+            return '';
+        };
+
         const step = () => {
             if (!this.state.tourActive) return;
 
-            const currentCoord = this.state.routeAnimationCoords[this.state.routeAnimationIndex];
+            const idx = this.state.routeAnimationIndex;
+            const currentCoord = this.state.routeAnimationCoords[idx];
             if (!currentCoord) {
                 this.stopTour();
                 return;
             }
 
+            // Calculate heading from previous to current point
+            const prevCoord = idx > 0 ? this.state.routeAnimationCoords[idx - 1] : currentCoord;
+            const bearing = this.calculateBearing(prevCoord[0], prevCoord[1], currentCoord[0], currentCoord[1]);
+            if (idx > 0) lastHeading = bearing;
+
             this.layers.movingMarker.setLatLng(currentCoord);
-            map.panTo(currentCoord, { animate: true, duration: 0.32, easeLinearity: 0.2 });
+            map.panTo(currentCoord, { animate: true, duration: 0.28, easeLinearity: 0.15 });
 
             const progress = this.state.routeAnimationCoords.length > 1
-                ? this.state.routeAnimationIndex / (this.state.routeAnimationCoords.length - 1)
+                ? idx / (this.state.routeAnimationCoords.length - 1)
                 : 0;
             const legProgress = sequence.length > 1 ? progress * (sequence.length - 1) : 0;
             const activeStopIndex = Math.min(Math.floor(legProgress), Math.max(sequence.length - 2, 0));
             const currentStop = sequence[activeStopIndex] || sequence[0];
             const nextStop = sequence[Math.min(activeStopIndex + 1, sequence.length - 1)] || currentStop;
             const pct = Math.max(1, Math.min(100, Math.round(progress * 100)));
+
+            // Update HUD
+            const roadName = getCurrentRoadName(idx);
+            this.updateDriveHUD(pct, lastHeading, roadName, currentStop?.name, nextStop?.name);
 
             if (activeStopIndex !== lastNarratedStopIndex) {
                 lastNarratedStopIndex = activeStopIndex;
@@ -7844,11 +8010,10 @@ const RoutePlanner = {
                 }
             }
 
-            if (this.state.routeAnimationIndex % 10 === 0 || this.state.routeAnimationIndex === 0) {
-                const driveLabel = this.state.tourMode === 'smart'
-                    ? `Smart Tour ${pct}% complete. Moving from ${currentStop?.name || 'current stop'} toward ${nextStop?.name || 'next stop'}.`
-                    : `Drive Tour ${pct}% complete. Following the route from ${currentStop?.name || 'current stop'} toward ${nextStop?.name || 'next stop'}.`;
-                this.setTourContext(currentStop?.name, nextStop?.name, driveLabel);
+            if (idx % 10 === 0 || idx === 0) {
+                const modeStr = this.state.tourMode === 'smart' ? 'Smart Tour' : 'Drive Tour';
+                const roadSuffix = roadName ? ` on ${roadName}` : '';
+                this.setTourContext(currentStop?.name, nextStop?.name, `${modeStr} ${pct}%${roadSuffix}. ${currentStop?.name || ''} → ${nextStop?.name || ''}`);
             }
 
             this.state.routeAnimationIndex += 1;
@@ -7857,10 +8022,90 @@ const RoutePlanner = {
                 return;
             }
 
-            this.state.routeAnimationFrame = window.setTimeout(step, 85);
+            const baseInterval = 85;
+            const interval = Math.max(20, baseInterval / (this.state.driveSpeed || 1));
+            this.state.routeAnimationFrame = window.setTimeout(step, interval);
         };
 
         step();
+    },
+
+    calculateBearing(lat1, lng1, lat2, lng2) {
+        const dLng = (lng2 - lng1) * Math.PI / 180;
+        const y = Math.sin(dLng) * Math.cos(lat2 * Math.PI / 180);
+        const x = Math.cos(lat1 * Math.PI / 180) * Math.sin(lat2 * Math.PI / 180) -
+                  Math.sin(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.cos(dLng);
+        return ((Math.atan2(y, x) * 180 / Math.PI) + 360) % 360;
+    },
+
+    getCompassDirection(bearing) {
+        const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+        return directions[Math.round(bearing / 45) % 8];
+    },
+
+    createDriveHUD() {
+        this.removeDriveHUD();
+        const hud = document.createElement('div');
+        hud.id = 'driveHUD';
+        hud.innerHTML = `
+          <div class="drive-hud-bar">
+            <div class="drive-hud-progress" id="driveProgress"></div>
+          </div>
+          <div class="drive-hud-info">
+            <div class="drive-hud-compass" id="driveCompass">
+              <svg viewBox="0 0 40 40" width="36" height="36">
+                <circle cx="20" cy="20" r="18" fill="none" stroke="var(--glass-border)" stroke-width="1.5"/>
+                <text x="20" y="10" text-anchor="middle" fill="var(--avaria-gold)" font-size="7" font-weight="700">N</text>
+                <polygon id="driveCompassNeedle" points="20,6 17,22 20,20 23,22" fill="var(--avaria-gold)" opacity="0.9"/>
+              </svg>
+              <span class="drive-compass-label" id="driveCompassLabel">N</span>
+            </div>
+            <div class="drive-hud-road" id="driveRoadName">--</div>
+            <div class="drive-hud-stops">
+              <span class="drive-hud-from" id="driveFromStop">--</span>
+              <span class="drive-hud-arrow">→</span>
+              <span class="drive-hud-to" id="driveToStop">--</span>
+            </div>
+            <div class="drive-hud-speed">
+              <button class="drive-speed-btn" onclick="RoutePlanner.setDriveSpeed(0.5)" data-speed="0.5">0.5×</button>
+              <button class="drive-speed-btn active" onclick="RoutePlanner.setDriveSpeed(1)" data-speed="1">1×</button>
+              <button class="drive-speed-btn" onclick="RoutePlanner.setDriveSpeed(2)" data-speed="2">2×</button>
+              <button class="drive-speed-btn" onclick="RoutePlanner.setDriveSpeed(4)" data-speed="4">4×</button>
+            </div>
+            <div class="drive-hud-pct" id="drivePct">0%</div>
+          </div>`;
+        document.body.appendChild(hud);
+    },
+
+    updateDriveHUD(pct, heading, roadName, fromStop, toStop) {
+        const progressEl = document.getElementById('driveProgress');
+        const compassLabel = document.getElementById('driveCompassLabel');
+        const needle = document.getElementById('driveCompassNeedle');
+        const roadEl = document.getElementById('driveRoadName');
+        const fromEl = document.getElementById('driveFromStop');
+        const toEl = document.getElementById('driveToStop');
+        const pctEl = document.getElementById('drivePct');
+
+        if (progressEl) progressEl.style.width = `${pct}%`;
+        if (compassLabel) compassLabel.textContent = this.getCompassDirection(heading);
+        if (needle) needle.style.transform = `rotate(${heading}deg)`;
+        if (needle) needle.style.transformOrigin = '20px 20px';
+        if (roadEl) roadEl.textContent = roadName || '--';
+        if (fromEl) fromEl.textContent = fromStop || '--';
+        if (toEl) toEl.textContent = toStop || '--';
+        if (pctEl) pctEl.textContent = `${pct}%`;
+    },
+
+    removeDriveHUD() {
+        const hud = document.getElementById('driveHUD');
+        if (hud) hud.remove();
+    },
+
+    setDriveSpeed(speed) {
+        this.state.driveSpeed = speed;
+        document.querySelectorAll('.drive-speed-btn').forEach(btn => {
+            btn.classList.toggle('active', parseFloat(btn.dataset.speed) === speed);
+        });
     },
 
     async startTour() {
@@ -7920,6 +8165,7 @@ const RoutePlanner = {
         }
         this.layers.movingMarker = null;
 
+        this.removeDriveHUD();
         legacyStopTour();
         this.state.forced3DForTour = false;
         this.clearTourContext();

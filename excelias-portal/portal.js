@@ -17,7 +17,7 @@ const PROJECTS = {
   },
   avaria: {
     name:  'Academy Operations',
-    url:   IS_LOCAL ? 'http://localhost:3005' : 'https://avaria.vercel.app',
+    url:   IS_LOCAL ? 'http://localhost:3005' : 'https://lms.xcelias.com',
     mode:  'iframe'
   },
   reports: {

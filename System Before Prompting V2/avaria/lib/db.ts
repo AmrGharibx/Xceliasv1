@@ -4,12 +4,12 @@
 // ============================================================
 
 import { PrismaClient } from "@prisma/client";
-import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
+import { PrismaLibSql } from "@prisma/adapter-libsql";
 
-// Create Prisma adapter with SQLite file path
-// The database is at project root (./dev.db) based on how Prisma CLI resolves DATABASE_URL
-const adapter = new PrismaBetterSqlite3({
-  url: "./dev.db",
+// Connect to Turso (hosted libSQL) for production
+const adapter = new PrismaLibSql({
+  url: process.env.TURSO_DATABASE_URL!,
+  authToken: process.env.TURSO_AUTH_TOKEN,
 });
 
 const globalForPrisma = globalThis as unknown as {

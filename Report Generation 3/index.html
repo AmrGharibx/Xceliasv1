@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RED Report Generator</title>
+    <title>Xcelias Report Generator</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Playfair+Display:wght@500;600;700;800&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -46,7 +46,7 @@
         /* ====== HEADER BAR ====== */
         .topbar{background:#fff;border-bottom:3px solid var(--red);padding:14px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:var(--shadow-sm)}
         .logo-group{display:flex;align-items:center;gap:12px}
-        .logo-mark{width:40px;height:40px;background:var(--red);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:800;font-size:1rem;color:#fff;letter-spacing:.05em}
+        .logo-mark{width:40px;height:40px;background:linear-gradient(135deg,#667eea,#764ba2);border-radius:12px;display:flex;align-items:center;justify-content:center}
         .logo-t{display:flex;flex-direction:column}
         .logo-t b{font-family:'Playfair Display',serif;font-weight:700;font-size:1.1rem;color:var(--g800);line-height:1.2}
         .logo-t small{font-size:.72rem;color:var(--g400);font-weight:400;letter-spacing:.03em}
@@ -471,8 +471,8 @@
 <div id="app-shell">
     <header class="topbar">
         <div class="logo-group">
-            <div class="logo-mark">RED</div>
-            <div class="logo-t"><b>Report Generator</b><small>Built-in OCR &bull; No API Key</small></div>
+            <div class="logo-mark"><svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:24px;height:24px"><defs><linearGradient id="xlg" x1="0" y1="0" x2="56" y2="56"><stop offset="0%" stop-color="#667eea"/><stop offset="50%" stop-color="#764ba2"/><stop offset="100%" stop-color="#f093fb"/></linearGradient></defs><rect x="4" y="4" width="48" height="48" rx="14" stroke="url(#xlg)" stroke-width="2" fill="none" opacity="0.6"/><text x="28" y="37" text-anchor="middle" fill="url(#xlg)" font-family="Montserrat" font-weight="900" font-size="26">X</text></svg></div>
+            <div class="logo-t"><b>Xcelias Report Generator</b><small>Built-in OCR &bull; No API Key</small></div>
         </div>
         <div class="dots" id="step-dots">
             <div class="dot now" data-s="1" onclick="navStep(1)">1<span class="dl">Setup</span></div>
@@ -1919,7 +1919,7 @@ async function dlPDF(){
             if(i>0)pdf.addPage();
             pdf.addImage(canvas.toDataURL('image/jpeg',.95),'JPEG',0,0,210,297);
         }
-        pdf.save(`RED_Report_${S.co.replace(/\s+/g,'_')}_Batch${S.batch}.pdf`);
+        pdf.save(`Xcelias_Report_${S.co.replace(/\s+/g,'_')}_Batch${S.batch}.pdf`);
         toast('PDF downloaded!','ok');
     }catch(e){console.error(e);toast('PDF failed — try Print instead','err')}
     finally{ov.classList.remove('on');bar.style.width='0%'}

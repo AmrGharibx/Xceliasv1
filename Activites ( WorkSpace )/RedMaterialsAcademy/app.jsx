@@ -471,7 +471,7 @@ const lerp = (a, b, t) => a + (b - a) * t;
 
 const UI_STRINGS = {
   en: {
-    appTitle: 'Red',
+    appTitle: 'Xcelias',
     appSubtitle: 'A premium real estate training game with 35+ interactive drills',
     totalScore: 'Total Score',
     currentStreak: 'Current Streak',
@@ -576,7 +576,7 @@ const UI_STRINGS = {
     }
   },
   eg: {
-    appTitle: 'ريد',
+    appTitle: 'Xcelias',
     appSubtitle: 'لعبة تدريب عقاري بريميوم فيها +٣٥ تمرين تفاعلي',
     totalScore: 'إجمالي النقط',
     currentStreak: 'الستريك الحالي',
@@ -977,7 +977,7 @@ const styles = {
   logoIcon: {
     width: '50px',
     height: '50px',
-    background: `linear-gradient(135deg, ${RM_THEME.red}, ${RM_THEME.red2})`,
+    background: `linear-gradient(135deg, #667eea, #764ba2)`,
     borderRadius: '12px',
     display: 'flex',
     alignItems: 'center',
@@ -1665,13 +1665,13 @@ const RunStatusBar = ({ lang, globalScore, globalStreak, academyStats, currentAc
           background: `linear-gradient(135deg, ${rank.accent}22, rgba(255,255,255,0.04))`
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, alignItems: 'center', flexWrap: 'wrap', marginBottom: 8 }}>
-            <span style={{ ...styles.badge, ...styles.badgeBlue }}>{lang === 'eg' ? 'رتبة ريد' : 'Red Rank'}</span>
+            <span style={{ ...styles.badge, ...styles.badgeBlue }}>{lang === 'eg' ? 'رتبة Xcelias' : 'Xcelias Rank'}</span>
             <span style={{ color: rank.accent, fontWeight: 900, fontSize: 13 }}>{lang === 'eg' ? rank.eg : rank.en}</span>
           </div>
           <div style={{ fontSize: 24, fontWeight: 900, marginBottom: 6 }}>
             {currentActivity
               ? (lang === 'eg' ? `دلوقتي: ${currentActivity.name}` : `Now Playing: ${currentActivity.name}`)
-              : (lang === 'eg' ? 'غرفة تشغيل ريد' : 'Red Command Run')}
+              : (lang === 'eg' ? 'غرفة تشغيل Xcelias' : 'Xcelias Command Run')}
           </div>
           <div style={{ color: RM_THEME.muted, lineHeight: 1.55, fontSize: 14, marginBottom: 10 }}>
             {currentActivity
@@ -1744,7 +1744,7 @@ const PromotionBanner = ({ lang, promotionNotice, onClose }) => {
               ? (lang === 'eg'
                 ? `كمّل ضغطك عشان توصل ${nextRank.eg} بعديها.`
                 : `Keep the pressure on and push toward ${nextRank.en} next.`)
-              : (lang === 'eg' ? 'أعلى رتبة في ريد اتفتحت.' : 'You have unlocked the top Red rank.')}
+              : (lang === 'eg' ? 'أعلى رتبة في Xcelias اتفتحت.' : 'You have unlocked the top Xcelias rank.')}
           </div>
         </div>
         <button onClick={onClose} style={styles.secondaryBtn}>{lang === 'eg' ? 'إقفال' : 'Dismiss'}</button>
@@ -1798,7 +1798,7 @@ const MissionRewardBanner = ({ lang, rewardNotice, onClose }) => {
       <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap', alignItems: 'center' }}>
         <div>
           <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap', marginBottom: 8 }}>
-            <span style={{ ...styles.badge, ...styles.badgeGreen }}>{lang === 'eg' ? 'مكافأة Red Ops' : 'Red Ops Reward'}</span>
+            <span style={{ ...styles.badge, ...styles.badgeGreen }}>{lang === 'eg' ? 'مكافأة Xcelias Ops' : 'Xcelias Ops Reward'}</span>
             <span style={{ color: RM_THEME.amber, fontWeight: 900 }}>+{rewardNotice.points}</span>
           </div>
           <div style={{ fontSize: 22, fontWeight: 900, marginBottom: 6 }}>{rewardNotice.title}</div>
@@ -6648,7 +6648,7 @@ const ColdCallSimulator = ({ onBack, updateScore }) => {
         situation: "Phone rings... Client answers: 'Hello?'",
         options: [
           { text: 'Hi, is this a good time to talk?', correct: false, feedback: "Wrong question! This gives them an easy out. Don't stop when you should proceed!" },
-          { text: 'Good morning! This is [Name] from Red Materials. I noticed your interest in New Cairo properties - I have something exciting to share!', correct: true, feedback: 'Perfect! Confident, introduces yourself, and leads with value.' }
+          { text: 'Good morning! This is [Name] from Xcelias. I noticed your interest in New Cairo properties - I have something exciting to share!', correct: true, feedback: 'Perfect! Confident, introduces yourself, and leads with value.' }
         ]
       },
       {
@@ -6682,7 +6682,7 @@ const ColdCallSimulator = ({ onBack, updateScore }) => {
         situation: 'التليفون بيرن… العميل: "ألو؟"',
         options: [
           { text: 'ألو، ينفع أتكلم دلوقتي؟', correct: false, feedback: 'ده سؤال بيدي للعميل مخرج سهل يقفل. ادخل على القيمة على طول.' },
-          { text: 'صباح الخير! معاك [الاسم] من ريد ماتيريالز. لاحظت اهتمامك بالقاهرة الجديدة — عندي حاجة مناسبة جدًا أحب أقولك عليها بسرعة.', correct: true, feedback: 'ممتاز: تعريف سريع + ثقة + قيمة واضحة.' }
+          { text: 'صباح الخير! معاك [الاسم] من Xcelias. لاحظت اهتمامك بالقاهرة الجديدة — عندي حاجة مناسبة جدًا أحب أقولك عليها بسرعة.', correct: true, feedback: 'ممتاز: تعريف سريع + ثقة + قيمة واضحة.' }
         ]
       },
       {
@@ -7522,7 +7522,7 @@ const FinalExam = ({ onBack, updateScore }) => {
               <h2 style={{ marginTop: '15px' }}>Exam Complete!</h2>
               <h3 style={{ marginTop: '10px' }}>Final Score: {localScore}/{questions.length * 5}</h3>
               <p style={{ marginTop: '10px', color: 'rgba(255,255,255,0.7)' }}>
-                {localScore >= questions.length * 4 ? "🏆 Outstanding! You're a Red Materials expert!" :
+                {localScore >= questions.length * 4 ? "🏆 Outstanding! You're an Xcelias expert!" :
                  localScore >= questions.length * 3 ? "👏 Great job! Keep refining your knowledge." :
                  localScore >= questions.length * 2 ? "📚 Good effort! Review the material for better results." :
                  "💪 Keep studying! Practice makes perfect."}
@@ -10057,7 +10057,7 @@ const App = () => {
           flexDirection: 'column'
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'center', marginBottom: 16 }}>
-            <h3>{lang === 'eg' ? 'Red Ops' : 'Red Ops'}</h3>
+            <h3>{lang === 'eg' ? 'Xcelias Ops' : 'Xcelias Ops'}</h3>
             <span style={{ ...styles.badge, ...styles.badgeBlue }}>{redOpsMissions.filter(mission => mission.completed).length}/{redOpsMissions.length}</span>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -10369,7 +10369,7 @@ const App = () => {
       {/* Header */}
       <header style={styles.header}>
         <div style={styles.logo}>
-          <div style={styles.logoIcon}>{lang === 'eg' ? 'ر' : 'R'}</div>
+          <div style={styles.logoIcon}><svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg" style={{width:'28px',height:'28px'}}><defs><linearGradient id="xlg" x1="0" y1="0" x2="56" y2="56"><stop offset="0%" stopColor="#667eea"/><stop offset="50%" stopColor="#764ba2"/><stop offset="100%" stopColor="#f093fb"/></linearGradient></defs><rect x="4" y="4" width="48" height="48" rx="14" stroke="url(#xlg)" strokeWidth="2" fill="none" opacity="0.6"/><text x="28" y="37" textAnchor="middle" fill="url(#xlg)" fontFamily="Montserrat" fontWeight="900" fontSize="26">X</text></svg></div>
           <span style={styles.logoText}>{s.appTitle}</span>
         </div>
         <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
@@ -10437,8 +10437,8 @@ const App = () => {
         </p>
         <p style={{ marginTop: '5px' }}>
           {lang === 'eg'
-            ? 'كل المحتوى مبني على عرض تدريب ريد ماتيريالز'
-            : 'All content derived from Red Materials Training Presentation'}
+            ? 'كل المحتوى مبني على عرض تدريب Xcelias'
+            : 'All content derived from Xcelias Training Presentation'}
         </p>
       </footer>
         </div>

@@ -57,7 +57,7 @@ const Footer = () => (
           <Building2 className="h-5 w-5 text-white" />
         </div>
         <div>
-          <div className="text-xs uppercase tracking-[0.28em] text-[var(--accent-soft)]">Red Materials</div>
+          <div className="text-xs uppercase tracking-[0.28em] text-[var(--accent-soft)]">Xcelias</div>
           <div className="text-sm text-[var(--text-soft)]">Immersive real-estate sales mastery</div>
         </div>
       </div>

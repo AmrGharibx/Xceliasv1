@@ -17,8 +17,8 @@ const PROJECTS = {
   },
   avaria: {
     name:  'Academy Operations',
-    url:   IS_LOCAL ? 'http://localhost:3005' : null,
-    mode:  'tab'
+    url:   IS_LOCAL ? 'http://localhost:3005' : 'https://lms.xcelias.com',
+    mode:  'iframe'
   },
   reports: {
     name:  'Report Generator',

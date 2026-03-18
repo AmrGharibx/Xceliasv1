@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --webpack -p 3005",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
     "import:datacv": "tsx scripts/parseNotionData.ts && tsx scripts/seed-db.ts"

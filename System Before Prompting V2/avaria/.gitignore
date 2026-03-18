@@ -36,8 +36,15 @@ yarn-error.log*
 # vercel
 .vercel
 
+# data import directories (not needed for deployment)
+/datacv/
+/datanew/
+/dev.db
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
 
 /lib/generated/prisma
+
+.vercel

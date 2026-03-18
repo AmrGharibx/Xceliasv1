@@ -24,7 +24,7 @@ export const TopNavigation = ({ activeSection, onOpenMap, onOpenSource, onOpenBr
               <Building2 className="h-5 w-5" />
             </div>
             <div>
-              <div className="text-[11px] uppercase tracking-[0.28em] text-[var(--accent-soft)]">Red Materials</div>
+              <div className="text-[11px] uppercase tracking-[0.28em] text-[var(--accent-soft)]">Xcelias</div>
               <div className="text-sm font-semibold md:text-base">The Ultimate Real Estate Mastery</div>
             </div>
           </button>

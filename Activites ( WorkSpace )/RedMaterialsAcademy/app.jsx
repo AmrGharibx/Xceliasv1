@@ -977,6 +977,7 @@ const styles = {
   logoIcon: {
     width: '50px',
     height: '50px',
+    position: 'relative',
     background: `linear-gradient(135deg, #667eea, #764ba2)`,
     borderRadius: '12px',
     display: 'flex',
@@ -985,6 +986,18 @@ const styles = {
     fontSize: '24px',
     fontWeight: '800',
     boxShadow: '0 14px 32px rgba(102,126,234,0.25), inset 0 0 0 1px rgba(255,255,255,0.14)'
+  },
+  logoRing: {
+    position: 'absolute',
+    inset: '-6px',
+    borderRadius: '18px',
+    border: '1.5px solid transparent',
+    background: 'linear-gradient(135deg, #667eea, #764ba2, #f093fb) border-box',
+    WebkitMask: 'linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0)',
+    WebkitMaskComposite: 'xor',
+    maskComposite: 'exclude',
+    opacity: 0.4,
+    animation: 'logoRingPulse 3s ease-in-out infinite'
   },
   
   logoText: {
@@ -9215,6 +9228,15 @@ const getActivityMeta = (categoryId, activityId) => {
 };
 
 const App = () => {
+  // Inject logo ring pulse animation
+  React.useEffect(() => {
+    if (!document.getElementById('xcelias-ring-css')) {
+      const s = document.createElement('style');
+      s.id = 'xcelias-ring-css';
+      s.textContent = '@keyframes logoRingPulse{0%,100%{opacity:0.3;transform:scale(1)}50%{opacity:0.6;transform:scale(1.06)}}';
+      document.head.appendChild(s);
+    }
+  }, []);
   const [currentActivity, setCurrentActivity] = useState(null);
   const [globalScore, setGlobalScore] = useState(() => {
     try {
@@ -10369,7 +10391,7 @@ const App = () => {
       {/* Header */}
       <header style={styles.header}>
         <div style={styles.logo}>
-          <div style={styles.logoIcon}><svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg" style={{width:'28px',height:'28px'}}><defs><linearGradient id="xlg" x1="0" y1="0" x2="56" y2="56"><stop offset="0%" stopColor="#667eea"/><stop offset="50%" stopColor="#764ba2"/><stop offset="100%" stopColor="#f093fb"/></linearGradient></defs><rect x="4" y="4" width="48" height="48" rx="14" stroke="url(#xlg)" strokeWidth="2" fill="none" opacity="0.6"/><text x="28" y="37" textAnchor="middle" fill="url(#xlg)" fontFamily="Montserrat" fontWeight="900" fontSize="26">X</text></svg></div>
+          <div style={styles.logoIcon}><div style={styles.logoRing}></div><svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg" style={{width:'28px',height:'28px',position:'relative',zIndex:1}}><defs><linearGradient id="xlg" x1="0" y1="0" x2="56" y2="56"><stop offset="0%" stopColor="#667eea"/><stop offset="50%" stopColor="#764ba2"/><stop offset="100%" stopColor="#f093fb"/></linearGradient></defs><rect x="4" y="4" width="48" height="48" rx="14" stroke="url(#xlg)" strokeWidth="2" fill="none" opacity="0.6"/><text x="28" y="37" textAnchor="middle" fill="url(#xlg)" fontFamily="Montserrat" fontWeight="900" fontSize="26">X</text></svg></div>
           <span style={styles.logoText}>{s.appTitle}</span>
         </div>
         <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-end' }}>

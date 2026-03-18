@@ -169,6 +169,34 @@
         /* font-size: 3rem; REMOVED */
         color: var(--avaria-gold);
         line-height: 1;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .logo-x-wrap {
+        position: relative;
+        width: 36px;
+        height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .logo-x-ring {
+        position: absolute;
+        inset: -6px;
+        border-radius: 18px;
+        border: 1.5px solid transparent;
+        background: linear-gradient(135deg, #667eea, #764ba2, #f093fb) border-box;
+        -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        opacity: 0.4;
+        animation: ringPulse 3s ease-in-out infinite;
+      }
+      @keyframes ringPulse {
+        0%, 100% { opacity: 0.3; transform: scale(1); }
+        50% { opacity: 0.6; transform: scale(1.06); }
       }
       .logo-sub {
         font-family: 'Montserrat', sans-serif;
@@ -666,7 +694,7 @@
         <div class="sidebar-header">
       <div class="logo-area" style="display: flex; justify-content: space-between; align-items: flex-start;">
         <div>
-          <div class="logo-main"><svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:32px;height:32px;display:inline-block;vertical-align:middle;margin-right:8px"><defs><linearGradient id="xlg" x1="0" y1="0" x2="56" y2="56"><stop offset="0%" stop-color="#667eea"/><stop offset="50%" stop-color="#764ba2"/><stop offset="100%" stop-color="#f093fb"/></linearGradient></defs><rect x="4" y="4" width="48" height="48" rx="14" stroke="url(#xlg)" stroke-width="2" fill="none" opacity="0.6"/><text x="28" y="37" text-anchor="middle" fill="url(#xlg)" font-family="Montserrat" font-weight="900" font-size="26">X</text></svg>XCELIAS</div>
+          <div class="logo-main"><span class="logo-x-wrap"><div class="logo-x-ring"></div><svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:32px;height:32px;position:relative;z-index:1"><defs><linearGradient id="xlg" x1="0" y1="0" x2="56" y2="56"><stop offset="0%" stop-color="#667eea"/><stop offset="50%" stop-color="#764ba2"/><stop offset="100%" stop-color="#f093fb"/></linearGradient></defs><rect x="4" y="4" width="48" height="48" rx="14" stroke="url(#xlg)" stroke-width="2" fill="none" opacity="0.6"/><text x="28" y="37" text-anchor="middle" fill="url(#xlg)" font-family="Montserrat" font-weight="900" font-size="26">X</text></svg></span>XCELIAS</div>
           <div class="logo-sub">Training Academy</div>
         </div>
         <div style="display: flex; gap: 5px;">

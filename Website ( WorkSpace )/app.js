@@ -2206,6 +2206,8 @@ const NeuralView = {
   animationFrame: null,
   sourceProject: null,
   targetProjects: [],
+  _cachedThemeColor: null,
+  _cachedTheme: null,
   
   init: function(mapInstance) {
       this.canvas = document.createElement('canvas');
@@ -2311,27 +2313,32 @@ const NeuralView = {
       
       const time = Date.now() / 1000;
 
-      // Get theme colors - Premium purple theme
-      const styles = getComputedStyle(document.documentElement);
-      const themeColor = styles.getPropertyValue('--avaria-gold').trim() || '#667eea';
+      // Get theme colors - cached to avoid getComputedStyle every frame
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      if (!this._cachedThemeColor || this._cachedTheme !== currentTheme) {
+          const styles = getComputedStyle(document.documentElement);
+          this._cachedThemeColor = styles.getPropertyValue('--avaria-gold').trim() || '#667eea';
+          this._cachedTheme = currentTheme;
+      }
+      const themeColor = this._cachedThemeColor;
       
       this.targetProjects.forEach((target, index) => {
           const targetPoint = map.latLngToContainerPoint([target.lat, target.lng]);
           
-          // Draw Line
+          // Draw Line with glow
           this.ctx.beginPath();
           this.ctx.moveTo(sourcePoint.x, sourcePoint.y);
           this.ctx.lineTo(targetPoint.x, targetPoint.y);
           
-          // Pulse Effect
           const alpha = (Math.sin(time * 3 + index) + 1) / 2 * 0.6 + 0.2;
           this.ctx.strokeStyle = this.hexToRgba(themeColor, alpha);
           this.ctx.lineWidth = 2;
-          this.ctx.shadowBlur = 10;
+          this.ctx.shadowBlur = 8;
           this.ctx.shadowColor = themeColor;
           this.ctx.stroke();
           
-          // Draw Glowing Dot at Target
+          // Draw Dot at Target (no shadow needed)
+          this.ctx.shadowBlur = 0;
           this.ctx.beginPath();
           this.ctx.arc(targetPoint.x, targetPoint.y, 4, 0, Math.PI * 2);
           this.ctx.fillStyle = themeColor;
@@ -3639,9 +3646,10 @@ function focusOnProject(p, options = {}) {
       });
     }
     
-    // Draw 10km Radius Circle
-        if (drawRadius && currentRadiusCircle && map) {
+    // Draw 10km Radius Circle - always clean up previous
+        if (currentRadiusCircle && map) {
       map.removeLayer(currentRadiusCircle);
+      currentRadiusCircle = null;
     }
     
         if (drawRadius && map) {
@@ -3773,13 +3781,13 @@ function toggleSidebar(event) {
           // Sidebar is closing. Hide sidebar sig, show external sig.
           gsap.to(sidebarSig, { opacity: 0, duration: 0.3 });
           gsap.fromTo(externalSig, 
-              { opacity: 0, y: 100, scale: 0.5, filter: 'blur(10px)' },
-              { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)', duration: 1, delay: 0.3, ease: "back.out(1.7)" }
+              { opacity: 0, y: 30, scale: 0.9 },
+              { opacity: 1, y: 0, scale: 1, duration: 0.6, delay: 0.3, ease: "power2.out" }
           );
       } else {
           // Sidebar is opening. Hide external sig, show sidebar sig.
           gsap.to(externalSig, { opacity: 0, duration: 0.3 });
-          gsap.to(sidebarSig, { opacity: 1, duration: 1, delay: 0.3 });
+          gsap.to(sidebarSig, { opacity: 1, duration: 0.5, delay: 0.3 });
       }
   }
 }
@@ -3787,6 +3795,12 @@ function toggleSidebar(event) {
 function closeModal() {
   const modal = document.getElementById("projectModal");
   if (modal) modal.classList.remove("active");
+  
+  // Stop swiper autoplay when modal is hidden to prevent invisible DOM updates
+  if (swiperInstance && swiperInstance.autoplay) {
+      swiperInstance.autoplay.stop();
+  }
+  
   if (sidebarAutoCollapsed) {
       const sidebar = document.getElementById("sidebar");
       if (sidebar && sidebar.classList.contains("collapsed")) {
@@ -4625,46 +4639,39 @@ function clearLifestyleFilter() {
 // --- TIMELINE SLIDER LOGIC ---
 let timelineInterval;
 let isTimelinePlaying = false;
+let _timelineRenderPending = false;
 
 function updateTimeline(year) {
     const display = document.getElementById('timeline-display');
     if (display) display.innerText = year;
     
-    // Filter and Style Projects
-    const visibleProjects = (projects || []).filter(p => {
-        // Show if project "exists" by this year (launched before or delivered)
-        // For simplicity, let's assume all projects "launch" at 2020, 
-        // but their status changes over time.
-        // Or, use the prompt's logic: "If slider is before launch, hide."
-        // We'll assume launch year is deliveryYear - 4.
-        const launchYear = (p.deliveryYear || 2026) - 4;
-        return year >= launchYear;
-    });
+    // Debounce renderProjects during timeline play to avoid heavy re-render stacking
+    if (_timelineRenderPending) return;
+    _timelineRenderPending = true;
+    requestAnimationFrame(() => {
+        _timelineRenderPending = false;
+        
+        const visibleProjects = (projects || []).filter(p => {
+            const launchYear = (p.deliveryYear || 2026) - 4;
+            return year >= launchYear;
+        });
 
-    // We need to update the MARKERS, not just the list.
-    // renderProjects clears and rebuilds, which is fine but might be heavy.
-    // Let's modify renderProjects to accept a "year" context or handle it here.
-    // For simplicity/robustness, we'll re-render with a special flag or just modify the loop in renderProjects.
-    // Actually, let's just filter the list passed to renderProjects.
-    
-    // But we also need to change colors based on status at that year.
-    // We'll attach a temporary "currentStatus" to the project objects before rendering.
-    
-    visibleProjects.forEach(p => {
-        const delivery = p.deliveryYear || 2026;
-        if (year >= delivery) {
-            p.tempStatus = 'Delivered';
-            p.tempColor = 'var(--avaria-green)'; // Green
-        } else if (year >= delivery - 3) {
-            p.tempStatus = 'Under Construction';
-            p.tempColor = 'var(--avaria-gold)'; // Gold
-        } else {
-            p.tempStatus = 'Planned';
-            p.tempColor = 'var(--avaria-red)'; // Red
-        }
-    });
+        visibleProjects.forEach(p => {
+            const delivery = p.deliveryYear || 2026;
+            if (year >= delivery) {
+                p.tempStatus = 'Delivered';
+                p.tempColor = 'var(--avaria-green)';
+            } else if (year >= delivery - 3) {
+                p.tempStatus = 'Under Construction';
+                p.tempColor = 'var(--avaria-gold)';
+            } else {
+                p.tempStatus = 'Planned';
+                p.tempColor = 'var(--avaria-red)';
+            }
+        });
 
-    renderProjects(visibleProjects, true); // Pass true for "timelineMode"
+        renderProjects(visibleProjects, true);
+    });
 }
 
 function expandTimeline(event) {
@@ -4761,9 +4768,13 @@ function updateSpatialAudio() {
 }
 
 if (map) {
+    let _lastAudioCenter = null;
     map.on('move', () => {
-        // Throttled update
+        // Throttle: only update when map center moves significantly (0.01 deg ~1km)
         if (audioContext) {
+            const c = map.getCenter();
+            if (_lastAudioCenter && Math.abs(c.lat - _lastAudioCenter.lat) < 0.01 && Math.abs(c.lng - _lastAudioCenter.lng) < 0.01) return;
+            _lastAudioCenter = { lat: c.lat, lng: c.lng };
             requestAnimationFrame(updateSpatialAudio);
         }
     });
@@ -5394,13 +5405,15 @@ function initInvestment(proj) {
     setTimeout(() => {
         scoreBar.style.width = score + "%";
         
-        // Counter Animation
+        // Counter Animation using rAF instead of setInterval(15ms)
         let currentScore = 0;
-        const interval = setInterval(() => {
-            currentScore++;
+        const animateScore = () => {
+            currentScore += Math.max(1, Math.ceil(score / 40));
+            if (currentScore > score) currentScore = score;
             scoreVal.innerText = currentScore;
-            if (currentScore >= score) clearInterval(interval);
-        }, 15);
+            if (currentScore < score) requestAnimationFrame(animateScore);
+        };
+        requestAnimationFrame(animateScore);
     }, 300);
 
     const verdictEl = document.getElementById("aiVerdict");
@@ -5778,18 +5791,25 @@ REMEMBER:
 Now BE RITA and make this client feel like they've found the best real estate friend in Egypt! 🇪🇬✨`;
     },
     
-    // Knowledge Base - Dynamic based on loaded data
+    // Knowledge Base - Cached to avoid re-creating Set arrays on every call
+    _knowledgeCache: null,
+    _knowledgeCacheLen: 0,
     getKnowledge() {
         const projectsArray = window.projects || [];
+        if (this._knowledgeCache && this._knowledgeCacheLen === projectsArray.length) {
+            return this._knowledgeCache;
+        }
         const zones = [...new Set(projectsArray.map(p => p.zone))].filter(z => z);
         const developers = [...new Set(projectsArray.map(p => p.dev))].filter(d => d && d !== "Unknown");
         
-        return {
+        this._knowledgeCache = {
             totalProjects: projectsArray.length,
             zones: zones,
             developers: developers,
             projects: projectsArray
         };
+        this._knowledgeCacheLen = projectsArray.length;
+        return this._knowledgeCache;
     },
 
     // Intent Recognition
@@ -6092,8 +6112,11 @@ Now BE RITA and make this client feel like they've found the best real estate fr
         const entities = this.extractEntities(message);
         const knowledge = this.getKnowledge();
         
-        // Add to conversation history
+        // Add to conversation history (cap at 20 messages to prevent memory leak)
         this.conversationHistory.push({ role: 'user', content: message });
+        if (this.conversationHistory.length > 20) {
+            this.conversationHistory = this.conversationHistory.slice(-16);
+        }
         
         // Try Ollama (local AI) first
         const aiResponse = await this.callOllama(message);
@@ -7263,6 +7286,9 @@ const RoutePlanner = {
         this.state.activeRoute = null;
         this.state.activeAlternatives = [];
         this.state.optimizedOrder = null;
+        
+        // Deactivate route-line CSS animations
+        document.body.classList.remove('has-route');
 
         if (clearInputs) {
             this.state.origin = null;
@@ -7563,7 +7589,16 @@ const RoutePlanner = {
         this.layers.connectors?.clearLayers();
         this.layers.stops?.clearLayers();
 
-        if (!routeData?.primaryRoute?.geometry) return;
+        if (!routeData?.primaryRoute?.geometry) {
+            document.body.classList.remove('has-route');
+            return;
+        }
+        
+        // Activate route-line CSS animations
+        document.body.classList.add('has-route');
+
+        // Cache computed style once for all alternatives
+        const routeAltColor = getComputedStyle(document.documentElement).getPropertyValue('--route-alt').trim() || 'rgba(162, 176, 194, 0.24)';
 
         // Render clickable alternative routes with labels
         const alternatives = routeData.alternatives || [];
@@ -7571,7 +7606,7 @@ const RoutePlanner = {
             const altLayer = L.geoJSON(altRoute.geometry, {
                 pane: 'routeAltPane',
                 style: () => ({
-                    color: getComputedStyle(document.documentElement).getPropertyValue('--route-alt').trim() || 'rgba(162, 176, 194, 0.24)',
+                    color: routeAltColor,
                     weight: 5,
                     opacity: 0.7,
                     lineCap: 'round',

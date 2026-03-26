@@ -24,6 +24,11 @@ if (window.gsap && window.ScrollTrigger && typeof window.gsap.registerPlugin ===
 window.projects = window.projects || [];
 window.projectDetails = window.projectDetails || {};
 
+// Production site base URL for QR codes in PDFs (update when deployed)
+const SITE_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? 'https://xcelias.com'
+    : (window.location.origin + window.location.pathname).replace(/\/$/, '');
+
 // Canonical developer tier lists (used by scoring, investment, and AI systems)
 const PREMIUM_DEVS = ["emaar", "ora", "sodic", "tatweer misr", "palm hills"];
 const STRONG_DEVS = ["mountain view", "hassan allam", "orascom", "hyde park", "city edge", "al ahly sabbour"];
@@ -4009,12 +4014,26 @@ async function downloadBrochure() {
           doc.text(`BY ${currentProject.dev.toUpperCase()}`, 15, yPos + 20);
       }
       
-      // QR Code (Top Right) — links to exact project location on Google Maps
-      const qrUrl = `https://maps.google.com/maps?q=${currentProject.lat},${currentProject.lng}&z=15`;
+      // QR Codes (Top Right) — two codes side by side
+      // Left QR: Opens project on our website
+      const websiteQrUrl = `${SITE_BASE_URL}#project=${encodeURIComponent(currentProject.name)}`;
+      // Right QR: Opens exact location on Google Maps
+      const mapsQrUrl = `https://maps.google.com/maps?q=${currentProject.lat},${currentProject.lng}&z=15`;
       try {
-          const qrDataUrl = await createQRCodeDataUrl(qrUrl);
-          if (qrDataUrl) {
-              doc.addImage(qrDataUrl, 'PNG', width - 40, yPos - 5, 25, 25);
+          const [websiteQrData, mapsQrData] = await Promise.all([
+              createQRCodeDataUrl(websiteQrUrl),
+              createQRCodeDataUrl(mapsQrUrl)
+          ]);
+          // Website QR (right side, leftmost of the two)
+          if (websiteQrData) {
+              doc.addImage(websiteQrData, 'PNG', width - 68, yPos - 5, 25, 25);
+              doc.setFontSize(7);
+              doc.setTextColor(...colors.darkGrey);
+              doc.text("VIEW PROJECT", width - 55.5, yPos + 24, { align: "center" });
+          }
+          // Maps QR (rightmost)
+          if (mapsQrData) {
+              doc.addImage(mapsQrData, 'PNG', width - 40, yPos - 5, 25, 25);
               doc.setFontSize(7);
               doc.setTextColor(...colors.darkGrey);
               doc.text("SCAN FOR MAP", width - 27.5, yPos + 24, { align: "center" });

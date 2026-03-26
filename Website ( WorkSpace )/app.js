@@ -4009,8 +4009,8 @@ async function downloadBrochure() {
           doc.text(`BY ${currentProject.dev.toUpperCase()}`, 15, yPos + 20);
       }
       
-      // QR Code (Top Right)
-      const qrUrl = window.location.origin + window.location.pathname + "#project=" + encodeURIComponent(currentProject.name);
+      // QR Code (Top Right) — links to exact project location on Google Maps
+      const qrUrl = `https://maps.google.com/maps?q=${currentProject.lat},${currentProject.lng}&z=15`;
       try {
           const qrDataUrl = await createQRCodeDataUrl(qrUrl);
           if (qrDataUrl) {

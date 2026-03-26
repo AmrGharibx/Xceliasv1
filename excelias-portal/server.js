@@ -4,6 +4,7 @@ const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
+const WEBSITE_LOCAL_ORIGIN = process.env.WEBSITE_LOCAL_ORIGIN || 'http://localhost:3000';
 
 /* ─── Workspace root (parent of this folder) ─── */
 const WS = path.resolve(__dirname, '..');
@@ -39,6 +40,10 @@ app.use('/reports', express.static(REPORTS_DIR));
 /*  The website's index.html uses absolute paths (/styles.css, /data.json, etc.)
     which break when served under /website/. Rewrite them on the fly.          */
 app.get(['/website/', '/website/index.html'], (req, res) => {
+  if (req.hostname === 'localhost' || req.hostname === '127.0.0.1') {
+    return res.redirect(302, WEBSITE_LOCAL_ORIGIN);
+  }
+
   const htmlPath = path.join(WEBSITE_DIR, 'index.html');
   let html = fs.readFileSync(htmlPath, 'utf8');
   // Rewrite absolute paths in href="/..." and src="/..." attributes

@@ -495,6 +495,7 @@ if (IS_LOCALHOST) {
         crossOriginResourcePolicy: false,
         originAgentCluster: false,
         referrerPolicy: false,
+        frameguard: false,
         hsts: false
     }));
 } else {
@@ -514,9 +515,31 @@ if (IS_LOCALHOST) {
             }
         },
         crossOriginEmbedderPolicy: false,
-        hsts: false
+        hsts: { maxAge: 31536000, includeSubDomains: true }
     }));
 }
+
+// Simple in-memory rate limiter for routing API (no extra dependency)
+const _rateBuckets = new Map();
+function rateLimitRoute(req, res, next) {
+    const ip = req.ip || req.connection.remoteAddress || 'unknown';
+    const now = Date.now();
+    const bucket = _rateBuckets.get(ip) || { count: 0, reset: now + 60000 };
+    if (now > bucket.reset) { bucket.count = 0; bucket.reset = now + 60000; }
+    bucket.count++;
+    _rateBuckets.set(ip, bucket);
+    if (bucket.count > 60) {
+        return res.status(429).json({ error: 'Rate limit exceeded. Try again in a minute.' });
+    }
+    next();
+}
+// Cleanup stale buckets every 5 minutes
+setInterval(() => {
+    const now = Date.now();
+    for (const [ip, bucket] of _rateBuckets) {
+        if (now > bucket.reset + 120000) _rateBuckets.delete(ip);
+    }
+}, 300000);
 
 app.use(cors());
 app.use(compression());
@@ -607,7 +630,7 @@ app.post('/api/search', (req, res) => {
     res.json({ success: true, ...result });
 });
 
-app.post('/api/route/route', async (req, res) => {
+app.post('/api/route/route', rateLimitRoute, async (req, res) => {
     try {
         const profile = req.body?.profile || 'driving';
         const alternatives = req.body?.alternatives ? 'true' : 'false';
@@ -635,7 +658,7 @@ app.post('/api/route/route', async (req, res) => {
     }
 });
 
-app.post('/api/route/table', async (req, res) => {
+app.post('/api/route/table', rateLimitRoute, async (req, res) => {
     try {
         const profile = req.body?.profile || 'driving';
         const requestedPoints = (req.body?.coordinates || []).map(normalizeCoordinatePoint);
@@ -672,7 +695,7 @@ app.post('/api/route/table', async (req, res) => {
     }
 });
 
-app.post('/api/route/trip', async (req, res) => {
+app.post('/api/route/trip', rateLimitRoute, async (req, res) => {
     try {
         const profile = req.body?.profile || 'driving';
         const requestedPoints = (req.body?.coordinates || []).map(normalizeCoordinatePoint);

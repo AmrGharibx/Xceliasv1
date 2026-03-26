@@ -17,10 +17,9 @@
     <link rel="preload" href="/data.json" as="fetch" crossorigin="anonymous" />
     
     <!-- Preload critical JS/CSS -->
-    <link rel="preload" href="/app.js" as="script" />
-    <link rel="preload" href="/styles.css" as="style" />
-    <link rel="stylesheet" href="/styles.css" />
-    <link rel="preload" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" as="script" crossorigin />
+    <link rel="preload" href="/app.js?v=20260325-tourfix8" as="script" />
+    <link rel="preload" href="/styles.css?v=20260325-tourfix8" as="style" />
+    <link rel="stylesheet" href="/styles.css?v=20260325-tourfix8" />
 
     <!-- Preconnect for Performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -47,8 +46,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
 
-    <!-- Leaflet CSS (Preloaded) -->
-    <link rel="preload" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" as="style">
+    <!-- Leaflet CSS -->
     <link
       rel="stylesheet"
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -71,7 +69,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" defer></script>
 
     <!-- Main App - defer to not block -->
-    <script src="app.js" defer></script>
+    <script src="app.js?v=20260325-tourfix8" defer></script>
     
     <!-- Service Worker Registration -->
     <script>
@@ -651,18 +649,26 @@
 
         <!-- Cinematic Group -->
         <div class="dock-group" id="cinematic-group">
-            <div class="dock-toggle" role="button" tabindex="0" onclick="toggleDockGroup('cinematic', event)" onkeydown="if(event.key==='Enter'||event.key===' ')toggleDockGroup('cinematic', event)" title="Cinematic Tour" aria-label="Toggle Cinematic Tour" aria-expanded="false" aria-controls="cinematic-content">
+            <div class="dock-toggle" role="button" tabindex="0" onclick="toggleDockGroup('cinematic', event)" onkeydown="if(event.key==='Enter'||event.key===' ')toggleDockGroup('cinematic', event)" title="Route Tour" aria-label="Toggle Route Tour" aria-expanded="false" aria-controls="cinematic-content">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
             </div>
-            <div class="dock-content" id="cinematic-content" role="group" aria-label="Cinematic Tour Controls">
-                <button onclick="startTour()" class="tour-btn" id="btn-play-tour" aria-label="Start Cinematic Tour">
+            <div class="dock-content" id="cinematic-content" role="group" aria-label="Route Tour Controls">
+            <button onclick="startCinematicTour()" class="tour-btn" id="btn-play-tour" aria-label="Start Route Tour">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
                     <span data-i18n="startTour">Start Tour</span>
                 </button>
-                <button onclick="stopTour()" class="tour-btn" id="btn-stop-tour" style="display: none; color: var(--avaria-red); border-color: var(--avaria-red);" aria-label="Stop Cinematic Tour">
+          <button onclick="pauseCinematicTour()" class="tour-btn" id="btn-stop-tour" style="display: none; color: var(--avaria-red); border-color: var(--avaria-red);" aria-label="Pause Route Tour">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
-                    <span data-i18n="stopTour">Stop Tour</span>
+              <span>Pause Tour</span>
+            </button>
+          <button onclick="continueCinematicTour()" class="tour-btn" id="btn-resume-tour" style="display: none;" aria-label="Continue Route Tour">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+              <span>Continue Tour</span>
                 </button>
+            <button onclick="endCinematicTour()" class="tour-btn tour-btn-end" id="btn-end-tour" style="display: none;" aria-label="End Route Tour">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              <span>End Tour</span>
+              </button>
             </div>
         </div>
     </div>
@@ -1169,8 +1175,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js" defer></script>
 
-    <!-- QRCode (deferred - only used in PDF brochure) -->
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js" defer></script>
+    <!-- QRCode is loaded on demand from a local path when brochure export needs it -->
 
     <!-- Swiper.js -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />

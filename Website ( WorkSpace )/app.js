@@ -949,11 +949,13 @@ const AdvancedFilters = {
         const downPayment = document.getElementById('downPaymentSlider')?.value;
         const installments = document.getElementById('installmentsSlider')?.value;
         
+        const parseSafe = (v) => { const n = parseFloat(v); return (v && !isNaN(n) && n >= 0) ? n : null; };
+
         return {
-            priceMin: priceMin ? parseFloat(priceMin) : null,
-            priceMax: priceMax ? parseFloat(priceMax) : null,
-            areaMin: areaMin ? parseFloat(areaMin) : null,
-            areaMax: areaMax ? parseFloat(areaMax) : null,
+            priceMin: parseSafe(priceMin),
+            priceMax: parseSafe(priceMax),
+            areaMin: parseSafe(areaMin),
+            areaMax: parseSafe(areaMax),
             bedrooms: this.activeFilters.bedrooms,
             maxDownPayment: parseInt(downPayment) === 30 ? null : parseInt(downPayment),
             minInstallments: parseInt(installments) === 0 ? null : parseInt(installments)
@@ -1627,7 +1629,17 @@ async function fetchAndDrawRoads() {
       method: "POST",
       body: query
     });
-    const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(`Road overlay request failed with ${response.status}`);
+        }
+
+        const responseType = response.headers.get('content-type') || '';
+        if (!responseType.includes('application/json')) {
+            throw new Error('Road overlay provider returned a non-JSON response');
+        }
+
+        const data = await response.json();
     
     if (!window.osmtogeojson) {
        console.error("osmtogeojson library not loaded");
@@ -1727,8 +1739,8 @@ async function fetchAndDrawRoads() {
       // But let's keep the check consistent with the variable name change.
     }
 
-  } catch (e) {
-    console.error("Error fetching roads:", e);
+    } catch (e) {
+        console.warn("Road overlay unavailable:", e?.message || e);
   }
 }
 
@@ -1979,6 +1991,24 @@ function removeFromCompare(projectName) {
   updateComparisonDrawer();
 }
 
+function decodeProjectToken(projectToken) {
+    if (!projectToken) return '';
+
+    try {
+        return decodeURIComponent(projectToken);
+    } catch {
+        return String(projectToken);
+    }
+}
+
+function addToCompareEncoded(projectToken) {
+    return addToCompare(decodeProjectToken(projectToken));
+}
+
+function removeFromCompareEncoded(projectToken) {
+    return removeFromCompare(decodeProjectToken(projectToken));
+}
+
 function updateComparisonDrawer() {
   const drawer = document.getElementById('comparison-drawer');
   const itemsContainer = document.getElementById('drawer-items');
@@ -1990,10 +2020,11 @@ function updateComparisonDrawer() {
   
   compareList.forEach(p => {
     const card = document.createElement('div');
+        const encodedProjectName = encodeURIComponent(p.name);
     card.className = 'comparison-card';
     card.innerHTML = `
       <span>${p.name}</span>
-      <button class="remove-btn" onclick="removeFromCompare('${p.name}')">×</button>
+            <button class="remove-btn" onclick="removeFromCompareEncoded('${encodedProjectName}')">×</button>
     `;
     itemsContainer.appendChild(card);
   });
@@ -2226,7 +2257,10 @@ const NeuralView = {
       this.ctx = this.canvas.getContext('2d');
       this.resize();
       
-      window.addEventListener('resize', () => this.resize());
+      window.addEventListener('resize', () => {
+          clearTimeout(this._resizeTimer);
+          this._resizeTimer = setTimeout(() => this.resize(), 150);
+      });
       mapInstance.on('move', () => this.update());
       mapInstance.on('zoom', () => this.update());
   },
@@ -2350,45 +2384,18 @@ const NeuralView = {
 };
 
 function updateBrowseTelemetry(visibleCount, totalCount = (window.projects || []).length) {
-  const countEl = document.getElementById('browseProjectCount');
-  const routeEl = document.getElementById('browseRouteContext');
-  const tourEl = document.getElementById('browseTourContext');
+  if (window.RoutePlanner?.updateBrowseTelemetry) {
+      window.RoutePlanner.updateBrowseTelemetry(visibleCount, totalCount);
+      return;
+  }
 
+  const countEl = document.getElementById('browseProjectCount');
   if (countEl && Number.isFinite(visibleCount)) {
       countEl.dataset.visible = `${visibleCount}`;
       countEl.dataset.total = `${totalCount}`;
-  }
-
-  const resolvedVisible = Number(countEl?.dataset.visible || 0);
-  const resolvedTotal = Number(countEl?.dataset.total || totalCount || 0);
-
-  if (countEl) {
-      countEl.textContent = resolvedTotal > 0 && resolvedVisible !== resolvedTotal
-          ? `${resolvedVisible} of ${resolvedTotal} projects`
-          : `${resolvedVisible || resolvedTotal} curated projects`;
-  }
-
-  const planner = window.RoutePlanner;
-  const selectedCount = planner
-      ? [planner.state.origin, ...planner.state.stops, planner.state.destination].filter(Boolean).length
-      : 0;
-
-  if (routeEl) {
-      if (planner?.state?.activeRoute?.primaryRoute) {
-          routeEl.textContent = `${planner.formatDistance(planner.state.activeRoute.primaryRoute.distance)} route ready`;
-      } else if (selectedCount > 0) {
-          routeEl.textContent = `${selectedCount} route points armed`;
-      } else {
-          routeEl.textContent = 'Route idle';
-      }
-  }
-
-  if (tourEl) {
-      if (planner?.state?.tourActive) {
-          tourEl.textContent = planner.state.tourNarrative || `${String(planner.state.tourMode || 'tour').replace(/^./, letter => letter.toUpperCase())} tour live`;
-      } else {
-          tourEl.textContent = 'Tour idle';
-      }
+      countEl.textContent = totalCount > 0 && visibleCount !== totalCount
+          ? `${visibleCount} of ${totalCount} projects`
+          : `${visibleCount || totalCount} curated projects`;
   }
 }
 
@@ -2493,11 +2500,7 @@ async function renderProjects(projectList) {
       const content = document.createElement("div");
       content.className = "zone-content";
       
-      const totalProjects = window.projects ? window.projects.length : 0;
-      const isFiltered = projectList.length < totalProjects;
-      // Expand major zones by default to avoid confusion
-      const majorZones = ["North Coast", "New Cairo", "New Capital", "6th of October", "Ain Sokhna", "El Gouna"];
-      const isCollapsed = !isFiltered && !majorZones.includes(zone);
+    const isCollapsed = true;
       
       if (isCollapsed) {
           header.classList.add("collapsed");
@@ -2572,7 +2575,7 @@ async function renderProjects(projectList) {
                                 Number.isFinite(p.downPayment) ? `${p.downPayment}% DP` : '',
                                 Number.isFinite(p.installmentYears) && p.installmentYears > 0 ? `${p.installmentYears}Y plan` : sizePreview
                             ].filter(Boolean).join(' • ') || 'Tap to inspect payment options';
-                            const escapedProjectName = p.name.replace(/'/g, "\\'");
+                            const encodedProjectName = encodeURIComponent(p.name);
                             const badgesHtml = (routeMeta.badges || []).map(badge => `<span class="list-item-badge">${badge}</span>`).join('');
                             item.innerHTML = `
                                 <div class="list-item-top">
@@ -2590,11 +2593,18 @@ async function renderProjects(projectList) {
                                     <span class="list-item-plan">${planLine}</span>
                                 </div>
                                 <div class="list-item-actions">
-                                    <button type="button" class="list-action-btn" onclick="event.stopPropagation(); routeProjectAction('${escapedProjectName}', 'origin')">Start</button>
-                                    <button type="button" class="list-action-btn" onclick="event.stopPropagation(); routeProjectAction('${escapedProjectName}', 'stop')">Stop</button>
-                                    <button type="button" class="list-action-btn" onclick="event.stopPropagation(); routeProjectAction('${escapedProjectName}', 'destination')">Finish</button>
+                                    <button type="button" class="list-action-btn" data-route-action="origin" data-project-token="${encodedProjectName}">Start</button>
+                                    <button type="button" class="list-action-btn" data-route-action="stop" data-project-token="${encodedProjectName}">Stop</button>
+                                    <button type="button" class="list-action-btn" data-route-action="destination" data-project-token="${encodedProjectName}">Finish</button>
                                 </div>
                             `;
+              item.querySelectorAll('.list-action-btn[data-route-action]').forEach(button => {
+                  button.addEventListener('click', event => {
+                      event.stopPropagation();
+                      event.preventDefault();
+                      routeProjectAction(decodeProjectToken(button.dataset.projectToken), button.dataset.routeAction);
+                  });
+              });
               item.onclick = () => focusOnProject(p);
               fragment.appendChild(item);
 
@@ -2656,18 +2666,18 @@ async function renderProjects(projectList) {
                             const popupContent = `
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                   <div class="popup-title" style="margin-bottom: 0;">${p.name}</div>
-                                    <button class="fav-btn" data-project="${p.name}" onclick="toggleFavorite('${escapedProjectName}')" style="background: none; border: none; cursor: pointer; font-size: 1.2rem;">
+                                                                        <button class="fav-btn" data-project="${p.name}" onclick="toggleFavoriteEncoded('${encodedProjectName}')" style="background: none; border: none; cursor: pointer; font-size: 1.2rem;">
                       <i class="${heartClass} fa-heart" style="color: ${heartColor};"></i>
                   </button>
                 </div>
                 <div class="popup-dev">${p.dev}</div>
                 ${priceDisplay}
                 ${paymentDisplay}
-                                <button onclick="addToCompare('${escapedProjectName}')" class="popup-btn">Add to Compare</button>
+                                                                <button onclick="addToCompareEncoded('${encodedProjectName}')" class="popup-btn">Add to Compare</button>
                                 <div class="route-popup-actions">
-                                    <button onclick="routeProjectAction('${escapedProjectName}', 'origin')" class="popup-route-btn">Start</button>
-                                    <button onclick="routeProjectAction('${escapedProjectName}', 'destination')" class="popup-route-btn">Destination</button>
-                                    <button onclick="routeProjectAction('${escapedProjectName}', 'stop')" class="popup-route-btn">Stop</button>
+                                                                        <button onclick="routeProjectActionEncoded('${encodedProjectName}', 'origin')" class="popup-route-btn">Start</button>
+                                                                        <button onclick="routeProjectActionEncoded('${encodedProjectName}', 'destination')" class="popup-route-btn">Destination</button>
+                                                                        <button onclick="routeProjectActionEncoded('${encodedProjectName}', 'stop')" class="popup-route-btn">Stop</button>
                                 </div>
                 <a href="${waLink}" target="_blank" class="whatsapp-btn" style="text-decoration: none;">
                   <i class="fab fa-whatsapp"></i> WhatsApp
@@ -2719,7 +2729,7 @@ async function renderProjects(projectList) {
                               isPopupHovered = false;
                               closeTimeout = setTimeout(() => {
                                   if (!isPopupHovered) {
-                                      targetMarker.closePopup();
+                                      safeCloseMarkerPopup(targetMarker);
                                   }
                               }, 300);
                           });
@@ -2740,7 +2750,7 @@ async function renderProjects(projectList) {
                   // Start 1.3-second timer to show popup
                   if (!hoverTimeout) {
                       hoverTimeout = setTimeout(() => {
-                          e.target.openPopup();
+                          safeOpenMarkerPopup(e.target);
                           hoverTimeout = null;
                       }, 1300);
                   }
@@ -2756,7 +2766,7 @@ async function renderProjects(projectList) {
                   // Delay popup close to allow moving to popup
                   closeTimeout = setTimeout(() => {
                       if (!isPopupHovered) {
-                          e.target.closePopup();
+                          safeCloseMarkerPopup(e.target);
                       }
                   }, 300);
               };
@@ -2797,6 +2807,8 @@ async function renderProjects(projectList) {
   }
   
   listContainerEl.appendChild(mainFragment);
+    window.RoutePlanner?.invalidateProjectListCache?.();
+    window.RoutePlanner?.syncProjectListHighlights?.(true);
   
   // Ensure layers are cleared before adding new ones
   markerClusterGroup.clearLayers();
@@ -2820,85 +2832,118 @@ async function renderProjects(projectList) {
 }
 
 // --- CINEMATIC TOUR ---
-let tourInterval;
-let isTouring = false;
-const featuredProjects = [
-  "Marassi", 
-  "Silversands", 
-  "Il Monte Galala", 
-  "Badya", 
-  "Hacienda Bay" 
-];
+function safeCloseMapPopup() {
+    if (!map) return;
 
-function startTour() {
-  if (isTouring) return;
-  isTouring = true;
-  const playBtn = document.getElementById("btn-play-tour");
-  const stopBtn = document.getElementById("btn-stop-tour");
-  if (playBtn) playBtn.style.display = "none";
-  if (stopBtn) stopBtn.style.display = "flex";
-  
-  let index = 0;
-  
-  const visitNext = () => {
-      if (!isTouring) return;
-      
-      if (index >= featuredProjects.length) {
-          stopTour();
-          return;
-      }
-      
-      const pName = featuredProjects[index];
-      const p = projects.find(proj => proj.name === pName);
-      
-      if (p) {
-          // Close any open modal/popup first
-          closeModal();
-          map.closePopup();
-
-          // Fly to project
-          map.flyTo([p.lat, p.lng], 15, {
-              animate: true,
-              duration: 4, // Slow, cinematic flight
-              easeLinearity: 0.1
-          });
-          
-          // Wait for flight to finish, then reveal the project with the lightweight popup
-          setTimeout(() => {
-              if (!isTouring) return;
-              
-              openProjectHover(p);
-              
-              // Wait briefly on the current stop, then move to the next reveal
-              tourInterval = setTimeout(() => {
-                  if (!isTouring) return;
-                  map.closePopup();
-                  index++;
-                  visitNext();
-              }, 4000); 
-              
-          }, 4200); // Wait 4.2s (flight duration + buffer)
-      } else {
-          // Skip if project not found
-          index++;
-          visitNext();
-      }
-  };
-  
-  visitNext();
+    try {
+        map.closePopup();
+    } catch (error) {
+        console.warn('Popup close skipped:', error?.message || error);
+    }
 }
 
-function stopTour() {
-  isTouring = false;
-  clearTimeout(tourInterval);
-  const playBtn = document.getElementById("btn-play-tour");
-  const stopBtn = document.getElementById("btn-stop-tour");
-  if (playBtn) playBtn.style.display = "flex";
-  if (stopBtn) stopBtn.style.display = "none";
-  if (map) map.stop(); // Stop animation
-    if (map) map.closePopup();
-  closeModal();
-  if (map) map.closePopup();
+function safeStopMapMotion() {
+    if (!map) return;
+
+    try {
+        map.stop();
+    } catch (error) {
+        console.warn('Map stop skipped:', error?.message || error);
+    }
+}
+
+function canSafelyToggleMarkerPopup(marker) {
+    return Boolean(marker && marker._map && marker._icon && typeof marker.getPopup === 'function' && marker.getPopup());
+}
+
+function safeOpenMarkerPopup(marker) {
+    if (!canSafelyToggleMarkerPopup(marker)) return false;
+
+    try {
+        marker.openPopup();
+        return true;
+    } catch (error) {
+        console.warn('Marker popup open skipped:', error?.message || error);
+        return false;
+    }
+}
+
+function safeCloseMarkerPopup(marker) {
+    if (!canSafelyToggleMarkerPopup(marker)) return false;
+
+    try {
+        marker.closePopup();
+        return true;
+    } catch (error) {
+        console.warn('Marker popup close skipped:', error?.message || error);
+        return false;
+    }
+}
+
+let qrCodeLoaderPromise = null;
+
+async function ensureQRCodeLibrary() {
+    if (typeof window.qrcode === 'function') {
+        return true;
+    }
+
+    if (!qrCodeLoaderPromise) {
+        qrCodeLoaderPromise = new Promise(resolve => {
+            const script = document.createElement('script');
+            script.src = '/node_modules/qrcode-generator/qrcode.js';
+            script.async = true;
+            script.onload = () => resolve(typeof window.qrcode === 'function');
+            script.onerror = () => resolve(false);
+            document.head.appendChild(script);
+        });
+    }
+
+    return qrCodeLoaderPromise;
+}
+
+async function createQRCodeDataUrl(text) {
+    const qrReady = await ensureQRCodeLibrary();
+    if (!qrReady || typeof window.qrcode !== 'function') {
+        return null;
+    }
+
+    const qr = window.qrcode(0, 'M');
+    qr.addData(text);
+    qr.make();
+
+    const cellSize = 4;
+    const moduleCount = qr.getModuleCount();
+    const canvas = document.createElement('canvas');
+    canvas.width = moduleCount * cellSize;
+    canvas.height = moduleCount * cellSize;
+
+    const context = canvas.getContext('2d');
+    if (!context) {
+        return null;
+    }
+
+    qr.renderTo2dContext(context, cellSize);
+    return canvas.toDataURL('image/png');
+}
+
+function startCinematicTour() {
+    return RoutePlanner.startTour();
+}
+
+function pauseCinematicTour() {
+    return RoutePlanner.pauseTour();
+}
+
+function continueCinematicTour() {
+    return RoutePlanner.resumeTour();
+}
+
+function stopCinematicTour() {
+    return RoutePlanner.stopTour();
+}
+
+function endCinematicTour() {
+    return RoutePlanner.endTour();
 }
 
 // --- AI CONCIERGE SEARCH (LEVEL 1000 - GOD MODE V2) ---
@@ -2922,52 +2967,47 @@ function parseNaturalLanguageSearch(query) {
   // Split by spaces but keep empty strings to know if user is typing a new word
   const tokens = lowerQuery.split(/\s+/).filter(t => t.length > 0);
   const uniqueFilters = new Set();
-
   // --- 1. PARSE NEGATIONS FIRST ---
   const negationIndices = [];
   tokens.forEach((t, i) => {
       if (["no", "not", "except"].includes(t) && i + 1 < tokens.length) {
           const negatedTerm = tokens[i+1];
-          criteria.negations.push(negatedTerm); // Store partial term
           uniqueFilters.add(`Exclude: ${negatedTerm}`);
           negationIndices.push(i, i+1);
       }
   });
-
-  // Filter out negation tokens for positive matching
   const positiveTokens = tokens.filter((_, i) => !negationIndices.includes(i));
   const positiveQuery = positiveTokens.join(" ");
 
   // --- 2. PARTIAL NUMBER PARSING ---
-  
   // Installments: "8y", "8 y", "8 yea"
   const yearsMatch = positiveQuery.match(/(\d+)\s*y/); 
   if (yearsMatch) {
     criteria.minInstallments = parseInt(yearsMatch[1], 10);
     uniqueFilters.add(`${criteria.minInstallments}+ Years`);
-  }
+    }
 
   // Down Payment: "10%", "10% down", "10% payment", "10% dp", "10 dp", "10 down payment"
   const dpMatch = positiveQuery.match(/(\d+)\s*%\s*(?:down|dp|payment|d)?|(\d+)\s*(?:dp|down\s*payment|down)/i);
   if (dpMatch) {
       const val = parseInt(dpMatch[1] || dpMatch[2], 10);
       if (val <= 60) { // Sanity check
-          criteria.maxDownPayment = val;
-          uniqueFilters.add(`Max ${val}% DP`);
+                    criteria.maxDownPayment = val;
+                    uniqueFilters.add(`Max ${criteria.maxDownPayment}% DP`);
       }
-  }
+    }
 
   // Area: "100m", "100 m", "100" (if > 60 and not years)
   const areaMatch = positiveQuery.match(/(\d+)\s*m|(\d+)\s*sq/);
   if (areaMatch) {
       criteria.minArea = parseInt(areaMatch[1] || areaMatch[2], 10);
       uniqueFilters.add(`Min ${criteria.minArea}m²`);
-  } else {
+    } else {
       // Heuristic: Standalone large number -> Area
       const standaloneNum = positiveQuery.match(/\b(\d{3,})\b/);
-      if (standaloneNum) {
-           criteria.minArea = parseInt(standaloneNum[1], 10);
-           uniqueFilters.add(`Min ${criteria.minArea}m²`);
+            if (standaloneNum) {
+                    criteria.minArea = parseInt(standaloneNum[1], 10);
+                    uniqueFilters.add(`Min ${criteria.minArea}m²`);
       }
   }
 
@@ -3602,20 +3642,28 @@ filterBtns.forEach(btn => {
 // --- SELECTION & RADIUS LOGIC ---
 let currentRadiusCircle = null;
 
-function openProjectHover(p) {
+function openProjectHover(p, options = {}) {
     if (!p) return;
+
+    const preferDirect = options.preferDirect === true;
 
     const targetMarker = isClusterView ? p.clusterMarker : p.normalMarker;
     if (!targetMarker) return;
 
-    map.closePopup();
+    safeCloseMapPopup();
+
+    if (preferDirect) {
+        if (safeOpenMarkerPopup(targetMarker)) {
+            return;
+        }
+    }
 
     if (isClusterView && markerClusterGroup?.zoomToShowLayer) {
-            markerClusterGroup.zoomToShowLayer(targetMarker, function() {
-                    targetMarker.openPopup();
-            });
+        markerClusterGroup.zoomToShowLayer(targetMarker, function() {
+            safeOpenMarkerPopup(targetMarker);
+        });
     } else {
-            targetMarker.openPopup();
+            safeOpenMarkerPopup(targetMarker);
     }
 }
 
@@ -3666,7 +3714,7 @@ function focusOnProject(p, options = {}) {
         if (openPopup) {
             openProjectHover(p);
         } else {
-            map.closePopup();
+            safeCloseMapPopup();
     }
 
     // Auto-collapse sidebar
@@ -3795,6 +3843,7 @@ function toggleSidebar(event) {
 function closeModal() {
   const modal = document.getElementById("projectModal");
   if (modal) modal.classList.remove("active");
+    document.body.classList.remove('modal-open');
   
   // Stop swiper autoplay when modal is hidden to prevent invisible DOM updates
   if (swiperInstance && swiperInstance.autoplay) {
@@ -3923,12 +3972,16 @@ async function downloadBrochure() {
       // QR Code (Top Right)
       const qrUrl = window.location.origin + window.location.pathname + "#project=" + encodeURIComponent(currentProject.name);
       try {
-          const qrDataUrl = await QRCode.toDataURL(qrUrl, { margin: 0, color: { dark: "#000000", light: "#ffffff" } });
-          doc.addImage(qrDataUrl, 'PNG', width - 40, yPos - 5, 25, 25);
-          doc.setFontSize(7);
-          doc.setTextColor(...colors.darkGrey);
-          doc.text("SCAN FOR MAP", width - 27.5, yPos + 24, { align: "center" });
-      } catch (err) { console.error(err); }
+          const qrDataUrl = await createQRCodeDataUrl(qrUrl);
+          if (qrDataUrl) {
+              doc.addImage(qrDataUrl, 'PNG', width - 40, yPos - 5, 25, 25);
+              doc.setFontSize(7);
+              doc.setTextColor(...colors.darkGrey);
+              doc.text("SCAN FOR MAP", width - 27.5, yPos + 24, { align: "center" });
+          }
+      } catch (err) {
+          console.warn('QR code skipped:', err?.message || err);
+      }
 
       yPos += 35;
 
@@ -4467,7 +4520,8 @@ function openModal(proj) {
       if (landmarksSection) landmarksSection.style.display = "none";
   }
 
-  if (modal) modal.classList.add("active");
+    if (modal) modal.classList.add("active");
+    document.body.classList.add('modal-open');
 }
 
 // --- THEME SWITCHER LOGIC ---
@@ -4973,8 +5027,15 @@ function toggleFavorite(projectName) {
     updateHeartIcons(projectName);
 }
 
+function toggleFavoriteEncoded(projectToken) {
+    return toggleFavorite(decodeProjectToken(projectToken));
+}
+
 function updateHeartIcons(projectName) {
-    const hearts = document.querySelectorAll(`.fav-btn[data-project="${projectName}"] i`);
+    const hearts = Array.from(document.querySelectorAll('.fav-btn'))
+        .filter(button => button.dataset.project === projectName)
+        .map(button => button.querySelector('i'))
+        .filter(Boolean);
     const isFav = isFavorite(projectName);
     hearts.forEach(icon => {
         if (isFav) {
@@ -5691,6 +5752,8 @@ loadAllData();
 
 // Map Panning Listener - Update List Only
 map.on('moveend', debounce(() => {
+    // Skip heavy project filtering while a tour is actively animating
+    if (window.RoutePlanner?.state?.tourActive) return;
     filterProjects();
 }, 200));
 
@@ -6802,6 +6865,13 @@ function notifyRouteMessage(message, type = 'info') {
 }
 
 const RoutePlanner = {
+    initialized: false,
+    initializing: false,
+    projectHighlightCache: new Map(),
+    _prevHighlightedNames: new Set(),
+    projectHighlightSignature: '',
+    browseTelemetrySignature: '',
+
     state: {
         origin: null,
         destination: null,
@@ -6810,17 +6880,24 @@ const RoutePlanner = {
         activeRoute: null,
         activeAlternatives: [],
         isRouting: false,
+        routeDirty: false,
         tourMode: 'air',
         tourActive: false,
+        tourPaused: false,
+        pausedTourMode: '',
         routeAnimationFrame: null,
         routeAnimationIndex: 0,
         routeAnimationCoords: [],
         optimizedOrder: null,
         forced3DForTour: false,
         airTourSequence: [],
+        airTourLegIndex: 0,
+        lastDriveCameraIndex: -1,
+        lastDriveHudIndex: -1,
         currentTourProjectName: '',
         nextTourProjectName: '',
-        tourNarrative: ''
+        tourNarrative: '',
+        tourGeneration: 0
     },
 
     layers: {
@@ -6835,26 +6912,31 @@ const RoutePlanner = {
     dom: {},
 
     init() {
-        if (!map) return;
+        if (this.initialized) return true;
+        if (this.initializing) return true;
+        if (!map) return false;
 
-        map.createPane('routeAltPane');
+        this.initializing = true;
+
+        if (!map.getPane('routeAltPane')) map.createPane('routeAltPane');
         map.getPane('routeAltPane').style.zIndex = 451;
-        map.createPane('routeGlowPane');
+
+        if (!map.getPane('routeGlowPane')) map.createPane('routeGlowPane');
         map.getPane('routeGlowPane').style.zIndex = 452;
-        map.createPane('routePane');
+        if (!map.getPane('routePane')) map.createPane('routePane');
         map.getPane('routePane').style.zIndex = 453;
-        map.createPane('routeStopsPane');
+        if (!map.getPane('routeStopsPane')) map.createPane('routeStopsPane');
         map.getPane('routeStopsPane').style.zIndex = 620;
 
         this.layers.alternatives = L.geoJSON(null, {
             pane: 'routeAltPane',
             style: () => ({
                 color: getComputedStyle(document.documentElement).getPropertyValue('--route-alt').trim() || 'rgba(162, 176, 194, 0.24)',
-                weight: 4,
-                opacity: 0.85,
+                weight: 3.5,
+                opacity: 0.7,
                 lineCap: 'round',
                 lineJoin: 'round',
-                dashArray: '8 14',
+                dashArray: '10 12',
                 className: 'route-line-alt'
             })
         }).addTo(map);
@@ -6863,8 +6945,8 @@ const RoutePlanner = {
             pane: 'routeGlowPane',
             style: () => ({
                 color: getComputedStyle(document.documentElement).getPropertyValue('--route-glow').trim() || 'rgba(96, 188, 255, 0.34)',
-                weight: 15,
-                opacity: 0.35,
+                weight: 10,
+                opacity: 0.18,
                 lineCap: 'round',
                 lineJoin: 'round',
                 className: 'route-line-shadow'
@@ -6875,7 +6957,7 @@ const RoutePlanner = {
             pane: 'routePane',
             style: () => ({
                 color: getComputedStyle(document.documentElement).getPropertyValue('--route-primary').trim() || '#8fd3ff',
-                weight: 8,
+                weight: 6,
                 opacity: 0.95,
                 lineCap: 'round',
                 lineJoin: 'round',
@@ -6885,13 +6967,22 @@ const RoutePlanner = {
 
         this.layers.connectors = L.layerGroup().addTo(map);
         this.layers.stops = L.layerGroup().addTo(map);
+        this.initialized = true;
 
         this.cacheDom();
         this.bindDomEvents();
         this.populateProjectOptions();
         this.renderStops();
         this.renderSummary();
-        this.toggleMenu(true);
+        this.syncProjectListHighlights();
+        this.syncTourButtons();
+        this.toggleMenu(false);
+        this.initializing = false;
+        return true;
+    },
+
+    ensureInitialized() {
+        return this.initialized || this.init();
     },
 
     cacheDom() {
@@ -6936,14 +7027,133 @@ const RoutePlanner = {
         this.dom.tourNarrative.textContent = 'Tour status will appear here while exploring.';
     },
 
+    syncTourButtons() {
+        const playBtn = document.getElementById('btn-play-tour');
+        const pauseBtn = document.getElementById('btn-stop-tour');
+        const resumeBtn = document.getElementById('btn-resume-tour');
+        const endBtn = document.getElementById('btn-end-tour');
+
+        if (playBtn) playBtn.style.display = this.state.tourActive || this.state.tourPaused ? 'none' : 'flex';
+        if (pauseBtn) pauseBtn.style.display = this.state.tourActive ? 'flex' : 'none';
+        if (resumeBtn) resumeBtn.style.display = this.state.tourPaused ? 'flex' : 'none';
+        if (endBtn) endBtn.style.display = this.state.tourActive || this.state.tourPaused ? 'flex' : 'none';
+
+        // Keep browse telemetry in sync with tour state changes
+        if (typeof updateBrowseTelemetry === 'function') updateBrowseTelemetry();
+    },
+
+    buildBrowseTelemetrySignature(visibleCount, totalCount) {
+        const activeRoute = this.state.activeRoute?.primaryRoute;
+        return [
+            Number.isFinite(visibleCount) ? visibleCount : '',
+            Number.isFinite(totalCount) ? totalCount : '',
+            this.state.origin?.name || '',
+            this.state.destination?.name || '',
+            this.state.stops.map(stop => stop.name).join('|'),
+            activeRoute?.distance || '',
+            activeRoute?.duration || '',
+            this.state.tourActive ? 'active' : this.state.tourPaused ? 'paused' : 'idle',
+            this.state.tourMode || '',
+            this.state.tourNarrative || ''
+        ].join('::');
+    },
+
+    updateBrowseTelemetry(visibleCount, totalCount = (window.projects || []).length) {
+        const countEl = document.getElementById('browseProjectCount');
+        const routeEl = document.getElementById('browseRouteContext');
+        const tourEl = document.getElementById('browseTourContext');
+        const nextSignature = this.buildBrowseTelemetrySignature(visibleCount, totalCount);
+
+        if (nextSignature === this.browseTelemetrySignature && countEl && routeEl && tourEl) {
+            return;
+        }
+
+        this.browseTelemetrySignature = nextSignature;
+
+        if (countEl && Number.isFinite(visibleCount)) {
+            countEl.dataset.visible = `${visibleCount}`;
+            countEl.dataset.total = `${totalCount}`;
+        }
+
+        const resolvedVisible = Number(countEl?.dataset.visible || 0);
+        const resolvedTotal = Number(countEl?.dataset.total || totalCount || 0);
+
+        if (countEl) {
+            countEl.textContent = resolvedTotal > 0 && resolvedVisible !== resolvedTotal
+                ? `${resolvedVisible} of ${resolvedTotal} projects`
+                : `${resolvedVisible || resolvedTotal} curated projects`;
+        }
+
+        const selectedCount = [this.state.origin, ...this.state.stops, this.state.destination].filter(Boolean).length;
+        const needsRouteBuild = this.state.routeDirty && selectedCount > 1;
+
+        if (routeEl) {
+            if (this.state.activeRoute?.primaryRoute) {
+                routeEl.textContent = `${this.formatDistance(this.state.activeRoute.primaryRoute.distance)} route ready`;
+            } else if (needsRouteBuild) {
+                routeEl.textContent = `${selectedCount} points staged`;
+            } else if (selectedCount > 0) {
+                routeEl.textContent = `${selectedCount} route points armed`;
+            } else {
+                routeEl.textContent = 'Route idle';
+            }
+        }
+
+        if (tourEl) {
+            if (this.state.tourActive) {
+                tourEl.textContent = this.state.tourNarrative || `${String(this.state.tourMode || 'tour').replace(/^./, letter => letter.toUpperCase())} tour live`;
+            } else if (this.state.tourPaused) {
+                tourEl.textContent = this.state.tourNarrative || 'Tour paused';
+            } else {
+                tourEl.textContent = 'Tour idle';
+            }
+        }
+    },
+
+    invalidateProjectListCache() {
+        this.projectHighlightCache.clear();
+        this.projectHighlightSignature = '';
+        this.browseTelemetrySignature = '';
+    },
+
+    refreshProjectListCache(force = false) {
+        if (!force && this.projectHighlightCache.size > 0) {
+            return this.projectHighlightCache;
+        }
+
+        this.projectHighlightCache = new Map();
+        document.querySelectorAll('.list-item[data-project-name]').forEach(item => {
+            const projectName = String(item.dataset.projectName || '').trim().toLowerCase();
+            if (!projectName) return;
+            this.projectHighlightCache.set(projectName, {
+                item,
+                badgeContainer: item.querySelector('.list-item-badges')
+            });
+        });
+
+        return this.projectHighlightCache;
+    },
+
+    getProjectHighlightSignature() {
+        return [
+            currentProject?.name || '',
+            this.state.origin?.name || '',
+            this.state.destination?.name || '',
+            this.state.stops.map(stop => stop.name).join('|'),
+            this.state.currentTourProjectName || '',
+            this.state.nextTourProjectName || ''
+        ].join('::');
+    },
+
     setTourContext(currentName, nextName, narrative) {
+        const nameChanged = currentName !== this.state.currentTourProjectName || nextName !== this.state.nextTourProjectName;
         this.state.currentTourProjectName = currentName || '';
         this.state.nextTourProjectName = nextName || '';
         this.state.tourNarrative = narrative || '';
         document.body.classList.add('touring');
         document.body.dataset.tourMode = this.state.tourMode || 'air';
         this.renderTourNarrative();
-        this.syncProjectListHighlights();
+        if (nameChanged) this.syncProjectListHighlights();
         updateBrowseTelemetry();
     },
 
@@ -6954,11 +7164,15 @@ const RoutePlanner = {
         document.body.classList.remove('touring');
         delete document.body.dataset.tourMode;
         this.renderTourNarrative();
-        this.syncProjectListHighlights();
+        // syncProjectListHighlights deferred to callers to avoid redundant iterations
         updateBrowseTelemetry();
     },
 
     toggleMenu(forceOpen) {
+        if (!this.ensureInitialized() && (!this.dom.panel || !this.dom.menu || !this.dom.menuToggle)) {
+            this.cacheDom();
+        }
+
         if (!this.dom.panel || !this.dom.menu || !this.dom.menuToggle) {
             this.cacheDom();
         }
@@ -6976,10 +7190,13 @@ const RoutePlanner = {
         if (!this.dom.menuToggleMeta) return;
 
         const selectedCount = [this.state.origin, ...this.state.stops, this.state.destination].filter(Boolean).length;
+        const needsRouteBuild = this.state.routeDirty && selectedCount > 1;
 
         if (isOpen) {
             if (this.state.activeRoute?.primaryRoute) {
                 this.dom.menuToggleMeta.textContent = `${this.formatDistance(this.state.activeRoute.primaryRoute.distance)} • ${this.formatDuration(this.state.activeRoute.primaryRoute.duration)}`;
+            } else if (needsRouteBuild) {
+                this.dom.menuToggleMeta.textContent = 'Ready to build';
             } else if (selectedCount > 0) {
                 this.dom.menuToggleMeta.textContent = `${selectedCount} points selected`;
             } else {
@@ -6989,7 +7206,13 @@ const RoutePlanner = {
             return;
         }
 
-        this.dom.menuToggleMeta.textContent = this.state.activeRoute?.primaryRoute ? 'Route ready' : selectedCount > 0 ? `${selectedCount} points ready` : 'New';
+        this.dom.menuToggleMeta.textContent = this.state.activeRoute?.primaryRoute
+            ? 'Route ready'
+            : needsRouteBuild
+                ? 'Build route'
+                : selectedCount > 0
+                    ? `${selectedCount} points ready`
+                    : 'New';
         updateBrowseTelemetry();
     },
 
@@ -7010,11 +7233,12 @@ const RoutePlanner = {
 
         if (this.dom.profileSelect) {
             this.dom.profileSelect.addEventListener('change', () => {
+                const wasMenuOpen = this.dom.panel ? !this.dom.panel.hidden : false;
                 this.state.profile = this.dom.profileSelect.value || 'driving';
                 this.invalidateRoute();
-                if (this.state.origin && this.state.destination) {
-                    this.calculateRoute({ fitBounds: false });
-                }
+                this.renderSummary();
+                this.syncProjectListHighlights();
+                this.syncMenuState(wasMenuOpen);
             });
         }
 
@@ -7124,25 +7348,68 @@ const RoutePlanner = {
         return { classes, badges };
     },
 
-    syncProjectListHighlights() {
-        document.querySelectorAll('.list-item[data-project-name]').forEach(item => {
-            const meta = this.getProjectRouteMeta(item.dataset.projectName);
+    syncProjectListHighlights(force = false) {
+        const signature = this.getProjectHighlightSignature();
+        if (!force && signature === this.projectHighlightSignature && this.projectHighlightCache.size > 0) {
+            return;
+        }
+
+        this.projectHighlightSignature = signature;
+        const cache = this.refreshProjectListCache(force);
+
+        // Build a set of project names that need route badges
+        const routeNames = new Set();
+        if (this.state.origin?.name) routeNames.add(this.state.origin.name.trim().toLowerCase());
+        if (this.state.destination?.name) routeNames.add(this.state.destination.name.trim().toLowerCase());
+        this.state.stops.forEach(s => { if (s?.name) routeNames.add(s.name.trim().toLowerCase()); });
+        if (currentProject?.name) routeNames.add(currentProject.name.trim().toLowerCase());
+        if (this.state.currentTourProjectName) routeNames.add(this.state.currentTourProjectName.trim().toLowerCase());
+        if (this.state.nextTourProjectName) routeNames.add(this.state.nextTourProjectName.trim().toLowerCase());
+        // Also include items that previously had route classes (to clear them)
+        const prevHighlighted = this._prevHighlightedNames || new Set();
+        const relevant = new Set([...routeNames, ...prevHighlighted]);
+
+        // Only iterate items that are relevant — skip the other 1000+ items
+        relevant.forEach(projectName => {
+            const cached = cache.get(projectName);
+            if (!cached) return;
+            const { item, badgeContainer } = cached;
+            const meta = this.getProjectRouteMeta(projectName);
             item.classList.remove('route-origin', 'route-destination', 'route-stop', 'route-focused', 'route-tour-current', 'route-tour-next');
             if (meta.classes.length) {
                 item.classList.add(...meta.classes);
             }
-
-            const badgeContainer = item.querySelector('.list-item-badges');
             if (badgeContainer) {
-                badgeContainer.innerHTML = meta.badges.map(badge => `<span class="list-item-badge">${badge}</span>`).join('');
+                const newHtml = meta.badges.map(badge => `<span class="list-item-badge">${badge}</span>`).join('');
+                if (badgeContainer.innerHTML !== newHtml) {
+                    badgeContainer.innerHTML = newHtml;
+                }
             }
         });
+
+        this._prevHighlightedNames = routeNames;
     },
 
     deriveRouteInsights(routeData) {
+        const steps = (routeData?.primaryRoute?.legs || []).flatMap(leg => leg.steps || []);
+        const cleanRoadName = value => String(value || '')
+            .replace(/\s+/g, ' ')
+            .replace(/^Unnamed Road$/i, '')
+            .trim();
+        const roadStats = new Map();
+        steps.forEach(step => {
+            const roadName = cleanRoadName(step.name);
+            if (!roadName) return;
+            const current = roadStats.get(roadName) || { distance: 0, hits: 0 };
+            current.distance += Number(step.distance) || 0;
+            current.hits += 1;
+            roadStats.set(roadName, current);
+        });
+        const topRoads = [...roadStats.entries()]
+            .sort((left, right) => right[1].distance - left[1].distance || right[1].hits - left[1].hits)
+            .slice(0, 3)
+            .map(([roadName]) => roadName);
         const firstLeg = routeData?.primaryRoute?.legs?.[0];
-        const stepNames = (firstLeg?.steps || []).map(step => step.name).filter(Boolean);
-        const uniqueRoads = [...new Set(stepNames)].slice(0, 3);
         const strategy = this.state.optimizedOrder
             ? 'Smart optimized sequence'
             : routeData?.alternatives?.length
@@ -7161,7 +7428,7 @@ const RoutePlanner = {
         return {
             strategy,
             sequence,
-            roadSummary: uniqueRoads.length ? `Via ${uniqueRoads.join(' • ')}` : routeData?.primaryRoute?.summary || 'Road summary ready',
+            roadSummary: topRoads.length ? `Via ${topRoads.join(' • ')}` : routeData?.primaryRoute?.summary || 'Road summary ready',
             nextInstruction
         };
     },
@@ -7180,13 +7447,20 @@ const RoutePlanner = {
     },
 
     invalidateRoute() {
-        this.stopTour(true);
+        if (this.state.tourActive || this.state.tourPaused) {
+            this.stopTour(true);
+        }
         this.state.activeRoute = null;
         this.state.activeAlternatives = [];
         this.state.optimizedOrder = null;
+        this.state.routeDirty = [this.state.origin, ...this.state.stops, this.state.destination].filter(Boolean).length > 1;
         this.state.routeAnimationCoords = [];
         this.state.routeAnimationIndex = 0;
+        this.state.routeAnimationDist = 0;
+        this.state.lastDriveCameraIndex = -1;
+        this.state.lastDriveHudIndex = -1;
         this.state.airTourSequence = [];
+        this.state.airTourLegIndex = 0;
 
         this.layers.glow?.clearLayers();
         this.layers.primary?.clearLayers();
@@ -7194,15 +7468,15 @@ const RoutePlanner = {
         this.layers.connectors?.clearLayers();
         this.layers.stops?.clearLayers();
 
-        this.renderSummary();
-        this.syncMenuState();
-        this.syncProjectListHighlights();
+        document.body.classList.remove('has-route');
+        // Callers are responsible for renderSummary/syncMenuState/syncProjectListHighlights
     },
 
     setPoint(kind, point) {
         const normalized = this.clonePoint(point);
         if (!normalized) return;
 
+        const wasMenuOpen = this.dom.panel ? !this.dom.panel.hidden : false;
         this.invalidateRoute();
 
         if (kind === 'origin') {
@@ -7213,21 +7487,25 @@ const RoutePlanner = {
             if (this.dom.destinationInput) this.dom.destinationInput.value = normalized.name;
         }
 
+        this.state.routeDirty = [this.state.origin, ...this.state.stops, this.state.destination].filter(Boolean).length > 1;
         this.renderSummary();
         this.syncProjectListHighlights();
-        this.syncMenuState();
+        this.syncMenuState(wasMenuOpen);
     },
 
     addStop(point) {
         const normalized = this.clonePoint(point);
         if (!normalized) return;
 
+        const wasMenuOpen = this.dom.panel ? !this.dom.panel.hidden : false;
         this.invalidateRoute();
         this.state.stops.push(normalized);
         if (this.dom.stopInput) this.dom.stopInput.value = '';
+        this.state.routeDirty = [this.state.origin, ...this.state.stops, this.state.destination].filter(Boolean).length > 1;
         this.renderStops();
         this.renderSummary();
         this.syncProjectListHighlights();
+        this.syncMenuState(wasMenuOpen);
     },
 
     addStopFromInput() {
@@ -7244,25 +7522,32 @@ const RoutePlanner = {
         const targetIndex = index + delta;
         if (targetIndex < 0 || targetIndex >= this.state.stops.length) return;
 
+        const wasMenuOpen = this.dom.panel ? !this.dom.panel.hidden : false;
         this.invalidateRoute();
         const reordered = [...this.state.stops];
         const [item] = reordered.splice(index, 1);
         reordered.splice(targetIndex, 0, item);
         this.state.stops = reordered;
+        this.state.routeDirty = [this.state.origin, ...this.state.stops, this.state.destination].filter(Boolean).length > 1;
         this.renderStops();
         this.renderSummary();
         this.syncProjectListHighlights();
+        this.syncMenuState(wasMenuOpen);
     },
 
     removeStop(index) {
+        const wasMenuOpen = this.dom.panel ? !this.dom.panel.hidden : false;
         this.invalidateRoute();
         this.state.stops.splice(index, 1);
+        this.state.routeDirty = [this.state.origin, ...this.state.stops, this.state.destination].filter(Boolean).length > 1;
         this.renderStops();
         this.renderSummary();
         this.syncProjectListHighlights();
+        this.syncMenuState(wasMenuOpen);
     },
 
     reverse() {
+        const wasMenuOpen = this.dom.panel ? !this.dom.panel.hidden : false;
         this.invalidateRoute();
         const oldOrigin = this.state.origin;
         this.state.origin = this.state.destination;
@@ -7272,13 +7557,11 @@ const RoutePlanner = {
         if (this.dom.originInput) this.dom.originInput.value = this.state.origin?.name || '';
         if (this.dom.destinationInput) this.dom.destinationInput.value = this.state.destination?.name || '';
 
+        this.state.routeDirty = [this.state.origin, ...this.state.stops, this.state.destination].filter(Boolean).length > 1;
         this.renderStops();
         this.renderSummary();
         this.syncProjectListHighlights();
-
-        if (this.state.origin && this.state.destination) {
-            this.calculateRoute();
-        }
+        this.syncMenuState(wasMenuOpen);
     },
 
     clear(clearInputs = true) {
@@ -7286,6 +7569,10 @@ const RoutePlanner = {
         this.state.activeRoute = null;
         this.state.activeAlternatives = [];
         this.state.optimizedOrder = null;
+        this.state.routeDirty = false;
+        this.state.isRouting = false;
+        this.state.lastDriveCameraIndex = -1;
+        this.state.lastDriveHudIndex = -1;
         
         // Deactivate route-line CSS animations
         document.body.classList.remove('has-route');
@@ -7518,9 +7805,15 @@ const RoutePlanner = {
     },
 
     async calculateRoute(options = {}) {
+        this.ensureInitialized();
         const fitBounds = options.fitBounds !== false;
+        const openMenu = options.openMenu !== false;
 
-        this.toggleMenu(true);
+        if (openMenu) {
+            this.toggleMenu(true);
+        } else {
+            this.syncMenuState(false);
+        }
 
         if (!this.state.origin) this.captureInputPoint('origin');
         if (!this.state.destination) this.captureInputPoint('destination');
@@ -7542,8 +7835,11 @@ const RoutePlanner = {
 
             this.state.activeRoute = data;
             this.state.activeAlternatives = data.alternatives || [];
+            this.state.routeDirty = false;
             this.renderRoute(data);
             this.renderSummary(data);
+            this.syncMenuState();
+            this.syncProjectListHighlights();
 
             if (fitBounds) {
                 this.fitRouteToBounds();
@@ -7555,9 +7851,9 @@ const RoutePlanner = {
         }
     },
 
-    async optimizeSmartRoute() {
+    async optimizeSmartRoute(options = {}) {
         if (!this.state.origin || !this.state.destination || this.state.stops.length === 0) {
-            return this.calculateRoute();
+            return this.calculateRoute(options);
         }
 
         const data = await this.requestJson('/api/route/trip', {
@@ -7579,10 +7875,17 @@ const RoutePlanner = {
             this.renderStops();
         }
 
-        return this.calculateRoute({ fitBounds: true });
+        return this.calculateRoute({
+            fitBounds: options.fitBounds !== false,
+            openMenu: options.openMenu !== false
+        });
     },
 
     renderRoute(routeData) {
+        if (!this.ensureInitialized() || !this.layers.primary || !this.layers.glow) {
+            return;
+        }
+
         this.layers.glow?.clearLayers();
         this.layers.primary?.clearLayers();
         this.layers.alternatives?.clearLayers();
@@ -7594,7 +7897,6 @@ const RoutePlanner = {
             return;
         }
         
-        // Activate route-line CSS animations
         document.body.classList.add('has-route');
 
         // Cache computed style once for all alternatives
@@ -7607,11 +7909,11 @@ const RoutePlanner = {
                 pane: 'routeAltPane',
                 style: () => ({
                     color: routeAltColor,
-                    weight: 5,
-                    opacity: 0.7,
+                    weight: 3.5,
+                    opacity: 0.58,
                     lineCap: 'round',
                     lineJoin: 'round',
-                    dashArray: '8 14',
+                    dashArray: '10 12',
                     className: 'route-line-alt'
                 }),
                 interactive: true,
@@ -7626,8 +7928,8 @@ const RoutePlanner = {
                         opacity: 0.95
                     });
                     layer.on('click', () => this.switchToAlternative(index));
-                    layer.on('mouseover', function() { this.setStyle({ weight: 8, opacity: 0.9, dashArray: '12 8' }); });
-                    layer.on('mouseout', function() { this.setStyle({ weight: 5, opacity: 0.7, dashArray: '8 14' }); });
+                    layer.on('mouseover', function() { this.setStyle({ weight: 5, opacity: 0.82, dashArray: '10 10' }); });
+                    layer.on('mouseout', function() { this.setStyle({ weight: 3.5, opacity: 0.58, dashArray: '10 12' }); });
                 }
             });
             this.layers.alternatives.addLayer(altLayer);
@@ -7706,6 +8008,8 @@ const RoutePlanner = {
         // Re-render
         this.renderRoute(routeData);
         this.renderSummary(routeData);
+        this.syncMenuState();
+        this.syncProjectListHighlights();
         notifyRouteMessage(`Switched to: ${selectedAlt.summary || 'Alternative route'}`, 'success');
     },
 
@@ -7749,20 +8053,19 @@ const RoutePlanner = {
             if (this.dom.stopCount) this.dom.stopCount.textContent = `${Math.max(requestedPointCount - 2, 0)}`;
             if (this.dom.primaryRoad) {
                 this.dom.primaryRoad.textContent = requestedPointCount > 1
-                    ? `Ready to route ${requestedPointCount} selected points on real roads.`
+                    ? `Ready to route ${requestedPointCount} selected points. Click Route Now to build the live road path.`
                     : 'Choose a start and destination to unlock the road summary.';
             }
             if (this.dom.strategyChip) this.dom.strategyChip.textContent = requestedPointCount > 2 ? 'Multi-stop plan' : 'Strategy pending';
             if (this.dom.sequenceChip) this.dom.sequenceChip.textContent = [this.state.origin, ...this.state.stops, this.state.destination].filter(Boolean).map(point => point.name).join(' → ') || 'Select route points';
-            if (this.dom.nextInstruction) this.dom.nextInstruction.textContent = requestedPointCount > 1 ? 'Route summary will include road names, ETA, and next maneuver after calculation.' : 'Next move will appear here after route build.';
+                if (this.dom.nextInstruction) this.dom.nextInstruction.textContent = requestedPointCount > 1 ? 'Route summary will include corridor names, ETA, and next maneuver after you click Route Now.' : 'Next move will appear here after route build.';
             if (this.dom.legsList) {
                 this.dom.legsList.innerHTML = requestedPointCount > 1
-                    ? '<div class="route-leg-item">Build the route to reveal road-by-road guidance and leg timing.</div>'
+                    ? '<div class="route-leg-item">Build the route when ready to reveal road-by-road guidance, clearer road names, and leg timing.</div>'
                     : '';
             }
             this.renderTourNarrative();
-            this.syncMenuState();
-            this.syncProjectListHighlights();
+            // syncMenuState and syncProjectListHighlights deferred to callers
             return;
         }
 
@@ -7810,8 +8113,7 @@ const RoutePlanner = {
         }
 
         this.renderTourNarrative();
-        this.syncMenuState();
-        this.syncProjectListHighlights();
+        // syncMenuState and syncProjectListHighlights deferred to callers
     },
 
     fitRouteToBounds() {
@@ -7822,6 +8124,7 @@ const RoutePlanner = {
     },
 
     projectAction(projectName, action) {
+        this.ensureInitialized();
         const project = this.findProjectByName(projectName);
         if (!project) {
             notifyRouteMessage('Project not found for route action.', 'error');
@@ -7830,16 +8133,13 @@ const RoutePlanner = {
 
         if (action === 'origin') {
             this.setPoint('origin', project);
-            this.toggleMenu(true);
-            notifyRouteMessage(`${project.name} set as route start.`, 'success');
+            notifyRouteMessage(`${project.name} staged as route start.`, 'success');
         } else if (action === 'destination') {
             this.setPoint('destination', project);
-            this.toggleMenu(true);
-            notifyRouteMessage(`${project.name} set as route destination.`, 'success');
+            notifyRouteMessage(`${project.name} staged as route destination.`, 'success');
         } else if (action === 'stop') {
             this.addStop(project);
-            this.toggleMenu(true);
-            notifyRouteMessage(`${project.name} added as route stop.`, 'success');
+            notifyRouteMessage(`${project.name} added as a staged route stop.`, 'success');
         }
     },
 
@@ -7850,7 +8150,72 @@ const RoutePlanner = {
 
     buildAnimationPath() {
         const coordinates = this.state.activeRoute?.primaryRoute?.geometry?.coordinates || [];
-        return coordinates.map(([lng, lat]) => [lat, lng]);
+        if (coordinates.length < 2) {
+            return coordinates.map(([lng, lat]) => [lat, lng]);
+        }
+
+        const maxPoints = 3000;
+        if (coordinates.length <= maxPoints) {
+            return coordinates.map(([lng, lat]) => [lat, lng]);
+        }
+
+        // Uniform sampling with guaranteed inclusion of first and last point
+        const step = Math.max(1, Math.ceil(coordinates.length / maxPoints));
+        const sampled = [];
+        for (let index = 0; index < coordinates.length; index += step) {
+            const [lng, lat] = coordinates[index];
+            sampled.push([lat, lng]);
+        }
+
+        const last = coordinates[coordinates.length - 1];
+        const lastSampled = sampled[sampled.length - 1];
+        if (!lastSampled || lastSampled[0] !== last[1] || lastSampled[1] !== last[0]) {
+            sampled.push([last[1], last[0]]);
+        }
+
+        return sampled;
+    },
+
+    // Build cumulative distance array for the animation path (meters)
+    _buildCumulativeDistances(coords) {
+        const dist = [0];
+        for (let i = 1; i < coords.length; i++) {
+            const [lat1, lng1] = coords[i - 1];
+            const [lat2, lng2] = coords[i];
+            const dx = (lng2 - lng1) * 111320 * Math.cos(((lat1 + lat2) / 2) * Math.PI / 180);
+            const dy = (lat2 - lat1) * 110540;
+            dist.push(dist[i - 1] + Math.sqrt(dx * dx + dy * dy));
+        }
+        return dist;
+    },
+
+    // Given a distance along the path, return interpolated [lat, lng] and the segment index
+    _interpolateAtDistance(coords, cumDist, d) {
+        if (d <= 0) return { pos: coords[0], idx: 0 };
+        if (d >= cumDist[cumDist.length - 1]) return { pos: coords[coords.length - 1], idx: coords.length - 1 };
+        // Binary search for the segment
+        let lo = 0, hi = cumDist.length - 1;
+        while (lo < hi - 1) {
+            const mid = (lo + hi) >> 1;
+            if (cumDist[mid] <= d) lo = mid; else hi = mid;
+        }
+        const segLen = cumDist[hi] - cumDist[lo];
+        const t = segLen > 0 ? (d - cumDist[lo]) / segLen : 0;
+        const lat = coords[lo][0] + (coords[hi][0] - coords[lo][0]) * t;
+        const lng = coords[lo][1] + (coords[hi][1] - coords[lo][1]) * t;
+        return { pos: [lat, lng], idx: lo };
+    },
+
+    normalizeRoadLabel(value) {
+        const label = String(value || '')
+            .replace(/\s+/g, ' ')
+            .replace(/^Unnamed Road$/i, '')
+            .replace(/^Road$/i, '')
+            .replace(/^;+|;+$/g, '')
+            .replace(/;/g, ' / ')
+            .trim();
+
+        return label || '';
     },
 
     getTourSequence() {
@@ -7862,28 +8227,53 @@ const RoutePlanner = {
             });
         }
 
-        return featuredProjects
-            .map(name => this.findProjectByName(name))
-            .filter(Boolean);
+        return [];
     },
 
-    startAirTourAnimation() {
-        const sequence = this.getTourSequence();
+    startAirTourAnimation(options = {}) {
+        const resume = options.resume === true;
+        const sequence = resume && this.state.airTourSequence.length
+            ? this.state.airTourSequence
+            : this.getTourSequence();
+
         if (sequence.length < 2) {
-            legacyStartTour();
+            this.toggleMenu(true);
+            notifyRouteMessage('Build a route from the left menu first, then start the tour.', 'error');
             return;
         }
 
-        this.stopTour(true);
-        legacyStopTour();
-        this.state.tourActive = true;
-        this.state.airTourSequence = sequence;
-        this.state.forced3DForTour = false;
+        if (!resume) {
+            this.stopTour(true);
+            this.state.airTourSequence = sequence;
+            this.state.airTourLegIndex = 0;
+        } else {
+            this.state.airTourSequence = sequence;
+            this.state.airTourLegIndex = Math.min(this.state.airTourLegIndex || 0, Math.max(sequence.length - 2, 0));
+        }
 
-        let legIndex = 0;
+        // Capture generation so stale callbacks from previous tours are ignored
+        const gen = this.state.tourGeneration = (this.state.tourGeneration || 0) + 1;
+
+        this.state.tourActive = true;
+        this.state.tourPaused = false;
+        this.state.pausedTourMode = '';
+        this.state.forced3DForTour = false;
+        this.syncTourButtons();
+
+        // Set immediate tour context so browse telemetry shows active state
+        const firstStop = sequence[0];
+        const secondStop = sequence[Math.min(1, sequence.length - 1)];
+        this.setTourContext(firstStop?.name, secondStop?.name, `Air tour preparing departure from ${firstStop?.name || 'start'}.`);
+
+        // Compute total route distance for adaptive timing
+        const totalRouteDist = this.state.activeRoute?.primaryRoute?.distance || 100000;
 
         const runLeg = () => {
-            if (!this.state.tourActive) return;
+            if (!this.state.tourActive || this.state.tourGeneration !== gen) return;
+
+            try {
+
+            const legIndex = Math.min(this.state.airTourLegIndex || 0, sequence.length - 1);
 
             if (legIndex >= sequence.length - 1) {
                 this.setTourContext(sequence[sequence.length - 1]?.name || 'Final stop', '', 'Tour complete.');
@@ -7899,170 +8289,435 @@ const RoutePlanner = {
             const legDist = activeLeg ? this.formatDistance(activeLeg.distance) : '';
             const legTime = activeLeg ? this.formatDuration(activeLeg.duration) : '';
             const legInfo = legDist && legTime ? ` (${legDist}, ${legTime})` : '';
+
+            // Adaptive timing: scale durations by leg distance relative to total route
+            const legDistMeters = activeLeg?.distance || 50000;
+            const distRatio = Math.min(Math.max(legDistMeters / totalRouteDist, 0.15), 0.6);
+            const flyDepartDuration = 1.2 + distRatio * 2.0;  // 1.2s – 2.4s
+            const flyMidDuration = 1.0 + distRatio * 1.8;     // 1.0s – 1.9s
+            const flyArriveDuration = 1.3 + distRatio * 2.0;  // 1.3s – 2.5s
+            const delayDepart = 800 + distRatio * 1200;        // 0.8s – 1.5s
+            const delayMid = 900 + distRatio * 1200;           // 0.9s – 1.6s
+            const delayArrive = 1200 + distRatio * 1400;       // 1.2s – 2.0s
+
             const midpoint = {
                 lat: (current.lat + next.lat) / 2,
                 lng: (current.lng + next.lng) / 2
             };
 
-            this.setTourContext(current.name, next.name, `✈️ Departing ${current.name}${corridorLabel}${legInfo}. Next: ${next.name}.`);
+            // Adaptive zoom: zoom out more for longer legs
+            const midZoom = legDistMeters > 80000 ? 9.5 : legDistMeters > 40000 ? 10.2 : 11.1;
+
+            this.setTourContext(current.name, next.name, `Air tour departing ${current.name}${corridorLabel}${legInfo}. Next stop: ${next.name}.`);
 
             map.flyTo([current.lat, current.lng], 14.6, {
                 animate: true,
-                duration: 2.8,
+                duration: flyDepartDuration,
                 easeLinearity: 0.12
             });
 
             if (current?.name) {
                 const currentProject = this.findProjectByName(current.name);
                 if (currentProject) {
-                    setTimeout(() => openProjectHover(currentProject), 1800);
+                    setTimeout(() => {
+                        if (this.state.tourGeneration !== gen) return;
+                        openProjectHover(currentProject, { preferDirect: true });
+                        // Auto-dismiss departure popup after 2.5s so it clears before mid-flight
+                        setTimeout(() => safeCloseMapPopup(), 2500);
+                    }, flyDepartDuration * 1000);
                 }
             }
 
             this.state.routeAnimationFrame = window.setTimeout(() => {
-                if (!this.state.tourActive) return;
+                if (!this.state.tourActive || this.state.tourGeneration !== gen) return;
 
                 const legsTotal = (this.state.activeRoute?.primaryRoute?.legs || []).length;
                 const legProgress = `Leg ${legIndex + 1}/${legsTotal}`;
-                this.setTourContext(current.name, next.name, `🛫 ${legProgress} — Crossing corridor${corridorLabel}. ETA: ${legTime || 'calculating...'}.`);
+                this.setTourContext(current.name, next.name, `${legProgress} across the corridor${corridorLabel}. ETA: ${legTime || 'calculating...'}.`);
 
-                map.flyTo([midpoint.lat, midpoint.lng], 11.1, {
+                map.flyTo([midpoint.lat, midpoint.lng], midZoom, {
                     animate: true,
-                    duration: 2.4,
+                    duration: flyMidDuration,
                     easeLinearity: 0.08
                 });
 
                 this.state.routeAnimationFrame = window.setTimeout(() => {
-                    if (!this.state.tourActive) return;
+                    if (!this.state.tourActive || this.state.tourGeneration !== gen) return;
 
                     const remainingStops = sequence.length - legIndex - 2;
-                    const arrivalNote = remainingStops > 0 ? `${remainingStops} stop${remainingStops > 1 ? 's' : ''} remaining.` : '🏁 Final destination!';
-                    this.setTourContext(next.name, following?.name || current.name, `📍 Arrived at ${next.name}${legInfo}. ${arrivalNote}`);
+                    const isFinal = remainingStops === 0;
+                    const arrivalNote = !isFinal ? `${remainingStops} stop${remainingStops > 1 ? 's' : ''} remaining.` : 'Final destination!';
+                    this.setTourContext(next.name, following?.name || current.name, `Arrived at ${next.name}${legInfo}. ${arrivalNote}`);
 
                     map.flyTo([next.lat, next.lng], 15, {
                         animate: true,
-                        duration: 3.2,
+                        duration: flyArriveDuration,
                         easeLinearity: 0.14
                     });
 
                     const nextProject = next?.name ? this.findProjectByName(next.name) : null;
                     if (nextProject) {
-                        setTimeout(() => openProjectHover(nextProject), 2000);
+                        setTimeout(() => {
+                            if (this.state.tourGeneration !== gen) return;
+                            openProjectHover(nextProject, { preferDirect: true });
+                            // Auto-dismiss after 3s for intermediate stops; keep final stop open
+                            if (!isFinal) {
+                                setTimeout(() => safeCloseMapPopup(), 3000);
+                            }
+                        }, flyArriveDuration * 1000);
                     }
 
                     this.state.routeAnimationFrame = window.setTimeout(() => {
-                        legIndex += 1;
+                        if (this.state.tourGeneration !== gen) return;
+                        this.state.airTourLegIndex = legIndex + 1;
                         runLeg();
-                    }, 3600);
-                }, 2400);
-            }, 2500);
+                    }, delayArrive);
+                }, delayMid);
+            }, delayDepart);
+
+            } catch (err) {
+                console.error('Air tour error:', err);
+                this.stopTour();
+                notifyRouteMessage('Air tour encountered an error and was stopped.', 'error');
+            }
         };
 
         runLeg();
     },
 
-    startDriveAnimation() {
+    startDriveAnimation(resume = false) {
         const coordinates = this.buildAnimationPath();
         if (coordinates.length < 2) {
             notifyRouteMessage('Create a route first for Drive Tour.', 'error');
             return;
         }
 
-        this.stopTour(true);
+        // Pre-compute cumulative distances along the path (meters)
+        const cumDist = this._buildCumulativeDistances(coordinates);
+        const pathTotalDist = cumDist[cumDist.length - 1] || 1;
+
+        if (!resume) {
+            this.stopTour(true);
+            this.state.routeAnimationCoords = coordinates;
+            this.state.routeAnimationIndex = 0;
+            this.state.routeAnimationDist = 0; // meters traveled along path
+        } else {
+            this.state.routeAnimationCoords = this.state.routeAnimationCoords.length ? this.state.routeAnimationCoords : coordinates;
+            // Clamp distance on resume
+            this.state.routeAnimationDist = Math.min(this.state.routeAnimationDist || 0, pathTotalDist);
+        }
+
+        // Capture generation so orphan callbacks from previous tours can't corrupt this tour
+        const gen = this.state.tourGeneration = (this.state.tourGeneration || 0) + 1;
+
         this.state.tourActive = true;
-        this.state.routeAnimationCoords = coordinates;
-        this.state.routeAnimationIndex = 0;
-        this.state.driveSpeed = 1; // 1x speed
+        this.state.tourPaused = false;
+        this.state.pausedTourMode = '';
+        if (!resume) this.state.driveSpeed = 1;
+        this.state.lastDriveCameraIndex = -1;
+        this.state.lastDriveHudIndex = -1;
         const sequence = this.getTourSequence();
         let lastNarratedStopIndex = -1;
         let lastHeading = 0;
 
+        // Pre-build road name index from actual route geometry for accurate lookup
+        const roadIndex = this._buildRoadIndex();
+
+        // Pre-compute leg boundary distances (meters along path) for accurate leg tracking
+        const legBoundaryDists = this._buildLegBoundaryDistances(coordinates, cumDist, sequence);
+
         // Create drive HUD overlay
         this.createDriveHUD();
 
-        this.layers.movingMarker = L.marker(coordinates[0], {
-            pane: 'routeStopsPane',
-            icon: L.divIcon({
-                className: '',
-                html: '<div class="route-stop-marker route-tour-indicator"></div>',
-                iconSize: [24, 24],
-                iconAnchor: [12, 12]
-            })
-        }).addTo(map);
+        const startInterp = this._interpolateAtDistance(coordinates, cumDist, this.state.routeAnimationDist);
+        const markerPoint = startInterp.pos;
+        this.state.routeAnimationIndex = startInterp.idx;
 
-        // Find current road name based on animation position
-        const getCurrentRoadName = (coordIndex) => {
-            const legs = this.state.activeRoute?.primaryRoute?.legs || [];
-            let totalCoords = 0;
-            for (const leg of legs) {
-                for (const step of (leg.steps || [])) {
-                    const stepCoords = step.distance ? Math.max(1, Math.round(step.distance / 50)) : 5;
-                    totalCoords += stepCoords;
-                    if (coordIndex <= totalCoords) {
-                        return step.name || step.instruction || '';
-                    }
-                }
+        if (this.layers.movingMarker && map.hasLayer(this.layers.movingMarker)) {
+            this.layers.movingMarker.setLatLng(markerPoint);
+        } else {
+            this.layers.movingMarker = L.marker(markerPoint, {
+                pane: 'routeStopsPane',
+                icon: L.divIcon({
+                    className: '',
+                    html: '<div class="route-stop-marker route-tour-indicator"></div>',
+                    iconSize: [24, 24],
+                    iconAnchor: [12, 12]
+                })
+            }).addTo(map);
+        }
+
+        // Set initial tour context immediately so browse telemetry shows active state
+        const initStop = sequence[0];
+        const initNext = sequence[Math.min(1, sequence.length - 1)];
+        const modeLabel = this.state.tourMode === 'smart' ? 'Smart Tour' : 'Drive Tour';
+        this.setTourContext(initStop?.name, initNext?.name, `${modeLabel} starting. ${initStop?.name || ''} → ${initNext?.name || ''}`);
+
+        // Smooth camera interpolation state
+        let cameraLat = markerPoint[0];
+        let cameraLng = markerPoint[1];
+
+        // Timer for auto-dismissing arrival popups at intermediate stops
+        let arrivalPopupTimer = null;
+
+        // Dwell state: when we reach an intermediate stop, pause animation for a few seconds
+        let dwellingAtStop = false;
+        let dwellTimer = null;
+
+        // Pre-compute total duration and distance for countdown
+        const totalDuration = this.state.activeRoute?.primaryRoute?.duration || 0;
+        const totalDistance = this.state.activeRoute?.primaryRoute?.distance || pathTotalDist;
+
+        // Distance-based animation: base driving speed in meters per second (wall-clock)
+        // At 1x with 150 m/s base, a 10 km route takes ~67s, 50 km takes ~333s (~5.5 min)
+        const BASE_SPEED_MPS = 150; // meters per second at 1x speed
+
+        let lastFrameTime = 0;
+        let lastCameraPanTime = 0;
+
+        const step = (timestamp) => {
+            // Bail if tour stopped or if this callback belongs to a previous generation
+            if (!this.state.tourActive || this.state.tourGeneration !== gen) return;
+
+            // If dwelling at a stop, keep scheduling but don't advance
+            if (dwellingAtStop) {
+                this.state.routeAnimationFrame = requestAnimationFrame(step);
+                return;
             }
-            return '';
-        };
 
-        const step = () => {
-            if (!this.state.tourActive) return;
+            // Compute elapsed real time
+            if (lastFrameTime === 0) { lastFrameTime = timestamp; lastCameraPanTime = timestamp; }
+            const dt = Math.min(timestamp - lastFrameTime, 100) / 1000; // seconds, capped at 100ms
+            lastFrameTime = timestamp;
 
-            const idx = this.state.routeAnimationIndex;
-            const currentCoord = this.state.routeAnimationCoords[idx];
-            if (!currentCoord) {
+            try {
+
+            // Advance distance based on speed * dt
+            const speed = this.state.driveSpeed || 1;
+            const advance = BASE_SPEED_MPS * speed * dt;
+            this.state.routeAnimationDist += advance;
+            const currentDist = this.state.routeAnimationDist;
+
+            // Check if tour is complete
+            if (currentDist >= pathTotalDist) {
+                // Final stop: show popup and keep it open
+                if (arrivalPopupTimer) { clearTimeout(arrivalPopupTimer); arrivalPopupTimer = null; }
+                if (dwellTimer) { clearTimeout(dwellTimer); dwellTimer = null; dwellingAtStop = false; }
+                const finalStop = sequence[sequence.length - 1];
+                const finalProject = finalStop?.name ? this.findProjectByName(finalStop.name) : null;
+                if (finalProject) {
+                    openProjectHover(finalProject, { preferDirect: true });
+                }
                 this.stopTour();
                 return;
             }
 
+            // Interpolate position along path
+            const interp = this._interpolateAtDistance(coordinates, cumDist, currentDist);
+            const currentCoord = interp.pos;
+            const idx = interp.idx;
+            this.state.routeAnimationIndex = idx;
+
             // Calculate heading from previous to current point
-            const prevCoord = idx > 0 ? this.state.routeAnimationCoords[idx - 1] : currentCoord;
+            const prevCoord = idx > 0 ? coordinates[idx] : currentCoord;
             const bearing = this.calculateBearing(prevCoord[0], prevCoord[1], currentCoord[0], currentCoord[1]);
             if (idx > 0) lastHeading = bearing;
 
-            this.layers.movingMarker.setLatLng(currentCoord);
-            map.panTo(currentCoord, { animate: true, duration: 0.28, easeLinearity: 0.15 });
+            if (this.layers.movingMarker) {
+                this.layers.movingMarker.setLatLng(currentCoord);
+            }
 
-            const progress = this.state.routeAnimationCoords.length > 1
-                ? idx / (this.state.routeAnimationCoords.length - 1)
-                : 0;
-            const legProgress = sequence.length > 1 ? progress * (sequence.length - 1) : 0;
-            const activeStopIndex = Math.min(Math.floor(legProgress), Math.max(sequence.length - 2, 0));
-            const currentStop = sequence[activeStopIndex] || sequence[0];
-            const nextStop = sequence[Math.min(activeStopIndex + 1, sequence.length - 1)] || currentStop;
+            // Smooth camera: lerp towards current coord instead of snapping
+            const lerpFactor = 0.18;
+            cameraLat += (currentCoord[0] - cameraLat) * lerpFactor;
+            cameraLng += (currentCoord[1] - cameraLng) * lerpFactor;
+            // Pan camera at most every 50ms for smoothness
+            if (timestamp - lastCameraPanTime >= 50) {
+                lastCameraPanTime = timestamp;
+                map.panTo([cameraLat, cameraLng], { animate: true, duration: 0.15, easeLinearity: 1 });
+            }
+
+            const progress = pathTotalDist > 0 ? currentDist / pathTotalDist : 0;
             const pct = Math.max(1, Math.min(100, Math.round(progress * 100)));
 
-            // Update HUD
-            const roadName = getCurrentRoadName(idx);
-            this.updateDriveHUD(pct, lastHeading, roadName, currentStop?.name, nextStop?.name);
+            // Determine active leg from pre-computed boundary distances
+            let activeStopIndex = 0;
+            for (let b = 0; b < legBoundaryDists.length; b++) {
+                if (currentDist >= legBoundaryDists[b]) activeStopIndex = b;
+            }
+            activeStopIndex = Math.min(activeStopIndex, Math.max(sequence.length - 2, 0));
+            const currentStop = sequence[activeStopIndex] || sequence[0];
+            const nextStop = sequence[Math.min(activeStopIndex + 1, sequence.length - 1)] || currentStop;
+
+            // Road name from pre-built geometry index
+            const roadName = roadIndex.length ? this._lookupRoad(roadIndex, currentCoord) : 'Local road';
+            // Update HUD ~every 80ms
+            if (timestamp - (this.state._lastHudTime || 0) >= 80) {
+                this.state._lastHudTime = timestamp;
+                // Compute remaining distance and ETA (countdown)
+                const remainingDist = totalDistance - currentDist;
+                const remainingTime = totalDistance > 0 ? totalDuration * (remainingDist / totalDistance) : 0;
+                // Per-leg remaining
+                const legStartDist = legBoundaryDists[activeStopIndex] || 0;
+                const legEndDist = legBoundaryDists[activeStopIndex + 1] || pathTotalDist;
+                const legSpanDist = Math.max(legEndDist - legStartDist, 1);
+                const legProgress = Math.min((currentDist - legStartDist) / legSpanDist, 1);
+                const activeLeg = this.state.activeRoute?.primaryRoute?.legs?.[activeStopIndex];
+                const legRemainDist = activeLeg ? activeLeg.distance * (1 - legProgress) : remainingDist;
+                const legRemainTime = activeLeg ? activeLeg.duration * (1 - legProgress) : remainingTime;
+                this.updateDriveHUD(pct, lastHeading, roadName, currentStop?.name, nextStop?.name,
+                    this.formatDuration(legRemainTime), this.formatDistance(legRemainDist));
+            }
 
             if (activeStopIndex !== lastNarratedStopIndex) {
                 lastNarratedStopIndex = activeStopIndex;
+
+                // Clear any previous arrival popup timer
+                if (arrivalPopupTimer) { clearTimeout(arrivalPopupTimer); arrivalPopupTimer = null; }
+
                 const currentStopProject = currentStop?.name ? this.findProjectByName(currentStop.name) : null;
                 if (currentStopProject) {
-                    openProjectHover(currentStopProject);
+                    openProjectHover(currentStopProject, { preferDirect: true });
+                }
+
+                // Dwell at intermediate stops: pause animation for 4 seconds
+                // so the user can see the stop, the popup, and the map can load
+                const isFinalStop = activeStopIndex >= sequence.length - 2;
+                if (activeStopIndex > 0 && !isFinalStop) {
+                    dwellingAtStop = true;
+                    // Snap camera directly to stop location for a clean view
+                    cameraLat = currentCoord[0];
+                    cameraLng = currentCoord[1];
+                    map.flyTo([currentCoord[0], currentCoord[1]], 15, { animate: true, duration: 0.8 });
+
+                    this.setTourContext(currentStop?.name, nextStop?.name,
+                        `Arrived at ${currentStop?.name}. Pausing at stop ${activeStopIndex}/${sequence.length - 2}. Next: ${nextStop?.name}.`);
+
+                    dwellTimer = setTimeout(() => {
+                        if (this.state.tourGeneration !== gen) return;
+                        dwellingAtStop = false;
+                        dwellTimer = null;
+                        lastFrameTime = 0; // reset so dt doesn't include dwell time
+                        safeCloseMapPopup();
+                        // Zoom back out to driving overview after dwell
+                        map.flyTo([cameraLat, cameraLng], 14, { animate: true, duration: 0.6 });
+                    }, 4000);
                 }
             }
 
-            if (idx % 10 === 0 || idx === 0) {
-                const modeStr = this.state.tourMode === 'smart' ? 'Smart Tour' : 'Drive Tour';
-                const roadSuffix = roadName ? ` on ${roadName}` : '';
-                this.setTourContext(currentStop?.name, nextStop?.name, `${modeStr} ${pct}%${roadSuffix}. ${currentStop?.name || ''} → ${nextStop?.name || ''}`);
+            if (idx % 8 === 0 || idx === 0) {
+                const roadSuffix = roadName && roadName !== 'Guided corridor' ? ` via ${roadName}` : '';
+                this.setTourContext(currentStop?.name, nextStop?.name, `${modeLabel} ${pct}%${roadSuffix}. ${currentStop?.name || ''} → ${nextStop?.name || ''}`);
             }
 
-            this.state.routeAnimationIndex += 1;
-            if (this.state.routeAnimationIndex >= this.state.routeAnimationCoords.length) {
+            this.state.routeAnimationFrame = requestAnimationFrame(step);
+
+            } catch (err) {
+                console.error('Drive tour animation error:', err);
                 this.stopTour();
-                return;
+                notifyRouteMessage('Tour encountered an error and was stopped.', 'error');
             }
-
-            const baseInterval = 85;
-            const interval = Math.max(20, baseInterval / (this.state.driveSpeed || 1));
-            this.state.routeAnimationFrame = window.setTimeout(step, interval);
         };
 
-        step();
+        this.state.routeAnimationFrame = requestAnimationFrame(step);
+    },
+
+    // Build a dense road name index by mapping route geometry coordinates to step names
+    _buildRoadIndex() {
+        const legs = this.state.activeRoute?.primaryRoute?.legs || [];
+        const geom = this.state.activeRoute?.primaryRoute?.geometry?.coordinates || [];
+        const index = [];
+
+        // Strategy: walk through steps and distribute their road name across
+        // geometry coordinates proportional to step distance
+        let geoIdx = 0;
+        for (const leg of legs) {
+            for (const step of (leg.steps || [])) {
+                const label = this.normalizeRoadLabel(step.name || step.instruction || '');
+                // Use step.location (server-normalized from maneuver.location)
+                const loc = step.location;
+                if (loc && loc.length >= 2) {
+                    index.push({ lat: loc[1], lng: loc[0], road: label });
+                }
+                // Also distribute the label across geometry coords that fall within this step's distance
+                const stepDist = step.distance || 0;
+                let accumulated = 0;
+                const startGeo = geoIdx;
+                while (geoIdx < geom.length - 1 && accumulated < stepDist) {
+                    const [lng1, lat1] = geom[geoIdx];
+                    const [lng2, lat2] = geom[geoIdx + 1];
+                    const dx = (lng2 - lng1) * 111320 * Math.cos(lat1 * Math.PI / 180);
+                    const dy = (lat2 - lat1) * 110540;
+                    accumulated += Math.sqrt(dx * dx + dy * dy);
+                    geoIdx++;
+                }
+                // Add geometry points for this step at regular intervals for dense coverage
+                const endGeo = geoIdx;
+                const span = endGeo - startGeo;
+                const sampleInterval = Math.max(1, Math.floor(span / 8));
+                for (let g = startGeo; g <= endGeo && g < geom.length; g += sampleInterval) {
+                    index.push({ lat: geom[g][1], lng: geom[g][0], road: label });
+                }
+            }
+        }
+        return index;
+    },
+
+    // Look up the nearest road name from the spatial index
+    _lookupRoad(index, coord) {
+        let bestDist = Infinity;
+        let bestRoad = '';
+        const lat = coord[0];
+        const lng = coord[1];
+        for (let i = 0; i < index.length; i++) {
+            if (!index[i].road) continue; // skip empty labels
+            const dx = index[i].lat - lat;
+            const dy = index[i].lng - lng;
+            const d = dx * dx + dy * dy;
+            if (d < bestDist) {
+                bestDist = d;
+                bestRoad = index[i].road;
+            }
+        }
+        return bestRoad || 'Local road';
+    },
+
+    // Pre-compute animation-frame indices where each leg boundary falls
+    _buildLegBoundaries(coords, sequence) {
+        if (sequence.length < 2 || coords.length < 2) return [0];
+        const boundaries = [0];
+        for (let s = 1; s < sequence.length - 1; s++) {
+            const stop = sequence[s];
+            let bestIdx = 0;
+            let bestDist = Infinity;
+            for (let c = 0; c < coords.length; c++) {
+                const dx = coords[c][0] - stop.lat;
+                const dy = coords[c][1] - stop.lng;
+                const d = dx * dx + dy * dy;
+                if (d < bestDist) { bestDist = d; bestIdx = c; }
+            }
+            boundaries.push(bestIdx);
+        }
+        return boundaries;
+    },
+
+    // Pre-compute cumulative distances (meters) where each leg boundary falls
+    _buildLegBoundaryDistances(coords, cumDist, sequence) {
+        if (sequence.length < 2 || coords.length < 2) return [0];
+        const boundaries = [0];
+        for (let s = 1; s < sequence.length - 1; s++) {
+            const stop = sequence[s];
+            let bestIdx = 0;
+            let bestDist = Infinity;
+            for (let c = 0; c < coords.length; c++) {
+                const dx = coords[c][0] - stop.lat;
+                const dy = coords[c][1] - stop.lng;
+                const d = dx * dx + dy * dy;
+                if (d < bestDist) { bestDist = d; bestIdx = c; }
+            }
+            boundaries.push(cumDist[bestIdx] || 0);
+        }
+        return boundaries;
     },
 
     calculateBearing(lat1, lng1, lat2, lng2) {
@@ -8095,24 +8750,36 @@ const RoutePlanner = {
               </svg>
               <span class="drive-compass-label" id="driveCompassLabel">N</span>
             </div>
-            <div class="drive-hud-road" id="driveRoadName">--</div>
+                        <div class="drive-hud-road-wrap">
+                            <div class="drive-hud-label">Current Road</div>
+                            <div class="drive-hud-road" id="driveRoadName">Loading road...</div>
+                        </div>
             <div class="drive-hud-stops">
               <span class="drive-hud-from" id="driveFromStop">--</span>
               <span class="drive-hud-arrow">→</span>
               <span class="drive-hud-to" id="driveToStop">--</span>
             </div>
+            <div class="drive-hud-leg-wrap">
+              <div class="drive-hud-label">Remaining</div>
+              <div class="drive-hud-leg-info" id="driveLegInfo">--</div>
+            </div>
+                        <div class="drive-hud-speed-wrap">
+                            <div class="drive-hud-label">Tour Speed</div>
             <div class="drive-hud-speed">
-              <button class="drive-speed-btn" onclick="RoutePlanner.setDriveSpeed(0.5)" data-speed="0.5">0.5×</button>
+              <button class="drive-speed-btn" onclick="RoutePlanner.setDriveSpeed(0.25)" data-speed="0.25">¼×</button>
+              <button class="drive-speed-btn" onclick="RoutePlanner.setDriveSpeed(0.5)" data-speed="0.5">½×</button>
               <button class="drive-speed-btn active" onclick="RoutePlanner.setDriveSpeed(1)" data-speed="1">1×</button>
               <button class="drive-speed-btn" onclick="RoutePlanner.setDriveSpeed(2)" data-speed="2">2×</button>
               <button class="drive-speed-btn" onclick="RoutePlanner.setDriveSpeed(4)" data-speed="4">4×</button>
+              <button class="drive-speed-btn" onclick="RoutePlanner.setDriveSpeed(8)" data-speed="8">8×</button>
             </div>
+                        </div>
             <div class="drive-hud-pct" id="drivePct">0%</div>
           </div>`;
         document.body.appendChild(hud);
     },
 
-    updateDriveHUD(pct, heading, roadName, fromStop, toStop) {
+    updateDriveHUD(pct, heading, roadName, fromStop, toStop, legEta, legDist) {
         const progressEl = document.getElementById('driveProgress');
         const compassLabel = document.getElementById('driveCompassLabel');
         const needle = document.getElementById('driveCompassNeedle');
@@ -8120,15 +8787,17 @@ const RoutePlanner = {
         const fromEl = document.getElementById('driveFromStop');
         const toEl = document.getElementById('driveToStop');
         const pctEl = document.getElementById('drivePct');
+        const legInfoEl = document.getElementById('driveLegInfo');
 
         if (progressEl) progressEl.style.width = `${pct}%`;
         if (compassLabel) compassLabel.textContent = this.getCompassDirection(heading);
         if (needle) needle.style.transform = `rotate(${heading}deg)`;
         if (needle) needle.style.transformOrigin = '20px 20px';
-        if (roadEl) roadEl.textContent = roadName || '--';
+        if (roadEl) roadEl.textContent = this.normalizeRoadLabel(roadName) || 'Local road';
         if (fromEl) fromEl.textContent = fromStop || '--';
         if (toEl) toEl.textContent = toStop || '--';
         if (pctEl) pctEl.textContent = `${pct}%`;
+        if (legInfoEl) legInfoEl.textContent = legEta && legDist ? `${legDist} · ${legEta}` : legEta || legDist || '--';
     },
 
     removeDriveHUD() {
@@ -8143,54 +8812,121 @@ const RoutePlanner = {
         });
     },
 
-    async startTour() {
-        this.state.tourMode = this.dom.tourModeSelect?.value || this.state.tourMode || 'air';
-
-        if (this.state.tourMode === 'air') {
-            if (!this.state.activeRoute && this.state.origin && this.state.destination) {
-                await this.calculateRoute({ fitBounds: false });
-            }
-
-            if (!this.state.activeRoute?.primaryRoute) {
-                notifyRouteMessage('Build a valid route before starting the air tour.', 'error');
-                return;
-            }
-
-            this.startAirTourAnimation();
-            const playBtn = document.getElementById('btn-play-tour');
-            const stopBtn = document.getElementById('btn-stop-tour');
-            if (playBtn) playBtn.style.display = 'none';
-            if (stopBtn) stopBtn.style.display = 'flex';
-            return;
+    pauseTour() {
+        if (!this.state.tourActive) {
+            return false;
         }
 
-        legacyStopTour();
+        this.state.tourActive = false;
+        this.state.tourPaused = true;
+        this.state.pausedTourMode = this.state.tourMode === 'air' ? 'air' : 'drive';
+
+        if (this.state.routeAnimationFrame) {
+            cancelAnimationFrame(this.state.routeAnimationFrame);
+            clearTimeout(this.state.routeAnimationFrame);
+            this.state.routeAnimationFrame = null;
+        }
+
+        safeStopMapMotion();
+        safeCloseMapPopup();
+
+        this.removeDriveHUD();
+        this.syncTourButtons();
+        notifyRouteMessage('Tour paused. Use Continue Tour to resume.', 'info');
+        return true;
+    },
+
+    resumeTour() {
+        if (!this.state.tourPaused || !this.state.pausedTourMode) {
+            notifyRouteMessage('No paused tour available to continue.', 'warning');
+            return false;
+        }
+
+        const mode = this.state.pausedTourMode;
+        return this.startTour({ mode, resume: true });
+    },
+
+    async startTour(options = {}) {
+        this.ensureInitialized();
+        const resume = options.resume === true;
+
+        // Prevent double-start: if already active and not resuming, stop first
+        if (this.state.tourActive && !resume) {
+            this.stopTour(true);
+        }
+
+        const requestedMode = options.mode || this.dom.tourModeSelect?.value || this.state.tourMode || 'air';
+        this.state.tourMode = requestedMode;
+
+        if (this.state.tourMode === 'air') {
+            if (!resume && !this.state.activeRoute && this.state.origin && this.state.destination) {
+                await this.calculateRoute({ fitBounds: false, openMenu: false });
+            }
+
+            if (!this.state.activeRoute) {
+                notifyRouteMessage('Route must be calculated before starting the tour. Click Route Now first.', 'error');
+                return false;
+            }
+
+            const sequence = resume && this.state.airTourSequence.length
+                ? this.state.airTourSequence
+                : this.getTourSequence();
+
+            if (sequence.length < 2) {
+                notifyRouteMessage('Build a valid route before starting the air tour.', 'error');
+                return false;
+            }
+
+            this.startAirTourAnimation({ resume });
+            this.syncTourButtons();
+            notifyRouteMessage(resume ? 'Air tour resumed.' : 'Air tour started.', 'success');
+            return true;
+        }
 
         try {
-            if (this.state.tourMode === 'smart') {
-                await this.optimizeSmartRoute();
-            } else if (!this.state.activeRoute) {
-                await this.calculateRoute();
+            if (!resume) {
+                if (this.state.tourMode === 'smart') {
+                    await this.optimizeSmartRoute({ fitBounds: false, openMenu: false });
+                } else if (!this.state.activeRoute) {
+                    await this.calculateRoute({ fitBounds: false, openMenu: false });
+                }
             }
 
-            if (!this.state.activeRoute?.primaryRoute) {
+            // Verify route was actually built before proceeding
+            if (!this.state.activeRoute?.primaryRoute?.geometry) {
+                notifyRouteMessage('Route must be calculated before starting the tour. Click Route Now first.', 'error');
+                return false;
+            }
+
+            const drivePath = resume && this.state.routeAnimationCoords.length
+                ? this.state.routeAnimationCoords
+                : this.buildAnimationPath();
+
+            if (drivePath.length < 2) {
                 notifyRouteMessage('Build a valid route before starting the tour.', 'error');
-                return;
+                return false;
             }
 
-            this.startDriveAnimation();
-            const playBtn = document.getElementById('btn-play-tour');
-            const stopBtn = document.getElementById('btn-stop-tour');
-            if (playBtn) playBtn.style.display = 'none';
-            if (stopBtn) stopBtn.style.display = 'flex';
+            this.startDriveAnimation(resume);
+            this.syncTourButtons();
+            notifyRouteMessage(resume ? 'Drive tour resumed.' : 'Drive tour started.', 'success');
+            return true;
         } catch (error) {
             notifyRouteMessage(error.message || 'Tour could not start.', 'error');
+            return false;
         }
     },
 
     stopTour(silent = false) {
+        // Bump generation so any lingering RAF/timeout callbacks from a previous tour
+        // will see the mismatch and bail out immediately.
+        this.state.tourGeneration = (this.state.tourGeneration || 0) + 1;
+
         this.state.tourActive = false;
+        this.state.tourPaused = false;
+        this.state.pausedTourMode = '';
         if (this.state.routeAnimationFrame) {
+            cancelAnimationFrame(this.state.routeAnimationFrame);
             clearTimeout(this.state.routeAnimationFrame);
             this.state.routeAnimationFrame = null;
         }
@@ -8201,27 +8937,32 @@ const RoutePlanner = {
         this.layers.movingMarker = null;
 
         this.removeDriveHUD();
-        legacyStopTour();
         this.state.forced3DForTour = false;
+        this.state.airTourSequence = [];
+        this.state.airTourLegIndex = 0;
+        this.state.routeAnimationCoords = [];
+        this.state.routeAnimationIndex = 0;
+        this.state.routeAnimationDist = 0;
+        this.state.lastDriveCameraIndex = -1;
+        this.state.lastDriveHudIndex = -1;
         this.clearTourContext();
-        if (map) {
-            map.stop();
-            map.closePopup();
-        }
+        this.syncProjectListHighlights();
+        safeStopMapMotion();
+        safeCloseMapPopup();
+
+        this.syncTourButtons();
 
         if (!silent) {
-            const playBtn = document.getElementById('btn-play-tour');
-            const stopBtn = document.getElementById('btn-stop-tour');
-            if (playBtn) playBtn.style.display = 'flex';
-            if (stopBtn) stopBtn.style.display = 'none';
+            notifyRouteMessage('Tour ended.', 'info');
         }
+    },
+
+    endTour() {
+        return this.stopTour(false);
     }
 };
 
 window.RoutePlanner = RoutePlanner;
-
-const legacyStartTour = startTour;
-const legacyStopTour = stopTour;
 
 startTour = function() {
     return RoutePlanner.startTour();
@@ -8263,12 +9004,16 @@ function routeProjectAction(projectName, action) {
     return RoutePlanner.projectAction(projectName, action);
 }
 
+function routeProjectActionEncoded(projectToken, action) {
+    return routeProjectAction(decodeProjectToken(projectToken), action);
+}
+
 function routeCurrentProjectAs(action) {
     return RoutePlanner.routeCurrentProjectAs(action);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(() => RoutePlanner.init(), 150);
+    RoutePlanner.init();
 });
 
 function toggleRouteMenu(forceOpen) {

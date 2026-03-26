@@ -1,7 +1,7 @@
 // RED Training Academy - Ultimate Performance Service Worker
 // Version 2.0 - Aggressive Caching for Maximum Speed
 
-const CACHE_VERSION = 'red-v4';
+const CACHE_VERSION = 'red-v6';
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const DATA_CACHE = `${CACHE_VERSION}-data`;
 const CDN_CACHE = `${CACHE_VERSION}-cdn`;

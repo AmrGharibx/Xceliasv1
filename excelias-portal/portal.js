@@ -27,7 +27,7 @@ const PROJECTS = {
   },
   website: {
     name:  'Property Explorer',
-    url:   '/website/index.html',
+    url:   IS_LOCAL ? 'http://localhost:3000' : '/website/index.html',
     mode:  'iframe'
   }
 };
@@ -50,10 +50,19 @@ const iframeLoader = document.getElementById('iframe-loading');
 (function initParticles() {
   const canvas = document.getElementById('particle-canvas');
   if (!canvas) return;
+
+  // Respect reduced motion preference
+  const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+  if (motionQuery.matches) return;
+
   const ctx = canvas.getContext('2d');
   let W, H;
   const particles = [];
-  const PARTICLE_COUNT = 60;
+
+  // Fewer particles on mobile for performance
+  const isMobile = window.innerWidth <= 768;
+  const PARTICLE_COUNT = isMobile ? 25 : 60;
+  const LINE_DISTANCE = isMobile ? 100 : 150;
 
   function resize() {
     W = canvas.width = window.innerWidth;
@@ -97,11 +106,11 @@ const iframeLoader = document.getElementById('iframe-loading');
         const dx = particles[i].x - particles[j].x;
         const dy = particles[i].y - particles[j].y;
         const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 150) {
+        if (dist < LINE_DISTANCE) {
           ctx.beginPath();
           ctx.moveTo(particles[i].x, particles[i].y);
           ctx.lineTo(particles[j].x, particles[j].y);
-          ctx.strokeStyle = `rgba(102, 126, 234, ${0.06 * (1 - dist / 150)})`;
+          ctx.strokeStyle = `rgba(102, 126, 234, ${0.06 * (1 - dist / LINE_DISTANCE)})`;
           ctx.lineWidth = 0.5;
           ctx.stroke();
         }
@@ -130,7 +139,7 @@ const iframeLoader = document.getElementById('iframe-loading');
 })();
 
 /* ═══════════════════════════════════════════════════
-   COUNTER ANIMATION (hero stats)
+   COUNTER ANIMATION (hero stats) — rAF-based
    ═══════════════════════════════════════════════════ */
 (function animateCounters() {
   const nums = document.querySelectorAll('.hero-stat-num[data-count]');
@@ -140,20 +149,21 @@ const iframeLoader = document.getElementById('iframe-loading');
         const el = entry.target;
         const target = parseInt(el.dataset.count, 10);
         const suffix = el.dataset.count.includes('+') ? '+' : '';
-        let current = 0;
-        const step = Math.max(1, Math.floor(target / 40));
-        const interval = setInterval(() => {
-          current += step;
-          if (current >= target) {
-            current = target;
-            clearInterval(interval);
-          }
-          el.textContent = current + suffix;
-        }, 30);
+        const duration = 800; // ms
+        const start = performance.now();
+        function tick(now) {
+          const elapsed = now - start;
+          const progress = Math.min(elapsed / duration, 1);
+          // Ease out cubic
+          const eased = 1 - Math.pow(1 - progress, 3);
+          el.textContent = Math.round(target * eased) + suffix;
+          if (progress < 1) requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
         io.unobserve(el);
       }
     });
-  }, { threshold: 0.5 });
+  }, { threshold: 0.3 });
   nums.forEach(n => io.observe(n));
 })();
 
@@ -184,10 +194,27 @@ function launchProject(key) {
   iframeLoader.classList.remove('hidden');
   iframe.src = proj.url;
 
+  // Clear any previous timeout
+  if (window._iframeTimeout) clearTimeout(window._iframeTimeout);
+
   // Hide loader when iframe loads
   iframe.onload = () => {
     iframeLoader.classList.add('hidden');
+    if (window._iframeTimeout) { clearTimeout(window._iframeTimeout); window._iframeTimeout = null; }
   };
+
+  // Error handler
+  iframe.onerror = () => {
+    showIframeError(proj.name);
+    if (window._iframeTimeout) { clearTimeout(window._iframeTimeout); window._iframeTimeout = null; }
+  };
+
+  // Timeout: if iframe hasn't loaded in 30s, show error
+  window._iframeTimeout = setTimeout(() => {
+    if (!iframeLoader.classList.contains('hidden')) {
+      showIframeError(proj.name);
+    }
+  }, 30000);
 
   history.pushState({ project: key }, proj.name, '#' + key);
 }
@@ -198,13 +225,42 @@ function goHome() {
   currentIframeUrl = null;
   iframe.src = 'about:blank';
   iframe.onload = null;
+  iframe.onerror = null;
+  if (window._iframeTimeout) { clearTimeout(window._iframeTimeout); window._iframeTimeout = null; }
+
+  // Remove any error overlay
+  const errOverlay = document.getElementById('iframe-error');
+  if (errOverlay) errOverlay.remove();
 
   projectView.classList.add('hidden');
+  iframeLoader.classList.add('hidden');
   homeView.style.display = '';
 
   if (location.hash) {
     history.pushState(null, 'Xcelias', location.pathname);
   }
+}
+
+/* ─── Show iframe load error ─── */
+function showIframeError(projectName) {
+  iframeLoader.classList.add('hidden');
+
+  const existing = document.getElementById('iframe-error');
+  if (existing) existing.remove();
+
+  const overlay = document.createElement('div');
+  overlay.id = 'iframe-error';
+  overlay.style.cssText = 'position:absolute;inset:48px 0 0 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:var(--bg,#0f0f1a);z-index:6;text-align:center;padding:24px';
+  overlay.innerHTML = `
+    <div style="font-size:3rem;opacity:0.5">⚠️</div>
+    <h3 style="font-size:1.1rem;font-weight:700;color:#e8e8f0">Failed to Load</h3>
+    <p style="font-size:0.82rem;color:#9898b8;max-width:360px;line-height:1.6">${projectName || 'This module'} didn't respond. Make sure the server is running and try again.</p>
+    <div style="display:flex;gap:12px;margin-top:8px">
+      <button onclick="location.reload()" style="padding:10px 24px;border-radius:50px;border:1px solid rgba(102,126,234,0.3);background:rgba(102,126,234,0.1);color:#a5b4fc;font-family:inherit;font-size:0.78rem;font-weight:600;cursor:pointer">Retry</button>
+      <button onclick="goHome()" style="padding:10px 24px;border-radius:50px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.05);color:#9898b8;font-family:inherit;font-size:0.78rem;font-weight:600;cursor:pointer">Back to Home</button>
+    </div>
+  `;
+  projectView.appendChild(overlay);
 }
 
 /* ─── Open in new tab ─── */

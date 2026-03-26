@@ -235,6 +235,186 @@
             * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
             body::before { animation: none !important; }
         }
+
+        /* ===== MOBILE RESPONSIVE ===== */
+
+        /* Tablet & Phone */
+        @media (max-width: 768px) {
+            /* Container */
+            .rm-app-shell {
+                padding: 16px !important;
+            }
+
+            /* Header → stacked */
+            .rm-app-shell > header {
+                flex-direction: column !important;
+                gap: 14px !important;
+                padding: 14px 16px !important;
+                backdrop-filter: blur(8px) !important;
+                -webkit-backdrop-filter: blur(8px) !important;
+            }
+
+            /* Collapse hardcoded 3-col and 2-col grids */
+            [style*="grid-template-columns: repeat(3"] {
+                grid-template-columns: 1fr !important;
+            }
+            [style*="grid-template-columns: repeat(2"] {
+                grid-template-columns: 1fr !important;
+            }
+
+            /* RunStatusBar complex grid → stack */
+            [style*="minmax(260px, 1.35fr)"] {
+                grid-template-columns: 1fr !important;
+            }
+
+            /* Dashboard score grid → 2 col */
+            [style*="minmax(160px, 1fr)"] {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+
+            /* Command Deck cards → single column */
+            [style*="minmax(260px, 1fr)"] {
+                grid-template-columns: 1fr !important;
+            }
+
+            /* Ops/Sessions/Review 2-panel grid → single */
+            [style*="minmax(320px, 1fr)"] {
+                grid-template-columns: 1fr !important;
+            }
+
+            /* Font reductions */
+            .rm-app-shell h1 {
+                font-size: 28px !important;
+            }
+            .rm-app-shell h2 {
+                font-size: 22px !important;
+            }
+
+            /* Category header icon */
+            [style*="font-size: 56px"] {
+                font-size: 40px !important;
+            }
+
+            /* Card padding reductions */
+            [style*="backdrop-filter: blur(16px)"] {
+                backdrop-filter: blur(8px) !important;
+                -webkit-backdrop-filter: blur(8px) !important;
+            }
+            [style*="backdrop-filter: blur(14px)"] {
+                backdrop-filter: blur(8px) !important;
+                -webkit-backdrop-filter: blur(8px) !important;
+            }
+
+            /* Projector mode: no scale on mobile */
+            body.rm-projector .rm-app-shell {
+                transform: none !important;
+            }
+            body.rm-projector #root {
+                padding-bottom: 30px !important;
+            }
+
+            /* Aurora: reduce on mobile */
+            body::before {
+                filter: blur(16px) saturate(100%) !important;
+                opacity: 0.55 !important;
+                animation-duration: 28s !important;
+            }
+
+            /* Footer */
+            footer {
+                padding: 20px 10px !important;
+            }
+
+            /* Touch targets: minimum 44px hit area */
+            button {
+                min-height: 44px;
+            }
+        }
+
+        /* Small phones */
+        @media (max-width: 480px) {
+            .rm-app-shell {
+                padding: 10px !important;
+            }
+
+            .rm-app-shell > header {
+                padding: 12px !important;
+                border-radius: 14px !important;
+            }
+
+            .rm-app-shell h1 {
+                font-size: 24px !important;
+            }
+            .rm-app-shell h2 {
+                font-size: 20px !important;
+            }
+
+            /* Score grid → single column on very small */
+            [style*="minmax(160px, 1fr)"] {
+                grid-template-columns: 1fr !important;
+            }
+
+            /* Reduce button bloat */
+            .rm-app-shell button {
+                font-size: 14px !important;
+            }
+
+            /* Category icon smaller */
+            [style*="font-size: 40px"] {
+                font-size: 32px !important;
+            }
+
+            /* Footer compact */
+            footer {
+                padding: 16px 8px !important;
+                font-size: 12px !important;
+            }
+
+            /* Kill card breathing animation on weak devices */
+            [style*="rmCardBreath"] {
+                animation: none !important;
+            }
+        }
+
+        /* Fold devices */
+        @media (max-width: 320px) {
+            .rm-app-shell {
+                padding: 6px !important;
+            }
+
+            .rm-app-shell > header {
+                padding: 10px !important;
+                border-radius: 12px !important;
+                margin-bottom: 16px !important;
+            }
+
+            .rm-app-shell h1 {
+                font-size: 20px !important;
+            }
+            .rm-app-shell h2 {
+                font-size: 18px !important;
+            }
+        }
+
+        /* Landscape phones */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .rm-app-shell {
+                padding: 10px 16px !important;
+            }
+            .rm-app-shell > header {
+                margin-bottom: 14px !important;
+                padding: 10px 14px !important;
+            }
+        }
+
+        /* Print stylesheet */
+        @media print {
+            body::before, body::after, .rm-grain, canvas { display: none !important; }
+            .rm-app-shell { padding: 0 !important; }
+            .rm-app-shell > header { box-shadow: none !important; backdrop-filter: none !important; border: 1px solid #ccc !important; }
+            button { display: none !important; }
+            * { color: #000 !important; background: #fff !important; box-shadow: none !important; text-shadow: none !important; }
+        }
     </style>
 </head>
 <body>

@@ -1359,8 +1359,9 @@ const BackgroundFX = () => {
     };
 
     const seed = () => {
-      const base = prefersReduced ? 40 : 160;
-      const count = Math.max(12, Math.floor(base * densityScale * clamp(fxIntensity, 0.6, 2.2)));
+      const isMobile = W <= 768;
+      const base = prefersReduced ? 40 : (isMobile ? 60 : 160);
+      const count = Math.min(120, Math.max(8, Math.floor(base * densityScale * clamp(fxIntensity, 0.6, 2.2))));
       const w = W;
       const h = H;
       const pts = [];
@@ -1868,6 +1869,8 @@ const ProgressBar = ({ current, total }) => (
 // Timer Component
 const Timer = ({ seconds, onTimeUp }) => {
   const [timeLeft, setTimeLeft] = useState(seconds);
+  const onTimeUpRef = React.useRef(onTimeUp);
+  onTimeUpRef.current = onTimeUp;
 
   useEffect(() => {
     setTimeLeft(seconds);
@@ -1875,12 +1878,12 @@ const Timer = ({ seconds, onTimeUp }) => {
   
   useEffect(() => {
     if (timeLeft <= 0) {
-      onTimeUp();
+      onTimeUpRef.current();
       return;
     }
     const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
     return () => clearTimeout(timer);
-  }, [timeLeft, onTimeUp]);
+  }, [timeLeft]);
   
   return (
     <div style={{ ...styles.timer, color: timeLeft <= 5 ? '#f093fb' : '#667eea' }}>

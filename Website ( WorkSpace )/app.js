@@ -3675,7 +3675,7 @@ function focusOnProject(p, options = {}) {
     }
 
         const {
-            showModal = false,
+            showModal = true,
             updateHash = true,
             collapseSidebar = true,
             drawRadius = true,
@@ -4771,69 +4771,6 @@ function toggleTimelinePlay() {
     }
 }
 
-// --- SPATIAL AUDIO SYSTEM ---
-let audioContext = null;
-try {
-    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-    if (AudioContextClass) {
-        audioContext = new AudioContextClass();
-    }
-} catch (e) {
-    console.warn('AudioContext not supported:', e);
-}
-// Placeholder frequencies for synthetic ambience since we don't have files
-// Ocean: Low rumble + Hiss
-// Mountain: Wind (Bandpass noise)
-// Urban: Low hum (Oscillator)
-
-// We will simulate "Volume" by logging or visual indicator, 
-// as generating good procedural audio in browser without files is complex code.
-// However, I will implement the logic structure requested.
-
-const audioZones = {
-    north: { center: [31.0, 28.5], name: "Ocean", volume: 0 },
-    sokhna: { center: [29.5, 32.4], name: "Mountain", volume: 0 },
-    gouna: { center: [27.39, 33.67], name: "Ocean", volume: 0 },
-    capital: { center: [30.0, 31.7], name: "Urban", volume: 0 },
-    october: { center: [30.0, 31.0], name: "Urban", volume: 0 }
-};
-
-function updateSpatialAudio() {
-    const center = map.getCenter();
-    const maxDist = 1.5; // Degrees (~150km)
-
-    let activeZone = null;
-    let maxVol = 0;
-
-    Object.keys(audioZones).forEach(key => {
-        const zone = audioZones[key];
-        const dist = Math.sqrt(Math.pow(center.lat - zone.center[0], 2) + Math.pow(center.lng - zone.center[1], 2));
-        
-        // Calculate volume (1 at center, 0 at maxDist)
-        let vol = 1 - (dist / maxDist);
-        if (vol < 0) vol = 0;
-        
-        zone.volume = vol;
-        
-        if (vol > 0.1) {
-
-        }
-    });
-}
-
-if (map) {
-    let _lastAudioCenter = null;
-    map.on('move', () => {
-        // Throttle: only update when map center moves significantly (0.01 deg ~1km)
-        if (audioContext) {
-            const c = map.getCenter();
-            if (_lastAudioCenter && Math.abs(c.lat - _lastAudioCenter.lat) < 0.01 && Math.abs(c.lng - _lastAudioCenter.lng) < 0.01) return;
-            _lastAudioCenter = { lat: c.lat, lng: c.lng };
-            requestAnimationFrame(updateSpatialAudio);
-        }
-    });
-}
-
 // --- RADAR CHART LOGIC ---
 function drawRadarChart(project) {
     const container = document.getElementById('radar-chart-container'); // We need to add this to modal
@@ -5574,13 +5511,6 @@ function filterByDeveloper(devName, btnElement) {
       map.flyToBounds(bounds, { padding: [50, 50], maxZoom: 14, duration: 2 });
   }
 }
-
-// --- AUDIO CONTEXT RESUME (Browser Policy Compliance) ---
-document.addEventListener('click', () => {
-    if (audioContext && audioContext.state === 'suspended') {
-        audioContext.resume().catch(e => console.warn('Audio resume failed:', e));
-    }
-}, { once: true, passive: true });
 
 // Auto-collapse sidebar on mobile for better UX
 if (window.innerWidth < 768) {

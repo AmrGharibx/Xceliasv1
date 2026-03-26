@@ -5620,16 +5620,36 @@ button:focus-visible, input:focus-visible {
 }
 
 /* ═══════════════════════════════════════════════════
-   MOBILE PERFORMANCE — Reduce blur & GPU load
+   MOBILE PERFORMANCE — Disable backdrop-filter (GPU-heavy)
    ═══════════════════════════════════════════════════ */
 @media (max-width: 768px) {
+    .sidebar,
+    .modal-content,
+    .road-name-tooltip,
+    .drive-hud-info,
+    .dock-toggle,
+    .dock-content,
+    .dock-container,
+    .mode-switcher,
+    .list-container,
+    .timeline-container,
+    .filter-btn,
+    .map-btn,
+    .zone-header,
+    .legend-container,
+    .leaflet-popup-content-wrapper,
+    .tooltip-icon::before,
+    .leaflet-tooltip.custom-tooltip,
+    .modal-overlay,
+    .ai-toggle-label,
     .ai-chat-window,
+    .ai-context-menu,
     .price-alerts-panel,
-    .price-alert-toast,
     .price-alert-modal,
-    .ai-toggle-label {
-        backdrop-filter: blur(10px) !important;
-        -webkit-backdrop-filter: blur(10px) !important;
+    .price-alert-modal-content,
+    .price-alert-toast {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
     }
 }
 

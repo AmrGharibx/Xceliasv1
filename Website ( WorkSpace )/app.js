@@ -25,6 +25,33 @@ window.projects = window.projects || [];
 window.projectDetails = window.projectDetails || {};
 
 // ═══════════════════════════════════════════════════════════════════════════
+// LAZY-LOAD UTILITY — Load scripts/CSS on demand
+// ═══════════════════════════════════════════════════════════════════════════
+const _lazyCache = {};
+function lazyLoadScript(url) {
+    if (_lazyCache[url]) return _lazyCache[url];
+    _lazyCache[url] = new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = url;
+        s.onload = resolve;
+        s.onerror = () => reject(new Error('Failed to load: ' + url));
+        document.head.appendChild(s);
+    });
+    return _lazyCache[url];
+}
+function lazyLoadCSS(url) {
+    if (_lazyCache[url]) return _lazyCache[url];
+    _lazyCache[url] = new Promise((resolve) => {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = url;
+        link.onload = resolve;
+        document.head.appendChild(link);
+    });
+    return _lazyCache[url];
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
 // 🌍 INTERNATIONALIZATION (i18n) SYSTEM - Arabic/English Toggle
 // ═══════════════════════════════════════════════════════════════════════════
 const i18n = {
@@ -1642,9 +1669,14 @@ async function fetchAndDrawRoads() {
         const data = await response.json();
     
     if (!window.osmtogeojson) {
-       console.error("osmtogeojson library not loaded");
-       return;
+        try {
+            await lazyLoadScript('https://unpkg.com/osmtogeojson@2.2.12/osmtogeojson.js');
+        } catch (e) {
+            console.error('Failed to load osmtogeojson:', e);
+            return;
+        }
     }
+    if (!window.osmtogeojson) return;
     
     const geojson = osmtogeojson(data);
 
@@ -2438,13 +2470,22 @@ async function renderProjects(projectList) {
       const gold = styles.getPropertyValue('--avaria-gold').trim() || '#667eea';
       const red = styles.getPropertyValue('--avaria-red').trim() || '#f093fb';
 
-      const heatPoints = projectList.map(p => [p.lat, p.lng, 1]);
-      heatmapLayer = L.heatLayer(heatPoints, {
-          radius: 25,
-          blur: 15,
-          maxZoom: 10,
-          gradient: { 0.4: 'blue', 0.65: gold, 1.0: red }
-      }).addTo(map);
+      if (!L.heatLayer) {
+          try {
+              await lazyLoadScript('https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js');
+          } catch (e) {
+              console.warn('Failed to load leaflet.heat:', e);
+          }
+      }
+      if (L.heatLayer) {
+          const heatPoints = projectList.map(p => [p.lat, p.lng, 1]);
+          heatmapLayer = L.heatLayer(heatPoints, {
+              radius: 25,
+              blur: 15,
+              maxZoom: 10,
+              gradient: { 0.4: 'blue', 0.65: gold, 1.0: red }
+          }).addTo(map);
+      }
   }
 
   // Handle empty results - show "No results" message
@@ -3881,8 +3922,14 @@ async function downloadBrochure() {
       }
       
       if (!window.jspdf) {
-          console.error("jsPDF library not loaded");
-          return;
+          try {
+              await lazyLoadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+              await lazyLoadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js');
+          } catch (e) {
+              console.error('Failed to load jsPDF:', e);
+              alert('PDF generation is temporarily unavailable. Please try again.');
+              return;
+          }
       }
       
       const { jsPDF } = window.jspdf;
@@ -4293,7 +4340,7 @@ function switchTab(tabName) {
     });
 }
 
-function openModal(proj) {
+async function openModal(proj) {
   currentProject = proj;
     if (window.RoutePlanner?.syncProjectListHighlights) {
             window.RoutePlanner.syncProjectListHighlights();
@@ -4355,10 +4402,20 @@ function openModal(proj) {
       
       swiperContainer.style.display = "block";
       
+      if (!window.Swiper) {
+          try {
+              await lazyLoadCSS('https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css');
+              await lazyLoadScript('https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js');
+          } catch (e) {
+              console.warn('Failed to load Swiper:', e);
+          }
+      }
+      
       if (swiperInstance) {
           swiperInstance.destroy(true, true);
       }
       
+      if (!window.Swiper) return;
       swiperInstance = new Swiper(".mySwiper", {
           spaceBetween: 30,
           centeredSlides: true,

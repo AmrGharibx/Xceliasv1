@@ -62,8 +62,7 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
 
-    <!-- Non-critical scripts - defer -->
-    <script src="https://unpkg.com/osmtogeojson@2.2.12/osmtogeojson.js" defer></script>
+    <!-- Non-critical scripts - defer (osmtogeojson lazy-loaded on demand) -->
     <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" defer></script>
@@ -1158,18 +1157,7 @@
       </div>
     </div>
 
-    <!-- Leaflet Heat (Leaflet core + MarkerCluster already loaded in <head>) -->
-    <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
-
-    <!-- jsPDF & AutoTable (deferred - only used for PDF download) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js" defer></script>
-
-    <!-- QRCode is loaded on demand from a local path when brochure export needs it -->
-
-    <!-- Swiper.js -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <!-- Libraries lazy-loaded on demand: leaflet.heat, jsPDF, AutoTable, Swiper -->
 
     <!-- MODAL POPUP HTML -->
     <div class="modal-overlay" id="projectModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">

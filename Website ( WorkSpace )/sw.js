@@ -79,9 +79,16 @@ self.addEventListener('fetch', event => {
     return;
   }
   
-  // Strategy 3: Cache-First for map tiles (with long TTL)
+  // Strategy 3: Cache-First for map tiles (with long TTL + LRU cap)
   if (TILE_PATTERNS.some(pattern => url.hostname.includes(pattern))) {
-    event.respondWith(cacheFirst(event.request, DATA_CACHE, 7 * 24 * 60 * 60 * 1000)); // 7 days
+    event.respondWith(
+      cacheFirst(event.request, DATA_CACHE, 7 * 24 * 60 * 60 * 1000)
+        .then(response => {
+          // Trim tile cache in background (non-blocking)
+          trimTileCache(DATA_CACHE);
+          return response;
+        })
+    ); // 7 days
     return;
   }
   
@@ -110,12 +117,29 @@ async function cacheFirst(request, cacheName, maxAge = null) {
           // Cache too old, fetch new
           return fetchAndCache(request, cache);
         }
+      } else {
+        // No Date header — treat as potentially stale, refetch
+        return fetchAndCache(request, cache);
       }
     }
     return cached;
   }
   
   return fetchAndCache(request, cache);
+}
+
+const TILE_CACHE_MAX = 500;
+
+// Trim tile cache to max entries (LRU approximation: delete oldest keys first)
+async function trimTileCache(cacheName) {
+  const cache = await caches.open(cacheName);
+  const keys = await cache.keys();
+  if (keys.length > TILE_CACHE_MAX) {
+    const excess = keys.length - TILE_CACHE_MAX;
+    for (let i = 0; i < excess; i++) {
+      await cache.delete(keys[i]);
+    }
+  }
 }
 
 // Stale-While-Revalidate (fast + fresh)

@@ -19,23 +19,17 @@ self.onmessage = function(e) {
     if (type === 'INIT') {
         projects = payload.projects || [];
         projectDetails = payload.projectDetails || {};
-        console.log('Worker received INIT with', projects.length, 'projects');
         try {
             if (typeof Fuse !== 'undefined') {
                 fuse = new Fuse(projects, fuseOptions);
-                console.log('Fuse initialized successfully');
-            } else {
-                console.warn("Fuse.js not loaded in worker");
             }
         } catch (err) {
-            console.error("Error initializing Fuse in worker:", err);
+            // Fuse init failed — search will fall back to filter-only mode
         }
         self.postMessage({ type: 'INIT_COMPLETE' });
     } else if (type === 'SEARCH') {
         const query = payload.query;
-        console.log('Worker searching for:', query, 'in', projects.length, 'projects');
         const results = performSearch(query);
-        console.log('Worker returning', results.length, 'results');
         self.postMessage({ type: 'SEARCH_RESULTS', results: results });
     }
 };
@@ -135,9 +129,9 @@ function performSearch(query) {
             });
         }
 
-        // 10. Apply Sorting
+        // 10. Apply Sorting (spread to avoid mutating shared projects array)
         if (criteria.sortBy) {
-            results.sort((a, b) => {
+            results = [...results].sort((a, b) => {
                 if (criteria.sortBy === 'installments-desc') {
                     return (b.maxInstallmentYears || 0) - (a.maxInstallmentYears || 0);
                 }
@@ -169,7 +163,6 @@ function performSearch(query) {
         if (results.length === 0 && fuse && query.length > 0) {
             const fuseResults = fuse.search(query).map(r => r.item);
             if (fuseResults.length > 0) {
-                console.log('Using Fuse fallback - found', fuseResults.length, 'results');
                 results = fuseResults;
             }
         }

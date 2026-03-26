@@ -25,12 +25,7 @@ const IS_LOCALHOST = ['localhost', '127.0.0.1', '0.0.0.0'].includes(HOST) || !pr
 // ═══════════════════════════════════════════════════════════════════════════
 
 let DATA = {
-    projects: [],
-    projectsById: new Map(),
-    projectsByZone: new Map(),
-    mapProjects: [],
-    filters: null,
-    searchIndex: []
+    projects: []
 };
 
 const ROUTE_CACHE = new Map();
@@ -230,7 +225,6 @@ function loadAllData() {
                     lat: parseFloat(p.lat) || null,
                     lng: parseFloat(p.lng) || null,
                     zone: p.zone || zone,
-                    zoneNormalized: normalizeZone(p.zone || zone),
                     status: p.status || 'Under Construction',
                     type: p.type || 'residential',
                     priceMin: p.priceMin || p.price_min || null,
@@ -261,226 +255,8 @@ function loadAllData() {
     // Store in memory
     DATA.projects = allProjects;
     
-    // Build indexes
-    console.log('🔨 Building indexes...');
-    
-    // By ID
-    for (const p of allProjects) {
-        DATA.projectsById.set(p.id, p);
-        DATA.projectsById.set(p.name.toLowerCase(), p);
-    }
-    
-    // By Zone
-    for (const p of allProjects) {
-        const zone = p.zoneNormalized;
-        if (!DATA.projectsByZone.has(zone)) {
-            DATA.projectsByZone.set(zone, []);
-        }
-        DATA.projectsByZone.get(zone).push(p);
-    }
-    
-    // Map projects (only with coordinates)
-    DATA.mapProjects = allProjects.filter(p => p.lat && p.lng).map(p => ({
-        id: p.id,
-        name: p.name,
-        dev: p.dev,
-        lat: p.lat,
-        lng: p.lng,
-        zone: p.zone,
-        zoneNormalized: p.zoneNormalized,
-        status: p.status,
-        type: p.type,
-        priceMin: p.priceMin,
-        priceMax: p.priceMax,
-        downPayment: p.downPayment,
-        installmentYears: p.installmentYears
-    }));
-    
-    // Pre-compute filters
-    DATA.filters = computeFilters(allProjects);
-    
-    // Search index
-    DATA.searchIndex = allProjects.map(p => ({
-        id: p.id,
-        name: p.name,
-        dev: p.dev,
-        zone: p.zone,
-        text: p._searchText
-    }));
-
     const elapsed = Date.now() - startTime;
     console.log(`\n✅ Loaded ${allProjects.length} projects in ${elapsed}ms`);
-    console.log(`   📊 Map markers: ${DATA.mapProjects.length}`);
-    console.log(`   🗺️ Zones: ${DATA.projectsByZone.size}`);
-}
-
-function normalizeZone(zone) {
-    if (!zone) return 'other';
-    const z = zone.toLowerCase();
-    if (z.includes('north') || z.includes('sahel') || z.includes('alamein')) return 'north_coast';
-    if (z.includes('sokhna') || z.includes('galala')) return 'sokhna';
-    if (z.includes('gouna')) return 'gouna';
-    if (z.includes('cairo') || z.includes('capital') || z.includes('october') || z.includes('zayed')) return 'cairo';
-    return 'other';
-}
-
-function computeFilters(projects) {
-    const zones = {};
-    const developers = {};
-    const unitTypes = {};
-    const statuses = { delivered: 0, construction: 0 };
-    let priceMin = Infinity, priceMax = 0;
-    let areaMin = Infinity, areaMax = 0;
-
-    for (const p of projects) {
-        // Zones
-        const zone = p.zoneNormalized;
-        zones[zone] = (zones[zone] || 0) + 1;
-
-        // Developers
-        if (p.dev) {
-            developers[p.dev] = (developers[p.dev] || 0) + 1;
-        }
-
-        // Unit types
-        for (const ut of p.unitTypes) {
-            if (ut) unitTypes[ut] = (unitTypes[ut] || 0) + 1;
-        }
-
-        // Status
-        const status = (p.status || '').toLowerCase();
-        if (status.includes('delivered') || status.includes('ready')) {
-            statuses.delivered++;
-        } else {
-            statuses.construction++;
-        }
-
-        // Price range
-        if (p.priceMin && p.priceMin < priceMin) priceMin = p.priceMin;
-        if (p.priceMax && p.priceMax > priceMax) priceMax = p.priceMax;
-
-        // Area range
-        if (p.areaMin && p.areaMin < areaMin) areaMin = p.areaMin;
-        if (p.areaMax && p.areaMax > areaMax) areaMax = p.areaMax;
-    }
-
-    return {
-        zones: Object.entries(zones).map(([value, count]) => ({ value, label: value.replace('_', ' '), count })).sort((a, b) => b.count - a.count),
-        developers: Object.entries(developers).map(([value, count]) => ({ value, label: value, count })).sort((a, b) => b.count - a.count).slice(0, 50),
-        unitTypes: Object.entries(unitTypes).map(([value, count]) => ({ value, label: value, count })).sort((a, b) => b.count - a.count),
-        statuses: [
-            { value: 'delivered', label: 'Delivered', count: statuses.delivered },
-            { value: 'construction', label: 'Under Construction', count: statuses.construction }
-        ],
-        priceRange: { min: priceMin === Infinity ? 0 : priceMin, max: priceMax },
-        areaRange: { min: areaMin === Infinity ? 0 : areaMin, max: areaMax }
-    };
-}
-
-// ═══════════════════════════════════════════════════════════════════════════
-// ULTRA-FAST QUERY ENGINE
-// ═══════════════════════════════════════════════════════════════════════════
-
-function queryProjects(options = {}) {
-    const {
-        q,
-        zone,
-        status,
-        type,
-        unitType,
-        priceMin,
-        priceMax,
-        developer,
-        sort = 'name-asc',
-        page = 1,
-        pageSize = 20
-    } = options;
-
-    let results = DATA.projects;
-
-    // Zone filter (use pre-indexed data if only zone filter)
-    if (zone && zone !== 'all' && !q && !status && !type && !developer) {
-        results = DATA.projectsByZone.get(zone) || [];
-    } else {
-        // Apply filters
-        if (zone && zone !== 'all') {
-            results = results.filter(p => p.zoneNormalized === zone);
-        }
-        
-        if (status) {
-            const isDelivered = status === 'delivered';
-            results = results.filter(p => {
-                const s = (p.status || '').toLowerCase();
-                return isDelivered 
-                    ? (s.includes('delivered') || s.includes('ready'))
-                    : s.includes('construction');
-            });
-        }
-        
-        if (type) {
-            results = results.filter(p => p.type === type);
-        }
-        
-        if (unitType) {
-            const ut = unitType.toLowerCase();
-            results = results.filter(p => p.unitTypes.some(t => t.toLowerCase().includes(ut)));
-        }
-        
-        if (priceMin != null) {
-            results = results.filter(p => !p.priceMax || p.priceMax >= priceMin);
-        }
-        
-        if (priceMax != null) {
-            results = results.filter(p => !p.priceMin || p.priceMin <= priceMax);
-        }
-        
-        if (developer) {
-            const dev = developer.toLowerCase();
-            results = results.filter(p => p.dev && p.dev.toLowerCase().includes(dev));
-        }
-        
-        // Text search
-        if (q && q.length >= 2) {
-            const terms = q.toLowerCase().split(/\s+/);
-            results = results.filter(p => 
-                terms.every(term => p._searchText.includes(term))
-            );
-        }
-    }
-
-    // Sort
-    const sortFn = getSortFunction(sort);
-    if (sortFn) {
-        results = [...results].sort(sortFn);
-    }
-
-    // Paginate
-    const total = results.length;
-    const limit = Math.min(parseInt(pageSize) || 20, 100);
-    const offset = (Math.max(parseInt(page) || 1, 1) - 1) * limit;
-    const paged = results.slice(offset, offset + limit);
-
-    return {
-        projects: paged,
-        pagination: {
-            page: Math.max(parseInt(page) || 1, 1),
-            pageSize: limit,
-            total,
-            totalPages: Math.ceil(total / limit)
-        }
-    };
-}
-
-function getSortFunction(sort) {
-    const sorts = {
-        'name-asc': (a, b) => a.name.localeCompare(b.name),
-        'name-desc': (a, b) => b.name.localeCompare(a.name),
-        'price-asc': (a, b) => (a.priceMin || Infinity) - (b.priceMin || Infinity),
-        'price-desc': (a, b) => (b.priceMax || 0) - (a.priceMax || 0),
-        'area-asc': (a, b) => (a.areaMin || Infinity) - (b.areaMin || Infinity),
-        'area-desc': (a, b) => (b.areaMax || 0) - (a.areaMax || 0)
-    };
-    return sorts[sort];
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -503,12 +279,12 @@ if (IS_LOCALHOST) {
         contentSecurityPolicy: {
             directives: {
                 defaultSrc: ["'self'"],
-                scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://unpkg.com", "https://cdn.jsdelivr.net", "https://cdnjs.cloudflare.com"],
+                scriptSrc: ["'self'", "'unsafe-inline'", "https://unpkg.com", "https://cdn.jsdelivr.net", "https://cdnjs.cloudflare.com"],
                 scriptSrcAttr: ["'unsafe-inline'"],
                 styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://unpkg.com", "https://cdnjs.cloudflare.com", "https://cdn.jsdelivr.net"],
                 fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"],
                 imgSrc: ["'self'", "data:", "blob:", "https://*.basemaps.cartocdn.com", "https://server.arcgisonline.com", "https://*.tile.openstreetmap.org"],
-                connectSrc: ["'self'", "https://overpass-api.de", "https://*.basemaps.cartocdn.com", "https://server.arcgisonline.com", "https://router.project-osrm.org", "http://localhost:11434"],
+                connectSrc: ["'self'", "https://overpass-api.de", "https://*.basemaps.cartocdn.com", "https://server.arcgisonline.com", "https://router.project-osrm.org"],
                 workerSrc: ["'self'", "blob:"],
                 manifestSrc: ["'self'"],
                 upgradeInsecureRequests: null
@@ -558,77 +334,8 @@ app.use((req, res, next) => {
 });
 
 // ═══════════════════════════════════════════════════════════════════════════
-// API ROUTES - All served from memory
+// API ROUTES
 // ═══════════════════════════════════════════════════════════════════════════
-
-// Health check
-app.get('/api/health', (req, res) => {
-    res.json({
-        status: 'ok',
-        projects: DATA.projects.length,
-        uptime: process.uptime()
-    });
-});
-
-// Get map projects (MUST be before /api/projects/:id)
-app.get('/api/projects/map', (req, res) => {
-    let results = DATA.mapProjects;
-    
-    // Optional zone filter
-    if (req.query.zone && req.query.zone !== 'all') {
-        results = results.filter(p => p.zoneNormalized === req.query.zone);
-    }
-    
-    res.json({ success: true, data: results });
-});
-
-// Get projects with filters
-app.get('/api/projects', (req, res) => {
-    try {
-        const result = queryProjects(req.query);
-        res.json({ success: true, ...result });
-    } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
-    }
-});
-
-// Get single project (MUST be after /api/projects/map)
-app.get('/api/projects/:id', (req, res) => {
-    const id = req.params.id;
-    const project = DATA.projectsById.get(parseInt(id)) || DATA.projectsById.get(id.toLowerCase());
-    
-    if (!project) {
-        return res.status(404).json({ success: false, error: 'Project not found' });
-    }
-    
-    res.json({ success: true, data: project });
-});
-
-// Get filters
-app.get('/api/filters', (req, res) => {
-    res.json({ success: true, data: DATA.filters });
-});
-
-// Search suggestions
-app.get('/api/search/suggest', (req, res) => {
-    const q = (req.query.q || '').toLowerCase();
-    if (q.length < 2) {
-        return res.json({ success: true, data: [] });
-    }
-    
-    const results = DATA.searchIndex
-        .filter(p => p.text.includes(q))
-        .slice(0, 10)
-        .map(p => ({ name: p.name, dev: p.dev, zone: p.zone }));
-    
-    res.json({ success: true, data: results });
-});
-
-// Natural language search
-app.post('/api/search', (req, res) => {
-    const result = queryProjects(req.body);
-    res.json({ success: true, ...result });
-});
 
 app.post('/api/route/route', rateLimitRoute, async (req, res) => {
     try {
@@ -774,7 +481,6 @@ app.listen(PORT, HOST, () => {
     console.log(`  🖥️  Localhost:      http://localhost:${PORT}`);
     console.log(`  📡 API:            http://localhost:${PORT}/api`);
     console.log(`  💾 Projects in RAM: ${DATA.projects.length}`);
-    console.log(`  🗺️ Map Markers:     ${DATA.mapProjects.length}`);
     console.log('\n  All queries served from memory (<1ms response time)');
     console.log('\n═══════════════════════════════════════════════════════════════\n');
 });

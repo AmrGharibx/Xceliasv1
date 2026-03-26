@@ -24,6 +24,26 @@ if (window.gsap && window.ScrollTrigger && typeof window.gsap.registerPlugin ===
 window.projects = window.projects || [];
 window.projectDetails = window.projectDetails || {};
 
+// Canonical developer tier lists (used by scoring, investment, and AI systems)
+const PREMIUM_DEVS = ["emaar", "ora", "sodic", "tatweer misr", "palm hills"];
+const STRONG_DEVS = ["mountain view", "hassan allam", "orascom", "hyde park", "city edge", "al ahly sabbour"];
+const GOOD_DEVS = ["lmd", "inertia", "marakez", "misr italia", "cairo capital", "memaar al morshedy"];
+
+// Apply active category filter (delivered / construction / chalets / villas)
+function applyActiveFilter(projects) {
+    if (typeof activeFilter === 'undefined' || activeFilter === 'all') return projects;
+    return projects.filter(p => {
+        const details = (window.projectDetails || {})[p.name] || {};
+        const status = (details.status || "").toLowerCase();
+        const type = (details.unitTypes || "").toLowerCase();
+        if (activeFilter === 'delivered') return status.includes('delivered') || status.includes('ready');
+        if (activeFilter === 'construction') return status.includes('construction');
+        if (activeFilter === 'chalets') return type.includes('chalets');
+        if (activeFilter === 'villas') return type.includes('villas');
+        return true;
+    });
+}
+
 // ═══════════════════════════════════════════════════════════════════════════
 // LAZY-LOAD UTILITY — Load scripts/CSS on demand
 // ═══════════════════════════════════════════════════════════════════════════
@@ -1917,10 +1937,8 @@ function parseProjectData() {
         
         // Luxury Score
         let luxuryScore = 5;
-        const premiumDevs = ["emaar", "ora", "sodic", "tatweer misr", "palm hills"];
-        const strongDevs = ["mountain view", "hassan allam", "orascom", "hyde park"];
-        if (premiumDevs.some(d => dev.includes(d))) luxuryScore = 10;
-        else if (strongDevs.some(d => dev.includes(d))) luxuryScore = 8;
+        if (PREMIUM_DEVS.some(d => dev.includes(d))) luxuryScore = 10;
+        else if (STRONG_DEVS.some(d => dev.includes(d))) luxuryScore = 8;
         else if (zone.includes("north") || zone.includes("gouna")) luxuryScore = 7;
         
         // Amenities Score
@@ -1933,7 +1951,7 @@ function parseProjectData() {
             else if (count >= 6) amenitiesScore = 7;
             else if (count >= 4) amenitiesScore = 6;
         }
-        if (premiumDevs.some(d => dev.includes(d))) amenitiesScore = Math.min(10, amenitiesScore + 2);
+        if (PREMIUM_DEVS.some(d => dev.includes(d))) amenitiesScore = Math.min(10, amenitiesScore + 2);
         
         // Location Score (accessibility, demand)
         let locationScore = 5;
@@ -2161,19 +2179,7 @@ function initSearchWorker() {
                     let finalResults = results || [];
                     
                     // Apply active category filter (buttons)
-                    if (typeof activeFilter !== 'undefined' && activeFilter !== 'all') {
-                        finalResults = finalResults.filter(p => {
-                            const details = window.projectDetails[p.name] || {};
-                            const status = (details.status || "").toLowerCase();
-                            const type = (details.unitTypes || "").toLowerCase();
-                            
-                            if (activeFilter === 'delivered') return status.includes('delivered') || status.includes('ready');
-                            if (activeFilter === 'construction') return status.includes('construction');
-                            if (activeFilter === 'chalets') return type.includes('chalets');
-                            if (activeFilter === 'villas') return type.includes('villas');
-                            return true;
-                        });
-                    }
+                    finalResults = applyActiveFilter(finalResults);
 
                     try {
                         renderProjects(finalResults);
@@ -3144,20 +3150,7 @@ function filterProjects() {
       
       // Reset to all projects (filtered by active category)
       let results = window.projects || [];
-      
-      if (activeFilter !== 'all') {
-        results = results.filter(p => {
-          const details = projectDetails[p.name] || {};
-          const status = (details.status || "").toLowerCase();
-          const type = (details.unitTypes || "").toLowerCase();
-          
-          if (activeFilter === 'delivered') return status.includes('delivered') || status.includes('ready');
-          if (activeFilter === 'construction') return status.includes('construction');
-          if (activeFilter === 'chalets') return type.includes('chalets');
-          if (activeFilter === 'villas') return type.includes('villas');
-          return true;
-        });
-      }
+      results = applyActiveFilter(results);
       
       // Apply Advanced Filters
       if (typeof AdvancedFilters !== 'undefined' && AdvancedFilters.countActiveFilters() > 0) {
@@ -5239,15 +5232,11 @@ function updateInvestmentFinancials(price, proj) {
     }
     
     // Developer reputation bonus/penalty
-    const premiumDevs = ["emaar", "ora", "sodic", "tatweer misr", "palm hills"];
-    const strongDevs = ["mountain view", "hassan allam", "orascom", "hyde park", "city edge"];
-    const goodDevs = ["al ahly sabbour", "lmd", "inertia", "marakez", "misr italia"];
-    
-    if (premiumDevs.some(d => dev.includes(d))) {
+    if (PREMIUM_DEVS.some(d => dev.includes(d))) {
         baseGrowthRate += 0.04;
-    } else if (strongDevs.some(d => dev.includes(d))) {
+    } else if (STRONG_DEVS.some(d => dev.includes(d))) {
         baseGrowthRate += 0.02;
-    } else if (goodDevs.some(d => dev.includes(d))) {
+    } else if (GOOD_DEVS.some(d => dev.includes(d))) {
         baseGrowthRate += 0.01;
     }
     
@@ -5283,7 +5272,7 @@ function updateInvestmentFinancials(price, proj) {
     }
     
     // Premium developers get better rental yield
-    if (premiumDevs.some(d => dev.includes(d))) {
+    if (PREMIUM_DEVS.some(d => dev.includes(d))) {
         rentalRate += 0.015;
     }
     
@@ -5317,15 +5306,11 @@ function initInvestment(proj) {
     const dev = proj.dev ? proj.dev.toLowerCase() : "";
     
     // Factor A: Developer Reputation (0-30 points)
-    const premiumDevs = ["emaar", "ora", "sodic", "tatweer misr", "palm hills"];
-    const strongDevs = ["mountain view", "hassan allam", "orascom", "hyde park", "city edge", "al ahly sabbour"];
-    const goodDevs = ["lmd", "inertia", "marakez", "misr italia", "cairo capital", "memaar al morshedy"];
-    
-    if (premiumDevs.some(d => dev.includes(d))) {
+    if (PREMIUM_DEVS.some(d => dev.includes(d))) {
         score += 30;
-    } else if (strongDevs.some(d => dev.includes(d))) {
+    } else if (STRONG_DEVS.some(d => dev.includes(d))) {
         score += 22;
-    } else if (goodDevs.some(d => dev.includes(d))) {
+    } else if (GOOD_DEVS.some(d => dev.includes(d))) {
         score += 15;
     } else if (dev && dev.length > 0) {
         score += 8; // Unknown developer gets minimal points
@@ -5577,72 +5562,6 @@ if (window.innerWidth < 768) {
     }
 }
 
-// --- DEEP LINKING SYSTEM ---
-function initDeepLinking() {
-    const urlParams = new URLSearchParams(window.location.search);
-    
-    // 1. Project Deep Link (?project=Name)
-    const projectParam = urlParams.get('project');
-    if (projectParam && window.projects && window.projects.length > 0) {
-        // Fuzzy match the project name
-        const targetProject = window.projects.find(p => 
-            p.name.toLowerCase().includes(projectParam.toLowerCase()) || 
-            projectParam.toLowerCase().includes(p.name.toLowerCase())
-        );
-        
-        if (targetProject) {
-            // Wait for map to be ready
-            setTimeout(() => {
-                if (typeof focusOnProject === 'function') focusOnProject(targetProject);
-            }, 1000);
-        }
-    }
-
-    // 2. Search Deep Link (?search=Query)
-    const searchParam = urlParams.get('search');
-    if (searchParam) {
-        const searchInput = document.getElementById("searchInput");
-        if (searchInput) {
-            searchInput.value = searchParam;
-            // Trigger search logic
-            if (typeof filterProjects === 'function') filterProjects();
-            // Scroll to map
-            const mapEl = document.getElementById("map");
-            if(mapEl) mapEl.scrollIntoView({ behavior: "smooth" });
-        }
-    }
-    
-    // 3. Zone Deep Link (?zone=ZoneName)
-    const zoneParam = urlParams.get('zone');
-    if (zoneParam) {
-        // Map URL param to internal zone names
-        let internalZone = "";
-        const z = zoneParam.toLowerCase();
-        if (z.includes("north") || z.includes("sahel")) internalZone = "North Coast";
-        else if (z.includes("sokhna")) internalZone = "Sokhna";
-        else if (z.includes("gouna")) internalZone = "Gouna";
-        else if (z.includes("capital")) internalZone = "New Capital";
-        else if (z.includes("cairo")) internalZone = "New Cairo";
-        else if (z.includes("october") || z.includes("zayed")) internalZone = "October";
-        
-        if (internalZone) {
-            if (typeof switchMode === 'function') switchMode('zone');
-            // Find the button and click it to trigger filtering and UI updates
-            setTimeout(() => {
-                if (internalZone === "North Coast") document.getElementById("btn-north")?.click();
-                if (internalZone === "Sokhna") document.getElementById("btn-sokhna")?.click();
-                if (internalZone === "Gouna") document.getElementById("btn-gouna")?.click();
-                if (internalZone === "New Capital") document.getElementById("btn-capital")?.click();
-                if (internalZone === "New Cairo") document.getElementById("btn-newcairo")?.click();
-                if (internalZone === "October") document.getElementById("btn-october")?.click();
-            }, 500);
-        }
-    }
-}
-
-// Initialize Deep Linking after a short delay to ensure DOM is ready
-// window.addEventListener('load', initDeepLinking);
-
 // --- MOBILE OPTIMIZATIONS ---
 // Debounce resize event to prevent layout thrashing
 let resizeTimeout;
@@ -5743,10 +5662,6 @@ map.on('moveend', debounce(() => {
     if (window.RoutePlanner?.state?.tourActive) return;
     filterProjects();
 }, 200));
-
-function updateVisibleProjectsList() {
-    // Deprecated in favor of filterProjects() with bounds check
-}
 
 // ===== AI CONCIERGE CHATBOT SYSTEM (Powered by Google Gemini) =====
 const AIConcierge = {
@@ -6498,9 +6413,7 @@ Now BE RITA and make this client feel like they've found the best real estate fr
             results = results.filter(p => p.minDownPayment).sort((a, b) => a.minDownPayment - b.minDownPayment);
             filterDesc = "lowest down payment";
         } else if (lower.match(/expensive|luxury|premium|فاخر|لاكشري/)) {
-            // Premium developers
-            const premiumDevs = ["emaar", "ora", "sodic", "tatweer misr", "palm hills"];
-            results = results.filter(p => premiumDevs.some(d => p.dev && p.dev.toLowerCase().includes(d)));
+            results = results.filter(p => PREMIUM_DEVS.some(d => p.dev && p.dev.toLowerCase().includes(d)));
             filterDesc = "luxury developers";
         } else if (lower.match(/best investment|roi|appreciation|استثمار/)) {
             // Prioritize high-growth zones
@@ -8667,25 +8580,6 @@ const RoutePlanner = {
             }
         }
         return bestRoad || 'Local road';
-    },
-
-    // Pre-compute animation-frame indices where each leg boundary falls
-    _buildLegBoundaries(coords, sequence) {
-        if (sequence.length < 2 || coords.length < 2) return [0];
-        const boundaries = [0];
-        for (let s = 1; s < sequence.length - 1; s++) {
-            const stop = sequence[s];
-            let bestIdx = 0;
-            let bestDist = Infinity;
-            for (let c = 0; c < coords.length; c++) {
-                const dx = coords[c][0] - stop.lat;
-                const dy = coords[c][1] - stop.lng;
-                const d = dx * dx + dy * dy;
-                if (d < bestDist) { bestDist = d; bestIdx = c; }
-            }
-            boundaries.push(bestIdx);
-        }
-        return boundaries;
     },
 
     // Pre-compute cumulative distances (meters) where each leg boundary falls

@@ -44,7 +44,7 @@
         .pdf-box .ptxt{font-size:.85rem;color:var(--g500);margin-top:10px}
 
         /* ====== HEADER BAR ====== */
-        .topbar{background:#fff;border-bottom:3px solid var(--red);padding:14px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:var(--shadow-sm)}
+        .topbar{background:#fff;border-bottom:3px solid var(--red);padding:14px 32px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:var(--shadow-sm);overflow:visible}
         .logo-group{display:flex;align-items:center;gap:12px}
         .logo-mark{width:40px;height:40px;background:linear-gradient(135deg,#667eea,#764ba2);border-radius:12px;display:flex;align-items:center;justify-content:center;position:relative}
         .logo-ring{position:absolute;inset:-6px;border-radius:18px;border:1.5px solid transparent;background:linear-gradient(135deg,#667eea,#764ba2,#f093fb) border-box;-webkit-mask:linear-gradient(#fff 0 0) padding-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:0.4;animation:ringPulse 3s ease-in-out infinite}
@@ -59,7 +59,7 @@
         .dot.now{border-color:var(--red);color:#fff;background:var(--red);box-shadow:0 0 0 4px rgba(193,18,31,.15)}
         .dot.done{border-color:var(--green);color:#fff;background:var(--green);cursor:pointer}.dot.done:hover{transform:scale(1.1)}
         .dline{width:48px;height:2.5px;background:var(--g300);transition:var(--ease)}.dline.done{background:var(--green)}
-        .dot .dl{position:absolute;top:42px;left:50%;transform:translateX(-50%);font-size:.65rem;color:var(--g400);white-space:nowrap;font-weight:500}
+        .dot .dl{position:absolute;top:42px;left:50%;transform:translateX(-50%);font-size:.65rem;color:var(--g400);white-space:nowrap;font-weight:500;z-index:2}
         .dot.now .dl{color:var(--red);font-weight:600}.dot.done .dl{color:var(--green)}
 
         /* ====== MAIN ====== */
@@ -230,7 +230,7 @@
         @media(max-width:780px){
             .main{padding:20px 12px 60px}.card{padding:24px 20px}
             .grid{grid-template-columns:1fr}.grid.c3,.grid.c4{grid-template-columns:1fr 1fr}
-            .dot .dl{display:none}.dline{width:24px}.topbar{padding:12px 16px}
+            .dot .dl{display:none}.dline{width:24px}.topbar{padding:12px 16px 12px}
             .ocr-box{min-width:auto !important;max-width:96vw !important;padding:28px 20px !important}
             .pdf-box{min-width:auto !important;max-width:96vw !important;padding:32px 24px !important}
             .rtoolbar{padding:10px 16px !important}
@@ -241,7 +241,7 @@
             .main{padding:14px 8px 50px}.card{padding:18px 14px}
             .grid.c3,.grid.c4{grid-template-columns:1fr}
             .card-title{font-size:1.3rem}
-            .topbar{padding:10px 10px;gap:8px}
+            .topbar{padding:10px 10px 10px;gap:8px}
             .logo-t b{font-size:.95rem}
             .logo-t small{display:none}
             .upzone{padding:30px 20px}
@@ -253,7 +253,7 @@
 
         @media(max-width:320px){
             .main{padding:10px 6px 40px}.card{padding:14px 10px}
-            .topbar{padding:8px}
+            .topbar{padding:8px 8px 8px}
             .card-title{font-size:1.15rem}
             .btn{padding:8px 14px;font-size:.78rem}
         }
@@ -306,6 +306,7 @@
         .topbar{
             background:var(--d-surface) !important;backdrop-filter:blur(30px) saturate(200%) brightness(1.1);-webkit-backdrop-filter:blur(30px) saturate(200%) brightness(1.1);
             border-bottom:1px solid var(--d-border) !important;box-shadow:var(--d-glass-shadow) !important;
+            overflow:visible !important;
         }
         .logo-mark{
             background:var(--d-gradient) !important;border-radius:12px !important;font-family:'Montserrat',sans-serif !important;
@@ -429,7 +430,7 @@
         .raw-box{background:rgba(0,0,0,0.3) !important;border:1px solid var(--d-border) !important;color:var(--d-text-dim) !important}
 
         /* Topbar gradient accent line */
-        .topbar::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--d-gradient)}
+        .topbar::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--d-gradient);z-index:0}
 
         /* OCR overlay dark */
         #ocr-overlay .ocr-box{background:var(--d-surface) !important;backdrop-filter:blur(40px) saturate(200%);-webkit-backdrop-filter:blur(40px) saturate(200%);border:1px solid var(--d-border);box-shadow:0 25px 80px rgba(0,0,0,0.5),0 0 40px rgba(102,126,234,0.1)}
@@ -750,17 +751,66 @@ function ocrPreprocess(dataUrl){
             const scale=Math.max(2,Math.min(4,2400/Math.max(img.width,img.height)));
             c.width=img.width*scale;c.height=img.height*scale;
             const ctx=c.getContext('2d');
-            // Sharpen rendering
             ctx.imageSmoothingEnabled=false;
             ctx.drawImage(img,0,0,c.width,c.height);
-            // Grayscale + aggressive contrast for crisp text
+
             const id=ctx.getImageData(0,0,c.width,c.height),d=id.data;
-            for(let i=0;i<d.length;i+=4){
-                let g=0.299*d[i]+0.587*d[i+1]+0.114*d[i+2];
-                // Push darks darker, lights lighter (binarize-ish)
-                g=g<145?Math.max(0,g*0.4):Math.min(255,128+(g-128)*2.2);
-                d[i]=d[i+1]=d[i+2]=g;
+
+            // Step 1: Convert to grayscale and detect if dark or light theme
+            const gray=new Float32Array(c.width*c.height);
+            let totalBright=0;
+            for(let i=0,j=0;i<d.length;i+=4,j++){
+                gray[j]=0.299*d[i]+0.587*d[i+1]+0.114*d[i+2];
+                totalBright+=gray[j];
             }
+            const avgBright=totalBright/(c.width*c.height);
+            const isDark=avgBright<128;
+
+            // Step 2: If dark theme, invert to black text on white background
+            if(isDark){
+                for(let j=0;j<gray.length;j++) gray[j]=255-gray[j];
+            }
+
+            // Step 3: Local adaptive threshold (Sauvola-inspired)
+            // Use a simplified approach: compute local mean in 15x15 blocks
+            const w=c.width,h=c.height;
+            const blockSize=Math.max(15,Math.round(Math.min(w,h)/80)|1);
+            const halfBlock=blockSize>>1;
+
+            // Build integral image for fast local mean
+            const integral=new Float64Array((w+1)*(h+1));
+            for(let y=0;y<h;y++){
+                let rowSum=0;
+                for(let x=0;x<w;x++){
+                    rowSum+=gray[y*w+x];
+                    integral[(y+1)*(w+1)+(x+1)]=integral[y*(w+1)+(x+1)]+rowSum;
+                }
+            }
+
+            function localMean(x,y){
+                const x1=Math.max(0,x-halfBlock),y1=Math.max(0,y-halfBlock);
+                const x2=Math.min(w-1,x+halfBlock),y2=Math.min(h-1,y+halfBlock);
+                const area=(x2-x1+1)*(y2-y1+1);
+                const sum=integral[(y2+1)*(w+1)+(x2+1)]-integral[y1*(w+1)+(x2+1)]
+                         -integral[(y2+1)*(w+1)+x1]+integral[y1*(w+1)+x1];
+                return sum/area;
+            }
+
+            // Step 4: Apply adaptive binarization with bias toward keeping text
+            const k=0.15; // Sauvola bias
+            for(let y=0;y<h;y++){
+                for(let x=0;x<w;x++){
+                    const idx=y*w+x;
+                    const px=gray[idx];
+                    const mean=localMean(x,y);
+                    // Threshold: pixel is text (dark) if it's darker than local mean adjusted by k
+                    const threshold=mean*(1-k);
+                    const out=px<threshold?0:255;
+                    const pi=idx*4;
+                    d[pi]=d[pi+1]=d[pi+2]=out;
+                }
+            }
+
             ctx.putImageData(id,0,0);
             resolve(c.toDataURL('image/png'));
         };
@@ -786,7 +836,7 @@ async function extractFromScreenshots(){
     },90000);
 
     try{
-        // Create Tesseract worker
+        // Create Tesseract worker with optimized settings
         const worker=await Tesseract.createWorker('eng',1,{
             logger:m=>{
                 if(m.status==='loading tesseract core')ocrProg('Loading Tesseract core...',5);
@@ -798,6 +848,12 @@ async function extractFromScreenshots(){
                     ocrProg('Reading text... '+Math.round(m.progress*100)+'%',imgPct);
                 }
             }
+        });
+        // Set Tesseract parameters for better structured document reading
+        await worker.setParameters({
+            tessedit_pageseg_mode: '6',      // Assume uniform block of text (better for card layouts)
+            preserve_interword_spaces: '1',   // Keep spacing for field:value pairs
+            tessedit_char_whitelist: ''        // Allow all characters (default)
         });
         ocrStep(1,'done');ocrStep(2);
         if(_ocrCancelled){await worker.terminate();return;}
@@ -873,6 +929,7 @@ async function extractFromScreenshots(){
 
 // Returns true if this image's OCR text looks like a Notion detail card
 function isCardView(text){
+    const normalized=normFieldLabel(text);
     const fieldHits=[
         /\bmapp?ing\b/i,
         /\bsoft\s*skill/i,
@@ -880,24 +937,38 @@ function isCardView(text){
         /\bpresentab/i,
         /\bassessment\s*fo/i,
         /\battendance\b/i,
-        /\babsen/i
+        /\babsen/i,
+        /\binstructor\s*co/i,
+        /\bbatch\b/i,
+        /\bcompany\b/i
     ];
     let hits=0;
-    for(const rx of fieldHits)if(rx.test(text))hits++;
+    for(const rx of fieldHits)if(rx.test(text)||rx.test(normalized))hits++;
     return hits>=3;
 }
 
 // Strip OCR noise from a candidate name string
 function cleanOCRName(s){
     if(!s)return '';
-    // Remove unicode box-drawing, Notion icons, emoji
-    s=s.replace(/[\u2000-\u2BFF\u{1F000}-\u{1FFFF}]/gu,'').trim();
-    // Remove leading bracket/symbol clusters
-    s=s.replace(/^[\[\]{}#@$%^&*()<>=+\-_~`'"!?|/\\;:,]+\s*/,'').trim();
-    // Repeatedly strip any leading garbage token (1-4 chars, letter OR digit OR symbol)
-    // before a word that starts with an uppercase — these are misread Notion page icons
-    for(let i=0;i<4;i++){
-        s=s.replace(/^[^\s]{1,4}\s+(?=[A-Z])/, '').trim();
+    // Remove unicode box-drawing, Notion icons, emoji, dingbats, misc symbols
+    s=s.replace(/[\u2000-\u2BFF\u{1F000}-\u{1FFFF}\u{E000}-\u{F8FF}\uFE00-\uFE0F\u200B-\u200F\u2028-\u202F]/gu,'').trim();
+    // Remove leading punctuation/symbol clusters
+    s=s.replace(/^[\[\]{}#@$%^&*()<>=+\-_~`'"!?|/\\;:,.]+\s*/,'').trim();
+    // Remove common OCR artifacts that precede names (Notion page icons read as garbled text)
+    // e.g., "Gd Ahmed Sayed" or "A& Mohamed Ali" or "a© Fatma Hassan"
+    s=s.replace(/^[^\s]{1,3}[©®™&@#§¶†‡]+\s*/,'').trim();
+    // Strip isolated 1-2 char garbage tokens before a capitalized name
+    // Only strip if what follows starts with a capital letter (actual name)
+    s=s.replace(/^[^\sa-zA-Z]{1,3}\s+(?=[A-Z])/,'').trim();
+    // One more pass: strip any remaining single non-alpha token before a name
+    s=s.replace(/^[^a-zA-Z\s]{1,2}\s+/,'').trim();
+    // Fix common OCR substitutions in names
+    s=s.replace(/\b0(?=[a-z])/g,'O');  // "0mar" → "Omar"
+    s=s.replace(/\b1(?=[a-z])/g,'I');  // "1brahim" → "Ibrahim"
+    // Fix "rn" → "m" isn't reliable, skip that
+    // Capitalize first letter of each word if all lowercase
+    if(s===s.toLowerCase()&&s.length>3){
+        s=s.replace(/\b\w/g,c=>c.toUpperCase());
     }
     return s;
 }
@@ -906,8 +977,9 @@ function normFieldLabel(line){
     return String(line||'')
         .toLowerCase()
         .replace(/0/g,'o')
-        .replace(/[1|]/g,'i')
+        .replace(/[1|l]/g,'i')
         .replace(/5/g,'s')
+        .replace(/8/g,'b')
         .replace(/[^a-z\s]/g,' ')
         .replace(/\s+/g,' ')
         .trim();
@@ -919,24 +991,47 @@ function isValidNameCandidate(value){
     if(/\d/.test(candidate))return false;
     const compact=normFieldLabel(candidate).replace(/[^a-z]/g,'');
     if(!/[a-z]{2}/i.test(candidate))return false;
-    if(/^(?:final|empty|roots?|batch|company|mapping|product|soft|present|attendance|absence|instructor|assessment|outcome|comments?)$/i.test(candidate))return false;
+    if(/^(?:final|empty|roots?|batch|company|mapping|product|soft|present|attendance|absence|instructor|assessment|outcome|comments?|ratings?)$/i.test(candidate))return false;
     if(/(?:assessment|instructor|attendance|absence|outcome|product|mapping|presentability|softskills?)/i.test(compact))return false;
     const tokens=candidate.split(/\s+/).filter(Boolean);
     if(tokens.length<2)return false;
-    const allowedShort=new Set(['al','el','de','da','di','la','le','bin','ibn','abu']);
+    const allowedShort=new Set(['al','el','de','da','di','la','le','bin','ibn','abu','om','ay','mo']);
     if(tokens.some(token=>token.length<2))return false;
     if(tokens.some(token=>token.length===2&&!allowedShort.has(token.toLowerCase())))return false;
+    // Boost confidence: check if first token matches a common Arabic/English first name
+    const commonFirstNames=new Set([
+        'ahmed','mohamed','mohammed','mohammad','mahmoud','mustafa','omar','amr','ali','hassan','hussein',
+        'ibrahim','ismail','youssef','yousuf','karim','khalid','khaled','tarek','tamer','hossam','walid',
+        'sherif','ashraf','adel','nour','abdel','abdallah','ramy','sami','samir','ayman','ehab','hany',
+        'magdy','maged','nader','osama','rahim','reda','said','shady','wael','yasser','ziad',
+        'fatma','sara','sarah','mona','nada','noura','hana','dina','rana','rania','menna','mariam',
+        'aya','yasmin','layla','salma','asmaa','esraa','heba','iman','reham','soha','omnia',
+        'john','david','michael','james','robert','william','joseph','thomas','daniel','mark',
+        'mary','jennifer','linda','elizabeth','susan','karen','nancy','lisa','betty','sandra'
+    ]);
+    if(commonFirstNames.has(tokens[0].toLowerCase()))return true;
     return true;
 }
 
 function bestNearbyName(lines,startIdx,searchRadius=3){
+    // First pass: look forward
     for(let offset=1;offset<=searchRadius;offset++){
         const next=lines[startIdx+offset];
-        if(next&&isValidNameCandidate(next))return cleanOCRName(next);
+        if(!next)continue;
+        const cleaned=cleanOCRName(next);
+        if(isValidNameCandidate(cleaned))return cleaned;
+        // Try partial: maybe just the first 2-3 title-case words are the name
+        const partial=cleaned.match(/^([A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,3})/);
+        if(partial&&isValidNameCandidate(partial[1]))return partial[1];
     }
+    // Second pass: look backward
     for(let offset=1;offset<=searchRadius;offset++){
         const prev=lines[startIdx-offset];
-        if(prev&&isValidNameCandidate(prev))return cleanOCRName(prev);
+        if(!prev)continue;
+        const cleaned=cleanOCRName(prev);
+        if(isValidNameCandidate(cleaned))return cleaned;
+        const partial=cleaned.match(/^([A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,3})/);
+        if(partial&&isValidNameCandidate(partial[1]))return partial[1];
     }
     return '';
 }
@@ -952,10 +1047,17 @@ function firstScoreOnLine(line, nextLine){
         const v=parseFloat(m[1]);
         if(v>=0&&v<=5)return v;
     }
+    // Try isolated fraction patterns: "3/5", "4.5/5"
+    const fracM=line.match(/(\d+\.?\d*)\s*[/]\s*5/);
+    if(fracM){const v=parseFloat(fracM[1]);if(v>=0&&v<=5)return v;}
     // Try the next line (value may be on separate line in OCR output)
     if(nextLine){
-        const m2=nextLine.match(/^(\d+\.?\d*)(?!\s*%)/);
-        if(m2){const v=parseFloat(m2[1]);if(v>=0&&v<=5)return v;}
+        const re2=/(?:^|[\s:])(\d+\.?\d*)(?!\s*%)/g;
+        let m2;
+        while((m2=re2.exec(nextLine))!==null){
+            const v=parseFloat(m2[1]);
+            if(v>=0&&v<=5)return v;
+        }
     }
     return null;
 }
@@ -967,7 +1069,13 @@ function ocrNormText(t){
         .replace(/(\d)\.(\s+)(\d)/g,'$1.$3') // spaced decimal "3. 5" → "3.5"
         .replace(/\bO\b/g,'0')               // isolated O → 0
         .replace(/\bl\b/g,'1')               // isolated l → 1
-        .replace(/\bS\b(?=\.?\d)/g,'5');     // S before digit → 5
+        .replace(/\bS\b(?=\.?\d)/g,'5')      // S before digit → 5
+        .replace(/(\d)[oO]/g,'$10')           // "3o" → "30" (zero after digit)
+        .replace(/[oO](\d)/g,'0$1')           // "o3" → "03" (zero before digit)
+        .replace(/\bI(\d)/g,'1$1')            // "I3" → "13"
+        .replace(/(\d)I\b/g,'$11')            // "3I" → "31"
+        .replace(/\bll\b/g,'11')              // "ll" → "11"
+        .replace(/\bOO\b/g,'00');             // "OO" → "00"
 }
 
 // Robust score finder — tries patterns in order, returns first 0-5 match
@@ -1067,7 +1175,7 @@ function extractSummaryData(fullText){
         /soft\s*skill[a-z.]*[\s:,]+(\d+\.?\d*)(?!\s*%)/i
     ]);
 
-    let match=fullText.match(/[Aa]ttendance\s+was\s+(\d+)\s+with\s+(no|zero)\s+absences?/i);
+    let match=fullText.match(/[Aa]ttendance\s+was\s+(\d+)\s+with\s+(no|zero|0)\s+absences?/i);
     if(match){
         data.attendanceDays=parseInt(match[1],10);
         data.absent=0;
@@ -1084,6 +1192,21 @@ function extractSummaryData(fullText){
             data.attendanceDays=parseInt(match[1],10);
             data.absent=0;
         }
+    }
+    // More patterns: "attendance: 8", "attendance 8 days", "8 days attended"
+    if(data.attendanceDays===null){
+        match=fullText.match(/attendance\s*[:\-]\s*(\d+)/i)
+           || fullText.match(/attendance\s+(\d+)\s*(?:days?)?/i)
+           || fullText.match(/(\d+)\s+days?\s+attended/i);
+        if(match){const v=parseInt(match[1],10);if(v>0&&v<=30)data.attendanceDays=v;}
+    }
+    // "absence: 0", "absent: 2", "0 absences", "2 absences"
+    if(data.absent===null){
+        match=fullText.match(/absences?\s*[:\-]\s*(\d+)/i)
+           || fullText.match(/absent\s*[:\-]\s*(\d+)/i)
+           || fullText.match(/(\d+)\s+absences?\b/i)
+           || fullText.match(/(\d+)\s+absent\b/i);
+        if(match){const v=parseInt(match[1],10);if(v>=0&&v<=30)data.absent=v;}
     }
 
     match=fullText.match(/(?:assessment\s+outcome|outcome|assessment)\s+was\s+["']?([A-Za-z][A-Za-z\s-]{2,30}?)(?=["'.,;]|\s+with\b|\s+and\b|$)/i);
@@ -1175,13 +1298,24 @@ function parseCardView(text){
             if(isValidNameCandidate(val)){
                 name=val;
             }else{
-                // Try next line
-                let nv=cleanOCRName(NL);
-                if(isValidNameCandidate(nv))name=nv;
-                // Also try line after that
-                if(!name||name.length<2){
-                    let nv2=cleanOCRName(lines[i+2]||'');
-                    if(isValidNameCandidate(nv2))name=nv2;
+                // Try extracting title-case words from the collected value
+                const titleMatch=val.match(/([A-Z][a-z]+(?:\s+[A-Za-z][a-z]+){1,3})/);
+                if(titleMatch&&isValidNameCandidate(titleMatch[1])){
+                    name=cleanOCRName(titleMatch[1]);
+                }else{
+                    // Try next line
+                    let nv=cleanOCRName(NL);
+                    if(isValidNameCandidate(nv)){name=nv;}
+                    else{
+                        // Try partial title-case from next line
+                        const partNL=cleanOCRName(NL).match(/([A-Z][a-z]+(?:\s+[A-Za-z][a-z]+){1,3})/);
+                        if(partNL&&isValidNameCandidate(partNL[1]))name=cleanOCRName(partNL[1]);
+                    }
+                    // Also try line after that
+                    if(!name||name.length<2){
+                        let nv2=cleanOCRName(lines[i+2]||'');
+                        if(isValidNameCandidate(nv2))name=nv2;
+                    }
                 }
             }
         }
@@ -1225,14 +1359,21 @@ function parseCardView(text){
 
         // ---- Absence / Attendance (only if AI summary didn't already set them) ----
         if(!gotAttFromAI){
-            if(/^absence\b/.test(labelNorm)){
-                // Take the last integer on the line (avoids stray chars)
-                const nums=(L+' '+NL).match(/\b(\d+)\b/g);
-                if(nums)absent=parseInt(nums[0]); // first number = the value
+            if(/^absence\b/.test(labelNorm)||/^absent\b/.test(labelNorm)){
+                const normLine=ocrNormText(L+' '+NL);
+                const nums=normLine.match(/\b(\d+)\b/g);
+                if(nums){
+                    // Pick first number in sane range (0-30)
+                    for(const n of nums){const v=parseInt(n,10);if(v>=0&&v<=30){absent=v;break;}}
+                }
             }
-            if(/^attendance\b/.test(labelNorm)&&!/absence/.test(labelNorm)){
-                const nums=(L+' '+NL).match(/\b(\d+)\b/g);
-                if(nums)attendanceDays=parseInt(nums[nums.length-1]);
+            if(/^attendance\b/.test(labelNorm)&&!/absence|absent/.test(labelNorm)){
+                const normLine=ocrNormText(L+' '+NL);
+                const nums=normLine.match(/\b(\d+)\b/g);
+                if(nums){
+                    // Pick last number in sane range (1-30)
+                    for(let ni=nums.length-1;ni>=0;ni--){const v=parseInt(nums[ni],10);if(v>0&&v<=30){attendanceDays=v;break;}}
+                }
             }
         }
 
@@ -1259,6 +1400,15 @@ function parseCardView(text){
         // Pattern: "Assessment Fo... [icon?] Name Here"
         const m=fullText.match(/assessment\s*fo[^\s.]*[.…]*\s+([A-Za-z][^\n\r]{2,40}?)(?:\s{2,}|$)/i);
         if(m){const v=cleanOCRName(m[1].trim());if(isValidNameCandidate(v))name=v;}
+    }
+    // Try extracting name using known-names anchor: look for common first names followed by another word
+    if(!name||name.length<2){
+        const nameRx=/\b((?:Ahmed|Mohamed|Mohammed|Mohammad|Mahmoud|Mustafa|Omar|Amr|Ali|Hassan|Hussein|Ibrahim|Ismail|Youssef|Karim|Khalid|Khaled|Tarek|Tamer|Hossam|Walid|Sherif|Ashraf|Nour|Abdel|Ramy|Sami|Ayman|Fatma|Sara|Sarah|Mona|Nada|Noura|Hana|Dina|Rana|Rania|Menna|Mariam|Aya|Yasmin|Layla|Salma|Heba|Iman)(?:\s+[A-Z][a-z]{1,}){1,3})/g;
+        const candidates=[...fullText.matchAll(nameRx)];
+        for(const c of candidates){
+            const cv=cleanOCRName(c[1]);
+            if(isValidNameCandidate(cv)){name=cv;break;}
+        }
     }
     // Fallback around the outcome field position — the real name is often adjacent even if the form label OCR is mangled.
     if(!name||name.length<2){
@@ -1321,11 +1471,22 @@ function parseOCRText(raw){
         }
     }
     if(cardTrainees.length>0){
-        // Deduplicate
+        // Deduplicate — fuzzy match names that OCR may have slightly corrupted
         const seen=new Map();
         for(const t of cardTrainees){
-            const key=t.name.toLowerCase().replace(/\s+/g,' ');
-            if(!seen.has(key))seen.set(key,t);
+            const key=t.name.toLowerCase().replace(/\s+/g,' ').trim();
+            // Check for near-duplicates (edit distance ≤ 2 or one name is substring of the other)
+            let merged=false;
+            for(const [existKey,existT] of seen){
+                if(key===existKey||(key.length>5&&existKey.length>5&&(key.includes(existKey)||existKey.includes(key)))){
+                    // Keep the one with more data (higher total score)
+                    const existTotal=(existT.scores.mapping.score||0)+(existT.scores.productKnowledge.score||0)+(existT.scores.softSkills.score||0)+(existT.scores.presentability.score||0);
+                    const newTotal=(t.scores.mapping.score||0)+(t.scores.productKnowledge.score||0)+(t.scores.softSkills.score||0)+(t.scores.presentability.score||0);
+                    if(newTotal>existTotal)seen.set(existKey,t);
+                    merged=true;break;
+                }
+            }
+            if(!merged)seen.set(key,t);
         }
         return Array.from(seen.values());
     }

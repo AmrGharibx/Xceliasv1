@@ -3013,10 +3013,6 @@ function continueCinematicTour() {
     return RoutePlanner.resumeTour();
 }
 
-function stopCinematicTour() {
-    return RoutePlanner.stopTour();
-}
-
 function endCinematicTour() {
     return RoutePlanner.endTour();
 }
@@ -3408,40 +3404,6 @@ function debounce(func, wait) {
         clearTimeout(timeout);
         timeout = setTimeout(() => func.apply(context, args), wait);
     };
-}
-
-// Throttle function for scroll and resize events
-function throttle(func, limit) {
-    let inThrottle;
-    return function(...args) {
-        const context = this;
-        if (!inThrottle) {
-            func.apply(context, args);
-            inThrottle = true;
-            setTimeout(() => inThrottle = false, limit);
-        }
-    };
-}
-
-// Simple memoization cache for search results
-const searchCache = new Map();
-const CACHE_MAX_SIZE = 50;
-
-function getCachedResults(query) {
-    return searchCache.get(query);
-}
-
-function setCachedResults(query, results) {
-    // Implement LRU-style cache eviction
-    if (searchCache.size >= CACHE_MAX_SIZE) {
-        const firstKey = searchCache.keys().next().value;
-        searchCache.delete(firstKey);
-    }
-    searchCache.set(query, results);
-}
-
-function clearSearchCache() {
-    searchCache.clear();
 }
 
 // Event Listeners with optimized debounce
@@ -5624,13 +5586,6 @@ window.addEventListener('resize', () => {
     }, 200);
 }, { passive: true });
 
-// Prevent double-tap zoom on buttons (CSS touch-action is preferred, but this is a fallback)
-// document.querySelectorAll('button').forEach(btn => {
-//     btn.addEventListener('touchend', (e) => {
-//         e.preventDefault();
-//         btn.click();
-//     });
-// });
 // --- DATA LOADING ---
 // Load all data at startup to ensure all markers are visible.
 // Optimization: The sidebar list will be filtered by map bounds to improve performance.

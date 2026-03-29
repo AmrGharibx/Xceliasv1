@@ -3108,6 +3108,11 @@
         border-right-color: var(--glass-border);
       }
 
+      /* Instant hide for labels toggle (avoids per-marker DOM ops) */
+      .labels-hidden .leaflet-tooltip {
+        display: none !important;
+      }
+
       .popup-title {
         font-weight: 700;
         background: var(--gradient-primary);

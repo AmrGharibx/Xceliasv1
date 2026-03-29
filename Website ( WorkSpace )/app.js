@@ -1553,27 +1553,59 @@ function toggleLabels() {
     isLabelsAlwaysVisible = !isLabelsAlwaysVisible;
     const btn = document.getElementById('btn-labels');
     if (btn) {
-        if (isLabelsAlwaysVisible) {
-            btn.classList.add('active');
-        } else {
-            btn.classList.remove('active');
-        }
+        if (isLabelsAlwaysVisible) btn.classList.add('active');
+        else btn.classList.remove('active');
     }
-    
-    // Optimized: Only toggle tooltips for markers within the current viewport
     if (!map) return;
+    const mapEl = map.getContainer();
+
+    if (!isLabelsAlwaysVisible) {
+        // OFF: CSS-hide instantly, then close tooltips in background
+        mapEl.classList.add('labels-hidden');
+        _batchTooltips(false);
+    } else {
+        // ON: remove CSS-hide, then open viewport tooltips in batches
+        mapEl.classList.remove('labels-hidden');
+        _batchTooltips(true);
+    }
+}
+
+/** Batch-process tooltip open/close for viewport markers only */
+function _batchTooltips(open) {
     const bounds = map.getBounds();
     const markers = allMarkersWithTooltips;
+    const batch = [];
     for (let i = 0; i < markers.length; i++) {
-        const marker = markers[i];
-        if (marker && marker.getLatLng && bounds.contains(marker.getLatLng())) {
-            const tooltip = marker.getTooltip?.();
-            if (tooltip) {
-                if (isLabelsAlwaysVisible) marker.openTooltip();
-                else marker.closeTooltip();
-            }
+        const m = markers[i];
+        if (m && m._map && m.getLatLng && bounds.contains(m.getLatLng())) {
+            if (m.getTooltip?.()) batch.push(m);
         }
     }
+    // In Normal View at low zoom, cap labels to avoid overlapping mess
+    const maxLabels = open && !isClusterView ? 200 : batch.length;
+    const count = Math.min(batch.length, maxLabels);
+    // Batch size: small for open (each triggers DOM reflow), larger for close
+    const batchSize = open ? 10 : 60;
+    // Small count → do it synchronously
+    if (count <= batchSize) {
+        for (let i = 0; i < count; i++) {
+            if (open) batch[i].openTooltip(); else batch[i].closeTooltip();
+        }
+        if (!open) map.getContainer().classList.remove('labels-hidden');
+        return;
+    }
+    // Large count → rAF batches
+    let idx = 0;
+    function step() {
+        const end = Math.min(idx + batchSize, count);
+        for (let i = idx; i < end; i++) {
+            if (open) batch[i].openTooltip(); else batch[i].closeTooltip();
+        }
+        idx = end;
+        if (idx < count) requestAnimationFrame(step);
+        else if (!open) map.getContainer().classList.remove('labels-hidden');
+    }
+    requestAnimationFrame(step);
 }
 
 function toggleHeatmap() {
@@ -5672,17 +5704,7 @@ map.on('moveend', debounce(() => {
     if (window.RoutePlanner?.state?.tourActive) return;
     filterProjects();
     // Sync labels for newly visible markers after pan/zoom
-    if (isLabelsAlwaysVisible) {
-        const bounds = map.getBounds();
-        const markers = allMarkersWithTooltips;
-        for (let i = 0; i < markers.length; i++) {
-            const m = markers[i];
-            if (m && m.getLatLng && bounds.contains(m.getLatLng())) {
-                const t = m.getTooltip?.();
-                if (t) m.openTooltip();
-            }
-        }
-    }
+    if (isLabelsAlwaysVisible) _batchTooltips(true);
 }, 200));
 
 // ===== AI CONCIERGE CHATBOT SYSTEM (Powered by Google Gemini) =====

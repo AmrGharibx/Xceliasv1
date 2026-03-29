@@ -1007,6 +1007,20 @@ const styles = {
     WebkitBackgroundClip: 'text',
     WebkitTextFillColor: 'transparent'
   },
+  logoSub: {
+    fontSize: '9px',
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    letterSpacing: '2px',
+    color: 'rgba(255,255,255,0.5)',
+    marginTop: '2px'
+  },
+  logoRed: {
+    color: '#e8372a',
+    fontWeight: '800',
+    WebkitTextFillColor: '#e8372a',
+    letterSpacing: '2px'
+  },
   
   // Score Panel
   scorePanel: {
@@ -10395,7 +10409,10 @@ const App = () => {
       <header style={styles.header}>
         <div style={styles.logo}>
           <div style={styles.logoIcon}><div style={styles.logoRing}></div><svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg" style={{width:'28px',height:'28px',position:'relative',zIndex:1}}><defs><linearGradient id="xlg" x1="0" y1="0" x2="56" y2="56"><stop offset="0%" stopColor="#667eea"/><stop offset="50%" stopColor="#764ba2"/><stop offset="100%" stopColor="#f093fb"/></linearGradient></defs><rect x="4" y="4" width="48" height="48" rx="14" stroke="url(#xlg)" strokeWidth="2" fill="none" opacity="0.6"/><text x="28" y="37" textAnchor="middle" fill="url(#xlg)" fontFamily="Montserrat" fontWeight="900" fontSize="26">X</text></svg></div>
-          <span style={styles.logoText}>{s.appTitle}</span>
+          <div style={{display:'flex',flexDirection:'column'}}>
+            <span style={styles.logoText}>{s.appTitle}</span>
+            <span style={styles.logoSub}><span style={styles.logoRed}>by red</span> Training Academy</span>
+          </div>
         </div>
         <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
           <button

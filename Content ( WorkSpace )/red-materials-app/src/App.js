@@ -58,7 +58,7 @@ const Footer = () => (
         </div>
         <div>
           <div className="text-xs uppercase tracking-[0.28em] text-[var(--accent-soft)]">Xcelias</div>
-          <div className="text-sm text-[var(--text-soft)]">Immersive real-estate sales mastery</div>
+          <div className="text-[9px] uppercase tracking-[0.18em] text-[var(--text-muted)]"><span className="font-extrabold text-[#e8372a]">by red</span> Training Academy</div>
         </div>
       </div>
       <p className="max-w-xl text-sm leading-6 text-[var(--text-muted)]">Designed as a premium learning system with the original training transcript preserved in-product and a dedicated quick-reference layer for repeat use.</p>

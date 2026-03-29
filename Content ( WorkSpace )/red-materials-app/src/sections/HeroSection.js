@@ -24,6 +24,9 @@ const HeroSection = ({ onOpenSource, onOpenMap }) => {
               <span className="mt-2 block font-sans text-lg font-medium uppercase tracking-[0.32em] text-[var(--gold)] md:text-2xl">
                 The Ultimate Real Estate Mastery
               </span>
+              <span className="mt-1 block font-sans text-xs font-semibold uppercase tracking-[0.28em] text-white/50">
+                <span className="font-extrabold text-[#e8372a]">by red</span> Training Academy
+              </span>
             </h1>
             <p className="mt-8 max-w-3xl text-lg leading-8 text-[var(--text-soft)] md:text-xl">
               A premium, chapter-based field guide for real-estate consultants who need to classify inventory clearly, qualify demand precisely, read buyer motives intelligently, and control calls with authority.

@@ -35,7 +35,7 @@ export const SectionShell = ({ id, chapter, title, subtitle, summary, takeaways 
             <div className="mb-4 inline-flex items-center gap-3 rounded-full border border-[var(--line)] bg-[var(--panel-strong)] px-4 py-2 text-xs uppercase tracking-[0.3em] text-[var(--accent-soft)]">
               <span>Chapter {chapter}</span>
               <span className="h-1 w-1 rounded-full bg-[var(--accent)]" />
-              <span>Xcelias</span>
+              <span><span className="font-extrabold text-[#e8372a]">red</span> Xcelias</span>
             </div>
             <h2 className="max-w-4xl font-display text-4xl leading-none text-white md:text-6xl lg:text-7xl">{title}</h2>
             <p className="mt-4 max-w-3xl text-base leading-7 text-[var(--text-soft)] md:text-lg">{subtitle}</p>

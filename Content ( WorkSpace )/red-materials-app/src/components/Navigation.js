@@ -25,7 +25,7 @@ export const TopNavigation = ({ activeSection, onOpenMap, onOpenSource, onOpenBr
             </div>
             <div>
               <div className="text-[11px] uppercase tracking-[0.28em] text-[var(--accent-soft)]">Xcelias</div>
-              <div className="text-sm font-semibold md:text-base">The Ultimate Real Estate Mastery</div>
+              <div className="text-[9px] uppercase tracking-[0.18em] text-[var(--text-muted)]"><span className="font-extrabold text-[#e8372a]">by red</span> Training Academy</div>
             </div>
           </button>
 

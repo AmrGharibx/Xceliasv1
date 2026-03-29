@@ -1560,36 +1560,20 @@ function toggleLabels() {
         }
     }
     
-    // Optimized: Toggle tooltips directly without re-rendering
-    // Use requestAnimationFrame for smooth UI
-    requestAnimationFrame(() => {
-        const markers = allMarkersWithTooltips;
-        const batchSize = 50; // Process in batches to avoid blocking
-        let index = 0;
-        
-        function processBatch() {
-            const end = Math.min(index + batchSize, markers.length);
-            for (let i = index; i < end; i++) {
-                const marker = markers[i];
-                if (marker && marker.getTooltip) {
-                    const tooltip = marker.getTooltip();
-                    if (tooltip) {
-                        if (isLabelsAlwaysVisible) {
-                            marker.openTooltip();
-                        } else {
-                            marker.closeTooltip();
-                        }
-                    }
-                }
-            }
-            index = end;
-            if (index < markers.length) {
-                requestAnimationFrame(processBatch);
+    // Optimized: Only toggle tooltips for markers within the current viewport
+    if (!map) return;
+    const bounds = map.getBounds();
+    const markers = allMarkersWithTooltips;
+    for (let i = 0; i < markers.length; i++) {
+        const marker = markers[i];
+        if (marker && marker.getLatLng && bounds.contains(marker.getLatLng())) {
+            const tooltip = marker.getTooltip?.();
+            if (tooltip) {
+                if (isLabelsAlwaysVisible) marker.openTooltip();
+                else marker.closeTooltip();
             }
         }
-        
-        processBatch();
-    });
+    }
 }
 
 function toggleHeatmap() {
@@ -5687,6 +5671,18 @@ map.on('moveend', debounce(() => {
     // Skip heavy project filtering while a tour is actively animating
     if (window.RoutePlanner?.state?.tourActive) return;
     filterProjects();
+    // Sync labels for newly visible markers after pan/zoom
+    if (isLabelsAlwaysVisible) {
+        const bounds = map.getBounds();
+        const markers = allMarkersWithTooltips;
+        for (let i = 0; i < markers.length; i++) {
+            const m = markers[i];
+            if (m && m.getLatLng && bounds.contains(m.getLatLng())) {
+                const t = m.getTooltip?.();
+                if (t) m.openTooltip();
+            }
+        }
+    }
 }, 200));
 
 // ===== AI CONCIERGE CHATBOT SYSTEM (Powered by Google Gemini) =====

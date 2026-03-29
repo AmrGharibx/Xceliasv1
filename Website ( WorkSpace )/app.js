@@ -2442,6 +2442,79 @@ function updateBrowseTelemetry(visibleCount, totalCount = (window.projects || []
   }
 }
 
+// Lazy zone rendering: create list items only when zone is expanded
+function _renderZoneListItems(container, projects) {
+  if (container._itemsRendered) return;
+  container._itemsRendered = true;
+  const fragment = document.createDocumentFragment();
+  projects.forEach(p => {
+    if (isNaN(p.lat) || isNaN(p.lng) || p.lat === 0 || p.lng === 0) return;
+    const item = document.createElement("div");
+    item.className = "list-item";
+    item.dataset.projectName = p.name;
+    const isLongName = (p.name || "").length > 18;
+    const nameClass = isLongName ? "long-text" : "";
+    const devName = p.dev || "";
+    const isLongDev = devName.length > 15;
+    const devClass = isLongDev ? "dev-name long" : "dev-name";
+    const routePlanner = window.RoutePlanner;
+    const routeMeta = routePlanner && typeof routePlanner.getProjectRouteMeta === 'function'
+      ? routePlanner.getProjectRouteMeta(p.name) : { classes: [], badges: [] };
+    if (routeMeta.classes?.length) item.classList.add(...routeMeta.classes);
+    const formatPrice = (price) => {
+      if (!price) return '';
+      if (price >= 1000000) return `${(price / 1000000).toFixed(1)}M`;
+      if (price >= 1000) return `${(price / 1000).toFixed(0)}K`;
+      return `${price}`;
+    };
+    const titleCase = (value) => String(value || '').replace(/[-_]/g, ' ').replace(/\b\w/g, letter => letter.toUpperCase());
+    const unitPreview = Array.isArray(p.unitTypes) && p.unitTypes.length
+      ? p.unitTypes.slice(0, 2).join(' / ') : titleCase(p.type || 'Project');
+    const sizePreview = Number.isFinite(p.areaMin)
+      ? `${p.areaMin}${Number.isFinite(p.areaMax) ? `-${p.areaMax}` : '+'} sqm` : '';
+    const financeLine = p.priceMin ? `From ${formatPrice(p.priceMin)} EGP` : 'Pricing on request';
+    const planLine = [
+      Number.isFinite(p.downPayment) ? `${p.downPayment}% DP` : '',
+      Number.isFinite(p.installmentYears) && p.installmentYears > 0 ? `${p.installmentYears}Y plan` : sizePreview
+    ].filter(Boolean).join(' • ') || 'Tap to inspect payment options';
+    const encodedProjectName = encodeURIComponent(p.name);
+    const badgesHtml = (routeMeta.badges || []).map(badge => `<span class="list-item-badge">${badge}</span>`).join('');
+    item.innerHTML = `
+      <div class="list-item-top">
+        <span class="list-item-headline ${nameClass}">${p.name}</span>
+        <span class="list-item-badges">${badgesHtml}</span>
+      </div>
+      <span class="${devClass}">${devName || p.zone || 'Developer pending'}</span>
+      <div class="list-item-meta">
+        <span class="list-item-chip emphasis">${p.zone || 'Egypt'}</span>
+        <span class="list-item-chip">${titleCase(p.status || 'Available')}</span>
+        <span class="list-item-chip subtle">${unitPreview}</span>
+      </div>
+      <div class="list-item-finance">
+        <strong class="list-item-price">${financeLine}</strong>
+        <span class="list-item-plan">${planLine}</span>
+      </div>
+      <div class="list-item-actions">
+        <button type="button" class="list-action-btn" data-route-action="origin" data-project-token="${encodedProjectName}">Start</button>
+        <button type="button" class="list-action-btn" data-route-action="stop" data-project-token="${encodedProjectName}">Stop</button>
+        <button type="button" class="list-action-btn" data-route-action="destination" data-project-token="${encodedProjectName}">Finish</button>
+      </div>
+    `;
+    item.querySelectorAll('.list-action-btn[data-route-action]').forEach(button => {
+      button.addEventListener('click', event => {
+        event.stopPropagation();
+        event.preventDefault();
+        routeProjectAction(decodeProjectToken(button.dataset.projectToken), button.dataset.routeAction);
+      });
+    });
+    item.onclick = () => focusOnProject(p);
+    fragment.appendChild(item);
+  });
+  container.appendChild(fragment);
+  window.RoutePlanner?.invalidateProjectListCache?.();
+  window.RoutePlanner?.syncProjectListHighlights?.(true);
+}
+
 async function renderProjects(projectList) {
   // Validate input
   if (!Array.isArray(projectList)) {
@@ -2561,11 +2634,18 @@ async function renderProjects(projectList) {
           content.style.height = "auto";
       }
 
+      // Store projects for lazy list-item creation when zone is expanded
+      const zoneProjects = zones[zone];
+      content._zoneProjects = zoneProjects;
+      content._itemsRendered = false;
+
       header.onclick = (e) => {
           if (e) e.stopPropagation();
           const isClosed = header.classList.contains("collapsed");
           if (isClosed) {
               header.classList.remove("collapsed");
+              // Lazy: create list items on first expand
+              _renderZoneListItems(content, content._zoneProjects);
               gsap.to(content, { height: "auto", duration: 0.4, ease: "power2.out" });
           } else {
               header.classList.add("collapsed");
@@ -2576,89 +2656,20 @@ async function renderProjects(projectList) {
       mainFragment.appendChild(header);
       mainFragment.appendChild(content);
 
-      const zoneProjects = zones[zone];
-      
-      // Simplified rendering (Synchronous) to debug missing projects
-      const fragment = document.createDocumentFragment();
-      
+      // Create markers for ALL projects (map always needs them)
+      const formatPrice = (price) => {
+        if (!price) return '';
+        if (price >= 1000000) return `${(price / 1000000).toFixed(1)}M`;
+        if (price >= 1000) return `${(price / 1000).toFixed(0)}K`;
+        return `${price}`;
+      };
       zoneProjects.forEach(p => {
             try {
               // Validate Coordinates
               if (isNaN(p.lat) || isNaN(p.lng) || p.lat === 0 || p.lng === 0) {
-                  // console.warn(`Skipping project ${p.name} due to invalid coordinates: ${p.lat}, ${p.lng}`);
                   return;
               }
-
-              // List Item
-                            const item = document.createElement("div");
-                            item.className = "list-item";
-                            item.dataset.projectName = p.name;
-              const isLongName = (p.name || "").length > 18; 
-              const nameClass = isLongName ? "long-text" : "";
-              const devName = p.dev || "";
-              const isLongDev = devName.length > 15;
-              const devClass = isLongDev ? "dev-name long" : "dev-name";
-                            const routePlanner = window.RoutePlanner;
-                            const routeMeta = routePlanner && typeof routePlanner.getProjectRouteMeta === 'function'
-                                    ? routePlanner.getProjectRouteMeta(p.name)
-                                    : { classes: [], badges: [] };
-
-                            if (routeMeta.classes?.length) {
-                                    item.classList.add(...routeMeta.classes);
-                            }
-
-                            const formatPrice = (price) => {
-                                if (!price) return '';
-                                if (price >= 1000000) return `${(price / 1000000).toFixed(1)}M`;
-                                if (price >= 1000) return `${(price / 1000).toFixed(0)}K`;
-                                return `${price}`;
-                            };
-                            const titleCase = (value) => String(value || '').replace(/[-_]/g, ' ').replace(/\b\w/g, letter => letter.toUpperCase());
-                            const unitPreview = Array.isArray(p.unitTypes) && p.unitTypes.length
-                                ? p.unitTypes.slice(0, 2).join(' / ')
-                                : titleCase(p.type || 'Project');
-                            const sizePreview = Number.isFinite(p.areaMin)
-                                ? `${p.areaMin}${Number.isFinite(p.areaMax) ? `-${p.areaMax}` : '+'} sqm`
-                                : '';
-                            const financeLine = p.priceMin
-                                ? `From ${formatPrice(p.priceMin)} EGP`
-                                : 'Pricing on request';
-                            const planLine = [
-                                Number.isFinite(p.downPayment) ? `${p.downPayment}% DP` : '',
-                                Number.isFinite(p.installmentYears) && p.installmentYears > 0 ? `${p.installmentYears}Y plan` : sizePreview
-                            ].filter(Boolean).join(' • ') || 'Tap to inspect payment options';
-                            const encodedProjectName = encodeURIComponent(p.name);
-                            const badgesHtml = (routeMeta.badges || []).map(badge => `<span class="list-item-badge">${badge}</span>`).join('');
-                            item.innerHTML = `
-                                <div class="list-item-top">
-                                    <span class="list-item-headline ${nameClass}">${p.name}</span>
-                                    <span class="list-item-badges">${badgesHtml}</span>
-                                </div>
-                                <span class="${devClass}">${devName || p.zone || 'Developer pending'}</span>
-                                <div class="list-item-meta">
-                                    <span class="list-item-chip emphasis">${p.zone || 'Egypt'}</span>
-                                    <span class="list-item-chip">${titleCase(p.status || 'Available')}</span>
-                                    <span class="list-item-chip subtle">${unitPreview}</span>
-                                </div>
-                                <div class="list-item-finance">
-                                    <strong class="list-item-price">${financeLine}</strong>
-                                    <span class="list-item-plan">${planLine}</span>
-                                </div>
-                                <div class="list-item-actions">
-                                    <button type="button" class="list-action-btn" data-route-action="origin" data-project-token="${encodedProjectName}">Start</button>
-                                    <button type="button" class="list-action-btn" data-route-action="stop" data-project-token="${encodedProjectName}">Stop</button>
-                                    <button type="button" class="list-action-btn" data-route-action="destination" data-project-token="${encodedProjectName}">Finish</button>
-                                </div>
-                            `;
-              item.querySelectorAll('.list-action-btn[data-route-action]').forEach(button => {
-                  button.addEventListener('click', event => {
-                      event.stopPropagation();
-                      event.preventDefault();
-                      routeProjectAction(decodeProjectToken(button.dataset.projectToken), button.dataset.routeAction);
-                  });
-              });
-              item.onclick = () => focusOnProject(p);
-              fragment.appendChild(item);
+              const encodedProjectName = encodeURIComponent(p.name);
 
               // Marker Logic
               const isLandmark = p.type === "landmark";
@@ -2854,13 +2865,9 @@ async function renderProjects(projectList) {
                 console.error(`Error rendering project ${p.name}:`, err);
             }
       });
-      
-      content.appendChild(fragment);
   }
   
   listContainerEl.appendChild(mainFragment);
-    window.RoutePlanner?.invalidateProjectListCache?.();
-    window.RoutePlanner?.syncProjectListHighlights?.(true);
   
   // Ensure layers are cleared before adding new ones
   markerClusterGroup.clearLayers();

@@ -388,9 +388,9 @@ app.post('/api/gemini', rateLimitRoute, async (req, res) => {
         const geminiBody = {
             contents,
             generationConfig: {
-                temperature: generationConfig?.temperature ?? 0.8,
-                topP: generationConfig?.topP ?? 0.9,
-                maxOutputTokens: generationConfig?.maxOutputTokens ?? 600
+                temperature: generationConfig?.temperature ?? 0.9,
+                topP: generationConfig?.topP ?? 0.95,
+                maxOutputTokens: generationConfig?.maxOutputTokens ?? 1200
             }
         };
 

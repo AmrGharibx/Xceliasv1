@@ -27,7 +27,12 @@ async function callGeminiWithRetry(apiKey, geminiBody, retries = 2) {
     throw new Error('All Gemini models unavailable');
 }
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
+    // CORS
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    if (req.method === 'OPTIONS') return res.status(200).end();
     if (req.method !== 'POST') {
         return res.status(405).json({ success: false, error: 'Method not allowed' });
     }
@@ -52,9 +57,9 @@ export default async function handler(req, res) {
         const geminiBody = {
             contents,
             generationConfig: {
-                temperature: generationConfig?.temperature ?? 0.8,
-                topP: generationConfig?.topP ?? 0.9,
-                maxOutputTokens: generationConfig?.maxOutputTokens ?? 600
+                temperature: generationConfig?.temperature ?? 0.9,
+                topP: generationConfig?.topP ?? 0.95,
+                maxOutputTokens: generationConfig?.maxOutputTokens ?? 1200
             }
         };
 

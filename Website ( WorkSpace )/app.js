@@ -16,9 +16,20 @@ if (!window.gsap) {
     };
 }
 
-if (window.gsap && window.ScrollTrigger && typeof window.gsap.registerPlugin === 'function') {
-    window.gsap.registerPlugin(window.ScrollTrigger);
+if (window.gsap && typeof window.gsap.registerPlugin === 'function') {
+    // P5: ScrollTrigger removed — never used
 }
+
+// P5: Inline SVG icon strings (replaces Font Awesome — saves ~294KB)
+const XI = {
+    heart:      '<svg class="xi" viewBox="0 0 512 512"><path d="M47.6 300.4L228.3 469.1c7.5 7 17.4 10.9 27.7 10.9s20.2-3.9 27.7-10.9L464.4 300.4c30.4-28.3 47.6-68 47.6-109.5v-5.8c0-69.9-50.5-129.5-119.4-141C347 36.5 300.6 51.4 268 84L256 96 244 84c-32.6-32.6-79-47.5-124.6-39.9C50.5 55.6 0 115.2 0 185.1v5.8c0 41.5 17.2 81.2 47.6 109.5z"/></svg>',
+    heartEmpty: '<svg class="xi" viewBox="0 0 512 512"><path d="M225.8 468.2l-2.5-2.3L48.1 303.2C17.4 274.7 0 234.7 0 192.8v-3.3c0-70.4 50-130.8 119.2-144C158.6 37.9 198.9 47 231 69.6c9 6.3 17.3 13.8 25 22.3c7.7-8.5 16-16 25-22.3c32.1-22.6 72.4-31.7 111.8-24.2C461.5 59.6 512 117.2 512 189.5v3.3c0 41.9-17.4 81.9-48.1 110.4L287.7 465.9l-2.5 2.3c-8.2 7.6-19 11.9-30.2 11.9s-22-4.2-30.2-11.9z"/></svg>',
+    tag:        '<svg class="xi" viewBox="0 0 448 512"><path d="M0 80V229.5c0 17 6.7 33.3 18.7 45.3l176 176c25 25 65.5 25 90.5 0L418.7 317.3c25-25 25-65.5 0-90.5l-176-176C230.8 38.7 214.5 32 197.5 32H48C21.5 32 0 53.5 0 80zm112 32a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/></svg>',
+    creditCard: '<svg class="xi" viewBox="0 0 576 512"><path d="M64 32C28.7 32 0 60.7 0 96v32h576V96c0-35.3-28.7-64-64-64H64zM576 224H0v192c0 35.3 28.7 64 64 64h448c35.3 0 64-28.7 64-64V224zM112 352h64c8.8 0 16 7.2 16 16s-7.2 16-16 16h-64c-8.8 0-16-7.2-16-16s7.2-16 16-16zm112 16c0-8.8 7.2-16 16-16h128c8.8 0 16 7.2 16 16s-7.2 16-16 16H240c-8.8 0-16-7.2-16-16z"/></svg>',
+    whatsapp:   '<svg class="xi" viewBox="0 0 448 512"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.8-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5.1-3.9-10.6-6.9z"/></svg>',
+    route:      '<svg class="xi" viewBox="0 0 512 512"><path d="M512 96c0 50.2-59.1 125.1-84.6 155c-3.8 4.4-9.4 6.1-14.5 5H320c-17.7 0-32 14.3-32 32s14.3 32 32 32h96c53 0 96 43 96 96s-43 96-96 96H139.6c8.7-9.9 19.3-22.6 29.9-36.5C194.5 444.4 224 382.2 224 320c0-17.7-14.3-32-32-32H96c-17.7 0-32-14.3-32-32s14.3-32 32-32h96c53 0 96-43 96-96s-43-96-96-96H52.5c25.5-29.9 84.6-104.8 84.6-155C137.1 14.3 170.7 0 192 0s105 45.8 105 96H512z"/></svg>',
+    codeBranch: '<svg class="xi" viewBox="0 0 448 512"><path d="M80 104a24 24 0 1 0 0-48 24 24 0 1 0 0 48zm80-24c0 32.8-19.7 61-48 73.3v87.8c18.8-10.9 40.7-17.1 64-17.1h96c35.3 0 64-28.7 64-64v-6.7C307.7 141 288 112.8 288 80c0-44.2 35.8-80 80-80s80 35.8 80 80c0 32.8-19.7 61-48 73.3V160c0 70.7-57.3 128-128 128H176c-35.3 0-64 28.7-64 64v6.7c28.3 12.3 48 40.5 48 73.3c0 44.2-35.8 80-80 80s-80-35.8-80-80c0-32.8 19.7-61 48-73.3V153.3C19.7 141 0 112.8 0 80 0 35.8 35.8 0 80 0s80 35.8 80 80zM368 56a24 24 0 1 0 0 48 24 24 0 1 0 0-48zM80 408a24 24 0 1 0 0 48 24 24 0 1 0 0-48z"/></svg>',
+};
 
 // Initialize global data containers to prevent crashes before data.js loads
 window.projects = window.projects || [];
@@ -2728,25 +2739,25 @@ async function renderProjects(projectList) {
               // Popups and Events
               const waLink = getWhatsAppLink(p);
               const isFav = isFavorite(p.name);
-              const heartClass = isFav ? "fas" : "far";
+              const heartIcon = isFav ? XI.heart : XI.heartEmpty;
               const heartColor = isFav ? "var(--avaria-red)" : "var(--avaria-gold)";
               
               const priceDisplay = p.priceMin ? `
                 <div class="popup-price">
-                  <i class="fas fa-tag"></i> ${i18n.currentLang === 'ar' ? 'يبدأ من' : 'From'} <strong>${formatPrice(p.priceMin)} EGP</strong>
+                  ${XI.tag} ${i18n.currentLang === 'ar' ? 'يبدأ من' : 'From'} <strong>${formatPrice(p.priceMin)} EGP</strong>
                 </div>` : '';
               
               // Payment plan display
               const paymentDisplay = p.paymentPlan ? `
                 <div class="popup-payment">
-                  <i class="fas fa-credit-card"></i> ${p.paymentPlan}
+                  ${XI.creditCard} ${p.paymentPlan}
                 </div>` : '';
               
                             const popupContent = `
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                   <div class="popup-title" style="margin-bottom: 0;">${p.name}</div>
-                                                                        <button class="fav-btn" data-project="${p.name}" onclick="toggleFavoriteEncoded('${encodedProjectName}')" style="background: none; border: none; cursor: pointer; font-size: 1.2rem;">
-                      <i class="${heartClass} fa-heart" style="color: ${heartColor};"></i>
+                                                                        <button class="fav-btn" data-project="${p.name}" onclick="toggleFavoriteEncoded('${encodedProjectName}')" style="background: none; border: none; cursor: pointer; font-size: 1.2rem; color: ${heartColor};">
+                      ${heartIcon}
                   </button>
                 </div>
                 <div class="popup-dev">${p.dev}</div>
@@ -2759,7 +2770,7 @@ async function renderProjects(projectList) {
                                                                         <button onclick="routeProjectActionEncoded('${encodedProjectName}', 'stop')" class="popup-route-btn">Stop</button>
                                 </div>
                 <a href="${waLink}" target="_blank" class="whatsapp-btn" style="text-decoration: none;">
-                  <i class="fab fa-whatsapp"></i> WhatsApp
+                  ${XI.whatsapp} WhatsApp
                 </a>
               `;
 
@@ -5049,7 +5060,7 @@ function renderFavoritesList() {
     
     if (favs.length === 0) {
         favList.innerHTML = `<div style="color: var(--avaria-text-muted); font-size: 0.9rem; text-align: center; width: 100%; padding: 20px;">
-          No favorites yet. Click the <i class="far fa-heart"></i> on any project to save it here.
+          No favorites yet. Click the ${XI.heartEmpty} on any project to save it here.
         </div>`;
         return;
     }
@@ -5067,7 +5078,7 @@ function renderFavoritesList() {
     favs.forEach(name => {
         const btn = document.createElement("button");
         btn.className = "filter-btn";
-        btn.innerHTML = `<i class="fas fa-heart" style="color: var(--avaria-red); margin-right: 5px;"></i> ${name}`;
+        btn.innerHTML = `<span style="color: var(--avaria-red); margin-right: 5px;">${XI.heart}</span> ${name}`;
         btn.onclick = () => {
             const p = projects.find(proj => proj.name === name);
             if (p) {
@@ -5627,8 +5638,9 @@ async function loadAllData() {
         // Parse and Render
         parseProjectData();
 
-        if (window.RoutePlanner && typeof window.RoutePlanner.populateProjectOptions === 'function') {
-            window.RoutePlanner.populateProjectOptions();
+        // P6: Mark datalist as needing refresh (actual population deferred to input focus)
+        if (window.RoutePlanner) {
+            window.RoutePlanner._datalistPopulated = false;
         }
         
         // Initial Render (Synchronous) to ensure markers appear immediately
@@ -6870,7 +6882,18 @@ const RoutePlanner = {
 
         this.cacheDom();
         this.bindDomEvents();
-        this.populateProjectOptions();
+        // P6: Defer datalist population to first input focus (saves 1383 DOM nodes at init)
+        this._datalistPopulated = false;
+        const deferPopulate = () => {
+            if (!this._datalistPopulated) {
+                this._datalistPopulated = true;
+                this.populateProjectOptions();
+            }
+        };
+        if (this.dom.originInput) this.dom.originInput.addEventListener('focus', deferPopulate, { once: true });
+        if (this.dom.destinationInput) this.dom.destinationInput.addEventListener('focus', deferPopulate, { once: true });
+        const stopInput = document.getElementById('routeStopInput');
+        if (stopInput) stopInput.addEventListener('focus', deferPopulate, { once: true });
         this.renderStops();
         this.renderSummary();
         this.syncProjectListHighlights();
@@ -8000,12 +8023,12 @@ const RoutePlanner = {
                     const timeDiffStr = timeDiff > 0 ? `+${this.formatDuration(Math.abs(timeDiff))}` : `-${this.formatDuration(Math.abs(timeDiff))}`;
                     const label = alt.summary || `Alternative ${i + 1}`;
                     return `<div class="route-alt-option" onclick="RoutePlanner.switchToAlternative(${i})">
-                      <div class="route-alt-label"><i class="fas fa-route"></i> ${label}</div>
+                      <div class="route-alt-label">${XI.route} ${label}</div>
                       <div class="route-alt-meta">${this.formatDistance(alt.distance)} · ${this.formatDuration(alt.duration)} <span class="route-alt-diff">${timeDiffStr}</span></div>
                     </div>`;
                 }).join('');
                 this.dom.legsList.innerHTML += `<div class="route-alternatives-section">
-                  <div class="route-alt-header"><i class="fas fa-code-branch"></i> Alternative Routes</div>
+                  <div class="route-alt-header">${XI.codeBranch} Alternative Routes</div>
                   ${altsHtml}
                 </div>`;
             }

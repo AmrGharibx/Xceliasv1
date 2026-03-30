@@ -102,6 +102,17 @@
         contain-intrinsic-size: auto 500px;
       }
 
+      /* ── P5: Inline SVG Icon System (replaces Font Awesome) ── */
+      .xi {
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+        vertical-align: -0.125em;
+        fill: currentColor;
+        flex-shrink: 0;
+      }
+      .xi-lg { width: 1.25em; height: 1.25em; }
+
       button, .filter-btn, .map-btn, .sidebar-toggle, .dock-toggle, .lifestyle-icon {
         touch-action: manipulation;
         -webkit-tap-highlight-color: transparent;
@@ -6121,15 +6132,17 @@ button:focus-visible, input:focus-visible {
         padding: 0 !important;
         overflow: hidden !important;
         z-index: 2000 !important;
-        background: var(--surface-glass) !important;
-        backdrop-filter: blur(12px) !important;
-        -webkit-backdrop-filter: blur(12px) !important;
+        background: rgba(15, 15, 30, 0.97) !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
     }
 
     .sidebar.collapsed {
         transform: translateY(100%) !important;
         width: 100% !important;
         padding: 0 !important;
+        content-visibility: auto;
+        contain-intrinsic-size: 0 50vh;
     }
 
     .sidebar[data-sheet="half"] {
@@ -6270,8 +6283,9 @@ button:focus-visible, input:focus-visible {
         cursor: pointer;
         touch-action: manipulation;
         -webkit-tap-highlight-color: transparent;
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
+        background: rgba(15, 15, 30, 0.95);
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
     }
 
     .fab-menu-btn.active {
@@ -6295,8 +6309,9 @@ button:focus-visible, input:focus-visible {
         border: 1px solid var(--glass-border);
         white-space: nowrap;
         pointer-events: none;
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
+        background: rgba(15, 15, 30, 0.95);
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
     }
 
     .fab-backdrop {
@@ -6318,9 +6333,9 @@ button:focus-visible, input:focus-visible {
         left: 0;
         right: 0;
         height: var(--m-nav-h);
-        background: rgba(15, 15, 30, 0.97);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
+        background: rgba(15, 15, 30, 0.98);
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
         border-top: 1px solid var(--glass-border);
         display: flex;
         align-items: stretch;
@@ -6558,6 +6573,24 @@ button:focus-visible, input:focus-visible {
     [dir="rtl"] .legend-container {
         left: auto !important;
         right: 12px !important;
+    }
+
+    /* ── P6: Pause animations on hidden/collapsed elements ── */
+    .sidebar.collapsed *,
+    .right-dock *,
+    .timeline-container *,
+    .ai-chat-window:not(.active) *,
+    .price-alerts-panel:not(.active) *,
+    .modal-overlay:not(.active) * {
+        animation-play-state: paused !important;
+    }
+
+    /* P6: content-visibility for off-screen panels */
+    .ai-chat-window:not(.active),
+    .price-alerts-panel:not(.active),
+    .route-panel-container {
+        content-visibility: auto;
+        contain-intrinsic-size: auto 300px;
     }
 }
 

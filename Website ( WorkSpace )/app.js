@@ -8900,6 +8900,293 @@ function toggleRouteMenu(forceOpen) {
     return RoutePlanner.toggleMenu(forceOpen);
 }
 
+// ═══════════════════════════════════════════════════════════
+// P4: MOBILE-NATIVE UX — Bottom Sheet · FAB · Bottom Nav
+// ═══════════════════════════════════════════════════════════
+(function initMobileUX() {
+    'use strict';
 
+    const MQ = window.matchMedia('(max-width: 768px)');
+    if (!MQ.matches) return; // Desktop → skip
+
+    const sidebar = document.getElementById('sidebar');
+    if (!sidebar) return;
+
+    // ── Inject drag handle as first child of sidebar ──
+    const handle = document.createElement('div');
+    handle.className = 'sheet-drag-handle';
+    handle.innerHTML = '<div class="sheet-drag-handle-bar"></div>';
+    sidebar.insertBefore(handle, sidebar.firstChild);
+
+    // ── State management ──
+    const STATES = ['hidden', 'peek', 'half', 'full'];
+    let currentState = 'peek';
+
+    // Remove collapsed class set by earlier code, show as peek
+    sidebar.classList.remove('collapsed');
+    sidebar.removeAttribute('data-sheet');
+
+    function setSheetState(state) {
+        currentState = state;
+        sidebar.removeAttribute('data-sheet');
+
+        if (state === 'hidden') {
+            sidebar.classList.add('collapsed');
+        } else {
+            sidebar.classList.remove('collapsed');
+            if (state === 'half' || state === 'full') {
+                sidebar.setAttribute('data-sheet', state);
+            }
+        }
+
+        // Scrim
+        var scrim = document.getElementById('sheetScrim');
+        if (scrim) {
+            scrim.classList.toggle('visible', state === 'half' || state === 'full');
+        }
+
+        // FAB visibility
+        var fab = document.getElementById('mobileFab');
+        var fabMenuEl = document.getElementById('fabMenu');
+        if (fab) {
+            if (state === 'half' || state === 'full') {
+                fab.style.display = 'none';
+                if (fabMenuEl) { fabMenuEl.classList.remove('open'); }
+                closeFabMenu();
+            } else {
+                fab.style.display = '';
+                fab.classList.toggle('fab-lowered', state === 'hidden');
+            }
+        }
+        if (fabMenuEl) {
+            fabMenuEl.classList.toggle('fab-lowered', state === 'hidden');
+        }
+
+        // Update nav tabs
+        if (state === 'hidden') {
+            _setActiveTab('map');
+        }
+    }
+
+    window.setSheetState = setSheetState;
+
+    // ── Touch gesture on drag handle ──
+    var startY = 0, startTranslateY = 0, dragging = false;
+
+    handle.addEventListener('touchstart', function(e) {
+        dragging = true;
+        startY = e.touches[0].clientY;
+        // Get computed translate
+        var transform = getComputedStyle(sidebar).transform;
+        if (transform && transform !== 'none') {
+            var matrix = new DOMMatrix(transform);
+            startTranslateY = matrix.m42;
+        } else {
+            startTranslateY = 0;
+        }
+        sidebar.classList.add('dragging');
+    }, { passive: true });
+
+    handle.addEventListener('touchmove', function(e) {
+        if (!dragging) return;
+        var deltaY = e.touches[0].clientY - startY;
+        var maxTranslate = sidebar.offsetHeight;
+        var newY = Math.max(0, Math.min(maxTranslate, startTranslateY + deltaY));
+        sidebar.style.transform = 'translateY(' + newY + 'px)';
+    }, { passive: true });
+
+    handle.addEventListener('touchend', function(e) {
+        if (!dragging) return;
+        dragging = false;
+        sidebar.classList.remove('dragging');
+        sidebar.style.transform = '';
+
+        var endY = e.changedTouches[0].clientY;
+        var deltaY = endY - startY;
+        var idx = STATES.indexOf(currentState);
+
+        if (deltaY < -40) {
+            // Swipe up → expand
+            setSheetState(STATES[Math.min(idx + 1, STATES.length - 1)]);
+        } else if (deltaY > 40) {
+            // Swipe down → collapse
+            setSheetState(STATES[Math.max(idx - 1, 0)]);
+        } else {
+            setSheetState(currentState); // snap back
+        }
+    }, { passive: true });
+
+    // ── Scrim click → collapse to peek ──
+    var scrimEl = document.getElementById('sheetScrim');
+    if (scrimEl) {
+        scrimEl.addEventListener('click', function() {
+            setSheetState('peek');
+        });
+    }
+
+    // ── Bottom Nav ──
+    function _setActiveTab(tab) {
+        var tabs = document.querySelectorAll('.nav-tab');
+        for (var i = 0; i < tabs.length; i++) {
+            tabs[i].classList.toggle('active', tabs[i].dataset.tab === tab);
+        }
+    }
+
+    var navTabs = document.querySelectorAll('.nav-tab');
+    for (var i = 0; i < navTabs.length; i++) {
+        navTabs[i].addEventListener('click', function() {
+            var tab = this.dataset.tab;
+            _setActiveTab(tab);
+
+            switch (tab) {
+                case 'map':
+                    setSheetState('hidden');
+                    closeFabMenu();
+                    // Close chatbot if open
+                    var chatWin = document.getElementById('aiChatWindow');
+                    if (chatWin && chatWin.classList.contains('active')) {
+                        chatWin.classList.remove('active');
+                    }
+                    break;
+
+                case 'search':
+                    setSheetState('half');
+                    setTimeout(function() {
+                        var input = document.getElementById('searchInput');
+                        if (input) input.focus();
+                    }, 400);
+                    break;
+
+                case 'favorites':
+                    if (typeof switchMode === 'function') switchMode('fav');
+                    setSheetState('half');
+                    break;
+
+                case 'rita':
+                    setSheetState('hidden');
+                    if (typeof toggleAIChat === 'function') toggleAIChat();
+                    _setActiveTab('rita');
+                    break;
+
+                case 'more':
+                    setSheetState('full');
+                    break;
+            }
+        });
+    }
+
+    // ── FAB Menu ──
+    function toggleFabMenu() {
+        var fab = document.getElementById('mobileFab');
+        var menu = document.getElementById('fabMenu');
+        var backdrop = document.getElementById('fabBackdrop');
+        if (!fab || !menu) return;
+
+        var isOpen = menu.classList.contains('open');
+        fab.classList.toggle('active', !isOpen);
+        menu.classList.toggle('open', !isOpen);
+        if (backdrop) backdrop.classList.toggle('visible', !isOpen);
+    }
+
+    function closeFabMenu() {
+        var fab = document.getElementById('mobileFab');
+        var menu = document.getElementById('fabMenu');
+        var backdrop = document.getElementById('fabBackdrop');
+        if (fab) fab.classList.remove('active');
+        if (menu) menu.classList.remove('open');
+        if (backdrop) backdrop.classList.remove('visible');
+    }
+
+    window.toggleFabMenu = toggleFabMenu;
+    window.closeFabMenu = closeFabMenu;
+
+    // FAB button click
+    var fabBtn = document.getElementById('mobileFab');
+    if (fabBtn) {
+        fabBtn.addEventListener('click', toggleFabMenu);
+    }
+
+    // FAB backdrop click
+    var fabBackdropEl = document.getElementById('fabBackdrop');
+    if (fabBackdropEl) {
+        fabBackdropEl.addEventListener('click', closeFabMenu);
+    }
+
+    // FAB menu item clicks
+    var fabItems = document.querySelectorAll('.fab-menu-btn');
+    for (var j = 0; j < fabItems.length; j++) {
+        fabItems[j].addEventListener('click', function(e) {
+            var btn = e.currentTarget;
+            var layer = btn.dataset.layer;
+            var action = btn.dataset.action;
+
+            if (layer) {
+                // Map layer switch
+                if (typeof switchMapLayer === 'function') switchMapLayer(layer);
+                // Update active states
+                var allBtns = document.querySelectorAll('.fab-menu-btn[data-layer]');
+                for (var k = 0; k < allBtns.length; k++) {
+                    allBtns[k].classList.toggle('active', allBtns[k] === btn);
+                }
+            } else if (action === 'reset') {
+                if (typeof map !== 'undefined' && map) map.flyTo([30.0, 31.0], 7);
+            } else if (action === 'heatmap') {
+                if (typeof toggleHeatmap === 'function') toggleHeatmap();
+                btn.classList.toggle('active');
+            } else if (action === 'labels') {
+                if (typeof toggleLabels === 'function') toggleLabels();
+                btn.classList.toggle('active');
+            } else if (action === '3d') {
+                if (typeof toggle3DMode === 'function') toggle3DMode();
+                btn.classList.toggle('active');
+            }
+
+            closeFabMenu();
+        });
+    }
+
+    // ── Smart Legend ──
+    var legend = document.querySelector('.legend-container');
+    if (legend) {
+        var legendTimer;
+        legend.addEventListener('click', function(e) {
+            e.stopPropagation();
+            legend.classList.toggle('legend-expanded');
+            clearTimeout(legendTimer);
+            if (legend.classList.contains('legend-expanded')) {
+                legendTimer = setTimeout(function() {
+                    legend.classList.remove('legend-expanded');
+                }, 5000);
+            }
+        });
+    }
+
+    // ── Override toggleSidebar for mobile ──
+    var _origToggleSidebar = window.toggleSidebar;
+    window.toggleSidebar = function(event) {
+        if (MQ.matches) {
+            if (event) event.stopPropagation();
+            // Simple show/hide toggle: visible → hidden, hidden → peek
+            if (currentState === 'hidden') {
+                setSheetState('peek');
+            } else {
+                setSheetState('hidden');
+            }
+        } else {
+            _origToggleSidebar(event);
+        }
+    };
+
+    // ── Listen for responsive changes ──
+    MQ.addEventListener('change', function(e) {
+        if (!e.matches) {
+            // Switched to desktop: clean up mobile state
+            sidebar.removeAttribute('data-sheet');
+            sidebar.classList.remove('dragging');
+            sidebar.style.transform = '';
+        }
+    });
+
+})();
 
 

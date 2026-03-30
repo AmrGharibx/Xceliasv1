@@ -6074,3 +6074,489 @@ button:focus-visible, input:focus-visible {
     }
 }
 
+/* ═══════════════════════════════════════════════════════════
+   P4: MOBILE-NATIVE UX REDESIGN
+   Bottom Sheet · FAB · Bottom Nav · Smart Legend
+   ═══════════════════════════════════════════════════════════ */
+
+/* --- Desktop: hide mobile-only elements --- */
+@media (min-width: 769px) {
+    .mobile-bottom-nav,
+    .mobile-fab,
+    .fab-menu,
+    .fab-backdrop,
+    .sheet-drag-handle,
+    .sheet-scrim {
+        display: none !important;
+    }
+}
+
+/* --- Mobile Redesign --- */
+@media (max-width: 768px) {
+
+    /* ── CSS Variables ── */
+    :root {
+        --m-nav-h: 56px;
+        --m-sheet-peek: 72px;
+        --m-sheet-half: 50vh;
+        --m-sheet-full: 92vh;
+        --m-fab-size: 52px;
+    }
+
+    /* ── 1. Bottom Sheet Sidebar ── */
+    .sidebar {
+        position: fixed !important;
+        top: auto !important;
+        bottom: var(--m-nav-h) !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        height: var(--m-sheet-full) !important;
+        max-height: var(--m-sheet-full) !important;
+        transform: translateY(calc(100% - var(--m-sheet-peek))) !important;
+        transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1) !important;
+        border-radius: 16px 16px 0 0 !important;
+        border-right: none !important;
+        border-top: 1px solid var(--glass-border) !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+        z-index: 2000 !important;
+        background: var(--surface-glass) !important;
+        backdrop-filter: blur(12px) !important;
+        -webkit-backdrop-filter: blur(12px) !important;
+    }
+
+    .sidebar.collapsed {
+        transform: translateY(100%) !important;
+        width: 100% !important;
+        padding: 0 !important;
+    }
+
+    .sidebar[data-sheet="half"] {
+        transform: translateY(calc(100% - var(--m-sheet-half))) !important;
+    }
+
+    .sidebar[data-sheet="full"] {
+        transform: translateY(0) !important;
+        border-radius: 0 !important;
+    }
+
+    /* Disable transition during drag */
+    .sidebar.dragging {
+        transition: none !important;
+    }
+
+    /* Hide old sidebar toggle */
+    .sidebar-toggle {
+        display: none !important;
+    }
+
+    /* Drag handle */
+    .sheet-drag-handle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 0 6px;
+        cursor: grab;
+        touch-action: none;
+        flex-shrink: 0;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .sheet-drag-handle-bar {
+        width: 36px;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 2px;
+        transition: width 0.2s ease;
+    }
+
+    .sheet-drag-handle:active .sheet-drag-handle-bar {
+        width: 44px;
+        background: rgba(255, 255, 255, 0.5);
+    }
+
+    /* Sidebar scroll within bottom sheet */
+    .sidebar-scroll {
+        overflow-y: auto !important;
+        height: calc(100% - 24px) !important;
+        padding: 0 1rem 1rem !important;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-y: contain;
+    }
+
+    /* In peek state, prevent scrolling */
+    .sidebar:not([data-sheet="half"]):not([data-sheet="full"]):not(.collapsed) .sidebar-scroll {
+        overflow: hidden !important;
+    }
+
+    /* Sidebar header compact on mobile */
+    .sidebar .sidebar-header {
+        padding-top: 0 !important;
+    }
+
+    .sidebar .logo-area {
+        padding: 4px 0 !important;
+    }
+
+    /* ── 2. FAB (Floating Action Button) ── */
+    .map-controls {
+        display: none !important;
+    }
+
+    .mobile-fab {
+        position: fixed;
+        bottom: calc(var(--m-nav-h) + var(--m-sheet-peek) + 12px);
+        right: 12px;
+        width: var(--m-fab-size);
+        height: var(--m-fab-size);
+        border-radius: 50%;
+        background: var(--gradient-primary);
+        border: none;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2500;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+        cursor: pointer;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+        transition: transform 0.2s ease, bottom 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+    }
+
+    .mobile-fab.active {
+        transform: rotate(45deg);
+    }
+
+    .mobile-fab.fab-lowered {
+        bottom: calc(var(--m-nav-h) + 12px);
+    }
+
+    .mobile-fab svg {
+        width: 24px;
+        height: 24px;
+        pointer-events: none;
+    }
+
+    .fab-menu {
+        position: fixed;
+        bottom: calc(var(--m-nav-h) + var(--m-sheet-peek) + 12px + var(--m-fab-size) + 10px);
+        right: 12px;
+        display: flex;
+        flex-direction: column-reverse;
+        gap: 8px;
+        z-index: 2499;
+        pointer-events: none;
+        opacity: 0;
+        transform: translateY(20px) scale(0.8);
+        transition: opacity 0.2s ease, transform 0.2s ease, bottom 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+    }
+
+    .fab-menu.open {
+        pointer-events: auto;
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+    .fab-menu.fab-lowered {
+        bottom: calc(var(--m-nav-h) + 12px + var(--m-fab-size) + 10px);
+    }
+
+    .fab-menu-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-direction: row-reverse;
+    }
+
+    .fab-menu-btn {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: var(--surface-glass);
+        border: 1px solid var(--glass-border);
+        color: var(--avaria-gold);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    }
+
+    .fab-menu-btn.active {
+        background: var(--gradient-primary);
+        color: #fff;
+        border-color: transparent;
+    }
+
+    .fab-menu-btn svg {
+        width: 20px;
+        height: 20px;
+        pointer-events: none;
+    }
+
+    .fab-menu-label {
+        font-size: 0.7rem;
+        color: var(--avaria-text);
+        background: var(--surface-glass);
+        padding: 4px 10px;
+        border-radius: 6px;
+        border: 1px solid var(--glass-border);
+        white-space: nowrap;
+        pointer-events: none;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    }
+
+    .fab-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.3);
+        z-index: 2498;
+        display: none;
+    }
+
+    .fab-backdrop.visible {
+        display: block;
+    }
+
+    /* ── 3. Bottom Navigation Bar ── */
+    .mobile-bottom-nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: var(--m-nav-h);
+        background: rgba(15, 15, 30, 0.97);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-top: 1px solid var(--glass-border);
+        display: flex;
+        align-items: stretch;
+        justify-content: space-around;
+        z-index: 3000;
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    .nav-tab {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+        background: none;
+        border: none;
+        color: var(--avaria-text-muted);
+        font-size: 0.6rem;
+        font-family: 'Montserrat', sans-serif;
+        cursor: pointer;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+        transition: color 0.2s;
+        position: relative;
+    }
+
+    .nav-tab.active {
+        color: var(--avaria-gold);
+    }
+
+    .nav-tab.active::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 25%;
+        right: 25%;
+        height: 2px;
+        background: var(--gradient-primary);
+        border-radius: 0 0 2px 2px;
+    }
+
+    .nav-tab svg {
+        width: 22px;
+        height: 22px;
+    }
+
+    .nav-tab-label {
+        font-weight: 600;
+        letter-spacing: 0.3px;
+    }
+
+    /* ── 4. Smart Legend ── */
+    .legend-container {
+        position: fixed !important;
+        bottom: calc(var(--m-nav-h) + var(--m-sheet-peek) + 8px) !important;
+        left: 12px !important;
+        right: auto !important;
+        top: auto !important;
+        transform: none !important;
+        padding: 6px 12px !important;
+        border-radius: 20px !important;
+        display: flex !important;
+        flex-direction: row !important;
+        gap: 6px !important;
+        align-items: center !important;
+        max-height: none !important;
+        overflow: visible !important;
+        z-index: 1500 !important;
+        background: rgba(15, 15, 30, 0.9) !important;
+        border: 1px solid var(--glass-border) !important;
+        cursor: pointer;
+        transition: all 0.25s ease !important;
+    }
+
+    .legend-container .legend-title {
+        display: none !important;
+    }
+
+    .legend-container .legend-item span {
+        display: none;
+    }
+
+    .legend-container .legend-item {
+        gap: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .legend-container.legend-expanded {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        border-radius: 12px !important;
+        padding: 10px 14px !important;
+        gap: 6px !important;
+    }
+
+    .legend-container.legend-expanded .legend-title {
+        display: block !important;
+        font-size: 0.7rem;
+        margin-bottom: 2px;
+    }
+
+    .legend-container.legend-expanded .legend-item span {
+        display: inline;
+        font-size: 0.75rem;
+    }
+
+    .legend-container.legend-expanded .legend-item {
+        gap: 6px !important;
+    }
+
+    /* ── 5. Reposition existing elements ── */
+
+    /* Right dock above sheet */
+    .right-dock {
+        bottom: calc(var(--m-nav-h) + var(--m-sheet-peek) + 8px) !important;
+        left: auto !important;
+        right: 70px !important;
+        top: auto !important;
+        transform: none !important;
+    }
+
+    /* Timeline above sheet */
+    .timeline-container {
+        bottom: calc(var(--m-nav-h) + var(--m-sheet-peek) + 8px) !important;
+    }
+
+    /* Chatbot: hide toggle (accessible via bottom nav RITA tab) */
+    .ai-chat-toggle {
+        display: none !important;
+    }
+
+    .ai-chatbot {
+        bottom: var(--m-nav-h) !important;
+        right: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+    }
+
+    .ai-chat-window {
+        bottom: 0 !important;
+    }
+
+    .ai-chat-window.active {
+        width: 100% !important;
+        height: calc(100vh - var(--m-nav-h)) !important;
+        max-height: calc(100vh - var(--m-nav-h)) !important;
+        border-radius: 0 !important;
+    }
+
+    /* External signature */
+    #external-signature {
+        bottom: calc(var(--m-nav-h) + var(--m-sheet-peek) + 44px) !important;
+    }
+
+    /* Sheet scrim */
+    .sheet-scrim {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 1999;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+    }
+
+    .sheet-scrim.visible {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    /* ── 6. Compact list items ── */
+    .list-item {
+        padding: 10px 12px !important;
+    }
+
+    .list-item .item-header {
+        font-size: 0.85rem !important;
+    }
+
+    .list-item .dev-name {
+        font-size: 0.7rem !important;
+    }
+
+    .list-item .price-badge {
+        font-size: 0.7rem !important;
+        padding: 2px 8px !important;
+    }
+
+    /* ── 7. RTL support for bottom sheet ── */
+    [dir="rtl"] .sidebar {
+        left: 0 !important;
+        right: 0 !important;
+    }
+
+    [dir="rtl"] .sidebar.collapsed {
+        transform: translateY(100%) !important;
+    }
+
+    [dir="rtl"] .mobile-fab {
+        right: auto;
+        left: 12px;
+    }
+
+    [dir="rtl"] .fab-menu {
+        right: auto;
+        left: 12px;
+    }
+
+    [dir="rtl"] .fab-menu-item {
+        flex-direction: row;
+    }
+
+    [dir="rtl"] .right-dock {
+        right: auto !important;
+        left: 70px !important;
+    }
+
+    [dir="rtl"] .legend-container {
+        left: auto !important;
+        right: 12px !important;
+    }
+}
+

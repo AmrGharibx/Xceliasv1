@@ -4938,6 +4938,25 @@ closeModal = function() {
     document.body.style.overflow = ''; // Unlock body scroll
 };
 
+// ── Mobile modal back-button & swipe-down-to-close ──
+if (window.matchMedia('(max-width: 768px)').matches) {
+    // Pressing hardware back while modal open → close modal
+    window.addEventListener('popstate', function() {
+        var modal = document.getElementById('projectModal');
+        if (modal && modal.classList.contains('active')) {
+            closeModal();
+        }
+    });
+
+    // Overlay tap → close (for edge taps above/below modal-content)
+    var overlay = document.getElementById('projectModal');
+    if (overlay) {
+        overlay.addEventListener('click', function(e) {
+            if (e.target === overlay) closeModal();
+        });
+    }
+}
+
 function flyToRegion(lat, lng, zoom, zoneName) {
   if (!map) return;
   
@@ -8985,13 +9004,12 @@ function toggleRouteMenu(forceOpen) {
 
     window.setSheetState = setSheetState;
 
-    // ── Touch gesture on drag handle ──
+    // ── Touch gesture on drag handle + scroll-area swipe-to-dismiss ──
     var startY = 0, startTranslateY = 0, dragging = false;
 
     handle.addEventListener('touchstart', function(e) {
         dragging = true;
         startY = e.touches[0].clientY;
-        // Get computed translate
         var transform = getComputedStyle(sidebar).transform;
         if (transform && transform !== 'none') {
             var matrix = new DOMMatrix(transform);
@@ -9021,15 +9039,34 @@ function toggleRouteMenu(forceOpen) {
         var idx = STATES.indexOf(currentState);
 
         if (deltaY < -40) {
-            // Swipe up → expand
             setSheetState(STATES[Math.min(idx + 1, STATES.length - 1)]);
         } else if (deltaY > 40) {
-            // Swipe down → collapse
             setSheetState(STATES[Math.max(idx - 1, 0)]);
         } else {
-            setSheetState(currentState); // snap back
+            setSheetState(currentState);
         }
     }, { passive: true });
+
+    // ── Scroll-area: swipe down when scrolled to top → collapse sheet ──
+    var scrollEl = sidebar.querySelector('.sidebar-scroll');
+    if (scrollEl) {
+        var scrollStartY = 0, scrollDragging = false;
+        scrollEl.addEventListener('touchstart', function(e) {
+            if (scrollEl.scrollTop <= 1) {
+                scrollStartY = e.touches[0].clientY;
+                scrollDragging = true;
+            }
+        }, { passive: true });
+        scrollEl.addEventListener('touchend', function(e) {
+            if (!scrollDragging) return;
+            scrollDragging = false;
+            var delta = e.changedTouches[0].clientY - scrollStartY;
+            if (delta > 60 && scrollEl.scrollTop <= 1) {
+                var idx = STATES.indexOf(currentState);
+                setSheetState(STATES[Math.max(idx - 1, 0)]);
+            }
+        }, { passive: true });
+    }
 
     // ── Scrim click → collapse to peek ──
     var scrimEl = document.getElementById('sheetScrim');
@@ -9056,6 +9093,7 @@ function toggleRouteMenu(forceOpen) {
             switch (tab) {
                 case 'map':
                     setSheetState('hidden');
+                    if (typeof switchMode === 'function') switchMode('zone');
                     closeFabMenu();
                     // Close chatbot if open
                     var chatWin = document.getElementById('aiChatWindow');
@@ -9065,6 +9103,7 @@ function toggleRouteMenu(forceOpen) {
                     break;
 
                 case 'search':
+                    if (typeof switchMode === 'function') switchMode('zone');
                     setSheetState('half');
                     setTimeout(function() {
                         var input = document.getElementById('searchInput');

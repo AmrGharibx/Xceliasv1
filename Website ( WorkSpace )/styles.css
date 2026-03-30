@@ -3651,6 +3651,10 @@
         flex-wrap: nowrap !important;
         gap: 8px !important;
     }
+
+    /* Hide inactive list panels — override display:flex !important above */
+    #fav-list[style*="none"] { display: none !important; }
+    #dev-list[style*="none"] { display: none !important; }
     
     .list-container::-webkit-scrollbar { 
         display: none !important; /* Chrome/Safari */
@@ -3743,8 +3747,30 @@
     }
     
     .modal-header {
-        padding: 15px !important;
+        padding: 12px 15px !important;
         flex-shrink: 0 !important;
+    }
+
+    /* Close button — prominent top-right pill */
+    #projectModal .modal-close {
+        position: absolute !important;
+        top: 10px !important;
+        right: 10px !important;
+        z-index: 10 !important;
+        width: 36px !important;
+        height: 36px !important;
+        min-width: 36px !important;
+        min-height: 36px !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border-radius: 50% !important;
+        background: rgba(255, 255, 255, 0.1) !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 1.4rem !important;
+        color: var(--avaria-text) !important;
+        border: 1px solid rgba(255,255,255,0.15) !important;
     }
     
     .modal-body {
@@ -6164,12 +6190,12 @@ button:focus-visible, input:focus-visible {
         display: none !important;
     }
 
-    /* Drag handle */
+    /* Drag handle — large touch target */
     .sheet-drag-handle {
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 10px 0 6px;
+        padding: 14px 0 10px;
         cursor: grab;
         touch-action: none;
         flex-shrink: 0;
@@ -6177,16 +6203,16 @@ button:focus-visible, input:focus-visible {
     }
 
     .sheet-drag-handle-bar {
-        width: 36px;
-        height: 4px;
-        background: rgba(255, 255, 255, 0.3);
-        border-radius: 2px;
+        width: 40px;
+        height: 5px;
+        background: rgba(255, 255, 255, 0.35);
+        border-radius: 3px;
         transition: width 0.2s ease;
     }
 
     .sheet-drag-handle:active .sheet-drag-handle-bar {
-        width: 44px;
-        background: rgba(255, 255, 255, 0.5);
+        width: 52px;
+        background: rgba(255, 255, 255, 0.55);
     }
 
     /* Sidebar scroll within bottom sheet */

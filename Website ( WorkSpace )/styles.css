@@ -6097,7 +6097,6 @@ button:focus-visible, input:focus-visible {
     /* ── CSS Variables ── */
     :root {
         --m-nav-h: 56px;
-        --m-sheet-peek: 72px;
         --m-sheet-half: 50vh;
         --m-sheet-full: 92vh;
         --m-fab-size: 52px;
@@ -6114,7 +6113,7 @@ button:focus-visible, input:focus-visible {
         max-width: 100% !important;
         height: var(--m-sheet-full) !important;
         max-height: var(--m-sheet-full) !important;
-        transform: translateY(calc(100% - var(--m-sheet-peek))) !important;
+        transform: translateY(100%) !important;
         transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1) !important;
         border-radius: 16px 16px 0 0 !important;
         border-right: none !important;
@@ -6186,11 +6185,6 @@ button:focus-visible, input:focus-visible {
         overscroll-behavior-y: contain;
     }
 
-    /* In peek state, prevent scrolling */
-    .sidebar:not([data-sheet="half"]):not([data-sheet="full"]):not(.collapsed) .sidebar-scroll {
-        overflow: hidden !important;
-    }
-
     /* Sidebar header compact on mobile */
     .sidebar .sidebar-header {
         padding-top: 0 !important;
@@ -6207,7 +6201,7 @@ button:focus-visible, input:focus-visible {
 
     .mobile-fab {
         position: fixed;
-        bottom: calc(var(--m-nav-h) + var(--m-sheet-peek) + 12px);
+        bottom: calc(var(--m-nav-h) + 12px);
         right: 12px;
         width: var(--m-fab-size);
         height: var(--m-fab-size);
@@ -6230,10 +6224,6 @@ button:focus-visible, input:focus-visible {
         transform: rotate(45deg);
     }
 
-    .mobile-fab.fab-lowered {
-        bottom: calc(var(--m-nav-h) + 12px);
-    }
-
     .mobile-fab svg {
         width: 24px;
         height: 24px;
@@ -6242,7 +6232,7 @@ button:focus-visible, input:focus-visible {
 
     .fab-menu {
         position: fixed;
-        bottom: calc(var(--m-nav-h) + var(--m-sheet-peek) + 12px + var(--m-fab-size) + 10px);
+        bottom: calc(var(--m-nav-h) + 12px + var(--m-fab-size) + 10px);
         right: 12px;
         display: flex;
         flex-direction: column-reverse;
@@ -6258,10 +6248,6 @@ button:focus-visible, input:focus-visible {
         pointer-events: auto;
         opacity: 1;
         transform: translateY(0) scale(1);
-    }
-
-    .fab-menu.fab-lowered {
-        bottom: calc(var(--m-nav-h) + 12px + var(--m-fab-size) + 10px);
     }
 
     .fab-menu-item {
@@ -6390,7 +6376,7 @@ button:focus-visible, input:focus-visible {
     /* ── 4. Smart Legend ── */
     .legend-container {
         position: fixed !important;
-        bottom: calc(var(--m-nav-h) + var(--m-sheet-peek) + 8px) !important;
+        bottom: calc(var(--m-nav-h) + 8px) !important;
         left: 12px !important;
         right: auto !important;
         top: auto !important;
@@ -6447,20 +6433,35 @@ button:focus-visible, input:focus-visible {
         gap: 6px !important;
     }
 
-    /* ── 5. Reposition existing elements ── */
+    /* ── 5. Reposition / hide desktop elements ── */
 
-    /* Right dock above sheet */
+    /* Right dock: hide on mobile (accessible via More > full sheet) */
     .right-dock {
-        bottom: calc(var(--m-nav-h) + var(--m-sheet-peek) + 8px) !important;
-        left: auto !important;
-        right: 70px !important;
-        top: auto !important;
-        transform: none !important;
+        display: none !important;
     }
 
-    /* Timeline above sheet */
+    /* Timeline: hide floating widget on mobile (accessible via More > full sheet) */
     .timeline-container {
-        bottom: calc(var(--m-nav-h) + var(--m-sheet-peek) + 8px) !important;
+        display: none !important;
+    }
+
+    /* Sidebar signature: hide on mobile (external one only) */
+    .sidebar .signature {
+        display: none !important;
+    }
+
+    /* External signature: small, centered, above bottom nav */
+    #external-signature {
+        position: fixed !important;
+        bottom: calc(var(--m-nav-h) + 6px) !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        font-size: 0.65rem !important;
+        width: auto !important;
+        text-align: center !important;
+        opacity: 0.5 !important;
+        z-index: 2999 !important;
+        pointer-events: none !important;
     }
 
     /* Chatbot: hide toggle (accessible via bottom nav RITA tab) */
@@ -6549,9 +6550,9 @@ button:focus-visible, input:focus-visible {
         flex-direction: row;
     }
 
-    [dir="rtl"] .right-dock {
-        right: auto !important;
-        left: 70px !important;
+    [dir="rtl"] .legend-container {
+        left: auto !important;
+        right: 12px !important;
     }
 
     [dir="rtl"] .legend-container {

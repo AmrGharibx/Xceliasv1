@@ -8919,11 +8919,11 @@ function toggleRouteMenu(forceOpen) {
     sidebar.insertBefore(handle, sidebar.firstChild);
 
     // ── State management ──
-    const STATES = ['hidden', 'peek', 'half', 'full'];
-    let currentState = 'peek';
+    const STATES = ['hidden', 'half', 'full'];
+    let currentState = 'hidden';
 
-    // Remove collapsed class set by earlier code, show as peek
-    sidebar.classList.remove('collapsed');
+    // Start hidden on mobile (map-first experience)
+    sidebar.classList.add('collapsed');
     sidebar.removeAttribute('data-sheet');
 
     function setSheetState(state) {
@@ -8945,21 +8945,13 @@ function toggleRouteMenu(forceOpen) {
             scrim.classList.toggle('visible', state === 'half' || state === 'full');
         }
 
-        // FAB visibility
+        // FAB visibility — hide when sheet is open
         var fab = document.getElementById('mobileFab');
-        var fabMenuEl = document.getElementById('fabMenu');
         if (fab) {
-            if (state === 'half' || state === 'full') {
-                fab.style.display = 'none';
-                if (fabMenuEl) { fabMenuEl.classList.remove('open'); }
-                closeFabMenu();
-            } else {
-                fab.style.display = '';
-                fab.classList.toggle('fab-lowered', state === 'hidden');
-            }
+            fab.style.display = (state === 'half' || state === 'full') ? 'none' : '';
         }
-        if (fabMenuEl) {
-            fabMenuEl.classList.toggle('fab-lowered', state === 'hidden');
+        if (state === 'half' || state === 'full') {
+            closeFabMenu();
         }
 
         // Update nav tabs

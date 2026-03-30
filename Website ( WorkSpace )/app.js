@@ -8951,6 +8951,12 @@ function toggleRouteMenu(forceOpen) {
     const MQ = window.matchMedia('(max-width: 768px)');
     if (!MQ.matches) return; // Desktop → skip
 
+    // ── P9: Strip desktop-only DOM to save ~94 nodes ──
+    ['right-dock', 'timeline-container', 'comparison-drawer', 'comparisonModal'].forEach(function(id) {
+        var el = document.getElementById(id) || document.querySelector('.' + id);
+        if (el) el.remove();
+    });
+
     const sidebar = document.getElementById('sidebar');
     if (!sidebar) return;
 

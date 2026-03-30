@@ -5492,6 +5492,54 @@ function initInvestment(proj) {
 
     const verdictEl = document.getElementById("aiVerdict");
     if (verdictEl) verdictEl.innerText = verdict;
+
+    // Async Gemini-powered insight
+    fetchGeminiInsight(proj, score, verdict);
+}
+
+// Fetch a short AI-generated analysis from Gemini for the project modal
+async function fetchGeminiInsight(proj, score, verdict) {
+    const container = document.getElementById('aiGeminiInsight');
+    const textEl = document.getElementById('aiGeminiInsightText');
+    if (!container || !textEl) return;
+
+    container.style.display = 'none';
+    textEl.textContent = '';
+
+    try {
+        const details = projectDetails[proj.name] || {};
+        const prompt = `You are RITA, an Egyptian real estate investment advisor. Give a 2-3 sentence personalized investment analysis for this project. Be warm, specific, and insightful. Include one actionable tip.
+
+Project: ${proj.name}
+Developer: ${proj.dev || 'N/A'}
+Zone: ${proj.zone || 'N/A'}
+Down Payment: ${proj.minDownPayment || 'N/A'}%
+Installments: ${proj.maxInstallmentYears || 'N/A'} years
+Delivery: ${proj.deliveryYear || 'TBA'}
+Unit Types: ${details.unitTypes || 'Various'}
+Score: ${score}/100
+Verdict: ${verdict}
+
+Reply in the same language as the current page (check if it feels like an Arabic or English context). Keep it under 60 words. No markdown, no action tags.`;
+
+        const response = await fetch('/api/gemini', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                messages: [{ role: 'user', content: prompt }],
+                generationConfig: { temperature: 0.7, topP: 0.9, maxOutputTokens: 120 }
+            })
+        });
+
+        if (!response.ok) return;
+        const data = await response.json();
+        if (data.success && data.text) {
+            textEl.textContent = data.text.trim();
+            container.style.display = 'block';
+        }
+    } catch (e) {
+        // Silent fail — algorithmic insights still shown
+    }
 }
 
 // --- MODE SWITCHER & DEVELOPER LIST ---
@@ -5698,9 +5746,8 @@ const AIConcierge = {
     isOpen: false,
     conversationHistory: [],
     
-    // Ollama Configuration (Local AI)
-    ollamaEndpoint: 'http://localhost:11434/api/chat',
-    ollamaModel: 'qwen2.5:7b',
+    // Gemini Configuration (via server proxy)
+    geminiEndpoint: '/api/gemini',
     
     // System prompt that gives AI full context
     getSystemPrompt() {
@@ -5926,66 +5973,45 @@ Now BE RITA and make this client feel like they've found the best real estate fr
         return entities;
     },
 
-    // Call Gemini API
-    // Call Ollama (Local AI)
-    async callOllama(message) {
+    // Call Gemini API (via server proxy)
+    async callGemini(message) {
         try {
-            // Build conversation history for context
-            const messages = [
-                {
-                    role: 'system',
-                    content: this.getSystemPrompt()
-                }
-            ];
-            
-            // Add conversation history (last 8 messages for context)
+            // Build conversation messages (last 8 for context)
+            const messages = [];
             this.conversationHistory.slice(-8).forEach(msg => {
                 messages.push({
                     role: msg.role === 'user' ? 'user' : 'assistant',
                     content: msg.content
                 });
             });
+            messages.push({ role: 'user', content: message });
             
-            // Add current message
-            messages.push({
-                role: 'user',
-                content: message
-            });
-            
-            const requestBody = {
-                model: this.ollamaModel,
-                messages: messages,
-                stream: false,
-                options: {
-                    temperature: 0.8,
-                    top_p: 0.9,
-                    num_predict: 500
-                }
-            };
-            
-            const response = await fetch(this.ollamaEndpoint, {
+            const response = await fetch(this.geminiEndpoint, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(requestBody)
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    systemPrompt: this.getSystemPrompt(),
+                    messages: messages,
+                    generationConfig: {
+                        temperature: 0.8,
+                        topP: 0.9,
+                        maxOutputTokens: 600
+                    }
+                })
             });
             
             if (!response.ok) {
-                throw new Error(`Ollama error: ${response.status}`);
+                throw new Error('Gemini error: ' + response.status);
             }
             
             const data = await response.json();
-            console.log('Ollama Response:', data);
-            
-            if (data.message && data.message.content) {
-                return data.message.content;
+            if (data.success && data.text) {
+                return data.text;
             }
             
-            throw new Error('Invalid response format');
-            
+            throw new Error(data.error || 'Invalid response');
         } catch (error) {
-            console.error('Ollama Error:', error);
+            console.error('Gemini Error:', error);
             return null;
         }
     },
@@ -6102,7 +6128,7 @@ Now BE RITA and make this client feel like they've found the best real estate fr
         return mentioned.slice(0, 3); // Max 3 project cards
     },
 
-    // Generate Response (Ollama-Powered)
+    // Generate Response (Gemini-Powered)
     async generateResponse(message) {
         const entities = this.extractEntities(message);
         const knowledge = this.getKnowledge();
@@ -6113,8 +6139,8 @@ Now BE RITA and make this client feel like they've found the best real estate fr
             this.conversationHistory = this.conversationHistory.slice(-16);
         }
         
-        // Try Ollama (local AI) first
-        const aiResponse = await this.callOllama(message);
+        // Try Gemini AI first
+        const aiResponse = await this.callGemini(message);
         
         if (aiResponse) {
             const { cleanText, actions } = this.parseAIActions(aiResponse);
@@ -6141,7 +6167,7 @@ Now BE RITA and make this client feel like they've found the best real estate fr
             };
         }
         
-        // Fallback to local processing if Ollama fails
+        // Fallback to local processing if Gemini fails
         return this.generateLocalResponse(message, entities, knowledge);
     },
     

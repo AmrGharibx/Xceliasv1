@@ -91,5 +91,8 @@
     }
   ],
   "cleanUrls": true,
-  "trailingSlash": false
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/api/gemini", "destination": "/api/gemini" }
+  ]
 }

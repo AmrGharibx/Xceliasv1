@@ -4747,6 +4747,196 @@ button:focus-visible, input:focus-visible {
 }
 .ai-context-badge svg { width: 12px; height: 12px; }
 
+/* ═══ ROLE BADGE (header) ═══ */
+.ai-role-badge {
+    display: none;
+    padding: 3px 10px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    border-radius: 20px;
+    white-space: nowrap;
+}
+.ai-role-badge.active {
+    display: inline-flex;
+}
+.ai-role-badge.customer {
+    color: #60a5fa;
+    background: rgba(96, 165, 250, 0.12);
+    border: 1px solid rgba(96, 165, 250, 0.25);
+}
+.ai-role-badge.agent {
+    color: #f59e0b;
+    background: rgba(245, 158, 11, 0.12);
+    border: 1px solid rgba(245, 158, 11, 0.25);
+}
+
+/* ═══ MODE SELECTOR ═══ */
+.ai-mode-selector {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 20px 20px;
+    height: 100%;
+    animation: modeFadeIn 0.6s ease;
+}
+@keyframes modeFadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.ai-mode-orb {
+    position: relative;
+    width: 64px;
+    height: 64px;
+    margin-bottom: 16px;
+}
+.ai-mode-orb-ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 2px solid var(--chat-accent);
+    opacity: 0.3;
+    animation: orbPulse 2.5s ease-in-out infinite;
+}
+@keyframes orbPulse {
+    0%, 100% { transform: scale(1); opacity: 0.3; }
+    50% { transform: scale(1.2); opacity: 0.1; }
+}
+.ai-mode-orb-core {
+    position: absolute;
+    inset: 8px;
+    border-radius: 50%;
+    background: var(--chat-gradient);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: white;
+    box-shadow: 0 0 30px rgba(102, 126, 234, 0.4);
+    animation: coreGlow 3s ease-in-out infinite;
+}
+@keyframes coreGlow {
+    0%, 100% { box-shadow: 0 0 20px rgba(102, 126, 234, 0.3); }
+    50% { box-shadow: 0 0 40px rgba(102, 126, 234, 0.6), 0 0 60px rgba(240, 147, 251, 0.2); }
+}
+.ai-mode-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--avaria-text);
+    margin: 0 0 4px;
+}
+.ai-mode-subtitle {
+    font-size: 0.85rem;
+    color: var(--avaria-text-muted);
+    margin: 0 0 24px;
+}
+.ai-mode-cards {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+    padding: 0 8px;
+}
+.ai-mode-card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 20px 12px;
+    border-radius: 18px;
+    border: 1px solid var(--chat-border);
+    background: rgba(255, 255, 255, 0.04);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+.ai-mode-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 18px;
+    background: var(--chat-gradient);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.ai-mode-card:hover {
+    border-color: var(--chat-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
+}
+.ai-mode-card:hover::before {
+    opacity: 0.08;
+}
+.ai-mode-card:active {
+    transform: translateY(0) scale(0.98);
+}
+.ai-mode-icon {
+    font-size: 28px;
+    position: relative;
+    z-index: 1;
+}
+.ai-mode-label {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--avaria-text);
+    position: relative;
+    z-index: 1;
+}
+.ai-mode-desc {
+    font-size: 0.72rem;
+    color: var(--avaria-text-muted);
+    text-align: center;
+    line-height: 1.3;
+    position: relative;
+    z-index: 1;
+}
+
+/* ═══ AI THINKING ANIMATION (replaces typing dots) ═══ */
+.ai-thinking {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 0;
+}
+.ai-thinking-orb {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--chat-gradient);
+    position: relative;
+    flex-shrink: 0;
+    animation: thinkOrb 1.8s ease-in-out infinite;
+}
+@keyframes thinkOrb {
+    0%, 100% { transform: scale(0.85); opacity: 0.6; }
+    50% { transform: scale(1); opacity: 1; }
+}
+.ai-thinking-orb::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 1.5px solid var(--chat-accent);
+    opacity: 0;
+    animation: thinkRing 1.8s ease-in-out infinite;
+}
+@keyframes thinkRing {
+    0%, 100% { transform: scale(0.8); opacity: 0; }
+    50% { transform: scale(1.2); opacity: 0.4; }
+}
+.ai-thinking-text {
+    font-size: 0.78rem;
+    color: var(--avaria-text-muted);
+    animation: thinkTextPulse 2s ease-in-out infinite;
+}
+@keyframes thinkTextPulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
 /* ═══ MOBILE RESPONSIVE ═══ */
 @media (max-width: 768px) {
     .ai-chatbot {

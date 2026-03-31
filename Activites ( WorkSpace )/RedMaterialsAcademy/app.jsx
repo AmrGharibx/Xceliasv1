@@ -9174,6 +9174,22 @@ const App = () => {
     if (root) mo.observe(root, { childList: true, subtree: true });
     return () => { obs.disconnect(); mo.disconnect(); };
   }, []);
+
+  // ─── MULTI-USER AUTH STATE ─────────────────────────
+  const [currentUser, setCurrentUser] = useState(() => xcRead(XC_KEYS.currentUser, null));
+  const [showLeaderboard, setShowLeaderboard] = useState(false);
+  const [showAdmin, setShowAdmin]             = useState(false);
+  const [showRoom, setShowRoom]               = useState(false);
+  const [mobileTab, setMobileTab]             = useState('home');
+
+  const handleLogin  = (user) => { setCurrentUser(user); xcWrite(XC_KEYS.currentUser, user); };
+  const handleLogout = async () => {
+    if (!window.confirm('Sign out of Xcelias?')) return;
+    await XC.signOut();
+    setCurrentUser(null);
+    setGlobalScore(0); setGlobalStreak(0); setCurrentActivity(null); setSelectedCategory(null);
+  };
+
   const [currentActivity, setCurrentActivity] = useState(null);
   const [globalScore, setGlobalScore] = useState(() => {
     try {
@@ -9253,6 +9269,17 @@ const App = () => {
   useEffect(() => {
     writeJsonStorage(APP_STORAGE.academyProgress, academyProgress);
   }, [academyProgress]);
+
+  // ─── SYNC SCORE TO FIREBASE / OFFLINE LEADERBOARD ──
+  useEffect(() => {
+    if (!currentUser?.uid || currentUser?.role === 'admin') return;
+    const timer = setTimeout(() => {
+      const rank = getRedRank(globalScore);
+      const activitiesPlayed = Object.keys(academyProgress.activityStats || {}).length;
+      XC.pushScore(currentUser.uid, currentUser.batchId, globalScore, globalStreak, rank.en, activitiesPlayed);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, [globalScore, globalStreak]);
 
   useEffect(() => {
     try {
@@ -10367,6 +10394,11 @@ const App = () => {
     );
   };
 
+  // ─── AUTH GUARD ──────────────────────────────────────
+  if (!currentUser) {
+    return <XcLoginScreen onLogin={handleLogin} />;
+  }
+
   return (
     <UIContext.Provider value={{
       tone,
@@ -10383,33 +10415,64 @@ const App = () => {
       <>
         <BackgroundFX />
         <SettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />
+        {showLeaderboard && <XcLeaderboard currentUser={currentUser} onClose={() => { setShowLeaderboard(false); setMobileTab('home'); }} />}
+        {showAdmin && currentUser?.role === 'admin' && <XcAdminPanel currentUser={currentUser} onClose={() => { setShowAdmin(false); setMobileTab('home'); }} />}
+        {showRoom && <XcRoomPanel currentUser={currentUser} onClose={() => { setShowRoom(false); setMobileTab('home'); }} />}
         <div style={styles.container} className="rm-app-shell">
       {/* Header */}
       <header style={styles.header}>
         <div style={styles.logo}>
-          <div style={styles.logoIcon}><div style={styles.logoRing}></div><svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg" style={{width:'28px',height:'28px',position:'relative',zIndex:1}}><defs><linearGradient id="xlg" x1="0" y1="0" x2="56" y2="56"><stop offset="0%" stopColor="#667eea"/><stop offset="50%" stopColor="#764ba2"/><stop offset="100%" stopColor="#f093fb"/></linearGradient></defs><rect x="4" y="4" width="48" height="48" rx="14" stroke="url(#xlg)" strokeWidth="2" fill="none" opacity="0.6"/><text x="28" y="37" textAnchor="middle" fill="url(#xlg)" fontFamily="Montserrat" fontWeight="900" fontSize="26">X</text></svg></div>
+          {/* ANIMATED LOGO */}
+          <div style={styles.logoIcon} className="xc-logo-icon">
+            <div className="xc-logo-ring-spin"></div>
+            <div className="xc-logo-ring-pulse"></div>
+            <div className="xc-orb-track xc-orb-track--1"><span className="xc-orb xc-orb--1"></span></div>
+            <div className="xc-orb-track xc-orb-track--2"><span className="xc-orb xc-orb--2"></span></div>
+            <div className="xc-orb-track xc-orb-track--3"><span className="xc-orb xc-orb--3"></span></div>
+            <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg" className="xc-logo-svg" style={{width:'28px',height:'28px',position:'relative',zIndex:2}}>
+              <defs><linearGradient id="xlg" x1="0" y1="0" x2="56" y2="56"><stop offset="0%" stopColor="#667eea"/><stop offset="50%" stopColor="#764ba2"/><stop offset="100%" stopColor="#f093fb"/></linearGradient></defs>
+              <rect x="4" y="4" width="48" height="48" rx="14" stroke="url(#xlg)" strokeWidth="2" fill="none" opacity="0.8"/>
+              <text x="28" y="37" textAnchor="middle" fill="url(#xlg)" fontFamily="Montserrat" fontWeight="900" fontSize="26">X</text>
+            </svg>
+          </div>
           <div style={{display:'flex',flexDirection:'column'}}>
             <span style={styles.logoText}>{s.appTitle}</span>
             <span style={styles.logoSub}><span style={styles.logoRed}>by red</span> Training Academy</span>
           </div>
         </div>
-        <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+        <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+          {/* Leaderboard */}
+          <button className="xc-header-btn xc-header-btn--trophy" onClick={() => setShowLeaderboard(true)} title="Leaderboard">
+            🏆 <span style={{display:'inline-block'}}>Board</span>
+          </button>
+          {/* Room */}
+          <button className="xc-header-btn xc-header-btn--room" onClick={() => setShowRoom(true)} title="Join Classroom Room">
+            🎮 <span style={{display:'inline-block'}}>Room</span>
+          </button>
+          {/* Admin panel for admin only */}
+          {currentUser?.role === 'admin' && (
+            <button className="xc-header-btn xc-header-btn--admin" onClick={() => setShowAdmin(true)} title="Admin Panel">
+              👑 <span style={{display:'inline-block'}}>Admin</span>
+            </button>
+          )}
+          {/* Settings */}
           <button
             onClick={() => setSettingsOpen(true)}
-            style={{
-              ...styles.secondaryBtn,
-              padding: '12px 14px',
-              borderRadius: 14,
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 10
-            }}
+            style={{ ...styles.secondaryBtn, padding: '10px 14px', borderRadius: 14, display: 'inline-flex', alignItems: 'center', gap: 8 }}
             title={lang === 'eg' ? 'الإعدادات' : 'Settings'}
           >
-            <span style={{ fontSize: 18 }}>⚙</span>
-            <span style={{ fontSize: 13, color: RM_THEME.muted, fontWeight: 800 }}>{s.settings}</span>
+            <span style={{ fontSize: 16 }}>⚙</span>
+            <span style={{ fontSize: 12, color: RM_THEME.muted, fontWeight: 800 }}>{s.settings}</span>
           </button>
+          {/* Score panel */}
           <ScorePanel score={globalScore} streak={globalStreak} totalQuestions={0} currentQuestion={0} />
+          {/* User chip + logout */}
+          <div className="xc-user-chip" onClick={handleLogout} title="Click to sign out">
+            <div className="xc-user-avatar">
+              {currentUser?.role === 'admin' ? '👑' : (currentUser?.displayName||currentUser?.username||'U').charAt(0).toUpperCase()}
+            </div>
+            <span className="xc-user-name">{currentUser?.displayName || currentUser?.username}</span>
+          </div>
         </div>
       </header>
 
@@ -10462,6 +10525,38 @@ const App = () => {
             : 'All content derived from Xcelias Training Presentation'}
         </p>
       </footer>
+
+        {/* ── Mobile Bottom Navigation ── */}
+        <nav className="xc-bottom-nav">
+          <button className={`xc-bnav-item${mobileTab==='home'?' active':''}`}
+            onClick={() => { setMobileTab('home'); setCurrentActivity && setCurrentActivity(null); }}>
+            <span className="xc-bnav-icon">🏠</span>
+            <span className="xc-bnav-label">Home</span>
+          </button>
+          <button className={`xc-bnav-item${mobileTab==='board'?' active':''}`}
+            onClick={() => { setMobileTab('board'); setShowLeaderboard(true); }}>
+            <span className="xc-bnav-icon">🏆</span>
+            <span className="xc-bnav-label">Board</span>
+          </button>
+          <button className={`xc-bnav-item${mobileTab==='room'?' active':''}`}
+            onClick={() => { setMobileTab('room'); setShowRoom(true); }}>
+            <span className="xc-bnav-icon">🎮</span>
+            <span className="xc-bnav-label">Room</span>
+          </button>
+          <button className={`xc-bnav-item${mobileTab==='profile'?' active':''}`}
+            onClick={() => setMobileTab('profile')}>
+            <span className="xc-bnav-icon">👤</span>
+            <span className="xc-bnav-label">Profile</span>
+          </button>
+          {currentUser?.role === 'admin' && (
+            <button className={`xc-bnav-item${mobileTab==='admin'?' active':''}`}
+              onClick={() => { setMobileTab('admin'); setShowAdmin(true); }}>
+              <span className="xc-bnav-icon">⚙️</span>
+              <span className="xc-bnav-label">Admin</span>
+            </button>
+          )}
+        </nav>
+
         </div>
       </>
     </UIContext.Provider>
@@ -10469,5 +10564,736 @@ const App = () => {
 };
 
 // Render the app
+// ═══════════════════════════════════════════════════════════════════════
+// XCELIAS MULTI-USER ENGINE
+// Offline (localStorage) + Online (Firebase Realtime Database)
+// ═══════════════════════════════════════════════════════════════════════
+
+const XC_MAX_TRAINEES = 35;
+const XC_KEYS = {
+  currentUser: 'xcCurrentUser',
+  accounts:    'xcAccounts',
+  adminSetup:  'xcAdminSetup',
+  roomJoined:  'xcRoomJoined',
+};
+const xcRead  = (key, fb=null) => { try { const v=localStorage.getItem(key); return v?JSON.parse(v):fb; } catch{return fb;} };
+const xcWrite = (key, v) => { try { localStorage.setItem(key, JSON.stringify(v)); } catch{} };
+const xcGenPassword = () => { const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let p='XC-'; for(let i=0;i<4;i++) p+=c[Math.floor(Math.random()*c.length)]; p+='-'; for(let i=0;i<4;i++) p+=c[Math.floor(Math.random()*c.length)]; return p; };
+const xcId = () => Math.random().toString(36).slice(2,10).toUpperCase();
+const xcHash = async (s) => { try { const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)); return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join(''); } catch { let h=5381; for(let i=0;i<s.length;i++) h=((h<<5)+h)^s.charCodeAt(i); return (h>>>0).toString(16); } };
+
+const xcCreateFirebaseUser = async (email, password) => {
+  const cfg = window.XCELIAS_FB_CONFIG;
+  if (!cfg || !cfg.apiKey) throw new Error('Firebase not configured');
+  const res = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${cfg.apiKey}`, {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ email, password, returnSecureToken: false })
+  });
+  const data = await res.json();
+  if (data.error) {
+    const msg = data.error.message;
+    if (msg==='EMAIL_EXISTS') throw new Error('Username already taken');
+    throw new Error(msg||'Failed to create account');
+  }
+  return data.localId;
+};
+
+const XC = {
+  isOnline: () => !!window.xcFirebaseReady,
+  fbEmail:  (u) => `${u.toLowerCase().trim()}@xcelias.internal`,
+
+  // ─── SIGN IN ────────────────────────────────────────
+  signIn: async (username, password) => {
+    const u = username.toLowerCase().trim();
+    if (XC.isOnline()) {
+      try {
+        const cred = await window.xcAuth.signInWithEmailAndPassword(XC.fbEmail(u), password);
+        const snap = await window.xcDB.ref(`users/${cred.user.uid}`).once('value');
+        const profile = snap.val();
+        if (!profile) throw new Error('Account profile not found');
+        const user = { uid: cred.user.uid, ...profile };
+        xcWrite(XC_KEYS.currentUser, user);
+        return user;
+      } catch(e) {
+        if (e.code==='auth/wrong-password'||e.code==='auth/user-not-found'||e.code==='auth/invalid-credential') throw new Error('Invalid username or password');
+        throw e;
+      }
+    }
+    // Offline
+    const adminSetup = xcRead(XC_KEYS.adminSetup, null);
+    if (u === 'admin') {
+      if (!adminSetup) throw new Error('Admin not set up yet');
+      const hash = await xcHash(password);
+      if (hash !== adminSetup.passwordHash) throw new Error('Invalid username or password');
+      const user = { uid:'admin_local', username:'admin', displayName:'Admin', role:'admin', batchId:'admin' };
+      xcWrite(XC_KEYS.currentUser, user);
+      return user;
+    }
+    const accounts = xcRead(XC_KEYS.accounts, []);
+    const account  = accounts.find(a => a.username.toLowerCase() === u);
+    if (!account) throw new Error('Invalid username or password');
+    const hash = await xcHash(password);
+    if (hash !== account.passwordHash) throw new Error('Invalid username or password');
+    xcWrite(XC_KEYS.currentUser, account);
+    return account;
+  },
+
+  signOut: async () => {
+    xcWrite(XC_KEYS.currentUser, null);
+    xcWrite(XC_KEYS.roomJoined, null);
+    if (XC.isOnline()) { try { await window.xcAuth.signOut(); } catch{} }
+  },
+
+  currentUser: () => xcRead(XC_KEYS.currentUser, null),
+  isAdminSetup: () => XC.isOnline() || !!xcRead(XC_KEYS.adminSetup, null),
+
+  // ─── ADMIN SETUP ────────────────────────────────────
+  setupAdmin: async (password) => {
+    if (password.length < 6) throw new Error('Password must be at least 6 characters');
+    if (XC.isOnline()) {
+      try {
+        const cred = await window.xcAuth.createUserWithEmailAndPassword(XC.fbEmail('admin'), password);
+        const uid = cred.user.uid;
+        await window.xcDB.ref(`users/${uid}`).set({ username:'admin', displayName:'Admin', role:'admin', batchId:'admin', createdAt:Date.now() });
+        const user = { uid, username:'admin', displayName:'Admin', role:'admin', batchId:'admin' };
+        xcWrite(XC_KEYS.currentUser, user);
+        return user;
+      } catch(e) {
+        if (e.code==='auth/email-already-in-use') throw new Error('Admin already set up. Sign in with your admin password.');
+        throw e;
+      }
+    }
+    const hash = await xcHash(password);
+    xcWrite(XC_KEYS.adminSetup, { passwordHash:hash, createdAt:Date.now() });
+    const user = { uid:'admin_local', username:'admin', displayName:'Admin', role:'admin', batchId:'admin' };
+    xcWrite(XC_KEYS.currentUser, user);
+    return user;
+  },
+
+  // ─── ACCOUNTS ───────────────────────────────────────
+  listAccounts: async (batchId=null) => {
+    if (XC.isOnline()) {
+      const ref = batchId ? window.xcDB.ref(`leaderboard/${batchId}`) : window.xcDB.ref('leaderboard');
+      const snap = await ref.once('value');
+      const raw = snap.val() || {};
+      if (batchId) return Object.entries(raw).map(([uid,d])=>({uid,...d}));
+      const all = [];
+      for (const [bid, users] of Object.entries(raw)) {
+        if (!users) continue;
+        for (const [uid, d] of Object.entries(users)) all.push({ uid, batchId:bid, ...d });
+      }
+      return all;
+    }
+    const acc = xcRead(XC_KEYS.accounts, []);
+    return batchId ? acc.filter(a=>a.batchId===batchId) : acc;
+  },
+
+  createTrainee: async ({ displayName, username, password, batchId, batchName }) => {
+    const u = username.toLowerCase().trim();
+    if (XC.isOnline()) {
+      const email = XC.fbEmail(u);
+      const uid = await xcCreateFirebaseUser(email, password);
+      const profile = { username:u, displayName, role:'trainee', batchId, batchName, totalScore:0, streak:0, activitiesPlayed:0, rank:'Rookie', lastActive:Date.now(), createdAt:Date.now() };
+      await window.xcDB.ref(`users/${uid}`).set(profile);
+      await window.xcDB.ref(`leaderboard/${batchId}/${uid}`).set({ displayName, username:u, totalScore:0, streak:0, rank:'Rookie', activitiesPlayed:0, lastActive:Date.now() });
+      return { uid, ...profile };
+    }
+    const accounts = xcRead(XC_KEYS.accounts, []);
+    if (accounts.find(a=>a.username.toLowerCase()===u)) throw new Error('Username already taken');
+    if (accounts.filter(a=>a.batchId===batchId).length >= XC_MAX_TRAINEES) throw new Error(`Maximum ${XC_MAX_TRAINEES} trainees per batch`);
+    const hash = await xcHash(password);
+    const uid = `local_${xcId()}`;
+    const account = { uid, username:u, displayName, passwordHash:hash, role:'trainee', batchId, batchName, totalScore:0, streak:0, activitiesPlayed:0, rank:'Rookie', lastActive:Date.now(), createdAt:Date.now() };
+    accounts.push(account);
+    xcWrite(XC_KEYS.accounts, accounts);
+    return account;
+  },
+
+  deleteTrainee: async (uid, batchId) => {
+    if (XC.isOnline()) {
+      await window.xcDB.ref(`users/${uid}`).remove();
+      await window.xcDB.ref(`leaderboard/${batchId}/${uid}`).remove();
+      return;
+    }
+    xcWrite(XC_KEYS.accounts, xcRead(XC_KEYS.accounts,[]).filter(a=>a.uid!==uid));
+  },
+
+  // ─── SCORE SYNC ─────────────────────────────────────
+  pushScore: (uid, batchId, totalScore, streak, rank, activitiesPlayed) => {
+    if (!uid || !batchId || batchId==='admin') return;
+    if (XC.isOnline()) {
+      window.xcDB.ref(`leaderboard/${batchId}/${uid}`).update({ totalScore, streak, rank, activitiesPlayed, lastActive:Date.now() });
+    }
+    const accounts = xcRead(XC_KEYS.accounts,[]);
+    const idx = accounts.findIndex(a=>a.uid===uid);
+    if (idx!==-1) { accounts[idx]={...accounts[idx],totalScore,streak,rank,activitiesPlayed}; xcWrite(XC_KEYS.accounts,accounts); }
+  },
+
+  // ─── LEADERBOARD ────────────────────────────────────
+  subscribeLeaderboard: (batchId, callback) => {
+    if (XC.isOnline() && batchId && batchId!=='admin') {
+      const ref = window.xcDB.ref(`leaderboard/${batchId}`);
+      ref.on('value', snap => {
+        const data = snap.val() || {};
+        const list = Object.entries(data).map(([uid,d])=>({uid,...d})).sort((a,b)=>(b.totalScore||0)-(a.totalScore||0));
+        callback(list);
+      });
+      return () => ref.off();
+    }
+    const poll = () => {
+      const accounts = xcRead(XC_KEYS.accounts,[]);
+      const filtered = (batchId && batchId!=='admin') ? accounts.filter(a=>a.batchId===batchId) : accounts.filter(a=>a.role!=='admin');
+      callback(filtered.slice().sort((a,b)=>(b.totalScore||0)-(a.totalScore||0)));
+    };
+    poll();
+    const id = setInterval(poll, 3000);
+    return () => clearInterval(id);
+  },
+
+  // ─── ROOMS ──────────────────────────────────────────
+  createRoom: async (adminUid, batchId, mode) => {
+    const code = xcId().slice(0,4) + '-' + xcId().slice(0,4);
+    const room = { code, batchId, adminUid, mode:mode||'solo_race', status:'lobby', participants:{}, createdAt:Date.now() };
+    if (XC.isOnline()) { await window.xcDB.ref(`rooms/${code}`).set(room); return room; }
+    xcWrite(`xcRoom_${code}`, room);
+    return room;
+  },
+
+  joinRoom: async (code, uid, displayName) => {
+    if (XC.isOnline()) {
+      const snap = await window.xcDB.ref(`rooms/${code}`).once('value');
+      const room = snap.val();
+      if (!room) throw new Error('Room not found');
+      if (room.status==='ended') throw new Error('This session has already ended');
+      await window.xcDB.ref(`rooms/${code}/participants/${uid}`).set({ displayName, score:0, joinedAt:Date.now() });
+      xcWrite(XC_KEYS.roomJoined, { code, uid });
+      return room;
+    }
+    const room = xcRead(`xcRoom_${code}`, null);
+    if (!room) throw new Error('Room not found');
+    xcWrite(XC_KEYS.roomJoined, { code, uid });
+    return room;
+  },
+
+  subscribeRoom: (code, callback) => {
+    if (XC.isOnline()) {
+      const ref = window.xcDB.ref(`rooms/${code}`);
+      ref.on('value', snap => callback(snap.val()));
+      return () => ref.off();
+    }
+    const poll = () => callback(xcRead(`xcRoom_${code}`,null));
+    poll();
+    const id = setInterval(poll, 2000);
+    return () => clearInterval(id);
+  },
+
+  updateRoomStatus: async (code, status) => {
+    if (XC.isOnline()) await window.xcDB.ref(`rooms/${code}/status`).set(status);
+    const room = xcRead(`xcRoom_${code}`, null);
+    if (room) xcWrite(`xcRoom_${code}`, { ...room, status });
+  },
+
+  updateRoomScore: async (code, uid, score) => {
+    if (XC.isOnline()) window.xcDB.ref(`rooms/${code}/participants/${uid}/score`).set(score);
+  }
+};
+
+// ═══════════════════════════════════════════════════════════════════════
+// LOGIN SCREEN
+// ═══════════════════════════════════════════════════════════════════════
+const XcLoginScreen = ({ onLogin }) => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError]       = useState('');
+  const [loading, setLoading]   = useState(false);
+  const [showSetup, setShowSetup]   = useState(false);
+  const [adminPw, setAdminPw]       = useState('');
+  const [adminPw2, setAdminPw2]     = useState('');
+  const [setupLoading, setSetupLoading] = useState(false);
+  const [setupError, setSetupError]     = useState('');
+  const [pwVisible, setPwVisible]   = useState(false);
+  const noAdmin = !XC.isAdminSetup();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    if (!username.trim() || !password.trim()) { setError('Enter username and password'); return; }
+    setError(''); setLoading(true);
+    try { const user = await XC.signIn(username.trim(), password); onLogin(user); }
+    catch(err) { setError(err.message || 'Login failed'); }
+    setLoading(false);
+  };
+
+  const handleSetup = async (e) => {
+    e.preventDefault();
+    if (adminPw.length < 6) { setSetupError('Password must be at least 6 characters'); return; }
+    if (adminPw !== adminPw2) { setSetupError("Passwords don't match"); return; }
+    setSetupError(''); setSetupLoading(true);
+    try { const user = await XC.setupAdmin(adminPw); onLogin(user); }
+    catch(err) { setSetupError(err.message || 'Setup failed'); }
+    setSetupLoading(false);
+  };
+
+  return (
+    <div className="xc-login-screen">
+      <div className="xc-login-bg">
+        <div className="xc-login-orb xc-login-orb--1"></div>
+        <div className="xc-login-orb xc-login-orb--2"></div>
+        <div className="xc-login-orb xc-login-orb--3"></div>
+      </div>
+      <div className="xc-login-card">
+        <div className="xc-login-logo">
+          <div className="xc-login-logo-ring xc-login-logo-ring--outer"></div>
+          <div className="xc-login-logo-ring xc-login-logo-ring--inner"></div>
+          <div className="xc-login-logo-orb xc-login-logo-orb--1"></div>
+          <div className="xc-login-logo-orb xc-login-logo-orb--2"></div>
+          <div className="xc-login-logo-orb xc-login-logo-orb--3"></div>
+          <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg" className="xc-login-logo-svg">
+            <defs><linearGradient id="xlg_login" x1="0" y1="0" x2="56" y2="56"><stop offset="0%" stopColor="#667eea"/><stop offset="50%" stopColor="#764ba2"/><stop offset="100%" stopColor="#f093fb"/></linearGradient></defs>
+            <rect x="4" y="4" width="48" height="48" rx="14" stroke="url(#xlg_login)" strokeWidth="2.5" fill="none"/>
+            <text x="28" y="37" textAnchor="middle" fill="url(#xlg_login)" fontFamily="Montserrat" fontWeight="900" fontSize="26">X</text>
+          </svg>
+        </div>
+        <div className="xc-login-title">
+          <span className="xc-login-title-x">Xcelias</span>
+          <span className="xc-login-title-sub">Training Academy</span>
+        </div>
+        {noAdmin && !showSetup ? (
+          <div className="xc-login-first-time">
+            <p className="xc-login-hint">👋 First launch detected.<br/>Set up the admin account to get started.</p>
+            <button className="xc-login-btn xc-login-btn--primary" onClick={() => setShowSetup(true)}>⚙ Setup Admin Account</button>
+          </div>
+        ) : showSetup ? (
+          <form onSubmit={handleSetup} className="xc-login-form">
+            <p className="xc-login-form-title">Admin Setup</p>
+            <div className="xc-login-field">
+              <label className="xc-login-label">New Admin Password</label>
+              <input type="password" value={adminPw} onChange={e=>setAdminPw(e.target.value)} className="xc-login-input" placeholder="At least 6 characters" minLength={6} autoFocus />
+            </div>
+            <div className="xc-login-field">
+              <label className="xc-login-label">Confirm Password</label>
+              <input type="password" value={adminPw2} onChange={e=>setAdminPw2(e.target.value)} className="xc-login-input" placeholder="Repeat password" />
+            </div>
+            {setupError && <div className="xc-login-error">{setupError}</div>}
+            <button type="submit" className="xc-login-btn xc-login-btn--primary" disabled={setupLoading}>
+              {setupLoading ? <span className="xc-login-loading"><span/><span/><span/></span> : '✓ Create Admin Account'}
+            </button>
+            {!noAdmin && <button type="button" className="xc-login-link" onClick={() => setShowSetup(false)}>← Back to Login</button>}
+          </form>
+        ) : (
+          <form onSubmit={handleLogin} className="xc-login-form">
+            <div className="xc-login-field">
+              <label className="xc-login-label">Username</label>
+              <input type="text" value={username} onChange={e=>setUsername(e.target.value)} className="xc-login-input" placeholder="Enter your username" autoCapitalize="none" autoCorrect="off" spellCheck="false" />
+            </div>
+            <div className="xc-login-field">
+              <label className="xc-login-label">Password</label>
+              <div className="xc-login-pw-wrap">
+                <input type={pwVisible?'text':'password'} value={password} onChange={e=>setPassword(e.target.value)} className="xc-login-input" placeholder="Enter your password" />
+                <button type="button" className="xc-login-pw-toggle" onClick={() => setPwVisible(v=>!v)}>{pwVisible?'🙈':'👁'}</button>
+              </div>
+            </div>
+            {error && <div className="xc-login-error">{error}</div>}
+            <button type="submit" className="xc-login-btn xc-login-btn--primary" disabled={loading}>
+              {loading ? <span className="xc-login-loading"><span/><span/><span/></span> : '⚡ Enter the Academy'}
+            </button>
+            <p className="xc-login-footer-hint">Contact your trainer if you need access</p>
+          </form>
+        )}
+        {!XC.isOnline() && (
+          <div style={{ marginTop:16, textAlign:'center', fontSize:11, color:'rgba(255,176,32,0.6)', lineHeight:1.5 }}>
+            📡 Offline mode — configure firebase-config.js for real-time sync
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// ═══════════════════════════════════════════════════════════════════════
+// LEADERBOARD
+// ═══════════════════════════════════════════════════════════════════════
+const XcLeaderboard = ({ currentUser, onClose, embedded=false }) => {
+  const [entries, setEntries]   = useState([]);
+  const [loading, setLoading]   = useState(true);
+  const batchId = currentUser?.batchId;
+
+  useEffect(() => {
+    if (!batchId) { setLoading(false); return; }
+    setLoading(true);
+    const unsub = XC.subscribeLeaderboard(batchId, (list) => { setEntries(list); setLoading(false); });
+    return unsub;
+  }, [batchId]);
+
+  const getRankEmoji = (i) => i===0?'👑':i===1?'🥈':i===2?'🥉':`#${i+1}`;
+  const getStreakColor = (s) => s>=10?'#ff4444':s>=5?'#ff7700':s>=3?'#ffb020':'rgba(152,152,184,0.6)';
+  const getBadge = (score) => {
+    if (score>=500) return { label:'Legend', color:'#f093fb' };
+    if (score>=300) return { label:'Elite',  color:'#667eea' };
+    if (score>=150) return { label:'Pro',    color:'#50fa7b' };
+    if (score>=60)  return { label:'Operator',color:'#ffb020'};
+    return { label:'Rookie', color:'rgba(152,152,184,0.8)' };
+  };
+
+  const inner = (
+    <>
+      <div className="xc-leaderboard__header">
+        <div className="xc-leaderboard__title"><span>🏆</span><span>Leaderboard</span></div>
+        {!embedded && <button className="xc-modal-close" onClick={onClose}>✕</button>}
+      </div>
+      {loading ? (
+        <div className="xc-leaderboard__loading">
+          <div className="xc-loading-dots"><span/><span/><span/></div>
+          <p>Loading scores...</p>
+        </div>
+      ) : entries.length === 0 ? (
+        <div className="xc-leaderboard__empty">
+          <div style={{fontSize:48}}>🎮</div>
+          <p>No scores yet. Start playing!</p>
+        </div>
+      ) : (
+        <div className="xc-leaderboard__list">
+          {entries.map((entry, idx) => {
+            const isMe = entry.uid === currentUser?.uid;
+            const badge = getBadge(entry.totalScore || 0);
+            return (
+              <div key={entry.uid} className={`xc-lb-row${isMe?' xc-lb-row--me':''}${idx<3?' xc-lb-row--top':''}`}>
+                <div className="xc-lb-rank"><span className={`xc-lb-rank-num${idx<3?' xc-lb-rank-num--podium':''}`}>{getRankEmoji(idx)}</span></div>
+                <div className="xc-lb-avatar">{(entry.displayName||entry.username||'U').charAt(0).toUpperCase()}</div>
+                <div className="xc-lb-info">
+                  <span className="xc-lb-name">{entry.displayName||entry.username}{isMe&&<span className="xc-lb-you"> (You)</span>}</span>
+                  <div className="xc-lb-meta">
+                    <span className="xc-lb-badge" style={{color:badge.color}}>{badge.label}</span>
+                    {(entry.activitiesPlayed||0)>0 && <span className="xc-lb-acts">{entry.activitiesPlayed} {entry.activitiesPlayed===1?'activity':'activities'}</span>}
+                  </div>
+                </div>
+                <div className="xc-lb-score-col">
+                  <div className="xc-lb-score">{(entry.totalScore||0).toLocaleString()}</div>
+                  {(entry.streak||0)>0 && <div className="xc-lb-streak" style={{color:getStreakColor(entry.streak)}}>🔥{entry.streak}</div>}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+      {!XC.isOnline() && (
+        <div className="xc-leaderboard__offline-note">
+          📡 Offline mode — scores shown for this device only.<br/>Configure firebase-config.js for real-time sync.
+        </div>
+      )}
+    </>
+  );
+
+  if (embedded) return <div className="xc-leaderboard">{inner}</div>;
+  return (
+    <div className="xc-modal-overlay" onClick={onClose}>
+      <div className="xc-leaderboard" onClick={e=>e.stopPropagation()}>{inner}</div>
+    </div>
+  );
+};
+
+// ═══════════════════════════════════════════════════════════════════════
+// ADMIN PANEL
+// ═══════════════════════════════════════════════════════════════════════
+const XcAdminPanel = ({ currentUser, onClose }) => {
+  const [tab, setTab]                   = useState('accounts');
+  const [accounts, setAccounts]         = useState([]);
+  const [loading, setLoading]           = useState(true);
+  const [showAddForm, setShowAddForm]   = useState(false);
+  const [newName, setNewName]           = useState('');
+  const [newUsername, setNewUsername]   = useState('');
+  const [newPassword, setNewPassword]   = useState(xcGenPassword);
+  const [batchName, setBatchName]       = useState('Batch 1');
+  const [batchId, setBatchId]           = useState(() => 'batch_' + Date.now());
+  const [addLoading, setAddLoading]     = useState(false);
+  const [addError, setAddError]         = useState('');
+  const [credentials, setCredentials]   = useState([]);
+  const [roomMode, setRoomMode]         = useState('solo_race');
+  const [createdRoom, setCreatedRoom]   = useState(null);
+  const [creatingRoom, setCreatingRoom] = useState(false);
+  const [batchFilter, setBatchFilter]   = useState('');
+
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      try { setAccounts(await XC.listAccounts()); } catch {}
+      setLoading(false);
+    })();
+  }, []);
+
+  const batches = useMemo(() => {
+    const map = {};
+    for (const a of accounts) {
+      if (!a.batchId || a.batchId==='admin') continue;
+      if (!map[a.batchId]) map[a.batchId] = { id:a.batchId, name:a.batchName||a.batchId, trainees:[] };
+      map[a.batchId].trainees.push(a);
+    }
+    return Object.values(map);
+  }, [accounts]);
+
+  const currentBatch = accounts.filter(a => a.batchId===batchId && a.role!=='admin');
+
+  const handleAdd = async (e) => {
+    e.preventDefault();
+    if (!newName.trim() || !newUsername.trim()) { setAddError('Name and username are required'); return; }
+    setAddError(''); setAddLoading(true);
+    try {
+      const trainee = await XC.createTrainee({ displayName:newName.trim(), username:newUsername.trim(), password:newPassword, batchId, batchName });
+      setAccounts(p => [...p, trainee]);
+      setCredentials(p => [...p, { name:newName.trim(), username:newUsername.trim().toLowerCase(), password:newPassword }]);
+      setNewName(''); setNewUsername(''); setNewPassword(xcGenPassword()); setShowAddForm(false);
+    } catch(err) { setAddError(err.message||'Failed to create account'); }
+    setAddLoading(false);
+  };
+
+  const handleDelete = async (uid, bid) => {
+    if (!window.confirm('Delete this account? This cannot be undone.')) return;
+    await XC.deleteTrainee(uid, bid);
+    setAccounts(p => p.filter(a=>a.uid!==uid));
+  };
+
+  const handleCreateRoom = async () => {
+    setCreatingRoom(true);
+    try { setCreatedRoom(await XC.createRoom(currentUser.uid, batchId||'all', roomMode)); }
+    catch(err) { alert(err.message); }
+    setCreatingRoom(false);
+  };
+
+  const displayAccounts = batchFilter ? accounts.filter(a=>a.batchId===batchFilter&&a.role!=='admin') : currentBatch;
+
+  return (
+    <div className="xc-modal-overlay">
+      <div className="xc-admin-panel" onClick={e=>e.stopPropagation()}>
+        <div className="xc-admin-header">
+          <div className="xc-admin-title"><span className="xc-admin-badge">ADMIN</span><span>Control Center</span></div>
+          <button className="xc-modal-close" onClick={onClose}>✕</button>
+        </div>
+
+        <div className="xc-admin-tabs">
+          {[{id:'accounts',label:'👥 Accounts',count:accounts.filter(a=>a.role!=='admin').length},{id:'rooms',label:'🎮 Rooms'},{id:'scores',label:'📊 Scores'}].map(t => (
+            <button key={t.id} className={`xc-admin-tab${tab===t.id?' active':''}`} onClick={()=>setTab(t.id)}>
+              {t.label}{t.count!==undefined&&<span className="xc-tab-count">{t.count}</span>}
+            </button>
+          ))}
+        </div>
+
+        <div className="xc-admin-body">
+          {tab === 'accounts' && (
+            <div style={{display:'flex',flexDirection:'column',gap:16}}>
+              <div className="xc-admin-row">
+                <div className="xc-admin-field">
+                  <label className="xc-admin-label">Active Batch Name</label>
+                  <input type="text" value={batchName} onChange={e=>setBatchName(e.target.value)} className="xc-admin-input" placeholder="e.g., Batch 12 — March 2026" />
+                </div>
+                <div className="xc-admin-stat" style={{textAlign:'right',justifyContent:'flex-end',paddingBottom:6}}>
+                  <span className="xc-admin-stat-num">{currentBatch.length}</span>
+                  <span className="xc-admin-stat-label">/ {XC_MAX_TRAINEES}</span>
+                </div>
+              </div>
+
+              {batches.length > 1 && (
+                <div className="xc-admin-field">
+                  <label className="xc-admin-label">View Batch</label>
+                  <select className="xc-admin-input" value={batchFilter} onChange={e=>setBatchFilter(e.target.value)}>
+                    <option value="">Current batch ({batchName})</option>
+                    {batches.map(b=><option key={b.id} value={b.id}>{b.name} ({b.trainees.length})</option>)}
+                  </select>
+                </div>
+              )}
+
+              <div className="xc-admin-trainee-list">
+                {loading ? <div className="xc-loading-center"><div className="xc-loading-dots"><span/><span/><span/></div></div>
+                : displayAccounts.length === 0 ? (
+                  <div className="xc-admin-empty"><div style={{fontSize:36}}>👥</div><p>No trainees yet in this batch.<br/>Add up to {XC_MAX_TRAINEES}.</p></div>
+                ) : displayAccounts.map(t => (
+                  <div key={t.uid} className="xc-admin-trainee-card">
+                    <div className="xc-trainee-avatar">{(t.displayName||t.username).charAt(0).toUpperCase()}</div>
+                    <div className="xc-trainee-info">
+                      <span className="xc-trainee-name">{t.displayName}</span>
+                      <span className="xc-trainee-username">@{t.username}</span>
+                    </div>
+                    <div className="xc-trainee-score">⭐ {(t.totalScore||0).toLocaleString()}</div>
+                    <button className="xc-trainee-delete" onClick={()=>handleDelete(t.uid,t.batchId)} title="Delete">🗑</button>
+                  </div>
+                ))}
+              </div>
+
+              {currentBatch.length < XC_MAX_TRAINEES && (
+                showAddForm ? (
+                  <form onSubmit={handleAdd} className="xc-add-trainee-form">
+                    <div className="xc-admin-field">
+                      <label className="xc-admin-label">Full Name</label>
+                      <input type="text" value={newName} onChange={e=>setNewName(e.target.value)} className="xc-admin-input" placeholder="e.g., Ahmed Hassan" autoFocus />
+                    </div>
+                    <div className="xc-admin-row">
+                      <div className="xc-admin-field">
+                        <label className="xc-admin-label">Username</label>
+                        <input type="text" value={newUsername} onChange={e=>setNewUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g,''))} className="xc-admin-input" placeholder="Ahmed01" />
+                      </div>
+                      <div className="xc-admin-field">
+                        <label className="xc-admin-label">Password</label>
+                        <div style={{display:'flex',gap:8}}>
+                          <input type="text" value={newPassword} onChange={e=>setNewPassword(e.target.value)} className="xc-admin-input" style={{flex:1}} />
+                          <button type="button" className="xc-admin-gen-btn" onClick={()=>setNewPassword(xcGenPassword())} title="Generate">🔄</button>
+                        </div>
+                      </div>
+                    </div>
+                    {addError && <div className="xc-login-error">{addError}</div>}
+                    <div style={{display:'flex',gap:10,flexWrap:'wrap'}}>
+                      <button type="submit" className="xc-admin-btn xc-admin-btn--primary" disabled={addLoading}>{addLoading?'⏳...':'✓ Create Account'}</button>
+                      <button type="button" className="xc-admin-btn" onClick={()=>{setShowAddForm(false);setAddError('');}}>Cancel</button>
+                    </div>
+                  </form>
+                ) : (
+                  <button className="xc-admin-btn xc-admin-btn--add" onClick={()=>setShowAddForm(true)}>
+                    + Add Trainee ({XC_MAX_TRAINEES - currentBatch.length} slots left)
+                  </button>
+                )
+              )}
+
+              {credentials.length > 0 && (
+                <div className="xc-credentials-box">
+                  <div className="xc-credentials-header">
+                    <span>📋 New Credentials — save before closing</span>
+                    <button className="xc-admin-btn xc-admin-btn--small" onClick={() => {
+                      const text = credentials.map(c=>`Name: ${c.name}\nUsername: ${c.username}\nPassword: ${c.password}\n`).join('\n---\n');
+                      const blob = new Blob([text],{type:'text/plain'});
+                      const url  = URL.createObjectURL(blob);
+                      const a    = document.createElement('a'); a.href=url; a.download='xcelias_credentials.txt'; a.click();
+                      URL.revokeObjectURL(url);
+                    }}>⬇ Export</button>
+                  </div>
+                  {credentials.map((c,i) => (
+                    <div key={i} className="xc-credential-row">
+                      <span className="xc-cred-name">{c.name}</span>
+                      <span className="xc-cred-user">@{c.username}</span>
+                      <code className="xc-cred-pw">{c.password}</code>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {tab === 'rooms' && (
+            <div className="xc-admin-room-create">
+              <h3 className="xc-admin-section-title">Create Classroom Session</h3>
+              <div className="xc-room-modes">
+                {[{id:'solo_race',label:'🏃 Solo Race',desc:'Everyone plays independently, ranked by score'},{id:'team_battle',label:'⚔️ Team Battle',desc:'Teams compete for highest combined score'}].map(m => (
+                  <div key={m.id} className={`xc-room-mode-card${roomMode===m.id?' active':''}`} onClick={()=>setRoomMode(m.id)}>
+                    <div className="xc-room-mode-label">{m.label}</div>
+                    <div className="xc-room-mode-desc">{m.desc}</div>
+                  </div>
+                ))}
+              </div>
+              <button className="xc-admin-btn xc-admin-btn--primary xc-admin-btn--large" onClick={handleCreateRoom} disabled={creatingRoom}>
+                {creatingRoom ? '⏳ Creating...' : '🎮 Create Room'}
+              </button>
+              {createdRoom && (
+                <div className="xc-room-created-card">
+                  <div className="xc-room-created-label">Room Created!</div>
+                  <div className="xc-room-code">{createdRoom.code}</div>
+                  <p className="xc-room-code-hint">Share this code with trainees to join</p>
+                  <button className="xc-admin-btn xc-admin-btn--danger" onClick={async()=>{ await XC.updateRoomStatus(createdRoom.code,'ended'); setCreatedRoom(null); }}>End Session</button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {tab === 'scores' && (
+            <div className="xc-admin-scores">
+              <XcLeaderboard currentUser={{ ...currentUser, batchId: batchFilter||batchId }} onClose={()=>{}} embedded={true} />
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ═══════════════════════════════════════════════════════════════════════
+// ROOM JOIN + LOBBY
+// ═══════════════════════════════════════════════════════════════════════
+const XcRoomPanel = ({ currentUser, onClose }) => {
+  const [code, setCode]         = useState('');
+  const [joining, setJoining]   = useState(false);
+  const [error, setError]       = useState('');
+  const [joinedRoom, setJoinedRoom] = useState(() => xcRead(XC_KEYS.roomJoined, null));
+  const [roomData, setRoomData] = useState(null);
+
+  useEffect(() => {
+    if (!joinedRoom?.code) return;
+    const unsub = XC.subscribeRoom(joinedRoom.code, data => setRoomData(data));
+    return unsub;
+  }, [joinedRoom]);
+
+  const handleJoin = async (e) => {
+    e.preventDefault();
+    if (!code.trim()) return;
+    setError(''); setJoining(true);
+    try {
+      await XC.joinRoom(code.trim().toUpperCase(), currentUser.uid, currentUser.displayName||currentUser.username);
+      setJoinedRoom({ code: code.trim().toUpperCase(), uid: currentUser.uid });
+    } catch(err) { setError(err.message||'Room not found'); }
+    setJoining(false);
+  };
+
+  const leave = () => { xcWrite(XC_KEYS.roomJoined, null); setJoinedRoom(null); setRoomData(null); onClose(); };
+
+  if (joinedRoom && roomData) {
+    const sorted = Object.values(roomData.participants||{}).sort((a,b)=>(b.score||0)-(a.score||0));
+    return (
+      <div className="xc-modal-overlay" onClick={onClose}>
+        <div className="xc-room-lobby" onClick={e=>e.stopPropagation()}>
+          <div className="xc-room-lobby-header">
+            <div>
+              <div className="xc-room-lobby-title">Live Session</div>
+              <div className="xc-room-lobby-code">Room: {joinedRoom.code}</div>
+            </div>
+            <div className={`xc-room-status xc-room-status--${roomData.status}`}>
+              {roomData.status==='lobby'?'⏳ Waiting...':roomData.status==='active'?'🔴 LIVE':'✓ Ended'}
+            </div>
+          </div>
+          <div className="xc-room-participants">
+            <div className="xc-room-section-title">{sorted.length} connected</div>
+            {sorted.map((p,i) => (
+              <div key={p.joinedAt||i} className="xc-room-participant">
+                <span className="xc-room-p-rank">{i+1}</span>
+                <span className="xc-room-p-avatar">{(p.displayName||'U').charAt(0)}</span>
+                <span className="xc-room-p-name">{p.displayName}</span>
+                <span className="xc-room-p-score">⭐ {p.score||0}</span>
+              </div>
+            ))}
+          </div>
+          <div style={{padding:'16px 20px',borderTop:'1px solid rgba(255,255,255,0.06)'}}>
+            <button className="xc-admin-btn" onClick={leave}>Leave Room</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="xc-modal-overlay" onClick={onClose}>
+      <div className="xc-room-join" onClick={e=>e.stopPropagation()}>
+        <div className="xc-room-join-header">
+          <span className="xc-room-join-icon">🎮</span>
+          <div>
+            <div className="xc-room-join-title">Join Classroom Room</div>
+            <div className="xc-room-join-hint">Enter the code shown by your trainer</div>
+          </div>
+          <button className="xc-modal-close" onClick={onClose}>✕</button>
+        </div>
+        <form onSubmit={handleJoin} className="xc-room-join-form">
+          <input type="text" value={code} onChange={e=>setCode(e.target.value.toUpperCase())} className="xc-room-code-input" placeholder="XXXX-XXXX" maxLength={9} autoFocus />
+          {error && <div className="xc-login-error">{error}</div>}
+          <button type="submit" className="xc-login-btn xc-login-btn--primary" disabled={joining}>
+            {joining ? <span className="xc-login-loading"><span/><span/><span/></span> : '🚀 Join Room'}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+};
+
 ReactDOM.createRoot(document.getElementById('root')).render(<App />);
 

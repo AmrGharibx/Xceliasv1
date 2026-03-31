@@ -3,7 +3,7 @@
 // Dynamic Training Platform - Phase 1: Core Data & Utilities
 // ============================================
 
-const { useState, useEffect, useCallback, useMemo } = React;
+const { useState, useEffect, useCallback, useMemo, useRef } = React;
 
 // ============================================
 // UI CONTEXT (Tone, Motion, FX Intensity)
@@ -10581,6 +10581,25 @@ const xcWrite = (key, v) => { try { localStorage.setItem(key, JSON.stringify(v))
 const xcGenPassword = () => { const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let p='XC-'; for(let i=0;i<4;i++) p+=c[Math.floor(Math.random()*c.length)]; p+='-'; for(let i=0;i<4;i++) p+=c[Math.floor(Math.random()*c.length)]; return p; };
 const xcId = () => Math.random().toString(36).slice(2,10).toUpperCase();
 const xcHash = async (s) => { try { const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)); return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join(''); } catch { let h=5381; for(let i=0;i<s.length;i++) h=((h<<5)+h)^s.charCodeAt(i); return (h>>>0).toString(16); } };
+const xcDownloadTextFile = (filename, text, type='text/plain') => {
+  const blob = new Blob([text], { type });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+};
+const xcDownloadJsonFile = (filename, data) => xcDownloadTextFile(filename, JSON.stringify(data, null, 2), 'application/json');
+const xcReadJsonFile = (file) => new Promise((resolve, reject) => {
+  const reader = new FileReader();
+  reader.onload = () => {
+    try { resolve(JSON.parse(reader.result)); }
+    catch { reject(new Error('Invalid JSON backup file')); }
+  };
+  reader.onerror = () => reject(new Error('Failed to read backup file'));
+  reader.readAsText(file);
+});
 
 const xcCreateFirebaseUser = async (email, password) => {
   const cfg = window.XCELIAS_FB_CONFIG;
@@ -10646,6 +10665,36 @@ const XC = {
 
   currentUser: () => xcRead(XC_KEYS.currentUser, null),
   isAdminSetup: () => XC.isOnline() || !!xcRead(XC_KEYS.adminSetup, null),
+  offlineBackupSummary: () => {
+    const accounts = xcRead(XC_KEYS.accounts, []);
+    const adminSetup = xcRead(XC_KEYS.adminSetup, null);
+    return {
+      mode: 'offline',
+      exportedAt: Date.now(),
+      app: 'Xcelias Academy',
+      version: 1,
+      hasAdmin: !!adminSetup,
+      traineeCount: accounts.filter(a => a.role !== 'admin').length,
+    };
+  },
+  exportOfflineBackup: () => ({
+    meta: XC.offlineBackupSummary(),
+    data: {
+      adminSetup: xcRead(XC_KEYS.adminSetup, null),
+      accounts: xcRead(XC_KEYS.accounts, []),
+    }
+  }),
+  importOfflineBackup: (backup) => {
+    if (!backup || typeof backup !== 'object' || !backup.data) throw new Error('Backup file is missing data');
+    const adminSetup = backup.data.adminSetup || null;
+    const accounts = Array.isArray(backup.data.accounts) ? backup.data.accounts : [];
+    xcWrite(XC_KEYS.adminSetup, adminSetup);
+    xcWrite(XC_KEYS.accounts, accounts);
+    return {
+      hasAdmin: !!adminSetup,
+      traineeCount: accounts.filter(a => a.role !== 'admin').length,
+    };
+  },
 
   // ─── ADMIN SETUP ────────────────────────────────────
   setupAdmin: async (password) => {
@@ -10673,16 +10722,15 @@ const XC = {
   // ─── ACCOUNTS ───────────────────────────────────────
   listAccounts: async (batchId=null) => {
     if (XC.isOnline()) {
-      const ref = batchId ? window.xcDB.ref(`leaderboard/${batchId}`) : window.xcDB.ref('leaderboard');
-      const snap = await ref.once('value');
-      const raw = snap.val() || {};
-      if (batchId) return Object.entries(raw).map(([uid,d])=>({uid,...d}));
-      const all = [];
-      for (const [bid, users] of Object.entries(raw)) {
-        if (!users) continue;
-        for (const [uid, d] of Object.entries(users)) all.push({ uid, batchId:bid, ...d });
-      }
-      return all;
+      const userSnap = await window.xcDB.ref('users').once('value');
+      const users = userSnap.val() || {};
+      const boardSnap = await window.xcDB.ref('leaderboard').once('value');
+      const leaderboard = boardSnap.val() || {};
+      const all = Object.entries(users).map(([uid, profile]) => {
+        const scoreData = profile?.batchId && leaderboard[profile.batchId] ? leaderboard[profile.batchId][uid] : null;
+        return { uid, ...profile, ...(scoreData || {}) };
+      });
+      return batchId ? all.filter(a => a.batchId === batchId) : all;
     }
     const acc = xcRead(XC_KEYS.accounts, []);
     return batchId ? acc.filter(a=>a.batchId===batchId) : acc;
@@ -10691,6 +10739,11 @@ const XC = {
   createTrainee: async ({ displayName, username, password, batchId, batchName }) => {
     const u = username.toLowerCase().trim();
     if (XC.isOnline()) {
+      const usersSnap = await window.xcDB.ref('users').once('value');
+      const users = usersSnap.val() || {};
+      const existing = Object.values(users);
+      if (existing.find(a => (a.username || '').toLowerCase() === u)) throw new Error('Username already taken');
+      if (existing.filter(a => a.batchId === batchId && a.role !== 'admin').length >= XC_MAX_TRAINEES) throw new Error(`Maximum ${XC_MAX_TRAINEES} trainees per batch`);
       const email = XC.fbEmail(u);
       const uid = await xcCreateFirebaseUser(email, password);
       const profile = { username:u, displayName, role:'trainee', batchId, batchName, totalScore:0, streak:0, activitiesPlayed:0, rank:'Rookie', lastActive:Date.now(), createdAt:Date.now() };
@@ -10812,6 +10865,7 @@ const XcLoginScreen = ({ onLogin }) => {
   const [setupLoading, setSetupLoading] = useState(false);
   const [setupError, setSetupError]     = useState('');
   const [pwVisible, setPwVisible]   = useState(false);
+  const fileInputRef = useRef(null);
   const noAdmin = !XC.isAdminSetup();
 
   const handleLogin = async (e) => {
@@ -10831,6 +10885,27 @@ const XcLoginScreen = ({ onLogin }) => {
     try { const user = await XC.setupAdmin(adminPw); onLogin(user); }
     catch(err) { setSetupError(err.message || 'Setup failed'); }
     setSetupLoading(false);
+  };
+
+  const handleImportBackup = async (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    setError('');
+    setSetupError('');
+    try {
+      const backup = await xcReadJsonFile(file);
+      const result = XC.importOfflineBackup(backup);
+      const countLabel = result.traineeCount === 1 ? '1 trainee' : `${result.traineeCount} trainees`;
+      if (result.hasAdmin) {
+        setShowSetup(false);
+        setError(`Offline backup imported. Sign in with the admin password from the original device. ${countLabel} restored.`);
+      } else {
+        setSetupError('Backup imported, but it does not include an admin setup.');
+      }
+    } catch (err) {
+      setError(err.message || 'Import failed');
+    }
+    e.target.value = '';
   };
 
   return (
@@ -10859,8 +10934,14 @@ const XcLoginScreen = ({ onLogin }) => {
         </div>
         {noAdmin && !showSetup ? (
           <div className="xc-login-first-time">
-            <p className="xc-login-hint">👋 First launch detected.<br/>Set up the admin account to get started.</p>
+            <p className="xc-login-hint">👋 This device has no synced admin yet.<br/>Set up admin here, or import a backup from the original device.</p>
             <button className="xc-login-btn xc-login-btn--primary" onClick={() => setShowSetup(true)}>⚙ Setup Admin Account</button>
+            {!XC.isOnline() && (
+              <>
+                <button className="xc-login-btn" onClick={() => fileInputRef.current?.click()}>⬆ Import Offline Backup</button>
+                <p className="xc-login-footnote">Without Firebase, each device has its own local admin, trainees, scores, and rooms.</p>
+              </>
+            )}
           </div>
         ) : showSetup ? (
           <form onSubmit={handleSetup} className="xc-login-form">
@@ -10900,10 +10981,11 @@ const XcLoginScreen = ({ onLogin }) => {
           </form>
         )}
         {!XC.isOnline() && (
-          <div style={{ marginTop:16, textAlign:'center', fontSize:11, color:'rgba(255,176,32,0.6)', lineHeight:1.5 }}>
-            📡 Offline mode — configure firebase-config.js for real-time sync
+          <div className="xc-login-sync-note">
+            <strong>📡 Offline mode</strong><br/>This device is using local storage only. To share the same admin and leaderboard across devices, either configure Firebase or import an offline backup from the original device.
           </div>
         )}
+        <input ref={fileInputRef} type="file" accept="application/json,.json" style={{display:'none'}} onChange={handleImportBackup} />
       </div>
     </div>
   );
@@ -11011,6 +11093,7 @@ const XcAdminPanel = ({ currentUser, onClose }) => {
   const [createdRoom, setCreatedRoom]   = useState(null);
   const [creatingRoom, setCreatingRoom] = useState(false);
   const [batchFilter, setBatchFilter]   = useState('');
+  const importRef = useRef(null);
 
   useEffect(() => {
     (async () => {
@@ -11056,6 +11139,26 @@ const XcAdminPanel = ({ currentUser, onClose }) => {
     try { setCreatedRoom(await XC.createRoom(currentUser.uid, batchId||'all', roomMode)); }
     catch(err) { alert(err.message); }
     setCreatingRoom(false);
+  };
+
+  const handleExportBackup = () => {
+    const stamp = new Date().toISOString().slice(0, 19).replace(/[T:]/g, '-');
+    xcDownloadJsonFile(`xcelias-offline-backup-${stamp}.json`, XC.exportOfflineBackup());
+  };
+
+  const handleImportBackup = async (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    try {
+      const backup = await xcReadJsonFile(file);
+      XC.importOfflineBackup(backup);
+      setAccounts(await XC.listAccounts());
+      setCredentials([]);
+      alert('Offline backup imported on this device.');
+    } catch (err) {
+      alert(err.message || 'Import failed');
+    }
+    e.target.value = '';
   };
 
   const displayAccounts = batchFilter ? accounts.filter(a=>a.batchId===batchFilter&&a.role!=='admin') : currentBatch;
@@ -11117,6 +11220,19 @@ const XcAdminPanel = ({ currentUser, onClose }) => {
                 ))}
               </div>
 
+              {!XC.isOnline() && (
+                <div className="xc-sync-box">
+                  <div className="xc-sync-box__title">Offline Sync Between Devices</div>
+                  <p className="xc-sync-box__text">This app is still local-only. Export a backup from this device, then import it on the other device so it gets the same admin setup and trainee accounts.</p>
+                  <div className="xc-sync-box__actions">
+                    <button className="xc-admin-btn" onClick={handleExportBackup}>⬇ Export Device Backup</button>
+                    <button className="xc-admin-btn" onClick={() => importRef.current?.click()}>⬆ Import Device Backup</button>
+                  </div>
+                  <div className="xc-sync-box__hint">For live multi-device sync, fill in firebase-config.js once and redeploy the app.</div>
+                  <input ref={importRef} type="file" accept="application/json,.json" style={{display:'none'}} onChange={handleImportBackup} />
+                </div>
+              )}
+
               {currentBatch.length < XC_MAX_TRAINEES && (
                 showAddForm ? (
                   <form onSubmit={handleAdd} className="xc-add-trainee-form">
@@ -11156,10 +11272,7 @@ const XcAdminPanel = ({ currentUser, onClose }) => {
                     <span>📋 New Credentials — save before closing</span>
                     <button className="xc-admin-btn xc-admin-btn--small" onClick={() => {
                       const text = credentials.map(c=>`Name: ${c.name}\nUsername: ${c.username}\nPassword: ${c.password}\n`).join('\n---\n');
-                      const blob = new Blob([text],{type:'text/plain'});
-                      const url  = URL.createObjectURL(blob);
-                      const a    = document.createElement('a'); a.href=url; a.download='xcelias_credentials.txt'; a.click();
-                      URL.revokeObjectURL(url);
+                      xcDownloadTextFile('xcelias_credentials.txt', text);
                     }}>⬇ Export</button>
                   </div>
                   {credentials.map((c,i) => (

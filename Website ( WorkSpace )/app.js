@@ -6644,6 +6644,9 @@ ${knowledgeBlock}
                     response = this.handleQuestion(message, entities, knowledge);
                 } else if (entities.zones.length > 0 || entities.developers.length > 0) {
                     response = this.handleSearch(message, entities, knowledge);
+                } else if (AIConcierge._userRole === 'agent') {
+                    response.text = `⚡ Gemini AI is temporarily unavailable. I can still answer questions about our **${knowledge.totalProjects} projects** across **${knowledge.zones.length} locations**.\n\nTry asking about:\n• 🏗️ Specific projects or developers\n• 📍 Zones and locations\n• 💰 Pricing and payment plans\n• ⚖️ Project comparisons`;
+                    response.suggestions = ["🏗️ Top developers", "📍 All locations", "💰 Best payment plans"];
                 } else {
                     response.text = `Hmm, let me think about that! 🤔 While I process, tell me more - what kind of property catches your eye?\n\n• 🏖️ Beach front in North Coast?\n• 🏙️ Modern living in New Cairo?\n• 🏝️ Desert views in Sokhna?\n\nOr just ask me anything - I'm all ears!`;
                     response.suggestions = ["🏖️ Beach options", "🏢 City properties", "💎 Luxury picks"];

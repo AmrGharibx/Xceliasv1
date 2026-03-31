@@ -238,17 +238,17 @@ Keep responses educational and insightful. Use the training material as your sou
             history.push({role:'user', content:msg});
             const thinking = showThinking();
             try{
-                const messages = [{role:'user',content:SYSTEM_PROMPT + '\n\n---\nUser says: ' + history[0].content}];
-                for(let i=1;i<history.length;i++) messages.push(history[i]);
-                const res = await fetch(API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages, stream:false})});
+                const chatMessages = history.map(h => ({role: h.role === 'assistant' ? 'assistant' : 'user', content: h.content}));
+                const res = await fetch(API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({systemPrompt: SYSTEM_PROMPT, messages: chatMessages, stream:false})});
+                if(!res.ok) throw new Error('API returned ' + res.status);
                 const data = await res.json();
-                const reply = data.response || data.error || 'Something went wrong.';
+                const reply = data.text || data.response || data.error || 'Something went wrong.';
                 if(thinking) thinking.remove();
                 addMsg('bot', formatMd(reply));
                 history.push({role:'assistant', content:reply});
             }catch(e){
                 if(thinking) thinking.remove();
-                addMsg('bot','<p style="color:#ff6b6b">Connection error. Make sure the server is running.</p>');
+                addMsg('bot','<p style="color:#ff6b6b">⚠️ ' + (e.message || 'Connection error') + '</p>');
             }
             if(history.length > 20) history = history.slice(-16);
         }

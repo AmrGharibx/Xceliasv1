@@ -338,7 +338,7 @@ app.use((req, res, next) => {
 // ═══════════════════════════════════════════════════════════════════════════
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || '';
-const GEMINI_MODELS = ['gemini-2.5-flash-lite', 'gemini-2.0-flash-lite'];
+const GEMINI_MODELS = ['gemini-2.5-flash-lite', 'gemini-2.0-flash-lite', 'gemini-2.5-flash', 'gemini-2.0-flash'];
 const GEMINI_BASE = 'https://generativelanguage.googleapis.com/v1beta/models';
 
 async function callGeminiWithRetry(geminiBody, retries = 2) {
@@ -361,9 +361,9 @@ async function callGeminiWithRetry(geminiBody, retries = 2) {
                 await new Promise(r => setTimeout(r, 1500 * (attempt + 1)));
                 continue;
             }
-            // Non-retryable error — throw immediately
-            const errText = await response.text().catch(() => '');
-            throw new Error(`Gemini API ${status}: ${errText}`);
+            // Non-retryable error for this model, try next model
+            console.warn(`Gemini ${model}: ${status}, trying next model...`);
+            break;
         }
     }
     throw new Error('All Gemini models unavailable');
@@ -380,7 +380,7 @@ async function streamGeminiToResponse(geminiBody, res) {
         });
         if (!response.ok) {
             const status = response.status;
-            if (status === 503 || status === 429) continue;
+            if (status === 503 || status === 429 || status === 404) continue;
             const errText = await response.text().catch(() => '');
             throw new Error(`Gemini API ${status}: ${errText}`);
         }

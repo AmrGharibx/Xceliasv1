@@ -25,13 +25,13 @@
 // ================================================================
 
 window.XCELIAS_FB_CONFIG = {
-  apiKey:            "",
-  authDomain:        "",
-  databaseURL:       "",
-  projectId:         "",
-  storageBucket:     "",
-  messagingSenderId: "",
-  appId:             ""
+  apiKey:            "AIzaSyDbguvLUduOUgHVJnM6M0juFudZa5ToUYU",
+  authDomain:        "xcelias-academy.firebaseapp.com",
+  databaseURL:       "https://xcelias-academy-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId:         "xcelias-academy",
+  storageBucket:     "xcelias-academy.firebasestorage.app",
+  messagingSenderId: "363432658541",
+  appId:             "1:363432658541:web:500c0f300bb579b729e164"
 };
 
 (function () {

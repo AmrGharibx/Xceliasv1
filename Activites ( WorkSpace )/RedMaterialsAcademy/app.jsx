@@ -10866,7 +10866,31 @@ const XcLoginScreen = ({ onLogin }) => {
   const [setupError, setSetupError]     = useState('');
   const [pwVisible, setPwVisible]   = useState(false);
   const fileInputRef = useRef(null);
-  const noAdmin = !XC.isAdminSetup();
+  const [adminStatus, setAdminStatus] = useState(() => XC.isOnline() ? 'checking' : (XC.isAdminSetup() ? 'ready' : 'missing'));
+  const noAdmin = adminStatus === 'missing';
+
+  useEffect(() => {
+    let alive = true;
+    if (!XC.isOnline()) {
+      setAdminStatus(XC.isAdminSetup() ? 'ready' : 'missing');
+      return () => { alive = false; };
+    }
+    setAdminStatus('checking');
+    setSetupError('');
+    window.xcAuth.fetchSignInMethodsForEmail(XC.fbEmail('admin'))
+      .then((methods) => {
+        if (!alive) return;
+        setAdminStatus(methods && methods.length ? 'ready' : 'missing');
+      })
+      .catch((err) => {
+        if (!alive) return;
+        if (err && err.code === 'auth/operation-not-allowed') {
+          setSetupError('Enable Email/Password inside Firebase Authentication before continuing.');
+        }
+        setAdminStatus('missing');
+      });
+    return () => { alive = false; };
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -10883,7 +10907,20 @@ const XcLoginScreen = ({ onLogin }) => {
     if (adminPw !== adminPw2) { setSetupError("Passwords don't match"); return; }
     setSetupError(''); setSetupLoading(true);
     try { const user = await XC.setupAdmin(adminPw); onLogin(user); }
-    catch(err) { setSetupError(err.message || 'Setup failed'); }
+    catch(err) {
+      const message = err.message || 'Setup failed';
+      if (message === 'Admin already set up. Sign in with your admin password.') {
+        setAdminStatus('ready');
+        setShowSetup(false);
+        setUsername('admin');
+        setPassword('');
+        setAdminPw('');
+        setAdminPw2('');
+        setError(message);
+      } else {
+        setSetupError(message);
+      }
+    }
     setSetupLoading(false);
   };
 
@@ -10932,16 +10969,10 @@ const XcLoginScreen = ({ onLogin }) => {
           <span className="xc-login-title-x">Xcelias</span>
           <span className="xc-login-title-sub">Training Academy</span>
         </div>
-        {noAdmin && !showSetup ? (
+        {adminStatus === 'checking' ? (
           <div className="xc-login-first-time">
-            <p className="xc-login-hint">👋 This device has no synced admin yet.<br/>Set up admin here, or import a backup from the original device.</p>
-            <button className="xc-login-btn xc-login-btn--primary" onClick={() => setShowSetup(true)}>⚙ Setup Admin Account</button>
-            {!XC.isOnline() && (
-              <>
-                <button className="xc-login-btn" onClick={() => fileInputRef.current?.click()}>⬆ Import Offline Backup</button>
-                <p className="xc-login-footnote">Without Firebase, each device has its own local admin, trainees, scores, and rooms.</p>
-              </>
-            )}
+            <p className="xc-login-hint">Checking Firebase admin setup...</p>
+            <div className="xc-login-loading" style={{justifyContent:'center'}}><span/><span/><span/></div>
           </div>
         ) : showSetup ? (
           <form onSubmit={handleSetup} className="xc-login-form">
@@ -10958,7 +10989,7 @@ const XcLoginScreen = ({ onLogin }) => {
             <button type="submit" className="xc-login-btn xc-login-btn--primary" disabled={setupLoading}>
               {setupLoading ? <span className="xc-login-loading"><span/><span/><span/></span> : '✓ Create Admin Account'}
             </button>
-            {!noAdmin && <button type="button" className="xc-login-link" onClick={() => setShowSetup(false)}>← Back to Login</button>}
+            <button type="button" className="xc-login-link" onClick={() => { setShowSetup(false); setSetupError(''); }}>← Back to Login</button>
           </form>
         ) : (
           <form onSubmit={handleLogin} className="xc-login-form">
@@ -10977,7 +11008,19 @@ const XcLoginScreen = ({ onLogin }) => {
             <button type="submit" className="xc-login-btn xc-login-btn--primary" disabled={loading}>
               {loading ? <span className="xc-login-loading"><span/><span/><span/></span> : '⚡ Enter the Academy'}
             </button>
+            {noAdmin ? (
+              <>
+                <p className="xc-login-hint">👋 No Firebase admin exists yet. Create it once on one device, then sign in everywhere else.</p>
+                <button type="button" className="xc-login-btn" onClick={() => { setShowSetup(true); setError(''); }}>⚙ Setup Admin Account</button>
+              </>
+            ) : null}
+            {!XC.isOnline() && !noAdmin ? (
+              <button type="button" className="xc-login-btn" onClick={() => fileInputRef.current?.click()}>⬆ Import Offline Backup</button>
+            ) : null}
             <p className="xc-login-footer-hint">Contact your trainer if you need access</p>
+            {!XC.isOnline() && (
+              <p className="xc-login-footnote">Without Firebase, each device has its own local admin, trainees, scores, and rooms.</p>
+            )}
           </form>
         )}
         {!XC.isOnline() && (

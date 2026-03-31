@@ -906,6 +906,29 @@ const optionLetter = (lang, idx) => {
   return ar[idx] || '•';
 };
 
+// Game-style option button class builder
+// Returns className string with color + correct/incorrect/dimmed state
+const OPTION_COLOR_CYCLE = ['blue', 'pink', 'amber', 'green', 'red', 'purple', 'cyan', 'teal'];
+
+const optionClass = (idx, chosen, correctAnswer, showFeedback, option) => {
+  const color = OPTION_COLOR_CYCLE[idx % OPTION_COLOR_CYCLE.length];
+  let base = `game-option game-option--${color}`;
+  if (!showFeedback) return base;
+  if (option === correctAnswer) return `${base} game-option--correct`;
+  if (option === chosen) return `${base} game-option--incorrect`;
+  return `${base} game-option--dimmed`;
+};
+
+// Two-choice variant: idx 0 = green (TRUE/A), idx 1 = red (FALSE/B)
+const tfClass = (value, chosen, correct, showFeedback) => {
+  const color = value === true || value === 'a' ? 'green' : 'red';
+  let base = `game-option game-option--${color}`;
+  if (!showFeedback) return base;
+  if (value === correct) return `${base} game-option--correct`;
+  if (value === chosen) return `${base} game-option--incorrect`;
+  return `${base} game-option--dimmed`;
+};
+
 
 const EG_COACH_LINES = {
   good: [
@@ -1106,37 +1129,43 @@ const styles = {
   },
   
   optionBtn: {
-    background: 'rgba(22,22,38,0.80)',
-    color: '#fff',
-    border: `1px solid ${RM_THEME.border2}`,
-    padding: '20px',
-    borderRadius: '12px',
+    background: 'linear-gradient(145deg, rgba(30,32,60,0.9), rgba(20,22,45,0.95))',
+    color: '#e2e8f0',
+    border: '1.5px solid rgba(102,126,234,0.25)',
+    padding: '20px 22px',
+    borderRadius: '16px',
     fontSize: '16px',
+    fontWeight: '600',
     cursor: 'pointer',
-    transition: 'transform 0.2s ease, border-color 0.2s ease',
+    transition: 'transform 0.18s cubic-bezier(0.34,1.56,0.64,1), border-color 0.2s ease, box-shadow 0.2s ease',
     textAlign: 'left',
     width: '100%',
     marginBottom: '12px',
-    boxShadow: '0 8px 24px rgba(0,0,0,0.22)',
-    backgroundImage:
-      'linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03))'
+    boxShadow: '0 4px 16px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.08)',
+    backdropFilter: 'none',
+    WebkitBackdropFilter: 'none',
+    position: 'relative',
+    overflow: 'hidden'
   },
   
   optionBtnHover: {
-    background: 'rgba(255,255,255,0.1)',
-    borderColor: '#667eea'
+    background: 'linear-gradient(145deg, rgba(102,126,234,0.18), rgba(30,32,60,0.95))',
+    borderColor: '#667eea',
+    transform: 'translateY(-2px)'
   },
   
   correctBtn: {
-    background: 'rgba(72, 187, 120, 0.2)',
-    borderColor: RM_THEME.green,
-    color: RM_THEME.green
+    background: 'linear-gradient(145deg, rgba(16,185,129,0.22), rgba(5,150,105,0.15))',
+    borderColor: '#10b981',
+    color: '#6ee7b7',
+    boxShadow: '0 0 20px rgba(16,185,129,0.25), 0 4px 16px rgba(0,0,0,0.3)'
   },
   
   incorrectBtn: {
-    background: 'rgba(245, 101, 101, 0.2)',
-    borderColor: '#f56565',
-    color: '#f56565'
+    background: 'linear-gradient(145deg, rgba(239,68,68,0.22), rgba(185,28,28,0.15))',
+    borderColor: '#ef4444',
+    color: '#fca5a5',
+    boxShadow: '0 0 20px rgba(239,68,68,0.25), 0 4px 16px rgba(0,0,0,0.3)'
   },
   
   // Grid
@@ -1205,27 +1234,33 @@ const styles = {
   },
   
   questionText: {
-    fontSize: '24px',
-    fontWeight: '600',
-    marginBottom: '30px',
-    lineHeight: '1.5'
+    fontSize: '26px',
+    fontWeight: '700',
+    marginBottom: '28px',
+    lineHeight: '1.45',
+    color: '#fff',
+    textAlign: 'center'
   },
-  
-  // Feedback
+
+  // Feedback — now delegated to CSS classes
   feedbackCorrect: {
-    background: 'rgba(72, 187, 120, 0.15)',
-    border: '1px solid #48bb78',
-    borderRadius: '12px',
-    padding: '20px',
-    marginTop: '20px'
+    borderRadius: '20px',
+    padding: '24px 28px',
+    marginTop: '20px',
+    background: 'linear-gradient(135deg, rgba(16,185,129,0.18), rgba(5,150,105,0.10))',
+    border: '1px solid rgba(16,185,129,0.35)',
+    position: 'relative',
+    overflow: 'hidden'
   },
   
   feedbackIncorrect: {
-    background: 'rgba(245, 101, 101, 0.15)',
-    border: '1px solid #f56565',
-    borderRadius: '12px',
-    padding: '20px',
-    marginTop: '20px'
+    borderRadius: '20px',
+    padding: '24px 28px',
+    marginTop: '20px',
+    background: 'linear-gradient(135deg, rgba(239,68,68,0.18), rgba(220,38,38,0.10))',
+    border: '1px solid rgba(239,68,68,0.35)',
+    position: 'relative',
+    overflow: 'hidden'
   },
   
   // Category Cards
@@ -1256,21 +1291,23 @@ const styles = {
     color: 'rgba(255,255,255,0.6)'
   },
   
-  // Progress Bar
+  // Progress Bar — now uses game-progress CSS class, these are fallbacks
   progressBar: {
     width: '100%',
-    height: '8px',
-    background: 'rgba(255,255,255,0.1)',
-    borderRadius: '4px',
+    height: '12px',
+    background: 'rgba(255,255,255,0.08)',
+    borderRadius: '99px',
     overflow: 'hidden',
-    marginBottom: '20px'
+    marginBottom: '24px',
+    boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.3)'
   },
   
   progressFill: {
     height: '100%',
-    background: 'linear-gradient(90deg, #667eea, #f093fb)',
-    borderRadius: '4px',
-    transition: 'width 0.3s ease'
+    background: 'linear-gradient(90deg, #667eea, #a78bfa, #f093fb)',
+    borderRadius: '99px',
+    transition: 'width 0.5s cubic-bezier(0.16,1,0.3,1)',
+    position: 'relative'
   },
   
   // Timer
@@ -1583,20 +1620,29 @@ const ScorePanel = ({ score, streak, totalQuestions, currentQuestion }) => {
   const { tone } = useUI();
   const s = UI_STRINGS[tone === 'eg' ? 'eg' : 'en'];
 
+  const streakClass = streak >= 10
+    ? 'game-hud__streak game-hud__streak--fire'
+    : streak >= 5
+    ? 'game-hud__streak game-hud__streak--hot'
+    : 'game-hud__streak';
+
   return (
-    <div style={styles.scorePanel}>
-      <div style={styles.scoreItem}>
-        <span style={styles.scoreLabel}>{s.score}</span>
-        {React.createElement(ScoreCounter, { value: score, style: styles.scoreValue })}
+    <div className="game-hud">
+      <div className="game-hud__item game-hud__score">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="#a78bfa" style={{ flexShrink: 0 }}>
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+        </svg>
+        {React.createElement(ScoreCounter, { value: score, style: { color: '#c4b5fd', fontWeight: 700, fontSize: 15 } })}
       </div>
-      <div style={styles.scoreItem}>
-        <span style={styles.scoreLabel}>{s.streak} 🔥</span>
-        {React.createElement(ScoreCounter, { value: streak, style: styles.streakValue })}
-      </div>
+      {streak > 0 && (
+        <div className={`game-hud__item ${streakClass}`}>
+          🔥&nbsp;
+          {React.createElement(ScoreCounter, { value: streak, style: { fontWeight: 700, fontSize: 15 } })}
+        </div>
+      )}
       {totalQuestions > 0 && (
-        <div style={styles.scoreItem}>
-          <span style={styles.scoreLabel}>{s.progress}</span>
-          <span style={styles.scoreValue}>{currentQuestion}/{totalQuestions}</span>
+        <div className="game-hud__item" style={{ color: 'rgba(255,255,255,0.5)', fontSize: 13 }}>
+          {currentQuestion}/{totalQuestions}
         </div>
       )}
     </div>
@@ -1845,7 +1891,37 @@ const MissionRewardBanner = ({ lang, rewardNotice, onClose }) => {
   );
 };
 
-// Feedback Component
+// ============================================
+// GAME SYSTEM: Floating Score + Viewport Flash
+// ============================================
+
+// Spawn a floating "+10" or "-0" score that drifts upward
+const spawnFloatScore = (points, isCorrect, streak) => {
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const el = document.createElement('div');
+  el.className = `float-score ${isCorrect ? 'float-score--positive' : 'float-score--negative'}`;
+  const label = isCorrect
+    ? `+${points}${streak >= 3 ? ` 🔥×${streak}` : ''}`
+    : '✕';
+  el.textContent = label;
+  el.style.left = (35 + Math.random() * 30) + '%';
+  el.style.top = '60%';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1300);
+};
+
+// Flash the entire viewport green (correct) or red (incorrect)
+const spawnViewportFlash = (isCorrect) => {
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const el = document.createElement('div');
+  el.className = `viewport-flash ${isCorrect ? 'viewport-flash--correct' : 'viewport-flash--incorrect'}`;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 700);
+};
+
+// ============================================
+// Feedback Component — Game-quality redesign
+// ============================================
 const Feedback = ({ isCorrect, message, explanation }) => {
   const { tone } = useUI();
   const lang = tone === 'eg' ? 'eg' : 'en';
@@ -1857,37 +1933,58 @@ const Feedback = ({ isCorrect, message, explanation }) => {
   }, [lang, isCorrect]);
 
   return (
-    <div style={isCorrect ? styles.feedbackCorrect : styles.feedbackIncorrect} className="animate-fadeIn">
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
-        <span style={{ fontSize: '24px' }}>{isCorrect ? '✅' : '❌'}</span>
-        <strong style={{ fontSize: '18px' }}>{isCorrect ? s.correct : s.incorrect}</strong>
-        {coachLine && (
-          <span style={{
-            marginLeft: '8px',
-            fontSize: '13px',
-            color: 'rgba(255,255,255,0.75)',
-            padding: '6px 10px',
-            borderRadius: '999px',
-            border: `1px solid ${RM_THEME.border}`,
-            background: 'rgba(255,255,255,0.06)'
-          }}>
-            {coachLine}
-          </span>
-        )}
+    <div className={`game-feedback ${isCorrect ? 'game-feedback--correct' : 'game-feedback--incorrect'}`}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px' }}>
+        <div className="fb-icon">{isCorrect ? '✓' : '✕'}</div>
+        <div style={{ flex: 1 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8, flexWrap: 'wrap' }}>
+            <strong style={{ fontSize: '19px', color: isCorrect ? '#34d399' : '#f87171' }}>
+              {isCorrect ? s.correct : s.incorrect}
+            </strong>
+            {coachLine && (
+              <span style={{
+                fontSize: '13px',
+                color: 'rgba(255,255,255,0.7)',
+                padding: '4px 10px',
+                borderRadius: '999px',
+                background: 'rgba(255,255,255,0.08)',
+                border: `1px solid ${RM_THEME.border}`
+              }}>{coachLine}</span>
+            )}
+          </div>
+          <p style={{ color: 'rgba(255,255,255,0.88)', lineHeight: '1.7', fontSize: '15px', margin: 0 }}>
+            {toneifyText(lang, explanation, 'explain')}
+          </p>
+        </div>
       </div>
-      <p style={{ color: 'rgba(255,255,255,0.9)', lineHeight: '1.7' }}>{toneifyText(lang, explanation, 'explain')}</p>
     </div>
   );
 };
 
-// Progress Bar Component
-const ProgressBar = ({ current, total }) => (
-  <div style={styles.progressBar}>
-    <div style={{ ...styles.progressFill, width: `${(current / total) * 100}%` }} />
-  </div>
-);
+// ============================================
+// Progress Bar Component — Game-quality redesign
+// ============================================
+const ProgressBar = ({ current, total }) => {
+  const pct = total > 0 ? Math.min((current / total) * 100, 100) : 0;
+  // Build step dots for small totals (≤ 12 steps)
+  const showSteps = total > 0 && total <= 12;
+  return (
+    <div className="game-progress" style={{ marginBottom: 20 }}>
+      <div className="game-progress__fill" style={{ width: `${pct}%` }} />
+      {showSteps && Array.from({ length: total }, (_, i) => (
+        <div
+          key={i}
+          className={`game-progress__step${i < current - 1 ? ' game-progress__step--done' : i === current - 1 ? ' game-progress__step--current' : ''}`}
+          style={{ left: `${((i + 1) / (total + 1)) * 100}%` }}
+        />
+      ))}
+    </div>
+  );
+};
 
+// ============================================
 // Timer Component
+// ============================================
 const Timer = ({ seconds, onTimeUp }) => {
   const [timeLeft, setTimeLeft] = useState(seconds);
   const onTimeUpRef = React.useRef(onTimeUp);
@@ -1906,34 +2003,58 @@ const Timer = ({ seconds, onTimeUp }) => {
     return () => clearTimeout(timer);
   }, [timeLeft]);
   
+  const danger = timeLeft <= 5;
   return (
-    <div style={{ ...styles.timer, color: timeLeft <= 5 ? '#f093fb' : '#667eea' }}>
+    <div style={{
+      ...styles.timer,
+      color: danger ? '#ef4444' : timeLeft <= 10 ? '#f97316' : '#667eea',
+      transform: danger ? 'scale(1.1)' : 'scale(1)',
+      transition: 'color 0.3s ease, transform 0.2s ease'
+    }}>
       {timeLeft}s
     </div>
   );
 };
 
-// Back Button Component
+// ============================================
+// Back Button Component — Game quality
+// ============================================
 const BackButton = ({ onClick }) => {
   const { tone } = useUI();
   const s = UI_STRINGS[tone === 'eg' ? 'eg' : 'en'];
   return (
-    <button 
-      onClick={onClick} 
-      style={{ ...styles.secondaryBtn, marginBottom: '20px' }}
+    <button
+      onClick={onClick}
+      style={{
+        ...styles.secondaryBtn,
+        marginBottom: '20px',
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 8,
+        padding: '10px 18px',
+        fontSize: 14
+      }}
     >
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M19 12H5"/><path d="M12 5l-7 7 7 7"/>
+      </svg>
       {s.back}
     </button>
   );
 };
 
-// Next Button Component
+// ============================================
+// Next Button Component — Game quality
+// ============================================
 const NextButton = ({ onClick, label }) => {
   const { tone } = useUI();
   const s = UI_STRINGS[tone === 'eg' ? 'eg' : 'en'];
   return (
-    <button onClick={onClick} style={{ ...styles.primaryBtn, marginTop: '20px' }}>
+    <button onClick={onClick} className="game-next-btn">
       {label || s.nextQuestion}
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M5 12h14"/><path d="M12 5l7 7-7 7"/>
+      </svg>
     </button>
   );
 };
@@ -2244,18 +2365,15 @@ const RapidFireMCQ = ({ onBack, updateScore }) => {
       
       <h2 style={styles.questionText}>{toneifyText(lang, q.question, 'question')}</h2>
       
-      <div>
+      <div className="game-options-grid">
         {q.options.map((option, idx) => (
           <button
             key={idx}
             onClick={() => handleAnswer(option)}
-            style={{
-              ...styles.optionBtn,
-              ...(showFeedback && option === q.correct ? styles.correctBtn : {}),
-              ...(showFeedback && selected === option && option !== q.correct ? styles.incorrectBtn : {})
-            }}
+            className={optionClass(idx, selected, q.correct, showFeedback, option)}
           >
-            {optionLetter(lang, idx)}. {toneifyTermLabel(lang, option)}
+            <span className="opt-letter">{optionLetter(lang, idx)}</span>
+            {toneifyTermLabel(lang, option)}
           </button>
         ))}
       </div>
@@ -2357,27 +2475,15 @@ const TrueFalseSpeedRun = ({ onBack, updateScore }) => {
       <div style={styles.grid2}>
         <button
           onClick={() => handleAnswer(true)}
-          style={{
-            ...styles.optionBtn,
-            padding: '30px',
-            textAlign: 'center',
-            fontSize: '20px',
-            ...(showFeedback && q.answer === true ? styles.correctBtn : {}),
-            ...(showFeedback && selected === true && q.answer !== true ? styles.incorrectBtn : {})
-          }}
+          className={tfClass(true, selected, q.answer, showFeedback)}
+          style={{ padding: '36px 20px', textAlign: 'center', fontSize: '22px', fontWeight: 800 }}
         >
           {lang === 'eg' ? '✓ صح' : '✓ TRUE'}
         </button>
         <button
           onClick={() => handleAnswer(false)}
-          style={{
-            ...styles.optionBtn,
-            padding: '30px',
-            textAlign: 'center',
-            fontSize: '20px',
-            ...(showFeedback && q.answer === false ? styles.correctBtn : {}),
-            ...(showFeedback && selected === false && q.answer !== false ? styles.incorrectBtn : {})
-          }}
+          className={tfClass(false, selected, q.answer, showFeedback)}
+          style={{ padding: '36px 20px', textAlign: 'center', fontSize: '22px', fontWeight: 800 }}
         >
           {lang === 'eg' ? '✗ غلط' : '✗ FALSE'}
         </button>
@@ -2479,14 +2585,8 @@ const DefinitionMatching = ({ onBack, updateScore }) => {
               key={idx}
               onClick={() => handleTermClick(item.term)}
               disabled={matches[item.term]}
-              style={{
-                ...styles.optionBtn,
-                opacity: matches[item.term] ? 0.5 : 1,
-                borderColor: selectedTerm === item.term ? '#667eea' : 'rgba(255,255,255,0.2)',
-                background: selectedTerm === item.term ? 'rgba(229,62,62,0.2)' : 'rgba(255,255,255,0.05)',
-                ...(showResults && matches[item.term] === item.definition ? styles.correctBtn : {}),
-                ...(showResults && matches[item.term] && matches[item.term] !== item.definition ? styles.incorrectBtn : {})
-              }}
+              className={`game-option game-option--${['purple','blue','cyan','teal'][idx % 4]}${showResults && matches[item.term] === item.definition ? ' game-option--correct' : ''}${showResults && matches[item.term] && matches[item.term] !== item.definition ? ' game-option--incorrect' : ''}${selectedTerm === item.term ? ' game-option--selected' : ''}`}
+              style={{ opacity: matches[item.term] ? 0.5 : 1 }}
             >
               {item.term}
             </button>
@@ -2499,11 +2599,8 @@ const DefinitionMatching = ({ onBack, updateScore }) => {
               key={idx}
               onClick={() => handleDefinitionClick(def)}
               disabled={Object.values(matches).includes(def)}
-              style={{
-                ...styles.optionBtn,
-                opacity: Object.values(matches).includes(def) ? 0.5 : 1,
-                fontSize: '14px'
-              }}
+              className={`game-option game-option--${['blue','purple','cyan','teal'][idx % 4]}`}
+              style={{ opacity: Object.values(matches).includes(def) ? 0.5 : 1, fontSize: '14px' }}
             >
               {def}
             </button>
@@ -2645,13 +2742,8 @@ const OddOneOut = ({ onBack, updateScore }) => {
           <button
             key={idx}
             onClick={() => handleAnswer(option)}
-            style={{
-              ...styles.optionBtn,
-              padding: '25px',
-              textAlign: 'center',
-              ...(showFeedback && option === q.oddOne ? styles.correctBtn : {}),
-              ...(showFeedback && selected === option && option !== q.oddOne ? styles.incorrectBtn : {})
-            }}
+            className={optionClass(idx, selected, q.oddOne, showFeedback, option)} style={{padding: '25px',
+              textAlign: 'center',}}
           >
             {option}
           </button>
@@ -2788,12 +2880,7 @@ const FillInBlanks = ({ onBack, updateScore }) => {
           <button
             key={idx}
             onClick={() => handleAnswer(option)}
-            style={{
-              ...styles.optionBtn,
-              textAlign: 'center',
-              ...(showFeedback && option === q.answer ? styles.correctBtn : {}),
-              ...(showFeedback && selected === option && option !== q.answer ? styles.incorrectBtn : {})
-            }}
+            className={optionClass(idx, selected, q.answer, showFeedback, option)} style={{textAlign: 'center',}}
           >
             {option}
           </button>
@@ -2891,11 +2978,7 @@ const AcronymDecoder = ({ onBack, updateScore }) => {
           <button
             key={idx}
             onClick={() => handleAnswer(option)}
-            style={{
-              ...styles.optionBtn,
-              ...(showFeedback && option === q.answer ? styles.correctBtn : {}),
-              ...(showFeedback && selected === option && option !== q.answer ? styles.incorrectBtn : {})
-            }}
+            className={optionClass(idx, selected, q.answer, showFeedback, option)}
           >
             {option}
           </button>
@@ -3158,29 +3241,15 @@ const AccessoriesInspection = ({ onBack, updateScore }) => {
       <div style={styles.grid2}>
         <button
           onClick={() => handleAnswer(true)}
-          style={{
-            ...styles.optionBtn,
-            padding: '30px',
-            textAlign: 'center',
-            fontSize: '20px',
-            background: showFeedback && scenario.shouldPass ? 'rgba(72, 187, 120, 0.3)' : 'rgba(72, 187, 120, 0.1)',
-            borderColor: '#48bb78',
-            ...(showFeedback && selected === true && !scenario.shouldPass ? styles.incorrectBtn : {})
-          }}
+          className={tfClass(true, selected, scenario.shouldPass, showFeedback)}
+          style={{ padding: '36px 20px', textAlign: 'center', fontSize: '22px', fontWeight: 800 }}
         >
           {lang === 'eg' ? '✓ تمام' : '✓ PASS'}
         </button>
         <button
           onClick={() => handleAnswer(false)}
-          style={{
-            ...styles.optionBtn,
-            padding: '30px',
-            textAlign: 'center',
-            fontSize: '20px',
-            background: showFeedback && !scenario.shouldPass ? 'rgba(245, 101, 101, 0.3)' : 'rgba(245, 101, 101, 0.1)',
-            borderColor: '#f56565',
-            ...(showFeedback && selected === false && scenario.shouldPass ? styles.incorrectBtn : {})
-          }}
+          className={tfClass(false, selected, scenario.shouldPass, showFeedback)}
+          style={{ padding: '36px 20px', textAlign: 'center', fontSize: '22px', fontWeight: 800 }}
         >
           {lang === 'eg' ? '✗ مش تمام' : '✗ FAIL'}
         </button>
@@ -3288,13 +3357,8 @@ const UnitTypeIdentifier = ({ onBack, updateScore }) => {
           <button
             key={idx}
             onClick={() => handleAnswer(option)}
-            style={{
-              ...styles.optionBtn,
-              textAlign: 'center',
-              padding: '20px',
-              ...(showFeedback && option === q.correct ? styles.correctBtn : {}),
-              ...(showFeedback && selected === option && option !== q.correct ? styles.incorrectBtn : {})
-            }}
+            className={optionClass(idx, selected, q.correct, showFeedback, option)} style={{textAlign: 'center',
+              padding: '20px',}}
           >
             {option}
           </button>
@@ -3413,13 +3477,8 @@ const FinishingVisualizer = ({ onBack, updateScore }) => {
           <button
             key={idx}
             onClick={() => handleAnswer(option)}
-            style={{
-              ...styles.optionBtn,
-              textAlign: 'center',
-              padding: '20px',
-              ...(showFeedback && option === q.name ? styles.correctBtn : {}),
-              ...(showFeedback && selected === option && option !== q.name ? styles.incorrectBtn : {})
-            }}
+            className={optionClass(idx, selected, q.name, showFeedback, option)} style={{textAlign: 'center',
+              padding: '20px',}}
           >
             {option}
           </button>
@@ -3661,30 +3720,16 @@ const SortingHat = ({ onBack, updateScore }) => {
       <div style={styles.grid2}>
         <button
           onClick={() => handleAnswer("Broker")}
-          style={{
-            ...styles.optionBtn,
-            padding: '40px',
-            textAlign: 'center',
-            background: 'rgba(66,153,225,0.1)',
-            borderColor: '#4299e1',
-            ...(showFeedback && q.answer === "Broker" ? styles.correctBtn : {}),
-            ...(showFeedback && selected === "Broker" && q.answer !== "Broker" ? styles.incorrectBtn : {})
-          }}
+          className={tfClass("Broker", selected, q.answer, showFeedback)}
+          style={{ padding: '40px', textAlign: 'center' }}
         >
           <span style={{ fontSize: '40px' }}>👔</span>
           <div style={{ marginTop: '10px', fontSize: '20px', fontWeight: '600' }}>{lang === 'eg' ? 'بروكر' : 'BROKER'}</div>
         </button>
         <button
           onClick={() => handleAnswer("Developer")}
-          style={{
-            ...styles.optionBtn,
-            padding: '40px',
-            textAlign: 'center',
-            background: 'rgba(237,137,54,0.1)',
-            borderColor: '#ed8936',
-            ...(showFeedback && q.answer === "Developer" ? styles.correctBtn : {}),
-            ...(showFeedback && selected === "Developer" && q.answer !== "Developer" ? styles.incorrectBtn : {})
-          }}
+          className={tfClass("Developer", selected, q.answer, showFeedback)}
+          style={{ padding: '40px', textAlign: 'center' }}
         >
           <span style={{ fontSize: '40px' }}>🏗️</span>
           <div style={{ marginTop: '10px', fontSize: '20px', fontWeight: '600' }}>{lang === 'eg' ? 'ديفيلوبر' : 'DEVELOPER'}</div>
@@ -3788,15 +3833,8 @@ const ProConMatrix = ({ onBack, updateScore }) => {
       <div style={styles.grid2}>
         <button
           onClick={() => handleAnswer("Primary")}
-          style={{
-            ...styles.optionBtn,
-            padding: '30px',
-            textAlign: 'center',
-            background: 'rgba(72,187,120,0.1)',
-            borderColor: '#48bb78',
-            ...(showFeedback && q.answer === "Primary" ? styles.correctBtn : {}),
-            ...(showFeedback && selected === "Primary" && q.answer !== "Primary" ? styles.incorrectBtn : {})
-          }}
+          className={tfClass("Primary", selected, q.answer, showFeedback)}
+          style={{ padding: '30px', textAlign: 'center' }}
         >
           <span style={{ fontSize: '30px' }}>🏗️</span>
           <div style={{ marginTop: '10px', fontWeight: '600' }}>PRIMARY</div>
@@ -3804,15 +3842,8 @@ const ProConMatrix = ({ onBack, updateScore }) => {
         </button>
         <button
           onClick={() => handleAnswer("Resale")}
-          style={{
-            ...styles.optionBtn,
-            padding: '30px',
-            textAlign: 'center',
-            background: 'rgba(237,137,54,0.1)',
-            borderColor: '#ed8936',
-            ...(showFeedback && q.answer === "Resale" ? styles.correctBtn : {}),
-            ...(showFeedback && selected === "Resale" && q.answer !== "Resale" ? styles.incorrectBtn : {})
-          }}
+          className={tfClass("Resale", selected, q.answer, showFeedback)}
+          style={{ padding: '30px', textAlign: 'center' }}
         >
           <span style={{ fontSize: '30px' }}>🔄</span>
           <div style={{ marginTop: '10px', fontWeight: '600' }}>RESALE</div>
@@ -3901,26 +3932,16 @@ const MarketAwarenessCheck = ({ onBack, updateScore }) => {
       <div style={styles.grid2}>
         <button
           onClick={() => handleAnswer("Broker")}
-          style={{
-            ...styles.optionBtn,
-            padding: '40px',
-            textAlign: 'center',
-            ...(showFeedback && q.answer === "Broker" ? styles.correctBtn : {}),
-            ...(showFeedback && selected === "Broker" && q.answer !== "Broker" ? styles.incorrectBtn : {})
-          }}
+          className={tfClass("Broker", selected, q.answer, showFeedback)}
+          style={{ padding: '40px', textAlign: 'center' }}
         >
           <span style={{ fontSize: '50px' }}>👔</span>
           <div style={{ marginTop: '15px', fontSize: '20px', fontWeight: '700' }}>{lang === 'eg' ? 'بروكر' : 'BROKER'}</div>
         </button>
         <button
           onClick={() => handleAnswer("Developer")}
-          style={{
-            ...styles.optionBtn,
-            padding: '40px',
-            textAlign: 'center',
-            ...(showFeedback && q.answer === "Developer" ? styles.correctBtn : {}),
-            ...(showFeedback && selected === "Developer" && q.answer !== "Developer" ? styles.incorrectBtn : {})
-          }}
+          className={tfClass("Developer", selected, q.answer, showFeedback)}
+          style={{ padding: '40px', textAlign: 'center' }}
         >
           <span style={{ fontSize: '50px' }}>🏢</span>
           <div style={{ marginTop: '15px', fontSize: '20px', fontWeight: '700' }}>{lang === 'eg' ? 'ديفيلوبر' : 'DEVELOPER'}</div>
@@ -4023,15 +4044,8 @@ const MotiveDetective = ({ onBack, updateScore }) => {
       <div style={styles.grid2}>
         <button
           onClick={() => handleAnswer("Emotional")}
-          style={{
-            ...styles.optionBtn,
-            padding: '30px',
-            textAlign: 'center',
-            background: 'rgba(237,100,166,0.1)',
-            borderColor: '#ed64a6',
-            ...(showFeedback && q.answer === "Emotional" ? styles.correctBtn : {}),
-            ...(showFeedback && selected === "Emotional" && q.answer !== "Emotional" ? styles.incorrectBtn : {})
-          }}
+          className={tfClass("Emotional", selected, q.answer, showFeedback)}
+          style={{ padding: '30px', textAlign: 'center' }}
         >
           <span style={{ fontSize: '40px' }}>❤️</span>
           <div style={{ marginTop: '10px', fontWeight: '700' }}>EMOTIONAL</div>
@@ -4039,15 +4053,8 @@ const MotiveDetective = ({ onBack, updateScore }) => {
         </button>
         <button
           onClick={() => handleAnswer("Rational")}
-          style={{
-            ...styles.optionBtn,
-            padding: '30px',
-            textAlign: 'center',
-            background: 'rgba(66,153,225,0.1)',
-            borderColor: '#4299e1',
-            ...(showFeedback && q.answer === "Rational" ? styles.correctBtn : {}),
-            ...(showFeedback && selected === "Rational" && q.answer !== "Rational" ? styles.incorrectBtn : {})
-          }}
+          className={tfClass("Rational", selected, q.answer, showFeedback)}
+          style={{ padding: '30px', textAlign: 'center' }}
         >
           <span style={{ fontSize: '40px' }}>🧠</span>
           <div style={{ marginTop: '10px', fontWeight: '700' }}>RATIONAL</div>
@@ -4168,13 +4175,8 @@ const NeedsWantsSorter = ({ onBack, updateScore }) => {
         <div style={styles.grid2}>
           <button
             onClick={() => handleSort("Needs")}
-            style={{
-              ...styles.optionBtn,
-              padding: '40px',
-              textAlign: 'center',
-              background: 'rgba(66,153,225,0.1)',
-              borderColor: '#4299e1'
-            }}
+            className="game-option game-option--blue"
+            style={{ padding: '40px', textAlign: 'center' }}
           >
             <span style={{ fontSize: '40px' }}>📋</span>
             <div style={{ marginTop: '10px', fontSize: '20px', fontWeight: '700' }}>NEEDS</div>
@@ -4187,18 +4189,13 @@ const NeedsWantsSorter = ({ onBack, updateScore }) => {
           </button>
           <button
             onClick={() => handleSort("Wants")}
-            style={{
-              ...styles.optionBtn,
-              padding: '40px',
-              textAlign: 'center',
-              background: 'rgba(237,100,166,0.1)',
-              borderColor: '#ed64a6'
-            }}
+            className="game-option game-option--pink"
+            style={{ padding: '40px', textAlign: 'center' }}
           >
             <span style={{ fontSize: '40px' }}>💭</span>
             <div style={{ marginTop: '10px', fontSize: '20px', fontWeight: '700' }}>WANTS</div>
             <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginTop: '5px' }}>
-              Concepts & feelings behind it
+              Concepts &amp; feelings behind it
             </div>
             <div style={{ marginTop: '10px', fontSize: '14px' }}>
               Sorted: {sorted.Wants.length}
@@ -4347,11 +4344,7 @@ const WhyChain = ({ onBack, updateScore }) => {
           <button
             key={idx}
             onClick={() => handleAnswer(option)}
-            style={{
-              ...styles.optionBtn,
-              ...(showFeedback && option.correct ? styles.correctBtn : {}),
-              ...(showFeedback && selected === option && !option.correct ? styles.incorrectBtn : {})
-            }}
+            className={`game-option game-option--${['blue','pink','amber','green'][idx % 4]}${showFeedback && option.correct ? ' game-option--correct' : ''}${showFeedback && selected === option && !option.correct ? ' game-option--incorrect' : ''}${showFeedback && selected !== option && !option.correct ? ' game-option--dimmed' : ''}`}
           >
             {option.text}
           </button>
@@ -4480,13 +4473,15 @@ const BrainVsHeart = ({ onBack, updateScore }) => {
           <div style={styles.grid2}>
             <button
               onClick={() => handleSort(reasons[0], 'emotional')}
-              style={{ ...styles.optionBtn, textAlign: 'center', padding: '20px', borderColor: '#ed64a6' }}
+              className="game-option game-option--pink"
+              style={{ textAlign: 'center', padding: '24px' }}
             >
               ❤️ Emotional
             </button>
             <button
               onClick={() => handleSort(reasons[0], 'rational')}
-              style={{ ...styles.optionBtn, textAlign: 'center', padding: '20px', borderColor: '#4299e1' }}
+              className="game-option game-option--blue"
+              style={{ textAlign: 'center', padding: '24px' }}
             >
               🧠 Rational
             </button>
@@ -4648,13 +4643,8 @@ const CommunicationDecoder = ({ onBack, updateScore }) => {
           <button
             key={option.type}
             onClick={() => handleAnswer(option.type)}
-            style={{
-              ...styles.optionBtn,
-              padding: '25px',
-              textAlign: 'center',
-              ...(showFeedback && option.type === q.error ? styles.correctBtn : {}),
-              ...(showFeedback && selected === option.type && option.type !== q.error ? styles.incorrectBtn : {})
-            }}
+            className={optionClass(idx, selected, q.error, showFeedback, option.type)}
+            style={{ padding: '25px', textAlign: 'center' }}
           >
             <span style={{ fontSize: '30px' }}>{option.icon}</span>
             <div style={{ marginTop: '10px', fontWeight: '600' }}>{option.type}</div>
@@ -4772,15 +4762,8 @@ const RobotTalkBuzzer = ({ onBack, updateScore }) => {
           <button
             key={idx}
             onClick={() => handleBuzz(script)}
-            style={{
-              ...styles.optionBtn,
-              padding: '20px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '15px',
-              ...(showFeedback && script.robot ? styles.correctBtn : {}),
-              ...(showFeedback && selected === script && !script.robot ? styles.incorrectBtn : {})
-            }}
+            className={`game-option game-option--${['blue','pink','amber','green'][idx % 4]}${showFeedback && script.robot ? ' game-option--correct' : ''}${showFeedback && selected === script && !script.robot ? ' game-option--incorrect' : ''}${showFeedback && selected !== script && !script.robot ? ' game-option--dimmed' : ''}`}
+            style={{ display: 'flex', alignItems: 'center', gap: '15px', padding: '20px' }}
           >
             <span style={{ fontSize: '24px' }}>🔊</span>
             <span style={{ flex: 1 }}>"{script.text}"</span>
@@ -4919,11 +4902,7 @@ const MirroringDrill = ({ onBack, updateScore }) => {
           <button
             key={idx}
             onClick={() => handleAnswer(option.isCorrect)}
-            style={{
-              ...styles.optionBtn,
-              ...(showFeedback && option.isCorrect ? styles.correctBtn : {}),
-              ...(showFeedback && selected === option.isCorrect && !option.isCorrect ? styles.incorrectBtn : {})
-            }}
+            className={optionClass(idx, selected, true, showFeedback, option.isCorrect)}
           >
             {option.text}
           </button>
@@ -5261,14 +5240,7 @@ const MistakeSniper = ({ onBack, updateScore }) => {
           <button
             key={idx}
             onClick={() => handleSelect(idx)}
-            style={{
-              ...styles.optionBtn,
-              display: 'flex',
-              alignItems: 'center',
-              gap: '15px',
-              ...(showFeedback && idx === q.mistakeIndex ? styles.correctBtn : {}),
-              ...(showFeedback && selected === idx && idx !== q.mistakeIndex ? styles.incorrectBtn : {})
-            }}
+            className={optionClass(idx, selected, q.mistakeIndex, showFeedback, idx)} style={{ display: 'flex', alignItems: 'center', gap: '15px' }}
           >
             <span style={{ fontSize: '20px' }}>🎯</span>
             <span>{line}</span>
@@ -5276,14 +5248,8 @@ const MistakeSniper = ({ onBack, updateScore }) => {
         ))}
         <button
           onClick={() => handleSelect(-1)}
-          style={{
-            ...styles.optionBtn,
-            textAlign: 'center',
-            background: 'rgba(72,187,120,0.1)',
-            borderColor: '#48bb78',
-            ...(showFeedback && q.mistakeIndex === -1 ? styles.correctBtn : {}),
-            ...(showFeedback && selected === -1 && q.mistakeIndex !== -1 ? styles.incorrectBtn : {})
-          }}
+          className={optionClass(999, selected, -1, showFeedback, -1)}
+          style={{ textAlign: 'center' }}
         >
           ✓ {lang === 'eg' ? 'مفيش غلط — المكالمة تمام' : 'No Mistakes - This call is clean!'}
         </button>
@@ -5617,23 +5583,15 @@ const DressCodePolice = ({ onBack, updateScore }) => {
             <div style={styles.grid2}>
               <button
                 onClick={() => setUserVerdict(true)}
-                style={{
-                  ...styles.optionBtn,
-                  textAlign: 'center',
-                  borderColor: userVerdict === true ? '#f56565' : 'rgba(255,255,255,0.2)',
-                  background: userVerdict === true ? 'rgba(245,101,101,0.2)' : 'transparent'
-                }}
+                className={`game-option game-option--red${userVerdict === true ? ' game-option--correct' : ''}`}
+                style={{ textAlign: 'center' }}
               >
                 🚫 VIOLATION
               </button>
               <button
                 onClick={() => setUserVerdict(false)}
-                style={{
-                  ...styles.optionBtn,
-                  textAlign: 'center',
-                  borderColor: userVerdict === false ? '#48bb78' : 'rgba(255,255,255,0.2)',
-                  background: userVerdict === false ? 'rgba(72,187,120,0.2)' : 'transparent'
-                }}
+                className={`game-option game-option--green${userVerdict === false ? ' game-option--correct' : ''}`}
+                style={{ textAlign: 'center' }}
               >
                 ✓ ACCEPTABLE
               </button>
@@ -6022,30 +5980,16 @@ const FirstImpressionTrial = ({ onBack, updateScore }) => {
       <div style={styles.grid2}>
         <button
           onClick={() => handleAnswer(true)}
-          style={{
-            ...styles.optionBtn,
-            padding: '30px',
-            textAlign: 'center',
-            background: 'rgba(72,187,120,0.1)',
-            borderColor: '#48bb78',
-            ...(showFeedback && q.isGood ? styles.correctBtn : {}),
-            ...(showFeedback && selected === true && !q.isGood ? styles.incorrectBtn : {})
-          }}
+          className={tfClass(true, selected, q.isGood, showFeedback)}
+          style={{ padding: '30px', textAlign: 'center' }}
         >
           <span style={{ fontSize: '40px' }}>👍</span>
           <div style={{ marginTop: '10px', fontWeight: '600' }}>{lang === 'eg' ? 'كويس' : 'GOOD'}</div>
         </button>
         <button
           onClick={() => handleAnswer(false)}
-          style={{
-            ...styles.optionBtn,
-            padding: '30px',
-            textAlign: 'center',
-            background: 'rgba(245,101,101,0.1)',
-            borderColor: '#f56565',
-            ...(showFeedback && !q.isGood ? styles.correctBtn : {}),
-            ...(showFeedback && selected === false && q.isGood ? styles.incorrectBtn : {})
-          }}
+          className={tfClass(false, selected, !q.isGood, showFeedback)}
+          style={{ padding: '30px', textAlign: 'center' }}
         >
           <span style={{ fontSize: '40px' }}>👎</span>
           <div style={{ marginTop: '10px', fontWeight: '600' }}>{lang === 'eg' ? 'وحش' : 'BAD'}</div>
@@ -6243,11 +6187,7 @@ const ObjectionDeflector = ({ onBack, updateScore }) => {
           <button
             key={idx}
             onClick={() => handleAnswer(response)}
-            style={{
-              ...styles.optionBtn,
-              ...(showFeedback && response.correct ? styles.correctBtn : {}),
-              ...(showFeedback && selected === response && !response.correct ? styles.incorrectBtn : {})
-            }}
+            className={`game-option game-option--${['blue','pink','amber','green'][idx % 4]}${showFeedback && response.correct ? ' game-option--correct' : ''}${showFeedback && selected === response && !response.correct ? ' game-option--incorrect' : ''}${showFeedback && selected !== response && !response.correct ? ' game-option--dimmed' : ''}`}
           >
             {response.text}
           </button>
@@ -6400,11 +6340,8 @@ const LeadTriage = ({ onBack, updateScore }) => {
               key={idx}
               onClick={() => addToRanking(lead)}
               disabled={showResult}
-              style={{
-                ...styles.optionBtn,
-                flex: '1 1 200px',
-                opacity: showResult ? 0.5 : 1
-              }}
+              className={`game-option game-option--${['blue','pink','amber','green','purple','cyan'][idx % 6]}`}
+              style={{ flex: '1 1 200px', opacity: showResult ? 0.5 : 1 }}
             >
               <div style={{ fontWeight: '600' }}>{lead.type}</div>
               <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.7)', marginTop: '5px' }}>
@@ -6822,10 +6759,8 @@ const ColdCallSimulator = ({ onBack, updateScore }) => {
                 key={idx}
                 onClick={() => handleChoice(option)}
                 disabled={lastChoice}
-                style={{
-                  ...styles.optionBtn,
-                  opacity: lastChoice ? 0.5 : 1
-                }}
+                className={`game-option game-option--${['blue','pink','amber','green'][idx % 4]}`}
+                style={{ opacity: lastChoice ? 0.5 : 1 }}
               >
                 {option.text}
               </button>
@@ -7503,25 +7438,15 @@ const FinalExam = ({ onBack, updateScore }) => {
         <div style={styles.grid2}>
           <button
             onClick={() => handleAnswer(true)}
-            style={{
-              ...styles.optionBtn,
-              padding: '30px',
-              textAlign: 'center',
-              ...(showFeedback && q.correct === true ? styles.correctBtn : {}),
-              ...(showFeedback && selected === true && q.correct !== true ? styles.incorrectBtn : {})
-            }}
+            className={tfClass(true, selected, q.correct, showFeedback)}
+            style={{ padding: '36px 20px', textAlign: 'center', fontSize: '22px', fontWeight: 800 }}
           >
             {lang === 'eg' ? '✓ صح' : '✓ TRUE'}
           </button>
           <button
             onClick={() => handleAnswer(false)}
-            style={{
-              ...styles.optionBtn,
-              padding: '30px',
-              textAlign: 'center',
-              ...(showFeedback && q.correct === false ? styles.correctBtn : {}),
-              ...(showFeedback && selected === false && q.correct !== false ? styles.incorrectBtn : {})
-            }}
+            className={tfClass(false, selected, q.correct, showFeedback)}
+            style={{ padding: '36px 20px', textAlign: 'center', fontSize: '22px', fontWeight: 800 }}
           >
             {lang === 'eg' ? '✗ غلط' : '✗ FALSE'}
           </button>
@@ -7532,11 +7457,7 @@ const FinalExam = ({ onBack, updateScore }) => {
             <button
               key={idx}
               onClick={() => handleAnswer(option)}
-              style={{
-                ...styles.optionBtn,
-                ...(showFeedback && option === q.correct ? styles.correctBtn : {}),
-                ...(showFeedback && selected === option && option !== q.correct ? styles.incorrectBtn : {})
-              }}
+              className={optionClass(idx, selected, q.correct, showFeedback, option)}
             >
               {option}
             </button>
@@ -8016,14 +7937,8 @@ const TeamBattleArena = ({ onBack, updateScore }) => {
               key={i}
               onClick={() => buzz(i)}
               disabled={attempted.includes(i)}
-              style={{
-                ...styles.optionBtn,
-                textAlign: 'center',
-                padding: '22px 16px',
-                background: attempted.includes(i)
-                  ? 'rgba(255,255,255,0.03)'
-                  : 'linear-gradient(135deg, rgba(0,212,255,0.12), rgba(255,59,59,0.10))'
-              }}
+              className={`game-option game-option--${['blue','pink','amber','green'][i % 4]}`}
+              style={{ textAlign: 'center', padding: '22px 16px', opacity: attempted.includes(i) ? 0.4 : 1 }}
             >
               <div style={{ fontSize: 34, marginBottom: 6 }}>🔔</div>
               <div style={{ fontWeight: 900 }}>{teamNames[i]}</div>
@@ -8044,12 +7959,8 @@ const TeamBattleArena = ({ onBack, updateScore }) => {
               key={idx}
               onClick={() => pick(opt, idx)}
               disabled={buzzedTeam === null || locked || selected !== null}
-              style={{
-                ...styles.optionBtn,
-                ...(show && isCorrect ? styles.correctBtn : {}),
-                ...(show && isSelected && !isCorrect ? styles.incorrectBtn : {}),
-                opacity: buzzedTeam === null ? 0.65 : 1
-              }}
+              className={optionClass(idx, selected, question.correctIndex, show, idx)}
+              style={{ opacity: buzzedTeam === null ? 0.65 : 1 }}
             >
               {opt}
             </button>
@@ -8334,15 +8245,7 @@ const ConsensusClash = ({ onBack, updateScore }) => {
               <button
                 key={idx}
                 onClick={() => castVote(team, idx)}
-                style={{
-                  ...styles.optionBtn,
-                  marginBottom: 10,
-                  padding: 14,
-                  borderRadius: 14,
-                  ...(votes[team] === idx ? { borderColor: RM_THEME.cyan, background: 'rgba(0,212,255,0.10)' } : {}),
-                  ...(reveal && idx === correctIdx ? styles.correctBtn : {}),
-                  ...(reveal && votes[team] === idx && idx !== correctIdx ? styles.incorrectBtn : {})
-                }}
+                className={optionClass(idx, selected, correctIdx, showFeedback, idx)} style={{ marginBottom: 10, padding: 14, borderRadius: 14 }}
               >
                 {c}
               </button>
@@ -8463,11 +8366,7 @@ const ReviewRescue = ({ onBack, updateScore, academyContext }) => {
         <button
           key={idx}
           onClick={() => handleAnswer(option, idx)}
-          style={{
-            ...styles.optionBtn,
-            ...(showFeedback && idx === question.correctIndex ? styles.correctBtn : {}),
-            ...(showFeedback && selected === idx && idx !== question.correctIndex ? styles.incorrectBtn : {})
-          }}
+          className={optionClass(idx, selected, question.correctIndex, showFeedback, idx)}
         >
           {option}
         </button>
@@ -8580,11 +8479,7 @@ const AcademySprint = ({ onBack, updateScore }) => {
         <button
           key={idx}
           onClick={() => submitAnswer(idx)}
-          style={{
-            ...styles.optionBtn,
-            ...(showFeedback && idx === question.correctIndex ? styles.correctBtn : {}),
-            ...(showFeedback && selected === idx && idx !== question.correctIndex ? styles.incorrectBtn : {})
-          }}
+          className={optionClass(idx, selected, question.correctIndex, showFeedback, idx)}
         >
           {option}
         </button>
@@ -8754,11 +8649,7 @@ const ObjectionDuelArena = ({ onBack, updateScore }) => {
         <button
           key={idx}
           onClick={() => choose(idx)}
-          style={{
-            ...styles.optionBtn,
-            ...(showFeedback && idx === scenario.correctIndex ? styles.correctBtn : {}),
-            ...(showFeedback && selected === idx && idx !== scenario.correctIndex ? styles.incorrectBtn : {})
-          }}
+          className={optionClass(idx, selected, scenario.correctIndex, showFeedback, idx)}
         >
           {option}
         </button>
@@ -8893,7 +8784,7 @@ const CallFlowBuilder = ({ onBack, updateScore }) => {
         <div style={{ padding: 16, borderRadius: 18, border: `1px solid ${RM_THEME.border}`, background: 'rgba(255,255,255,0.05)' }}>
           <h3 style={{ marginBottom: 12 }}>{lang === 'eg' ? 'الخطوات المتاحة' : 'Available Steps'}</h3>
           {available.map(step => (
-            <button key={step} onClick={() => pickStep(step)} style={{ ...styles.optionBtn, marginBottom: 10 }}>{step}</button>
+            <button key={step} onClick={() => pickStep(step)} className="game-option game-option--blue" style={{ marginBottom: 10 }}>{step}</button>
           ))}
         </div>
       </div>
@@ -9532,13 +9423,16 @@ const App = () => {
   }, [activityInsights, launchActivity]);
 
   const updateScore = useCallback((points, isCorrect) => {
-    setGlobalScore(prev => prev + points);
-    setGlobalStreak(prev => {
-      const next = isCorrect ? prev + 1 : 0;
-      // Mini confetti burst on streak milestones (3, 5, 10, ...)
-      if (isCorrect && (next === 3 || next === 5 || next % 10 === 0)) fireConfetti(15);
-      return next;
+    // Fire game effects immediately
+    spawnViewportFlash(isCorrect);
+    setGlobalStreak(prevStreak => {
+      const nextStreak = isCorrect ? prevStreak + 1 : 0;
+      if (points > 0) spawnFloatScore(points, isCorrect, nextStreak);
+      if (isCorrect && (nextStreak === 3 || nextStreak === 5 || nextStreak % 10 === 0)) fireConfetti(15);
+      return nextStreak;
     });
+
+    setGlobalScore(prev => prev + points);
 
     if (!currentActivity) return;
 
@@ -10454,7 +10348,7 @@ const App = () => {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {reviewQueue.slice(0, 6).map(activity => (
               <button key={activity.id} onClick={() => launchActivity(activity)}
-                style={{ ...styles.optionBtn, padding: '12px 16px', marginBottom: 0, textAlign: 'left', borderRadius: 14 }}>
+                className="game-option game-option--blue" style={{ padding: '12px 16px', marginBottom: 0, textAlign: 'left', borderRadius: 14 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, alignItems: 'baseline' }}>
                   <strong style={{ fontSize: 14 }}>{activity.name}</strong>
                   <span style={{ color: '#f56565', fontSize: 12, fontWeight: 800 }}>{activity.mastery}%</span>

@@ -6273,9 +6273,20 @@ ${knowledgeBlock}
             }
         });
         
-        // Extract projects by name
+        // Extract projects by name (with word-boundary + common-word protection)
+        const entityIgnore = new Set(['do','red','code','core','ever','rare','soul','salt','nest',
+            'edge','kite','gems','ruby','epic','june','furl','viva','cyan','boho',
+            'being','there','leaves','pulse','notion','scenes','summer','winter',
+            'belong','queens','village','seasons','ranches','shades','terrace',
+            'mist','trio','glen','noir','atom','sway','vida','vert']);
         knowledge.projects.forEach(proj => {
-            if (lower.includes(proj.name.toLowerCase())) {
+            const projName = proj.name.toLowerCase().trim();
+            // Skip very short names or common English words
+            if (projName.length < 4 || entityIgnore.has(projName)) return;
+            // Use word boundary regex to avoid substring false positives
+            const escaped = projName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const regex = new RegExp(`\\b${escaped}\\b`, 'i');
+            if (regex.test(lower)) {
                 entities.projects.push(proj);
             }
         });
@@ -6363,6 +6374,9 @@ ${knowledgeBlock}
             });
             messages.push({ role: 'user', content: message });
 
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 45000);
+
             const response = await fetch(this.geminiEndpoint, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -6375,8 +6389,11 @@ ${knowledgeBlock}
                         maxOutputTokens: 2000
                     },
                     stream: true
-                })
+                }),
+                signal: controller.signal
             });
+
+            clearTimeout(timeout);
 
             if (!response.ok || !response.body) {
                 // Fallback to non-streaming
@@ -6425,6 +6442,7 @@ ${knowledgeBlock}
     // Track what the user is currently viewing for context
     _viewContext: { zone: null, project: null, modalOpen: false },
     _userRole: null, // 'customer' or 'agent'
+    _isBusy: false, // prevent concurrent sends
     setViewContext(ctx) {
         Object.assign(this._viewContext, ctx);
     },
@@ -6535,7 +6553,12 @@ ${knowledgeBlock}
             'real', 'estate', 'property', 'properties', 'project', 'projects', 'area', 'location',
             'beach', 'sea', 'view', 'home', 'house', 'villa', 'apartment', 'unit', 'investment',
             'price', 'payment', 'down', 'north', 'coast', 'south', 'east', 'west', 'city', 
-            'cairo', 'egypt', 'rita', 'help', 'want', 'need', 'looking', 'find', 'show'];
+            'cairo', 'egypt', 'rita', 'help', 'want', 'need', 'looking', 'find', 'show',
+            'do', 'red', 'code', 'core', 'ever', 'rare', 'soul', 'salt', 'nest', 'edge', 'kite',
+            'gems', 'ruby', 'epic', 'june', 'furl', 'viva', 'cyan', 'boho', 'being', 'there',
+            'leaves', 'pulse', 'notion', 'scenes', 'summer', 'winter', 'belong', 'queens',
+            'village', 'seasons', 'ranches', 'shades', 'terrace', 'mist', 'trio', 'glen', 'noir',
+            'atom', 'sway', 'vida', 'vert'];
         
         knowledge.projects.forEach(proj => {
             const projName = proj.name.toLowerCase().trim();
@@ -6556,14 +6579,16 @@ ${knowledgeBlock}
     },
 
     // Generate Response (Gemini-Powered)
-    async generateResponse(message) {
+    async generateResponse(message, { skipHistoryPush = false } = {}) {
         const entities = this.extractEntities(message);
         const knowledge = this.getKnowledge();
         
         // Add to conversation history (cap at 20 messages to prevent memory leak)
-        this.conversationHistory.push({ role: 'user', content: message });
-        if (this.conversationHistory.length > 20) {
-            this.conversationHistory = this.conversationHistory.slice(-16);
+        if (!skipHistoryPush) {
+            this.conversationHistory.push({ role: 'user', content: message });
+            if (this.conversationHistory.length > 20) {
+                this.conversationHistory = this.conversationHistory.slice(-16);
+            }
         }
         
         // Try Gemini AI first
@@ -6942,7 +6967,11 @@ ${knowledgeBlock}
 };
 
 // ═══ Rich Markdown Formatter for AI Messages ═══
+function escapeHTML(str) {
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
 function formatAIMarkdown(text) {
+    text = escapeHTML(text);
     const lines = text.split('\n');
     let html = '';
     let inOl = false, inUl = false;
@@ -7118,10 +7147,19 @@ function handleAIChatKey(e) {
 }
 
 async function sendAIMessage(customMessage = null) {
+    if (AIConcierge._isBusy) return;
     const input = document.getElementById('aiChatInput');
     const messagesContainer = document.getElementById('aiChatMessages');
     const message = customMessage || (input ? input.value.trim() : '');
     if (!message) return;
+
+    // Message length limit to prevent token burning
+    if (message.length > 3000) {
+        addChatMessage("Message too long — please keep it under 3000 characters.", 'bot');
+        return;
+    }
+
+    AIConcierge._isBusy = true;
 
     // Auto-select customer mode if none picked
     if (!AIConcierge._userRole) {
@@ -7133,6 +7171,7 @@ async function sendAIMessage(customMessage = null) {
     // Render user bubble
     addChatMessage(message, 'user');
 
+  try {
     // Add to conversation history
     AIConcierge.conversationHistory.push({ role: 'user', content: message });
     if (AIConcierge.conversationHistory.length > 20) {
@@ -7154,7 +7193,9 @@ async function sendAIMessage(customMessage = null) {
             contentEl.innerHTML = formatAIMarkdown(partial);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         });
-    } catch (_) {}
+    } catch (streamErr) {
+        console.warn('Streaming failed, falling back:', streamErr.message || streamErr);
+    }
 
     // Fallback: non-streaming Gemini or local
     if (!fullText) {
@@ -7162,7 +7203,7 @@ async function sendAIMessage(customMessage = null) {
         contentEl.classList.remove('ai-streaming-cursor');
         contentEl.innerHTML = '<div class="ai-thinking"><div class="ai-thinking-orb"></div><span class="ai-thinking-text">RITA is thinking...</span></div>';
 
-        const response = await AIConcierge.generateResponse(message);
+        const response = await AIConcierge.generateResponse(message, { skipHistoryPush: true });
         fullText = response.text;
 
         contentEl.innerHTML = formatAIMarkdown(fullText);
@@ -7174,7 +7215,7 @@ async function sendAIMessage(customMessage = null) {
             response.actions.forEach(action => executeAction(action));
         }
 
-        AIConcierge.conversationHistory.push({ role: 'assistant', content: fullText });
+        // generateResponse already pushes assistant to history
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
         return;
     }
@@ -7204,6 +7245,9 @@ async function sendAIMessage(customMessage = null) {
     if (actions) actions.forEach(a => executeAction(a));
 
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  } finally {
+    AIConcierge._isBusy = false;
+  }
 }
 
 function createBotMessageEl() {
@@ -7285,15 +7329,20 @@ function createProjectCard(proj) {
     const card = document.createElement('div');
     card.className = 'ai-project-card';
     card.onclick = () => { focusOnProject(proj); openModal(proj); };
+    const eName = escapeHTML(proj.name || '');
+    const eDev = escapeHTML(proj.dev || 'N/A');
+    const eZone = escapeHTML(proj.zone || 'N/A');
+    const eDelivery = escapeHTML(proj.deliveryYear || 'TBA');
+    const eDP = proj.minDownPayment ? escapeHTML(String(proj.minDownPayment)) + '% DP' : 'N/A';
     card.innerHTML = `
         <div class="ai-project-card-header">
-            <span class="ai-project-card-name">${proj.name}</span>
-            <span class="ai-project-card-score">${proj.minDownPayment ? proj.minDownPayment + '% DP' : 'N/A'}</span>
+            <span class="ai-project-card-name">${eName}</span>
+            <span class="ai-project-card-score">${eDP}</span>
         </div>
         <div class="ai-project-card-details">
-            <span>🏗️ ${proj.dev || 'N/A'}</span>
-            <span>📍 ${proj.zone || 'N/A'}</span>
-            <span>📅 ${proj.deliveryYear || 'TBA'}</span>
+            <span>🏗️ ${eDev}</span>
+            <span>📍 ${eZone}</span>
+            <span>📅 ${eDelivery}</span>
         </div>`;
     return card;
 }
@@ -7435,7 +7484,7 @@ function toggleAIVoice() {
     if (!aiVoiceRecognition) {
         aiVoiceRecognition = new SpeechRecognition();
         aiVoiceRecognition.continuous = false;
-        aiVoiceRecognition.lang = 'en-US';
+        aiVoiceRecognition.lang = 'ar-EG'; // Primary: Egyptian Arabic (also understands English mixed in)
         aiVoiceRecognition.interimResults = false;
         
         aiVoiceRecognition.onresult = (event) => {

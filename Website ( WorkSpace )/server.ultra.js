@@ -369,13 +369,63 @@ async function callGeminiWithRetry(geminiBody, retries = 2) {
     throw new Error('All Gemini models unavailable');
 }
 
+async function streamGeminiToResponse(geminiBody, res) {
+    for (const model of GEMINI_MODELS) {
+        const url = `${GEMINI_BASE}/${model}:streamGenerateContent?key=${GEMINI_API_KEY}&alt=sse`;
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(geminiBody),
+            signal: AbortSignal.timeout(30000)
+        });
+        if (!response.ok) {
+            const status = response.status;
+            if (status === 503 || status === 429) continue;
+            const errText = await response.text().catch(() => '');
+            throw new Error(`Gemini API ${status}: ${errText}`);
+        }
+        res.setHeader('Content-Type', 'text/event-stream');
+        res.setHeader('Cache-Control', 'no-cache');
+        res.setHeader('Connection', 'keep-alive');
+        res.setHeader('X-Accel-Buffering', 'no');
+        res.flushHeaders();
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+            buffer = lines.pop();
+            for (const line of lines) {
+                if (!line.startsWith('data: ')) continue;
+                const raw = line.slice(6).trim();
+                if (!raw || raw === '[DONE]') continue;
+                try {
+                    const parsed = JSON.parse(raw);
+                    const chunk = parsed?.candidates?.[0]?.content?.parts?.[0]?.text;
+                    if (chunk) {
+                        res.write(`data: ${JSON.stringify({ t: chunk })}\n\n`);
+                    }
+                } catch (_) {}
+            }
+        }
+        res.write('data: [DONE]\n\n');
+        return res.end();
+    }
+    throw new Error('All Gemini models unavailable');
+}
+
 app.post('/api/gemini', rateLimitRoute, async (req, res) => {
     try {
         if (!GEMINI_API_KEY) {
             return res.status(500).json({ success: false, error: 'Gemini API key not configured' });
         }
 
-        const { systemPrompt, messages, generationConfig } = req.body;
+        const { systemPrompt, messages, generationConfig, stream } = req.body;
         if (!messages || !Array.isArray(messages) || messages.length === 0) {
             return res.status(400).json({ success: false, error: 'Messages array is required' });
         }
@@ -396,6 +446,10 @@ app.post('/api/gemini', rateLimitRoute, async (req, res) => {
 
         if (systemPrompt) {
             geminiBody.systemInstruction = { parts: [{ text: systemPrompt }] };
+        }
+
+        if (stream) {
+            return await streamGeminiToResponse(geminiBody, res);
         }
 
         const text = await callGeminiWithRetry(geminiBody);

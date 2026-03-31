@@ -3879,6 +3879,7 @@ function closeModal() {
   const modal = document.getElementById("projectModal");
   if (modal) modal.classList.remove("active");
     document.body.classList.remove('modal-open');
+  AIConcierge.setViewContext({ modalOpen: false });
   
   // Stop swiper autoplay when modal is hidden to prevent invisible DOM updates
   if (swiperInstance && swiperInstance.autoplay) {
@@ -4350,6 +4351,7 @@ function switchTab(tabName) {
 
 async function openModal(proj) {
   currentProject = proj;
+  AIConcierge.setViewContext({ project: proj.name, zone: proj.zone, modalOpen: true });
     if (window.RoutePlanner?.syncProjectListHighlights) {
             window.RoutePlanner.syncProjectListHighlights();
     }
@@ -5821,7 +5823,7 @@ ${projectsSummary}
 • دايماً اختمي بسؤال أو دعوة لاستكمال الكلام
 • خلّي العميل يحس إنه لقى أحسن صاحبة في العقارات في مصر! 🇪🇬✨
 
-كوني ريتا دلوقتي! 💫`;
+كوني ريتا دلوقتي! 💫` + this.getViewContextPrompt();
     },
     
     // Knowledge Base - Cached to avoid re-creating Set arrays on every call
@@ -6005,6 +6007,93 @@ ${projectsSummary}
             console.error('Gemini Error:', error);
             return null;
         }
+    },
+
+    // Call Gemini with SSE streaming — invokes onChunk(fullTextSoFar) for each token
+    async callGeminiStream(message, onChunk) {
+        try {
+            const messages = [];
+            this.conversationHistory.slice(-8).forEach(msg => {
+                messages.push({
+                    role: msg.role === 'user' ? 'user' : 'assistant',
+                    content: msg.content
+                });
+            });
+            messages.push({ role: 'user', content: message });
+
+            const response = await fetch(this.geminiEndpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    systemPrompt: this.getSystemPrompt(),
+                    messages: messages,
+                    generationConfig: {
+                        temperature: 0.9,
+                        topP: 0.95,
+                        maxOutputTokens: 1200
+                    },
+                    stream: true
+                })
+            });
+
+            if (!response.ok || !response.body) {
+                // Fallback to non-streaming
+                return null;
+            }
+
+            const contentType = response.headers.get('content-type') || '';
+            if (!contentType.includes('text/event-stream')) {
+                // Server returned JSON (non-streaming fallback)
+                const data = await response.json();
+                return (data.success && data.text) ? data.text : null;
+            }
+
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let fullText = '';
+            let buffer = '';
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                buffer += decoder.decode(value, { stream: true });
+                const lines = buffer.split('\n');
+                buffer = lines.pop();
+
+                for (const line of lines) {
+                    if (!line.startsWith('data: ')) continue;
+                    const raw = line.slice(6).trim();
+                    if (!raw || raw === '[DONE]') continue;
+                    try {
+                        const parsed = JSON.parse(raw);
+                        if (parsed.t) {
+                            fullText += parsed.t;
+                            onChunk(fullText);
+                        }
+                    } catch (_) {}
+                }
+            }
+            return fullText || null;
+        } catch (error) {
+            console.error('Gemini Stream Error:', error);
+            return null;
+        }
+    },
+
+    // Track what the user is currently viewing for context
+    _viewContext: { zone: null, project: null, modalOpen: false },
+    setViewContext(ctx) {
+        Object.assign(this._viewContext, ctx);
+    },
+    getViewContextPrompt() {
+        const c = this._viewContext;
+        const parts = [];
+        if (c.modalOpen && c.project) {
+            parts.push(`العميل فاتح دلوقتي تفاصيل مشروع "${c.project}" — ممكن تتكلمي عنه لو سأل.`);
+        } else if (c.zone) {
+            parts.push(`العميل بيتصفح منطقة "${c.zone}" على الخريطة دلوقتي.`);
+        }
+        return parts.length ? '\n\n[سياق المشاهدة الحالي]: ' + parts.join(' ') : '';
     },
     
     // Parse actions from AI response
@@ -6502,15 +6591,50 @@ ${projectsSummary}
     }
 };
 
+// ═══ Rich Markdown Formatter for AI Messages ═══
+function formatAIMarkdown(text) {
+    const lines = text.split('\n');
+    let html = '';
+    let inOl = false, inUl = false;
+
+    const fmtInline = s => s
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/g, '<em>$1</em>');
+
+    for (const raw of lines) {
+        const line = raw.trimEnd();
+        const olMatch = line.match(/^\s*(\d+)[.)]\s+(.+)/);
+        const ulMatch = !olMatch && line.match(/^\s*[-•*]\s+(.+)/);
+
+        if (olMatch) {
+            if (inUl) { html += '</ul>'; inUl = false; }
+            if (!inOl) { html += '<ol>'; inOl = true; }
+            html += `<li>${fmtInline(olMatch[2])}</li>`;
+        } else if (ulMatch) {
+            if (inOl) { html += '</ol>'; inOl = false; }
+            if (!inUl) { html += '<ul>'; inUl = true; }
+            html += `<li>${fmtInline(ulMatch[1])}</li>`;
+        } else {
+            if (inOl) { html += '</ol>'; inOl = false; }
+            if (inUl) { html += '</ul>'; inUl = false; }
+            if (line.trim() === '') {
+                html += '<br>';
+            } else {
+                html += `<p>${fmtInline(line)}</p>`;
+            }
+        }
+    }
+    if (inOl) html += '</ol>';
+    if (inUl) html += '</ul>';
+    return html;
+}
+
 // UI Functions for Chatbot
 function toggleAIChat() {
     const chatWindow = document.getElementById('aiChatWindow');
-    const toggle = document.getElementById('aiChatToggle');
-    
     if (chatWindow) {
         chatWindow.classList.toggle('active');
         AIConcierge.isOpen = chatWindow.classList.contains('active');
-        
         if (AIConcierge.isOpen) {
             const input = document.getElementById('aiChatInput');
             if (input) setTimeout(() => input.focus(), 300);
@@ -6521,7 +6645,6 @@ function toggleAIChat() {
 function clearAIChat() {
     const messagesContainer = document.getElementById('aiChatMessages');
     if (messagesContainer) {
-        // Keep only the welcome message
         const welcome = messagesContainer.querySelector('.ai-message');
         messagesContainer.innerHTML = '';
         if (welcome) messagesContainer.appendChild(welcome.cloneNode(true));
@@ -6529,130 +6652,183 @@ function clearAIChat() {
     AIConcierge.conversationHistory = [];
 }
 
+// Keyboard handler for chat textarea (Enter sends, Shift+Enter = newline)
+function handleAIChatKey(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendAIMessage();
+    }
+    // Auto-resize textarea
+    requestAnimationFrame(() => {
+        const ta = e.target;
+        ta.style.height = 'auto';
+        ta.style.height = Math.min(ta.scrollHeight, 120) + 'px';
+    });
+}
+
 async function sendAIMessage(customMessage = null) {
     const input = document.getElementById('aiChatInput');
     const messagesContainer = document.getElementById('aiChatMessages');
-    
     const message = customMessage || (input ? input.value.trim() : '');
     if (!message) return;
-    
-    if (input) input.value = '';
-    
-    // Add user message
+
+    if (input) { input.value = ''; input.style.height = 'auto'; }
+
+    // Render user bubble
     addChatMessage(message, 'user');
-    
-    // Show typing indicator
-    const typingId = showTypingIndicator();
-    
-    // Generate response
+
+    // Add to conversation history
+    AIConcierge.conversationHistory.push({ role: 'user', content: message });
+    if (AIConcierge.conversationHistory.length > 20) {
+        AIConcierge.conversationHistory = AIConcierge.conversationHistory.slice(-16);
+    }
+
+    // Create streaming bot message element
+    const botMsg = createBotMessageEl();
+    const contentEl = botMsg.querySelector('.ai-message-content');
+    contentEl.classList.add('ai-streaming-cursor');
+    messagesContainer.appendChild(botMsg);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+    let fullText = null;
+
+    // Try streaming first
     try {
+        fullText = await AIConcierge.callGeminiStream(message, (partial) => {
+            contentEl.innerHTML = formatAIMarkdown(partial);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        });
+    } catch (_) {}
+
+    // Fallback: non-streaming Gemini or local
+    if (!fullText) {
+        // Show typing dots while waiting
+        contentEl.classList.remove('ai-streaming-cursor');
+        contentEl.innerHTML = '<div class="ai-typing"><span></span><span></span><span></span></div>';
+
         const response = await AIConcierge.generateResponse(message);
-        
-        // Remove typing indicator
-        removeTypingIndicator(typingId);
-        
-        // Add bot response
-        addChatMessage(response.text, 'bot', response);
-        
-        // Execute actions
+        fullText = response.text;
+
+        contentEl.innerHTML = formatAIMarkdown(fullText);
+
+        // Add extras for local/non-streaming responses
+        appendResponseExtras(contentEl, response);
+
         if (response.actions) {
             response.actions.forEach(action => executeAction(action));
         }
-        
-    } catch (error) {
-        console.error('AI Response Error:', error);
-        removeTypingIndicator(typingId);
-        addChatMessage("Oops! Something went wrong. Please try again. 😅", 'bot');
+
+        AIConcierge.conversationHistory.push({ role: 'assistant', content: fullText });
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        return;
     }
+
+    // Streaming completed — finalize
+    contentEl.classList.remove('ai-streaming-cursor');
+
+    const { cleanText, actions } = AIConcierge.parseAIActions(fullText);
+    const mentionedProjects = AIConcierge.findMentionedProjects(fullText);
+
+    contentEl.innerHTML = formatAIMarkdown(cleanText);
+
+    const entities = AIConcierge.extractEntities(message);
+    let allProjects = [...mentionedProjects];
+    if (entities.projects.length > 0) {
+        entities.projects.forEach(p => {
+            if (!allProjects.find(mp => mp.name === p.name)) allProjects.push(p);
+        });
+    }
+    allProjects = allProjects.slice(0, 5);
+
+    const responseObj = { text: cleanText, actions, projects: allProjects, suggestions: null };
+    appendResponseExtras(contentEl, responseObj);
+
+    AIConcierge.conversationHistory.push({ role: 'assistant', content: cleanText });
+
+    if (actions) actions.forEach(a => executeAction(a));
+
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
 
-function addChatMessage(text, sender, response = null) {
-    const messagesContainer = document.getElementById('aiChatMessages');
-    if (!messagesContainer) return;
-    
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `ai-message ai-${sender}`;
-    
-    const avatar = document.createElement('div');
-    avatar.className = 'ai-message-avatar';
-    avatar.innerHTML = sender === 'bot' 
-        ? '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle></svg>'
-        : '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>';
-    
-    const content = document.createElement('div');
-    content.className = 'ai-message-content';
-    
-    // Parse markdown-like formatting
-    const formattedText = text
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\n/g, '<br>');
-    
-    content.innerHTML = `<p>${formattedText}</p>`;
-    
-    // Add project cards if available
-    if (response && response.projects && response.projects.length > 0) {
+function createBotMessageEl() {
+    const div = document.createElement('div');
+    div.className = 'ai-message ai-bot';
+    div.innerHTML = `
+        <div class="ai-message-avatar">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle></svg>
+        </div>
+        <div class="ai-message-content"></div>`;
+    return div;
+}
+
+function appendResponseExtras(contentEl, response) {
+    // Project cards
+    if (response.projects && response.projects.length > 0) {
         response.projects.forEach(proj => {
-            const card = createProjectCard(proj);
-            content.appendChild(card);
+            contentEl.appendChild(createProjectCard(proj));
         });
     }
-    
-    // Add suggestions if available
-    if (response && response.suggestions) {
-        const suggestionsDiv = document.createElement('div');
-        suggestionsDiv.className = 'ai-suggestions';
-        response.suggestions.forEach(suggestion => {
+    // Suggestion pills
+    if (response.suggestions) {
+        const sugDiv = document.createElement('div');
+        sugDiv.className = 'ai-suggestions';
+        response.suggestions.forEach(s => {
             const btn = document.createElement('button');
-            btn.textContent = suggestion;
-            btn.onclick = () => sendAIMessage(suggestion);
-            suggestionsDiv.appendChild(btn);
+            btn.textContent = s;
+            btn.onclick = () => sendAIMessage(s);
+            sugDiv.appendChild(btn);
         });
-        content.appendChild(suggestionsDiv);
+        contentEl.appendChild(sugDiv);
     }
-    
-    // Add action buttons if there are projects
-    if (response && response.projects && response.projects.length > 0) {
-        const actionsDiv = document.createElement('div');
-        actionsDiv.className = 'ai-action-btns';
-        
+    // Action buttons
+    if (response.projects && response.projects.length > 0) {
+        const actDiv = document.createElement('div');
+        actDiv.className = 'ai-action-btns';
         const viewBtn = document.createElement('button');
         viewBtn.innerHTML = '📍 View on Map';
         viewBtn.onclick = () => {
-            if (response.projects.length === 1) {
-                focusOnProject(response.projects[0]);
-            } else {
-                renderProjects(response.projects);
-            }
+            if (response.projects.length === 1) focusOnProject(response.projects[0]);
+            else renderProjects(response.projects);
         };
-        actionsDiv.appendChild(viewBtn);
-        
+        actDiv.appendChild(viewBtn);
         if (response.projects.length === 1) {
-            const detailsBtn = document.createElement('button');
-            detailsBtn.className = 'primary';
-            detailsBtn.innerHTML = '📋 Full Details';
-            detailsBtn.onclick = () => openModal(response.projects[0]);
-            actionsDiv.appendChild(detailsBtn);
+            const detBtn = document.createElement('button');
+            detBtn.className = 'primary';
+            detBtn.innerHTML = '📋 Full Details';
+            detBtn.onclick = () => openModal(response.projects[0]);
+            actDiv.appendChild(detBtn);
         }
-        
-        content.appendChild(actionsDiv);
+        contentEl.appendChild(actDiv);
     }
-    
-    messageDiv.appendChild(avatar);
-    messageDiv.appendChild(content);
-    messagesContainer.appendChild(messageDiv);
-    
-    // Scroll to bottom
+}
+
+function addChatMessage(text, sender) {
+    const messagesContainer = document.getElementById('aiChatMessages');
+    if (!messagesContainer) return;
+
+    const div = document.createElement('div');
+    div.className = `ai-message ai-${sender}`;
+
+    const avatar = document.createElement('div');
+    avatar.className = 'ai-message-avatar';
+    avatar.innerHTML = sender === 'bot'
+        ? '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle></svg>'
+        : '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>';
+
+    const content = document.createElement('div');
+    content.className = 'ai-message-content';
+    content.innerHTML = formatAIMarkdown(text);
+
+    div.appendChild(avatar);
+    div.appendChild(content);
+    messagesContainer.appendChild(div);
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
 
 function createProjectCard(proj) {
     const card = document.createElement('div');
     card.className = 'ai-project-card';
-    card.onclick = () => {
-        focusOnProject(proj);
-        openModal(proj);
-    };
-    
+    card.onclick = () => { focusOnProject(proj); openModal(proj); };
     card.innerHTML = `
         <div class="ai-project-card-header">
             <span class="ai-project-card-name">${proj.name}</span>
@@ -6662,16 +6838,13 @@ function createProjectCard(proj) {
             <span>🏗️ ${proj.dev || 'N/A'}</span>
             <span>📍 ${proj.zone || 'N/A'}</span>
             <span>📅 ${proj.deliveryYear || 'TBA'}</span>
-        </div>
-    `;
-    
+        </div>`;
     return card;
 }
 
 function showTypingIndicator() {
     const messagesContainer = document.getElementById('aiChatMessages');
     if (!messagesContainer) return null;
-    
     const id = 'typing-' + Date.now();
     const typingDiv = document.createElement('div');
     typingDiv.id = id;
@@ -6681,24 +6854,69 @@ function showTypingIndicator() {
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle></svg>
         </div>
         <div class="ai-message-content">
-            <div class="ai-typing">
-                <span></span><span></span><span></span>
-            </div>
-        </div>
-    `;
-    
+            <div class="ai-typing"><span></span><span></span><span></span></div>
+        </div>`;
     messagesContainer.appendChild(typingDiv);
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    
     return id;
 }
 
 function removeTypingIndicator(id) {
-    if (id) {
-        const typing = document.getElementById(id);
-        if (typing) typing.remove();
-    }
+    if (id) { const el = document.getElementById(id); if (el) el.remove(); }
 }
+
+// ═══ Keyboard Shortcuts ═══
+document.addEventListener('keydown', function(e) {
+    // Escape closes chat or modal
+    if (e.key === 'Escape') {
+        if (AIConcierge.isOpen) { toggleAIChat(); e.preventDefault(); return; }
+        const modal = document.querySelector('.modal-overlay.active, .modal-overlay[style*="flex"]');
+        if (modal) { closeModal(); e.preventDefault(); return; }
+    }
+    // Ctrl+K or / focuses search (when not in an input)
+    if ((e.key === 'k' && (e.ctrlKey || e.metaKey)) || (e.key === '/' && !['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName))) {
+        e.preventDefault();
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) searchInput.focus();
+    }
+});
+
+// ═══ Mobile Swipe-to-Dismiss Chat ═══
+(function initChatSwipe() {
+    let startY = 0, currentY = 0, dragging = false;
+    const threshold = 80;
+
+    document.addEventListener('touchstart', function(e) {
+        const handle = e.target.closest('#aiChatSwipe, .ai-chat-header');
+        if (!handle) return;
+        const chatWindow = document.getElementById('aiChatWindow');
+        if (!chatWindow || !chatWindow.classList.contains('active')) return;
+        startY = e.touches[0].clientY;
+        dragging = true;
+        chatWindow.style.transition = 'none';
+    }, { passive: true });
+
+    document.addEventListener('touchmove', function(e) {
+        if (!dragging) return;
+        currentY = e.touches[0].clientY;
+        const dy = Math.max(0, currentY - startY);
+        if (dy > 10) {
+            const chatWindow = document.getElementById('aiChatWindow');
+            if (chatWindow) chatWindow.style.transform = `translateY(${dy}px) scale(${1 - dy * 0.0003})`;
+        }
+    }, { passive: true });
+
+    document.addEventListener('touchend', function() {
+        if (!dragging) return;
+        dragging = false;
+        const dy = currentY - startY;
+        const chatWindow = document.getElementById('aiChatWindow');
+        if (!chatWindow) return;
+        chatWindow.style.transition = '';
+        chatWindow.style.transform = '';
+        if (dy > threshold) toggleAIChat();
+    }, { passive: true });
+})();
 
 function executeAction(action) {
     switch (action.type) {

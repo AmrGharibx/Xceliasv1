@@ -9979,146 +9979,192 @@ const App = () => {
   const partnerLaunchActivity = activityInsights.find(activity => activity.id === 'objectionduel' && activity.unlock.unlocked) || null;
   const classroomLaunchActivity = activityInsights.find(activity => activity.id === 'teambattle' && activity.unlock.unlocked) || null;
 
-  const renderDashboard = () => (
-    <div className="animate-fadeIn">
-      <div style={{
-        marginBottom: '32px',
-        padding: '28px',
-        borderRadius: '26px',
-        border: `1px solid ${RM_THEME.border}`,
-        background: 'linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04))',
-        boxShadow: '0 28px 90px rgba(0,0,0,0.28)'
+  const renderDashboard = () => {
+    const currentRank = getRedRank(globalScore);
+    const nextRank = getNextRedRank(globalScore);
+    const rankProgress = nextRank ? ((globalScore - currentRank.minScore) / (nextRank.minScore - currentRank.minScore)) * 100 : 100;
+    const ringRadius = 52;
+    const ringCircumference = 2 * Math.PI * ringRadius;
+    const ringOffset = ringCircumference - (ringCircumference * Math.min(rankProgress, 100) / 100);
+    const cmdColors = {
+      daily: { bg: 'rgba(255,176,32,0.12)', icon: 'rgba(255,176,32,0.85)', glow: 'rgba(255,176,32,0.2)' },
+      review: { bg: 'rgba(80,250,123,0.12)', icon: 'rgba(80,250,123,0.85)', glow: 'rgba(80,250,123,0.2)' },
+      resume: { bg: 'rgba(102,126,234,0.12)', icon: 'rgba(102,126,234,0.85)', glow: 'rgba(102,126,234,0.2)' },
+      classroom: { bg: 'rgba(240,147,251,0.12)', icon: 'rgba(240,147,251,0.85)', glow: 'rgba(240,147,251,0.2)' }
+    };
+    return (
+    <div className="animate-fadeIn xstagger">
+      {/* ═══ HERO: Rank + Stats ═══ */}
+      <div className="xcard" style={{
+        marginBottom: 28, padding: '32px 28px',
+        background: 'linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.035))',
+        border: `1px solid ${RM_THEME.border}`, borderRadius: 26,
+        boxShadow: '0 28px 90px rgba(0,0,0,0.28)', position: 'relative', overflow: 'hidden'
       }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', gap: 24, flexWrap: 'wrap', alignItems: 'center' }}>
-          <div style={{ maxWidth: 760 }}>
-            <div style={{ display: 'inline-flex', gap: 10, alignItems: 'center', marginBottom: 14 }}>
+        <div style={{ position: 'absolute', top: -80, right: -60, width: 280, height: 280, background: `radial-gradient(circle, ${currentRank.accent}22, transparent 70%)`, pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', bottom: -60, left: -40, width: 220, height: 220, background: 'radial-gradient(circle, rgba(240,147,251,0.08), transparent 70%)', pointerEvents: 'none' }} />
+        <div style={{ display: 'flex', justifyContent: 'space-between', gap: 28, flexWrap: 'wrap', alignItems: 'center', position: 'relative', zIndex: 1 }}>
+          <div style={{ maxWidth: 680, flex: '1 1 380px' }}>
+            <div style={{ display: 'inline-flex', gap: 10, alignItems: 'center', marginBottom: 16, flexWrap: 'wrap' }}>
               <span style={{ ...styles.badge, ...styles.badgeRed }}>{lang === 'eg' ? 'أكاديمية الأداء' : 'Performance Academy'}</span>
-              <span style={{ ...styles.badge, ...styles.badgeBlue }}>{lang === 'eg' ? '35+ نشاط' : '35+ Activities'}</span>
+              <span style={{ ...styles.badge, ...styles.badgeBlue }}>{lang === 'eg' ? '42 نشاط' : '42 Activities'}</span>
               {projectorMode && <span style={{ ...styles.badge, ...styles.badgeGreen }}>{lang === 'eg' ? 'وضع بروجكتور' : 'Projector Ready'}</span>}
             </div>
-            <h1 style={{ fontSize: '42px', lineHeight: 1.05, marginBottom: '10px' }}>🏢 {s.appTitle}</h1>
-            <p style={{ fontSize: '18px', color: RM_THEME.muted, lineHeight: 1.65, maxWidth: 700 }}>
-              {s.appSubtitle}
-            </p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 18, marginBottom: 14 }}>
+              <div style={{ position: 'relative', width: 120, height: 120, flexShrink: 0 }}>
+                <svg className="xring" width="120" height="120" viewBox="0 0 120 120">
+                  <circle cx="60" cy="60" r={ringRadius} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="6" />
+                  <circle className="xring-fill" cx="60" cy="60" r={ringRadius} fill="none" stroke={currentRank.accent} strokeWidth="6"
+                    strokeDasharray={ringCircumference} strokeDashoffset={ringOffset} strokeLinecap="round" />
+                </svg>
+                <div className="xrank-orb" style={{
+                  position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
+                  width: 56, height: 56,
+                  background: `linear-gradient(135deg, ${currentRank.accent}44, ${currentRank.accent}22)`,
+                  border: `2px solid ${currentRank.accent}66`,
+                  backdropFilter: 'blur(8px)'
+                }}>
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill={currentRank.accent} opacity="0.9"/></svg>
+                </div>
+              </div>
+              <div>
+                <h1 style={{ fontSize: 38, lineHeight: 1.05, marginBottom: 4, fontWeight: 850 }}>{s.appTitle}</h1>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 6 }}>
+                  <span style={{ fontSize: 15, fontWeight: 800, color: currentRank.accent, textTransform: 'uppercase', letterSpacing: 1.5 }}>
+                    {lang === 'eg' ? currentRank.eg : currentRank.en}
+                  </span>
+                  {nextRank && <span style={{ fontSize: 12, color: RM_THEME.faint }}>→ {nextRank.minScore - globalScore} {lang === 'eg' ? 'XP للترقية' : 'XP to next'}</span>}
+                </div>
+                {nextRank && (
+                  <div className="xxp-bar" style={{ marginTop: 10, width: 200, maxWidth: '100%' }}>
+                    <div className="xxp-fill" style={{ width: `${Math.min(rankProgress, 100)}%` }} />
+                  </div>
+                )}
+              </div>
+            </div>
+            <p style={{ fontSize: 16, color: RM_THEME.muted, lineHeight: 1.65, maxWidth: 600 }}>{s.appSubtitle}</p>
           </div>
-
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 12, flex: '1 1 360px' }}>
-            <div style={styles.scoreItem}>
-              <span style={styles.scoreLabel}>{s.totalScore}</span>
-              <span style={styles.scoreValue}>{globalScore}</span>
+            <div className="xstat" style={{ '--xstat-accent': `linear-gradient(90deg, ${RM_THEME.red}, ${RM_THEME.red2})` }}>
+              <span style={{ fontSize: 12, color: RM_THEME.muted, textTransform: 'uppercase', letterSpacing: 1, display: 'block', marginBottom: 6 }}>{s.totalScore}</span>
+              <span style={{ fontSize: 32, fontWeight: 800, color: '#fff', display: 'block' }}>{globalScore}</span>
             </div>
-            <div style={styles.scoreItem}>
-              <span style={styles.scoreLabel}>{s.currentStreak}</span>
-              <span style={styles.streakValue}>🔥 {globalStreak}</span>
+            <div className="xstat" style={{ '--xstat-accent': `linear-gradient(90deg, ${RM_THEME.amber}, #ff8c00)` }}>
+              <span style={{ fontSize: 12, color: RM_THEME.muted, textTransform: 'uppercase', letterSpacing: 1, display: 'block', marginBottom: 6 }}>{s.currentStreak}</span>
+              <span style={{ fontSize: 32, fontWeight: 800, color: RM_THEME.amber, display: 'block' }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill={RM_THEME.amber} style={{ verticalAlign: 'middle', marginRight: 6 }}><path d="M12 23c-3.2-2.4-8-7.1-8-12.7C4 5.8 7.6 2 12 2s8 3.8 8 8.3c0 5.6-4.8 10.3-8 12.7z"/><path d="M12 18c-1.4-1.2-4-3.8-4-6.5C8 9.2 9.8 7 12 7s4 2.2 4 4.5c0 2.7-2.6 5.3-4 6.5z" fill="rgba(255,255,255,0.3)"/></svg>
+                {globalStreak}
+              </span>
             </div>
-            <div style={styles.scoreItem}>
-              <span style={styles.scoreLabel}>{lang === 'eg' ? 'متقن' : 'Mastered'}</span>
-              <span style={styles.scoreValue}>{academyStats.masteredActivities}</span>
+            <div className="xstat" style={{ '--xstat-accent': `linear-gradient(90deg, ${RM_THEME.green}, #2ecc71)` }}>
+              <span style={{ fontSize: 12, color: RM_THEME.muted, textTransform: 'uppercase', letterSpacing: 1, display: 'block', marginBottom: 6 }}>{lang === 'eg' ? 'متقن' : 'Mastered'}</span>
+              <span style={{ fontSize: 32, fontWeight: 800, color: RM_THEME.green, display: 'block' }}>{academyStats.masteredActivities}</span>
             </div>
-            <div style={styles.scoreItem}>
-              <span style={styles.scoreLabel}>{lang === 'eg' ? 'مراجعة' : 'Review Queue'}</span>
-              <span style={styles.scoreValue}>{academyStats.reviewCount}</span>
+            <div className="xstat" style={{ '--xstat-accent': `linear-gradient(90deg, #f093fb, #764ba2)` }}>
+              <span style={{ fontSize: 12, color: RM_THEME.muted, textTransform: 'uppercase', letterSpacing: 1, display: 'block', marginBottom: 6 }}>{lang === 'eg' ? 'مراجعة' : 'Review Queue'}</span>
+              <span style={{ fontSize: 32, fontWeight: 800, color: '#f093fb', display: 'block' }}>{academyStats.reviewCount}</span>
             </div>
           </div>
         </div>
       </div>
 
-      <div style={{ marginBottom: 22 }}>
-        <h2 style={{ marginBottom: 14 }}>{lang === 'eg' ? 'غرفة قيادة الأكاديمية' : 'Academy Command Deck'}</h2>
+      {/* ═══ COMMAND DECK ═══ */}
+      <div style={{ marginBottom: 24 }}>
+        <h2 style={{ marginBottom: 16, display: 'flex', alignItems: 'center', gap: 10 }}>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={RM_THEME.red} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          {lang === 'eg' ? 'غرفة قيادة الأكاديمية' : 'Academy Command Deck'}
+        </h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 16 }}>
           {[
             {
-              key: 'daily',
-              icon: '☀️',
+              key: 'daily', color: cmdColors.daily,
+              svgPath: 'M12 3v1m0 16v1m-8-9H3m18 0h-1m-2.636-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z',
               title: lang === 'eg' ? 'تحدي النهارده' : 'Daily Challenge',
-              text: dailyChallenge
-                ? `${dailyChallenge.name} • ${dailyChallenge.categoryTitle}`
-                : (lang === 'eg' ? 'اختيار يومي تلقائي' : 'Fresh mixed challenge'),
+              text: dailyChallenge ? `${dailyChallenge.name} • ${dailyChallenge.categoryTitle}` : (lang === 'eg' ? 'اختيار يومي تلقائي' : 'Fresh mixed challenge'),
               action: dailyChallenge ? () => launchActivity(dailyChallenge) : null,
               actionLabel: lang === 'eg' ? 'ابدأ' : 'Launch'
             },
             {
-              key: 'review',
-              icon: '🛟',
+              key: 'review', color: cmdColors.review,
+              svgPath: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z',
               title: lang === 'eg' ? 'Review Rescue' : 'Review Rescue',
-              text: recommendedActivity
-                ? `${recommendedActivity.name} • ${lang === 'eg' ? 'إتقان' : 'Mastery'} ${recommendedActivity.mastery}%`
-                : (lang === 'eg' ? 'مراجعة أضعف نقطة' : 'Rescue the weakest area'),
+              text: recommendedActivity ? `${recommendedActivity.name} • ${lang === 'eg' ? 'إتقان' : 'Mastery'} ${recommendedActivity.mastery}%` : (lang === 'eg' ? 'مراجعة أضعف نقطة' : 'Rescue the weakest area'),
               action: recommendedActivity ? () => launchActivity(recommendedActivity) : null,
               actionLabel: lang === 'eg' ? 'أنقذ المستوى' : 'Rescue It'
             },
             {
-              key: 'resume',
-              icon: '↺',
+              key: 'resume', color: cmdColors.resume,
+              svgPath: 'M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15',
               title: lang === 'eg' ? 'كمّل من آخر مرة' : 'Resume Momentum',
-              text: resumeActivity
-                ? `${resumeActivity.name} • ${formatLastPlayed(lang, resumeActivity.track.lastPlayedAt)}`
-                : (lang === 'eg' ? 'مفيش نشاط سابق، ابدأ امتحان أو نشاط جديد' : 'No recent session yet, jump into an exam or drill'),
+              text: resumeActivity ? `${resumeActivity.name} • ${formatLastPlayed(lang, resumeActivity.track.lastPlayedAt)}` : (lang === 'eg' ? 'مفيش نشاط سابق، ابدأ امتحان أو نشاط جديد' : 'No recent session yet'),
               action: resumeActivity ? () => launchActivity(resumeActivity) : (finalExamActivity ? () => launchActivity(finalExamActivity) : null),
               actionLabel: resumeActivity ? (lang === 'eg' ? 'كمّل' : 'Resume') : (lang === 'eg' ? 'ادخل الامتحان' : 'Start Exam')
             },
             {
-              key: 'classroom',
-              icon: '🎛️',
+              key: 'classroom', color: cmdColors.classroom,
+              svgPath: 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10',
               title: lang === 'eg' ? 'تشغيل فصل بسرعة' : 'Facilitator Quick Launch',
-              text: lang === 'eg' ? 'شغّل تيـم باتل أو كروت المُيسّر فورًا' : 'Launch Team Battle or Facilitator Deck in one tap',
+              text: lang === 'eg' ? 'شغّل تيـم باتل أو كروت المُيسّر فورًا' : 'Launch Team Battle or Facilitator Deck',
               action: () => launchActivityById('teambattle'),
               actionLabel: lang === 'eg' ? 'ابدأ الفصل' : 'Launch Room'
             }
           ].map(card => (
-            <div key={card.key} style={{
-              ...styles.categoryCard,
-              minHeight: 210,
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 12
+            <div key={card.key} className="xcmd" style={{
+              '--xcmd-glow': card.color.glow, padding: 22,
+              background: 'linear-gradient(135deg, rgba(255,255,255,0.07), rgba(255,255,255,0.03))',
+              border: `1px solid ${RM_THEME.border}`, display: 'flex', flexDirection: 'column', gap: 14, minHeight: 210
             }}>
-              <div style={{ fontSize: 28 }}>{card.icon}</div>
-              <div>
-                <h3 style={{ fontSize: 20, marginBottom: 6 }}>{card.title}</h3>
-                <p style={{ color: RM_THEME.muted, lineHeight: 1.55 }}>{card.text}</p>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
+                <div className="xcmd-icon" style={{ background: card.color.bg }}>
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke={card.color.icon} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d={card.svgPath} /></svg>
+                </div>
+                <div>
+                  <h3 style={{ fontSize: 19, fontWeight: 800, marginBottom: 6 }}>{card.title}</h3>
+                  <p style={{ color: RM_THEME.muted, lineHeight: 1.55, fontSize: 14 }}>{card.text}</p>
+                </div>
               </div>
               <div style={{ marginTop: 'auto' }}>
-                {card.action && (
-                  <button onClick={card.action} style={styles.primaryBtn}>{card.actionLabel}</button>
-                )}
+                {card.action && <button onClick={card.action} style={{ ...styles.primaryBtn, padding: '12px 22px', fontSize: 14 }}>{card.actionLabel}</button>}
               </div>
             </div>
           ))}
         </div>
       </div>
 
+      {/* ═══ OPS + UNLOCK RADAR ═══ */}
       <div style={{ marginBottom: 24, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 16 }}>
-        <div style={{
-          ...styles.categoryCard,
-          minHeight: 280,
-          display: 'flex',
-          flexDirection: 'column'
-        }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'center', marginBottom: 16 }}>
-            <h3>{lang === 'eg' ? 'Xcelias Ops' : 'Xcelias Ops'}</h3>
-            <span style={{ ...styles.badge, ...styles.badgeBlue }}>{redOpsMissions.filter(mission => mission.completed).length}/{redOpsMissions.length}</span>
+        <div className="xcard" style={{ padding: 24, background: 'linear-gradient(135deg, rgba(255,255,255,0.07), rgba(255,255,255,0.03))', border: `1px solid ${RM_THEME.border}`, display: 'flex', flexDirection: 'column', minHeight: 280 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'center', marginBottom: 18 }}>
+            <h3 style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f093fb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              Xcelias Ops
+            </h3>
+            <span style={{ ...styles.badge, ...styles.badgeBlue }}>{redOpsMissions.filter(m => m.completed).length}/{redOpsMissions.length}</span>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {redOpsMissions.map(mission => (
-              <div key={mission.id} style={{ padding: 14, borderRadius: 14, border: `1px solid ${RM_THEME.border}`, background: mission.completed ? 'rgba(34,197,94,0.10)' : 'rgba(255,255,255,0.04)' }}>
+              <div key={mission.id} className={mission.claimable ? 'xmission-claim' : ''} style={{
+                padding: 14, borderRadius: 16,
+                border: `1px solid ${mission.completed ? 'rgba(80,250,123,0.2)' : RM_THEME.border}`,
+                background: mission.completed ? 'rgba(80,250,123,0.06)' : 'rgba(255,255,255,0.03)',
+                transition: 'all 0.3s ease'
+              }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, alignItems: 'baseline' }}>
-                  <strong>{mission.title}</strong>
-                  <span style={{ color: mission.claimed ? RM_THEME.green : mission.completed ? RM_THEME.amber : RM_THEME.faint, fontSize: 12, fontWeight: 800 }}>
-                    {mission.claimed
-                      ? (lang === 'eg' ? 'تم التحصيل' : 'Claimed')
-                      : `${mission.current}/${mission.target}`}
+                  <strong style={{ fontSize: 14 }}>{mission.title}</strong>
+                  <span style={{ color: mission.claimed ? RM_THEME.green : mission.completed ? RM_THEME.amber : RM_THEME.faint, fontSize: 12, fontWeight: 800, display: 'flex', alignItems: 'center', gap: 4 }}>
+                    {mission.claimed && <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={RM_THEME.green} strokeWidth="3"><path d="M20 6L9 17l-5-5"/></svg>}
+                    {mission.claimed ? (lang === 'eg' ? 'تم' : 'Claimed') : `${mission.current}/${mission.target}`}
                   </span>
                 </div>
                 <div style={{ color: RM_THEME.muted, fontSize: 12, lineHeight: 1.5, marginTop: 6 }}>{mission.description}</div>
-                <div style={{ ...styles.progressBar, marginTop: 10, marginBottom: 6 }}>
-                  <div style={{ ...styles.progressFill, width: `${mission.progress}%`, background: mission.completed ? `linear-gradient(90deg, ${RM_THEME.green}, rgba(34,197,94,0.55))` : undefined }} />
+                <div className="xxp-bar" style={{ marginTop: 10, marginBottom: 6 }}>
+                  <div className="xxp-fill" style={{ width: `${mission.progress}%`, background: mission.completed ? `linear-gradient(90deg, ${RM_THEME.green}, rgba(34,197,94,0.55))` : undefined }} />
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, alignItems: 'center', marginTop: 6, flexWrap: 'wrap' }}>
-                  <div style={{ color: RM_THEME.faint, fontSize: 12 }}>{lang === 'eg' ? `الأثر: ${mission.reward} • +${mission.rewardPoints} نقطة` : `Effect: ${mission.reward} • +${mission.rewardPoints} points`}</div>
+                  <div style={{ color: RM_THEME.faint, fontSize: 12 }}>{lang === 'eg' ? `+${mission.rewardPoints} نقطة` : `+${mission.rewardPoints} pts`}</div>
                   {mission.claimable && (
-                    <button onClick={() => claimMissionReward(mission)} style={{ ...styles.primaryBtn, padding: '10px 14px', fontSize: 13 }}>
-                      {lang === 'eg' ? 'حصّل المكافأة' : 'Claim Reward'}
+                    <button onClick={() => claimMissionReward(mission)} style={{ ...styles.primaryBtn, padding: '8px 14px', fontSize: 12 }}>
+                      {lang === 'eg' ? 'حصّل المكافأة' : 'Claim'}
                     </button>
                   )}
                 </div>
@@ -10127,85 +10173,83 @@ const App = () => {
           </div>
         </div>
 
-        <div style={{
-          ...styles.categoryCard,
-          minHeight: 280,
-          display: 'flex',
-          flexDirection: 'column'
-        }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'center', marginBottom: 16 }}>
-            <h3>{lang === 'eg' ? 'الرادار الجاي' : 'Next Unlock Radar'}</h3>
+        <div className="xcard" style={{ padding: 24, background: 'linear-gradient(135deg, rgba(255,255,255,0.07), rgba(255,255,255,0.03))', border: `1px solid ${RM_THEME.border}`, display: 'flex', flexDirection: 'column', minHeight: 280 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'center', marginBottom: 18 }}>
+            <h3 style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={RM_THEME.red} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/><line x1="12" y1="2" x2="12" y2="6"/></svg>
+              {lang === 'eg' ? 'الرادار الجاي' : 'Next Unlock Radar'}
+            </h3>
             <span style={{ ...styles.badge, ...styles.badgeRed }}>{lockedActivityTargets.length}</span>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            {lockedActivityTargets.map(activity => (
-              <div key={activity.id} style={{ padding: 14, borderRadius: 14, border: `1px solid ${RM_THEME.border}`, background: 'rgba(255,255,255,0.04)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, alignItems: 'baseline' }}>
-                  <strong>{activity.name}</strong>
-                  <span style={{ color: RM_THEME.red, fontSize: 12, fontWeight: 800 }}>{activity.unlock.completionRatio}%</span>
+            {lockedActivityTargets.map(activity => {
+              const unlockR = 18; const unlockC = 2 * Math.PI * unlockR; const unlockOff = unlockC - (unlockC * activity.unlock.completionRatio / 100);
+              return (
+                <div key={activity.id} style={{ padding: 14, borderRadius: 16, border: `1px solid ${RM_THEME.border}`, background: 'rgba(255,255,255,0.03)', display: 'flex', gap: 14, alignItems: 'center' }}>
+                  <div style={{ position: 'relative', width: 44, height: 44, flexShrink: 0 }}>
+                    <svg className="xring" width="44" height="44" viewBox="0 0 44 44">
+                      <circle cx="22" cy="22" r={unlockR} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="3" />
+                      <circle className="xring-fill" cx="22" cy="22" r={unlockR} fill="none" stroke={RM_THEME.red} strokeWidth="3"
+                        strokeDasharray={unlockC} strokeDashoffset={unlockOff} strokeLinecap="round" />
+                    </svg>
+                    <span style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', fontSize: 10, fontWeight: 800, color: RM_THEME.red }}>{activity.unlock.completionRatio}%</span>
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <strong style={{ fontSize: 14 }}>{activity.name}</strong>
+                    <div style={{ color: RM_THEME.muted, fontSize: 12, lineHeight: 1.5, marginTop: 4 }}>{activity.unlock.requirementText}</div>
+                  </div>
                 </div>
-                <div style={{ color: RM_THEME.muted, fontSize: 12, lineHeight: 1.5, marginTop: 6 }}>{activity.unlock.requirementText}</div>
-                <div style={{ ...styles.progressBar, marginTop: 10 }}>
-                  <div style={{ ...styles.progressFill, width: `${activity.unlock.completionRatio}%` }} />
-                </div>
-              </div>
-            ))}
+              );
+            })}
             {lockedActivityTargets.length === 0 && (
-              <div style={{ color: RM_THEME.muted, lineHeight: 1.6 }}>
-                {lang === 'eg' ? 'كل الأنشطة المفتوحة الحالية اتفتحت. كمّل لعب وارفع الرتبة.' : 'Current unlock set is fully open. Keep playing and push the rank ladder.'}
+              <div style={{ color: RM_THEME.muted, lineHeight: 1.6, padding: '20px 0', textAlign: 'center' }}>
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke={RM_THEME.green} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ margin: '0 auto 10px', display: 'block', opacity: 0.6 }}><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+                {lang === 'eg' ? 'كل الأنشطة المفتوحة اتفتحت. كمّل لعب وارفع الرتبة.' : 'All unlocked. Keep pushing the rank ladder.'}
               </div>
             )}
           </div>
         </div>
       </div>
 
-      <div style={{ marginBottom: 24 }}>
-        <div style={{
-          marginBottom: 20,
-          padding: 20,
-          borderRadius: 22,
-          border: `1px solid ${RM_THEME.border}`,
-          background: 'linear-gradient(135deg, rgba(0,212,255,0.08), rgba(255,59,59,0.08))'
-        }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 18, flexWrap: 'wrap', alignItems: 'center' }}>
+      {/* ═══ PERFORMANCE SIGNAL ═══ */}
+      <div className="xcard" style={{ marginBottom: 24, padding: 24, background: 'linear-gradient(135deg, rgba(0,212,255,0.06), rgba(255,59,59,0.06))', border: `1px solid ${RM_THEME.border}` }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 20, flexWrap: 'wrap', alignItems: 'center' }}>
             <div style={{ flex: '1 1 420px' }}>
               <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap', marginBottom: 10 }}>
-                <span style={{ ...styles.badge, ...styles.badgeBlue }}>{lang === 'eg' ? 'إشارة الأداء' : 'Performance Signal'}</span>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, ...styles.badge, ...styles.badgeBlue }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                  {lang === 'eg' ? 'إشارة الأداء' : 'Performance Signal'}
+                </span>
                 {weakestCategory && <span style={{ ...styles.badge, ...styles.badgeRed }}>{lang === 'eg' ? 'أولوية' : 'Priority'}</span>}
               </div>
-              <h3 style={{ marginBottom: 8 }}>
+              <h3 style={{ marginBottom: 8, fontSize: 20 }}>
                 {weakestCategory
-                  ? (lang === 'eg'
-                    ? `أضعف مسار دلوقتي: ${weakestCategory.title}`
-                    : `Weakest lane right now: ${weakestCategory.title}`)
+                  ? (lang === 'eg' ? `أضعف مسار: ${weakestCategory.title}` : `Weakest lane: ${weakestCategory.title}`)
                   : (lang === 'eg' ? 'ابدأ أول نشاط لبناء خط الأساس' : 'Start your first activity to build a baseline')}
               </h3>
-              <p style={{ color: RM_THEME.muted, lineHeight: 1.6, marginBottom: 0 }}>
+              <p style={{ color: RM_THEME.muted, lineHeight: 1.6 }}>
                 {weakestCategory
                   ? (lang === 'eg'
-                    ? `الإتقان ${weakestCategory.mastery}% فقط. أفضل خطوة دلوقتي هي ${weakestCategory.suggested?.name || (lang === 'eg' ? 'نشاط من المسار ده' : 'an activity in this lane')}.`
-                    : `Mastery is only ${weakestCategory.mastery}%. The best next move is ${weakestCategory.suggested?.name || 'an activity inside this lane'}.`)
-                  : (lang === 'eg'
-                    ? 'ابدأ بجولة سريعة أو تحدي اليوم، وبعد أول نتيجة هنبدأ نديك توصيات أدق.'
-                    : 'Start with a sprint or the daily challenge, then the academy will begin tailoring sharper recommendations.')}
+                    ? `الإتقان ${weakestCategory.mastery}% فقط. أفضل خطوة: ${weakestCategory.suggested?.name || 'نشاط من المسار ده'}.`
+                    : `Mastery is only ${weakestCategory.mastery}%. Best move: ${weakestCategory.suggested?.name || 'an activity in this lane'}.`)
+                  : (lang === 'eg' ? 'ابدأ بتحدي اليوم، وبعدها هنديك توصيات أدق.' : 'Start with the daily challenge for tailored recommendations.')}
               </p>
             </div>
-
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12, flex: '1 1 340px' }}>
-              <div style={styles.scoreItem}>
-                <span style={styles.scoreLabel}>{lang === 'eg' ? 'أقوى مسار' : 'Strongest Lane'}</span>
-                <span style={{ ...styles.scoreValue, fontSize: 20 }}>{strongestCategory ? strongestCategory.title : '—'}</span>
+              <div className="xstat" style={{ '--xstat-accent': `linear-gradient(90deg, ${RM_THEME.green}, #2ecc71)` }}>
+                <span style={{ fontSize: 12, color: RM_THEME.muted, textTransform: 'uppercase', letterSpacing: 1, display: 'block', marginBottom: 4 }}>{lang === 'eg' ? 'أقوى مسار' : 'Strongest Lane'}</span>
+                <span style={{ fontSize: 18, fontWeight: 800, color: '#fff' }}>{strongestCategory ? strongestCategory.title : '—'}</span>
               </div>
-              <div style={styles.scoreItem}>
-                <span style={styles.scoreLabel}>{lang === 'eg' ? 'كووتشينج أولويّة' : 'Coaching Priority'}</span>
-                <span style={{ ...styles.scoreValue, fontSize: 20 }}>{coachingPriority ? coachingPriority.name : '—'}</span>
+              <div className="xstat" style={{ '--xstat-accent': `linear-gradient(90deg, ${RM_THEME.red}, ${RM_THEME.red2})` }}>
+                <span style={{ fontSize: 12, color: RM_THEME.muted, textTransform: 'uppercase', letterSpacing: 1, display: 'block', marginBottom: 4 }}>{lang === 'eg' ? 'كووتشينج أولويّة' : 'Coaching Priority'}</span>
+                <span style={{ fontSize: 18, fontWeight: 800, color: '#fff' }}>{coachingPriority ? coachingPriority.name : '—'}</span>
               </div>
             </div>
           </div>
-
-          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 16 }}>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 18 }}>
             {weakestCategory?.suggested && (
               <button onClick={() => launchActivity(weakestCategory.suggested)} style={styles.primaryBtn}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                 {lang === 'eg' ? 'عالِج أضعف مسار' : 'Fix Weakest Lane'}
               </button>
             )}
@@ -10215,122 +10259,139 @@ const App = () => {
               </button>
             )}
           </div>
-        </div>
+      </div>
 
-        <h2 style={{ marginBottom: 14 }}>{lang === 'eg' ? 'أوضاع التدريب' : 'Training Modes'}</h2>
+      {/* ═══ TRAINING MODES ═══ */}
+      <div style={{ marginBottom: 24 }}>
+        <h2 style={{ marginBottom: 16, display: 'flex', alignItems: 'center', gap: 10 }}>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={RM_THEME.red} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          {lang === 'eg' ? 'أوضاع التدريب' : 'Training Modes'}
+        </h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 14 }}>
           {[
             {
-              id: 'solo-launch',
-              title: lang === 'eg' ? 'Solo Sprint' : 'Solo Sprint',
-              copy: lang === 'eg' ? 'أفضل نشاط فردي تبدأ بيه دلوقتي.' : 'The smartest self-study launch based on your academy state.',
-              icon: '🎯',
+              id: 'solo-launch', title: lang === 'eg' ? 'Solo Sprint' : 'Solo Sprint',
+              copy: lang === 'eg' ? 'أفضل نشاط فردي تبدأ بيه دلوقتي.' : 'The smartest self-study launch.',
+              svgPath: 'M12 2a10 10 0 100 20 10 10 0 000-20zm0 6v4l3 3', color: '#667eea',
               action: recommendedActivity ? () => launchActivity(recommendedActivity) : null
             },
             {
-              id: 'coach-launch',
-              title: lang === 'eg' ? 'Coach Flow' : 'Coach Flow',
-              copy: lang === 'eg' ? 'ابدأ جلسة واحد لواحد بدك المُيسّر أو السيموليتر.' : 'Open a trainer-led deck or coaching simulation fast.',
-              icon: '🧑‍🏫',
+              id: 'coach-launch', title: lang === 'eg' ? 'Coach Flow' : 'Coach Flow',
+              copy: lang === 'eg' ? 'ابدأ جلسة واحد لواحد.' : 'Open a trainer-led deck or coaching simulation.',
+              svgPath: 'M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75',
+              color: '#ffb020',
               action: coachLaunchActivity ? () => launchActivity(coachLaunchActivity) : null,
-              lockedText: coachLaunchActivity ? '' : (lang === 'eg' ? 'افتح شوية أنشطة الأول عشان الكووتشينج يشتغل.' : 'Play a few activities first to unlock coaching flow.')
+              lockedText: coachLaunchActivity ? '' : (lang === 'eg' ? 'افتح شوية أنشطة الأول.' : 'Play a few activities first.')
             },
             {
-              id: 'partner-launch',
-              title: lang === 'eg' ? 'Partner Duel' : 'Partner Duel',
-              copy: lang === 'eg' ? 'تمارين رول-سواب، اعتراضات، وميرورينج.' : 'Role-swap drills, objections, and mirroring practice.',
-              icon: '🤝',
+              id: 'partner-launch', title: lang === 'eg' ? 'Partner Duel' : 'Partner Duel',
+              copy: lang === 'eg' ? 'تمارين رول-سواب واعتراضات.' : 'Role-swap drills and objections.',
+              svgPath: 'M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2M14 10l2 2 4-4M12 7a4 4 0 11-8 0 4 4 0 018 0z',
+              color: '#50fa7b',
               action: partnerLaunchActivity ? () => launchActivity(partnerLaunchActivity) : null,
-              lockedText: partnerLaunchActivity ? '' : (lang === 'eg' ? 'ارفع السكور والأنشطة المتجربة عشان تفتح البارتنر مود.' : 'Raise score and played activity count to unlock partner mode.')
+              lockedText: partnerLaunchActivity ? '' : (lang === 'eg' ? 'ارفع السكور لفتح البارتنر مود.' : 'Raise score to unlock partner mode.')
             },
             {
-              id: 'classroom-launch',
-              title: lang === 'eg' ? 'Classroom Arena' : 'Classroom Arena',
-              copy: lang === 'eg' ? 'بزّر، فرق، ونتائج مباشرة للبروجكتور.' : 'Buzzer battles, teams, and projector-first pacing.',
-              icon: '🏟️',
+              id: 'classroom-launch', title: lang === 'eg' ? 'Classroom Arena' : 'Classroom Arena',
+              copy: lang === 'eg' ? 'بزّر، فرق، ونتائج مباشرة.' : 'Buzzer battles, teams, and projector pacing.',
+              svgPath: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0h4',
+              color: '#f093fb',
               action: classroomLaunchActivity ? () => launchActivity(classroomLaunchActivity) : null,
-              lockedText: classroomLaunchActivity ? '' : (lang === 'eg' ? 'شغّل شوية جولات فردية الأول لفتح أدوات الفصل.' : 'Run a few solo rounds first to unlock classroom tools.')
+              lockedText: classroomLaunchActivity ? '' : (lang === 'eg' ? 'شغّل جولات فردية الأول.' : 'Run solo rounds first.')
             }
           ].map(modeCard => (
-            <div key={modeCard.id} style={{
-              ...styles.categoryCard,
-              minHeight: 170,
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 10,
-              opacity: modeCard.action ? 1 : 0.72
-            }}>
-              <div style={{ fontSize: 26 }}>{modeCard.icon}</div>
-              <div style={{ fontWeight: 900, fontSize: 18 }}>{modeCard.title}</div>
-              <div style={{ color: RM_THEME.muted, lineHeight: 1.5 }}>{modeCard.copy}</div>
-              {!modeCard.action && (
-                <div style={{ color: RM_THEME.red, fontSize: 12, lineHeight: 1.5 }}>{modeCard.lockedText}</div>
+            <div key={modeCard.id} className="xlane" style={{ padding: 22, display: 'flex', flexDirection: 'column', gap: 12, opacity: modeCard.action ? 1 : 0.6, minHeight: 190 }}>
+              <div className="xlane-glow" style={{ background: `radial-gradient(circle at 50% 0%, ${modeCard.color}15, transparent 70%)` }} />
+              <div className="xlane-icon" style={{ width: 48, height: 48, borderRadius: 14, background: `${modeCard.color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'transform 0.3s ease' }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={modeCard.color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d={modeCard.svgPath} /></svg>
+              </div>
+              <div style={{ fontWeight: 800, fontSize: 17 }}>{modeCard.title}</div>
+              <div style={{ color: RM_THEME.muted, lineHeight: 1.5, fontSize: 13 }}>{modeCard.copy}</div>
+              {!modeCard.action && modeCard.lockedText && (
+                <div style={{ color: RM_THEME.red, fontSize: 12, lineHeight: 1.4 }}>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ verticalAlign: 'middle', marginRight: 4 }}><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                  {modeCard.lockedText}
+                </div>
               )}
               <div style={{ marginTop: 'auto' }}>
-                <button onClick={modeCard.action} disabled={!modeCard.action} style={styles.secondaryBtn}>{modeCard.action ? (lang === 'eg' ? 'شغّل' : 'Launch') : (lang === 'eg' ? 'مقفول' : 'Locked')}</button>
+                <button onClick={modeCard.action} disabled={!modeCard.action} style={{
+                  ...styles.secondaryBtn, padding: '10px 18px', fontSize: 13,
+                  ...(modeCard.action ? { borderColor: `${modeCard.color}44`, color: modeCard.color } : {})
+                }}>
+                  {modeCard.action ? (lang === 'eg' ? 'شغّل' : 'Launch') : (lang === 'eg' ? 'مقفول' : 'Locked')}
+                </button>
               </div>
             </div>
           ))}
         </div>
       </div>
 
-      <h2 style={{ marginBottom: '20px' }}>{lang === 'eg' ? 'مسارات الأكاديمية' : 'Academy Lanes'}</h2>
-      <div style={styles.grid4}>
-        {categorySummaries.map(category => (
-          <div
-            key={category.id}
-            onClick={() => setSelectedCategory(category.id)}
-            style={{
-              ...styles.categoryCard,
-              borderTop: `4px solid ${category.color}`
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'flex-start' }}>
-              <div>
-                <div style={styles.categoryIcon}>{category.icon}</div>
-                <h3 style={styles.categoryTitle}>{category.title}</h3>
+      {/* ═══ ACADEMY LANES — Game-like Level Grid ═══ */}
+      <div style={{ marginBottom: 24 }}>
+        <h2 style={{ marginBottom: 20, display: 'flex', alignItems: 'center', gap: 10 }}>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={RM_THEME.red} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+          {lang === 'eg' ? 'مسارات الأكاديمية' : 'Academy Lanes'}
+        </h2>
+        <div style={styles.grid4}>
+          {categorySummaries.map(category => {
+            const laneR = 30; const laneC = 2 * Math.PI * laneR; const laneOff = laneC - (laneC * category.mastery / 100);
+            return (
+              <div key={category.id} onClick={() => setSelectedCategory(category.id)} className="xlane"
+                style={{ padding: 22, display: 'flex', flexDirection: 'column', gap: 14, borderTop: `3px solid ${category.color}` }}>
+                <div className="xlane-glow" style={{ background: `radial-gradient(circle at 50% 0%, ${category.color}12, transparent 70%)` }} />
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12 }}>
+                  <div>
+                    <div className="xlane-icon" style={{ fontSize: 36, marginBottom: 10, transition: 'transform 0.3s ease' }}>{category.icon}</div>
+                    <h3 style={{ fontSize: 17, fontWeight: 800, marginBottom: 4 }}>{category.title}</h3>
+                  </div>
+                  <div style={{ position: 'relative', width: 64, height: 64, flexShrink: 0 }}>
+                    <svg className="xring" width="64" height="64" viewBox="0 0 68 68">
+                      <circle cx="34" cy="34" r={laneR} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="4" />
+                      <circle className="xring-fill" cx="34" cy="34" r={laneR} fill="none" stroke={category.color} strokeWidth="4"
+                        strokeDasharray={laneC} strokeDashoffset={laneOff} strokeLinecap="round" />
+                    </svg>
+                    <span style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', fontSize: 13, fontWeight: 800, color: category.color }}>{category.mastery}%</span>
+                  </div>
+                </div>
+                <p style={{ fontSize: 13, color: RM_THEME.muted, lineHeight: 1.5 }}>
+                  {lang === 'eg'
+                    ? `${category.activities.length} نشاط • ${category.playedCount} متجرب • دقة ${category.accuracy || 0}%`
+                    : `${category.activities.length} activities • ${category.playedCount} played • ${category.accuracy || 0}% acc`}
+                </p>
+                <div className="xxp-bar" style={{ marginTop: 'auto' }}>
+                  <div className="xxp-fill" style={{ width: `${category.mastery}%`, background: `linear-gradient(90deg, ${category.color}, ${category.color}88)` }} />
+                </div>
+                {category.suggested && (
+                  <div style={{ color: RM_THEME.faint, fontSize: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6"/></svg>
+                    {lang === 'eg' ? `موصى به: ${category.suggested.name}` : `Next: ${category.suggested.name}`}
+                  </div>
+                )}
               </div>
-              <span style={{ ...styles.badge, ...styles.badgeBlue }}>{category.mastery}%</span>
-            </div>
-            <p style={{ ...styles.categoryCount, lineHeight: 1.55 }}>
-              {lang === 'eg'
-                ? `${category.activities.length} نشاط • ${category.playedCount} متجرب • دقة ${category.accuracy || 0}%`
-                : `${category.activities.length} activities • ${category.playedCount} played • ${category.accuracy || 0}% accuracy`}
-            </p>
-            <div style={{ ...styles.progressBar, marginTop: 14, marginBottom: 8 }}>
-              <div style={{ ...styles.progressFill, width: `${category.mastery}%` }} />
-            </div>
-            <div style={{ color: RM_THEME.faint, fontSize: 12 }}>
-              {category.suggested
-                ? (lang === 'eg' ? `موصى به: ${category.suggested.name}` : `Recommended: ${category.suggested.name}`)
-                : ''}
-            </div>
-          </div>
-        ))}
+            );
+          })}
+        </div>
       </div>
 
-      <div style={{ marginTop: 28, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 16 }}>
-        <div style={{
-          ...styles.categoryCard,
-          minHeight: 260,
-          display: 'flex',
-          flexDirection: 'column'
-        }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'center', marginBottom: 16 }}>
-            <h3>{lang === 'eg' ? 'آخر الجلسات' : 'Recent Sessions'}</h3>
+      {/* ═══ RECENT SESSIONS + AREAS NEEDING ATTENTION ═══ */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 16 }}>
+        <div className="xcard" style={{ padding: 24, background: 'linear-gradient(135deg, rgba(255,255,255,0.07), rgba(255,255,255,0.03))', border: `1px solid ${RM_THEME.border}`, display: 'flex', flexDirection: 'column', minHeight: 260 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'center', marginBottom: 18 }}>
+            <h3 style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={RM_THEME.green} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              {lang === 'eg' ? 'آخر الجلسات' : 'Recent Sessions'}
+            </h3>
             <span style={{ ...styles.badge, ...styles.badgeGreen }}>{academyProgress.recentSessions.length}</span>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {(academyProgress.recentSessions || []).slice(0, 6).map(session => (
-              <div key={session.id} style={{
-                padding: '12px 14px',
-                borderRadius: 14,
-                border: `1px solid ${RM_THEME.border}`,
-                background: 'rgba(255,255,255,0.04)'
-              }}>
+              <div key={session.id} style={{ padding: '12px 14px', borderRadius: 14, border: `1px solid ${RM_THEME.border}`, background: 'rgba(255,255,255,0.03)', transition: 'all 0.2s ease' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'baseline' }}>
-                  <div style={{ fontWeight: 800 }}>{session.activityName}</div>
-                  <div style={{ color: session.isCorrect ? RM_THEME.green : RM_THEME.red, fontWeight: 800 }}>
+                  <div style={{ fontWeight: 800, fontSize: 14 }}>{session.activityName}</div>
+                  <div style={{ color: session.isCorrect ? RM_THEME.green : '#f56565', fontWeight: 800, fontSize: 14, display: 'flex', alignItems: 'center', gap: 4 }}>
+                    {session.isCorrect
+                      ? <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={RM_THEME.green} strokeWidth="3"><path d="M20 6L9 17l-5-5"/></svg>
+                      : <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f56565" strokeWidth="3"><path d="M18 6L6 18M6 6l12 12"/></svg>}
                     {session.isCorrect ? '+' : ''}{session.points}
                   </div>
                 </div>
@@ -10340,40 +10401,29 @@ const App = () => {
               </div>
             ))}
             {academyProgress.recentSessions.length === 0 && (
-              <div style={{ color: RM_THEME.muted, lineHeight: 1.6 }}>
-                {lang === 'eg'
-                  ? 'ابدأ أي نشاط، وسجلّك التدريبي هيظهر هنا مع الوقت.'
-                  : 'Start any activity and your training history will build up here.'}
+              <div style={{ color: RM_THEME.muted, lineHeight: 1.6, textAlign: 'center', padding: '20px 0' }}>
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="1.5" style={{ margin: '0 auto 8px', display: 'block' }}><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                {lang === 'eg' ? 'ابدأ أي نشاط، وسجلّك هيظهر هنا.' : 'Start any activity and your history will build up here.'}
               </div>
             )}
           </div>
         </div>
 
-        <div style={{
-          ...styles.categoryCard,
-          minHeight: 260,
-          display: 'flex',
-          flexDirection: 'column'
-        }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'center', marginBottom: 16 }}>
-            <h3>{lang === 'eg' ? 'مناطق محتاجة شغل' : 'Areas Needing Attention'}</h3>
+        <div className="xcard" style={{ padding: 24, background: 'linear-gradient(135deg, rgba(255,255,255,0.07), rgba(255,255,255,0.03))', border: `1px solid ${RM_THEME.border}`, display: 'flex', flexDirection: 'column', minHeight: 260 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'center', marginBottom: 18 }}>
+            <h3 style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f56565" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0zM12 9v4M12 17h.01"/></svg>
+              {lang === 'eg' ? 'مناطق محتاجة شغل' : 'Areas Needing Attention'}
+            </h3>
             <span style={{ ...styles.badge, ...styles.badgeRed }}>{reviewQueue.length}</span>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {reviewQueue.slice(0, 6).map(activity => (
-              <button
-                key={activity.id}
-                onClick={() => launchActivity(activity)}
-                style={{
-                  ...styles.optionBtn,
-                  padding: '14px 16px',
-                  marginBottom: 0,
-                  textAlign: 'left'
-                }}
-              >
+              <button key={activity.id} onClick={() => launchActivity(activity)}
+                style={{ ...styles.optionBtn, padding: '12px 16px', marginBottom: 0, textAlign: 'left', borderRadius: 14 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, alignItems: 'baseline' }}>
-                  <strong>{activity.name}</strong>
-                  <span style={{ color: RM_THEME.red, fontSize: 12, fontWeight: 800 }}>{activity.mastery}%</span>
+                  <strong style={{ fontSize: 14 }}>{activity.name}</strong>
+                  <span style={{ color: '#f56565', fontSize: 12, fontWeight: 800 }}>{activity.mastery}%</span>
                 </div>
                 <div style={{ color: RM_THEME.muted, fontSize: 12, marginTop: 6 }}>
                   {activity.categoryTitle} • {activity.track.attempts === 0
@@ -10386,7 +10436,8 @@ const App = () => {
         </div>
       </div>
     </div>
-  );
+    );
+  };
 
   return (
     <UIContext.Provider value={{

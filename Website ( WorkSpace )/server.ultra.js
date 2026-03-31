@@ -566,6 +566,20 @@ app.use(express.static(path.join(__dirname, 'public'), {
     etag: true
 }));
 
+// Serve Activities module
+app.use('/RedMaterialsAcademy', express.static(path.join(__dirname, '..', 'Activites ( WorkSpace )', 'RedMaterialsAcademy'), {
+    maxAge: 0,
+    etag: true,
+    extensions: ['html', 'css', 'js', 'jsx']
+}));
+
+// Serve Report Generator module
+app.use('/ReportGenerator', express.static(path.join(__dirname, '..', 'Report Generation 3'), {
+    maxAge: 0,
+    etag: true,
+    extensions: ['html', 'css', 'js']
+}));
+
 // Serve root files
 app.use(express.static(__dirname, {
     maxAge: 0,

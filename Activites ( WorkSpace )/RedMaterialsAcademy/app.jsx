@@ -960,10 +960,9 @@ const styles = {
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: '18px 22px',
-    background: 'linear-gradient(135deg, rgba(255,255,255,0.09), rgba(255,255,255,0.05))',
+    background: 'linear-gradient(135deg, rgba(20,20,35,0.92), rgba(18,18,30,0.88))',
     borderRadius: '18px',
     marginBottom: '30px',
-    backdropFilter: 'blur(14px)',
     border: `1px solid ${RM_THEME.border}`,
     boxShadow: '0 18px 60px rgba(0,0,0,0.45)'
   },
@@ -997,7 +996,7 @@ const styles = {
     WebkitMaskComposite: 'xor',
     maskComposite: 'exclude',
     opacity: 0.4,
-    animation: 'logoRingPulse 3s ease-in-out infinite'
+    animation: 'logoRingPulse 3s ease-in-out 1'
   },
   
   logoText: {
@@ -1060,24 +1059,20 @@ const styles = {
   
   // Cards
   card: {
-    background: 'linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.045))',
+    background: 'linear-gradient(180deg, rgba(22,22,38,0.94), rgba(18,18,32,0.90))',
     borderRadius: '22px',
     padding: '30px',
-    backdropFilter: 'blur(16px)',
     border: `1px solid ${RM_THEME.border}`,
     marginBottom: '20px',
-    boxShadow: '0 22px 90px rgba(0,0,0,0.5)',
+    boxShadow: '0 22px 70px rgba(0,0,0,0.45)',
     position: 'relative',
     overflow: 'hidden',
     backgroundImage:
-      `radial-gradient(900px 420px at 10% 10%, rgba(102,126,234,0.14), transparent 60%),` +
-      `radial-gradient(900px 420px at 90% 20%, rgba(240,147,251,0.12), transparent 62%),` +
-      `radial-gradient(900px 520px at 60% 92%, rgba(118,75,162,0.14), transparent 62%),` +
-      `linear-gradient(180deg, rgba(255,255,255,0.075), rgba(255,255,255,0.035))`,
-    backgroundSize: '200% 200%',
-    backgroundPosition: '0% 50%',
-    animation: 'rmCardBreath 7s ease-in-out infinite, rmGradientShift 12s ease-in-out infinite',
-    willChange: 'transform, filter, background-position'
+      `radial-gradient(600px 300px at 10% 10%, rgba(102,126,234,0.10), transparent 60%),` +
+      `radial-gradient(600px 300px at 90% 20%, rgba(240,147,251,0.08), transparent 62%),` +
+      `radial-gradient(600px 400px at 60% 92%, rgba(118,75,162,0.10), transparent 62%),` +
+      `linear-gradient(180deg, rgba(255,255,255,0.055), rgba(255,255,255,0.025))`,
+    transition: 'transform 0.3s cubic-bezier(.4,0,.2,1), box-shadow 0.3s ease'
   },
   
   // Buttons
@@ -1090,18 +1085,15 @@ const styles = {
     fontSize: '16px',
     fontWeight: '600',
     cursor: 'pointer',
-    transition: 'all 0.3s ease',
+    transition: 'transform 0.2s ease, box-shadow 0.2s ease',
     display: 'inline-flex',
     alignItems: 'center',
     gap: '10px',
-    boxShadow: '0 16px 40px rgba(102,126,234,0.24), inset 0 0 0 1px rgba(255,255,255,0.14)',
-    backgroundSize: '200% 200%',
-    backgroundPosition: '0% 50%',
-    animation: 'rmGradientShift 8s ease-in-out infinite, rmPulseGlow 6s ease-in-out infinite'
+    boxShadow: '0 12px 32px rgba(102,126,234,0.22), inset 0 0 0 1px rgba(255,255,255,0.14)'
   },
   
   secondaryBtn: {
-    background: 'rgba(255,255,255,0.08)',
+    background: 'rgba(30,30,50,0.85)',
     color: '#fff',
     border: `1px solid ${RM_THEME.border}`,
     padding: '15px 30px',
@@ -1109,32 +1101,25 @@ const styles = {
     fontSize: '16px',
     fontWeight: '600',
     cursor: 'pointer',
-    transition: 'all 0.3s ease',
-    backdropFilter: 'blur(10px)',
-    backgroundImage: 'linear-gradient(135deg, rgba(255,255,255,0.10), rgba(255,255,255,0.06))',
-    backgroundSize: '200% 200%',
-    backgroundPosition: '0% 50%',
-    animation: 'rmGradientShift 14s ease-in-out infinite'
+    transition: 'transform 0.2s ease, border-color 0.2s ease',
+    backgroundImage: 'linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04))'
   },
   
   optionBtn: {
-    background: 'rgba(255,255,255,0.04)',
+    background: 'rgba(22,22,38,0.80)',
     color: '#fff',
     border: `1px solid ${RM_THEME.border2}`,
     padding: '20px',
     borderRadius: '12px',
     fontSize: '16px',
     cursor: 'pointer',
-    transition: 'all 0.3s ease',
+    transition: 'transform 0.2s ease, border-color 0.2s ease',
     textAlign: 'left',
     width: '100%',
     marginBottom: '12px',
-    boxShadow: '0 12px 34px rgba(0,0,0,0.28)',
+    boxShadow: '0 8px 24px rgba(0,0,0,0.22)',
     backgroundImage:
-      'linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03))',
-    backgroundSize: '200% 200%',
-    backgroundPosition: '0% 50%',
-    animation: 'rmGradientShift 18s ease-in-out infinite'
+      'linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03))'
   },
   
   optionBtnHover: {
@@ -1325,6 +1310,72 @@ const styles = {
 };
 
 // ============================================
+// SCROLL REVEAL — Animate sections once on entry
+// ============================================
+const useScrollReveal = (threshold = 0.1) => {
+  const ref = React.useRef(null);
+  const [visible, setVisible] = React.useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setVisible(true);
+      return;
+    }
+    const obs = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) { setVisible(true); obs.disconnect(); }
+    }, { threshold });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+  return { ref, className: visible ? 'reveal visible' : 'reveal' };
+};
+
+// ============================================
+// CONFETTI BURST — One-shot celebration
+// ============================================
+const fireConfetti = (count = 30) => {
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const colors = ['#667eea', '#f093fb', '#48bb78', '#fbbf24', '#ff6b6b', '#764ba2'];
+  const container = document.createElement('div');
+  container.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden';
+  document.body.appendChild(container);
+  for (let i = 0; i < count; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.left = (10 + Math.random() * 80) + '%';
+    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+    piece.style.animationDelay = (Math.random() * 0.8) + 's';
+    piece.style.animationDuration = (1.5 + Math.random() * 2) + 's';
+    piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+    piece.style.width = (4 + Math.random() * 8) + 'px';
+    piece.style.height = (4 + Math.random() * 8) + 'px';
+    container.appendChild(piece);
+  }
+  setTimeout(() => container.remove(), 4000);
+};
+
+// ============================================
+// SCORE POP — Animate score counter on change
+// ============================================
+const ScoreCounter = ({ value, style }) => {
+  const prevRef = React.useRef(value);
+  const [pop, setPop] = React.useState(false);
+  useEffect(() => {
+    if (value !== prevRef.current) {
+      setPop(true);
+      prevRef.current = value;
+      const t = setTimeout(() => setPop(false), 400);
+      return () => clearTimeout(t);
+    }
+  }, [value]);
+  return React.createElement('span', {
+    className: pop ? 'score-pop' : '',
+    style: { ...style, display: 'inline-block' }
+  }, value);
+};
+
+// ============================================
 // BACKGROUND FX (Canvas Particles + Aurora)
 // ============================================
 
@@ -1333,7 +1384,7 @@ const BackgroundFX = () => {
   const canvasRef = React.useRef(null);
   const rafRef = React.useRef(null);
   const particlesRef = React.useRef([]);
-  const mouseRef = React.useRef({ x: 0, y: 0, vx: 0, vy: 0, active: false });
+  const mouseRef = React.useRef({ x: 0, y: 0, active: false });
 
   const prefersReducedRender = reduceMotion || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
@@ -1341,20 +1392,24 @@ const BackgroundFX = () => {
     if (!backgroundEnabled) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d', { alpha: true });
+    const ctx = canvas.getContext('2d', { alpha: true, desynchronized: true });
     if (!ctx) return;
 
     const prefersReduced = reduceMotion || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-    // Perf: cap DPR and overall particle density.
-    // This is intentionally aggressive to avoid lag on low-end devices.
-    const densityScale = 0.15;
-    const DPR = Math.min(1, window.devicePixelRatio || 1);
+    const isMobile = window.innerWidth <= 768;
+
+    // PERF: No canvas on mobile — pure CSS aurora is enough
+    if (isMobile) return;
+
+    // PERF: Cap DPR to 1 to halve pixel count on retina
+    const DPR = 1;
 
     let W = window.innerWidth;
     let H = window.innerHeight;
     let vignette = null;
     let lastTs = 0;
-    const targetFps = prefersReduced ? 22 : 30;
+    // PERF: 20fps is buttery for ambient particles, saves 33% CPU vs 30fps
+    const targetFps = prefersReduced ? 12 : 20;
     const minFrameMs = 1000 / targetFps;
 
     const resize = () => {
@@ -1365,143 +1420,93 @@ const BackgroundFX = () => {
       canvas.style.width = W + 'px';
       canvas.style.height = H + 'px';
       ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-
-      // cache vignette gradient (avoid re-creating it every frame)
       vignette = ctx.createRadialGradient(W * 0.5, H * 0.35, 10, W * 0.5, H * 0.5, Math.max(W, H) * 0.75);
       vignette.addColorStop(0, 'rgba(0,0,0,0)');
-      vignette.addColorStop(1, 'rgba(0,0,0,0.34)');
+      vignette.addColorStop(1, 'rgba(0,0,0,0.28)');
     };
 
     const seed = () => {
-      const isMobile = W <= 768;
-      const base = prefersReduced ? 40 : (isMobile ? 60 : 160);
-      const count = Math.min(120, Math.max(8, Math.floor(base * densityScale * clamp(fxIntensity, 0.6, 2.2))));
-      const w = W;
-      const h = H;
+      // PERF: Drastically fewer particles — 12-24 max
+      const base = prefersReduced ? 8 : 18;
+      const count = Math.min(24, Math.max(6, Math.floor(base * clamp(fxIntensity, 0.6, 1.5))));
       const pts = [];
       for (let i = 0; i < count; i++) {
         pts.push({
-          x: Math.random() * w,
-          y: Math.random() * h,
-          r: lerp(1.1, 3.0, Math.random()) * clamp(fxIntensity, 0.6, 2.2),
-          a: lerp(0.10, 0.26, Math.random()) * clamp(fxIntensity, 0.7, 2.0),
-          vx: lerp(-0.22, 0.22, Math.random()) * clamp(fxIntensity, 0.7, 2.0),
-          vy: lerp(-0.16, 0.16, Math.random()) * clamp(fxIntensity, 0.7, 2.0),
+          x: Math.random() * W,
+          y: Math.random() * H,
+          r: lerp(1.5, 3.5, Math.random()),
+          a: lerp(0.12, 0.32, Math.random()),
+          vx: lerp(-0.18, 0.18, Math.random()),
+          vy: lerp(-0.12, 0.12, Math.random()),
           hue: Math.random() < 0.34 ? 355 : (Math.random() < 0.5 ? 195 : 265)
         });
       }
       particlesRef.current = pts;
     };
 
+    let moveThrottle = 0;
     const onMove = (e) => {
-      const mx = e.clientX;
-      const my = e.clientY;
-      const m = mouseRef.current;
-      m.vx = mx - m.x;
-      m.vy = my - m.y;
-      m.x = mx;
-      m.y = my;
-      m.active = true;
+      const now = performance.now();
+      if (now - moveThrottle < 50) return; // PERF: throttle mousemove to 20hz
+      moveThrottle = now;
+      mouseRef.current.x = e.clientX;
+      mouseRef.current.y = e.clientY;
+      mouseRef.current.active = true;
     };
-
-    const onLeave = () => {
-      mouseRef.current.active = false;
-    };
+    const onLeave = () => { mouseRef.current.active = false; };
 
     const tick = (ts) => {
-      // FPS cap (big win on low-end machines)
       if (ts && lastTs && (ts - lastTs) < minFrameMs) {
         rafRef.current = requestAnimationFrame(tick);
         return;
       }
       if (ts) lastTs = ts;
+      if (document.hidden) { rafRef.current = requestAnimationFrame(tick); return; }
 
-      if (document.hidden) {
-        rafRef.current = requestAnimationFrame(tick);
-        return;
-      }
-
-      const w = W;
-      const h = H;
+      const w = W, h = H;
       ctx.clearRect(0, 0, w, h);
-
-      // soft vignette
-      if (vignette) ctx.fillStyle = vignette;
-      ctx.fillRect(0, 0, w, h);
+      if (vignette) { ctx.fillStyle = vignette; ctx.fillRect(0, 0, w, h); }
 
       const m = mouseRef.current;
-      const pull = m.active ? 0.0014 * fxIntensity : 0.00035 * fxIntensity;
-
-      const drawLines = !prefersReduced && fxIntensity > 1.25;
-
+      const pull = m.active ? 0.001 : 0;
       const pts = particlesRef.current;
-      ctx.save();
-      ctx.globalCompositeOperation = 'lighter';
-      ctx.shadowBlur = 6 * fxIntensity;
+
+      // PERF: No shadowBlur, no globalCompositeOperation change
+      // Batch by hue color to minimize state changes
+      const groups = { 355: [], 195: [], 265: [] };
       for (const p of pts) {
-        // gentle drift
-        p.x += p.vx;
-        p.y += p.vy;
-
-        // wrap
-        if (p.x < -20) p.x = w + 20;
-        if (p.x > w + 20) p.x = -20;
-        if (p.y < -20) p.y = h + 20;
-        if (p.y > h + 20) p.y = -20;
-
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < -10) p.x = w + 10;
+        if (p.x > w + 10) p.x = -10;
+        if (p.y < -10) p.y = h + 10;
+        if (p.y > h + 10) p.y = -10;
         if (m.active) {
-          const dx = m.x - p.x;
-          const dy = m.y - p.y;
+          const dx = m.x - p.x, dy = m.y - p.y;
           const dist2 = dx * dx + dy * dy;
-          if (dist2 < 220 * 220) {
-            p.vx += dx * pull;
-            p.vy += dy * pull;
-          }
+          if (dist2 < 180 * 180) { p.vx += dx * pull; p.vy += dy * pull; }
         }
-
-        // damp
-        p.vx *= 0.985;
-        p.vy *= 0.985;
-
-        // draw (glow)
-        ctx.beginPath();
-        ctx.shadowColor = `hsla(${p.hue}, 95%, 60%, ${clamp(p.a, 0.05, 0.4)})`;
-        ctx.fillStyle = `hsla(${p.hue}, 95%, 62%, ${clamp(p.a, 0.07, 0.45)})`;
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fill();
+        p.vx *= 0.988; p.vy *= 0.988;
+        (groups[p.hue] || (groups[p.hue] = [])).push(p);
       }
-      ctx.restore();
 
-      // connecting lines (light)
-      if (drawLines) {
-        ctx.lineWidth = 1;
-        for (let i = 0; i < pts.length; i++) {
-          const p = pts[i];
-          for (let j = i + 1; j < i + 2 && j < pts.length; j++) {
-            const q = pts[j];
-            const dx = p.x - q.x;
-            const dy = p.y - q.y;
-            const d2 = dx * dx + dy * dy;
-            const maxD = 110 * clamp(fxIntensity, 0.7, 2.2);
-            if (d2 < maxD * maxD) {
-              const a = (1 - d2 / (maxD * maxD)) * 0.14 * clamp(fxIntensity, 0.7, 2.0);
-              ctx.strokeStyle = `rgba(255,255,255,${a})`;
-              ctx.beginPath();
-              ctx.moveTo(p.x, p.y);
-              ctx.lineTo(q.x, q.y);
-              ctx.stroke();
-            }
-          }
+      // PERF: Single beginPath per color group — massively fewer draw calls
+      for (const hue of [355, 195, 265]) {
+        const g = groups[hue];
+        if (!g || !g.length) continue;
+        ctx.fillStyle = `hsla(${hue}, 90%, 62%, 0.30)`;
+        ctx.beginPath();
+        for (const p of g) {
+          ctx.moveTo(p.x + p.r, p.y);
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
         }
+        ctx.fill();
       }
 
       rafRef.current = requestAnimationFrame(tick);
     };
 
-    resize();
-    seed();
+    resize(); seed();
     rafRef.current = requestAnimationFrame(tick);
-
     window.addEventListener('resize', resize);
     window.addEventListener('mousemove', onMove, { passive: true });
     window.addEventListener('mouseleave', onLeave);
@@ -1536,7 +1541,8 @@ const BackgroundFX = () => {
           inset: 0,
           zIndex: 0,
           pointerEvents: 'none',
-          overflow: 'hidden'
+          overflow: 'hidden',
+          contain: 'strict'
         }}
       >
         <canvas
@@ -1548,18 +1554,19 @@ const BackgroundFX = () => {
             height: '100%'
           }}
         />
+        {/* PERF: Static aurora — no animation, reduced blur, GPU-composited */}
         <div
           style={{
             position: 'absolute',
-            inset: '-20vh -20vw',
+            inset: '-10vh -10vw',
             background:
-              `radial-gradient(68vmax 44vmax at 12% 14%, rgba(255,59,59,${0.18 * clamp(fxIntensity, 0.7, 2.0)}), transparent 60%),` +
-              `radial-gradient(60vmax 48vmax at 88% 18%, rgba(0,212,255,${0.16 * clamp(fxIntensity, 0.7, 2.0)}), transparent 62%),` +
-              `radial-gradient(60vmax 60vmax at 60% 92%, rgba(139,92,246,${0.16 * clamp(fxIntensity, 0.7, 2.0)}), transparent 62%)`,
-            filter: prefersReducedRender ? 'blur(14px) saturate(120%)' : 'blur(18px) saturate(140%)',
-            opacity: prefersReducedRender ? 0.45 : (projectorMode ? 0.55 : 0.65),
+              `radial-gradient(55vmax 38vmax at 12% 14%, rgba(255,59,59,${0.14 * clamp(fxIntensity, 0.7, 1.5)}), transparent 60%),` +
+              `radial-gradient(50vmax 40vmax at 88% 18%, rgba(0,212,255,${0.12 * clamp(fxIntensity, 0.7, 1.5)}), transparent 62%),` +
+              `radial-gradient(50vmax 50vmax at 60% 92%, rgba(139,92,246,${0.12 * clamp(fxIntensity, 0.7, 1.5)}), transparent 62%)`,
+            filter: 'blur(14px) saturate(110%)',
+            opacity: prefersReducedRender ? 0.35 : (projectorMode ? 0.45 : 0.55),
             transform: 'translate3d(0,0,0)',
-            animation: (prefersReducedRender || projectorMode) ? 'none' : 'auroraShift 22s ease-in-out infinite alternate'
+            contain: 'layout style'
           }}
         />
       </div>
@@ -1580,11 +1587,11 @@ const ScorePanel = ({ score, streak, totalQuestions, currentQuestion }) => {
     <div style={styles.scorePanel}>
       <div style={styles.scoreItem}>
         <span style={styles.scoreLabel}>{s.score}</span>
-        <span style={styles.scoreValue}>{score}</span>
+        {React.createElement(ScoreCounter, { value: score, style: styles.scoreValue })}
       </div>
       <div style={styles.scoreItem}>
         <span style={styles.scoreLabel}>{s.streak} 🔥</span>
-        <span style={styles.streakValue}>{streak}</span>
+        {React.createElement(ScoreCounter, { value: streak, style: styles.streakValue })}
       </div>
       {totalQuestions > 0 && (
         <div style={styles.scoreItem}>
@@ -1957,8 +1964,7 @@ const SettingsModal = ({ open, onClose }) => {
         position: 'fixed',
         inset: 0,
         zIndex: 50,
-        background: 'rgba(0,0,0,0.55)',
-        backdropFilter: 'blur(10px)',
+        background: 'rgba(8,8,18,0.82)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -9254,6 +9260,29 @@ const App = () => {
       document.head.appendChild(s);
     }
   }, []);
+
+  // PERF: Global IntersectionObserver for scroll-reveal
+  React.useEffect(() => {
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const obs = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          obs.unobserve(entry.target);
+        }
+      }
+    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+    // Observe all .reveal elements in the app
+    const observe = () => {
+      document.querySelectorAll('.reveal:not(.visible)').forEach(el => obs.observe(el));
+    };
+    observe();
+    // Re-observe on navigation/state changes via MutationObserver
+    const mo = new MutationObserver(() => observe());
+    const root = document.getElementById('root');
+    if (root) mo.observe(root, { childList: true, subtree: true });
+    return () => { obs.disconnect(); mo.disconnect(); };
+  }, []);
   const [currentActivity, setCurrentActivity] = useState(null);
   const [globalScore, setGlobalScore] = useState(() => {
     try {
@@ -9504,7 +9533,12 @@ const App = () => {
 
   const updateScore = useCallback((points, isCorrect) => {
     setGlobalScore(prev => prev + points);
-    setGlobalStreak(prev => (isCorrect ? prev + 1 : 0));
+    setGlobalStreak(prev => {
+      const next = isCorrect ? prev + 1 : 0;
+      // Mini confetti burst on streak milestones (3, 5, 10, ...)
+      if (isCorrect && (next === 3 || next === 5 || next % 10 === 0)) fireConfetti(15);
+      return next;
+    });
 
     if (!currentActivity) return;
 
@@ -9728,6 +9762,7 @@ const App = () => {
   useEffect(() => {
     if (currentRank.minScore > rankMilestoneRef.current) {
       setPromotionNotice({ rank: currentRank, nextRank });
+      fireConfetti(40);
     }
     rankMilestoneRef.current = currentRank.minScore;
   }, [currentRank, nextRank]);
@@ -10021,8 +10056,7 @@ const App = () => {
                   position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
                   width: 56, height: 56,
                   background: `linear-gradient(135deg, ${currentRank.accent}44, ${currentRank.accent}22)`,
-                  border: `2px solid ${currentRank.accent}66`,
-                  backdropFilter: 'blur(8px)'
+                  border: `2px solid ${currentRank.accent}66`
                 }}>
                   <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill={currentRank.accent} opacity="0.9"/></svg>
                 </div>
@@ -10069,7 +10103,7 @@ const App = () => {
       </div>
 
       {/* ═══ COMMAND DECK ═══ */}
-      <div style={{ marginBottom: 24 }}>
+      <div className="reveal" style={{ marginBottom: 24 }}>
         <h2 style={{ marginBottom: 16, display: 'flex', alignItems: 'center', gap: 10 }}>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={RM_THEME.red} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
           {lang === 'eg' ? 'غرفة قيادة الأكاديمية' : 'Academy Command Deck'}
@@ -10132,7 +10166,7 @@ const App = () => {
       </div>
 
       {/* ═══ OPS + UNLOCK RADAR ═══ */}
-      <div style={{ marginBottom: 24, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 16 }}>
+      <div className="reveal cv-auto" style={{ marginBottom: 24, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 16 }}>
         <div className="xcard" style={{ padding: 24, background: 'linear-gradient(135deg, rgba(255,255,255,0.07), rgba(255,255,255,0.03))', border: `1px solid ${RM_THEME.border}`, display: 'flex', flexDirection: 'column', minHeight: 280 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'center', marginBottom: 18 }}>
             <h3 style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -10212,7 +10246,7 @@ const App = () => {
       </div>
 
       {/* ═══ PERFORMANCE SIGNAL ═══ */}
-      <div className="xcard" style={{ marginBottom: 24, padding: 24, background: 'linear-gradient(135deg, rgba(0,212,255,0.06), rgba(255,59,59,0.06))', border: `1px solid ${RM_THEME.border}` }}>
+      <div className="xcard reveal" style={{ marginBottom: 24, padding: 24, background: 'linear-gradient(135deg, rgba(0,212,255,0.06), rgba(255,59,59,0.06))', border: `1px solid ${RM_THEME.border}` }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', gap: 20, flexWrap: 'wrap', alignItems: 'center' }}>
             <div style={{ flex: '1 1 420px' }}>
               <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap', marginBottom: 10 }}>
@@ -10262,7 +10296,7 @@ const App = () => {
       </div>
 
       {/* ═══ TRAINING MODES ═══ */}
-      <div style={{ marginBottom: 24 }}>
+      <div className="reveal cv-auto" style={{ marginBottom: 24 }}>
         <h2 style={{ marginBottom: 16, display: 'flex', alignItems: 'center', gap: 10 }}>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={RM_THEME.red} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
           {lang === 'eg' ? 'أوضاع التدريب' : 'Training Modes'}
@@ -10327,7 +10361,7 @@ const App = () => {
       </div>
 
       {/* ═══ ACADEMY LANES — Game-like Level Grid ═══ */}
-      <div style={{ marginBottom: 24 }}>
+      <div className="reveal cv-auto" style={{ marginBottom: 24 }}>
         <h2 style={{ marginBottom: 20, display: 'flex', alignItems: 'center', gap: 10 }}>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={RM_THEME.red} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
           {lang === 'eg' ? 'مسارات الأكاديمية' : 'Academy Lanes'}
@@ -10374,7 +10408,7 @@ const App = () => {
       </div>
 
       {/* ═══ RECENT SESSIONS + AREAS NEEDING ATTENTION ═══ */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 16 }}>
+      <div className="reveal cv-auto" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 16 }}>
         <div className="xcard" style={{ padding: 24, background: 'linear-gradient(135deg, rgba(255,255,255,0.07), rgba(255,255,255,0.03))', border: `1px solid ${RM_THEME.border}`, display: 'flex', flexDirection: 'column', minHeight: 260 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'center', marginBottom: 18 }}>
             <h3 style={{ display: 'flex', alignItems: 'center', gap: 10 }}>

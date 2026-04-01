@@ -143,7 +143,7 @@
         background: var(--surface-glass);
         border-right: 1px solid var(--glass-border);
         z-index: 2000;
-        padding: 2rem;
+        padding: 14px 14px 14px 16px;
         box-sizing: border-box;
         transform: translateX(0);
         transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -155,7 +155,7 @@
         .sidebar {
             width: 85%;
             max-width: 350px;
-            padding: 1.5rem;
+            padding: 10px 12px;
         }
         .logo-main { font-size: 1.4rem; }
       }
@@ -196,7 +196,7 @@
       @keyframes xcLogoBreath{0%,100%{filter:drop-shadow(0 0 8px rgba(102,126,234,0.4));transform:scale(1)}50%{filter:drop-shadow(0 0 22px rgba(240,147,251,0.7)) drop-shadow(0 0 40px rgba(102,126,234,0.3));transform:scale(1.06)}}
 
       /* ── Sidebar-specific logo: compact orbs so rings don't clip or inflate scroll height ── */
-      .sidebar-header { overflow: visible !important; padding-top: 18px !important; }
+      .sidebar-header { overflow: visible !important; padding-top: 10px !important; }
       .sidebar-scroll  { overflow-x: visible !important; }
       .logo-area { overflow: visible !important; }
       /* Shrink orb tracks to ≤icon size so they stay inside the icon footprint */
@@ -892,7 +892,7 @@
       </div>
 
       <!-- View Toggle -->
-      <div class="view-toggle-container" style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px;">
+      <div class="view-toggle-container" style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
         <span data-i18n="viewLabel" style="font-size: 0.8rem; color: var(--avaria-text-muted);">View:</span>
         <button id="view-toggle-btn" class="filter-btn active" data-i18n="clusterView" onclick="toggleMapView()" style="width: auto; padding: 6px 16px;">
           Cluster View

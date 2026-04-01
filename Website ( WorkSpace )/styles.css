@@ -1921,7 +1921,7 @@
 
       /* SEARCH & FILTERS */
       .search-container {
-        margin-bottom: 1rem;
+        margin-bottom: 8px;
         position: relative;
         z-index: 1002; /* Higher than sidebar content */
       }
@@ -2004,7 +2004,7 @@
       .filter-container {
         display: flex;
         gap: 8px;
-        margin-bottom: 1.5rem;
+        margin-bottom: 10px;
         flex-wrap: wrap;
       }
 
@@ -4987,7 +4987,7 @@ button:focus-visible, input:focus-visible {
    ═══════════════════════════════════════════════════════════════════════════ */
 
 .recently-viewed-section {
-    margin-bottom: 1.5rem;
+    margin-bottom: 10px;
     background: rgba(255, 255, 255, 0.02);
     border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.05);

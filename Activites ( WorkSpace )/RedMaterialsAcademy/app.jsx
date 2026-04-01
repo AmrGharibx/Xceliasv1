@@ -4131,17 +4131,7 @@ const NeedsWantsSorter = ({ onBack, updateScore }) => {
       const cat = sorted.Needs.includes(item) ? 'Needs' : 'Wants';
       if (item.category === cat) correct++;
     });
-    // Add the last item
-    if (currentItem) {
-      setLocalScore((correct) * 10);
-    } else {
-      Object.entries(sorted).forEach(([cat, items]) => {
-        items.forEach(item => {
-          if (item.category === cat) correct++;
-        });
-      });
-      setLocalScore(correct * 10);
-    }
+    setLocalScore(correct * 10);
     updateScore(correct * 10, correct >= 8);
     setShowResults(true);
   };
@@ -4639,7 +4629,7 @@ const CommunicationDecoder = ({ onBack, updateScore }) => {
           { type: "Words", pct: "7%", icon: "💬" },
           { type: "Tonality", pct: "38%", icon: "🎤" },
           { type: "Body Language", pct: "55%", icon: "🕺" }
-        ].map((option) => (
+        ].map((option, idx) => (
           <button
             key={option.type}
             onClick={() => handleAnswer(option.type)}
@@ -8245,7 +8235,7 @@ const ConsensusClash = ({ onBack, updateScore }) => {
               <button
                 key={idx}
                 onClick={() => castVote(team, idx)}
-                className={optionClass(idx, selected, correctIdx, showFeedback, idx)} style={{ marginBottom: 10, padding: 14, borderRadius: 14 }}
+                className={optionClass(idx, votes[team], correctIdx, reveal, idx)} style={{ marginBottom: 10, padding: 14, borderRadius: 14 }}
               >
                 {c}
               </button>
@@ -9141,6 +9131,97 @@ const getActivityMeta = (categoryId, activityId) => {
   };
 };
 
+// ════════════════════════════════════════════════════════════════
+// ACTIVITY GAME SHELL — countdown + HUD + multiplier + lives
+// Wraps every solo activity. Classroom activities bypass it.
+// ════════════════════════════════════════════════════════════════
+const CLASSROOM_IDS = new Set(['teambattle', 'facilitator', 'debrief', 'consensus']);
+
+const ActivityGameShell = ({ children, updateScore }) => {
+  const [phase, setPhase] = React.useState('countdown');
+  const [countVal, setCountVal] = React.useState(3);
+  const [lives, setLives] = React.useState(3);
+  const [inStreak, setInStreak] = React.useState(0);
+  const [multiplier, setMultiplier] = React.useState(1);
+  const [multiLabel, setMultiLabel] = React.useState(null);
+  const [sessionScore, setSessionScore] = React.useState(0);
+
+  const streakRef = React.useRef(0);
+  const multiRef = React.useRef(1);
+
+  // Countdown: 3 → 2 → 1 → GO! → play
+  React.useEffect(() => {
+    let frame = 3;
+    const tick = () => {
+      frame--;
+      if (frame <= 0) {
+        setCountVal('GO!');
+        const t = setTimeout(() => setPhase('playing'), 700);
+        return () => clearTimeout(t);
+      } else {
+        setCountVal(frame);
+        setTimeout(tick, 800);
+      }
+    };
+    const t = setTimeout(tick, 700);
+    return () => clearTimeout(t);
+  }, []);
+
+  const wrappedUpdateScore = React.useCallback((points, isCorrect) => {
+    const newStreak = isCorrect ? streakRef.current + 1 : 0;
+    streakRef.current = newStreak;
+    setInStreak(newStreak);
+
+    const newMulti = newStreak >= 6 ? 3 : newStreak >= 3 ? 2 : 1;
+    if (newMulti > multiRef.current) {
+      setMultiLabel(`🔥 ${newMulti}x COMBO!`);
+      setTimeout(() => setMultiLabel(null), 2200);
+    }
+    multiRef.current = newMulti;
+    setMultiplier(newMulti);
+
+    if (!isCorrect) setLives(prev => Math.max(0, prev - 1));
+
+    const boosted = isCorrect && points > 0 ? Math.round(points * newMulti) : points;
+    setSessionScore(prev => prev + Math.max(0, boosted));
+    updateScore(boosted, isCorrect);
+  }, [updateScore]);
+
+  if (phase === 'countdown') {
+    return (
+      <div className="xc-game-countdown">
+        <div className="xc-countdown-orb" key={countVal}>{countVal}</div>
+        <div className="xc-countdown-hint">Get ready…</div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ position: 'relative' }}>
+      {/* ── In-activity HUD ── */}
+      <div className="xc-game-hud">
+        <span className="xc-hud-lives">
+          {'❤️'.repeat(lives)}{'🖤'.repeat(3 - lives)}
+        </span>
+        <span className={`xc-hud-multi${multiplier > 1 ? ' xc-hud-multi--active' : ''}`}>
+          ×{multiplier}
+        </span>
+        {inStreak > 1 && (
+          <span className="xc-hud-streak">🔥×{inStreak}</span>
+        )}
+        <span className="xc-hud-score">+{sessionScore} pts</span>
+      </div>
+
+      {/* ── Combo banner ── */}
+      {multiLabel && (
+        <div className="xc-multi-banner">{multiLabel}</div>
+      )}
+
+      {children(wrappedUpdateScore)}
+    </div>
+  );
+};
+
 const App = () => {
   // Inject logo ring pulse animation
   React.useEffect(() => {
@@ -9788,7 +9869,20 @@ const App = () => {
 
   const renderActivity = () => {
     const ActivityComponent = currentActivity.component;
-    return <ActivityComponent onBack={handleBack} updateScore={updateScore} academyContext={{ reviewQueue, launchActivity, activityInsights, categorySummaries, academyStats, recentSessions: academyProgress.recentSessions || [], recommendedActivity, coachingPriority, weakestCategory, strongestCategory, redOpsMissions, lockedActivityTargets }} />;
+    const ctx = { reviewQueue, launchActivity, activityInsights, categorySummaries, academyStats, recentSessions: academyProgress.recentSessions || [], recommendedActivity, coachingPriority, weakestCategory, strongestCategory, redOpsMissions, lockedActivityTargets };
+
+    if (CLASSROOM_IDS.has(currentActivity.id)) {
+      // Classroom / facilitator activities: no game shell
+      return <ActivityComponent onBack={handleBack} updateScore={updateScore} academyContext={ctx} />;
+    }
+
+    return (
+      <ActivityGameShell key={currentActivity.id} updateScore={updateScore}>
+        {(wrappedUpdate) => (
+          <ActivityComponent onBack={handleBack} updateScore={wrappedUpdate} academyContext={ctx} />
+        )}
+      </ActivityGameShell>
+    );
   };
 
   const renderCategoryActivities = () => {

@@ -1352,6 +1352,88 @@
         }
 
         /* ═══════════════════════════════════════════════════════
+        /* ═══════════════════════════════════════════════════════
+           ACTIVITY GAME SHELL — countdown + HUD + combo banner
+        ═══════════════════════════════════════════════════════ */
+
+        /* Full-screen countdown overlay */
+        .xc-game-countdown {
+            position:fixed; inset:0; z-index:10000;
+            display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px;
+            background:radial-gradient(ellipse 120% 120% at 50% 50%, rgba(102,126,234,0.22), transparent 65%),
+                       rgba(0,0,0,0.88);
+            backdrop-filter:blur(14px);
+        }
+        .xc-countdown-orb {
+            width:160px; height:160px; border-radius:50%;
+            display:flex; align-items:center; justify-content:center;
+            font-size:72px; font-weight:900; color:#fff;
+            background:linear-gradient(135deg,#667eea,#764ba2,#f093fb);
+            box-shadow:0 0 60px rgba(102,126,234,0.7), 0 0 120px rgba(240,147,251,0.35);
+            animation:xcCountdownPop 0.55s cubic-bezier(0.34,1.56,0.64,1) both;
+        }
+        .xc-countdown-hint {
+            font-size:15px; font-weight:600; letter-spacing:0.2em; text-transform:uppercase;
+            color:rgba(255,255,255,0.4);
+        }
+        @keyframes xcCountdownPop {
+            0%   { transform:scale(0.3) rotate(-15deg); opacity:0; }
+            100% { transform:scale(1)   rotate(0deg);   opacity:1; }
+        }
+
+        /* Sticky in-activity HUD bar */
+        .xc-game-hud {
+            position:sticky; top:0; z-index:500;
+            display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+            padding:8px 14px; margin-bottom:14px;
+            border-radius:14px;
+            background:rgba(10,10,22,0.92);
+            border:1px solid rgba(102,126,234,0.22);
+            backdrop-filter:blur(16px);
+            box-shadow:0 4px 24px rgba(0,0,0,0.4);
+        }
+        .xc-hud-lives  { font-size:17px; letter-spacing:3px; flex:1; min-width:80px; }
+        .xc-hud-multi  {
+            font-size:12px; font-weight:900; letter-spacing:1px;
+            padding:3px 11px; border-radius:999px;
+            background:rgba(255,255,255,0.07); color:rgba(255,255,255,0.35);
+            transition:all 0.25s;
+        }
+        .xc-hud-multi--active {
+            background:linear-gradient(135deg,#f5576c,#f093fb);
+            color:#fff;
+            box-shadow:0 0 18px rgba(245,87,108,0.55);
+            animation:xcMultiPop 0.35s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        .xc-hud-streak { font-size:13px; font-weight:800; color:#ff9f43; }
+        .xc-hud-score  {
+            font-size:13px; font-weight:900; margin-left:auto;
+            background:linear-gradient(90deg,#f093fb,#667eea);
+            -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+        }
+        @keyframes xcMultiPop {
+            0%   { transform:scale(0.6); }
+            100% { transform:scale(1);   }
+        }
+
+        /* Combo multiplier banner */
+        .xc-multi-banner {
+            position:fixed; top:38%; left:50%; transform:translateX(-50%);
+            z-index:9800; pointer-events:none;
+            padding:14px 38px; border-radius:999px;
+            font-size:30px; font-weight:900; white-space:nowrap;
+            background:linear-gradient(135deg,#f5576c,#f093fb,#667eea);
+            color:#fff;
+            box-shadow:0 0 50px rgba(245,87,108,0.55), 0 0 100px rgba(102,126,234,0.3);
+            animation:xcBannerArc 2.2s cubic-bezier(0.34,1.56,0.64,1) forwards;
+        }
+        @keyframes xcBannerArc {
+            0%   { transform:translateX(-50%) scale(0.4) translateY(20px); opacity:0; }
+            14%  { transform:translateX(-50%) scale(1.12) translateY(0);    opacity:1; }
+            70%  { transform:translateX(-50%) scale(1)    translateY(0);    opacity:1; }
+            100% { transform:translateX(-50%) scale(0.85) translateY(-30px);opacity:0; }
+        }
+
            LOGIN SCREEN
         ═══════════════════════════════════════════════════════ */
         .xc-login-screen {

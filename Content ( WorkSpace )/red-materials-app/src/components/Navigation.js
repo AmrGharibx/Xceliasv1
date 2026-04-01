@@ -1,10 +1,41 @@
 import React, { useRef } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { BookOpenText, Building2, Compass, ScrollText, X } from 'lucide-react';
+import { BookOpenText, Compass, ScrollText, X } from 'lucide-react';
 
 import { NAV_ITEMS } from '../data/content';
 import { scrollToSection } from '../utils/scroll';
 import useDialogAccessibility from './useDialogAccessibility';
+
+// Animated Xcelias logo — matches the Activities app logo exactly
+const XcAnimatedLogo = () => (
+  <div className="xc-logo-icon" style={{
+    width:'44px', height:'44px',
+    background:'linear-gradient(135deg,#667eea,#764ba2)',
+    borderRadius:'12px', display:'flex', alignItems:'center', justifyContent:'center',
+    position:'relative', flexShrink:0,
+    boxShadow:'0 8px 24px rgba(102,126,234,0.35)'
+  }}>
+    <div className="xc-logo-ring-spin" />
+    <div className="xc-logo-ring-pulse" />
+    <div className="xc-orb-track xc-orb-track--1"><span className="xc-orb xc-orb--1" /></div>
+    <div className="xc-orb-track xc-orb-track--2"><span className="xc-orb xc-orb--2" /></div>
+    <div className="xc-orb-track xc-orb-track--3"><span className="xc-orb xc-orb--3" /></div>
+    <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg"
+         className="xc-logo-svg" style={{width:'22px',height:'22px',position:'relative',zIndex:2}}>
+      <defs>
+        <linearGradient id="xcnav-lg" x1="0" y1="0" x2="56" y2="56">
+          <stop offset="0%" stopColor="#667eea"/>
+          <stop offset="50%" stopColor="#764ba2"/>
+          <stop offset="100%" stopColor="#f093fb"/>
+        </linearGradient>
+      </defs>
+      <rect x="4" y="4" width="48" height="48" rx="14"
+            stroke="url(#xcnav-lg)" strokeWidth="2" fill="none" opacity="0.8"/>
+      <text x="28" y="37" textAnchor="middle" fill="url(#xcnav-lg)"
+            fontFamily="Montserrat,sans-serif" fontWeight="900" fontSize="26">X</text>
+    </svg>
+  </div>
+);
 
 export const ProgressBar = ({ progress }) => (
   <div className="fixed left-0 right-0 top-0 z-[70] h-[3px] bg-white/5">
@@ -20,9 +51,7 @@ export const TopNavigation = ({ activeSection, onOpenMap, onOpenSource, onOpenBr
       <div className="mx-auto flex max-w-7xl flex-col gap-3 rounded-[28px] border border-white/10 bg-black/30 px-4 py-3 shadow-[0_24px_80px_rgba(0,0,0,0.35)] backdrop-blur-2xl md:px-5">
         <div className="flex items-center justify-between gap-3">
           <button type="button" onClick={() => scrollToSection('hero')} className="flex items-center gap-3 rounded-full text-left text-white focus:outline-none focus:ring-2 focus:ring-[var(--accent-soft)] focus:ring-offset-2 focus:ring-offset-[var(--bg)]">
-            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[linear-gradient(135deg,var(--accent),var(--accent-strong))] text-white shadow-[0_12px_30px_rgba(127,22,22,0.35)]">
-              <Building2 className="h-5 w-5" />
-            </div>
+            <XcAnimatedLogo />
             <div>
               <div className="text-[11px] uppercase tracking-[0.28em] text-[var(--accent-soft)]">Xcelias</div>
               <div className="text-[9px] uppercase tracking-[0.18em] text-[var(--text-muted)]"><span className="font-extrabold text-[#e8372a]">by red</span> Training Academy</div>

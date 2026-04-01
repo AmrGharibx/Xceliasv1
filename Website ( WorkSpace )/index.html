@@ -118,6 +118,7 @@
         --glass-border: rgba(102, 126, 234, 0.2);
         --avaria-panel-bg: rgba(15, 15, 30, 0.6);
         --avaria-border: rgba(102, 126, 234, 0.15);
+        --sidebar-width: 400px;
       }
       body { margin: 0; padding: 0; overflow: hidden; background-color: var(--avaria-bg); font-family: sans-serif; }
       #map {
@@ -137,8 +138,8 @@
         position: absolute;
         top: 0;
         left: 0;
-        width: 350px;
-        max-width: 85%; /* Prevent CLS on mobile */
+        width: var(--sidebar-width);
+        max-width: min(90vw, var(--sidebar-width)); /* Prevent CLS on mobile */
         height: 100%;
         background: var(--surface-glass);
         border-right: 1px solid var(--glass-border);
@@ -154,7 +155,7 @@
       @media (max-width: 768px) {
         .sidebar {
             width: 85%;
-            max-width: 350px;
+            max-width: min(92vw, 380px);
             padding: 10px 12px;
         }
         .logo-main { font-size: 1.4rem; }
@@ -199,6 +200,7 @@
       .sidebar-header { overflow: visible !important; padding-top: 10px !important; }
       .sidebar-scroll  { overflow-x: visible !important; }
       .logo-area { overflow: visible !important; }
+      .logo-area .xc-logo-icon { margin-left: 4px; }
       /* Shrink orb tracks to ≤icon size so they stay inside the icon footprint */
       .logo-area .xc-orb-track {
         width: 50px; height: 50px; margin: -25px 0 0 -25px;
@@ -341,7 +343,7 @@
     /* ... Existing Mobile Styles ... */
     .sidebar {
         width: 85%; 
-        max-width: 350px;
+    max-width: min(92vw, 380px);
         padding: 1.5rem;
     }
     
@@ -494,7 +496,7 @@
 /* 3. LAPTOPS / SMALL DESKTOPS (1025px - 1366px) */
 @media (min-width: 1025px) and (max-width: 1366px) {
     .sidebar {
-        width: 350px;
+    width: var(--sidebar-width);
     }
 
     .modal-content {

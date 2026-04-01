@@ -1790,8 +1790,8 @@
         left: 0;
         top: 0;
         height: 100%;
-        width: var(--sidebar-width, 400px); /* Fixed width for consistency */
-        max-width: min(90vw, var(--sidebar-width, 400px));
+        width: var(--sidebar-width, 420px); /* Fixed width for consistency */
+        max-width: min(92vw, var(--sidebar-width, 420px));
         background: var(--surface-glass);
         border-right: 1px solid var(--glass-border);
         z-index: 2000;

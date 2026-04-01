@@ -118,7 +118,7 @@
         --glass-border: rgba(102, 126, 234, 0.2);
         --avaria-panel-bg: rgba(15, 15, 30, 0.6);
         --avaria-border: rgba(102, 126, 234, 0.15);
-        --sidebar-width: 400px;
+        --sidebar-width: 420px;
       }
       body { margin: 0; padding: 0; overflow: hidden; background-color: var(--avaria-bg); font-family: sans-serif; }
       #map {
@@ -196,19 +196,44 @@
       .xc-logo-svg{animation:xcLogoBreath 4s ease-in-out infinite;position:relative;z-index:2}
       @keyframes xcLogoBreath{0%,100%{filter:drop-shadow(0 0 8px rgba(102,126,234,0.4));transform:scale(1)}50%{filter:drop-shadow(0 0 22px rgba(240,147,251,0.7)) drop-shadow(0 0 40px rgba(102,126,234,0.3));transform:scale(1.06)}}
 
-      /* ── Sidebar-specific logo: compact orbs so rings don't clip or inflate scroll height ── */
-      .sidebar-header { overflow: visible !important; padding-top: 10px !important; }
+      /* ── Sidebar logo uses the same full footprint as the other Xcelias pages ── */
+      .sidebar-header { overflow: visible !important; padding-top: 18px !important; }
       .sidebar-scroll  { overflow-x: visible !important; }
-      .logo-area { overflow: visible !important; }
-      .logo-area .xc-logo-icon { margin-left: 4px; }
-      /* Shrink orb tracks to ≤icon size so they stay inside the icon footprint */
-      .logo-area .xc-orb-track {
-        width: 50px; height: 50px; margin: -25px 0 0 -25px;
+      .logo-area {
+        overflow: visible !important;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 18px;
+        padding-left: 24px;
       }
-      .logo-area .xc-orb { width: 6px; height: 6px; }
-      /* Tighten rings so they don't poke far outside */
-      .logo-area .xc-logo-ring-spin  { inset: -5px; }
-      .logo-area .xc-logo-ring-pulse { inset: -8px; border-radius: 18px; }
+      .logo-brand {
+        min-width: 0;
+      }
+      .logo-area .xc-logo-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        box-shadow: 0 8px 24px rgba(102,126,234,0.35);
+      }
+      .logo-area .xc-logo-svg {
+        width: 28px;
+        height: 28px;
+      }
+      .logo-actions {
+        display: flex;
+        align-items: flex-start;
+        gap: 4px;
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+      .logo-actions button {
+        padding: 9px !important;
+      }
       .logo-sub {
         font-family: 'Montserrat', sans-serif;
         font-size: 0.65rem;
@@ -724,16 +749,16 @@
       </div>
       <div class="sidebar-scroll">
         <div class="sidebar-header">
-      <div class="logo-area" style="display: flex; justify-content: space-between; align-items: flex-start;">
-        <div>
-          <div class="logo-main" style="display:flex;align-items:center;gap:10px;">
-            <div class="xc-logo-icon" style="width:44px;height:44px;background:linear-gradient(135deg,#667eea,#764ba2);border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 6px 20px rgba(102,126,234,0.35);">
+      <div class="logo-area">
+        <div class="logo-brand">
+          <div class="logo-main" style="display:flex;align-items:center;gap:14px;">
+            <div class="xc-logo-icon" style="background:linear-gradient(135deg,#667eea,#764ba2);">
               <div class="xc-logo-ring-spin"></div>
               <div class="xc-logo-ring-pulse"></div>
               <div class="xc-orb-track xc-orb-track--1"><span class="xc-orb xc-orb--1"></span></div>
               <div class="xc-orb-track xc-orb-track--2"><span class="xc-orb xc-orb--2"></span></div>
               <div class="xc-orb-track xc-orb-track--3"><span class="xc-orb xc-orb--3"></span></div>
-              <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg" class="xc-logo-svg" style="width:22px;height:22px;position:relative;z-index:2">
+              <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg" class="xc-logo-svg" style="position:relative;z-index:2">
                 <defs><linearGradient id="xlg-web" x1="0" y1="0" x2="56" y2="56"><stop offset="0%" stop-color="#667eea"/><stop offset="50%" stop-color="#764ba2"/><stop offset="100%" stop-color="#f093fb"/></linearGradient></defs>
                 <rect x="4" y="4" width="48" height="48" rx="14" stroke="url(#xlg-web)" stroke-width="2" fill="none" opacity="0.8"/>
                 <text x="28" y="37" text-anchor="middle" fill="url(#xlg-web)" font-family="Montserrat" font-weight="900" font-size="26">X</text>
@@ -743,7 +768,7 @@
           </div>
           <div class="logo-sub"><span class="logo-red">by red</span> Training Academy</div>
         </div>
-        <div style="display: flex; gap: 5px;">
+        <div class="logo-actions">
           <!-- Price Alerts Button -->
           <button id="alerts-toggle-btn" onclick="togglePriceAlertsPanel()" aria-label="Price Alerts" title="Price Alerts" style="background: transparent; border: none; color: var(--avaria-gold); cursor: pointer; padding: 10px; position: relative;">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

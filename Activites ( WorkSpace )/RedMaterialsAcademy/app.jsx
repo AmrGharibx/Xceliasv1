@@ -518,7 +518,8 @@ const UI_STRINGS = {
       professional: 'Professionalism & Skills',
       advanced: 'Advanced Simulations',
       classroom: 'Classroom & Teams',
-      fun: 'Random & Fun'
+      fun: 'Random & Fun',
+      gaming: '🕹️ Fun Games Zone'
     },
     activityNames: {
       rapidfire: 'Rapid Fire MCQ',
@@ -572,7 +573,11 @@ const UI_STRINGS = {
 
       bingo: 'Real Estate Bingo',
       crossword: "Salesman's Word Game",
-      exam: 'Final Exam'
+      exam: 'Final Exam',
+
+      clientmatch: 'Client Match',
+      objblitz: 'Objection Blitz',
+      propquest: 'Property Quest'
     }
   },
   eg: {
@@ -623,7 +628,8 @@ const UI_STRINGS = {
       professional: 'بروفيشنال ومهارات',
       advanced: 'سيموليشنز متقدمة',
       classroom: 'فصل وتيمز',
-      fun: 'فَن وخلطبيطة'
+      fun: 'فَن وخلطبيطة',
+      gaming: '🕹️ منطقة الألعاب'
     },
     activityNames: {
       rapidfire: 'أسئلة سريعة (اختيارات)',
@@ -677,7 +683,11 @@ const UI_STRINGS = {
 
       bingo: 'بينجو عقارات',
       crossword: 'لعبة كلمات سيلز',
-      exam: 'الامتحان النهائي'
+      exam: 'الامتحان النهائي',
+
+      clientmatch: 'ماتش العميل',
+      objblitz: 'بليتز الاعتراضات',
+      propquest: 'مهمة العقار'
     }
   }
 };
@@ -9062,6 +9072,454 @@ const MODE_LABELS = {
   }
 };
 
+// ═══════════════════════════════════════════════════════════════
+// GAME 1 — CLIENT MATCH
+// Match the right unit type to each client profile (10 rounds)
+// ═══════════════════════════════════════════════════════════════
+const CLIENT_MATCH_DATA = [
+  { id:1, name:{en:'The El-Sayed Family',eg:'عيلة السيد'}, emoji:'👨‍👩‍👧‍👦', profile:{en:'Budget: 3M EGP • Family of 5 • Wants garden & privacy',eg:'ميزانية: ٣م • عيلة ٥ أفراد • عايزين جنينة وخصوصية'}, bestMatch:'Twin House', reason:{en:'Shared wall saves cost, private garden, family-sized',eg:'حيط مشترك بيوفّر في التكلفة وفيها جنينة'}, options:['Twin House','Penthouse','Studio','Admin'] },
+  { id:2, name:{en:'Eng. Ramy',eg:'م. رامي'}, emoji:'👨‍💼', profile:{en:'Budget: 800K EGP • Single • Investment-focused, wants rental income',eg:'ميزانية: ٨٠٠ك • أعزب • استثمار، عايز إيجار'}, bestMatch:'Studio', reason:{en:'Low cost, high rental demand, easy to manage',eg:'سعر منخفض، طلب إيجار عالي، سهل التأجير'}, options:['Studio','Stand Alone','Town House','Twin House'] },
+  { id:3, name:{en:'Dr. Hana',eg:'د. هنا'}, emoji:'👩‍⚕️', profile:{en:'Budget: 5M EGP+ • Professional • Wants luxury & top-floor prestige',eg:'ميزانية: +٥م • متخصصة • عايزة فخامة وبريستيج'}, bestMatch:'Penthouse', reason:{en:'Top floor luxury, prestige views, matches professional image',eg:'أعلى دور بتشطيب فاخر، يناسب شخصية بروفيشنال'}, options:['Penthouse','Apartment','Studio','Duplex'] },
+  { id:4, name:{en:'Mr. Karim',eg:'أ. كريم'}, emoji:'🧔', profile:{en:'Budget: 2.5M EGP • Couple • Wants two-floor layout for privacy',eg:'ميزانية: ٢.٥م • محتاج شقة على دورين لفراغات منفصلة'}, bestMatch:'Duplex', reason:{en:'Two-level living with internal staircase, unique layout',eg:'حياة على دورين بسلم داخلي، تصميم مختلف'}, options:['Duplex','Town House','Studio','Admin'] },
+  { id:5, name:{en:'Startup Office',eg:'مكاتب ستارت-أب'}, emoji:'🏢', profile:{en:'Commercial • Needs offices for 20 staff, branding important',eg:'تجاري • مكاتب لـ٢٠ موظف والبراند مهم'}, bestMatch:'Admin', reason:{en:'Administrative offices, professional image for corporate use',eg:'وحدات إدارية، صورة احترافية للشركة'}, options:['Admin','Studio','Penthouse','Apartment'] },
+  { id:6, name:{en:'Osama & Family',eg:'أسامة وعيلته'}, emoji:'👪', profile:{en:'Budget: 4M EGP • Family of 3 • Row home in compound, community feel',eg:'ميزانية: ٤م • يريد بيت في صف ضمن كمباوند'}, bestMatch:'Town House', reason:{en:'Row home in compound, community-oriented, multi-story',eg:'تاون هاوس في كمباوند، كوميونيتي، أدوار متعددة'}, options:['Town House','Penthouse','Studio','Duplex'] },
+  { id:7, name:{en:'Retail Brand X',eg:'براند تجاري X'}, emoji:'🛍️', profile:{en:'Commercial • Storefront on ground floor, high foot traffic',eg:'تجاري • واجهة محل في دور أرضي بمرور عالي'}, bestMatch:'Shops', reason:{en:'Ground floor shop with high street visibility',eg:'محل أرضي مرئية عالية ومرور ناس كتير'}, options:['Shops','Admin','Apartment','Stand Alone'] },
+  { id:8, name:{en:'Newlyweds',eg:'العرسان الجدد'}, emoji:'💑', profile:{en:'Budget: 1.5M EGP • Couple, first home, small & cozy',eg:'ميزانية: ١.٥م • عرسان جدد، أول بيت صغير ومريح'}, bestMatch:'Apartment', reason:{en:'Standard apartment, right size for two, affordable entry',eg:'شقة عادية، مناسبة لاثنين، مدخل معقول في السعر'}, options:['Apartment','Stand Alone','Twin House','Penthouse'] },
+  { id:9, name:{en:'Mr. Hassan',eg:'أ. حسن'}, emoji:'🤵', profile:{en:'Budget: 8M EGP+ • Wealthy • Max privacy, large plot, no shared walls',eg:'ميزانية: +٨م • عايز خصوصية قصوى وأرض كبيرة'}, bestMatch:'Stand Alone', reason:{en:'Standalone villa on own plot, no neighbors on any side',eg:'فيلا مستقلة على قطعة أرض خاصة كاملة'}, options:['Stand Alone','Twin House','Town House','Penthouse'] },
+  { id:10, name:{en:'Medical Center',eg:'مركز طبي'}, emoji:'🏥', profile:{en:'Commercial • Clinic space, regulated, accessible location',eg:'تجاري • عيادة أو مركز طبي، موقع سهل الوصول'}, bestMatch:'Medical', reason:{en:'Medical unit designed for clinics and health centers',eg:'وحدة طبية مصممة للعيادات والمراكز الصحية'}, options:['Medical','Admin','Studio','Shops'] }
+];
+
+const UNIT_ICONS = { 'Twin House':'🏘️','Penthouse':'🌆','Studio':'🏠','Admin':'🏢','Apartment':'🏬','Stand Alone':'🏡','Town House':'🏠','Duplex':'🏗️','Shops':'🛍️','Medical':'🏥','Pharmacy':'💊','Show Room':'🚗' };
+
+const ClientMatch = ({ onBack, updateScore }) => {
+  const { tone } = useUI();
+  const lang = tone === 'eg' ? 'eg' : 'en';
+  const [round, setRound] = useState(0);
+  const [pts, setPts] = useState(0);
+  const [selected, setSelected] = useState(null);
+  const [feedback, setFeedback] = useState(null);
+  const [gameOver, setGameOver] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(20);
+  const [opts, setOpts] = useState([]);
+  const [correct, setCorrect] = useState(0);
+
+  const cur = CLIENT_MATCH_DATA[round];
+
+  useEffect(() => {
+    if (!cur) return;
+    setOpts(shuffleArray([...cur.options]));
+    setTimeLeft(20);
+    setSelected(null);
+    setFeedback(null);
+  }, [round]);
+
+  useEffect(() => {
+    if (feedback || gameOver) return;
+    if (timeLeft <= 0) { handlePick(null, true); return; }
+    const t = setTimeout(() => setTimeLeft(p => p - 1), 1000);
+    return () => clearTimeout(t);
+  }, [timeLeft, feedback, gameOver]);
+
+  const handlePick = (opt, timeout = false) => {
+    if (feedback) return;
+    setSelected(opt);
+    const isCorrect = !timeout && opt === cur.bestMatch;
+    const award = isCorrect ? Math.max(5, timeLeft) + 5 : -5;
+    setFeedback({ correct: isCorrect, award, timeout });
+    updateScore(award, isCorrect);
+    setPts(p => p + award);
+    if (isCorrect) setCorrect(p => p + 1);
+  };
+
+  const next = () => {
+    if (round + 1 >= CLIENT_MATCH_DATA.length) setGameOver(true);
+    else setRound(p => p + 1);
+  };
+
+  const reset = () => { setRound(0); setPts(0); setSelected(null); setFeedback(null); setGameOver(false); setTimeLeft(20); setCorrect(0); };
+
+  if (gameOver) {
+    const pct = Math.round((correct / CLIENT_MATCH_DATA.length) * 100);
+    return (
+      <div className="animate-fadeIn" style={{ maxWidth:520, margin:'0 auto', padding:'40px 20px', textAlign:'center' }}>
+        <div style={{ fontSize:70, marginBottom:16 }}>{pct>=80?'🏆':pct>=60?'⭐':'💪'}</div>
+        <h2 style={{ fontSize:28, marginBottom:10 }}>{lang==='eg'?'خلصت اللعبة!':'Game Complete!'}</h2>
+        <div style={{ fontSize:48, fontWeight:900, color:RM_THEME.amber, marginBottom:8 }}>{correct}/{CLIENT_MATCH_DATA.length}</div>
+        <p style={{ color:RM_THEME.muted, marginBottom:24, fontSize:15 }}>{lang==='eg'?`مجموع النقط: ${pts}`:`Total Score: ${pts}`}</p>
+        <p style={{ color:RM_THEME.muted, fontSize:14, marginBottom:28, lineHeight:1.6 }}>
+          {pct>=80?(lang==='eg'?'ممتاز! فاهم احتياجات العميل كويس.':'Excellent! You nail client-to-unit matching.'):pct>=60?(lang==='eg'?'كويس، بس راجع أنواع الوحدات التجارية.':'Good — review commercial unit types.'):(lang==='eg'?'راجع أنواع الوحدات وتعريفاتها.':'Review unit types and their definitions.')}
+        </p>
+        <div style={{ display:'flex', gap:12, justifyContent:'center', flexWrap:'wrap' }}>
+          <button onClick={reset} style={styles.primaryBtn}>{lang==='eg'?'العب تاني':'Play Again'}</button>
+          <button onClick={onBack} style={styles.secondaryBtn}>{lang==='eg'?'رجوع':'Back'}</button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="animate-fadeIn" style={{ maxWidth:560, margin:'0 auto', padding:'0 16px 60px' }}>
+      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:18, gap:12, flexWrap:'wrap' }}>
+        <button onClick={onBack} style={{ ...styles.secondaryBtn, padding:'8px 14px', fontSize:13 }}>← {lang==='eg'?'رجوع':'Back'}</button>
+        <div style={{ display:'flex', gap:14, alignItems:'center' }}>
+          <span style={{ color:RM_THEME.amber, fontWeight:800, fontSize:14 }}>{lang==='eg'?`جولة ${round+1}/${CLIENT_MATCH_DATA.length}`:`Round ${round+1}/${CLIENT_MATCH_DATA.length}`}</span>
+          <span style={{ fontWeight:800, fontSize:14 }}>{pts} pts</span>
+        </div>
+      </div>
+      <div style={{ height:6, borderRadius:6, background:'rgba(255,255,255,0.08)', marginBottom:20, overflow:'hidden' }}>
+        <div style={{ height:'100%', borderRadius:6, transition:'width 1s linear, background 0.3s', width:`${(timeLeft/20)*100}%`, background:timeLeft>10?RM_THEME.green:timeLeft>5?RM_THEME.amber:'#f56565' }} />
+      </div>
+      <div style={{ padding:'24px 22px', borderRadius:24, marginBottom:22, border:`1px solid ${RM_THEME.border}`, background:'linear-gradient(135deg, rgba(102,126,234,0.14), rgba(102,126,234,0.04))', textAlign:'center' }}>
+        <div style={{ fontSize:52, marginBottom:10 }}>{cur.emoji}</div>
+        <h2 style={{ fontSize:20, marginBottom:8 }}>{lang==='eg'?cur.name.eg:cur.name.en}</h2>
+        <p style={{ color:RM_THEME.muted, fontSize:14, lineHeight:1.6 }}>{lang==='eg'?cur.profile.eg:cur.profile.en}</p>
+        <div style={{ marginTop:14, padding:'6px 14px', borderRadius:12, background:'rgba(255,176,32,0.1)', display:'inline-block' }}>
+          <span style={{ color:RM_THEME.amber, fontWeight:800, fontSize:13 }}>⏱ {timeLeft}s</span>
+        </div>
+      </div>
+      <p style={{ textAlign:'center', color:RM_THEME.muted, marginBottom:16, fontSize:14, fontWeight:700 }}>
+        {lang==='eg'?'👇 اختار أنسب نوع وحدة لهذا العميل':'👇 Pick the best unit type for this client'}
+      </p>
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12, marginBottom:16 }}>
+        {opts.map(opt => {
+          const isCor = opt===cur.bestMatch, isSel = opt===selected;
+          let bg='rgba(255,255,255,0.05)', border=RM_THEME.border;
+          if (feedback) { if (isCor){bg='rgba(80,250,123,0.12)';border=RM_THEME.green;} else if (isSel&&!isCor){bg='rgba(245,101,101,0.12)';border='#f56565';} }
+          else if (isSel) { bg='rgba(102,126,234,0.15)'; border=RM_THEME.red; }
+          return (
+            <button key={opt} onClick={()=>handlePick(opt)} disabled={!!feedback}
+              style={{ padding:'18px 12px', borderRadius:18, border:`2px solid ${border}`, background:bg, cursor:feedback?'default':'pointer', transition:'all 0.2s ease', display:'flex', flexDirection:'column', alignItems:'center', gap:8, fontFamily:'inherit', color:RM_THEME.text }}>
+              <span style={{ fontSize:30 }}>{UNIT_ICONS[opt]||'🏠'}</span>
+              <span style={{ fontWeight:800, fontSize:15 }}>{opt}</span>
+            </button>
+          );
+        })}
+      </div>
+      {feedback && (
+        <div className="animate-fadeIn" style={{ padding:'18px 20px', borderRadius:18, marginBottom:16, background:feedback.correct?'rgba(80,250,123,0.1)':'rgba(245,101,101,0.1)', border:`1px solid ${feedback.correct?RM_THEME.green:'#f56565'}` }}>
+          <div style={{ fontWeight:800, fontSize:16, marginBottom:6 }}>
+            {feedback.timeout?(lang==='eg'?'⏰ الوقت خلص!':'⏰ Time\'s up!'):feedback.correct?(lang==='eg'?`✅ صح! +${feedback.award}`:`✅ Correct! +${feedback.award} pts`):(lang==='eg'?'❌ غلط!':'❌ Wrong!')}
+          </div>
+          <p style={{ color:RM_THEME.muted, fontSize:13, lineHeight:1.5 }}>
+            <strong>{lang==='eg'?'الأنسب: ':'Best match: '}</strong>{cur.bestMatch} — {lang==='eg'?cur.reason.eg:cur.reason.en}
+          </p>
+          <button onClick={next} style={{ ...styles.primaryBtn, marginTop:12, padding:'10px 18px', fontSize:14 }}>
+            {round+1>=CLIENT_MATCH_DATA.length?(lang==='eg'?'شوف النتيجة':'Results'):(lang==='eg'?'التالي ←':'Next →')}
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ═══════════════════════════════════════════════════════════════
+// GAME 2 — OBJECTION BLITZ
+// Rapid-fire objection handling — use A.B.C. to respond (12 rounds)
+// ═══════════════════════════════════════════════════════════════
+const OBJECTION_BLITZ_DATA = [
+  { obj:{en:"The price is too expensive!",eg:"غالي جداً!"}, opts:{en:[{t:"I understand. Let me show you the payment plan — 10% down over 7 years. Could that work?",c:true},{t:"It's not that expensive for this area.",c:false},{t:"Maybe look at smaller units if budget is tight.",c:false}],eg:[{t:"أنا فاهم. خليني أوريلك خطة التقسيط — ١٠٪ مقدم على ٧ سنين. يناسبك؟",c:true},{t:"مش غالي على المنطقة دي.",c:false},{t:"ممكن تبص على وحدات أصغر لو الميزانية ضيقة.",c:false}]} },
+  { obj:{en:"I need to think about it.",eg:"محتاج أفكر."}, opts:{en:[{t:"Absolutely. FYI there are 2 other buyers interested. Want to reserve it and decide in 48h?",c:true},{t:"Take your time, call me whenever.",c:false},{t:"What exactly do you need to think about?",c:false}],eg:[{t:"طبعاً. على علمك فيه مشترين تانيين. تحجزها وتفكر ٤٨ ساعة؟",c:true},{t:"تمام، خد وقتك وكلمني.",c:false},{t:"في إيه بالذات هتفكر فيه؟",c:false}]} },
+  { obj:{en:"The location isn't convenient.",eg:"الموقع مش مناسب."}, opts:{en:[{t:"I hear you. Which area works best for you? I may have options there, or we can review the commute.",c:true},{t:"The location is actually great, all amenities are close.",c:false},{t:"Many clients felt that at first but ended up loving it.",c:false}],eg:[{t:"فاهم. أنهي منطقة أنسب؟ ممكن يكون عندي بديل أو نشوف خط السير مع بعض.",c:true},{t:"الموقع في الحقيقة ممتاز، كل حاجة قريبة.",c:false},{t:"كتير عملاء أحسوا كده في الأول وبعدين حبّوه.",c:false}]} },
+  { obj:{en:"I want to see it finished before buying.",eg:"عايز أشوفه خلص أول."}, opts:{en:[{t:"Valid concern. Buying now locks in today's price — by delivery it'll be 30-40% higher. Want to see the model unit?",c:true},{t:"We can't guarantee what it'll look like finished.",c:false},{t:"Most investors buy off-plan, it's normal.",c:false}],eg:[{t:"قلقك منطقي. الشراء دلوقتي يقفل سعر اليوم — لما يخلص السعر هيعلى ٣٠-٤٠٪. تيجي تشوف وحدة نموذج؟",c:true},{t:"ما نقدرش نضمن هيبقى إزاي لما يخلص.",c:false},{t:"معظم المستثمرين بيشتروا أوف-بلان، ده طبيعي.",c:false}]} },
+  { obj:{en:"Your competitor has a lower price.",eg:"المنافس عنده سعر أرخص."}, opts:{en:[{t:"Good point. Let's compare finishing spec, developer track record, and facilities — price alone doesn't tell the full story.",c:true},{t:"Their quality honestly isn't as good as ours.",c:false},{t:"If it's cheaper maybe it's better for you.",c:false}],eg:[{t:"نقطة كويسة. بس خليني أريلك الفرق في التشطيب وسمعة المطوّر والمرافق. السعر وحده مش بيقول الحكاية كلها.",c:true},{t:"جودتهم مش بالمستوى ده بصراحة.",c:false},{t:"لو أرخص يمكن يكون الأنسب ليك.",c:false}]} },
+  { obj:{en:"I don't have cash right now.",eg:"مش عندي كاش دلوقتي."}, opts:{en:[{t:"No problem at all — most clients use installment plans. With just 10% down you secure the unit. Want me to walk you through it?",c:true},{t:"You'll need at least some cash to proceed.",c:false},{t:"We have mortgage options but they're complicated.",c:false}],eg:[{t:"مفيش مشكلة، معظم عملائنا بيشتروا بالتقسيط. بـ١٠٪ بس تضمن الوحدة. أشرحلك الخطة؟",c:true},{t:"هتحتاج شوية كاش على الأقل.",c:false},{t:"عندنا تمويل بنكي بس معقد شوية.",c:false}]} },
+  { obj:{en:"Is the developer trustworthy?",eg:"المطوّر موثوق؟"}, opts:{en:[{t:"Great question. They've delivered 12 projects on time in 20 years. Want to visit a completed project nearby?",c:true},{t:"Yes, they're one of the best, everyone knows them.",c:false},{t:"I personally vouch for them, don't worry.",c:false}],eg:[{t:"سؤال ممتاز. سلّموا ١٢ مشروع في مواعيدهم على ٢٠ سنة. تيجي تزور مشروع جاهز قريب؟",c:true},{t:"آه من أحسن الناس، كلهم يعرفوهم.",c:false},{t:"أنا شخصيًا بضمنهم، متقلقش.",c:false}]} },
+  { obj:{en:"I want my family involved before deciding.",eg:"عايز أشرك عيلتي الأول."}, opts:{en:[{t:"Absolutely — family decisions are the most important. Can we schedule a meeting with them this week?",c:true},{t:"It's a great deal, your family will love it.",c:false},{t:"Most investment decisions are individual, you can tell them later.",c:false}],eg:[{t:"طبعاً قرارات العيلة هي الأهم. نعمل موعد معاهم الأسبوع ده؟",c:true},{t:"فرصة رائعة عيلتك هتحبها.",c:false},{t:"القرارات دي عادةً فردية، تقدر تقولهم بعدين.",c:false}]} },
+  { obj:{en:"The finishing quality looks weak.",eg:"التشطيب يبان ضعيف."}, opts:{en:[{t:"Your observation matters. Let me show you the exact specs — brands used, material grade, and warranty. Want to visit a delivered unit?",c:true},{t:"It's standard for this price range.",c:false},{t:"The price reflects the finishing quality.",c:false}],eg:[{t:"ملاحظتك مهمة. خليني أوريلك المواصفات الدقيقة — الماركات والخامات والضمان. تيجي تزور وحدة مسلمة؟",c:true},{t:"ده طبيعي للسعر ده.",c:false},{t:"السعر بيعكس مستوى التشطيب.",c:false}]} },
+  { obj:{en:"I'll wait for prices to drop.",eg:"هستنى الأسعار ترخص."}, opts:{en:[{t:"I understand. But in Egypt's market prices have risen 25-35% annually for years. Waiting typically costs more — want to see the price history?",c:true},{t:"Prices might drop, it's possible.",c:false},{t:"That's your choice, let me know if you change your mind.",c:false}],eg:[{t:"فاهم المنطق. بس في سوق مصر أسعار ترتفع ٢٥-٣٥٪ سنويًا. الانتظار عادةً بيكلف أكتر — تشوف تاريخ الأسعار؟",c:true},{t:"ممكن ترخص، محتمل.",c:false},{t:"ده قرارك، كلمني لو غيّرت رأيك.",c:false}]} },
+  { obj:{en:"The unit is too small.",eg:"الوحدة صغيرة."}, opts:{en:[{t:"Tell me more — what size do you actually need and how many rooms? I want to show you the right options.",c:true},{t:"It's the standard size for this tower.",c:false},{t:"Small spaces can feel bigger with good design.",c:false}],eg:[{t:"قولي أكتر — إيه المساحة اللي محتاجها وكام أوضة؟ عايز أوريلك الأنسب.",c:true},{t:"دي المساحة المعيارية للبرج ده.",c:false},{t:"المساحات الصغيرة ممكن تتصمم تحس فيها بالاتساع.",c:false}]} },
+  { obj:{en:"I'm not ready to decide today.",eg:"مش جاهز أقرر النهارده."}, opts:{en:[{t:"That's completely fine. What would help you feel ready — is there missing info, or shall I follow up when you've had time?",c:true},{t:"We have a limited offer today only.",c:false},{t:"What's stopping you from deciding now?",c:false}],eg:[{t:"ده تمام. إيه اللي هيخليك جاهز — في معلومة ناقصة ولا نتابع بعد ما تفكر؟",c:true},{t:"عندنا عرض محدود النهارده بس.",c:false},{t:"إيه اللي بيمنعك تقرر دلوقتي؟",c:false}]} }
+];
+
+const ObjectionBlitz = ({ onBack, updateScore }) => {
+  const { tone } = useUI();
+  const lang = tone === 'eg' ? 'eg' : 'en';
+  const [round, setRound] = useState(0);
+  const [score, setScore] = useState(0);
+  const [selected, setSelected] = useState(null);
+  const [feedback, setFeedback] = useState(null);
+  const [gameOver, setGameOver] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(18);
+  const [shuffledOpts, setShuffledOpts] = useState([]);
+  const [streak, setStreak] = useState(0);
+  const [correct, setCorrect] = useState(0);
+
+  const cur = OBJECTION_BLITZ_DATA[round];
+  const roundTime = Math.max(10, 18 - Math.floor(round / 3));
+
+  useEffect(() => {
+    if (!cur) return;
+    setShuffledOpts(shuffleArray([...cur.opts[lang]]));
+    setTimeLeft(roundTime);
+    setSelected(null);
+    setFeedback(null);
+  }, [round, lang]);
+
+  useEffect(() => {
+    if (feedback || gameOver) return;
+    if (timeLeft <= 0) { handlePick(null, true); return; }
+    const t = setTimeout(() => setTimeLeft(p => p - 1), 1000);
+    return () => clearTimeout(t);
+  }, [timeLeft, feedback, gameOver]);
+
+  const handlePick = (opt, timeout = false) => {
+    if (feedback) return;
+    setSelected(opt);
+    const isCorrect = !timeout && !!opt?.c;
+    const newStreak = isCorrect ? streak + 1 : 0;
+    const bonus = newStreak >= 3 ? 10 : newStreak >= 2 ? 5 : 0;
+    const award = isCorrect ? Math.max(8, timeLeft) + bonus : -5;
+    setFeedback({ correct: isCorrect, award, timeout, newStreak });
+    setStreak(newStreak);
+    updateScore(award, isCorrect);
+    setScore(p => p + award);
+    if (isCorrect) setCorrect(p => p + 1);
+  };
+
+  const next = () => {
+    if (round + 1 >= OBJECTION_BLITZ_DATA.length) setGameOver(true);
+    else setRound(p => p + 1);
+  };
+
+  const reset = () => { setRound(0); setScore(0); setSelected(null); setFeedback(null); setGameOver(false); setTimeLeft(18); setStreak(0); setCorrect(0); };
+
+  if (gameOver) {
+    const pct = Math.round((correct / OBJECTION_BLITZ_DATA.length) * 100);
+    return (
+      <div className="animate-fadeIn" style={{ maxWidth:520, margin:'0 auto', padding:'40px 20px', textAlign:'center' }}>
+        <div style={{ fontSize:70, marginBottom:16 }}>{pct>=80?'🎯':pct>=60?'⭐':'📚'}</div>
+        <h2 style={{ fontSize:28, marginBottom:10 }}>{lang==='eg'?'انتهت الجولات!':'All Rounds Done!'}</h2>
+        <div style={{ fontSize:48, fontWeight:900, color:RM_THEME.amber, marginBottom:8 }}>{correct}/{OBJECTION_BLITZ_DATA.length}</div>
+        <p style={{ color:RM_THEME.muted, marginBottom:28, fontSize:15 }}>{lang==='eg'?`نقط: ${score}`:`Score: ${score}`} • {pct}%</p>
+        <p style={{ color:RM_THEME.muted, fontSize:14, marginBottom:28, lineHeight:1.6 }}>
+          {pct>=80?(lang==='eg'?'محترف في رد الاعتراضات! أ.ب.ج في دمك.':'Objection pro! A.B.C. is in your blood.'):(lang==='eg'?'راجع تقنية أ.ب.ج وردود الاعتراضات.':'Review A.B.C. objection handling technique.')}
+        </p>
+        <div style={{ display:'flex', gap:12, justifyContent:'center', flexWrap:'wrap' }}>
+          <button onClick={reset} style={styles.primaryBtn}>{lang==='eg'?'العب تاني':'Play Again'}</button>
+          <button onClick={onBack} style={styles.secondaryBtn}>{lang==='eg'?'رجوع':'Back'}</button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="animate-fadeIn" style={{ maxWidth:600, margin:'0 auto', padding:'0 16px 60px' }}>
+      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:18, gap:12, flexWrap:'wrap' }}>
+        <button onClick={onBack} style={{ ...styles.secondaryBtn, padding:'8px 14px', fontSize:13 }}>← {lang==='eg'?'رجوع':'Back'}</button>
+        <div style={{ display:'flex', gap:14, alignItems:'center', flexWrap:'wrap' }}>
+          {streak>=2&&<span style={{ color:RM_THEME.amber, fontWeight:800 }}>🔥 ×{streak}</span>}
+          <span style={{ fontWeight:800, fontSize:14 }}>{lang==='eg'?`${round+1}/${OBJECTION_BLITZ_DATA.length} جولة`:`${round+1}/${OBJECTION_BLITZ_DATA.length}`}</span>
+          <span style={{ fontWeight:800 }}>{score} pts</span>
+        </div>
+      </div>
+      <div style={{ height:6, borderRadius:6, background:'rgba(255,255,255,0.08)', marginBottom:20, overflow:'hidden' }}>
+        <div style={{ height:'100%', borderRadius:6, transition:'width 1s linear, background 0.3s', width:`${(timeLeft/roundTime)*100}%`, background:timeLeft>8?RM_THEME.green:timeLeft>4?RM_THEME.amber:'#f56565' }} />
+      </div>
+      <div style={{ padding:'28px 24px', borderRadius:24, marginBottom:24, textAlign:'center', border:`2px solid rgba(245,101,101,0.3)`, background:'linear-gradient(135deg, rgba(245,101,101,0.1), rgba(245,101,101,0.04))' }}>
+        <div style={{ fontSize:36, marginBottom:10 }}>🚨</div>
+        <p style={{ fontSize:12, color:RM_THEME.muted, marginBottom:8, textTransform:'uppercase', letterSpacing:1, fontWeight:700 }}>
+          {lang==='eg'?'اعتراض العميل':'Client Objection'}
+        </p>
+        <h2 style={{ fontSize:22, lineHeight:1.4, fontWeight:900 }}>"{lang==='eg'?cur.obj.eg:cur.obj.en}"</h2>
+        <div style={{ marginTop:12, color:RM_THEME.amber, fontWeight:800 }}>⏱ {timeLeft}s</div>
+      </div>
+      <p style={{ color:RM_THEME.muted, fontSize:13, textAlign:'center', marginBottom:14, fontWeight:700 }}>
+        {lang==='eg'?'👇 اختار أفضل رد باستخدام أ.ب.ج':'👇 Pick the best A.B.C. response'}
+      </p>
+      <div style={{ display:'flex', flexDirection:'column', gap:12, marginBottom:16 }}>
+        {shuffledOpts.map((opt, idx) => {
+          const isSel = opt===selected;
+          let bg='rgba(255,255,255,0.04)', border=RM_THEME.border;
+          if (feedback) { if (opt.c){bg='rgba(80,250,123,0.12)';border=RM_THEME.green;} else if (isSel&&!opt.c){bg='rgba(245,101,101,0.12)';border='#f56565';} }
+          else if (isSel) { bg='rgba(102,126,234,0.15)'; border=RM_THEME.red; }
+          return (
+            <button key={idx} onClick={()=>handlePick(opt)} disabled={!!feedback}
+              style={{ padding:'16px 18px', borderRadius:18, border:`2px solid ${border}`, background:bg, cursor:feedback?'default':'pointer', transition:'all 0.2s ease', textAlign:'left', fontFamily:'inherit', color:RM_THEME.text, fontSize:14, lineHeight:1.55, display:'flex', alignItems:'flex-start', gap:10 }}>
+              <span style={{ fontSize:18, flexShrink:0, marginTop:1 }}>{feedback?(opt.c?'✅':'❌'):['A','B','C'][idx]}</span>
+              {opt.t}
+            </button>
+          );
+        })}
+      </div>
+      {feedback && (
+        <div className="animate-fadeIn" style={{ padding:'16px 20px', borderRadius:16, marginBottom:12, background:feedback.correct?'rgba(80,250,123,0.1)':'rgba(245,101,101,0.1)', border:`1px solid ${feedback.correct?RM_THEME.green:'#f56565'}` }}>
+          <div style={{ fontWeight:800, marginBottom:8 }}>
+            {feedback.timeout?(lang==='eg'?'⏰ الوقت راح!':'⏰ Time up!'):feedback.correct?(lang==='eg'?`✅ صح! +${feedback.award}`:`✅ Great! +${feedback.award} pts`):(lang==='eg'?'❌ مش الأفضل.':'❌ Not the best approach.')}
+            {feedback.correct&&feedback.newStreak>=2&&<span style={{ color:RM_THEME.amber, marginLeft:10 }}>🔥×{feedback.newStreak}</span>}
+          </div>
+          <button onClick={next} style={{ ...styles.primaryBtn, padding:'10px 18px', fontSize:14 }}>
+            {round+1>=OBJECTION_BLITZ_DATA.length?(lang==='eg'?'النتائج':'Results'):(lang==='eg'?'التالي ←':'Next →')}
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ═══════════════════════════════════════════════════════════════
+// GAME 3 — PROPERTY QUEST
+// Text-adventure RPG: run a full sales call from cold to close
+// ═══════════════════════════════════════════════════════════════
+const PQ_NODES = {
+  start: {
+    scene:{en:"📞 Your phone rings. Hot lead — Mr. Naser, referred by a colleague. He's looking for a unit in the New Capital. This is your shot.",eg:"📞 موبايلك يرن. ليد حلو — أ. ناصر، جاي بتوصية. بيدور على وحدة في العاصمة الإدارية. دي فرصتك."},
+    choices:[
+      {en:"Start with small talk to build rapport first",eg:"ابدأ بكلام خفيف لتبني ألفة أول",next:'qualify_warm',interest:+10,pts:15,c:true},
+      {en:"Jump straight into pitching your best project",eg:"اتكلم مباشرة عن أحسن مشروع عندك",next:'qualify_cold',interest:-10,pts:0,c:false},
+      {en:"Ask immediately for a budget figure",eg:"اسأل على الميزانية على طول",next:'qualify_budget_early',interest:-5,pts:5,c:false}
+    ]
+  },
+  qualify_warm: {
+    scene:{en:"Mr. Naser relaxes. He's been looking 6 months and is frustrated. You have his attention. Qualify him now.",eg:"أ. ناصر استرخى. بيدور من ٦ شهور وزهق. عنده انتباهك. كوّالفيه دلوقتي."},
+    choices:[
+      {en:"\"What's driving your search — investment or to live in it?\"",eg:"\"إيه اللي بيقودك — استثمار ولا سكن مع عيلتك؟\"",next:'present',interest:+15,pts:20,c:true},
+      {en:"\"How much exactly is your budget?\"",eg:"\"كام بالظبط ميزانيتك؟\"",next:'present_budget',interest:+0,pts:8,c:false},
+      {en:"\"Have you seen other projects before?\"",eg:"\"اتفرجت على مشاريع تانية قبل كده؟\"",next:'present',interest:+5,pts:10,c:false}
+    ]
+  },
+  qualify_cold: {
+    scene:{en:"Mr. Naser sounds put off. \"Wait — what exactly are you offering?\" You've lost ground. Recover fast.",eg:"أ. ناصر مش مبسوط. \"استنى — إيه بالظبط اللي بتعرضه؟\" خسرت شوية. تعافى."},
+    choices:[
+      {en:"Apologize and ask about his needs first",eg:"اعتذر واسأل عن احتياجاته قبل أي حاجة",next:'present',interest:+5,pts:10,c:true},
+      {en:"Continue pitching — \"It's the best in the capital!\"",eg:"كمّل البيتش — \"ده الأحسن في العاصمة!\"",next:'objection',interest:-15,pts:0,c:false}
+    ]
+  },
+  qualify_budget_early: {
+    scene:{en:"He pauses. \"Why do you need that first? Can't you show me options without a number?\" He's defensive.",eg:"وقف. \"ليه محتاجها الأول؟ مش تقدر توريني خيارات بدون رقم؟\" عنده دفاعية."},
+    choices:[
+      {en:"\"Of course! Tell me — investment or own use?\"",eg:"\"طبعاً! قولي — استثمار ولا استخدام شخصي؟\"",next:'present',interest:+5,pts:12,c:true},
+      {en:"Press again: \"I just need a rough budget range\"",eg:"اضغط تاني: \"محتاج بس رنج تقريبي\"",next:'objection',interest:-20,pts:0,c:false}
+    ]
+  },
+  present_budget: {
+    scene:{en:"He gives a range. You present 3 units by budget only. He listens politely but seems unmoved. You missed his real motivation.",eg:"أعطالك رنج. عرضت ٣ وحدات بناءً على الميزانية بس. بيسمعك بأدب بس مش مندفع. تجاهلت دوافعه الحقيقية."},
+    choices:[
+      {en:"\"Before we continue — investment or for you to live in?\"",eg:"\"قبل ما نكمل — استثمار ولا سكن شخصي؟\"",next:'objection',interest:+10,pts:15,c:true},
+      {en:"Continue detailing all the units anyway",eg:"كمّل تفاصيل الوحدات على أي حال",next:'objection',interest:-5,pts:0,c:false}
+    ]
+  },
+  present: {
+    scene:{en:"He's investment-focused, budget 3-5M EGP. You have: Studio (high ROI, low entry) vs Twin House (lifestyle, medium ROI). Which do you lead with?",eg:"هدفه استثمار، ميزانية ٣-٥م. عندك: استوديو (عائد عالي، سعر أقل) أو توين هاوس (لايف ستايل، عائد معتدل). بتبدأ بإيه؟"},
+    choices:[
+      {en:"Present the Studio — \"High rental yield, your money works from day one\"",eg:"اعرض الاستوديو — \"عائد إيجاري عالي، فلوسك تشتغل من اليوم الأول\"",next:'objection',interest:+20,pts:25,c:true},
+      {en:"Present the Twin House — \"Great family lifestyle with private garden\"",eg:"اعرض التوين هاوس — \"لايف ستايل عيلي رائع بجنينة خاصة\"",next:'objection',interest:-5,pts:5,c:false},
+      {en:"Present both equally without a clear recommendation",eg:"اعرض الاتنين بدون توصية واضحة",next:'objection',interest:+5,pts:10,c:false}
+    ]
+  },
+  objection: {
+    scene:{en:"\"The Studio is interesting but the price per sqm seems high vs other compounds I've seen.\"",eg:"\"الاستوديو مثير للاهتمام بس سعر المتر عالي مقارنة بكمباوندات تانية شوفتها.\""},
+    choices:[
+      {en:"\"Great point. Let me show you the 5-year ROI — this compound delivers 18% annually. The price is the entry, the return is the game.\"",eg:"\"نقطة ممتازة. خليني أوريلك العائد على ٥ سنين — الكمباوند ده بيوصل ١٨٪ سنويًا. السعر هو المدخل، العائد هو اللعبة.\"",next:'close',interest:+20,pts:30,c:true},
+      {en:"\"The other compounds don't have our facilities or track record.\"",eg:"\"الكمباوندات التانية ملهاش مرافقنا ولا سمعتنا.\"",next:'close',interest:-5,pts:5,c:false},
+      {en:"\"Let me try to get you a small discount.\"",eg:"\"هحاول أجبلك خصم صغير.\"",next:'close',interest:+5,pts:8,c:false}
+    ]
+  },
+  close: {
+    scene:{en:"Mr. Naser is intrigued. \"Okay, I like the numbers. What do I need to do to reserve it?\" This is THE moment.",eg:"أ. ناصر مهتم. \"تمام، يعجبني الأرقام. إيه اللي محتاج أعمله عشان أحجز؟\" دي اللحظة."},
+    choices:[
+      {en:"\"Just 1% token — 50K EGP — to lock this price today. I'll send the contract now. Shall I?\"",eg:"\"بس ١٪ حجز — ٥٠ ألف — تقفل السعر النهارده. هبعتلك العقد دلوقتي. تمام؟\"",next:'win',interest:+25,pts:40,c:true},
+      {en:"Explain all the paperwork in detail before asking for a decision",eg:"اشرح كل الأوراق بالتفصيل قبل ما تطلب قرار",next:'partial',interest:-10,pts:10,c:false},
+      {en:"\"Take your time, call me when you're ready.\"",eg:"\"خد وقتك، كلمني لما تبقى جاهز.\"",next:'lose',interest:-30,pts:0,c:false}
+    ]
+  },
+  win: { scene:{en:"🏆 Mr. Naser says YES. Deal closed! He transfers the token that evening. Your manager congratulates you. Perfect sales call.",eg:"🏆 أ. ناصر قال آه! صفقة مقفولة! حوّل المقدم المساء. مديرك بيبارك عليك. كول مثالي!"}, choices:[], ending:'win' },
+  partial: { scene:{en:"⭐ Mr. Naser says he'll 'think about it.' He never calls back. You got close but didn't close with confidence.",eg:"⭐ أ. ناصر قال هيفكر. وما رجعش يكلمك. اقتربت بس ما أغلقتش بثقة."}, choices:[], ending:'partial' },
+  lose: { scene:{en:"📉 Mr. Naser went with another broker who called him the next day and closed confidently. You missed it.",eg:"📉 أ. ناصر راح مع بروكر تاني اتصل بيه النهارده التالي وأغلق بثقة. فاتتك الصفقة."}, choices:[], ending:'lose' }
+};
+
+const PropertyQuest = ({ onBack, updateScore }) => {
+  const { tone } = useUI();
+  const lang = tone === 'eg' ? 'eg' : 'en';
+  const [nodeId, setNodeId] = useState('start');
+  const [interest, setInterest] = useState(50);
+  const [totalPts, setTotalPts] = useState(0);
+  const [gameOver, setGameOver] = useState(false);
+  const [ending, setEnding] = useState(null);
+
+  const node = PQ_NODES[nodeId];
+
+  const handleChoice = (choice) => {
+    const newInterest = Math.min(100, Math.max(0, interest + (choice.interest || 0)));
+    setInterest(newInterest);
+    setTotalPts(p => p + (choice.pts || 0));
+    updateScore(choice.pts || 0, choice.c);
+
+    if (newInterest <= 0) { setEnding('lost'); setGameOver(true); return; }
+
+    const next = PQ_NODES[choice.next];
+    if (next?.ending) { setEnding(next.ending); setGameOver(true); }
+    setNodeId(choice.next);
+  };
+
+  const reset = () => { setNodeId('start'); setInterest(50); setTotalPts(0); setGameOver(false); setEnding(null); };
+
+  const endings = {
+    win:    { emoji:'🏆', color:RM_THEME.green, title:{en:'Deal Closed!',eg:'صفقة مقفولة!'}, tip:{en:"You built rapport, qualified well, matched the right unit, and handled objections like a pro — that's how deals close!",eg:"بنيت ألفة، كوّالفيت صح، عارضت الأنسب، وردّيت على الاعتراض باحتراف — هكذا تتقفل الصفقات!"} },
+    partial:{ emoji:'⭐', color:RM_THEME.amber, title:{en:'So Close...',eg:'اقتربت...'}, tip:{en:"Your approach was solid but you didn't close with confidence. Practice assertive closing and A.B.C.",eg:"خطواتك كانت كويسة بس ما أغلقتش بثقة. تمرّن على الإغلاق الحازم وأ.ب.ج."} },
+    lose:   { emoji:'📉', color:'#f56565', title:{en:'Missed It',eg:'فاتت الصفقة'}, tip:{en:"Review rapport-building, client-need qualification, and closing technique.",eg:"راجع بناء الثقة، تحديد احتياج العميل، وأسلوب الإغلاق."} },
+    lost:   { emoji:'📵', color:'#f56565', title:{en:'Client Hung Up!',eg:'العميل قطع!'}, tip:{en:"The client lost interest — work on rapport and pacing before pressing.",eg:"العميل فقد الاهتمام — اشتغل على الألفة والتدرّج قبل الضغط."} }
+  };
+
+  if (gameOver) {
+    const ed = endings[ending] || endings.lose;
+    const curNode = PQ_NODES[nodeId];
+    return (
+      <div className="animate-fadeIn" style={{ maxWidth:520, margin:'0 auto', padding:'40px 20px', textAlign:'center' }}>
+        <div style={{ fontSize:72, marginBottom:16 }}>{ed.emoji}</div>
+        <h2 style={{ fontSize:28, marginBottom:8, color:ed.color }}>{lang==='eg'?ed.title.eg:ed.title.en}</h2>
+        {curNode&&<p style={{ color:RM_THEME.muted, fontSize:15, lineHeight:1.65, marginBottom:20, padding:'0 10px' }}>{lang==='eg'?curNode.scene.eg:curNode.scene.en}</p>}
+        <div style={{ fontSize:42, fontWeight:900, color:RM_THEME.amber, marginBottom:8 }}>{totalPts} pts</div>
+        <div style={{ padding:'14px 20px', borderRadius:16, marginBottom:24, background:'rgba(255,255,255,0.04)', border:`1px solid ${RM_THEME.border}` }}>
+          <div style={{ color:RM_THEME.muted, fontSize:13 }}>{lang==='eg'?`اهتمام العميل: ${interest}%`:`Client Interest: ${interest}%`}</div>
+          <div style={{ ...styles.progressBar, marginTop:8 }}><div style={{ ...styles.progressFill, width:`${interest}%`, background:ed.color }} /></div>
+        </div>
+        <p style={{ color:RM_THEME.muted, fontSize:14, marginBottom:28, lineHeight:1.6 }}>{lang==='eg'?ed.tip.eg:ed.tip.en}</p>
+        <div style={{ display:'flex', gap:12, justifyContent:'center', flexWrap:'wrap' }}>
+          <button onClick={reset} style={styles.primaryBtn}>{lang==='eg'?'العب تاني':'Play Again'}</button>
+          <button onClick={onBack} style={styles.secondaryBtn}>{lang==='eg'?'رجوع':'Back'}</button>
+        </div>
+      </div>
+    );
+  }
+
+  const interestColor = interest>=60?RM_THEME.green:interest>=35?RM_THEME.amber:'#f56565';
+  return (
+    <div className="animate-fadeIn" style={{ maxWidth:580, margin:'0 auto', padding:'0 16px 60px' }}>
+      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:18, gap:12, flexWrap:'wrap' }}>
+        <button onClick={onBack} style={{ ...styles.secondaryBtn, padding:'8px 14px', fontSize:13 }}>← {lang==='eg'?'رجوع':'Back'}</button>
+        <span style={{ fontWeight:800, fontSize:13, color:RM_THEME.muted }}>{lang==='eg'?`+${totalPts} نقطة`:`+${totalPts} pts`}</span>
+      </div>
+      <div style={{ padding:'14px 18px', borderRadius:18, marginBottom:20, border:`1px solid ${RM_THEME.border}`, background:'rgba(255,255,255,0.03)' }}>
+        <div style={{ display:'flex', justifyContent:'space-between', marginBottom:8, fontSize:13 }}>
+          <span style={{ color:RM_THEME.muted, fontWeight:700 }}>{lang==='eg'?'📊 اهتمام العميل':'📊 Client Interest'}</span>
+          <span style={{ fontWeight:900, color:interestColor }}>{interest}%</span>
+        </div>
+        <div style={{ ...styles.progressBar }}>
+          <div style={{ ...styles.progressFill, width:`${interest}%`, background:`linear-gradient(90deg, ${interestColor}, ${interestColor}88)`, transition:'width 0.6s ease' }} />
+        </div>
+        {interest<30&&<p style={{ color:'#f56565', fontSize:12, marginTop:6, fontWeight:700 }}>⚠️ {lang==='eg'?'أوشكت على خسارة العميل!':'Losing the client — choose wisely!'}</p>}
+      </div>
+      <div style={{ padding:'24px 22px', borderRadius:24, marginBottom:24, border:`1px solid ${RM_THEME.border}`, background:'linear-gradient(135deg, rgba(102,126,234,0.10), rgba(255,255,255,0.03))' }}>
+        <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:14 }}>
+          <span style={{ fontSize:24 }}>📞</span>
+          <span style={{ fontSize:12, fontWeight:800, color:RM_THEME.muted, textTransform:'uppercase', letterSpacing:1 }}>{lang==='eg'?'المشهد':'Scene'}</span>
+        </div>
+        <p style={{ fontSize:16, lineHeight:1.7 }}>{lang==='eg'?node.scene.eg:node.scene.en}</p>
+      </div>
+      <p style={{ color:RM_THEME.muted, fontSize:13, fontWeight:700, marginBottom:14 }}>{lang==='eg'?'🤔 إيه اللي بتعمله؟':'🤔 What do you do?'}</p>
+      <div style={{ display:'flex', flexDirection:'column', gap:12 }}>
+        {node.choices.map((choice, idx) => (
+          <button key={idx} onClick={()=>handleChoice(choice)}
+            style={{ padding:'18px 20px', borderRadius:18, border:`2px solid ${RM_THEME.border}`, background:'rgba(255,255,255,0.04)', cursor:'pointer', textAlign:'left', fontFamily:'inherit', color:RM_THEME.text, fontSize:14, lineHeight:1.55, transition:'all 0.2s ease', display:'flex', gap:12, alignItems:'flex-start' }}>
+            <span style={{ flexShrink:0, width:28, height:28, borderRadius:8, background:'rgba(102,126,234,0.15)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:13, fontWeight:900, color:RM_THEME.red }}>{idx+1}</span>
+            {lang==='eg'?choice.eg:choice.en}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 const CATEGORY_ACTIVITY_META = {
   knowledge: { mode: 'solo', difficulty: 1, duration: 4, tags: ['terminology', 'recall'] },
   visual: { mode: 'solo', difficulty: 2, duration: 5, tags: ['recognition', 'classification'] },
@@ -9071,7 +9529,8 @@ const CATEGORY_ACTIVITY_META = {
   professional: { mode: 'solo', difficulty: 2, duration: 4, tags: ['professionalism', 'habits'] },
   advanced: { mode: 'coaching', difficulty: 4, duration: 6, tags: ['simulation', 'application'] },
   classroom: { mode: 'classroom', difficulty: 3, duration: 8, tags: ['teams', 'facilitation'] },
-  fun: { mode: 'solo', difficulty: 2, duration: 5, tags: ['review', 'exam'] }
+  fun: { mode: 'solo', difficulty: 2, duration: 5, tags: ['review', 'exam'] },
+  gaming: { mode: 'solo', difficulty: 3, duration: 8, tags: ['game', 'simulation', 'fun'] }
 };
 
 const ACTIVITY_META = {
@@ -9117,7 +9576,10 @@ const ACTIVITY_META = {
   academysprint: { mode: 'solo', tags: ['mixed', 'speed'], difficulty: 3, duration: 5 },
   bingo: { mode: 'classroom', tags: ['review', 'teams'] },
   crossword: { tags: ['terminology', 'review'] },
-  exam: { tags: ['assessment', 'mastery'], difficulty: 5, duration: 10 }
+  exam: { tags: ['assessment', 'mastery'], difficulty: 5, duration: 10 },
+  clientmatch: { tags: ['qualification', 'matching', 'unit types'], difficulty: 2, duration: 7 },
+  objblitz: { tags: ['objections', 'abc', 'arcade'], difficulty: 3, duration: 6 },
+  propquest: { tags: ['sales process', 'call flow', 'story'], difficulty: 4, duration: 10 }
 };
 
 const getActivityMeta = (categoryId, activityId) => {
@@ -9492,6 +9954,17 @@ const App = () => {
         { id: 'bingo', name: s.activityNames.bingo, component: RealEstateBingo },
         { id: 'crossword', name: s.activityNames.crossword, component: SalesmanCrossword },
         { id: 'exam', name: s.activityNames.exam, component: FinalExam }
+      ]
+    },
+    {
+      id: 'gaming',
+      title: s.categories.gaming,
+      icon: '🕹️',
+      color: '#a78bfa',
+      activities: [
+        { id: 'clientmatch', name: s.activityNames.clientmatch, component: ClientMatch },
+        { id: 'objblitz', name: s.activityNames.objblitz, component: ObjectionBlitz },
+        { id: 'propquest', name: s.activityNames.propquest, component: PropertyQuest }
       ]
     }
   ];
@@ -10626,6 +11099,11 @@ const App = () => {
             onClick={() => { setMobileTab('home'); setCurrentActivity && setCurrentActivity(null); }}>
             <span className="xc-bnav-icon">🏠</span>
             <span className="xc-bnav-label">Home</span>
+          </button>
+          <button className={`xc-bnav-item${mobileTab==='games'?' active':''}`}
+            onClick={() => { setMobileTab('games'); setSelectedCategory('gaming'); setCurrentActivity(null); }}>
+            <span className="xc-bnav-icon">🕹️</span>
+            <span className="xc-bnav-label">{lang==='eg'?'ألعاب':'Games'}</span>
           </button>
           <button className={`xc-bnav-item${mobileTab==='board'?' active':''}`}
             onClick={() => { setMobileTab('board'); setShowLeaderboard(true); }}>

@@ -1790,14 +1790,14 @@
         left: 0;
         top: 0;
         height: 100%;
-        width: var(--sidebar-width, 420px); /* Fixed width for consistency */
-        max-width: min(92vw, var(--sidebar-width, 420px));
+        width: var(--sidebar-width, 390px); /* Fixed width for consistency */
+        max-width: min(92vw, var(--sidebar-width, 390px));
         background: var(--surface-glass);
         border-right: 1px solid var(--glass-border);
         z-index: 2000;
         display: flex;
         flex-direction: column;
-        padding: 14px 14px 14px 16px; /* Reduced padding to maximize content area */
+        padding: 8px 10px 8px 8px;
         box-shadow: var(--glass-shadow);
         transform: translateX(0);
         transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), background 0.3s, border-color 0.3s;
@@ -2104,7 +2104,7 @@
 
       .logo-area {
         margin-bottom: 0;
-        padding-bottom: 1.25rem;
+        padding-bottom: 0.5rem;
         border-bottom: 1px solid rgba(255, 255, 255, 0.05);
       }
 
@@ -3421,7 +3421,7 @@
       }
 
       .logo-area {
-        margin-bottom: 1.5rem;
+        margin-bottom: 0.5rem;
       }
 
       /* Comparison Drawer */

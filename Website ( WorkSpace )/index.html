@@ -118,7 +118,7 @@
         --glass-border: rgba(102, 126, 234, 0.2);
         --avaria-panel-bg: rgba(15, 15, 30, 0.6);
         --avaria-border: rgba(102, 126, 234, 0.15);
-        --sidebar-width: 420px;
+        --sidebar-width: 390px;
       }
       body { margin: 0; padding: 0; overflow: hidden; background-color: var(--avaria-bg); font-family: sans-serif; }
       #map {
@@ -144,7 +144,7 @@
         background: var(--surface-glass);
         border-right: 1px solid var(--glass-border);
         z-index: 2000;
-        padding: 14px 14px 14px 16px;
+        padding: 8px 10px 8px 8px;
         box-sizing: border-box;
         transform: translateX(0);
         transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -197,15 +197,17 @@
       @keyframes xcLogoBreath{0%,100%{filter:drop-shadow(0 0 8px rgba(102,126,234,0.4));transform:scale(1)}50%{filter:drop-shadow(0 0 22px rgba(240,147,251,0.7)) drop-shadow(0 0 40px rgba(102,126,234,0.3));transform:scale(1.06)}}
 
       /* ── Sidebar logo uses the same full footprint as the other Xcelias pages ── */
-      .sidebar-header { overflow: visible !important; padding-top: 18px !important; }
+      .sidebar-header { overflow: visible !important; padding-top: 6px !important; }
       .sidebar-scroll  { overflow-x: visible !important; }
       .logo-area {
         overflow: visible !important;
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
-        gap: 14px;
-        padding-left: 16px;
+        gap: 6px;
+        padding-left: 10px;
+        padding-bottom: 8px !important;
+        margin-bottom: 8px !important;
       }
       .logo-brand {
         flex: 0 0 auto;
@@ -227,12 +229,12 @@
       .logo-actions {
         display: flex;
         align-items: flex-start;
-        gap: 2px;
+        gap: 0px;
         flex-shrink: 0;
         margin-top: 2px;
       }
       .logo-actions button {
-        padding: 8px !important;
+        padding: 6px !important;
       }
       .logo-sub {
         font-family: 'Montserrat', sans-serif;
@@ -546,8 +548,8 @@
     }
 
     .sidebar {
-        width: 450px;
-        padding: 3rem;
+        width: var(--sidebar-width);
+        padding: 10px 12px 10px 10px;
     }
 
     .modal-content {
@@ -636,7 +638,7 @@
     }
     
     .sidebar {
-        padding-left: 5vw; /* Push sidebar content in slightly */
+        padding-left: 10px; /* Keep sidebar padding tight */
     }
     
     .legend-container {
@@ -751,7 +753,7 @@
         <div class="sidebar-header">
       <div class="logo-area">
         <div class="logo-brand">
-          <div class="logo-main" style="display:flex;align-items:center;gap:14px;">
+          <div class="logo-main" style="display:flex;align-items:center;gap:10px;">
             <div class="xc-logo-icon" style="background:linear-gradient(135deg,#667eea,#764ba2);">
               <div class="xc-logo-ring-spin"></div>
               <div class="xc-logo-ring-pulse"></div>

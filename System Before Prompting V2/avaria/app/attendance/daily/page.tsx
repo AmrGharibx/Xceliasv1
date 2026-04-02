@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import * as React from "react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -113,6 +113,10 @@ export default function DailyAttendancePage() {
   const [batches, setBatches] = React.useState<BatchOption[]>([]);
   const [trainees, setTrainees] = React.useState<TraineeOption[]>([]);
   const [refreshKey, setRefreshKey] = React.useState(0);
+  const [totalCount, setTotalCount] = React.useState(0);
+  const [page, setPage] = React.useState(1);
+  const [totalPages, setTotalPages] = React.useState(1);
+  const PAGE_SIZE = 30;
   const toast = useToast();
 
   React.useEffect(() => {
@@ -125,10 +129,16 @@ export default function DailyAttendancePage() {
     if (deferredSearch) params.set("search", deferredSearch);
     if (statusFilter) params.set("status", statusFilter);
     if (batchFilter) params.set("batchId", batchFilter);
+    params.set("page", String(page));
+    params.set("pageSize", String(PAGE_SIZE));
 
     fetch(`/api/attendance/daily?${params.toString()}`, { signal: abortController.signal })
       .then((response) => (response.ok ? response.json() : Promise.reject(new Error(`HTTP ${response.status}`))))
-      .then((payload: { records: AttendanceRecord[] }) => setRecords(payload.records || []))
+      .then((payload: { records: AttendanceRecord[]; total: number; totalPages: number }) => {
+        setRecords(payload.records || []);
+        setTotalCount(payload.total || 0);
+        setTotalPages(payload.totalPages || 1);
+      })
       .catch((fetchError: unknown) => {
         if ((fetchError as { name?: string }).name === "AbortError") return;
         setError(fetchError instanceof Error ? fetchError.message : "Failed to load attendance records");
@@ -136,9 +146,13 @@ export default function DailyAttendancePage() {
       .finally(() => setLoading(false));
 
     return () => abortController.abort();
-  }, [batchFilter, deferredSearch, refreshKey, selectedDate, statusFilter]);
+  }, [batchFilter, deferredSearch, page, refreshKey, selectedDate, statusFilter]);
 
   React.useEffect(() => {
+  // Reset page when filters change
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  React.useEffect(() => { setPage(1); }, [selectedDate, statusFilter, batchFilter, deferredSearch]);
+
     if (autoDateResolved) return;
 
     fetch("/api/attendance/daily?pageSize=1")
@@ -551,6 +565,32 @@ export default function DailyAttendancePage() {
                   </table>
                 </div>
               </Card>
+            )}
+
+            {/* Count + Pagination */}
+            {!loading && !error && totalCount > 0 && (
+              <div className="flex flex-col items-center gap-3 py-2">
+                <p className="text-sm text-[var(--text-muted)]">{totalCount} record{totalCount !== 1 ? "s" : ""} on {selectedDate}</p>
+                {totalPages > 1 && (
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setPage((p) => Math.max(1, p - 1))}
+                      disabled={page === 1 || loading}
+                      className="rounded-2xl border border-white/8 px-4 py-2 text-sm text-[var(--text-secondary)] transition hover:border-emerald-500/30 hover:text-emerald-300 disabled:opacity-30 disabled:cursor-not-allowed"
+                    >
+                      ← Prev
+                    </button>
+                    <span className="px-3 text-sm text-[var(--text-muted)]">{page} / {totalPages}</span>
+                    <button
+                      onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                      disabled={page === totalPages || loading}
+                      className="rounded-2xl border border-white/8 px-4 py-2 text-sm text-[var(--text-secondary)] transition hover:border-emerald-500/30 hover:text-emerald-300 disabled:opacity-30 disabled:cursor-not-allowed"
+                    >
+                      Next →
+                    </button>
+                  </div>
+                )}
+              </div>
             )}
           </div>
         </main>

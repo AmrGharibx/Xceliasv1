@@ -71,6 +71,10 @@ export default function TenDayAttendancePage() {
   const [error, setError] = React.useState<string | null>(null);
   const [records, setRecords] = React.useState<TenDayRecord[]>([]);
   const [refreshKey, setRefreshKey] = React.useState(0);
+  const [totalCount, setTotalCount] = React.useState(0);
+  const [page, setPage] = React.useState(1);
+  const [totalPages, setTotalPages] = React.useState(1);
+  const PAGE_SIZE = 25;
 
   /* â”€â”€â”€ CRUD state â”€â”€â”€ */
   const [showCreate, setShowCreate] = React.useState(false);
@@ -85,6 +89,10 @@ export default function TenDayAttendancePage() {
   const [batches, setBatches] = React.useState<BatchOption[]>([]);
   const [trainees, setTrainees] = React.useState<TraineeOption[]>([]);
 
+  // Reset to page 1 when filters change
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  React.useEffect(() => { setPage(1); }, [search, statusFilter, batchFilter]);
+
   /* â”€â”€â”€ fetch list â”€â”€â”€ */
   React.useEffect(() => {
     const ac = new AbortController();
@@ -94,10 +102,16 @@ export default function TenDayAttendancePage() {
     if (search.trim()) qs.set("search", search.trim());
     if (statusFilter) qs.set("status", statusFilter);
     if (batchFilter) qs.set("batchId", batchFilter);
+    qs.set("page", String(page));
+    qs.set("pageSize", String(PAGE_SIZE));
 
     fetch(`/api/attendance/10-day?${qs.toString()}`, { signal: ac.signal })
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
-      .then((data: { records: TenDayRecord[] }) => setRecords(data.records || []))
+      .then((data: { records: TenDayRecord[]; total: number; totalPages: number }) => {
+        setRecords(data.records || []);
+        setTotalCount(data.total || 0);
+        setTotalPages(data.totalPages || 1);
+      })
       .catch((e: unknown) => {
         if ((e as { name?: string }).name === "AbortError") return;
         setError(e instanceof Error ? e.message : "Failed to load 10-day attendance");
@@ -105,7 +119,7 @@ export default function TenDayAttendancePage() {
       .finally(() => setLoading(false));
 
     return () => ac.abort();
-  }, [search, statusFilter, batchFilter, refreshKey]);
+  }, [search, statusFilter, batchFilter, page, refreshKey]);
 
   /* â”€â”€â”€ fetch dropdowns â”€â”€â”€ */
   React.useEffect(() => {
@@ -306,6 +320,14 @@ export default function TenDayAttendancePage() {
               </select>
             </div>
 
+            {/* Count row */}
+            {!loading && totalCount > 0 && (
+              <div className="flex items-center justify-between text-sm text-[#57534e]">
+                <span>{totalCount} record{totalCount !== 1 ? "s" : ""} found</span>
+                {totalPages > 1 && <span>Page {page} of {totalPages}</span>}
+              </div>
+            )}
+
             {/* 10-Day Cards */}
             <div className="grid gap-6 md:grid-cols-2">
               {loading ? (
@@ -333,6 +355,27 @@ export default function TenDayAttendancePage() {
                 ))
               )}
             </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-center gap-2 pt-2">
+                <button
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={page === 1 || loading}
+                  className="rounded-xl border border-[#a8a29e]/8 px-4 py-2 text-sm text-[#78716c] transition hover:border-emerald-500/30 hover:text-emerald-300 disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  ← Prev
+                </button>
+                <span className="px-3 text-sm text-[#a8a29e]">{page} / {totalPages}</span>
+                <button
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={page === totalPages || loading}
+                  className="rounded-xl border border-[#a8a29e]/8 px-4 py-2 text-sm text-[#78716c] transition hover:border-emerald-500/30 hover:text-emerald-300 disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  Next →
+                </button>
+              </div>
+            )}
           </motion.div>
         </main>
       </div>

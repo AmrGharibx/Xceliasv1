@@ -341,8 +341,11 @@ export async function generateBatchReport(
   container.appendChild(pagesWrapper);
   document.body.appendChild(container);
 
-  // Wait for fonts/images to load
-  await new Promise(r => setTimeout(r, 500));
+  // Wait for fonts to load (or 3s max so we don't stall forever)
+  await Promise.race([
+    document.fonts.ready,
+    new Promise(r => setTimeout(r, 3000)),
+  ]);
 
   report('Loading PDF engine...', 10);
 

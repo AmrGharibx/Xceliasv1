@@ -9,7 +9,8 @@ import { requireAuth } from "@/lib/auth";
 
 // CSV parsing utility
 function parseCSV(csvText: string): Record<string, string>[] {
-  const lines = csvText.trim().split("\n");
+  // Normalize CRLF → LF before splitting
+  const lines = csvText.replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim().split("\n");
   if (lines.length < 2) return [];
   
   const headers = lines[0].split(",").map(h => h.trim().replace(/^"|"$/g, ""));

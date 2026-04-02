@@ -143,8 +143,7 @@ export default function BatchesPage() {
 
       setShowCreate(false);
       setEditBatch(null);
--      toast.success(isEdit ? "Batch updated" : "Batch created", `${form.batchName} is now synced.`);
-+      toast.success(isEdit ? "Batch updated" : "Batch created", `${batchLabel} is now synced.`);
+      toast.success(isEdit ? "Batch updated" : "Batch created", `${batchLabel} is now synced.`);
       fetchBatches();
     } catch (saveError) {
       console.error(saveError);
@@ -162,10 +161,9 @@ export default function BatchesPage() {
     try {
       const response = await fetch(`/api/batches/${deleteBatch.id}`, { method: "DELETE" });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
--      toast.success("Batch deleted", `${deleteBatch.batchName} has been removed.`);
-       setDeleteBatch(null);
-+      toast.success("Batch deleted", `${batchLabel} has been removed.`);
-       fetchBatches();
+      setDeleteBatch(null);
+      toast.success("Batch deleted", `${batchLabel} has been removed.`);
+      fetchBatches();
     } catch (deleteError) {
       console.error(deleteError);
       toast.error("Delete failed", "Avaria could not delete this batch.");

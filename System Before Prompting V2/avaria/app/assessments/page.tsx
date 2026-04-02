@@ -240,6 +240,49 @@ export default function AssessmentsPage() {
     }
   };
 
+  const [exporting, setExporting] = React.useState(false);
+  const handleExport = async () => {
+    setExporting(true);
+    try {
+      const qs = new URLSearchParams();
+      if (outcome) qs.set('outcome', outcome);
+      if (batchFilter) qs.set('batchId', batchFilter);
+      if (companyFilter) qs.set('company', companyFilter);
+      if (search.trim()) qs.set('search', search.trim());
+      qs.set('pageSize', '5000');
+      const res = await fetch(`/api/assessments?${qs.toString()}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data: { assessments: AssessmentData[] } = await res.json();
+      const rows = data.assessments;
+      const header = ['Trainee','Company','Batch','Title','Tech%','Soft%','Overall%','Outcome','Instructor Comment'];
+      const csv = [header, ...rows.map(a => [
+        a.trainee.traineeName,
+        a.company,
+        a.batch.batchName,
+        a.assessmentTitle,
+        a.techScorePercent,
+        a.softScorePercent,
+        a.overallPercent,
+        a.assessmentOutcome,
+        (a.instructorComment || '').replace(/"/g, '""'),
+      ].map(v => `"${v}"`))
+      ].map(r => r.join(',')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `assessments-${new Date().toISOString().slice(0,10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success('Export ready', `${rows.length} assessment${rows.length !== 1 ? 's' : ''} exported.`);
+    } catch (e) {
+      console.error(e);
+      toast.error('Export failed', 'Could not export assessments.');
+    } finally {
+      setExporting(false);
+    }
+  };
+
   return (
     <div className="flex min-h-screen bg-transparent">
       <Sidebar />
@@ -258,9 +301,9 @@ export default function AssessmentsPage() {
                 <p className="text-sm text-[#57534e]">Track trainee performance and assessment outcomes</p>
               </div>
               <div className="flex items-center gap-3">
-                <Button variant="secondary">
+                <Button variant="secondary" onClick={handleExport} disabled={exporting}>
                   <Download className="h-4 w-4" />
-                  Export
+                  {exporting ? 'Exporting…' : 'Export CSV'}
                 </Button>
                 <Button onClick={openCreate}>
                   <Plus className="h-4 w-4" />

@@ -199,6 +199,49 @@ export default function TenDayAttendancePage() {
     }
   };
 
+  const [exporting, setExporting] = React.useState(false);
+  const handleExport = async () => {
+    setExporting(true);
+    try {
+      const qs = new URLSearchParams();
+      if (statusFilter) qs.set('status', statusFilter);
+      if (batchFilter) qs.set('batchId', batchFilter);
+      if (search.trim()) qs.set('search', search.trim());
+      qs.set('pageSize', '5000');
+      const res = await fetch(`/api/attendance/10-day?${qs.toString()}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data: { records: TenDayRecord[] } = await res.json();
+      const rows = data.records;
+      const header = ['Trainee','Company','Batch','Period Start','Period End','Present','Absent','Late','Completion%','Status'];
+      const csv = [header, ...rows.map(r => [
+        r.trainee.traineeName,
+        r.trainee.company,
+        r.batch.batchName,
+        new Date(r.periodStart).toLocaleDateString(),
+        new Date(r.periodEnd).toLocaleDateString(),
+        r.presentCount ?? 0,
+        r.absentCount ?? 0,
+        r.lateCount ?? 0,
+        r.completionPercent ?? 0,
+        r.checklistStatus ?? '',
+      ].map(v => `"${String(v).replace(/"/g, '""')}"`))
+      ].map(r => r.join(',')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `10day-attendance-${new Date().toISOString().slice(0,10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success('Export ready', `${rows.length} record${rows.length !== 1 ? 's' : ''} exported.`);
+    } catch (e) {
+      console.error(e);
+      toast.error('Export failed', 'Could not export 10-day records.');
+    } finally {
+      setExporting(false);
+    }
+  };
+
   return (
     <div className="flex min-h-screen bg-transparent">
       <Sidebar />
@@ -218,9 +261,9 @@ export default function TenDayAttendancePage() {
                 <p className="text-sm text-[#57534e]">Track attendance completion over 10-day periods</p>
               </div>
               <div className="flex items-center gap-3">
-                <Button variant="secondary">
+                <Button variant="secondary" onClick={handleExport} disabled={exporting}>
                   <Download className="h-4 w-4" />
-                  Export
+                  {exporting ? 'Exporting…' : 'Export CSV'}
                 </Button>
                 <Button onClick={openCreate}>
                   <Plus className="h-4 w-4" />

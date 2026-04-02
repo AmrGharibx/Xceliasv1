@@ -53,7 +53,12 @@
         .then(function (cred) {
           return window.xcDB.ref('users/' + cred.user.uid).once('value').then(function (snap) {
             var profile = snap.val();
-            if (!profile) throw new Error('Account profile not found in database');
+            if (!profile) {
+              /* Auto-create missing DB profile from Firebase Auth user */
+              var isAdmin = u === 'admin';
+              profile = { username: u, displayName: isAdmin ? 'Admin' : u, role: isAdmin ? 'admin' : 'trainee', batchId: isAdmin ? 'admin' : 'default', createdAt: Date.now() };
+              window.xcDB.ref('users/' + cred.user.uid).set(profile).catch(function () {});
+            }
             var user = Object.assign({ uid: cred.user.uid }, profile);
             if (!_roleOk(user, requiredRoles)) {
               return window.xcAuth.signOut().then(function () {

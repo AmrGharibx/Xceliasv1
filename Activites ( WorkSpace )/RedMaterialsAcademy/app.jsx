@@ -11220,8 +11220,13 @@ const XC = {
       try {
         const cred = await window.xcAuth.signInWithEmailAndPassword(XC.fbEmail(u), password);
         const snap = await window.xcDB.ref(`users/${cred.user.uid}`).once('value');
-        const profile = snap.val();
-        if (!profile) throw new Error('Account profile not found');
+        let profile = snap.val();
+        if (!profile) {
+          /* Auto-create missing DB profile from Firebase Auth user */
+          const isAdmin = u === 'admin';
+          profile = { username: u, displayName: isAdmin ? 'Admin' : u, role: isAdmin ? 'admin' : 'trainee', batchId: isAdmin ? 'admin' : 'default', createdAt: Date.now() };
+          try { await window.xcDB.ref(`users/${cred.user.uid}`).set(profile); } catch {}
+        }
         const user = { uid: cred.user.uid, ...profile };
         xcWrite(XC_KEYS.currentUser, user);
         return user;

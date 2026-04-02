@@ -17,9 +17,9 @@ dist/
 .env.local
 .env.*.local
 
-# Firebase config (contains API key — keep out of version control)
-firebase-config.js
-**/firebase-config.js
+# Firebase service account (real secret — never commit)
+service-account.json
+**/service-account.json
 
 # Databases
 *.db

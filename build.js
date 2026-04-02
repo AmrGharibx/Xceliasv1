@@ -52,6 +52,7 @@ const portalDir = path.join(ROOT, 'excelias-portal');
 copyFile(path.join(portalDir, 'index.html'), path.join(DIST, 'index.html'));
 copyFile(path.join(portalDir, 'portal.css'), path.join(DIST, 'portal.css'));
 copyFile(path.join(portalDir, 'portal.js'), path.join(DIST, 'portal.js'));
+copyFile(path.join(portalDir, 'xcelias-auth.js'), path.join(DIST, 'xcelias-auth.js'));
 
 /* ════════ 2. Activities (Project 1) ════════ */
 console.log('[2/5] Activities...');
@@ -126,7 +127,8 @@ if (fs.existsSync(iconsSrc)) copyDir(iconsSrc, path.join(webDest, 'icons'));
 const webHtml = path.join(webDest, 'index.html');
 let wHtml = fs.readFileSync(webHtml, 'utf8');
 // Convert absolute /xxx → relative xxx (base tag handles resolution)
-wHtml = wHtml.replace(/(href|src)="\/(?!\/)/g, '$1="');
+// Exclude /xcelias-auth.js and /activities/ (auth scripts must stay absolute)
+wHtml = wHtml.replace(/(href|src)="\/(?!\/|xcelias-auth|activities\/)/g, '$1="');
 // Fix service worker registration absolute path
 wHtml = wHtml.replace(/register\('\/sw\.js'\)/g, "register('sw.js')");
 // Add <base> so all relative paths resolve to /website/

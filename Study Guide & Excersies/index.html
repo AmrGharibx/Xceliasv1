@@ -1,0 +1,2104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <meta name="theme-color" content="#0f0f1a"/>
+  <meta name="description" content="Xcelias Study Guide — Batch 31 Projects"/>
+  <title>Xcelias — Study Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+
+  <style>
+    /* ═══════════════════════════════════════════════
+       DESIGN TOKENS — matches Xcelias portal
+       ═══════════════════════════════════════════════ */
+    :root {
+      --bg:            #0f0f1a;
+      --surface:       rgba(15,15,30,0.78);
+      --surface-light: rgba(255,255,255,0.04);
+      --text:          #e8e8f0;
+      --text-muted:    #9898b8;
+      --text-dim:      #5a5a7a;
+      --accent:        #667eea;
+      --accent-mid:    #764ba2;
+      --accent-pink:   #f093fb;
+      --accent-green:  #50fa7b;
+      --accent-gold:   #ffd700;
+      --accent-orange: #ff9f43;
+      --border:        rgba(102,126,234,0.15);
+      --border-hover:  rgba(102,126,234,0.45);
+      --grad:          linear-gradient(135deg,#667eea 0%,#764ba2 50%,#f093fb 100%);
+      --blur:          blur(28px) saturate(180%);
+      --radius:        20px;
+      --radius-sm:     12px;
+      --font:          'Montserrat',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
+    html { font-size:16px; scroll-behavior:smooth; }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      background-image:
+        radial-gradient(ellipse at 15% 0%, rgba(102,126,234,0.1) 0%, transparent 55%),
+        radial-gradient(ellipse at 85% 100%, rgba(240,147,251,0.07) 0%, transparent 55%);
+    }
+    button { font-family: var(--font); cursor:pointer; border:none; outline:none; }
+    button:focus-visible { outline: 2px solid var(--accent); outline-offset:3px; }
+
+    /* ── scrollbar ── */
+    ::-webkit-scrollbar { width:6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(102,126,234,0.3); border-radius:99px; }
+
+    /* ═══════════════════════════════════════════════
+       AMBIENT ORBS
+       ═══════════════════════════════════════════════ */
+    .orb {
+      position:fixed; border-radius:50%;
+      filter:blur(100px); pointer-events:none; z-index:0;
+    }
+    .orb-a { width:500px; height:500px; top:-10%; left:-8%;
+      background:radial-gradient(circle,rgba(102,126,234,0.22) 0%,transparent 70%);
+      animation:orbA 20s ease-in-out infinite; }
+    .orb-b { width:400px; height:400px; bottom:-8%; right:-5%;
+      background:radial-gradient(circle,rgba(240,147,251,0.18) 0%,transparent 70%);
+      animation:orbB 24s ease-in-out infinite; }
+    .orb-c { width:300px; height:300px; top:45%; left:55%;
+      background:radial-gradient(circle,rgba(118,75,162,0.12) 0%,transparent 70%);
+      animation:orbA 18s ease-in-out infinite reverse; }
+    @keyframes orbA {
+      0%,100%{transform:translate(0,0) scale(1);opacity:.5}
+      33%{transform:translate(35px,-25px) scale(1.08);opacity:.7}
+      66%{transform:translate(-18px,40px) scale(.94);opacity:.4}
+    }
+    @keyframes orbB {
+      0%,100%{transform:translate(0,0) scale(1);opacity:.45}
+      50%{transform:translate(-40px,-30px) scale(1.1);opacity:.65}
+    }
+
+    /* ═══════════════════════════════════════════════
+       TOP BAR
+       ═══════════════════════════════════════════════ */
+    .topbar {
+      position:sticky; top:0; z-index:100;
+      backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+      background: rgba(15,15,26,0.88);
+      border-bottom: 1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+      padding: 14px 20px; gap:12px;
+    }
+    .topbar-logo {
+      display:flex; align-items:center; gap:12px;
+      text-decoration:none; color:inherit;
+    }
+    .topbar-logo-icon {
+      width:38px; height:38px;
+      background: var(--grad);
+      border-radius:10px;
+      display:flex; align-items:center; justify-content:center;
+      font-size:18px; font-weight:900; color:#fff;
+      box-shadow: 0 4px 16px rgba(102,126,234,0.4);
+      flex-shrink:0;
+    }
+    .topbar-logo-text { display:flex; flex-direction:column; line-height:1; }
+    .topbar-logo-main {
+      font-size:.9rem; font-weight:900; letter-spacing:.12em;
+      background: var(--grad);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    }
+    .topbar-logo-sub { font-size:.58rem; color:var(--text-dim); letter-spacing:.12em; text-transform:uppercase; margin-top:2px; }
+    .topbar-title {
+      flex:1; text-align:center;
+      font-size:.8rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase;
+      color:var(--text-muted);
+    }
+    @media(max-width:480px){ .topbar-title { display:none; } }
+    .topbar-right {
+      display:flex; align-items:center; gap:8px;
+    }
+    .topbar-user-chip {
+      display:flex; align-items:center; gap:7px;
+      padding:6px 12px; border-radius:99px;
+      background:rgba(102,126,234,0.12); border:1px solid rgba(102,126,234,0.2);
+      font-size:.72rem; font-weight:700; color:var(--text-muted);
+      cursor:pointer; transition:all .2s;
+    }
+    .topbar-user-chip:hover { background:rgba(102,126,234,0.2); color:var(--text); }
+    .topbar-batch-pill {
+      padding:5px 12px; border-radius:99px;
+      background:linear-gradient(135deg,rgba(102,126,234,0.2),rgba(240,147,251,0.15));
+      border:1px solid rgba(102,126,234,0.25);
+      font-size:.65rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase;
+      color:var(--accent); white-space:nowrap;
+    }
+
+    /* ═══════════════════════════════════════════════
+       MAIN LAYOUT
+       ═══════════════════════════════════════════════ */
+    #app {
+      position:relative; z-index:1;
+      min-height:calc(100vh - 68px);
+    }
+
+    /* ═══════════════════════════════════════════════
+       SCREENS (batch select / study screen)
+       ═══════════════════════════════════════════════ */
+    .screen { display:none; }
+    .screen.active { display:block; }
+
+    /* ═══════════════════════════════════════════════
+       BATCH SELECT SCREEN
+       ═══════════════════════════════════════════════ */
+    #screen-batches {
+      max-width:800px; margin:0 auto; padding:32px 20px 80px;
+    }
+    .batches-hero {
+      text-align:center; margin-bottom:36px;
+      animation:fadeUp .7s ease both;
+    }
+    .batches-hero-eyebrow {
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 16px; border-radius:99px;
+      background:rgba(102,126,234,0.12); border:1px solid rgba(102,126,234,0.2);
+      font-size:.65rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase;
+      color:var(--accent); margin-bottom:16px;
+    }
+    .batches-hero h1 {
+      font-size:clamp(1.8rem,6vw,3rem); font-weight:900; line-height:1.05;
+      background: var(--grad);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+      margin-bottom:10px;
+    }
+    .batches-hero p {
+      font-size:.88rem; color:var(--text-muted); line-height:1.6; max-width:420px; margin:0 auto;
+    }
+
+    /* Stats strip */
+    .batches-stats {
+      display:flex; justify-content:center; gap:0;
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:var(--radius); backdrop-filter:var(--blur);
+      padding:16px 24px; margin-bottom:36px;
+      animation:fadeUp .7s .1s ease both;
+      overflow:hidden;
+    }
+    .bs-stat { flex:1; text-align:center; padding:0 16px; }
+    .bs-stat + .bs-stat { border-left:1px solid var(--border); }
+    .bs-stat-n {
+      display:block; font-size:1.6rem; font-weight:900;
+      background: var(--grad);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+      line-height:1.1;
+    }
+    .bs-stat-l { display:block; font-size:.6rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--text-dim); margin-top:3px; }
+
+    /* Batch cards grid */
+    .batch-grid {
+      display:grid; gap:16px;
+      grid-template-columns:repeat(auto-fill, minmax(min(100%,320px), 1fr));
+    }
+    .batch-card {
+      position:relative; overflow:hidden;
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:var(--radius); cursor:pointer;
+      transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+      animation:fadeUp .6s ease both;
+    }
+    .batch-card:hover {
+      transform:translateY(-4px);
+      border-color:var(--border-hover);
+      box-shadow:0 12px 40px rgba(102,126,234,0.2);
+    }
+    .batch-card:active { transform:translateY(-1px); }
+    .batch-card-glow {
+      position:absolute; inset:0; opacity:0;
+      background:linear-gradient(135deg,rgba(102,126,234,0.08),rgba(240,147,251,0.06));
+      transition:opacity .25s;
+      pointer-events:none;
+    }
+    .batch-card:hover .batch-card-glow { opacity:1; }
+    .batch-card-inner { padding:24px; position:relative; z-index:1; }
+    .batch-card-head {
+      display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;
+    }
+    .batch-card-icon {
+      width:48px; height:48px; border-radius:14px;
+      display:flex; align-items:center; justify-content:center;
+      font-size:22px;
+      background:linear-gradient(135deg,rgba(102,126,234,0.2),rgba(240,147,251,0.15));
+      border:1px solid rgba(102,126,234,0.2);
+    }
+    .batch-card-badge {
+      padding:4px 10px; border-radius:99px;
+      background:rgba(80,250,123,0.12); border:1px solid rgba(80,250,123,0.25);
+      font-size:.6rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase;
+      color:var(--accent-green);
+    }
+    .batch-card-badge.locked {
+      background:rgba(152,152,184,0.1); border-color:rgba(152,152,184,0.2);
+      color:var(--text-dim);
+    }
+    .batch-card-title {
+      font-size:1.3rem; font-weight:800; margin-bottom:4px;
+    }
+    .batch-card-sub {
+      font-size:.75rem; color:var(--text-muted); margin-bottom:14px;
+    }
+    .batch-card-projects {
+      display:flex; flex-wrap:wrap; gap:6px; margin-bottom:16px;
+    }
+    .batch-project-pill {
+      padding:4px 10px; border-radius:99px;
+      background:rgba(102,126,234,0.1); border:1px solid rgba(102,126,234,0.18);
+      font-size:.62rem; font-weight:700; color:var(--text-muted);
+    }
+    .batch-card-cta {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:12px 16px; border-radius:var(--radius-sm);
+      background:linear-gradient(135deg,rgba(102,126,234,0.15),rgba(240,147,251,0.1));
+      border:1px solid rgba(102,126,234,0.2);
+      font-size:.75rem; font-weight:800; color:var(--accent);
+      transition:all .2s;
+    }
+    .batch-card:hover .batch-card-cta {
+      background:linear-gradient(135deg,rgba(102,126,234,0.25),rgba(240,147,251,0.18));
+    }
+    .batch-card-cta span:last-child { font-size:1.1rem; }
+
+    /* ═══════════════════════════════════════════════
+       STUDY SCREEN
+       ═══════════════════════════════════════════════ */
+    #screen-study {
+      display:flex; flex-direction:column; min-height:calc(100vh - 68px);
+    }
+
+    /* Progress nav at top of study screen */
+    .study-progress-bar-wrap {
+      padding:0 16px 0;
+      background:rgba(15,15,26,0.6);
+      border-bottom:1px solid var(--border);
+      position:sticky; top:68px; z-index:50;
+      backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur);
+    }
+    .study-tabs {
+      display:flex; gap:0; overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch;
+      padding:0; max-width:900px; margin:0 auto;
+    }
+    .study-tabs::-webkit-scrollbar { display:none; }
+    .study-tab {
+      flex-shrink:0; padding:14px 16px;
+      font-size:.67rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase;
+      color:var(--text-dim); background:none; border:none; border-bottom:2px solid transparent;
+      cursor:pointer; transition:all .2s; white-space:nowrap;
+    }
+    .study-tab:hover { color:var(--text-muted); }
+    .study-tab.active {
+      color:var(--accent);
+      border-bottom-color:var(--accent);
+    }
+    .study-tab.done { color:var(--accent-green); }
+    .study-tab.done::before { content:'✓ '; }
+
+    /* Study content panels */
+    .study-content {
+      flex:1; padding:24px 20px 80px;
+      max-width:900px; margin:0 auto; width:100%;
+    }
+    .study-panel { display:none; }
+    .study-panel.active {
+      display:block;
+      animation:fadeUp .4s ease both;
+    }
+
+    /* ─ Panel header ─ */
+    .panel-header {
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:var(--radius); padding:24px; margin-bottom:20px;
+      backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur);
+    }
+    .panel-header-row {
+      display:flex; align-items:center; gap:16px; margin-bottom:14px;
+    }
+    .panel-dev-icon {
+      width:56px; height:56px; flex-shrink:0; border-radius:16px;
+      display:flex; align-items:center; justify-content:center; font-size:28px;
+      border:1px solid rgba(102,126,234,0.2);
+    }
+    .panel-dev-info { flex:1; min-width:0; }
+    .panel-dev-name {
+      font-size:1.2rem; font-weight:900;
+      background: var(--grad);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+      margin-bottom:2px;
+    }
+    .panel-dev-since { font-size:.7rem; color:var(--text-dim); font-weight:600; }
+    .panel-dev-owner { font-size:.75rem; color:var(--text-muted); }
+    .panel-dev-history {
+      font-size:.78rem; color:var(--text-muted); line-height:1.6;
+      padding:14px; border-radius:var(--radius-sm);
+      background:rgba(102,126,234,0.06); border:1px solid rgba(102,126,234,0.1);
+      margin-top:10px;
+    }
+    .panel-dev-history strong { color:var(--accent); }
+
+    /* ─ Project specs card ─ */
+    .project-card-sg {
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:var(--radius); overflow:hidden; margin-bottom:20px;
+      backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur);
+    }
+    .project-card-sg-header {
+      padding:20px 24px 16px;
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+    }
+    .project-card-sg-name {
+      font-size:1.1rem; font-weight:900;
+      display:flex; align-items:center; gap:10px;
+    }
+    .project-card-sg-name .proj-emoji { font-size:1.3rem; }
+    .area-badge {
+      padding:5px 12px; border-radius:99px;
+      background:rgba(255,215,0,0.1); border:1px solid rgba(255,215,0,0.2);
+      font-size:.63rem; font-weight:800; color:var(--accent-gold);
+      letter-spacing:.06em;
+    }
+    .project-card-sg-body { padding:20px 24px; }
+
+    /* Unit type grid */
+    .units-grid {
+      display:grid; gap:10px;
+      grid-template-columns:repeat(auto-fill,minmax(min(100%,200px),1fr));
+      margin-bottom:18px;
+    }
+    .unit-pill {
+      padding:14px 16px; border-radius:var(--radius-sm);
+      background:rgba(255,255,255,0.03); border:1px solid rgba(102,126,234,0.12);
+      transition:all .2s; cursor:default;
+    }
+    .unit-pill:hover {
+      background:rgba(102,126,234,0.08); border-color:rgba(102,126,234,0.25);
+    }
+    .unit-pill-type {
+      font-size:.68rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase;
+      color:var(--accent); margin-bottom:5px;
+    }
+    .unit-pill-size { font-size:.9rem; font-weight:700; color:var(--text); }
+    .unit-pill-price {
+      font-size:.75rem; font-weight:700;
+      background:linear-gradient(135deg,var(--accent-green),var(--accent));
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+      margin-top:2px;
+    }
+
+    /* Info row */
+    .info-row {
+      display:grid; gap:10px;
+      grid-template-columns:repeat(auto-fill,minmax(min(100%,160px),1fr));
+      margin-bottom:16px;
+    }
+    .info-tile {
+      padding:14px; border-radius:var(--radius-sm);
+      background:rgba(255,255,255,0.03); border:1px solid rgba(102,126,234,0.1);
+      text-align:center;
+    }
+    .info-tile-icon { font-size:1.3rem; margin-bottom:6px; }
+    .info-tile-val {
+      font-size:.85rem; font-weight:800; color:var(--text);
+      margin-bottom:3px;
+    }
+    .info-tile-key {
+      font-size:.6rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase;
+      color:var(--text-dim);
+    }
+
+    /* ─ Quick-Ref Flash Cards ─ */
+    .section-heading {
+      font-size:.65rem; font-weight:800; letter-spacing:.15em; text-transform:uppercase;
+      color:var(--text-dim); margin-bottom:12px; display:flex; align-items:center; gap:8px;
+    }
+    .section-heading::after {
+      content:''; flex:1; height:1px; background:var(--border);
+    }
+
+    .flash-strip {
+      display:flex; gap:10px; overflow-x:auto; padding-bottom:6px;
+      scrollbar-width:none; -webkit-overflow-scrolling:touch;
+      margin-bottom:20px;
+    }
+    .flash-strip::-webkit-scrollbar { display:none; }
+    .flash-card {
+      flex-shrink:0; min-width:140px; padding:16px 14px; border-radius:var(--radius-sm);
+      background:var(--surface); border:1px solid var(--border);
+      cursor:pointer; user-select:none;
+      perspective:600px; position:relative;
+    }
+    .flash-card-face {
+      transition:opacity .25s; text-align:center;
+    }
+    .flash-card-face.back { display:none; }
+    .flash-card.flipped .front { display:none; }
+    .flash-card.flipped .back { display:block; }
+    .flash-q {
+      font-size:.65rem; font-weight:700; color:var(--text-dim); letter-spacing:.08em; text-transform:uppercase;
+      margin-bottom:8px;
+    }
+    .flash-a {
+      font-size:.9rem; font-weight:800; color:var(--text);
+      background: var(--grad);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    }
+    .flash-hint {
+      font-size:.55rem; color:var(--text-dim); margin-top:8px; font-style:italic;
+    }
+
+    /* ─ Quiz Engine ─ */
+    .quiz-wrap {
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:var(--radius); overflow:hidden; margin-bottom:20px;
+      backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur);
+    }
+    .quiz-header {
+      padding:16px 20px; border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    .quiz-header-title {
+      font-size:.78rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--accent);
+    }
+    .quiz-progress-text {
+      font-size:.68rem; font-weight:700; color:var(--text-muted);
+    }
+    .quiz-progress-bar {
+      height:3px; background:rgba(102,126,234,0.1);
+      transition:all .4s ease;
+    }
+    .quiz-progress-fill {
+      height:100%;
+      background: var(--grad);
+      border-radius:99px; transition:width .5s cubic-bezier(.4,0,.2,1);
+    }
+    .quiz-body { padding:24px 20px; }
+    .quiz-q-num {
+      font-size:.62rem; font-weight:700; color:var(--text-dim); letter-spacing:.1em; text-transform:uppercase;
+      margin-bottom:8px;
+    }
+    .quiz-question {
+      font-size:1rem; font-weight:700; line-height:1.5; color:var(--text);
+      margin-bottom:20px;
+    }
+    .quiz-options { display:flex; flex-direction:column; gap:10px; }
+    .quiz-option {
+      padding:14px 18px; border-radius:var(--radius-sm);
+      border:1px solid rgba(102,126,234,0.2);
+      background:rgba(255,255,255,0.03); color:var(--text);
+      font-size:.85rem; font-weight:600;
+      cursor:pointer; transition:all .2s; text-align:left;
+    }
+    .quiz-option:hover:not(:disabled) {
+      border-color:var(--accent); background:rgba(102,126,234,0.1);
+    }
+    .quiz-option.correct {
+      border-color:var(--accent-green); background:rgba(80,250,123,0.1);
+      color:var(--accent-green);
+    }
+    .quiz-option.wrong {
+      border-color:#f87171; background:rgba(248,113,113,0.1);
+      color:#f87171;
+    }
+    .quiz-option:disabled { cursor:default; }
+    .quiz-feedback {
+      margin-top:16px; padding:14px; border-radius:var(--radius-sm);
+      font-size:.82rem; font-weight:600; line-height:1.5;
+      display:none;
+    }
+    .quiz-feedback.ok {
+      background:rgba(80,250,123,0.1); border:1px solid rgba(80,250,123,0.25); color:var(--accent-green);
+      display:block;
+    }
+    .quiz-feedback.bad {
+      background:rgba(248,113,113,0.1); border:1px solid rgba(248,113,113,0.25); color:#f87171;
+      display:block;
+    }
+    .quiz-nav {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:16px 20px; border-top:1px solid var(--border);
+    }
+    .btn-quiz-nav {
+      padding:10px 20px; border-radius:var(--radius-sm);
+      background:rgba(102,126,234,0.12); border:1px solid rgba(102,126,234,0.25);
+      color:var(--accent); font-size:.8rem; font-weight:700;
+      cursor:pointer; transition:all .2s;
+    }
+    .btn-quiz-nav:hover { background:rgba(102,126,234,0.22); }
+    .btn-quiz-nav:disabled { opacity:.35; cursor:default; }
+    .btn-quiz-primary {
+      background:var(--grad); color:#fff; border:none;
+      padding:10px 24px; border-radius:var(--radius-sm);
+      font-size:.8rem; font-weight:800; letter-spacing:.06em;
+      cursor:pointer; transition:all .2s;
+      box-shadow:0 4px 16px rgba(102,126,234,0.3);
+    }
+    .btn-quiz-primary:hover { box-shadow:0 6px 24px rgba(102,126,234,0.5); transform:translateY(-1px); }
+
+    /* ─ Results / Score ─ */
+    .score-modal {
+      display:none; position:fixed; inset:0; z-index:200;
+      align-items:center; justify-content:center;
+      background:rgba(15,15,26,0.9); backdrop-filter:blur(10px); padding:20px;
+    }
+    .score-modal.active { display:flex; }
+    .score-card {
+      background:var(--surface); border:1px solid var(--border-hover);
+      border-radius:24px; padding:36px 28px; max-width:420px; width:100%;
+      text-align:center;
+      animation:zoomIn .4s cubic-bezier(.175,.885,.32,1.275) both;
+    }
+    @keyframes zoomIn {
+      from{opacity:0;transform:scale(.85)} to{opacity:1;transform:scale(1)}
+    }
+    .score-emoji { font-size:3rem; margin-bottom:12px; display:block; }
+    .score-title {
+      font-size:1.5rem; font-weight:900; margin-bottom:6px;
+      background: var(--grad);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    }
+    .score-subtitle { font-size:.85rem; color:var(--text-muted); margin-bottom:24px; }
+    .score-ring-wrap { display:flex; justify-content:center; margin-bottom:22px; }
+    .score-ring { position:relative; width:110px; height:110px; }
+    .score-ring svg { width:110px; height:110px; transform:rotate(-90deg); }
+    .score-ring-bg { fill:none; stroke:rgba(102,126,234,0.15); stroke-width:8; }
+    .score-ring-arc {
+      fill:none; stroke:url(#scoreGrad); stroke-width:8;
+      stroke-linecap:round;
+      stroke-dasharray: 295;
+      stroke-dashoffset: 295;
+      transition: stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1);
+    }
+    .score-ring-num {
+      position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+      flex-direction:column;
+    }
+    .score-ring-pct {
+      font-size:1.6rem; font-weight:900; line-height:1;
+      background: var(--grad);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    }
+    .score-ring-label { font-size:.55rem; color:var(--text-dim); font-weight:700; letter-spacing:.1em; text-transform:uppercase; margin-top:2px; }
+    .score-breakdown {
+      display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:24px;
+    }
+    .score-bd-tile {
+      padding:12px; border-radius:var(--radius-sm); background:rgba(255,255,255,0.03); border:1px solid var(--border);
+    }
+    .score-bd-val { font-size:1.3rem; font-weight:900; margin-bottom:2px; }
+    .score-bd-key { font-size:.6rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--text-dim); }
+    .score-bd-tile.ok .score-bd-val { color:var(--accent-green); }
+    .score-bd-tile.bad .score-bd-val { color:#f87171; }
+    .score-actions { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+    .btn-score-retry {
+      padding:12px 24px; border-radius:var(--radius-sm);
+      background:var(--grad); color:#fff; font-size:.82rem; font-weight:800;
+      border:none; cursor:pointer; transition:all .2s;
+      box-shadow:0 4px 16px rgba(102,126,234,0.35);
+    }
+    .btn-score-retry:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(102,126,234,0.5); }
+    .btn-score-study {
+      padding:12px 24px; border-radius:var(--radius-sm);
+      background:rgba(102,126,234,0.12); border:1px solid rgba(102,126,234,0.25);
+      color:var(--accent); font-size:.82rem; font-weight:800;
+      cursor:pointer; transition:all .2s;
+    }
+    .btn-score-study:hover { background:rgba(102,126,234,0.22); }
+
+    /* ─ Memory Match Mini-Game ─ */
+    .match-grid {
+      display:grid; gap:8px;
+      grid-template-columns:repeat(4,1fr);
+      margin:16px 0;
+    }
+    @media(max-width:460px){ .match-grid { grid-template-columns:repeat(3,1fr); } }
+    .match-card {
+      aspect-ratio:1; border-radius:var(--radius-sm);
+      background:rgba(102,126,234,0.1); border:1px solid rgba(102,126,234,0.2);
+      display:flex; align-items:center; justify-content:center;
+      font-size:.62rem; font-weight:700; color:var(--text-muted);
+      cursor:pointer; padding:6px; text-align:center; line-height:1.3;
+      transition:all .2s; position:relative;
+    }
+    .match-card:hover:not(.revealed):not(.matched) {
+      border-color:var(--accent); background:rgba(102,126,234,0.18);
+    }
+    .match-card.face-down::before {
+      content:'?';
+      font-size:1.2rem; color:var(--accent); opacity:.7;
+    }
+    .match-card.face-down span { display:none; }
+    .match-card.matched {
+      background:rgba(80,250,123,0.1); border-color:rgba(80,250,123,0.35);
+      color:var(--accent-green); cursor:default;
+    }
+    .match-card.selected { border-color:var(--accent-pink); background:rgba(240,147,251,0.12); }
+
+    /* ─ Fill-in-the-blank ─ */
+    .blank-question {
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:var(--radius); padding:24px; margin-bottom:16px;
+      backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur);
+    }
+    .blank-prompt {
+      font-size:.95rem; font-weight:700; line-height:1.7; color:var(--text);
+      margin-bottom:16px;
+    }
+    .blank-input {
+      width:100%; padding:12px 16px; border-radius:var(--radius-sm);
+      background:rgba(255,255,255,0.05); border:1px solid rgba(102,126,234,0.25);
+      color:var(--text); font-size:.9rem; font-family:var(--font); font-weight:600;
+      transition:border-color .2s, box-shadow .2s;
+    }
+    .blank-input:focus { border-color:rgba(102,126,234,0.5); box-shadow:0 0 0 3px rgba(102,126,234,0.12); outline:none; }
+    .blank-check-btn {
+      margin-top:12px; padding:10px 20px; border-radius:var(--radius-sm);
+      background:var(--grad); color:#fff; font-size:.8rem; font-weight:800;
+      border:none; cursor:pointer; transition:all .2s;
+      box-shadow:0 4px 14px rgba(102,126,234,0.3);
+    }
+    .blank-check-btn:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(102,126,234,0.45); }
+    .blank-result {
+      margin-top:10px; padding:10px 14px; border-radius:var(--radius-sm);
+      font-size:.8rem; font-weight:700; display:none;
+    }
+    .blank-result.ok { background:rgba(80,250,123,0.1); border:1px solid rgba(80,250,123,0.25); color:var(--accent-green); display:block; }
+    .blank-result.bad { background:rgba(248,113,113,0.1); border:1px solid rgba(248,113,113,0.25); color:#f87171; display:block; }
+
+    /* ─ Challenge / speed round ─ */
+    .challenge-header {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:16px 20px; border-bottom:1px solid var(--border);
+    }
+    .challenge-timer {
+      font-size:1.4rem; font-weight:900;
+      background: var(--grad);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    }
+    .challenge-streak {
+      font-size:.75rem; font-weight:800; color:var(--accent-orange);
+    }
+
+    /* ─ Leaderboard strip (local) ─ */
+    .lb-row {
+      display:flex; align-items:center; gap:12px; padding:12px 16px;
+      border-radius:var(--radius-sm);
+      background:rgba(255,255,255,0.02); border:1px solid var(--border);
+      margin-bottom:8px; transition:border-color .2s;
+    }
+    .lb-row:hover { border-color:rgba(102,126,234,0.2); }
+    .lb-rank {
+      font-size:.75rem; font-weight:900; width:24px; text-align:center;
+      color:var(--text-dim);
+    }
+    .lb-rank.gold { color:var(--accent-gold); }
+    .lb-rank.silver { color:#c0c0c0; }
+    .lb-rank.bronze { color:#cd7f32; }
+    .lb-name { flex:1; font-size:.82rem; font-weight:700; color:var(--text); }
+    .lb-score {
+      font-size:.82rem; font-weight:900;
+      background: var(--grad);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    }
+
+    /* ─ Bottom Tab Nav (mobile) ─ */
+    .bottom-nav {
+      display:none;
+      position:fixed; bottom:0; left:0; right:0; z-index:80;
+      background:rgba(15,15,26,0.95); backdrop-filter:var(--blur);
+      border-top:1px solid var(--border);
+      padding:8px 0 max(8px, env(safe-area-inset-bottom));
+      gap:0;
+    }
+    @media(max-width:640px){ .bottom-nav { display:flex; } }
+    .bn-tab {
+      flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;
+      padding:6px 4px;
+      font-size:.56rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+      color:var(--text-dim); background:none; border:none; cursor:pointer;
+      transition:color .2s;
+    }
+    .bn-tab.active { color:var(--accent); }
+    .bn-tab-icon { font-size:1.2rem; }
+
+    /* ─ Animations ─ */
+    @keyframes fadeUp {
+      from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:none}
+    }
+    @keyframes pop {
+      0%{transform:scale(1)} 50%{transform:scale(1.15)} 100%{transform:scale(1)}
+    }
+    .pop { animation:pop .3s ease; }
+
+    /* ─ Completion Badge ─ */
+    .completion-banner {
+      padding:20px; border-radius:var(--radius); text-align:center;
+      background:linear-gradient(135deg,rgba(80,250,123,0.08),rgba(102,126,234,0.08));
+      border:1px solid rgba(80,250,123,0.2); margin-bottom:20px;
+    }
+    .completion-banner .cb-emoji { font-size:2rem; }
+    .completion-banner .cb-title { font-size:1rem; font-weight:800; color:var(--accent-green); }
+    .completion-banner .cb-sub { font-size:.75rem; color:var(--text-muted); margin-top:4px; }
+
+    /* ─ Section tabs ─ */
+    .section-tabs {
+      display:flex; gap:8px; flex-wrap:wrap; margin-bottom:18px;
+    }
+    .section-tab-btn {
+      padding:8px 16px; border-radius:99px;
+      background:rgba(255,255,255,0.04); border:1px solid var(--border);
+      font-size:.72rem; font-weight:700; color:var(--text-muted);
+      cursor:pointer; transition:all .2s;
+    }
+    .section-tab-btn:hover { border-color:rgba(102,126,234,0.3); color:var(--text); }
+    .section-tab-btn.active {
+      background:rgba(102,126,234,0.15); border-color:rgba(102,126,234,0.4); color:var(--accent);
+    }
+
+    /* ─ Price comparison table ─ */
+    .price-table { width:100%; border-collapse:collapse; margin-bottom:16px; }
+    .price-table th, .price-table td {
+      padding:10px 14px; text-align:left; border-bottom:1px solid var(--border);
+      font-size:.78rem;
+    }
+    .price-table th {
+      font-size:.62rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase;
+      color:var(--text-dim); background:rgba(102,126,234,0.05);
+    }
+    .price-table td { color:var(--text); font-weight:600; }
+    .price-table tr:last-child td { border-bottom:none; }
+    .price-table td.price-cell {
+      font-weight:800;
+      background:linear-gradient(135deg,var(--accent-green),var(--accent));
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    }
+    .price-table-wrap {
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:var(--radius); overflow:hidden;
+      backdrop-filter:var(--blur); margin-bottom:20px;
+      overflow-x:auto;
+    }
+
+    /* ─ Back to batches btn ─ */
+    .back-to-batches {
+      display:inline-flex; align-items:center; gap:8px;
+      padding:10px 18px; border-radius:99px;
+      background:rgba(102,126,234,0.1); border:1px solid rgba(102,126,234,0.2);
+      color:var(--accent); font-size:.75rem; font-weight:800;
+      cursor:pointer; transition:all .2s; margin-bottom:16px;
+    }
+    .back-to-batches:hover { background:rgba(102,126,234,0.2); }
+
+    /* ─ Responsive tweaks ─ */
+    @media(max-width:640px){
+      .info-row { grid-template-columns:repeat(2,1fr); }
+      .units-grid { grid-template-columns:repeat(2,1fr); }
+      #screen-study { padding-bottom:70px; }
+      .study-content { padding-bottom:100px; }
+    }
+    @media print { .topbar,.bottom-nav,.orb,.back-to-batches { display:none !important; } }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient orbs -->
+  <div class="orb orb-a"></div>
+  <div class="orb orb-b"></div>
+  <div class="orb orb-c"></div>
+
+  <!-- ═══ TOP BAR ═══ -->
+  <nav class="topbar" role="navigation" aria-label="Top navigation">
+    <a class="topbar-logo" href="/" aria-label="Xcelias home">
+      <div class="topbar-logo-icon">X</div>
+      <div class="topbar-logo-text">
+        <span class="topbar-logo-main">Xcelias</span>
+        <span class="topbar-logo-sub">Study Guide</span>
+      </div>
+    </a>
+    <div class="topbar-title" id="topbar-module-title">Batch Library</div>
+    <div class="topbar-right">
+      <div class="topbar-batch-pill" id="active-batch-pill" style="display:none"></div>
+      <div class="topbar-user-chip" id="user-chip" onclick="handleSignOut()">
+        <span>👤</span><span id="user-chip-name">...</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ═══ APP ═══ -->
+  <main id="app" role="main">
+
+    <!-- ── SCREEN 1: Batch Selection ── -->
+    <section id="screen-batches" class="screen">
+      <div class="batches-hero">
+        <div class="batches-hero-eyebrow">🎓 Real Estate Training</div>
+        <h1>Study Guide</h1>
+        <p>Master every project, developer, and payment plan through structured study and interactive exercises.</p>
+      </div>
+      <div class="batches-stats" id="overall-stats">
+        <div class="bs-stat"><span class="bs-stat-n" id="stat-batches">1</span><span class="bs-stat-l">Batches</span></div>
+        <div class="bs-stat"><span class="bs-stat-n" id="stat-projects">5</span><span class="bs-stat-l">Projects</span></div>
+        <div class="bs-stat"><span class="bs-stat-n" id="stat-devs">5</span><span class="bs-stat-l">Developers</span></div>
+        <div class="bs-stat"><span class="bs-stat-n" id="stat-mastered">0</span><span class="bs-stat-l">Mastered</span></div>
+      </div>
+      <div class="batch-grid" id="batch-grid"></div>
+    </section>
+
+    <!-- ── SCREEN 2: Study Screen ── -->
+    <section id="screen-study" class="screen">
+      <!-- Study nav tabs -->
+      <div class="study-progress-bar-wrap" role="navigation" aria-label="Study sections">
+        <div class="study-tabs" id="study-tabs" role="tablist"></div>
+        <div class="quiz-progress-bar"><div class="quiz-progress-fill" id="progress-fill" style="width:0%"></div></div>
+      </div>
+
+      <!-- Content area -->
+      <div class="study-content" id="study-content-area" role="tabpanel"></div>
+    </section>
+
+  </main>
+
+  <!-- ── BOTTOM NAV (mobile only) ── -->
+  <nav class="bottom-nav" id="bottom-nav" aria-label="Mobile navigation">
+    <button class="bn-tab active" id="bn-study" onclick="switchSection('study')" aria-label="Study">
+      <span class="bn-tab-icon">📖</span>Study
+    </button>
+    <button class="bn-tab" id="bn-flash" onclick="switchSection('flash')" aria-label="Flash Cards">
+      <span class="bn-tab-icon">⚡</span>Flash
+    </button>
+    <button class="bn-tab" id="bn-quiz" onclick="switchSection('quiz')" aria-label="Quiz">
+      <span class="bn-tab-icon">🧠</span>Quiz
+    </button>
+    <button class="bn-tab" id="bn-match" onclick="switchSection('match')" aria-label="Match">
+      <span class="bn-tab-icon">🎯</span>Match
+    </button>
+    <button class="bn-tab" id="bn-blank" onclick="switchSection('blank')" aria-label="Fill Blanks">
+      <span class="bn-tab-icon">✏️</span>Fill
+    </button>
+  </nav>
+
+  <!-- ── SCORE MODAL ── -->
+  <div class="score-modal" id="score-modal" role="dialog" aria-modal="true" aria-label="Quiz Results">
+    <div class="score-card">
+      <span class="score-emoji" id="score-emoji">🏆</span>
+      <div class="score-title" id="score-title">Well done!</div>
+      <div class="score-subtitle" id="score-subtitle">You've completed the quiz</div>
+      <div class="score-ring-wrap">
+        <div class="score-ring">
+          <svg viewBox="0 0 110 110" aria-hidden="true">
+            <defs>
+              <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#667eea"/>
+                <stop offset="100%" stop-color="#f093fb"/>
+              </linearGradient>
+            </defs>
+            <circle class="score-ring-bg" cx="55" cy="55" r="47"/>
+            <circle class="score-ring-arc" id="score-arc" cx="55" cy="55" r="47"/>
+          </svg>
+          <div class="score-ring-num">
+            <div class="score-ring-pct" id="score-pct">0%</div>
+            <div class="score-ring-label">Score</div>
+          </div>
+        </div>
+      </div>
+      <div class="score-breakdown">
+        <div class="score-bd-tile ok">
+          <div class="score-bd-val" id="score-correct">0</div>
+          <div class="score-bd-key">Correct</div>
+        </div>
+        <div class="score-bd-tile bad">
+          <div class="score-bd-val" id="score-wrong">0</div>
+          <div class="score-bd-key">Wrong</div>
+        </div>
+      </div>
+      <div class="score-actions">
+        <button class="btn-score-retry" onclick="retryQuiz()">⚡ Retry Quiz</button>
+        <button class="btn-score-study" onclick="closeScoreModal()">📖 Keep Studying</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js" crossorigin></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js" crossorigin></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js" crossorigin></script>
+  <script src="/activities/firebase-config.js"></script>
+  <script src="/xcelias-auth.js"></script>
+
+  <script>
+  /* ═══════════════════════════════════════════════════════════╗
+     XCELIAS STUDY GUIDE — CORE ENGINE v1.0
+     Data-driven, exercise-rich, mobile-first
+  ╚═══════════════════════════════════════════════════════════ */
+  'use strict';
+
+  /* ─────────────────────────────────────────
+     DATA — Batch 31
+     ───────────────────────────────────────── */
+  const BATCHES = [
+    {
+      id: 'batch31',
+      label: 'Batch 31',
+      status: 'available', // 'available' | 'locked'
+      icon: '🏙️',
+      tagline: 'New Capital Focus — 5 Premier Projects',
+      projects: [
+        {
+          id: 'cityzen',
+          devName: 'Al Qamzi',
+          devIcon: '🏢',
+          devOwner: 'Abdalla Al Qamzi',
+          devSince: 'Founded 1997 · Egypt entry 2010',
+          devHistory: [
+            { label: 'New Cairo', project: 'East Shire' },
+            { label: 'North Coast', project: 'Seazen (K-171)' },
+            { label: 'Mostakbal City', project: 'Cityzen' }
+          ],
+          projectName: 'Cityzen',
+          area: '95 feddan',
+          location: 'Mostakbal City',
+          delivery: '4 years',
+          maintenance: '10%',
+          paymentPlan: '5% DP + 5% after 3 months · 9 years',
+          finishing: ['Apartments: Semi Finished', 'Villas: Core & Shell'],
+          units: [
+            { type: '1 BR', size: '65m²', price: '3.7M', priceNum: 3.7 },
+            { type: '2 BR', size: '120m²', price: '6.9M', priceNum: 6.9 },
+            { type: '3 BR', size: '145–185m²', price: '7.9M', priceNum: 7.9 },
+            { type: 'Townhome', size: '180m²', price: '16M', priceNum: 16 },
+            { type: 'Standalone Villa', size: '275m²', price: '31M', priceNum: 31 }
+          ]
+        },
+        {
+          id: 'jade',
+          devName: 'La Vista',
+          devIcon: '🌿',
+          devOwner: 'Alaa El Hady',
+          devSince: 'Established developer',
+          devHistory: [
+            { label: 'North Coast', project: 'La Vista Cascada, La Vista Bay East, La Vista Ras El Hikma' },
+            { label: 'Sokhna', project: 'La Vista Ray, La Vista 6, La Vista Gardens' },
+            { label: 'El Shorouk', project: 'El Patio 5 East, El Patio Prime, El Patio Casa, El Patio Sola' },
+            { label: 'New Capital', project: 'La Vista City — El Patio Jade (launch 2026)' },
+            { label: '6th Settlement', project: 'El Patio Vida' },
+            { label: 'New Cairo', project: 'El Patio Oro, Patio 7, Patio Town' },
+            { label: 'Sheikh Zayed', project: 'El Patio Vera' }
+          ],
+          projectName: 'El Patio Jade',
+          area: '100 feddan',
+          location: 'New Capital',
+          delivery: '4 years',
+          maintenance: '8%',
+          paymentPlan: '5% DP · 8 years',
+          finishing: ['Apartments: Core & Shell', 'Villas: Core & Shell'],
+          facilities: ['10-acre Clubhouse', 'Sports courts', 'Kids play areas', 'Food court', 'Outdoor gym', 'Massive water features'],
+          units: [
+            { type: 'Townhouse Mid', size: '185m²', price: '18.7M', priceNum: 18.7 },
+            { type: 'Townhouse Corner', size: '200m²', price: 'Sold Out', priceNum: 0 },
+            { type: 'Twin House', size: '210m²', price: '22.2M', priceNum: 22.2 },
+            { type: 'S/A Villa 225m²', size: '225m²', price: '23.9M', priceNum: 23.9 },
+            { type: 'S/A Villa 265m²', size: '265m²', price: '~30M', priceNum: 30 },
+            { type: 'S/A Villa 310m²', size: '310m²', price: '~37M', priceNum: 37 },
+            { type: 'S/A Villa 411m²', size: '411m²', price: '44.6M', priceNum: 44.6 },
+            { type: 'Family House G', size: '165m²', price: '18.4M', priceNum: 18.4 },
+            { type: 'Penthouse', size: '205m²', price: '17.3M', priceNum: 17.3 }
+          ]
+        },
+        {
+          id: 'grandlane',
+          devName: 'HDP',
+          devIcon: '🏗️',
+          devOwner: 'HDP Developer',
+          devSince: 'Established developer',
+          devHistory: [
+            { label: 'New Capital', project: 'Grand Lane' }
+          ],
+          projectName: 'Grand Lane',
+          area: '98 feddan',
+          location: 'New Capital',
+          delivery: '4 years',
+          maintenance: null,
+          paymentPlan: '5% DP · choose 4, 8, or 10 years',
+          finishing: ['Apartments: Semi Finished', 'Villas: Core & Shell'],
+          units: [
+            { type: '1 BR', size: '65–109m²', price: '3.5M (4y) / 4.3M (8y) / 4.7M (10y)', priceNum: 3.5 },
+            { type: '2 BR', size: '103–144m²', price: '5.2M (4y) / 6.3M (8y) / 7M (10y)', priceNum: 5.2 },
+            { type: '3 BR', size: '138–167m²', price: '6.5M (4y) / 7.9M (8y) / 8.8M (10y)', priceNum: 6.5 },
+            { type: 'Town House', size: '184–203m²', price: '12.3M (4y) / 14.9M (8y) / 16.5M (10y)', priceNum: 12.3 },
+            { type: 'Villa', size: '235–251m²', price: '23M (4y) / 27.9M (8y) / 30.9M (10y)', priceNum: 23 }
+          ]
+        },
+        {
+          id: 'lushvalley',
+          devName: 'City Edge',
+          devIcon: '🌆',
+          devOwner: 'Tamer Nasser (CEO)',
+          devSince: 'Since 2017',
+          devHistory: [
+            { label: 'New Cairo', project: 'V40' },
+            { label: '6th October', project: 'Etapa' },
+            { label: 'North Coast', project: 'Mazarine, North Edge, The Gate Towers, Latin City Golf' },
+            { label: 'New Capital', project: 'El Maqsed, Jade Park, New Garden City' },
+            { label: 'New Mansoura', project: 'Zahya, Areej, Marjan' }
+          ],
+          projectName: 'Lush Valley',
+          area: '60 feddan',
+          location: 'New Capital',
+          delivery: null,
+          maintenance: '8%',
+          paymentPlan: '5% DP + 5% · 8 years',
+          finishing: ['All types available'],
+          units: [
+            { type: '1 BR', size: '70m²', price: '5.6M', priceNum: 5.6 },
+            { type: '2 BR', size: '96–132m²', price: '9.7M', priceNum: 9.7 },
+            { type: '3 BR', size: '157–237m²', price: '12.9M', priceNum: 12.9 },
+            { type: 'Loft', size: '195m²', price: '15.5M', priceNum: 15.5 },
+            { type: 'Duplex', size: '226–307m²', price: '19.4M', priceNum: 19.4 },
+            { type: 'Mansio', size: '261–312m²', price: '24.4M', priceNum: 24.4 }
+          ]
+        },
+        {
+          id: 'vdlc',
+          devName: 'Palm Hills',
+          devIcon: '🌴',
+          devOwner: 'Yassen Mansour',
+          devSince: 'Since 1997',
+          devHistory: [
+            { label: 'New Cairo', project: 'The Village, PK1, PK2, VGK, PHNC, Palmet, Village Avenue, The Village Gate' },
+            { label: 'Sarai', project: 'Capital Gardens' },
+            { label: '6th October', project: 'Bamboo, Palm Valley, Golf Central, Golf Views, PX, The Crown, Woodville, Palm Parks, Badya, Casa, Jirian' },
+            { label: 'North Coast', project: 'Hacienda Bay, Henesh, Blue, Waters 1 & 2, White, West' },
+            { label: 'New Alamain', project: 'PHNA, Palm Hill, Alex' }
+          ],
+          projectName: 'Village De La Capital',
+          area: '290 feddan (Phase 1: 88F)',
+          location: 'New Capital',
+          delivery: '5 years',
+          maintenance: null,
+          paymentPlan: '1.5% down payment · 12 years',
+          finishing: ['Core & Shell'],
+          facilities: ['95% units overlooking landscape/water', 'Commercial area', 'School', 'Community Center'],
+          units: [
+            { type: '1 BR', size: '60m²', price: '5.5M', priceNum: 5.5 },
+            { type: '2 BR', size: '95m²', price: '7.9M', priceNum: 7.9 },
+            { type: '3 BR', size: '140m²', price: '11.6M', priceNum: 11.6 },
+            { type: 'Townhouse Mid', size: '185m²', price: '18.8M', priceNum: 18.8 },
+            { type: 'Townhouse Corner', size: '185m²', price: '20.8M', priceNum: 20.8 },
+            { type: 'S/A Villa 285m²', size: '285m²', price: '26.5M', priceNum: 26.5 },
+            { type: 'S/A Villa 300m²', size: '300m²', price: '29.9M', priceNum: 29.9 },
+            { type: 'S/A Villa 371m²', size: '371m²', price: '36.6M', priceNum: 36.6 }
+          ]
+        }
+      ]
+    }
+  ];
+
+  /* ─────────────────────────────────────────
+     QUIZ QUESTION BANK (auto-generated + hand-crafted)
+     ───────────────────────────────────────── */
+  function buildQuestions(projects) {
+    const qs = [];
+
+    // --- Developer identification questions ---
+    projects.forEach(p => {
+      qs.push({
+        q: `Who is the developer behind "${p.projectName}"?`,
+        options: shuffle(projects.map(x => x.devName)),
+        answer: p.devName,
+        explain: `${p.projectName} is developed by ${p.devName} (${p.devOwner}).`
+      });
+
+      // Payment plan
+      qs.push({
+        q: `What is the payment plan for "${p.projectName}"?`,
+        options: shuffle([
+          p.paymentPlan,
+          ...projects.filter(x=>x.id!==p.id).slice(0,3).map(x=>x.paymentPlan)
+        ]).slice(0,4),
+        answer: p.paymentPlan,
+        explain: `${p.projectName} payment plan: ${p.paymentPlan}`
+      });
+
+      // Project area
+      qs.push({
+        q: `What is the total area of "${p.projectName}"?`,
+        options: shuffle([
+          p.area,
+          ...projects.filter(x=>x.id!==p.id).slice(0,3).map(x=>x.area)
+        ]).slice(0,4),
+        answer: p.area,
+        explain: `${p.projectName} covers ${p.area}.`
+      });
+
+      // Maintenance
+      if (p.maintenance) {
+        qs.push({
+          q: `What is the maintenance fee for "${p.projectName}"?`,
+          options: shuffle([p.maintenance, '5%', '12%', '15%']).slice(0,4),
+          answer: p.maintenance,
+          explain: `Maintenance for ${p.projectName} is ${p.maintenance}.`
+        });
+      }
+
+      // Cheapest unit
+      const cheap = p.units.filter(u=>u.priceNum>0).sort((a,b)=>a.priceNum-b.priceNum)[0];
+      if (cheap) {
+        qs.push({
+          q: `In "${p.projectName}", what is the entry-level unit and price?`,
+          options: shuffle([
+            `${cheap.type} — ${cheap.price}`,
+            ...projects.filter(x=>x.id!==p.id).slice(0,3).map(x=>{
+              const c = x.units.filter(u=>u.priceNum>0).sort((a,b)=>a.priceNum-b.priceNum)[0];
+              return c ? `${c.type} — ${c.price}` : `1 BR — 5M`;
+            })
+          ]).slice(0,4),
+          answer: `${cheap.type} — ${cheap.price}`,
+          explain: `The entry-level unit in ${p.projectName} is ${cheap.type} (${cheap.size}) at ${cheap.price}.`
+        });
+      }
+    });
+
+    // --- Cross-project comparison questions ---
+    qs.push({
+      q: `Which project has the LONGEST payment plan (most years)?`,
+      options: shuffle(['Village De La Capital — 12 yrs', 'Cityzen — 9 yrs', 'Grand Lane — 10 yrs', 'El Patio Jade — 8 yrs']),
+      answer: 'Village De La Capital — 12 yrs',
+      explain: 'Palm Hills Village De La Capital offers 1.5% DP over 12 years — the longest plan in this batch.'
+    });
+    qs.push({
+      q: `Which developer founded earliest in Egypt?`,
+      options: shuffle(['Al Qamzi (1997)', 'La Vista (1990s)', 'Palm Hills (1997)', 'City Edge (2017)']),
+      answer: 'City Edge (2017)',
+      explain: 'City Edge was founded latest in 2017. Al Qamzi and Palm Hills both trace back to 1997.'
+    });
+    qs.push({
+      q: `Which project is in Mostakbal City (NOT New Capital)?`,
+      options: shuffle(['Cityzen', 'El Patio Jade', 'Lush Valley', 'Village De La Capital']),
+      answer: 'Cityzen',
+      explain: 'Cityzen (Al Qamzi) is located in Mostakbal City. The other 4 projects are in New Capital.'
+    });
+    qs.push({
+      q: `Grand Lane offers multiple delivery timelines. Which is NOT one of them?`,
+      options: shuffle(['4 years', '6 years', '8 years', '10 years']),
+      answer: '6 years',
+      explain: 'Grand Lane offers 4, 8, and 10-year payment plans. 6 years is not an option.'
+    });
+    qs.push({
+      q: `Which project has the LARGEST area (feddan)?`,
+      options: shuffle(['Village De La Capital — 290F', 'El Patio Jade — 100F', 'Grand Lane — 98F', 'Cityzen — 95F']),
+      answer: 'Village De La Capital — 290F',
+      explain: 'Village De La Capital is the largest at 290 feddan (Phase 1 alone is 88 feddan).'
+    });
+    qs.push({
+      q: `Which project has the SMALLEST area (feddan)?`,
+      options: shuffle(['Lush Valley — 60F', 'Cityzen — 95F', 'Grand Lane — 98F', 'El Patio Jade — 100F']),
+      answer: 'Lush Valley — 60F',
+      explain: 'Lush Valley (City Edge) is the smallest project at 60 feddan.'
+    });
+    qs.push({
+      q: `Which project introduced a "Mansio" as a unit type?`,
+      options: shuffle(['Lush Valley', 'Grand Lane', 'Cityzen', 'Village De La Capital']),
+      answer: 'Lush Valley',
+      explain: 'City Edge\'s Lush Valley includes a unique "Mansio" unit (261–312m²) starting at 24.4M.'
+    });
+    qs.push({
+      q: `La Vista's "El Patio Jade" has a Townhouse Corner unit at what price?`,
+      options: shuffle(['Sold Out', '22.2M', '18.7M', '20M']),
+      answer: 'Sold Out',
+      explain: 'The Townhouse Corner (200m²) in El Patio Jade is sold out — only the Middle (185m²) at 18.7M remains.'
+    });
+    qs.push({
+      q: `Which developer's CEO is named Tamer Nasser?`,
+      options: shuffle(['City Edge', 'Palm Hills', 'Al Qamzi', 'HDP']),
+      answer: 'City Edge',
+      explain: 'City Edge\'s CEO is Tamer Nasser. The company was founded in 2017.'
+    });
+    qs.push({
+      q: `Palm Hills "Village De La Capital" — what % of units overlook landscape/water?`,
+      options: shuffle(['95%', '80%', '70%', '60%']),
+      answer: '95%',
+      explain: '95% of units in Village De La Capital overlook landscape and water features.'
+    });
+    qs.push({
+      q: `In Cityzen, the Standalone Villa starts from how many million EGP?`,
+      options: shuffle(['31M', '16M', '25M', '22M']),
+      answer: '31M',
+      explain: 'Cityzen Standalone Villa is 275m² starting at 31M EGP.'
+    });
+    qs.push({
+      q: `HDP's Grand Lane finishing is:`,
+      options: shuffle(['Apartments Semi-Finished, Villas Core & Shell', 'All Fully Finished', 'All Core & Shell', 'Apartments Core & Shell, Villas Fully Finished']),
+      answer: 'Apartments Semi-Finished, Villas Core & Shell',
+      explain: 'Grand Lane: Apartments come semi-finished, Villas are core & shell.'
+    });
+
+    return shuffle(qs);
+  }
+
+  /* ─────────────────────────────────────────
+     FLASH CARD DATA per project
+     ───────────────────────────────────────── */
+  function buildFlashCards(project) {
+    const cards = [];
+    cards.push({ q: 'Developer', a: project.devName });
+    cards.push({ q: 'Owner', a: project.devOwner });
+    cards.push({ q: 'Project Area', a: project.area });
+    cards.push({ q: 'Location', a: project.location });
+    cards.push({ q: 'Payment Plan', a: project.paymentPlan });
+    cards.push({ q: 'Delivery', a: project.delivery || 'TBC' });
+    if (project.maintenance) cards.push({ q: 'Maintenance', a: project.maintenance });
+    project.units.slice(0,4).forEach(u => {
+      cards.push({ q: `${u.type} price`, a: u.price });
+      cards.push({ q: `${u.type} size`, a: u.size });
+    });
+    if (project.facilities) {
+      cards.push({ q: 'Key Facility', a: project.facilities[0] });
+    }
+    return shuffle(cards);
+  }
+
+  /* ─────────────────────────────────────────
+     FILL-IN-THE-BLANK QUESTIONS
+     ───────────────────────────────────────── */
+  function buildBlanks(projects) {
+    const blanks = [];
+    projects.forEach(p => {
+      blanks.push({
+        prompt: `${p.projectName} by ${p.devName} covers _____ feddan in ${p.location}.`,
+        answers: [p.area.replace(' feddan',''), p.area],
+        hint: 'Enter area in feddan'
+      });
+      blanks.push({
+        prompt: `${p.devName}'s payment plan for ${p.projectName} is: _____`,
+        answers: [p.paymentPlan.toLowerCase()],
+        hint: 'e.g. 5% DP · 8 years',
+        partial: true
+      });
+      if(p.maintenance){
+        blanks.push({
+          prompt: `The maintenance fee for ${p.projectName} is _____%.`,
+          answers: [p.maintenance.replace('%','').trim()],
+          hint: 'Numbers only'
+        });
+      }
+    });
+    blanks.push({
+      prompt: `The developer behind Village De La Capital is _____ with owner _____.`,
+      answers: ['palm hills / yassen mansour','palm hills yassen mansour'],
+      hint: 'Developer name / owner name',
+      partial: true
+    });
+    blanks.push({
+      prompt: `Grand Lane (HDP) offers delivery in _____ years.`,
+      answers: ['4'],
+      hint: 'Number of years'
+    });
+    return shuffle(blanks);
+  }
+
+  /* ─────────────────────────────────────────
+     MEMORY MATCH DATA
+     ───────────────────────────────────────── */
+  function buildMatchPairs(projects) {
+    const pairs = [];
+    projects.forEach(p => {
+      pairs.push({ id: p.id + '_d', group: p.id, text: p.devName, type: 'dev' });
+      pairs.push({ id: p.id + '_p', group: p.id, text: p.projectName, type: 'proj' });
+    });
+    return shuffle(pairs);
+  }
+
+  /* ─────────────────────────────────────────
+     STATE
+     ───────────────────────────────────────── */
+  let currentBatch = null;
+  let currentSection = 'study';
+  let currentProjectIndex = 0;
+  let quizQuestions = [];
+  let quizIndex = 0;
+  let quizCorrect = 0;
+  let quizAnswered = false;
+  let flashCards = [];
+  let flashIndex = 0;
+  let blanks = [];
+  let blankIndex = 0;
+  let matchPairs = [];
+  let matchSelected = null;
+  let matchFlipped = [];
+  let matchMatched = [];
+  let masteredSets = JSON.parse(localStorage.getItem('xc_sg_mastered') || '{}');
+  let localScores = JSON.parse(localStorage.getItem('xc_sg_scores') || '[]');
+
+  /* ─────────────────────────────────────────
+     UTILITIES
+     ───────────────────────────────────────── */
+  function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+  function esc(s) { const d = document.createElement('div'); d.textContent = String(s||''); return d.innerHTML; }
+  function el(id) { return document.getElementById(id); }
+  function normStr(s) { return String(s||'').toLowerCase().replace(/[^a-z0-9%\/\. ]/g,'').trim(); }
+
+  /* ─────────────────────────────────────────
+     AUTH + INIT
+     ───────────────────────────────────────── */
+  XceliasAuth.guard({
+    moduleName: 'Study Guide',
+    requiredRoles: null,
+    onReady: function(user) {
+      const name = user.displayName || user.username || 'Trainee';
+      el('user-chip-name').textContent = name;
+      initApp();
+    }
+  });
+
+  function handleSignOut() {
+    if (confirm('Sign out of Xcelias?')) XceliasAuth.signOut();
+  }
+
+  /* ─────────────────────────────────────────
+     INIT
+     ───────────────────────────────────────── */
+  function initApp() {
+    renderBatchGrid();
+    showScreen('screen-batches');
+    updateMasteredStat();
+  }
+
+  function updateMasteredStat() {
+    const total = BATCHES.reduce((s,b)=>s+b.projects.length,0);
+    const mastered = Object.keys(masteredSets).length;
+    if(el('stat-mastered')) el('stat-mastered').textContent = `${mastered}/${total}`;
+  }
+
+  /* ─────────────────────────────────────────
+     SCREEN MANAGEMENT
+     ───────────────────────────────────────── */
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    const s = el(id);
+    if(s) s.classList.add('active');
+    window.scrollTo(0,0);
+  }
+
+  /* ─────────────────────────────────────────
+     BATCH GRID RENDER
+     ───────────────────────────────────────── */
+  function renderBatchGrid() {
+    const grid = el('batch-grid');
+    if (!grid) return;
+    grid.innerHTML = BATCHES.map((batch, i) => {
+      const isFuture = i > 0;
+      const projectPills = batch.projects.map(p =>
+        `<span class="batch-project-pill">${esc(p.projectName)}</span>`
+      ).join('');
+      return `
+        <div class="batch-card" style="animation-delay:${i*0.08}s"
+             onclick="${isFuture ? '' : `openBatch('${batch.id}')`}"
+             tabindex="${isFuture ? -1 : 0}"
+             onkeydown="if(event.key==='Enter'&&!${isFuture})openBatch('${batch.id}')"
+             ${isFuture ? 'aria-disabled="true"' : ''}>
+          <div class="batch-card-glow"></div>
+          <div class="batch-card-inner">
+            <div class="batch-card-head">
+              <div class="batch-card-icon">${batch.icon}</div>
+              <div class="batch-card-badge ${isFuture ? 'locked' : ''}">${isFuture ? '🔒 Coming soon' : '✦ Available'}</div>
+            </div>
+            <div class="batch-card-title">${esc(batch.label)}</div>
+            <div class="batch-card-sub">${esc(batch.tagline)}</div>
+            <div class="batch-card-projects">${projectPills}</div>
+            <div class="batch-card-cta">
+              <span>${isFuture ? 'Unlock when ready' : 'Begin studying'}</span>
+              <span>${isFuture ? '🔒' : '→'}</span>
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  /* ─────────────────────────────────────────
+     OPEN BATCH → STUDY SCREEN
+     ───────────────────────────────────────── */
+  function openBatch(batchId) {
+    currentBatch = BATCHES.find(b => b.id === batchId);
+    if (!currentBatch) return;
+
+    // Prepare data
+    quizQuestions = buildQuestions(currentBatch.projects);
+    quizIndex = 0; quizCorrect = 0;
+    blanks = buildBlanks(currentBatch.projects);
+    blankIndex = 0;
+    matchPairs = buildMatchPairs(currentBatch.projects);
+
+    el('active-batch-pill').textContent = currentBatch.label;
+    el('active-batch-pill').style.display = '';
+    el('topbar-module-title').textContent = currentBatch.label + ' · Study Guide';
+    el('bottom-nav').style.display = 'flex';
+
+    buildStudyTabs();
+    currentProjectIndex = 0;
+    flashCards = buildFlashCards(currentBatch.projects[0]);
+    flashIndex = 0;
+
+    switchSection('study');
+    showScreen('screen-study');
+  }
+
+  /* ─────────────────────────────────────────
+     STUDY TABS
+     ───────────────────────────────────────── */
+  function buildStudyTabs() {
+    const tabsEl = el('study-tabs');
+    if (!tabsEl) return;
+    const sections = [
+      { id: 'study', label: '📖 Study' },
+      { id: 'flash', label: '⚡ Flash' },
+      { id: 'quiz',  label: '🧠 Quiz' },
+      { id: 'match', label: '🎯 Match' },
+      { id: 'blank', label: '✏️ Fill' }
+    ];
+    tabsEl.innerHTML = sections.map(s =>
+      `<button class="study-tab ${s.id==='study'?'active':''}" id="tab-${s.id}"
+               onclick="switchSection('${s.id}')" role="tab"
+               aria-selected="${s.id==='study'}">${esc(s.label)}</button>`
+    ).join('');
+  }
+
+  function updateTabStates(active) {
+    document.querySelectorAll('.study-tab').forEach(t => {
+      t.classList.remove('active');
+      t.setAttribute('aria-selected','false');
+    });
+    const at = el('tab-' + active);
+    if (at) { at.classList.add('active'); at.setAttribute('aria-selected','true'); }
+    // bottom nav
+    ['study','flash','quiz','match','blank'].forEach(id => {
+      const b = el('bn-' + id);
+      if (b) b.classList.toggle('active', id === active);
+    });
+    // progress fill (section index / 4)
+    const order = ['study','flash','quiz','match','blank'];
+    const pct = (order.indexOf(active) / (order.length - 1)) * 100;
+    const fill = el('progress-fill');
+    if (fill) fill.style.width = pct + '%';
+  }
+
+  /* ─────────────────────────────────────────
+     SECTION SWITCH
+     ───────────────────────────────────────── */
+  function switchSection(section) {
+    currentSection = section;
+    updateTabStates(section);
+    const area = el('study-content-area');
+    if (!area) return;
+
+    switch(section) {
+      case 'study': renderStudySection(area); break;
+      case 'flash': renderFlashSection(area); break;
+      case 'quiz':  renderQuizSection(area);  break;
+      case 'match': renderMatchSection(area); break;
+      case 'blank': renderBlankSection(area); break;
+    }
+    window.scrollTo({top: document.querySelector('.study-progress-bar-wrap')?.offsetTop || 0, behavior:'smooth'});
+  }
+
+  /* ═══════════════════════════════════════════
+     SECTION 1 — STUDY (deep project profiles)
+     ═══════════════════════════════════════════ */
+  function renderStudySection(area) {
+    if (!currentBatch) return;
+    const batch = currentBatch;
+
+    area.innerHTML = `
+      <button class="back-to-batches" onclick="goBackToBatches()" aria-label="Back to batch list">
+        ← Batch Library
+      </button>
+      <div class="section-tabs" role="tablist" aria-label="Project selector">
+        ${batch.projects.map((p,i) =>
+          `<button class="section-tab-btn ${i===currentProjectIndex?'active':''}"
+                   onclick="selectStudyProject(${i})" role="tab">${esc(p.devIcon)} ${esc(p.devName)}</button>`
+        ).join('')}
+      </div>
+      <div id="study-project-detail"></div>
+    `;
+    renderProjectDetail(currentProjectIndex);
+  }
+
+  function selectStudyProject(i) {
+    currentProjectIndex = i;
+    flashCards = buildFlashCards(currentBatch.projects[i]);
+    flashIndex = 0;
+    document.querySelectorAll('.section-tab-btn').forEach((b,idx) => b.classList.toggle('active', idx===i));
+    renderProjectDetail(i);
+  }
+
+  function renderProjectDetail(i) {
+    const p = currentBatch.projects[i];
+    const detail = el('study-project-detail');
+    if (!detail) return;
+
+    // Build unit rows
+    const unitPills = p.units.map(u => `
+      <div class="unit-pill">
+        <div class="unit-pill-type">${esc(u.type)}</div>
+        <div class="unit-pill-size">${esc(u.size)}</div>
+        <div class="unit-pill-price">${esc(u.price)}</div>
+      </div>`).join('');
+
+    // History items
+    const historyHtml = p.devHistory.map(h =>
+      `<strong>${esc(h.label)}:</strong> ${esc(h.project)}`
+    ).join(' · ');
+
+    // Facilities
+    const facHtml = p.facilities ? `
+      <div class="section-heading">Facilities</div>
+      <div class="flash-strip">
+        ${p.facilities.map(f => `
+          <div class="flash-card" style="min-width:120px;text-align:center;">
+            <span style="font-size:1.6rem;">🏊</span>
+            <div style="font-size:.7rem;font-weight:700;color:var(--text-muted);margin-top:6px;">${esc(f)}</div>
+          </div>`).join('')}
+      </div>` : '';
+
+    // Info tiles row
+    const tiles = [
+      { icon:'📐', val: p.area, key: 'Area' },
+      { icon:'📍', val: p.location, key: 'Location' },
+      { icon:'💳', val: p.paymentPlan, key: 'Payment Plan' },
+      { icon:'🏗️', val: p.delivery || 'TBC', key: 'Delivery' },
+      ...(p.maintenance ? [{ icon:'🔧', val: p.maintenance, key: 'Maintenance' }] : []),
+      ...(p.finishing ? [{ icon:'🎨', val: p.finishing.join(' · '), key: 'Finishing' }] : [])
+    ];
+    const tilesHtml = tiles.map(t => `
+      <div class="info-tile">
+        <div class="info-tile-icon">${t.icon}</div>
+        <div class="info-tile-val">${esc(t.val)}</div>
+        <div class="info-tile-key">${esc(t.key)}</div>
+      </div>`).join('');
+
+    // Mastered badge
+    const key = currentBatch.id + '_' + p.id;
+    const isMastered = !!masteredSets[key];
+    const masteredHtml = isMastered ? `
+      <div class="completion-banner">
+        <div class="cb-emoji">🏆</div>
+        <div class="cb-title">You've mastered ${esc(p.projectName)}!</div>
+        <div class="cb-sub">All exercises completed. Review anytime.</div>
+      </div>` : '';
+
+    detail.innerHTML = `
+      ${masteredHtml}
+      <div class="panel-header">
+        <div class="panel-header-row">
+          <div class="panel-dev-icon">${esc(p.devIcon)}</div>
+          <div class="panel-dev-info">
+            <div class="panel-dev-name">${esc(p.devName)}</div>
+            <div class="panel-dev-since">${esc(p.devSince)}</div>
+            <div class="panel-dev-owner">Owner: ${esc(p.devOwner)}</div>
+          </div>
+        </div>
+        <div class="panel-dev-history">${historyHtml}</div>
+      </div>
+
+      <div class="project-card-sg">
+        <div class="project-card-sg-header">
+          <div class="project-card-sg-name">
+            <span class="proj-emoji">🏙️</span>${esc(p.projectName)}
+          </div>
+          <div class="area-badge">📐 ${esc(p.area)}</div>
+        </div>
+        <div class="project-card-sg-body">
+          <div class="section-heading">Key Info</div>
+          <div class="info-row">${tilesHtml}</div>
+          ${facHtml}
+          <div class="section-heading">Unit Types & Prices</div>
+          <div class="units-grid">${unitPills}</div>
+        </div>
+      </div>
+
+      <div class="price-table-wrap">
+        <table class="price-table" aria-label="Unit price table for ${esc(p.projectName)}">
+          <thead><tr>
+            <th>Unit Type</th><th>Size</th><th>Starting Price</th>
+          </tr></thead>
+          <tbody>
+            ${p.units.map(u => `
+              <tr>
+                <td>${esc(u.type)}</td>
+                <td>${esc(u.size)}</td>
+                <td class="price-cell">${esc(u.price)}</td>
+              </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+
+      <div style="text-align:center;padding:8px 0 20px">
+        <button class="btn-quiz-primary" onclick="switchSection('flash')">
+          ⚡ Start Flash Cards →
+        </button>
+      </div>
+    `;
+  }
+
+  /* ═══════════════════════════════════════════
+     SECTION 2 — FLASH CARDS (all projects)
+     ═══════════════════════════════════════════ */
+  function renderFlashSection(area) {
+    flashCards = buildFlashCards(currentBatch.projects[currentProjectIndex]);
+    flashIndex = 0;
+    area.innerHTML = `
+      <button class="back-to-batches" onclick="goBackToBatches()">← Batch Library</button>
+      <div class="section-tabs">
+        ${currentBatch.projects.map((p,i) =>
+          `<button class="section-tab-btn ${i===currentProjectIndex?'active':''}"
+                   onclick="selectFlashProject(${i})">${esc(p.devIcon)} ${esc(p.devName)}</button>`
+        ).join('')}
+      </div>
+      <div id="flash-area"></div>
+    `;
+    renderFlashCard();
+  }
+
+  function selectFlashProject(i) {
+    currentProjectIndex = i;
+    flashCards = buildFlashCards(currentBatch.projects[i]);
+    flashIndex = 0;
+    document.querySelectorAll('.section-tab-btn').forEach((b,idx) => b.classList.toggle('active', idx===i));
+    renderFlashCard();
+  }
+
+  function renderFlashCard() {
+    const area = el('flash-area');
+    if (!area) return;
+    if (flashIndex >= flashCards.length) {
+      area.innerHTML = `
+        <div class="completion-banner" style="margin-top:24px;">
+          <div class="cb-emoji">⚡</div>
+          <div class="cb-title">All flash cards complete!</div>
+          <div class="cb-sub">${flashCards.length} cards reviewed for ${esc(currentBatch.projects[currentProjectIndex].projectName)}</div>
+        </div>
+        <div style="text-align:center;margin-top:16px;">
+          <button class="btn-quiz-primary" onclick="flashIndex=0;renderFlashCard()">🔄 Replay</button>
+          &nbsp;&nbsp;
+          <button class="btn-score-study" onclick="switchSection('quiz')">🧠 Take Quiz →</button>
+        </div>`;
+      return;
+    }
+
+    const card = flashCards[flashIndex];
+    const prog = Math.round(((flashIndex) / flashCards.length) * 100);
+    area.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+        <span style="font-size:.7rem;color:var(--text-dim);font-weight:700;">${flashIndex+1} / ${flashCards.length}</span>
+        <span style="font-size:.7rem;color:var(--text-dim);font-weight:700;">${prog}% done</span>
+      </div>
+      <div class="quiz-progress-bar" style="margin-bottom:24px;">
+        <div class="quiz-progress-fill" style="width:${prog}%"></div>
+      </div>
+      <div id="fc-main" class="flash-card" style="min-width:unset;width:100%;padding:36px 28px;text-align:center;cursor:pointer;border-radius:var(--radius);margin-bottom:20px;"
+           onclick="flipFlashCard()" aria-label="Tap to reveal answer" tabindex="0" role="button"
+           onkeydown="if(event.key==='Enter'||event.key===' ')flipFlashCard()">
+        <div id="fc-front" class="flash-card-face front">
+          <div class="flash-q" style="font-size:.75rem;margin-bottom:16px;">❓ Tap to reveal</div>
+          <div style="font-size:1.3rem;font-weight:900;color:var(--text);">${esc(card.q)}</div>
+          <div class="flash-hint">Tap / press Space to see answer</div>
+        </div>
+        <div id="fc-back" class="flash-card-face back" style="display:none;">
+          <div class="flash-q" style="font-size:.75rem;margin-bottom:16px;">✅ Answer</div>
+          <div class="flash-a" style="font-size:1.3rem;">${esc(card.a)}</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;" id="fc-actions" style="display:none"></div>
+    `;
+  }
+
+  function flipFlashCard() {
+    const front = el('fc-front'), back = el('fc-back'), actions = el('fc-actions');
+    if (!front || !back) return;
+    const isShowing = back.style.display !== 'none';
+    front.style.display = isShowing ? 'block' : 'none';
+    back.style.display = isShowing ? 'none' : 'block';
+    if (!isShowing && actions) {
+      actions.innerHTML = `
+        <button class="btn-quiz-nav" onclick="flashNext(0)" title="Didn't know it">❌ Missed</button>
+        <button class="btn-quiz-primary" onclick="flashNext(1)">✓ Got It →</button>
+      `;
+    }
+  }
+
+  function flashNext(knew) {
+    if (knew) {
+      const card = el('fc-main');
+      if (card) card.classList.add('pop');
+    }
+    flashIndex++;
+    setTimeout(renderFlashCard, 150);
+  }
+
+  /* ═══════════════════════════════════════════
+     SECTION 3 — QUIZ
+     ═══════════════════════════════════════════ */
+  function renderQuizSection(area) {
+    if (quizIndex >= quizQuestions.length) {
+      showQuizResults();
+      return;
+    }
+    const q = quizQuestions[quizIndex];
+    const prog = Math.round((quizIndex / quizQuestions.length) * 100);
+
+    area.innerHTML = `
+      <button class="back-to-batches" onclick="goBackToBatches()">← Batch Library</button>
+      <div class="quiz-wrap">
+        <div class="quiz-header">
+          <span class="quiz-header-title">🧠 Quiz — ${esc(currentBatch.label)}</span>
+          <span class="quiz-progress-text">${quizIndex+1} / ${quizQuestions.length}</span>
+        </div>
+        <div class="quiz-progress-bar">
+          <div class="quiz-progress-fill" style="width:${prog}%"></div>
+        </div>
+        <div class="quiz-body">
+          <div class="quiz-q-num">Question ${quizIndex+1}</div>
+          <div class="quiz-question">${esc(q.q)}</div>
+          <div class="quiz-options" id="quiz-options">
+            ${(q.options||[]).map((opt,i) =>
+              `<button class="quiz-option" onclick="answerQuiz(${i})" data-idx="${i}">${esc(opt)}</button>`
+            ).join('')}
+          </div>
+          <div class="quiz-feedback" id="quiz-feedback"></div>
+        </div>
+        <div class="quiz-nav">
+          <div id="quiz-score-live" style="font-size:.75rem;font-weight:700;color:var(--text-muted);">
+            ✅ ${quizCorrect} correct
+          </div>
+          <button class="btn-quiz-primary" id="quiz-next-btn" onclick="nextQuestion()" style="display:none">
+            ${quizIndex+1 < quizQuestions.length ? 'Next →' : 'See Results 🏆'}
+          </button>
+        </div>
+      </div>
+    `;
+    quizAnswered = false;
+  }
+
+  function answerQuiz(optIdx) {
+    if (quizAnswered) return;
+    quizAnswered = true;
+    const q = quizQuestions[quizIndex];
+    const chosen = q.options[optIdx];
+    const isCorrect = chosen === q.answer;
+    if (isCorrect) quizCorrect++;
+
+    const opts = document.querySelectorAll('.quiz-option');
+    opts.forEach((btn, i) => {
+      btn.disabled = true;
+      if (q.options[i] === q.answer) btn.classList.add('correct');
+      else if (i === optIdx && !isCorrect) btn.classList.add('wrong');
+    });
+
+    const fb = el('quiz-feedback');
+    if (fb) {
+      fb.className = 'quiz-feedback ' + (isCorrect ? 'ok' : 'bad');
+      fb.textContent = isCorrect
+        ? `✅ ${q.explain || 'Correct!'}`
+        : `❌ The correct answer is: "${q.answer}". ${q.explain || ''}`;
+    }
+
+    const nextBtn = el('quiz-next-btn');
+    if (nextBtn) nextBtn.style.display = '';
+  }
+
+  function nextQuestion() {
+    quizIndex++;
+    if (quizIndex >= quizQuestions.length) {
+      showQuizResults();
+    } else {
+      renderQuizSection(el('study-content-area'));
+    }
+  }
+
+  function showQuizResults() {
+    const pct = Math.round((quizCorrect / quizQuestions.length) * 100);
+    const modal = el('score-modal');
+    el('score-pct').textContent = pct + '%';
+    el('score-correct').textContent = quizCorrect;
+    el('score-wrong').textContent = quizQuestions.length - quizCorrect;
+
+    // Emoji and title
+    let emoji = '🥲', title = 'Keep Practicing';
+    if (pct >= 90) { emoji = '🏆'; title = 'Outstanding!'; }
+    else if (pct >= 70) { emoji = '🎯'; title = 'Well Done!'; }
+    else if (pct >= 50) { emoji = '📚'; title = 'Good Effort!'; }
+    el('score-emoji').textContent = emoji;
+    el('score-title').textContent = title;
+    el('score-subtitle').textContent = `${quizCorrect} / ${quizQuestions.length} correct · ${pct}%`;
+
+    // Animate ring
+    const arc = el('score-arc');
+    if (arc) {
+      const circ = 295;
+      arc.style.strokeDashoffset = circ;
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          arc.style.strokeDashoffset = circ - (circ * pct / 100);
+        });
+      });
+    }
+
+    // Save score locally
+    saveScore(pct);
+
+    // Mark mastered if >=80%
+    if (pct >= 80 && currentBatch) {
+      const key = currentBatch.id + '_all';
+      masteredSets[key] = true;
+      localStorage.setItem('xc_sg_mastered', JSON.stringify(masteredSets));
+      updateMasteredStat();
+    }
+
+    if (modal) modal.classList.add('active');
+  }
+
+  function saveScore(pct) {
+    const user = XceliasAuth.currentUser();
+    const entry = {
+      name: user ? (user.displayName || user.username) : 'Unknown',
+      score: pct,
+      batch: currentBatch ? currentBatch.label : '',
+      date: new Date().toLocaleDateString()
+    };
+    localScores.unshift(entry);
+    if (localScores.length > 50) localScores = localScores.slice(0, 50);
+    localStorage.setItem('xc_sg_scores', JSON.stringify(localScores));
+  }
+
+  function retryQuiz() {
+    closeScoreModal();
+    quizQuestions = buildQuestions(currentBatch.projects);
+    quizIndex = 0; quizCorrect = 0;
+    switchSection('quiz');
+  }
+
+  function closeScoreModal() {
+    const modal = el('score-modal');
+    if (modal) modal.classList.remove('active');
+  }
+
+  /* ═══════════════════════════════════════════
+     SECTION 4 — MEMORY MATCH GAME
+     ═══════════════════════════════════════════ */
+  function renderMatchSection(area) {
+    matchPairs = buildMatchPairs(currentBatch.projects);
+    matchSelected = null;
+    matchMatched = [];
+    matchFlipped = [];
+
+    area.innerHTML = `
+      <button class="back-to-batches" onclick="goBackToBatches()">← Batch Library</button>
+      <div class="quiz-wrap">
+        <div class="challenge-header">
+          <span class="quiz-header-title">🎯 Match: Developer ↔ Project</span>
+          <span class="challenge-streak" id="match-score">0 / ${currentBatch.projects.length} matched</span>
+        </div>
+        <div class="quiz-body">
+          <p style="font-size:.78rem;color:var(--text-muted);margin-bottom:16px;line-height:1.5;">
+            Tap a <strong style="color:var(--accent)">developer name</strong> then tap its matching <strong style="color:var(--accent)">project</strong>. Match all ${currentBatch.projects.length} pairs to win!
+          </p>
+          <div class="match-grid" id="match-grid"></div>
+        </div>
+      </div>
+    `;
+    renderMatchGrid();
+  }
+
+  function renderMatchGrid() {
+    const grid = el('match-grid');
+    if (!grid) return;
+    grid.innerHTML = matchPairs.map(card => {
+      const isMatched = matchMatched.includes(card.group);
+      return `
+        <button class="match-card face-down ${isMatched ? 'matched' : ''} ${matchSelected && matchSelected.id===card.id ? 'selected' : ''}"
+                id="mc-${card.id}"
+                onclick="selectMatchCard('${card.id}')"
+                ${isMatched ? 'disabled' : ''}
+                aria-label="${esc(card.text)}">
+          <span>${esc(card.text)}</span>
+        </button>`;
+    }).join('');
+  }
+
+  function selectMatchCard(cardId) {
+    const card = matchPairs.find(c => c.id === cardId);
+    if (!card || matchMatched.includes(card.group)) return;
+
+    if (!matchSelected) {
+      matchSelected = card;
+      const btn = el('mc-' + cardId);
+      if (btn) { btn.classList.remove('face-down'); btn.classList.add('selected'); }
+      return;
+    }
+
+    // Second selection
+    const prev = matchSelected;
+    matchSelected = null;
+
+    // Reveal both
+    const prevBtn = el('mc-' + prev.id), curBtn = el('mc-' + cardId);
+    if (curBtn) { curBtn.classList.remove('face-down'); }
+
+    if (prev.group === card.group && prev.id !== card.id) {
+      // Match!
+      matchMatched.push(card.group);
+      [prevBtn, curBtn].forEach(b => { if(b) { b.classList.add('matched'); b.classList.remove('selected','face-down'); } });
+
+      const scoreEl = el('match-score');
+      if (scoreEl) scoreEl.textContent = `${matchMatched.length} / ${currentBatch.projects.length} matched`;
+
+      if (matchMatched.length === currentBatch.projects.length) {
+        setTimeout(() => {
+          const area = el('study-content-area');
+          if(area) {
+            const banner = document.createElement('div');
+            banner.className = 'completion-banner';
+            banner.innerHTML = `<div class="cb-emoji">🎯</div><div class="cb-title">All matched! Perfect!</div><div class="cb-sub">You know all developer-project pairs.</div>`;
+            area.insertBefore(banner, area.firstChild);
+            window.scrollTo({top:0,behavior:'smooth'});
+          }
+        }, 500);
+      }
+    } else {
+      // No match — flip back after delay
+      [prevBtn, curBtn].forEach(b => { if(b) b.classList.add('selected'); });
+      setTimeout(() => {
+        [prevBtn, curBtn].forEach(b => {
+          if (b && !matchMatched.includes(matchPairs.find(c=>c.id===b.id?.replace('mc-',''))?.group)) {
+            b.classList.remove('selected');
+            b.classList.add('face-down');
+          }
+        });
+        // simpler: just re-render
+        renderMatchGrid();
+      }, 800);
+    }
+  }
+
+  /* ═══════════════════════════════════════════
+     SECTION 5 — FILL IN THE BLANK
+     ═══════════════════════════════════════════ */
+  function renderBlankSection(area) {
+    blanks = buildBlanks(currentBatch.projects);
+    blankIndex = 0;
+    area.innerHTML = `
+      <button class="back-to-batches" onclick="goBackToBatches()">← Batch Library</button>
+      <div id="blank-area"></div>
+    `;
+    renderBlankQuestion();
+  }
+
+  function renderBlankQuestion() {
+    const area = el('blank-area');
+    if (!area) return;
+    if (blankIndex >= blanks.length) {
+      area.innerHTML = `
+        <div class="completion-banner">
+          <div class="cb-emoji">✏️</div>
+          <div class="cb-title">All blanks complete!</div>
+          <div class="cb-sub">You've filled in all ${blanks.length} questions for ${esc(currentBatch.label)}.</div>
+        </div>
+        <div style="text-align:center;margin-top:16px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+          <button class="btn-score-retry" onclick="blanks=buildBlanks(currentBatch.projects);blankIndex=0;renderBlankQuestion()">🔄 Start Over</button>
+          <button class="btn-score-study" onclick="switchSection('quiz')">🧠 Take Quiz →</button>
+        </div>`;
+      return;
+    }
+
+    const b = blanks[blankIndex];
+    const prog = Math.round((blankIndex / blanks.length) * 100);
+    area.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <span style="font-size:.7rem;color:var(--text-dim);font-weight:700;">${blankIndex+1} / ${blanks.length}</span>
+        <span style="font-size:.7rem;color:var(--text-dim);font-weight:700;">${prog}%</span>
+      </div>
+      <div class="quiz-progress-bar" style="margin-bottom:20px;">
+        <div class="quiz-progress-fill" style="width:${prog}%"></div>
+      </div>
+      <div class="blank-question">
+        <div class="blank-prompt">${esc(b.prompt)}</div>
+        <input class="blank-input" type="text" id="blank-input" placeholder="${esc(b.hint)}"
+               autocapitalize="off" autocorrect="off" spellcheck="false"
+               onkeydown="if(event.key==='Enter')checkBlank()"/>
+        <div>
+          <button class="blank-check-btn" onclick="checkBlank()">✓ Check Answer</button>
+        </div>
+        <div class="blank-result" id="blank-result"></div>
+      </div>
+    `;
+    setTimeout(() => { const inp = el('blank-input'); if(inp) inp.focus(); }, 250);
+  }
+
+  function checkBlank() {
+    const inp = el('blank-input');
+    const res = el('blank-result');
+    if (!inp || !res) return;
+    const val = normStr(inp.value);
+    const b = blanks[blankIndex];
+    let correct = false;
+    if (b.partial) {
+      correct = b.answers.some(a => val.includes(normStr(a).split(' ')[0]) || normStr(a).includes(val.split(' ')[0]));
+    } else {
+      correct = b.answers.some(a => normStr(a) === val);
+    }
+    res.className = 'blank-result ' + (correct ? 'ok' : 'bad');
+    res.textContent = correct
+      ? `✅ Correct! "${b.answers[0]}" is right.`
+      : `❌ Not quite. The answer is: "${b.answers[0]}"`;
+
+    inp.disabled = true;
+    const btn = document.querySelector('.blank-check-btn');
+    if (btn) {
+      btn.textContent = blankIndex + 1 < blanks.length ? 'Next Question →' : 'See Summary';
+      btn.onclick = () => { blankIndex++; renderBlankQuestion(); };
+    }
+  }
+
+  /* ─────────────────────────────────────────
+     NAVIGATION
+     ───────────────────────────────────────── */
+  function goBackToBatches() {
+    currentBatch = null;
+    el('active-batch-pill').style.display = 'none';
+    el('topbar-module-title').textContent = 'Batch Library';
+    el('bottom-nav').style.display = 'none';
+    renderBatchGrid();
+    showScreen('screen-batches');
+  }
+
+  /* ─────────────────────────────────────────
+     KEYBOARD SHORTCUTS
+     ───────────────────────────────────────── */
+  document.addEventListener('keydown', function(e) {
+    if (e.target.tagName === 'INPUT') return;
+    if (e.key === 'ArrowRight' && currentSection === 'flash') flashNext(1);
+    if (e.key === 'ArrowLeft' && currentSection === 'flash') flashNext(0);
+    if (e.key === ' ' && currentSection === 'flash') { e.preventDefault(); flipFlashCard(); }
+    if (e.key === 'Escape') closeScoreModal();
+  });
+
+  </script>
+</body>
+</html>

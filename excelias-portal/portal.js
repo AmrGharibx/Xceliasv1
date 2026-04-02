@@ -27,6 +27,11 @@ const PROJECTS = {
     url:   '/reports/index.html',
     mode:  'iframe'
   },
+  studyguide: {
+    name:  'Study Guide',
+    url:   '/studyguide/index.html',
+    mode:  'iframe'
+  },
   website: {
     name:  'Property Explorer',
     url:   '/website/index.html',

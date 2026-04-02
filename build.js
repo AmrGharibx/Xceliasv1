@@ -87,7 +87,7 @@ fs.writeFileSync(contentHtml, cHtml);
 console.log('    → Added <base href="/content/"> + rewrote CRA paths');
 
 /* ════════ 4. Reports (Project 3) ════════ */
-console.log('[4/5] Reports...');
+console.log('[4/6] Reports...');
 const reportsSrc = path.join(ROOT, 'Report Generation 3');
 const reportsDest = path.join(DIST, 'reports');
 mkDir(reportsDest);
@@ -103,8 +103,21 @@ rHtml = rHtml.replace('<head>', '<head>\n    <base href="/reports/" />');
 fs.writeFileSync(reportsHtml, rHtml);
 console.log('    → Added <base href="/reports/">');
 
-/* ════════ 5. Website / Property Explorer (Project 5) ════════ */
-console.log('[5/5] Website...');
+/* ════════ 5. Study Guide (Project 4) ════════ */
+console.log('[5/6] Study Guide...');
+const studySrc = path.join(ROOT, 'Study Guide & Excersies');
+const studyDest = path.join(DIST, 'studyguide');
+mkDir(studyDest);
+copyFile(path.join(studySrc, 'index.html'), path.join(studyDest, 'index.html'));
+// Add <base> tag for Study Guide
+const studyHtml = path.join(studyDest, 'index.html');
+let sgHtml = fs.readFileSync(studyHtml, 'utf8');
+sgHtml = sgHtml.replace('<head>', '<head>\n    <base href="/studyguide/" />');
+fs.writeFileSync(studyHtml, sgHtml);
+console.log('    → Copied Study Guide + added <base href="/studyguide/">');
+
+/* ════════ 6. Website / Property Explorer (Project 5) ════════ */
+console.log('[6/6] Website...');
 const webSrc = path.join(ROOT, 'Website ( WorkSpace )');
 const webDest = path.join(DIST, 'website');
 mkDir(webDest);
@@ -146,5 +159,6 @@ console.log(`   ✓ Portal (home page)`);
 console.log(`   ✓ Activities (Training Academy)`);
 console.log(`   ✓ Content (Training Manual)`);
 console.log(`   ✓ Reports (Report Generator)`);
+console.log(`   ✓ Study Guide (Batch Library)`);
 console.log(`   ✓ Website (Property Explorer)`);
 console.log(`   ⊘ Avaria (requires separate server — opens in new tab)`);

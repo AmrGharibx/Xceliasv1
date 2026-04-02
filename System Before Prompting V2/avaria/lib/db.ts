@@ -6,22 +6,32 @@
 import { PrismaClient } from "@prisma/client";
 import { PrismaLibSql } from "@prisma/adapter-libsql";
 
-// Connect to Turso (hosted libSQL) for production
-const adapter = new PrismaLibSql({
-  url: process.env.TURSO_DATABASE_URL!,
-  authToken: process.env.TURSO_AUTH_TOKEN,
-});
-
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
-export const db =
-  globalForPrisma.prisma ??
-  new PrismaClient({
+function createPrismaClient(): PrismaClient {
+  // Prisma 7 requires a driver adapter for all engine types.
+  // Use Turso in production; fall back to the local SQLite file in dev.
+  const url =
+    process.env.TURSO_DATABASE_URL ||
+    process.env.DATABASE_URL ||
+    "file:./dev.db";
+  const authToken = process.env.TURSO_AUTH_TOKEN;
+
+  const adapter = new PrismaLibSql({
+    url,
+    ...(authToken ? { authToken } : {}),
+  });
+
+  return new PrismaClient({
     adapter,
     log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
   });
+}
+
+export const db =
+  globalForPrisma.prisma ?? createPrismaClient();
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = db;
 
@@ -75,12 +85,14 @@ export function normalizeCompany(company: string): string {
   const found = validCompanies.find(c => c.toLowerCase() === company.toLowerCase());
   if (found) return found;
   
-  // Partial match
   const partial = validCompanies.find(c => 
     company.toLowerCase().includes(c.toLowerCase()) || 
     c.toLowerCase().includes(company.toLowerCase())
   );
-  return partial || "RED";
+  if (partial) return partial;
+
+  console.warn(`[normalizeCompany] Unknown company "${company}" — defaulting to "RED"`);
+  return "RED";
 }
 
 /**

@@ -287,26 +287,6 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
 );
 Input.displayName = "Input";
 
-interface FormFieldProps {
-  label: string;
-  children: React.ReactNode;
-  error?: string;
-  required?: boolean;
-}
-
-export function FormField({ label, children, error, required }: FormFieldProps) {
-  return (
-    <div className="space-y-1.5">
-      <label className="text-[11px] uppercase tracking-[0.22em] text-[var(--text-muted)]">
-        {label}
-        {required ? <span className="ml-1 text-[var(--signal-rose)]">*</span> : null}
-      </label>
-      {children}
-      {error ? <p className="text-[11px] font-medium text-[var(--signal-rose)]">{error}</p> : null}
-    </div>
-  );
-}
-
 interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   label?: string;
   options: { value: string; label: string }[];
@@ -406,7 +386,7 @@ export function Tooltip({ children, content, side = "top" }: TooltipProps) {
     <div className="group relative inline-block">
       {children}
       <div className={cn("pointer-events-none absolute z-50 opacity-0 transition-all duration-150 group-hover:opacity-100", positionClasses)}>
-        <div className="whitespace-nowrap rounded-xl border border-white/8 bg-[rgba(8,12,22,0.94)] px-3 py-1.5 text-[11px] font-medium text-white shadow-2xl">
+        <div className="max-w-xs whitespace-nowrap rounded-xl border border-white/8 bg-[rgba(8,12,22,0.94)] px-3 py-1.5 text-[11px] font-medium text-white shadow-2xl">
           {content}
         </div>
       </div>

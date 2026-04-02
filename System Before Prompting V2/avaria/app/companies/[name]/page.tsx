@@ -21,17 +21,27 @@ type CompanyDetail = {
   }>;
 };
 
-export default function CompanyDetailPage({ params }: { params: { name: string } }) {
+export default function CompanyDetailPage({ params }: { params: Promise<{ name: string }> }) {
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
   const [data, setData] = React.useState<CompanyDetail | null>(null);
+  const [resolvedName, setResolvedName] = React.useState<string>("");
 
   React.useEffect(() => {
+    let cancelled = false;
+    params.then((p) => {
+      if (!cancelled) setResolvedName(p.name);
+    });
+    return () => { cancelled = true; };
+  }, [params]);
+
+  React.useEffect(() => {
+    if (!resolvedName) return;
     const ac = new AbortController();
     setLoading(true);
     setError(null);
 
-    fetch(`/api/companies/${encodeURIComponent(params.name)}`, { signal: ac.signal })
+    fetch(`/api/companies/${encodeURIComponent(resolvedName)}`, { signal: ac.signal })
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
       .then((json: CompanyDetail) => setData(json))
       .catch((e: unknown) => {
@@ -41,7 +51,7 @@ export default function CompanyDetailPage({ params }: { params: { name: string }
       .finally(() => setLoading(false));
 
     return () => ac.abort();
-  }, [params.name]);
+  }, [resolvedName]);
 
   return (
     <div className="flex min-h-screen bg-[#0c0a09]">
@@ -57,7 +67,7 @@ export default function CompanyDetailPage({ params }: { params: { name: string }
             <Breadcrumb items={[
               { label: "Dashboard", href: "/" },
               { label: "Companies", href: "/companies" },
-              { label: data?.company.name ?? decodeURIComponent(params.name) },
+              { label: data?.company.name ?? decodeURIComponent(resolvedName) },
             ]} />
 
             {loading ? (

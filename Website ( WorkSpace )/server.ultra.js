@@ -15,10 +15,12 @@ const compression = require('compression');
 
 require('dotenv').config();
 
-const app = express();
 const PORT = process.env.PORT || 3000;
 const HOST = process.env.HOST || '0.0.0.0';
 const IS_LOCALHOST = ['localhost', '127.0.0.1', '0.0.0.0'].includes(HOST) || !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
+
+const app = express();
+if (!IS_LOCALHOST) app.set('trust proxy', 1);
 
 // ═══════════════════════════════════════════════════════════════════════════
 // IN-MEMORY DATA STORE - Everything loaded at startup
@@ -279,12 +281,12 @@ if (IS_LOCALHOST) {
         contentSecurityPolicy: {
             directives: {
                 defaultSrc: ["'self'"],
-                scriptSrc: ["'self'", "'unsafe-inline'", "https://unpkg.com", "https://cdn.jsdelivr.net", "https://cdnjs.cloudflare.com"],
+                scriptSrc: ["'self'", "'sha256-1Zom+skRgJ2/QrpydctSxogEgF/VjJP4NsuHUVMg7vk='", "https://unpkg.com", "https://cdn.jsdelivr.net", "https://cdnjs.cloudflare.com", "https://www.gstatic.com"],
                 scriptSrcAttr: ["'unsafe-inline'"],
                 styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://unpkg.com", "https://cdnjs.cloudflare.com", "https://cdn.jsdelivr.net"],
                 fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"],
                 imgSrc: ["'self'", "data:", "blob:", "https://*.basemaps.cartocdn.com", "https://server.arcgisonline.com", "https://*.tile.openstreetmap.org"],
-                connectSrc: ["'self'", "https://overpass-api.de", "https://*.basemaps.cartocdn.com", "https://server.arcgisonline.com", "https://router.project-osrm.org"],
+                connectSrc: ["'self'", "https://overpass-api.de", "https://*.basemaps.cartocdn.com", "https://server.arcgisonline.com", "https://router.project-osrm.org", "https://*.firebaseio.com", "https://identitytoolkit.googleapis.com", "https://securetoken.googleapis.com"],
                 workerSrc: ["'self'", "blob:"],
                 manifestSrc: ["'self'"],
                 upgradeInsecureRequests: null
@@ -317,7 +319,16 @@ setInterval(() => {
     }
 }, 300000);
 
-app.use(cors());
+app.use(cors(IS_LOCALHOST ? {} : {
+    origin: [
+        'https://xcelias.com',
+        'https://www.xcelias.com',
+        /\.xcelias\.com$/
+    ],
+    methods: ['GET', 'POST', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'X-Xcelias-Token'],
+    maxAge: 86400
+}));
 app.use(compression());
 app.use(express.json({ limit: '1mb' }));
 
@@ -419,7 +430,17 @@ async function streamGeminiToResponse(geminiBody, res) {
     throw new Error('All Gemini models unavailable');
 }
 
-app.post('/api/gemini', rateLimitRoute, async (req, res) => {
+// Origin/Referer guard — blocks direct curl/Postman access to AI proxy
+function requireSameOrigin(req, res, next) {
+    if (IS_LOCALHOST) return next();
+    const origin  = req.get('origin')  || '';
+    const referer = req.get('referer') || '';
+    const allowed = /^https?:\/\/(www\.)?xcelias\.com(\/|$)/i;
+    if (allowed.test(origin) || allowed.test(referer)) return next();
+    return res.status(403).json({ success: false, error: 'Forbidden' });
+}
+
+app.post('/api/gemini', requireSameOrigin, rateLimitRoute, async (req, res) => {
     try {
         if (!GEMINI_API_KEY) {
             return res.status(500).json({ success: false, error: 'Gemini API key not configured' });
@@ -428,6 +449,12 @@ app.post('/api/gemini', rateLimitRoute, async (req, res) => {
         const { systemPrompt, messages, generationConfig, stream } = req.body;
         if (!messages || !Array.isArray(messages) || messages.length === 0) {
             return res.status(400).json({ success: false, error: 'Messages array is required' });
+        }
+        if (messages.length > 20) {
+            return res.status(400).json({ success: false, error: 'Too many messages (max 20)' });
+        }
+        if (systemPrompt && systemPrompt.length > 5000) {
+            return res.status(400).json({ success: false, error: 'System prompt too long (max 5000 chars)' });
         }
 
         const contents = messages.map(m => ({
@@ -440,7 +467,7 @@ app.post('/api/gemini', rateLimitRoute, async (req, res) => {
             generationConfig: {
                 temperature: generationConfig?.temperature ?? 0.9,
                 topP: generationConfig?.topP ?? 0.95,
-                maxOutputTokens: generationConfig?.maxOutputTokens ?? 1200
+                maxOutputTokens: Math.min(generationConfig?.maxOutputTokens ?? 1200, 4096)
             }
         };
 
@@ -456,7 +483,7 @@ app.post('/api/gemini', rateLimitRoute, async (req, res) => {
         res.json({ success: true, text });
     } catch (err) {
         console.error('Gemini proxy error:', err.message);
-        res.status(502).json({ success: false, error: err.message || 'Gemini request failed' });
+        res.status(502).json({ success: false, error: 'AI service temporarily unavailable' });
     }
 });
 
@@ -464,11 +491,13 @@ app.post('/api/gemini', rateLimitRoute, async (req, res) => {
 // API ROUTES
 // ═══════════════════════════════════════════════════════════════════════════
 
+const ALLOWED_PROFILES = new Set(['driving', 'walking', 'cycling']);
+
 app.post('/api/route/route', rateLimitRoute, async (req, res) => {
     try {
-        const profile = req.body?.profile || 'driving';
+        const profile = ALLOWED_PROFILES.has(req.body?.profile) ? req.body.profile : 'driving';
         const alternatives = req.body?.alternatives ? 'true' : 'false';
-        const requestedPoints = (req.body?.coordinates || []).map(normalizeCoordinatePoint);
+        const requestedPoints = (req.body?.coordinates || []).slice(0, 25).map(normalizeCoordinatePoint);
 
         if (requestedPoints.length < 2) {
             return res.status(400).json({ success: false, error: 'At least two route points are required' });
@@ -488,14 +517,15 @@ app.post('/api/route/route', rateLimitRoute, async (req, res) => {
         setRouteCache(cacheKey, normalized);
         res.json({ success: true, data: normalized });
     } catch (err) {
-        res.status(500).json({ success: false, error: err.message || 'Route request failed' });
+        console.error('Route error:', err.message);
+        res.status(500).json({ success: false, error: 'Route request failed' });
     }
 });
 
 app.post('/api/route/table', rateLimitRoute, async (req, res) => {
     try {
-        const profile = req.body?.profile || 'driving';
-        const requestedPoints = (req.body?.coordinates || []).map(normalizeCoordinatePoint);
+        const profile = ALLOWED_PROFILES.has(req.body?.profile) ? req.body.profile : 'driving';
+        const requestedPoints = (req.body?.coordinates || []).slice(0, 25).map(normalizeCoordinatePoint);
 
         if (requestedPoints.length < 2) {
             return res.status(400).json({ success: false, error: 'At least two table points are required' });
@@ -525,14 +555,15 @@ app.post('/api/route/table', rateLimitRoute, async (req, res) => {
         setRouteCache(cacheKey, normalized);
         res.json({ success: true, data: normalized });
     } catch (err) {
-        res.status(500).json({ success: false, error: err.message || 'Route matrix request failed' });
+        console.error('Table error:', err.message);
+        res.status(500).json({ success: false, error: 'Route matrix request failed' });
     }
 });
 
 app.post('/api/route/trip', rateLimitRoute, async (req, res) => {
     try {
-        const profile = req.body?.profile || 'driving';
-        const requestedPoints = (req.body?.coordinates || []).map(normalizeCoordinatePoint);
+        const profile = ALLOWED_PROFILES.has(req.body?.profile) ? req.body.profile : 'driving';
+        const requestedPoints = (req.body?.coordinates || []).slice(0, 25).map(normalizeCoordinatePoint);
 
         if (requestedPoints.length < 3) {
             return res.status(400).json({ success: false, error: 'At least three points are required for smart trip optimization' });
@@ -552,7 +583,8 @@ app.post('/api/route/trip', rateLimitRoute, async (req, res) => {
         setRouteCache(cacheKey, normalized);
         res.json({ success: true, data: normalized });
     } catch (err) {
-        res.status(500).json({ success: false, error: err.message || 'Smart trip request failed' });
+        console.error('Trip error:', err.message);
+        res.status(500).json({ success: false, error: 'Smart trip request failed' });
     }
 });
 
@@ -570,7 +602,7 @@ app.use(express.static(path.join(__dirname, 'public'), {
 app.use('/RedMaterialsAcademy', express.static(path.join(__dirname, '..', 'Activites ( WorkSpace )', 'RedMaterialsAcademy'), {
     maxAge: 0,
     etag: true,
-    extensions: ['html', 'css', 'js', 'jsx']
+    extensions: ['html', 'css', 'js']
 }));
 
 // Serve Report Generator module
@@ -580,11 +612,22 @@ app.use('/ReportGenerator', express.static(path.join(__dirname, '..', 'Report Ge
     extensions: ['html', 'css', 'js']
 }));
 
-// Serve root files
-app.use(express.static(__dirname, {
+// Serve root files — block sensitive files from being served
+const BLOCKED_FILES = new Set([
+    'server.ultra.js', '.env', 'package.json', 'package-lock.json',
+    'vercel.json', 'split_data.js', 'node_modules', '.gitignore', 'README.md'
+]);
+app.use((req, res, next) => {
+    const firstSeg = decodeURIComponent(req.path).split('/').filter(Boolean)[0] || '';
+    if (BLOCKED_FILES.has(firstSeg) || firstSeg === 'scraper' || firstSeg === 'api') {
+        return res.status(404).end();
+    }
+    next();
+}, express.static(__dirname, {
     maxAge: 0,
     etag: true,
-    extensions: ['html', 'css', 'js', 'json']
+    extensions: ['html', 'css', 'js', 'json'],
+    dotfiles: 'deny'
 }));
 
 // SPA fallback

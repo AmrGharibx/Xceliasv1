@@ -10,7 +10,7 @@ import { db } from "@/lib/db";
 
 // ── Constants ──────────────────────────────────────────────
 const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "avaria-academy-secret-key-change-in-production-2026"
+  process.env.JWT_SECRET ?? (() => { throw new Error("JWT_SECRET environment variable is required"); })()
 );
 const COOKIE_NAME = "avaria-session";
 const SESSION_DURATION = 7 * 24 * 60 * 60; // 7 days in seconds

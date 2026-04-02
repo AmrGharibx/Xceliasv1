@@ -190,11 +190,13 @@ export async function DELETE(
   const { id } = await params;
   try {
     await requireAuth();
-    await db.dailyAttendance.deleteMany({ where: { batchId: id } });
-    await db.tenDayAttendance.deleteMany({ where: { batchId: id } });
-    await db.assessment.deleteMany({ where: { batchId: id } });
-    await db.trainee.deleteMany({ where: { batchId: id } });
-    await db.batch.delete({ where: { id } });
+    await db.$transaction([
+      db.dailyAttendance.deleteMany({ where: { batchId: id } }),
+      db.tenDayAttendance.deleteMany({ where: { batchId: id } }),
+      db.assessment.deleteMany({ where: { batchId: id } }),
+      db.trainee.deleteMany({ where: { batchId: id } }),
+      db.batch.delete({ where: { id } }),
+    ]);
 
     return NextResponse.json({ success: true });
   } catch (error) {

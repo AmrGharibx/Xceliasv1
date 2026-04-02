@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
-  const query = searchParams.get("q")?.toLowerCase() || "";
+  const query = searchParams.get("q")?.trim() || "";
   const limit = parseInt(searchParams.get("limit") || "10");
 
   if (!query || query.length < 2) {

@@ -82,7 +82,7 @@ function getActiveTitle(pathname: string) {
 export function Sidebar() {
   const pathname = usePathname();
   const { sidebarOpen, toggleSidebar, setSidebarOpen } = useUIStore();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const initials = user
     ? user.name
         .split(" ")
@@ -178,10 +178,19 @@ export function Sidebar() {
             <AnimatePresence>
               {sidebarOpen ? (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-semibold text-white">{user?.name ?? "Operations User"}</p>
-                  <p className="truncate text-[11px] uppercase tracking-[0.24em] text-[var(--text-muted)]">
-                    {user?.role ?? "viewer"}
-                  </p>
+                  {authLoading ? (
+                    <>
+                      <div className="h-3.5 w-28 animate-pulse rounded bg-white/10" />
+                      <div className="mt-1.5 h-2.5 w-16 animate-pulse rounded bg-white/8" />
+                    </>
+                  ) : (
+                    <>
+                      <p className="truncate text-sm font-semibold text-white">{user?.name ?? "–"}</p>
+                      <p className="truncate text-[11px] uppercase tracking-[0.24em] text-[var(--text-muted)]">
+                        {user?.role ?? "–"}
+                      </p>
+                    </>
+                  )}
                 </motion.div>
               ) : null}
             </AnimatePresence>
@@ -376,6 +385,12 @@ export function Header() {
 
           <button
             aria-label="Notifications"
+            onClick={() => {
+              // TODO: Replace with notifications panel when ready
+              if (typeof window !== "undefined") {
+                window.dispatchEvent(new CustomEvent("avaria:toast", { detail: { type: "info", title: "No new notifications", message: "All caught up." } }));
+              }
+            }}
             className="relative rounded-2xl border border-white/8 bg-white/[0.04] p-2.5 text-[var(--text-secondary)] transition-colors hover:bg-white/[0.08] hover:text-white"
           >
             <Bell className="h-4.5 w-4.5" />

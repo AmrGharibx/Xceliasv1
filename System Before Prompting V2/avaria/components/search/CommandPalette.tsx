@@ -1,4 +1,4 @@
-"use client";
+﻿﻿"use client";
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
@@ -142,7 +142,7 @@ export function CommandPalette() {
             <div className="max-h-80 overflow-y-auto p-2">
               {query.trim().length < 2 ? (
                 <div className="px-4 py-8 text-center">
-                  <p className="text-sm text-[#57534e]">Type at least 2 characters to searchâ€¦</p>
+                  <p className="text-sm text-[#57534e]">Type at least 2 characters to search…</p>
                   <div className="mt-4 flex justify-center gap-2">
                     <span className="rounded-lg bg-[#231f1d]/50 px-3 py-1.5 text-xs text-[#78716c]">Trainees</span>
                     <span className="rounded-lg bg-[#231f1d]/50 px-3 py-1.5 text-xs text-[#78716c]">Companies</span>

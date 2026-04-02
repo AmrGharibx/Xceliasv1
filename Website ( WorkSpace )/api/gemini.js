@@ -28,13 +28,25 @@ async function callGeminiWithRetry(apiKey, geminiBody, retries = 2) {
 }
 
 module.exports = async function handler(req, res) {
-    // CORS
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    // CORS — restrict to xcelias.com
+    const allowedOrigin = /^https?:\/\/(www\.)?xcelias\.com$/i;
+    const reqOrigin = req.headers.origin || '';
+    if (allowedOrigin.test(reqOrigin)) {
+        res.setHeader('Access-Control-Allow-Origin', reqOrigin);
+    }
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     if (req.method === 'OPTIONS') return res.status(200).end();
     if (req.method !== 'POST') {
         return res.status(405).json({ success: false, error: 'Method not allowed' });
+    }
+
+    // Origin/Referer guard
+    const origin  = req.headers.origin  || '';
+    const referer = req.headers.referer || '';
+    const allowed = /^https?:\/\/(www\.)?xcelias\.com(\/|$)/i;
+    if (!allowed.test(origin) && !allowed.test(referer)) {
+        return res.status(403).json({ success: false, error: 'Forbidden' });
     }
 
     const GEMINI_API_KEY = process.env.GEMINI_API_KEY || '';
@@ -48,6 +60,9 @@ module.exports = async function handler(req, res) {
         if (!messages || !Array.isArray(messages) || messages.length === 0) {
             return res.status(400).json({ success: false, error: 'Messages array is required' });
         }
+        if (messages.length > 20) {
+            return res.status(400).json({ success: false, error: 'Too many messages' });
+        }
 
         const contents = messages.map(m => ({
             role: m.role === 'assistant' ? 'model' : 'user',
@@ -59,7 +74,7 @@ module.exports = async function handler(req, res) {
             generationConfig: {
                 temperature: generationConfig?.temperature ?? 0.9,
                 topP: generationConfig?.topP ?? 0.95,
-                maxOutputTokens: generationConfig?.maxOutputTokens ?? 1200
+                maxOutputTokens: Math.min(generationConfig?.maxOutputTokens ?? 1200, 4096)
             }
         };
 

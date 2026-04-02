@@ -2,6 +2,8 @@
    XCELIAS PORTAL — NAVIGATION + PARTICLE SYSTEM + EFFECTS
    ═══════════════════════════════════════════════════════════ */
 
+function escHtml(s){const d=document.createElement('div');d.textContent=String(s??'');return d.innerHTML;}
+
 const IS_LOCAL = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
 
 const PROJECTS = {
@@ -35,6 +37,13 @@ const PROJECTS = {
 /* ─── State ─── */
 let activeProject = null;
 let currentIframeUrl = null;
+
+/* ─── Auth State ─── */
+let xcPortalUser = null;
+// Keys not listed = accessible to any logged-in user
+const XCP_ROLE_MAP = {
+  website: ['admin', 'agent']
+};
 
 /* ─── DOM refs ─── */
 const homeView     = document.getElementById('home-view');
@@ -174,6 +183,18 @@ function launchProject(key) {
   const proj = PROJECTS[key];
   if (!proj) return;
 
+  // Role check
+  const allowedRoles = XCP_ROLE_MAP[key];
+  if (allowedRoles && xcPortalUser && !allowedRoles.includes(xcPortalUser.role)) {
+    const el = document.getElementById('xcp-access-denied');
+    if (el) {
+      el.textContent = '🔒 Agent access required. Ask your admin to upgrade your account.';
+      el.classList.add('show');
+      setTimeout(() => el.classList.remove('show'), 3500);
+    }
+    return;
+  }
+
   if (proj.mode === 'tab') {
     if (!proj.url) {
       showAvariaBanner();
@@ -254,7 +275,7 @@ function showIframeError(projectName) {
   overlay.innerHTML = `
     <div style="font-size:3rem;opacity:0.5">⚠️</div>
     <h3 style="font-size:1.1rem;font-weight:700;color:#e8e8f0">Failed to Load</h3>
-    <p style="font-size:0.82rem;color:#9898b8;max-width:360px;line-height:1.6">${projectName || 'This module'} didn't respond. Make sure the server is running and try again.</p>
+    <p style="font-size:0.82rem;color:#9898b8;max-width:360px;line-height:1.6">${escHtml(projectName || 'This module')} didn't respond. Make sure the server is running and try again.</p>
     <div style="display:flex;gap:12px;margin-top:8px">
       <button onclick="location.reload()" style="padding:10px 24px;border-radius:50px;border:1px solid rgba(102,126,234,0.3);background:rgba(102,126,234,0.1);color:#a5b4fc;font-family:inherit;font-size:0.78rem;font-weight:600;cursor:pointer">Retry</button>
       <button onclick="goHome()" style="padding:10px 24px;border-radius:50px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.05);color:#9898b8;font-family:inherit;font-size:0.78rem;font-weight:600;cursor:pointer">Back to Home</button>
@@ -274,6 +295,160 @@ function openInNewTab() {
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && activeProject) goHome();
 });
+
+/* ═══════════════════════════════════════════════════════════════
+   XC PORTAL AUTH GUARD
+   ═══════════════════════════════════════════════════════════════ */
+(function xcPortalAuthGuard() {
+  'use strict';
+  const _r = (k, d) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } };
+  const _w = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
+  const _hash = async (s) => {
+    try {
+      const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+      return Array.from(new Uint8Array(b)).map(x => x.toString(16).padStart(2, '0')).join('');
+    } catch {
+      throw new Error('Secure hashing unavailable — HTTPS required');
+    }
+  };
+
+  function applyRoles(user) {
+    xcPortalUser = user;
+    // Populate user chip
+    const chip = document.getElementById('xcp-user-chip');
+    if (chip) {
+      const roleLabel = { admin: '👑 Admin', agent: '🏠 Agent', trainee: '🎓 Trainee' }[user.role] || user.role;
+      chip.innerHTML = `<span class="xcp-chip-name">${escHtml(user.displayName || user.username)}</span><span class="xcp-chip-role">${escHtml(roleLabel)}</span><button class="xcp-chip-signout" id="xcp-signout">Sign Out</button>`;
+      chip.style.display = 'flex';
+      document.getElementById('xcp-signout').addEventListener('click', () => {
+        try { localStorage.removeItem('xcCurrentUser'); } catch {}
+        if (window.xcFirebaseReady && window.xcAuth) window.xcAuth.signOut().catch(() => {});
+        location.reload();
+      });
+    }
+    // Apply locked state to restricted cards
+    document.querySelectorAll('.project-card').forEach(card => {
+      const key = card.dataset.project;
+      const required = XCP_ROLE_MAP[key];
+      if (required && !required.includes(user.role)) {
+        card.classList.add('xcp-card-locked');
+        card.style.position = 'relative';
+        const badge = document.createElement('div');
+        badge.className = 'xcp-lock-badge';
+        badge.textContent = '🔒 Agent Only';
+        card.appendChild(badge);
+      }
+    });
+  }
+
+  const trySignIn = async (username, password) => {
+    const u = username.toLowerCase().trim();
+    if (window.xcFirebaseReady) {
+      try {
+        const cred = await window.xcAuth.signInWithEmailAndPassword(`${u}@xcelias.internal`, password);
+        const snap = await window.xcDB.ref(`users/${cred.user.uid}`).once('value');
+        const profile = snap.val();
+        if (!profile) throw new Error('Account profile not found');
+        const user = { uid: cred.user.uid, ...profile };
+        _w('xcCurrentUser', user);
+        return user;
+      } catch (e) {
+        if (e.code === 'auth/wrong-password' || e.code === 'auth/user-not-found' || e.code === 'auth/invalid-credential') throw new Error('Invalid username or password');
+        throw e;
+      }
+    }
+    // Offline
+    const adminSetup = _r('xcAdminSetup', null);
+    if (u === 'admin') {
+      if (!adminSetup) throw new Error('No admin found. Log in via Training Academy first.');
+      const h = await _hash(password);
+      if (h !== adminSetup.passwordHash) throw new Error('Invalid username or password');
+      const user = { uid: 'admin_local', username: 'admin', displayName: 'Admin', role: 'admin', batchId: 'admin' };
+      _w('xcCurrentUser', user);
+      return user;
+    }
+    const accounts = _r('xcAccounts', []);
+    if (!accounts.length) throw new Error('No accounts found. Log in via Training Academy first.');
+    const account = accounts.find(a => (a.username || '').toLowerCase() === u);
+    if (!account) throw new Error('Invalid username or password');
+    const h = await _hash(password);
+    if (h !== account.passwordHash) throw new Error('Invalid username or password');
+    _w('xcCurrentUser', account);
+    return account;
+  };
+
+  const overlay  = document.getElementById('xcp-auth-guard');
+  const cur = _r('xcCurrentUser', null);
+
+  // Already logged in — verify via Firebase before trusting localStorage
+  if (cur && cur.role) {
+    if (window.xcFirebaseReady && window.xcAuth) {
+      // Online: verify a real Firebase session backs this localStorage claim
+      const _unsub = window.xcAuth.onAuthStateChanged((fbUser) => {
+        _unsub();
+        if (fbUser) {
+          // Real Firebase session — proceed
+          if (overlay) overlay.remove();
+          applyRoles(cur);
+        } else {
+          // No Firebase session — check for legitimate offline accounts
+          const adminSetup = _r('xcAdminSetup', null);
+          const accounts = _r('xcAccounts', []);
+          const isOfflineAdmin = cur.uid === 'admin_local' && adminSetup;
+          const isOfflineAccount = accounts.some(a => a.uid === cur.uid);
+          if (isOfflineAdmin || isOfflineAccount) {
+            if (overlay) overlay.remove();
+            applyRoles(cur);
+          } else {
+            // Forged localStorage — wipe and force re-login
+            try { localStorage.removeItem('xcCurrentUser'); } catch {}
+            location.reload();
+          }
+        }
+      });
+    } else {
+      // Offline: trust localStorage (legitimate offline flow)
+      if (overlay) overlay.remove();
+      applyRoles(cur);
+    }
+    return;
+  }
+
+  // Show overlay and attach form handlers
+  const form     = document.getElementById('xcp-form');
+  const errEl    = document.getElementById('xcp-error');
+  const submitEl = document.getElementById('xcp-submit');
+  const unameEl  = document.getElementById('xcp-username');
+  const pwEl     = document.getElementById('xcp-password');
+  const toggle   = document.getElementById('xcp-pw-toggle');
+
+  if (toggle) toggle.addEventListener('click', () => {
+    pwEl.type = pwEl.type === 'password' ? 'text' : 'password';
+    toggle.textContent = pwEl.type === 'password' ? '👁' : '🙈';
+  });
+
+  const showErr  = (m) => {
+    if (errEl) {
+      errEl.textContent = m;
+      errEl.style.display = m ? 'block' : 'none';
+    }
+  };
+  const setLoad  = (on) => { if (submitEl) { submitEl.disabled = on; submitEl.textContent = on ? '· · ·' : '⚡ Enter Portal'; } };
+
+  if (form) form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const uname = (unameEl?.value || '').trim();
+    const pw    = pwEl?.value || '';
+    if (!uname || !pw) { showErr('Enter username and password'); return; }
+    setLoad(true); showErr('');
+    try {
+      const user = await trySignIn(uname, pw);
+      if (overlay) overlay.remove();
+      applyRoles(user);
+    } catch (err) { showErr(err.message || 'Login failed'); }
+    setLoad(false);
+  });
+})();
 
 /* ─── Card click / keyboard bindings ─── */
 document.querySelectorAll('.project-card').forEach(card => {

@@ -28,7 +28,7 @@ const defaultThemeConfig: ThemeConfig = {
   showSparklines: true,
   chartStyle: "area",
   colorScheme: "cyan",
-  fontFamily: "inter",
+  fontFamily: "jakarta",
 };
 
 export const useThemeStore = create<ThemeState>()(
@@ -133,7 +133,7 @@ export const useUIStore = create<UIState>()((set) => ({
     set((state) => ({
       notifications: [
         ...state.notifications,
-        { ...notification, id: `notif-${Date.now()}` },
+        { ...notification, id: `notif-${Date.now()}-${Math.random().toString(36).slice(2, 7)}` },
       ],
     })),
   removeNotification: (id) =>

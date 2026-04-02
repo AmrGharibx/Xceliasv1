@@ -9733,6 +9733,26 @@ const App = () => {
     setGlobalScore(0); setGlobalStreak(0); setCurrentActivity(null); setSelectedCategory(null);
   };
 
+  // ─── VERIFY LOCALSTORAGE AUTH AGAINST FIREBASE SESSION ─────
+  useEffect(() => {
+    if (!currentUser || !window.xcFirebaseReady || !window.xcAuth) return;
+    const unsub = window.xcAuth.onAuthStateChanged((fbUser) => {
+      unsub();
+      if (fbUser) return; // Real Firebase session — all good
+      // No Firebase session — check for legitimate offline accounts
+      const adminSetup = xcRead(XC_KEYS.adminSetup, null);
+      const accounts = xcRead(XC_KEYS.accounts, []);
+      const isOfflineAdmin = currentUser.uid === 'admin_local' && adminSetup;
+      const isOfflineAccount = accounts.some(a => a.uid === currentUser.uid);
+      if (!isOfflineAdmin && !isOfflineAccount) {
+        // Forged localStorage — force logout
+        try { localStorage.removeItem(XC_KEYS.currentUser); } catch {}
+        setCurrentUser(null);
+      }
+    });
+    return () => unsub();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   const [currentActivity, setCurrentActivity] = useState(null);
   const [globalScore, setGlobalScore] = useState(() => {
     try {
@@ -11152,7 +11172,7 @@ const xcRead  = (key, fb=null) => { try { const v=localStorage.getItem(key); ret
 const xcWrite = (key, v) => { try { localStorage.setItem(key, JSON.stringify(v)); } catch{} };
 const xcGenPassword = () => { const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let p='XC-'; for(let i=0;i<4;i++) p+=c[Math.floor(Math.random()*c.length)]; p+='-'; for(let i=0;i<4;i++) p+=c[Math.floor(Math.random()*c.length)]; return p; };
 const xcId = () => Math.random().toString(36).slice(2,10).toUpperCase();
-const xcHash = async (s) => { try { const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)); return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join(''); } catch { let h=5381; for(let i=0;i<s.length;i++) h=((h<<5)+h)^s.charCodeAt(i); return (h>>>0).toString(16); } };
+const xcHash = async (s) => { try { const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)); return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join(''); } catch { throw new Error('Secure hashing unavailable — HTTPS required'); } };
 const xcDownloadTextFile = (filename, text, type='text/plain') => {
   const blob = new Blob([text], { type });
   const url = URL.createObjectURL(blob);
@@ -11308,8 +11328,10 @@ const XC = {
     return batchId ? acc.filter(a=>a.batchId===batchId) : acc;
   },
 
-  createTrainee: async ({ displayName, username, password, batchId, batchName }) => {
+  createTrainee: async ({ displayName, username, password, batchId, batchName, role = 'trainee' }) => {
+    if (!password || password.length < 6) throw new Error('Password must be at least 6 characters');
     const u = username.toLowerCase().trim();
+    const resolvedRole = (role === 'agent') ? 'agent' : 'trainee';
     if (XC.isOnline()) {
       const usersSnap = await window.xcDB.ref('users').once('value');
       const users = usersSnap.val() || {};
@@ -11318,7 +11340,7 @@ const XC = {
       if (existing.filter(a => a.batchId === batchId && a.role !== 'admin').length >= XC_MAX_TRAINEES) throw new Error(`Maximum ${XC_MAX_TRAINEES} trainees per batch`);
       const email = XC.fbEmail(u);
       const uid = await xcCreateFirebaseUser(email, password);
-      const profile = { username:u, displayName, role:'trainee', batchId, batchName, totalScore:0, streak:0, activitiesPlayed:0, rank:'Rookie', lastActive:Date.now(), createdAt:Date.now() };
+      const profile = { username:u, displayName, role:resolvedRole, batchId, batchName, totalScore:0, streak:0, activitiesPlayed:0, rank:'Rookie', lastActive:Date.now(), createdAt:Date.now() };
       await window.xcDB.ref(`users/${uid}`).set(profile);
       await window.xcDB.ref(`leaderboard/${batchId}/${uid}`).set({ displayName, username:u, totalScore:0, streak:0, rank:'Rookie', activitiesPlayed:0, lastActive:Date.now() });
       return { uid, ...profile };
@@ -11328,7 +11350,7 @@ const XC = {
     if (accounts.filter(a=>a.batchId===batchId).length >= XC_MAX_TRAINEES) throw new Error(`Maximum ${XC_MAX_TRAINEES} trainees per batch`);
     const hash = await xcHash(password);
     const uid = `local_${xcId()}`;
-    const account = { uid, username:u, displayName, passwordHash:hash, role:'trainee', batchId, batchName, totalScore:0, streak:0, activitiesPlayed:0, rank:'Rookie', lastActive:Date.now(), createdAt:Date.now() };
+    const account = { uid, username:u, displayName, passwordHash:hash, role:resolvedRole, batchId, batchName, totalScore:0, streak:0, activitiesPlayed:0, rank:'Rookie', lastActive:Date.now(), createdAt:Date.now() };
     accounts.push(account);
     xcWrite(XC_KEYS.accounts, accounts);
     return account;
@@ -11704,6 +11726,7 @@ const XcAdminPanel = ({ currentUser, onClose }) => {
   const [addLoading, setAddLoading]     = useState(false);
   const [addError, setAddError]         = useState('');
   const [credentials, setCredentials]   = useState([]);
+  const [newRole, setNewRole]           = useState('trainee');
   const [roomMode, setRoomMode]         = useState('solo_race');
   const [createdRoom, setCreatedRoom]   = useState(null);
   const [creatingRoom, setCreatingRoom] = useState(false);
@@ -11735,10 +11758,10 @@ const XcAdminPanel = ({ currentUser, onClose }) => {
     if (!newName.trim() || !newUsername.trim()) { setAddError('Name and username are required'); return; }
     setAddError(''); setAddLoading(true);
     try {
-      const trainee = await XC.createTrainee({ displayName:newName.trim(), username:newUsername.trim(), password:newPassword, batchId, batchName });
+      const trainee = await XC.createTrainee({ displayName:newName.trim(), username:newUsername.trim(), password:newPassword, batchId, batchName, role:newRole });
       setAccounts(p => [...p, trainee]);
-      setCredentials(p => [...p, { name:newName.trim(), username:newUsername.trim().toLowerCase(), password:newPassword }]);
-      setNewName(''); setNewUsername(''); setNewPassword(xcGenPassword()); setShowAddForm(false);
+      setCredentials(p => [...p, { name:newName.trim(), username:newUsername.trim().toLowerCase(), password:newPassword, role:newRole }]);
+      setNewName(''); setNewUsername(''); setNewPassword(xcGenPassword()); setNewRole('trainee'); setShowAddForm(false);
     } catch(err) { setAddError(err.message||'Failed to create account'); }
     setAddLoading(false);
   };
@@ -11828,6 +11851,7 @@ const XcAdminPanel = ({ currentUser, onClose }) => {
                     <div className="xc-trainee-info">
                       <span className="xc-trainee-name">{t.displayName}</span>
                       <span className="xc-trainee-username">@{t.username}</span>
+                      {t.role==='agent'&&<span style={{fontSize:10,fontWeight:800,color:'#a78bfa',display:'block',marginTop:2}}>🏠 Agent</span>}
                     </div>
                     <div className="xc-trainee-score">⭐ {(t.totalScore||0).toLocaleString()}</div>
                     <button className="xc-trainee-delete" onClick={()=>handleDelete(t.uid,t.batchId)} title="Delete">🗑</button>
@@ -11867,6 +11891,13 @@ const XcAdminPanel = ({ currentUser, onClose }) => {
                           <button type="button" className="xc-admin-gen-btn" onClick={()=>setNewPassword(xcGenPassword())} title="Generate">🔄</button>
                         </div>
                       </div>
+                    </div>
+                    <div className="xc-admin-field">
+                      <label className="xc-admin-label">Role</label>
+                      <select value={newRole} onChange={e=>setNewRole(e.target.value)} className="xc-admin-input">
+                        <option value="trainee">🎓 Trainee — Activities only</option>
+                        <option value="agent">🏠 Agent — Activities + Website</option>
+                      </select>
                     </div>
                     {addError && <div className="xc-login-error">{addError}</div>}
                     <div style={{display:'flex',gap:10,flexWrap:'wrap'}}>

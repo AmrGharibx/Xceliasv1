@@ -1,4 +1,4 @@
-"use client";
+﻿﻿"use client";
 
 import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -124,7 +124,7 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   autoComplete="current-password"
-                  placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                  placeholder="••••••••"
                   className="w-full rounded-xl border border-[rgba(100,100,160,0.08)] bg-[#171412] px-4 py-3 pr-11 text-[14px] text-[#fafaf9] placeholder:text-[#44403c] outline-none transition-all focus:border-emerald-500/30 focus:ring-1 focus:ring-emerald-500/20"
                 />
                 <button

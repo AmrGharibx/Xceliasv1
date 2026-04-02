@@ -107,6 +107,33 @@ export default function SettingsPage() {
       const file = (e.target as HTMLInputElement).files?.[0];
       if (!file) return;
       toast.info("Importing...", `Processing ${file.name}`);
+
+      try {
+        // Determine file type from name
+        let fileType = "trainees";
+        const nameLower = file.name.toLowerCase();
+        if (nameLower.includes("batch")) fileType = "batches";
+        else if (nameLower.includes("attend")) fileType = "attendance";
+        else if (nameLower.includes("assess")) fileType = "assessments";
+        else if (nameLower.includes("10-day") || nameLower.includes("tenday") || nameLower.includes("10day")) fileType = "tenday";
+
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("type", fileType);
+
+        const res = await fetch("/api/ingest", { method: "POST", body: formData });
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({ error: "Import failed" }));
+          throw new Error(errData.error || "Import failed");
+        }
+        const result = await res.json();
+        toast.success(
+          "Import complete",
+          `${result.summary?.new ?? 0} new, ${result.summary?.updated ?? 0} updated, ${result.summary?.skipped ?? 0} skipped`
+        );
+      } catch (err) {
+        toast.error("Import failed", err instanceof Error ? err.message : "Could not process file.");
+      }
     };
     input.click();
   };
@@ -371,12 +398,12 @@ export default function SettingsPage() {
 
                   <div className="flex items-center justify-between rounded-xl border border-rose-500/20 bg-rose-500/5 p-4">
                     <div>
-                      <p className="font-medium text-rose-300">Clear All Data</p>
+                      <p className="font-medium text-rose-300">Reset Local Preferences</p>
                       <p className="text-sm text-[#57534e]">
-                        Permanently delete all data. This cannot be undone.
+                        Resets theme, dashboard layout, and notification preferences to defaults.
                       </p>
                     </div>
-                    <Button variant="danger" onClick={() => setClearConfirm(true)}>Clear Data</Button>
+                    <Button variant="danger" onClick={() => setClearConfirm(true)}>Reset</Button>
                   </div>
                 </div>
               </Card>
@@ -394,9 +421,9 @@ export default function SettingsPage() {
         open={clearConfirm}
         onClose={() => setClearConfirm(false)}
         onConfirm={handleClear}
-        title="Clear All Data"
-        message="This will reset all local preferences (theme, dashboard layout, notification settings). This action cannot be undone."
-        confirmLabel="Clear Everything"
+        title="Reset Local Preferences"
+        message="This will reset theme, dashboard layout, and notification preferences to their defaults. Your database data will not be affected."
+        confirmLabel="Reset Preferences"
         loading={clearing}
       />
     </div>

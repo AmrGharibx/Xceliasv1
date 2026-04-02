@@ -209,7 +209,7 @@ export interface ThemeConfig {
   showSparklines: boolean;
   chartStyle: "area" | "bar" | "line";
   colorScheme: "cyan" | "red" | "blue" | "sky" | "green" | "amber";
-  fontFamily: "inter" | "poppins" | "system";
+  fontFamily: "jakarta" | "grotesk" | "system";
 }
 
 export interface DashboardWidget {

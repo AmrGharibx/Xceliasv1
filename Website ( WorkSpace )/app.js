@@ -1,3 +1,134 @@
+// ─── XCELIAS AUTH GUARD ─────────────────────────────────────────────────────
+(function xcWebsiteAuthGuard() {
+  'use strict';
+  const _r = (k, d) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } };
+  const _w = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
+  const _hash = async (s) => {
+    try {
+      const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+      return Array.from(new Uint8Array(b)).map(x => x.toString(16).padStart(2, '0')).join('');
+    } catch {
+      throw new Error('Secure hashing unavailable — HTTPS required');
+    }
+  };
+  const _allowed = u => u && (u.role === 'admin' || u.role === 'agent');
+
+  // Already logged in with sufficient role → verify via Firebase before trusting
+  const cur = _r('xcCurrentUser', null);
+  if (_allowed(cur)) {
+    if (window.xcFirebaseReady && window.xcAuth) {
+      // Online: verify a real Firebase session backs this localStorage claim
+      const _unsub = window.xcAuth.onAuthStateChanged((fbUser) => {
+        _unsub();
+        if (fbUser) {
+          // Real Firebase session — proceed
+          const ov = document.getElementById('xc-auth-guard');
+          if (ov) ov.remove();
+        } else {
+          // No Firebase session — check for legitimate offline accounts
+          const adminSetup = _r('xcAdminSetup', null);
+          const accounts = _r('xcAccounts', []);
+          const isOfflineAdmin = cur.uid === 'admin_local' && adminSetup;
+          const isOfflineAccount = accounts.some(a => a.uid === cur.uid);
+          if (isOfflineAdmin || isOfflineAccount) {
+            const ov = document.getElementById('xc-auth-guard');
+            if (ov) ov.remove();
+          } else {
+            // Forged localStorage — wipe and force re-login
+            try { localStorage.removeItem('xcCurrentUser'); } catch {}
+            location.reload();
+          }
+        }
+      });
+    } else {
+      // Offline: trust localStorage (legitimate offline flow)
+      const ov = document.getElementById('xc-auth-guard');
+      if (ov) ov.remove();
+    }
+    return;
+  }
+
+  // Show overlay on DOM ready (it starts visible via HTML style attribute)
+  const initGuard = () => {
+    const overlay  = document.getElementById('xc-auth-guard');
+    const form     = document.getElementById('xca-form');
+    const errEl    = document.getElementById('xca-error');
+    const submitEl = document.getElementById('xca-submit');
+    const unameEl  = document.getElementById('xca-username');
+    const pwEl     = document.getElementById('xca-password');
+    const toggle   = document.getElementById('xca-pw-toggle');
+    if (!overlay || !form) return;
+
+    if (toggle) toggle.addEventListener('click', () => {
+      pwEl.type = pwEl.type === 'password' ? 'text' : 'password';
+      toggle.textContent = pwEl.type === 'password' ? '👁' : '🙈';
+    });
+
+    const showErr = (m) => { if (errEl) { errEl.textContent = m; errEl.style.display = 'block'; } };
+    const setLoad = (on) => { if (submitEl) { submitEl.disabled = on; submitEl.textContent = on ? '⏳' : 'Sign In →'; } };
+
+    const trySignIn = async (username, password) => {
+      const u = username.toLowerCase().trim();
+      // Online (Firebase, if loaded by firebase-config.js)
+      if (window.xcFirebaseReady) {
+        try {
+          const cred = await window.xcAuth.signInWithEmailAndPassword(`${u}@xcelias.internal`, password);
+          const snap = await window.xcDB.ref(`users/${cred.user.uid}`).once('value');
+          const profile = snap.val();
+          if (!profile) throw new Error('Account profile not found');
+          const user = { uid: cred.user.uid, ...profile };
+          if (!_allowed(user)) { await window.xcAuth.signOut(); throw new Error('Your account is Activities-only. Ask admin to upgrade to Agent.'); }
+          _w('xcCurrentUser', user);
+          return user;
+        } catch (e) {
+          if (e.code === 'auth/wrong-password' || e.code === 'auth/user-not-found' || e.code === 'auth/invalid-credential') throw new Error('Invalid username or password');
+          throw e;
+        }
+      }
+      // Offline
+      const adminSetup = _r('xcAdminSetup', null);
+      if (u === 'admin') {
+        if (!adminSetup) throw new Error('No admin found. Log in via Training Academy first.');
+        const h = await _hash(password);
+        if (h !== adminSetup.passwordHash) throw new Error('Invalid username or password');
+        const user = { uid: 'admin_local', username: 'admin', displayName: 'Admin', role: 'admin', batchId: 'admin' };
+        _w('xcCurrentUser', user);
+        return user;
+      }
+      const accounts = _r('xcAccounts', []);
+      if (!accounts.length) throw new Error('No accounts found. Log in via Training Academy first.');
+      const account = accounts.find(a => (a.username || '').toLowerCase() === u);
+      if (!account) throw new Error('Invalid username or password');
+      const h = await _hash(password);
+      if (h !== account.passwordHash) throw new Error('Invalid username or password');
+      if (!_allowed(account)) throw new Error('Your account is Activities-only. Ask admin to upgrade to Agent.');
+      _w('xcCurrentUser', account);
+      return account;
+    };
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const uname = (unameEl?.value || '').trim();
+      const pw    = pwEl?.value || '';
+      if (!uname || !pw) { showErr('Enter username and password'); return; }
+      setLoad(true); showErr('');
+      try { await trySignIn(uname, pw); overlay.remove(); }
+      catch (err) { showErr(err.message || 'Login failed'); }
+      setLoad(false);
+    });
+  };
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initGuard);
+  else initGuard();
+})();
+
+// ─── HTML ESCAPE UTILITY (XSS prevention for innerHTML) ─────────────────
+function escHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = String(s ?? '');
+  return d.innerHTML;
+}
+
 if (!window.gsap) {
     const noopTimeline = {
         to() { return this; },
@@ -64,23 +195,25 @@ function applyActiveFilter(projects) {
 // LAZY-LOAD UTILITY — Load scripts/CSS on demand
 // ═══════════════════════════════════════════════════════════════════════════
 const _lazyCache = {};
-function lazyLoadScript(url) {
+function lazyLoadScript(url, integrity) {
     if (_lazyCache[url]) return _lazyCache[url];
     _lazyCache[url] = new Promise((resolve, reject) => {
         const s = document.createElement('script');
         s.src = url;
+        if (integrity) { s.integrity = integrity; s.crossOrigin = 'anonymous'; }
         s.onload = resolve;
         s.onerror = () => reject(new Error('Failed to load: ' + url));
         document.head.appendChild(s);
     });
     return _lazyCache[url];
 }
-function lazyLoadCSS(url) {
+function lazyLoadCSS(url, integrity) {
     if (_lazyCache[url]) return _lazyCache[url];
     _lazyCache[url] = new Promise((resolve) => {
         const link = document.createElement('link');
         link.rel = 'stylesheet';
         link.href = url;
+        if (integrity) { link.integrity = integrity; link.crossOrigin = 'anonymous'; }
         link.onload = resolve;
         document.head.appendChild(link);
     });
@@ -577,15 +710,15 @@ const RecentlyViewed = {
         section.style.display = 'block';
         
         container.innerHTML = recent.map((proj, index) => `
-            <div class="recent-item" onclick="openRecentProject('${proj.name.replace(/'/g, "\\'")}')" role="button" tabindex="0">
+            <div class="recent-item" data-action="open-recent" data-project-name="${escHtml(proj.name)}" role="button" tabindex="0">
                 <div class="recent-item-info">
-                    <div class="recent-item-name">${proj.name}</div>
+                    <div class="recent-item-name">${escHtml(proj.name)}</div>
                     <div class="recent-item-meta">
-                        ${proj.dev ? `<span class="recent-dev">${proj.dev}</span>` : ''}
-                        ${proj.zone ? `<span class="recent-zone">${proj.zone}</span>` : ''}
+                        ${proj.dev ? `<span class="recent-dev">${escHtml(proj.dev)}</span>` : ''}
+                        ${proj.zone ? `<span class="recent-zone">${escHtml(proj.zone)}</span>` : ''}
                     </div>
                 </div>
-                <button class="recent-item-remove" onclick="event.stopPropagation(); RecentlyViewed.remove('${proj.name.replace(/'/g, "\\'")}')" title="${i18n.t('removeRecent')}" aria-label="Remove from recently viewed">
+                <button class="recent-item-remove" data-action="remove-recent" data-project-name="${escHtml(proj.name)}" title="${i18n.t('removeRecent')}" aria-label="Remove from recently viewed">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                 </button>
             </div>
@@ -651,6 +784,8 @@ const PriceAlerts = {
     // Add a new price alert
     add(projectName, targetPrice, currentPrice = null) {
         if (!projectName || !targetPrice) return false;
+        const parsedTarget = parseFloat(targetPrice);
+        if (isNaN(parsedTarget) || parsedTarget <= 0) return false;
         
         let alerts = this.get();
         
@@ -660,7 +795,7 @@ const PriceAlerts = {
         const alert = {
             id: existingIndex >= 0 ? alerts[existingIndex].id : Date.now(),
             projectName: projectName,
-            targetPrice: parseFloat(targetPrice),
+            targetPrice: parsedTarget,
             currentPrice: currentPrice ? parseFloat(currentPrice) : null,
             createdAt: existingIndex >= 0 ? alerts[existingIndex].createdAt : Date.now(),
             updatedAt: Date.now(),
@@ -767,7 +902,7 @@ const PriceAlerts = {
         toast.className = `price-alert-toast toast-${type}`;
         toast.innerHTML = `
             <span class="toast-icon">${type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ'}</span>
-            <span class="toast-message">${message}</span>
+            <span class="toast-message">${escHtml(message)}</span>
         `;
         document.body.appendChild(toast);
         
@@ -805,7 +940,7 @@ const PriceAlerts = {
         container.innerHTML = alerts.map(alert => `
             <div class="alert-item ${alert.triggered ? 'triggered' : ''}" data-id="${alert.id}">
                 <div class="alert-item-header">
-                    <span class="alert-project-name">${alert.projectName}</span>
+                    <span class="alert-project-name">${escHtml(alert.projectName)}</span>
                     <button class="alert-remove-btn" onclick="PriceAlerts.remove(${alert.id})" title="${i18n.t('removeAlert')}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                     </button>
@@ -1722,7 +1857,7 @@ async function fetchAndDrawRoads() {
     
     if (!window.osmtogeojson) {
         try {
-            await lazyLoadScript('https://unpkg.com/osmtogeojson@2.2.12/osmtogeojson.js');
+            await lazyLoadScript('https://unpkg.com/osmtogeojson@2.2.12/osmtogeojson.js', 'sha384-fAlU0IIimkdHdu7mvEMWsgmkz5GQe7P6r0z7pHCYOru6JzHyo3GcNwqxARCMVU02');
         } catch (e) {
             console.error('Failed to load osmtogeojson:', e);
             return;
@@ -2105,8 +2240,8 @@ function updateComparisonDrawer() {
         const encodedProjectName = encodeURIComponent(p.name);
     card.className = 'comparison-card';
     card.innerHTML = `
-      <span>${p.name}</span>
-            <button class="remove-btn" onclick="removeFromCompareEncoded('${encodedProjectName}')">×</button>
+      <span>${escHtml(p.name)}</span>
+            <button class="remove-btn" data-project-token="${encodedProjectName}" data-action="remove-compare">×</button>
     `;
     itemsContainer.appendChild(card);
   });
@@ -2131,21 +2266,21 @@ function openComparisonModal() {
     <thead>
       <tr>
         <th>Feature</th>
-        ${compareList.map(p => `<th>${p.name}</th>`).join('')}
+        ${compareList.map(p => `<th>${escHtml(p.name)}</th>`).join('')}
       </tr>
     </thead>
     <tbody>
       <tr>
         <td>Developer</td>
-        ${compareList.map(p => `<td>${p.dev || '-'}</td>`).join('')}
+        ${compareList.map(p => `<td>${escHtml(p.dev || '-')}</td>`).join('')}
       </tr>
       <tr>
         <td>Location</td>
-        ${compareList.map(p => `<td>${p.zone || '-'}</td>`).join('')}
+        ${compareList.map(p => `<td>${escHtml(p.zone || '-')}</td>`).join('')}
       </tr>
       <tr>
         <td>Unit Types</td>
-        ${compareList.map(p => `<td>${projectDetails[p.name]?.unitTypes || '-'}</td>`).join('')}
+        ${compareList.map(p => `<td>${escHtml(projectDetails[p.name]?.unitTypes || '-')}</td>`).join('')}
       </tr>
       <tr>
         <td>Min Area</td>
@@ -2505,17 +2640,17 @@ function _renderZoneListItems(container, projects) {
       Number.isFinite(p.installmentYears) && p.installmentYears > 0 ? `${p.installmentYears}Y plan` : sizePreview
     ].filter(Boolean).join(' • ') || 'Tap to inspect payment options';
     const encodedProjectName = encodeURIComponent(p.name);
-    const badgesHtml = (routeMeta.badges || []).map(badge => `<span class="list-item-badge">${badge}</span>`).join('');
+    const badgesHtml = (routeMeta.badges || []).map(badge => `<span class="list-item-badge">${escHtml(badge)}</span>`).join('');
     item.innerHTML = `
       <div class="list-item-top">
-        <span class="list-item-headline ${nameClass}">${p.name}</span>
+        <span class="list-item-headline ${nameClass}">${escHtml(p.name)}</span>
         <span class="list-item-badges">${badgesHtml}</span>
       </div>
-      <span class="${devClass}">${devName || p.zone || 'Developer pending'}</span>
+      <span class="${devClass}">${escHtml(devName || p.zone || 'Developer pending')}</span>
       <div class="list-item-meta">
-        <span class="list-item-chip emphasis">${p.zone || 'Egypt'}</span>
-        <span class="list-item-chip">${titleCase(p.status || 'Available')}</span>
-        <span class="list-item-chip subtle">${unitPreview}</span>
+        <span class="list-item-chip emphasis">${escHtml(p.zone || 'Egypt')}</span>
+        <span class="list-item-chip">${escHtml(titleCase(p.status || 'Available'))}</span>
+        <span class="list-item-chip subtle">${escHtml(unitPreview)}</span>
       </div>
       <div class="list-item-finance">
         <strong class="list-item-price">${financeLine}</strong>
@@ -2583,7 +2718,7 @@ async function renderProjects(projectList) {
 
       if (!L.heatLayer) {
           try {
-              await lazyLoadScript('https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js');
+              await lazyLoadScript('https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js', 'sha384-mFKkGiGvT5vo1fEyGCD3hshDdKmW3wzXW/x+fWriYJArD0R3gawT6lMvLboM22c0');
           } catch (e) {
               console.warn('Failed to load leaflet.heat:', e);
           }
@@ -2647,7 +2782,7 @@ async function renderProjects(projectList) {
     const header = document.createElement("div");
     header.className = "zone-header";
     const zoneCount = zones[zone].length;
-    header.innerHTML = `<span class="zone-label">${zone}</span><span class="zone-header-meta"><span class="zone-count">${zoneCount}</span><span class="arrow"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></span>`;
+    header.innerHTML = `<span class="zone-label">${escHtml(zone)}</span><span class="zone-header-meta"><span class="zone-count">${zoneCount}</span><span class="arrow"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span></span>`;
       
       const content = document.createElement("div");
       content.className = "zone-content";
@@ -2755,21 +2890,21 @@ async function renderProjects(projectList) {
               
                             const popupContent = `
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                  <div class="popup-title" style="margin-bottom: 0;">${p.name}</div>
-                                                                        <button class="fav-btn" data-project="${p.name}" onclick="toggleFavoriteEncoded('${encodedProjectName}')" style="background: none; border: none; cursor: pointer; font-size: 1.2rem; color: ${heartColor};">
+                  <div class="popup-title" style="margin-bottom: 0;">${escHtml(p.name)}</div>
+                                                                        <button class="fav-btn" data-project-token="${encodedProjectName}" data-action="fav" style="background: none; border: none; cursor: pointer; font-size: 1.2rem; color: ${heartColor};">
                       ${heartIcon}
                   </button>
                 </div>
-                <div class="popup-dev">${p.dev}</div>
+                <div class="popup-dev">${escHtml(p.dev)}</div>
                 ${priceDisplay}
                 ${paymentDisplay}
-                                                                <button onclick="addToCompareEncoded('${encodedProjectName}')" class="popup-btn">Add to Compare</button>
+                                                                <button data-project-token="${encodedProjectName}" data-action="compare" class="popup-btn">Add to Compare</button>
                                 <div class="route-popup-actions">
-                                                                        <button onclick="routeProjectActionEncoded('${encodedProjectName}', 'origin')" class="popup-route-btn">Start</button>
-                                                                        <button onclick="routeProjectActionEncoded('${encodedProjectName}', 'destination')" class="popup-route-btn">Destination</button>
-                                                                        <button onclick="routeProjectActionEncoded('${encodedProjectName}', 'stop')" class="popup-route-btn">Stop</button>
+                                                                        <button data-project-token="${encodedProjectName}" data-action="route" data-route-type="origin" class="popup-route-btn">Start</button>
+                                                                        <button data-project-token="${encodedProjectName}" data-action="route" data-route-type="destination" class="popup-route-btn">Destination</button>
+                                                                        <button data-project-token="${encodedProjectName}" data-action="route" data-route-type="stop" class="popup-route-btn">Stop</button>
                                 </div>
-                <a href="${waLink}" target="_blank" class="whatsapp-btn" style="text-decoration: none;">
+                <a href="${waLink}" target="_blank" rel="noopener noreferrer" class="whatsapp-btn" style="text-decoration: none;">
                   ${XI.whatsapp} WhatsApp
                 </a>
               `;
@@ -3612,7 +3747,7 @@ function handleSmartSearch(query) {
       if (topMatch.score < CONFIDENCE_THRESHOLD && results.length === 1) {
           // High confidence, single result -> Auto-execute
           focusOnProject(topMatch.item);
-          feedbackContainer.innerHTML = `<span style="color: var(--avaria-gold); font-size: 0.8rem;">Found: ${topMatch.item.name}</span>`;
+          feedbackContainer.innerHTML = `<span style="color: var(--avaria-gold); font-size: 0.8rem;">Found: ${escHtml(topMatch.item.name)}</span>`;
       } else {
           // Ambiguous or multiple good matches -> Suggest Options
           const suggestions = results.slice(0, 3);
@@ -3787,14 +3922,15 @@ renderProjects(projects);
 window.addEventListener('DOMContentLoaded', () => {
     const hash = window.location.hash;
     if (hash && hash.includes('project=')) {
-        const projectName = decodeURIComponent(hash.split('project=')[1]);
-        const project = projects.find(p => p.name === projectName);
-        if (project) {
-            // Small delay to ensure map is ready and markers are clustered
-            setTimeout(() => {
-                focusOnProject(project);
-            }, 1000);
-        }
+        try {
+            const projectName = decodeURIComponent(hash.split('project=')[1]);
+            const project = projects.find(p => p.name === projectName);
+            if (project) {
+                setTimeout(() => {
+                    focusOnProject(project);
+                }, 1000);
+            }
+        } catch { /* malformed URI — ignore */ }
     }
 });
 
@@ -3845,6 +3981,28 @@ document.addEventListener('click', (e) => {
   if (!e.target.closest('.right-dock')) {
     document.querySelectorAll('.dock-group').forEach(g => g.classList.remove('active'));
   }
+});
+
+// ─── DELEGATED POPUP BUTTON HANDLER (XSS-safe — no inline onclick) ─────
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-action][data-project-token]');
+  if (!btn) return;
+  const token = btn.dataset.projectToken;
+  const action = btn.dataset.action;
+  if (action === 'fav') toggleFavoriteEncoded(token);
+  else if (action === 'compare') addToCompareEncoded(token);
+  else if (action === 'remove-compare') removeFromCompareEncoded(token);
+  else if (action === 'route') routeProjectActionEncoded(token, btn.dataset.routeType);
+});
+
+// ─── DELEGATED RECENT ITEMS HANDLER (XSS-safe — no inline onclick) ─────
+document.addEventListener('click', (e) => {
+  const item = e.target.closest('[data-action][data-project-name]');
+  if (!item) return;
+  const name = item.dataset.projectName;
+  const action = item.dataset.action;
+  if (action === 'remove-recent') { e.stopPropagation(); RecentlyViewed.remove(name); }
+  else if (action === 'open-recent') openRecentProject(name);
 });
 
 function toggleSidebar(event) {
@@ -3918,8 +4076,8 @@ async function downloadBrochure() {
       
       if (!window.jspdf) {
           try {
-              await lazyLoadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
-              await lazyLoadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js');
+              await lazyLoadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js', 'sha384-JcnsjUPPylna1s1fvi1u12X5qjY5OL56iySh75FdtrwhO/SWXgMjoVqcKyIIWOLk');
+              await lazyLoadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js', 'sha384-fCAW/rDWORTbQxSiB7mOg0QtQ5c+r0f544y6XoKjuVva0nMBlCpNUjiFeG5iMdS3');
           } catch (e) {
               console.error('Failed to load jsPDF:', e);
               alert('PDF generation is temporarily unavailable. Please try again.');
@@ -4406,7 +4564,7 @@ async function openModal(proj) {
       images.forEach(url => {
           const slide = document.createElement("div");
           slide.className = "swiper-slide";
-          slide.innerHTML = `<img src="${url}" loading="lazy" decoding="async" style="width: 100%; height: 100%; object-fit: cover;" alt="${proj.name}">`;
+          slide.innerHTML = `<img src="${escHtml(url)}" loading="lazy" decoding="async" style="width: 100%; height: 100%; object-fit: cover;" alt="${escHtml(proj.name)}">`;
           swiperWrapper.appendChild(slide);
       });
       
@@ -4414,8 +4572,8 @@ async function openModal(proj) {
       
       if (!window.Swiper) {
           try {
-              await lazyLoadCSS('https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css');
-              await lazyLoadScript('https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js');
+              await lazyLoadCSS('https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css', 'sha384-gAPqlBuTCdtVcYt9ocMOYWrnBZ4XSL6q+4eXqwNycOr4iFczhNKtnYhF3NEXJM51');
+              await lazyLoadScript('https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js', 'sha384-2UI1PfnXFjVMQ7/ZDEF70CR943oH3v6uZrFQGGqJYlvhh4g6z6uVktxYbOlAczav');
           } catch (e) {
               console.warn('Failed to load Swiper:', e);
           }
@@ -4475,7 +4633,7 @@ async function openModal(proj) {
   const mpContainer = document.getElementById("masterplanContainer");
   if (mpContainer) {
       if (details.masterplan) {
-          mpContainer.innerHTML = `<img src="${details.masterplan}" class="masterplan-img" alt="Masterplan" loading="lazy" width="800" height="450" style="width: 100%; height: auto; aspect-ratio: 16/9; object-fit: contain;">`;
+          mpContainer.innerHTML = `<img src="${escHtml(details.masterplan)}" class="masterplan-img" alt="Masterplan" loading="lazy" width="800" height="450" style="width: 100%; height: auto; aspect-ratio: 16/9; object-fit: contain;">`;
       } else {
           mpContainer.innerHTML = "No Masterplan Available";
       }
@@ -4485,7 +4643,7 @@ async function openModal(proj) {
   const layoutContainer = document.getElementById("layoutsContainer");
   if (layoutContainer) {
       if (details.layouts && Array.isArray(details.layouts) && details.layouts.length > 0) {
-          layoutContainer.innerHTML = details.layouts.map(url => `<img src="${url}" class="layout-img" alt="Layout" loading="lazy" width="400" height="300" style="width: 100%; height: auto; aspect-ratio: 4/3; object-fit: contain; margin-bottom: 10px;">`).join('');
+          layoutContainer.innerHTML = details.layouts.map(url => `<img src="${escHtml(url)}" class="layout-img" alt="Layout" loading="lazy" width="400" height="300" style="width: 100%; height: auto; aspect-ratio: 4/3; object-fit: contain; margin-bottom: 10px;">`).join('');
       } else {
           layoutContainer.innerHTML = "No Layouts Available";
       }
@@ -4740,7 +4898,7 @@ mapElement.addEventListener('drop', (e) => {
 function applyLifestyleFilter(amenity) {
     // Visual feedback
     const feedback = document.getElementById('ai-feedback');
-    if (feedback) feedback.innerHTML = `<span style="color: var(--avaria-gold);">Filtered by Lifestyle: ${amenity.toUpperCase()}</span>`;
+    if (feedback) feedback.innerHTML = `<span style="color: var(--avaria-gold);">Filtered by Lifestyle: ${escHtml(amenity.toUpperCase())}</span>`;
 
     const filtered = projects.filter(p => {
         const details = projectDetails[p.name];
@@ -5099,7 +5257,7 @@ function renderFavoritesList() {
     favs.forEach(name => {
         const btn = document.createElement("button");
         btn.className = "filter-btn";
-        btn.innerHTML = `<span style="color: var(--avaria-red); margin-right: 5px;">${XI.heart}</span> ${name}`;
+        btn.innerHTML = `<span style="color: var(--avaria-red); margin-right: 5px;">${XI.heart}</span> ${escHtml(name)}`;
         btn.onclick = () => {
             const p = projects.find(proj => proj.name === name);
             if (p) {
@@ -8395,9 +8553,9 @@ const RoutePlanner = {
     },
 
     async directRouteFallback(endpoint, payload) {
-        const requestedPoints = payload.coordinates || [];
+        const requestedPoints = (payload.coordinates || []).slice(0, 25);
         const coordinates = requestedPoints.map(point => `${point.lng},${point.lat}`).join(';');
-        const profile = payload.profile || 'driving';
+        const profile = ['driving', 'walking', 'cycling'].includes(payload.profile) ? payload.profile : 'driving';
 
         if (endpoint === '/api/route/route') {
             const alternatives = payload.alternatives ? 'true' : 'false';
@@ -8626,7 +8784,7 @@ const RoutePlanner = {
                 pane: 'routeStopsPane',
                 icon: L.divIcon({
                     className: '',
-                    html: `<div class="route-stop-marker" title="${waypoint.name}"></div>`,
+                    html: `<div class="route-stop-marker" title="${escHtml(waypoint.name)}"></div>`,
                     iconSize: [20, 20],
                     iconAnchor: [10, 10]
                 })
@@ -8705,7 +8863,7 @@ const RoutePlanner = {
         this.dom.stopsList.innerHTML = this.state.stops.map((stop, index) => `
             <div class="route-stop-chip">
               <span class="route-stop-index">${index + 1}</span>
-              <span class="route-stop-name">${stop.name}</span>
+              <span class="route-stop-name">${escHtml(stop.name)}</span>
               <span class="route-stop-actions">
                 <button type="button" onclick="moveRouteStop(${index}, -1)" aria-label="Move stop up">↑</button>
                 <button type="button" onclick="moveRouteStop(${index}, 1)" aria-label="Move stop down">↓</button>
@@ -8766,11 +8924,11 @@ const RoutePlanner = {
 
         if (this.dom.legsList) {
             this.dom.legsList.innerHTML = (routeData.primaryRoute.legs || []).map((leg, index) => {
-                const fromName = routeData.requestedPoints?.[index]?.name || `Point ${index + 1}`;
-                const toName = routeData.requestedPoints?.[index + 1]?.name || `Point ${index + 2}`;
+                const fromName = escHtml(routeData.requestedPoints?.[index]?.name || `Point ${index + 1}`);
+                const toName = escHtml(routeData.requestedPoints?.[index + 1]?.name || `Point ${index + 2}`);
                 const leadStep = (leg.steps || []).find(step => step.instruction || step.name);
-                const summary = leg.summary ? `${leg.summary} • ` : '';
-                const instruction = leadStep ? `<br>${leadStep.instruction || `Follow ${leadStep.name}`}` : '';
+                const summary = leg.summary ? `${escHtml(leg.summary)} • ` : '';
+                const instruction = leadStep ? `<br>${escHtml(leadStep.instruction || `Follow ${leadStep.name}`)}` : '';
                 return `<div class="route-leg-item"><strong>${fromName}</strong> → <strong>${toName}</strong><br>${summary}${this.formatDistance(leg.distance)} • ${this.formatDuration(leg.duration)}${instruction}</div>`;
             }).join('');
 
@@ -8780,7 +8938,7 @@ const RoutePlanner = {
                 const altsHtml = alts.map((alt, i) => {
                     const timeDiff = alt.duration - routeData.primaryRoute.duration;
                     const timeDiffStr = timeDiff > 0 ? `+${this.formatDuration(Math.abs(timeDiff))}` : `-${this.formatDuration(Math.abs(timeDiff))}`;
-                    const label = alt.summary || `Alternative ${i + 1}`;
+                    const label = escHtml(alt.summary || `Alternative ${i + 1}`);
                     return `<div class="route-alt-option" onclick="RoutePlanner.switchToAlternative(${i})">
                       <div class="route-alt-label">${XI.route} ${label}</div>
                       <div class="route-alt-meta">${this.formatDistance(alt.distance)} · ${this.formatDuration(alt.duration)} <span class="route-alt-diff">${timeDiffStr}</span></div>

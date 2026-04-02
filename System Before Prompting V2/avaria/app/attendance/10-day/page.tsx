@@ -1,4 +1,4 @@
-"use client";
+﻿﻿"use client";
 
 import * as React from "react";
 import { motion } from "framer-motion";
@@ -309,7 +309,7 @@ export default function TenDayAttendancePage() {
                   value={form.batchId}
                   onChange={(e) => setForm({ ...form, batchId: e.target.value, traineeId: "" })}
                 >
-                  <option value="">Select batchâ€¦</option>
+                  <option value="">Select batch…</option>
                   {batches.map((b) => (
                     <option key={b.id} value={b.id}>{b.batchName}</option>
                   ))}
@@ -320,7 +320,7 @@ export default function TenDayAttendancePage() {
                   value={form.traineeId}
                   onChange={(e) => setForm({ ...form, traineeId: e.target.value })}
                 >
-                  <option value="">Select traineeâ€¦</option>
+                  <option value="">Select trainee…</option>
                   {filteredTrainees.map((t) => (
                     <option key={t.id} value={t.id}>{t.name}</option>
                   ))}
@@ -440,7 +440,7 @@ function TenDayCard({
             <h3 className="font-semibold text-[#fafaf9]">{record.trainee.traineeName}</h3>
             <p className="text-sm text-[#57534e]">{record.trainee.company}</p>
             <p className="mt-1 text-xs text-[#44403c]">
-              {record.batch.batchName} â€¢ {formatDateRange(new Date(record.periodStart), new Date(record.periodEnd))}
+              {record.batch.batchName} • {formatDateRange(new Date(record.periodStart), new Date(record.periodEnd))}
             </p>
           </div>
         </div>
@@ -474,15 +474,15 @@ function TenDayCard({
       {/* Stats */}
       <div className="mt-6 grid grid-cols-3 gap-4 rounded-xl bg-[#1c1917] p-4">
         <div className="text-center">
-          <p className="text-xl font-semibold text-emerald-300">{record.presentCount ?? "â€”"}</p>
+          <p className="text-xl font-semibold text-emerald-300">{record.presentCount ?? "—"}</p>
           <p className="text-xs text-[#57534e]">Present</p>
         </div>
         <div className="text-center">
-          <p className="text-xl font-semibold text-rose-300">{record.absentCount ?? "â€”"}</p>
+          <p className="text-xl font-semibold text-rose-300">{record.absentCount ?? "—"}</p>
           <p className="text-xs text-[#57534e]">Absent</p>
         </div>
         <div className="text-center">
-          <p className="text-xl font-semibold text-amber-300">{record.lateCount ?? "â€”"}</p>
+          <p className="text-xl font-semibold text-amber-300">{record.lateCount ?? "—"}</p>
           <p className="text-xs text-[#57534e]">Late</p>
         </div>
       </div>

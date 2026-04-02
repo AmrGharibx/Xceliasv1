@@ -53,17 +53,17 @@
     />
 
     <!-- Leaflet MarkerCluster CSS - Combine for fewer requests -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" integrity="sha384-lPzjPsFQL6te2x+VxmV6q1DpRxpRk0tmnl2cpwAO5y04ESyc752tnEWPKDfl1olr" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" integrity="sha384-5kMSQJ6S4Qj5i09mtMNrWpSi8iXw230pKU76xTmrpezGnNJQzj0NzXjQLLg+jE7k" crossorigin="anonymous" />
 
     <!-- Critical Scripts - Load Leaflet first for map -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js" integrity="sha384-RLIyj5q1b5XJTn0tqUhucRZe40nFTocRP91R/NkRJHwAe4XxnTV77FXy/vGLiec2" crossorigin="anonymous"></script>
 
     <!-- Non-critical scripts - defer (osmtogeojson lazy-loaded on demand) -->
-    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2" integrity="sha384-zPE55eyESN+FxCWGEnlNxGyAPJud6IZ6TtJmXb56OFRGhxZPN4akj9rjA3gw5Qqa" crossorigin="anonymous" defer></script>
     <!-- P5: GSAP loaded only on desktop (noop fallback exists in app.js for mobile) -->
-    <script>if(window.innerWidth>768)document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer><\/script>')</script>
+    <script>if(window.innerWidth>768){var s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js';s.integrity='sha384-d+vyQ0dYcymoP8ndq2hW7FGC50nqGdXUEgoOUGxbbkAJwZqL7h+jKN0GGgn9hFDS';s.crossOrigin='anonymous';s.defer=true;document.head.appendChild(s);}</script>
     <!-- P5: ScrollTrigger removed — never used (saves ~42KB) -->
 
     <!-- Main App - defer to not block -->
@@ -1773,6 +1773,41 @@
             <span class="nav-tab-label" data-i18n="navMore">More</span>
         </button>
     </nav>
+
+    <!-- ── Firebase (optional — enables online auth on fresh devices) ── -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js" integrity="sha384-AQ3POAMqIhwS81FrUH95ekxqBZHeP5tG2JfEL3+7GuTtfRLWnrRh32UxwzM+//A9" crossorigin="anonymous"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js" integrity="sha384-TnlRYaR4JYz/lpaGuaiU61PjNberSA4vjLjtF+oRC/IkohkJqnWxw5EmDSOt1vA1" crossorigin="anonymous"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js" integrity="sha384-1/m+A1jVWbD3yiK3/vtFvm1+LjK1WLpSoDY+Kaxppwn/yP9BVSgdHTNQVOjrzUO5" crossorigin="anonymous"></script>
+    <script src="/activities/firebase-config.js"></script>
+
+    <!-- ── Xcelias Auth Guard overlay ── -->
+    <div id="xc-auth-guard" style="position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:#0f0f1a;">
+      <div class="xca-bg">
+        <div class="xca-orb xca-orb--1"></div>
+        <div class="xca-orb xca-orb--2"></div>
+      </div>
+      <div class="xca-card">
+        <div class="xca-logo">X</div>
+        <div class="xca-title">Xcelias</div>
+        <div class="xca-subtitle">Property Explorer &mdash; Sign in to continue</div>
+        <div class="xca-error" id="xca-error"></div>
+        <form id="xca-form" novalidate>
+          <div class="xca-field">
+            <label class="xca-label" for="xca-username">Username</label>
+            <input class="xca-input" type="text" id="xca-username" placeholder="Enter your username" autocapitalize="none" autocorrect="off" spellcheck="false" />
+          </div>
+          <div class="xca-field">
+            <label class="xca-label" for="xca-password">Password</label>
+            <div class="xca-pw-wrap">
+              <input class="xca-input" type="password" id="xca-password" placeholder="Enter your password" autocomplete="off" />
+              <button type="button" id="xca-pw-toggle" class="xca-pw-toggle" aria-label="Show password">👁</button>
+            </div>
+          </div>
+          <button type="submit" id="xca-submit" class="xca-btn">Sign In &rarr;</button>
+        </form>
+        <p class="xca-hint">Use your Xcelias Training Academy credentials</p>
+      </div>
+    </div>
 
   </body>
 </html>

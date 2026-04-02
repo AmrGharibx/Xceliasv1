@@ -39,8 +39,8 @@ const animationSpeeds = [
 ] as const;
 
 const fontFamilies = [
-  { id: "inter", label: "Jakarta Sans" },
-  { id: "poppins", label: "Space Grotesk" },
+  { id: "jakarta", label: "Jakarta Sans" },
+  { id: "grotesk", label: "Space Grotesk" },
   { id: "system", label: "System" },
 ] as const;
 

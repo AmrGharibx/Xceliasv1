@@ -1,4 +1,4 @@
-"use client";
+﻿﻿"use client";
 
 import * as React from "react";
 import { motion } from "framer-motion";
@@ -58,7 +58,7 @@ interface AssessmentData {
   batch: { id: string; batchName: string };
 }
 
-interface BatchOption { id: string; batchName: string }
+interface BatchOption { id: string; batchName: string; status?: string }
 interface TraineeOption { id: string; name: string; batchId: string; company: string }
 
 const emptyForm = {
@@ -78,6 +78,9 @@ export default function AssessmentsPage() {
   const [search, setSearch] = React.useState("");
   const [outcome, setOutcome] = React.useState<"" | AssessmentOutcome>("");
   const [batchFilter, setBatchFilter] = React.useState("");
+  const [companyFilter, setCompanyFilter] = React.useState("");
+  const [companies, setCompanies] = React.useState<string[]>([]);
+  const [showAdvanced, setShowAdvanced] = React.useState(false);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
   const [assessments, setAssessments] = React.useState<AssessmentData[]>([]);
@@ -105,6 +108,7 @@ export default function AssessmentsPage() {
     if (search.trim()) qs.set("search", search.trim());
     if (outcome) qs.set("outcome", outcome);
     if (batchFilter) qs.set("batchId", batchFilter);
+    if (companyFilter) qs.set("company", companyFilter);
 
     fetch(`/api/assessments?${qs.toString()}`, { signal: ac.signal })
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
@@ -115,16 +119,16 @@ export default function AssessmentsPage() {
       })
       .finally(() => setLoading(false));
     return () => ac.abort();
-  }, [search, outcome, batchFilter, refreshKey]);
+  }, [search, outcome, batchFilter, companyFilter, refreshKey]);
 
   /* â”€â”€â”€ fetch dropdowns â”€â”€â”€ */
   React.useEffect(() => {
     fetch("/api/batches?search=")
       .then((r) => r.json())
-      .then((d) => setBatches((d.batches || []).map((b: BatchOption) => ({ id: b.id, batchName: b.batchName }))));
+      .then((d) => setBatches((d.batches || []).map((b: { id: string; batchName: string; status: string }) => ({ id: b.id, batchName: b.batchName, status: b.status }))));
     fetch("/api/trainees?pageSize=2000")
       .then((r) => r.json())
-      .then((d) =>
+      .then((d) => {
         setTrainees(
           (d.trainees || []).map((t: { id: string; name: string; batchId: string; company: string }) => ({
             id: t.id,
@@ -132,8 +136,9 @@ export default function AssessmentsPage() {
             batchId: t.batchId,
             company: t.company,
           }))
-        )
-      );
+        );
+        if (d.companies) setCompanies(d.companies.filter(Boolean));
+      });
   }, []);
 
   const filteredTrainees = form.batchId ? trainees.filter((t) => t.batchId === form.batchId) : trainees;
@@ -165,6 +170,16 @@ export default function AssessmentsPage() {
   };
 
   const handleSave = async () => {
+    if (!editAssessment) {
+      if (!form.batchId) {
+        toast.error("Batch required", "Please select a batch first.");
+        return;
+      }
+      if (!form.traineeId) {
+        toast.error("Trainee required", "Please select a trainee.");
+        return;
+      }
+    }
     setSaving(true);
     try {
       const isEdit = !!editAssessment;
@@ -255,40 +270,112 @@ export default function AssessmentsPage() {
             </div>
 
             {/* Filters */}
-            <div className="flex flex-wrap items-center gap-4">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#44403c]" />
-                <input
-                  type="text"
-                  placeholder="Search assessments..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="w-full max-w-sm rounded-xl border border-[#a8a29e]/8 bg-[#1c1917] py-2 pl-10 pr-4 text-sm text-[#ccd5e4] placeholder:text-[#44403c] focus:border-emerald-500/50 focus:outline-none focus:ring-2 focus:ring-emerald-500/10"
-                />
+            <div className="space-y-3">
+              <div className="flex flex-wrap items-center gap-3">
+                <div className="relative flex-1 min-w-[200px]">
+                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#44403c]" />
+                  <input
+                    type="text"
+                    placeholder="Search by trainee, title…"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="w-full rounded-xl border border-[#a8a29e]/8 bg-[#1c1917] py-2 pl-10 pr-4 text-sm text-[#ccd5e4] placeholder:text-[#44403c] focus:border-emerald-500/50 focus:outline-none focus:ring-2 focus:ring-emerald-500/10"
+                  />
+                </div>
+                <select
+                  value={outcome}
+                  onChange={(e) => setOutcome(e.target.value as "" | AssessmentOutcome)}
+                  className="rounded-xl border border-[#a8a29e]/8 bg-[#1c1917] px-4 py-2 text-sm text-[#ccd5e4] focus:border-emerald-500/50 focus:outline-none"
+                >
+                  <option value="">All Outcomes</option>
+                  <option value="Aced">Aced</option>
+                  <option value="Excellent">Excellent</option>
+                  <option value="Very Good">Very Good</option>
+                  <option value="Good">Good</option>
+                  <option value="Needs Improvement">Needs Improvement</option>
+                  <option value="Failed">Failed</option>
+                </select>
+                <button
+                  onClick={() => setShowAdvanced((v) => !v)}
+                  className={cn(
+                    "flex items-center gap-1.5 rounded-xl border px-4 py-2 text-sm transition",
+                    showAdvanced || batchFilter || companyFilter
+                      ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-300"
+                      : "border-[#a8a29e]/8 bg-[#1c1917] text-[#78716c] hover:text-[#d6d3d1]"
+                  )}
+                >
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z" /></svg>
+                  Filters
+                  {(batchFilter || companyFilter) && (
+                    <span className="ml-1 rounded-full bg-emerald-500 px-1.5 py-0.5 text-[10px] font-bold text-white">
+                      {[batchFilter, companyFilter].filter(Boolean).length}
+                    </span>
+                  )}
+                </button>
+                {(batchFilter || companyFilter || outcome || search) && (
+                  <button
+                    onClick={() => { setBatchFilter(""); setCompanyFilter(""); setOutcome(""); setSearch(""); }}
+                    className="text-xs text-[#57534e] underline hover:text-[#d6d3d1] transition"
+                  >
+                    Clear all
+                  </button>
+                )}
               </div>
-              <select
-                value={outcome}
-                onChange={(e) => setOutcome(e.target.value as "" | AssessmentOutcome)}
-                className="rounded-xl border border-[#a8a29e]/8 bg-[#1c1917] px-4 py-2 text-sm text-[#ccd5e4] focus:border-emerald-500/50 focus:outline-none"
-              >
-                <option value="">All Outcomes</option>
-                <option value="Aced">Aced</option>
-                <option value="Excellent">Excellent</option>
-                <option value="Very Good">Very Good</option>
-                <option value="Good">Good</option>
-                <option value="Needs Improvement">Needs Improvement</option>
-                <option value="Failed">Failed</option>
-              </select>
-              <select
-                value={batchFilter}
-                onChange={(e) => setBatchFilter(e.target.value)}
-                className="rounded-xl border border-[#a8a29e]/8 bg-[#1c1917] px-4 py-2 text-sm text-[#ccd5e4] focus:border-emerald-500/50 focus:outline-none"
-              >
-                <option value="">All Batches</option>
-                {batches.map((b) => (
-                  <option key={b.id} value={b.id}>{b.batchName}</option>
-                ))}
-              </select>
+
+              {/* Advanced filter panel */}
+              {showAdvanced && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="flex flex-wrap gap-3 rounded-xl border border-[#a8a29e]/8 bg-[#1c1917]/40 p-4"
+                >
+                  <div className="flex flex-col gap-1 min-w-[180px]">
+                    <label className="text-[11px] font-medium uppercase tracking-wider text-[#57534e]">Batch</label>
+                    <select
+                      value={batchFilter}
+                      onChange={(e) => setBatchFilter(e.target.value)}
+                      className="rounded-xl border border-[#a8a29e]/8 bg-[#1c1917] px-3 py-2 text-sm text-[#ccd5e4] focus:border-emerald-500/50 focus:outline-none"
+                    >
+                      <option value="">All Batches</option>
+                      {["Active", "Planning", "Completed"].map((s) => {
+                        const grouped = batches.filter((b) => b.status === s);
+                        if (!grouped.length) return null;
+                        return (
+                          <optgroup key={s} label={`── ${s}`}>
+                            {grouped.map((b) => (
+                              <option key={b.id} value={b.id}>{b.batchName}</option>
+                            ))}
+                          </optgroup>
+                        );
+                      })}
+                    </select>
+                  </div>
+                  <div className="flex flex-col gap-1 min-w-[160px]">
+                    <label className="text-[11px] font-medium uppercase tracking-wider text-[#57534e]">Company</label>
+                    <select
+                      value={companyFilter}
+                      onChange={(e) => setCompanyFilter(e.target.value)}
+                      className="rounded-xl border border-[#a8a29e]/8 bg-[#1c1917] px-3 py-2 text-sm text-[#ccd5e4] focus:border-emerald-500/50 focus:outline-none"
+                    >
+                      <option value="">All Companies</option>
+                      {companies.map((c) => (
+                        <option key={c} value={c}>{c}</option>
+                      ))}
+                    </select>
+                  </div>
+                  {(batchFilter || companyFilter) && (
+                    <div className="flex items-end">
+                      <button
+                        onClick={() => { setBatchFilter(""); setCompanyFilter(""); }}
+                        className="rounded-xl border border-[#a8a29e]/8 px-3 py-2 text-xs text-[#57534e] transition hover:border-rose-500/30 hover:text-rose-400"
+                      >
+                        Reset filters
+                      </button>
+                    </div>
+                  )}
+                </motion.div>
+              )}
             </div>
 
             {/* Assessments Grid */}
@@ -339,7 +426,7 @@ export default function AssessmentsPage() {
                     value={form.batchId}
                     onChange={(e) => setForm({ ...form, batchId: e.target.value, traineeId: "" })}
                   >
-                    <option value="">Select batchâ€¦</option>
+                    <option value="">Select batch…</option>
                     {batches.map((b) => (
                       <option key={b.id} value={b.id}>{b.batchName}</option>
                     ))}
@@ -349,12 +436,16 @@ export default function AssessmentsPage() {
                   <ModalSelect
                     value={form.traineeId}
                     onChange={(e) => setForm({ ...form, traineeId: e.target.value })}
+                    disabled={!form.batchId}
                   >
-                    <option value="">Select traineeâ€¦</option>
+                    <option value="">{form.batchId ? "Select trainee…" : "Select a batch first"}</option>
                     {filteredTrainees.map((t) => (
                       <option key={t.id} value={t.id}>{t.name}</option>
                     ))}
                   </ModalSelect>
+                  {form.batchId && filteredTrainees.length === 0 && (
+                    <p className="mt-1.5 text-xs text-amber-400">No trainees found for this batch.</p>
+                  )}
                 </FormField>
               </div>
               <FormField label="Assessment Title">
@@ -413,7 +504,7 @@ export default function AssessmentsPage() {
             <textarea
               value={form.instructorComment}
               onChange={(e) => setForm({ ...form, instructorComment: e.target.value })}
-              placeholder="Optional feedbackâ€¦"
+              placeholder="Optional feedback…"
               className="w-full rounded-xl border border-[#a8a29e]/8 bg-[#1c1917]/80 px-3.5 py-2.5 text-sm text-[#fafaf9] placeholder:text-[#44403c] transition focus:border-emerald-500/50 focus:outline-none focus:ring-2 focus:ring-emerald-500/15"
               rows={3}
             />
@@ -524,7 +615,7 @@ function AssessmentCard({
             <h3 className="font-semibold text-[#fafaf9]">{assessment.trainee.traineeName}</h3>
             <p className="text-sm text-[#57534e]">{assessment.company}</p>
             <p className="mt-1 text-xs text-[#44403c]">
-              {assessment.assessmentTitle} â€¢ {assessment.batch.batchName}
+              {assessment.assessmentTitle} • {assessment.batch.batchName}
             </p>
           </div>
         </div>
@@ -575,13 +666,13 @@ function AssessmentCard({
       <div className="mt-4 grid grid-cols-2 gap-4">
         <div className="rounded-xl bg-emerald-500/10 p-3 text-center">
           <p className="text-xl font-semibold text-emerald-300">
-            {typeof assessment.attendance === "number" ? assessment.attendance : "â€”"}
+            {typeof assessment.attendance === "number" ? assessment.attendance : "—"}
           </p>
           <p className="text-xs text-[#57534e]">Present Days</p>
         </div>
         <div className="rounded-xl bg-rose-500/10 p-3 text-center">
           <p className="text-xl font-semibold text-rose-300">
-            {typeof assessment.absence === "number" ? assessment.absence : "â€”"}
+            {typeof assessment.absence === "number" ? assessment.absence : "—"}
           </p>
           <p className="text-xs text-[#57534e]">Absent Days</p>
         </div>

@@ -43,6 +43,13 @@ export async function PUT(
   try {
     await requireAuth();
     const body = await request.json();
+    
+    // Validate input with Zod
+    const parsed = parseBody(updateAssessmentSchema, body);
+    if ("error" in parsed) {
+      return NextResponse.json({ error: parsed.error }, { status: 400 });
+    }
+    
     const {
       assessmentTitle,
       productKnowledge,
@@ -51,8 +58,8 @@ export async function PUT(
       softSkills,
       assessmentOutcome,
       instructorComment,
-      assessmentAIReport,
-    } = body;
+    } = parsed.data;
+    const assessmentAIReport = body.assessmentAIReport;
 
     const data: Record<string, unknown> = {};
 

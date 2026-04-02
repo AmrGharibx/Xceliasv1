@@ -1,4 +1,4 @@
-"use client";
+﻿﻿﻿"use client";
 
 import * as React from "react";
 import dynamic from "next/dynamic";
@@ -7,6 +7,7 @@ import { Download, TrendingUp, Users, Award, Clock } from "lucide-react";
 import { Sidebar, Header } from "@/components/layout";
 import { Button, Card } from "@/components/ui";
 import { useHydrated } from "@/hooks/useHydrated";
+import { useToast } from "@/components/ui/Toast";
 
 const obsidianTooltip = { background: "#231f1d", border: "1px solid rgba(100,100,160,0.12)", borderRadius: 12, padding: "10px 14px", fontSize: 12, color: "#fafaf9", boxShadow: "0 12px 40px -12px rgba(0,0,0,0.7)" };
 
@@ -36,6 +37,7 @@ export default function AnalyticsPage() {
   const [range, setRange] = React.useState("30");
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
+  const toast = useToast();
   const [data, setData] = React.useState<{
     attendanceByMonth: Array<{ month: string; present: number; absent: number; late: number }>;
     outcomeDistribution: Array<{ name: string; value: number; color: string }>;
@@ -115,7 +117,22 @@ export default function AnalyticsPage() {
                   <option value="90">Last 90 days</option>
                   <option value="365">Last year</option>
                 </select>
-                <Button variant="secondary">
+                <Button variant="secondary" onClick={async () => {
+                  try {
+                    const res = await fetch(`/api/export?type=analytics&days=${range}`);
+                    if (!res.ok) throw new Error("Export failed");
+                    const blob = await res.blob();
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = `analytics-report-${range}d-${new Date().toISOString().slice(0, 10)}.json`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    toast.success("Report exported", "Analytics report has been downloaded.");
+                  } catch {
+                    toast.error("Export failed", "Could not generate analytics report.");
+                  }
+                }}>
                   <Download className="h-4 w-4" />
                   Export Report
                 </Button>
@@ -126,28 +143,28 @@ export default function AnalyticsPage() {
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               <MetricCard
                 label="Avg Attendance"
-                value={loading ? "â€”" : `${avgAttendance}%`}
+                value={loading ? "—" : `${avgAttendance}%`}
                 change={loading ? "" : ""}
                 positive
                 icon={Users}
               />
               <MetricCard
                 label="Avg Assessment Score"
-                value={loading ? "â€”" : `${avgAssessment}%`}
+                value={loading ? "—" : `${avgAssessment}%`}
                 change={loading ? "" : ""}
                 positive
                 icon={Award}
               />
               <MetricCard
                 label="Late Arrivals"
-                value={loading ? "â€”" : `${avgLate}%`}
+                value={loading ? "—" : `${avgLate}%`}
                 change={loading ? "" : ""}
                 positive
                 icon={Clock}
               />
               <MetricCard
                 label="Completion Rate"
-                value={loading ? "â€”" : `${avgCompletion}%`}
+                value={loading ? "—" : `${avgCompletion}%`}
                 change=""
                 positive
                 icon={TrendingUp}

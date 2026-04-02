@@ -4,16 +4,20 @@ import * as React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
-  ArrowLeft,
   Users,
   TrendingUp,
   Clock,
   CalendarDays,
   BarChart3,
   CheckCircle2,
+  Plus,
+  Pencil,
+  Star,
 } from "lucide-react";
 import { Sidebar, Header } from "@/components/layout";
-import { Badge, Card, ProgressBar, Avatar, CompletionRing, Breadcrumb, CardSkeleton } from "@/components/ui";
+import { Badge, Button, Card, ProgressBar, Avatar, CompletionRing, Breadcrumb, CardSkeleton } from "@/components/ui";
+import { Modal, FormField, ModalFooter, ModalInput, ModalSelect } from "@/components/ui/Modal";
+import { useToast } from "@/components/ui/Toast";
 import { cn } from "@/lib/utils";
 import { formatTime, formatDateRange } from "@/lib/utils/calculations";
 
@@ -103,7 +107,7 @@ const outcomeBadge: Record<string, string> = {
   Failed: "bg-rose-500/15 text-rose-300",
 };
 
-export default function BatchDetailPage({ params }: { params: { id: string } }) {
+export default function BatchDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
   const [data, setData] = React.useState<BatchDetail | null>(null);
@@ -115,24 +119,171 @@ export default function BatchDetailPage({ params }: { params: { id: string } }) 
   const [assessmentRows, setAssessmentRows] = React.useState<AssessmentRow[]>([]);
   const [subLoading, setSubLoading] = React.useState(false);
 
-  const batchId = params?.id;
+  const [batchId, setBatchId] = React.useState<string | null>(null);
+  React.useEffect(() => { params.then((p) => setBatchId(p.id)); }, [params]);
 
-  /* fetch batch detail */
-  React.useEffect(() => {
+  const toast = useToast();
+
+  const fetchBatch = React.useCallback(async () => {
     if (!batchId) { setError("Missing batch id"); setLoading(false); return; }
-    const ac = new AbortController();
     setLoading(true);
     setError(null);
-    fetch(`/api/batches/${encodeURIComponent(batchId)}`, { signal: ac.signal })
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
-      .then((json: BatchDetail) => setData(json))
-      .catch((e: unknown) => {
-        if ((e as { name?: string }).name === "AbortError") return;
-        setError(e instanceof Error ? e.message : "Failed to load batch");
-      })
-      .finally(() => setLoading(false));
-    return () => ac.abort();
+    try {
+      const res = await fetch(`/api/batches/${encodeURIComponent(batchId)}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      setData(await res.json());
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "Failed to load batch");
+    } finally {
+      setLoading(false);
+    }
   }, [batchId]);
+
+  React.useEffect(() => { fetchBatch(); }, [fetchBatch]);
+
+  /* ─── Quick Status Change ───────────────────── */
+  const [changingStatus, setChangingStatus] = React.useState(false);
+  const [statusMenuOpen, setStatusMenuOpen] = React.useState(false);
+
+  async function handleQuickStatus(newStatus: string) {
+    if (!batchId || !data || newStatus === data.batch.status) { setStatusMenuOpen(false); return; }
+    setChangingStatus(true);
+    setStatusMenuOpen(false);
+    try {
+      const res = await fetch(`/api/batches/${batchId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          batchName: data.batch.name,
+          status: newStatus,
+          startDate: data.batch.startDate.slice(0, 10),
+          endDate: data.batch.endDate.slice(0, 10),
+        }),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      toast.success("Status updated", `Batch is now ${newStatus}.`);
+      fetchBatch();
+    } catch (e) {
+      console.error(e);
+      toast.error("Failed", "Could not update status.");
+    } finally {
+      setChangingStatus(false);
+    }
+  }
+
+  /* ─── Edit Batch ─────────────────────────────── */
+  const [editOpen, setEditOpen] = React.useState(false);
+  const [editForm, setEditForm] = React.useState({ batchName: "", status: "", startDate: "", endDate: "" });
+  const [savingBatch, setSavingBatch] = React.useState(false);
+
+  function openEditBatch() {
+    if (!data) return;
+    setEditForm({
+      batchName: data.batch.name,
+      status: data.batch.status,
+      startDate: data.batch.startDate.slice(0, 10),
+      endDate: data.batch.endDate.slice(0, 10),
+    });
+    setEditOpen(true);
+  }
+
+  async function handleSaveBatch() {
+    if (!batchId) return;
+    setSavingBatch(true);
+    try {
+      const res = await fetch(`/api/batches/${batchId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(editForm),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      setEditOpen(false);
+      toast.success("Batch updated", `${editForm.batchName} has been saved.`);
+      fetchBatch();
+    } catch (e) {
+      console.error(e);
+      toast.error("Save failed", "Could not update batch.");
+    } finally {
+      setSavingBatch(false);
+    }
+  }
+
+  /* ─── Add Trainee ────────────────────────────── */
+  const emptyTraineeForm = { name: "", email: "", phone: "", company: "" };
+  const [addTraineeOpen, setAddTraineeOpen] = React.useState(false);
+  const [traineeForm, setTraineeForm] = React.useState(emptyTraineeForm);
+  const [traineeFormErrors, setTraineeFormErrors] = React.useState<Record<string, string>>({});
+  const [savingTrainee, setSavingTrainee] = React.useState(false);
+
+  async function handleAddTrainee() {
+    const errs: Record<string, string> = {};
+    if (!traineeForm.name.trim()) errs.name = "Full name is required";
+    if (!traineeForm.company.trim()) errs.company = "Company is required";
+    if (Object.keys(errs).length) { setTraineeFormErrors(errs); return; }
+    setSavingTrainee(true);
+    try {
+      const res = await fetch("/api/trainees", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...traineeForm, batchId }),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      setAddTraineeOpen(false);
+      setTraineeForm(emptyTraineeForm);
+      setTraineeFormErrors({});
+      toast.success("Trainee added", `${traineeForm.name} has been added to this batch.`);
+      fetchBatch();
+    } catch (e) {
+      console.error(e);
+      toast.error("Add failed", "Could not add trainee.");
+    } finally {
+      setSavingTrainee(false);
+    }
+  }
+
+  /* ─── Add Assessment ─────────────────────────── */
+  const emptyAssessmentForm = { traineeId: "", assessmentTitle: "Final", productKnowledge: 0, mapping: 0, presentability: 0, softSkills: 0, assessmentOutcome: "" };
+  const [addAssessmentOpen, setAddAssessmentOpen] = React.useState(false);
+  const [assessmentForm, setAssessmentForm] = React.useState(emptyAssessmentForm);
+  const [assessmentFormErrors, setAssessmentFormErrors] = React.useState<Record<string, string>>({});
+  const [savingAssessment, setSavingAssessment] = React.useState(false);
+
+  async function handleSaveAssessment() {
+    const errs: Record<string, string> = {};
+    if (!assessmentForm.traineeId) errs.traineeId = "Trainee is required";
+    if (Object.keys(errs).length) { setAssessmentFormErrors(errs); return; }
+    setSavingAssessment(true);
+    try {
+      const res = await fetch("/api/assessments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...assessmentForm, batchId }),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      setAddAssessmentOpen(false);
+      setAssessmentForm(emptyAssessmentForm);
+      setAssessmentFormErrors({});
+      toast.success("Assessment created", "Assessment has been saved.");
+      fetchBatch();
+      if (batchId) {
+        setSubLoading(true);
+        fetch(`/api/assessments?batchId=${batchId}&pageSize=200`)
+          .then((r) => r.json())
+          .then((d) => setAssessmentRows(d.assessments || []))
+          .finally(() => setSubLoading(false));
+      }
+    } catch (e) {
+      console.error(e);
+      toast.error("Save failed", "Could not create assessment.");
+    } finally {
+      setSavingAssessment(false);
+    }
+  }
+
+  /* Computed score preview for assessment form */
+  const assessTechScore = Math.round(((assessmentForm.productKnowledge + assessmentForm.mapping) / 10) * 100);
+  const assessSoftScore = Math.round(((assessmentForm.presentability + assessmentForm.softSkills) / 10) * 100);
+  const assessOverallScore = Math.round(((assessmentForm.productKnowledge + assessmentForm.mapping + assessmentForm.presentability + assessmentForm.softSkills) / 20) * 100);
 
   /* fetch sub-data on tab change */
   React.useEffect(() => {
@@ -197,7 +348,49 @@ export default function BatchDetailPage({ params }: { params: { id: string } }) 
                       {new Date(data.batch.startDate).toLocaleDateString()} — {new Date(data.batch.endDate).toLocaleDateString()} • {data.stats.traineeCount} trainees
                     </p>
                   </div>
-                  <Badge variant={statusColors[data.batch.status] ?? "info"}>{data.batch.status}</Badge>
+                  <div className="flex items-center gap-3">
+                    {/* Quick status toggle */}
+                    <div className="relative">
+                      <button
+                        onClick={() => setStatusMenuOpen((o) => !o)}
+                        disabled={changingStatus}
+                        className="flex items-center gap-1.5 rounded-full border border-[#a8a29e]/10 bg-[#1c1917]/60 px-3 py-1 text-xs font-medium transition hover:border-[#a8a29e]/20 disabled:opacity-50"
+                      >
+                        <span className={cn(
+                          "h-1.5 w-1.5 rounded-full",
+                          data.batch.status === "Active" ? "bg-emerald-400" :
+                          data.batch.status === "Completed" ? "bg-sky-400" : "bg-amber-400"
+                        )} />
+                        <span className="text-[#d6d3d1]">{changingStatus ? "Saving…" : data.batch.status}</span>
+                        <svg className="h-3 w-3 text-[#57534e]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                      </button>
+                      {statusMenuOpen && (
+                        <>
+                          <div className="fixed inset-0 z-10" onClick={() => setStatusMenuOpen(false)} />
+                          <div className="absolute right-0 top-full z-20 mt-1 w-40 rounded-xl border border-[#a8a29e]/8 bg-[#1c1917] py-1 shadow-xl">
+                            {["Planning", "Active", "Completed"].map((s) => (
+                              <button
+                                key={s}
+                                onClick={() => handleQuickStatus(s)}
+                                className={cn(
+                                  "flex w-full items-center gap-2 px-3 py-2 text-sm transition hover:bg-[#231f1d]",
+                                  s === data.batch.status ? "text-cyan-300 font-medium" : "text-[#d6d3d1]"
+                                )}
+                              >
+                                <span className={cn("h-1.5 w-1.5 rounded-full", s === "Active" ? "bg-emerald-400" : s === "Completed" ? "bg-sky-400" : "bg-amber-400")} />
+                                {s}
+                                {s === data.batch.status && <span className="ml-auto text-[10px] text-[#57534e]">current</span>}
+                              </button>
+                            ))}
+                          </div>
+                        </>
+                      )}
+                    </div>
+                    <Button variant="secondary" size="sm" onClick={openEditBatch}>
+                      <Pencil className="h-3.5 w-3.5" />
+                      Edit batch
+                    </Button>
+                  </div>
                 </div>
 
                 {/* KPI */}
@@ -225,7 +418,13 @@ export default function BatchDetailPage({ params }: { params: { id: string } }) 
                 {/* Trainees Tab */}
                 {tab === "trainees" && (
                   <Card className="p-6">
-                    <h3 className="mb-4 text-lg font-semibold text-[#fafaf9]">Roster</h3>
+                    <div className="mb-4 flex items-center justify-between">
+                      <h3 className="text-lg font-semibold text-[#fafaf9]">Roster</h3>
+                      <Button size="sm" onClick={() => { setTraineeForm(emptyTraineeForm); setTraineeFormErrors({}); setAddTraineeOpen(true); }}>
+                        <Plus className="h-3.5 w-3.5" />
+                        Add trainee
+                      </Button>
+                    </div>
                     {data.trainees.length === 0 ? <p className="text-[#57534e]">No trainees in this batch.</p> : (
                       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
                         {data.trainees.map((t) => (
@@ -307,8 +506,16 @@ export default function BatchDetailPage({ params }: { params: { id: string } }) 
 
                 {/* Assessments Tab */}
                 {tab === "assessments" && (
-                  <div className="grid gap-6 md:grid-cols-2">
-                    {subLoading ? <Card className="p-6 text-[#78716c]">Loading…</Card> : assessmentRows.length === 0 ? <Card className="p-6 text-[#57534e]">No assessments.</Card> : (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-lg font-semibold text-[#fafaf9]">Assessments</h3>
+                      <Button size="sm" onClick={() => { setAssessmentForm(emptyAssessmentForm); setAssessmentFormErrors({}); setAddAssessmentOpen(true); }}>
+                        <Plus className="h-3.5 w-3.5" />
+                        New assessment
+                      </Button>
+                    </div>
+                    <div className="grid gap-6 md:grid-cols-2">
+                    {subLoading ? <Card className="p-6 text-[#78716c]">Loading…</Card> : assessmentRows.length === 0 ? <Card className="p-6 text-[#57534e]">No assessments yet. Click "New assessment" above to add one.</Card> : (
                       assessmentRows.map((a) => (
                         <Card key={a.id} className="p-5">
                           <div className="flex items-start justify-between">
@@ -323,6 +530,7 @@ export default function BatchDetailPage({ params }: { params: { id: string } }) 
                         </Card>
                       ))
                     )}
+                    </div>
                   </div>
                 )}
               </>
@@ -330,6 +538,179 @@ export default function BatchDetailPage({ params }: { params: { id: string } }) 
           </motion.div>
         </main>
       </div>
+
+      {/* ─── Edit Batch Modal ──────────────────────────────── */}
+      <Modal
+        open={editOpen}
+        onClose={() => setEditOpen(false)}
+        title="Edit batch"
+        description="Update this cohort's name, status, and schedule."
+      >
+        <div className="space-y-4">
+          <FormField label="Batch name" required>
+            <ModalInput
+              value={editForm.batchName}
+              onChange={(e) => setEditForm({ ...editForm, batchName: e.target.value })}
+              placeholder="Batch 15"
+            />
+          </FormField>
+          <FormField label="Status" required>
+            <ModalSelect
+              value={editForm.status}
+              onChange={(e) => setEditForm({ ...editForm, status: e.target.value })}
+            >
+              <option value="Planning">Planning</option>
+              <option value="Active">Active</option>
+              <option value="Completed">Completed</option>
+            </ModalSelect>
+          </FormField>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <FormField label="Start date" required>
+              <ModalInput type="date" value={editForm.startDate} onChange={(e) => setEditForm({ ...editForm, startDate: e.target.value })} />
+            </FormField>
+            <FormField label="End date" required>
+              <ModalInput type="date" value={editForm.endDate} onChange={(e) => setEditForm({ ...editForm, endDate: e.target.value })} />
+            </FormField>
+          </div>
+        </div>
+        <ModalFooter
+          onCancel={() => setEditOpen(false)}
+          onSubmit={handleSaveBatch}
+          submitLabel="Save changes"
+          loading={savingBatch}
+        />
+      </Modal>
+
+      {/* ─── Add Trainee Modal ─────────────────────────────── */}
+      <Modal
+        open={addTraineeOpen}
+        onClose={() => { setAddTraineeOpen(false); setTraineeForm(emptyTraineeForm); setTraineeFormErrors({}); }}
+        title="Add trainee"
+        description={`Add a new trainee directly to ${data?.batch.name ?? "this batch"}.`}
+        wide
+      >
+        <div className="space-y-4">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <FormField label="Full name" required error={traineeFormErrors.name}>
+              <ModalInput
+                value={traineeForm.name}
+                onChange={(e) => setTraineeForm({ ...traineeForm, name: e.target.value })}
+                placeholder="Ahmed Mohamed"
+              />
+            </FormField>
+            <FormField label="Company" required error={traineeFormErrors.company}>
+              <ModalInput
+                value={traineeForm.company}
+                onChange={(e) => setTraineeForm({ ...traineeForm, company: e.target.value })}
+                placeholder="Company name"
+              />
+            </FormField>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <FormField label="Email">
+              <ModalInput
+                type="email"
+                value={traineeForm.email}
+                onChange={(e) => setTraineeForm({ ...traineeForm, email: e.target.value })}
+                placeholder="ahmed@company.com"
+              />
+            </FormField>
+            <FormField label="Phone">
+              <ModalInput
+                value={traineeForm.phone}
+                onChange={(e) => setTraineeForm({ ...traineeForm, phone: e.target.value })}
+                placeholder="+20 1X XXX XXXX"
+              />
+            </FormField>
+          </div>
+        </div>
+        <ModalFooter
+          onCancel={() => { setAddTraineeOpen(false); setTraineeForm(emptyTraineeForm); setTraineeFormErrors({}); }}
+          onSubmit={handleAddTrainee}
+          submitLabel="Add to batch"
+          loading={savingTrainee}
+        />
+      </Modal>
+
+      {/* ─── New Assessment Modal ───────────────────────────── */}
+      <Modal
+        open={addAssessmentOpen}
+        onClose={() => { setAddAssessmentOpen(false); setAssessmentForm(emptyAssessmentForm); setAssessmentFormErrors({}); }}
+        title="New Assessment"
+        description={`Score a trainee from ${data?.batch.name ?? "this batch"}.`}
+        wide
+      >
+        <div className="space-y-5">
+          <FormField label="Trainee" required error={assessmentFormErrors.traineeId}>
+            <ModalSelect
+              value={assessmentForm.traineeId}
+              onChange={(e) => setAssessmentForm({ ...assessmentForm, traineeId: e.target.value })}
+            >
+              <option value="">Select trainee…</option>
+              {(data?.trainees ?? []).map((t) => (
+                <option key={t.id} value={t.id}>{t.name} — {t.company}</option>
+              ))}
+            </ModalSelect>
+          </FormField>
+          <FormField label="Assessment title">
+            <ModalInput
+              value={assessmentForm.assessmentTitle}
+              onChange={(e) => setAssessmentForm({ ...assessmentForm, assessmentTitle: e.target.value })}
+              placeholder="Final"
+            />
+          </FormField>
+          <div className="grid grid-cols-2 gap-4">
+            {(["productKnowledge", "mapping", "presentability", "softSkills"] as const).map((field) => {
+              const labels: Record<string, string> = { productKnowledge: "Product Knowledge", mapping: "Mapping", presentability: "Presentability", softSkills: "Soft Skills" };
+              return (
+                <div key={field} className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-[#78716c]">{labels[field]}</span>
+                    <span className="text-sm font-semibold text-[#fafaf9]">{assessmentForm[field]}/5</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    {[1, 2, 3, 4, 5].map((s) => (
+                      <button key={s} type="button"
+                        onClick={() => setAssessmentForm({ ...assessmentForm, [field]: s === assessmentForm[field] ? 0 : s })}
+                        className="transition-transform hover:scale-110">
+                        <Star className={cn("h-5 w-5", s <= assessmentForm[field] ? "fill-amber-400 text-amber-400" : "text-[#3d3632]")} />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <div className="rounded-xl border border-[#a8a29e]/6 bg-[#1c1917]/50 p-4">
+            <p className="mb-3 text-xs font-medium uppercase tracking-wider text-[#57534e]">Score Preview</p>
+            <div className="grid grid-cols-3 gap-4 text-center">
+              <div><p className="text-lg font-semibold text-cyan-300">{assessTechScore}%</p><p className="text-xs text-[#57534e]">Tech</p></div>
+              <div><p className="text-lg font-semibold text-purple-300">{assessSoftScore}%</p><p className="text-xs text-[#57534e]">Soft</p></div>
+              <div><p className="text-lg font-semibold text-[#fafaf9]">{assessOverallScore}%</p><p className="text-xs text-[#57534e]">Overall</p></div>
+            </div>
+          </div>
+          <FormField label="Outcome">
+            <ModalSelect
+              value={assessmentForm.assessmentOutcome}
+              onChange={(e) => setAssessmentForm({ ...assessmentForm, assessmentOutcome: e.target.value })}
+            >
+              <option value="">Auto-determine from score</option>
+              <option value="Aced">Aced</option>
+              <option value="Excellent">Excellent</option>
+              <option value="Very Good">Very Good</option>
+              <option value="Good">Good</option>
+              <option value="Needs Improvement">Needs Improvement</option>
+              <option value="Failed">Failed</option>
+            </ModalSelect>
+          </FormField>
+        </div>
+        <ModalFooter
+          onCancel={() => { setAddAssessmentOpen(false); setAssessmentForm(emptyAssessmentForm); setAssessmentFormErrors({}); }}
+          onSubmit={handleSaveAssessment}
+          submitLabel="Create assessment"
+          loading={savingAssessment}
+        />
+      </Modal>
     </div>
   );
 }

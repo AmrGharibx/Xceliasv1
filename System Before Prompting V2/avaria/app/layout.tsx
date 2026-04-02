@@ -9,18 +9,18 @@ import { ToastProvider } from "@/components/ui/Toast";
 import { AuthProvider } from "@/hooks/useAuth";
 
 const jakarta = Plus_Jakarta_Sans({
-  variable: "--font-geist-sans",
+  variable: "--font-jakarta",
   subsets: ["latin"],
 });
 
 const grotesk = Space_Grotesk({
-  variable: "--font-poppins",
+  variable: "--font-grotesk",
   subsets: ["latin"],
   weight: ["400", "500", "700"],
 });
 
 const jetbrains = JetBrains_Mono({
-  variable: "--font-geist-mono",
+  variable: "--font-mono",
   subsets: ["latin"],
 });
 

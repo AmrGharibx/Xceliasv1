@@ -1,4 +1,4 @@
-"use client";
+﻿﻿"use client";
 
 import * as React from "react";
 import Link from "next/link";
@@ -105,14 +105,14 @@ export default function CompaniesPage() {
                     ? `${Math.round(
                         companies.reduce((sum, c) => sum + c.avgScore, 0) / companies.length
                       )}%`
-                    : "â€”"
+                    : "—"
                 }
                 icon={TrendingUp}
                 color="emerald"
               />
               <StatCard
                 label="Top Performer"
-                value={topPerformers[0]?.name || (loading ? "Loadingâ€¦" : "â€”")}
+                value={topPerformers[0]?.name || (loading ? "Loading…" : "—")}
                 icon={Award}
                 color="amber"
               />
@@ -183,7 +183,7 @@ export default function CompaniesPage() {
                 </h3>
                 <div className="space-y-4">
                   {loading ? (
-                    <div className="text-[#57534e]">Loadingâ€¦</div>
+                    <div className="text-[#57534e]">Loading…</div>
                   ) : error ? (
                     <div className="text-rose-300">{error}</div>
                   ) : (

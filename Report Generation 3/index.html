@@ -491,205 +491,22 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js" integrity="sha384-TnlRYaR4JYz/lpaGuaiU61PjNberSA4vjLjtF+oRC/IkohkJqnWxw5EmDSOt1vA1" crossorigin="anonymous"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js" integrity="sha384-1/m+A1jVWbD3yiK3/vtFvm1+LjK1WLpSoDY+Kaxppwn/yP9BVSgdHTNQVOjrzUO5" crossorigin="anonymous"></script>
 <script src="/activities/firebase-config.js"></script>
+
+<!-- Unified Xcelias Auth Module -->
+<script src="/xcelias-auth.js"></script>
 </head>
 <body>
 
-<!-- ====== AUTH GATE (Firebase-powered, matches Portal/Activities) ====== -->
-<div id="auth-gate" style="position:fixed;inset:0;z-index:99999;display:grid;place-items:center;background:linear-gradient(180deg,#070710 0%,#0d0d1e 100%);background-image:radial-gradient(ellipse 120% 80% at 20% 20%,rgba(102,126,234,0.18),transparent 55%),radial-gradient(ellipse 100% 80% at 80% 80%,rgba(240,147,251,0.14),transparent 55%);padding:20px;overflow-y:auto;font-family:'Montserrat',sans-serif">
-  <div class="xc-login-bg">
-    <div class="xc-login-orb xc-login-orb--1"></div>
-    <div class="xc-login-orb xc-login-orb--2"></div>
-    <div class="xc-login-orb xc-login-orb--3"></div>
-  </div>
-  <div class="xc-login-card">
-    <div class="xc-login-logo">
-      <div class="xc-login-logo-ring xc-login-logo-ring--outer"></div>
-      <div class="xc-login-logo-ring xc-login-logo-ring--inner"></div>
-      <div class="xc-login-logo-orb xc-login-logo-orb--1"></div>
-      <div class="xc-login-logo-orb xc-login-logo-orb--2"></div>
-      <div class="xc-login-logo-orb xc-login-logo-orb--3"></div>
-      <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg" class="xc-login-logo-svg">
-        <defs><linearGradient id="xlg_rg_login" x1="0" y1="0" x2="56" y2="56"><stop offset="0%" stop-color="#667eea"/><stop offset="50%" stop-color="#764ba2"/><stop offset="100%" stop-color="#f093fb"/></linearGradient></defs>
-        <rect x="4" y="4" width="48" height="48" rx="14" stroke="url(#xlg_rg_login)" stroke-width="2.5" fill="none"/>
-        <text x="28" y="37" text-anchor="middle" fill="url(#xlg_rg_login)" font-family="Montserrat" font-weight="900" font-size="26">X</text>
-      </svg>
-    </div>
-    <div class="xc-login-title">
-      <span class="xc-login-title-x">Xcelias</span>
-      <span class="xc-login-title-sub">Report Generator</span>
-    </div>
-    <div class="xc-login-error" id="rg-error" style="display:none"></div>
-    <form id="rg-form" class="xc-login-form" novalidate>
-      <div class="xc-login-field">
-        <label class="xc-login-label" for="rg-username">Username</label>
-        <input class="xc-login-input" type="text" id="rg-username" placeholder="Enter your username" autocapitalize="none" autocorrect="off" spellcheck="false" />
-      </div>
-      <div class="xc-login-field">
-        <label class="xc-login-label" for="rg-password">Password</label>
-        <div class="xc-login-pw-wrap">
-          <input class="xc-login-input" type="password" id="rg-password" placeholder="Enter your password" autocomplete="off" />
-          <button type="button" id="rg-pw-toggle" class="xc-login-pw-toggle" aria-label="Show password">👁</button>
-        </div>
-      </div>
-      <button type="submit" id="rg-submit" class="xc-login-btn xc-login-btn--primary">&zwnj;⚡ Sign In</button>
-    </form>
-    <p class="xc-login-footer-hint">Use your Xcelias Training Academy credentials</p>
-  </div>
-</div>
-
-<style>
-/* ── Report Generator Login (mirrored from Portal) ── */
-#auth-gate .xc-login-bg { position:absolute; inset:0; overflow:hidden; pointer-events:none; }
-#auth-gate .xc-login-orb { position:absolute; border-radius:50%; filter:blur(80px); opacity:0.18; animation:xcLoginOrbFloat 8s ease-in-out infinite; }
-#auth-gate .xc-login-orb--1 { width:500px; height:500px; background:#667eea; top:-150px; left:-150px; animation-delay:0s; }
-#auth-gate .xc-login-orb--2 { width:400px; height:400px; background:#f093fb; bottom:-100px; right:-100px; animation-delay:-3s; }
-#auth-gate .xc-login-orb--3 { width:300px; height:300px; background:#50fa7b; top:30%; left:40%; animation-delay:-5s; }
-@keyframes xcLoginOrbFloat { 0%,100% { transform:translate(0,0) scale(1); } 33% { transform:translate(30px,-20px) scale(1.05); } 66% { transform:translate(-20px,30px) scale(0.95); } }
-#auth-gate .xc-login-card { position:relative; z-index:2; background:rgba(15,15,26,0.82); backdrop-filter:blur(28px); border:1px solid rgba(102,126,234,0.18); border-radius:28px; padding:48px 40px; width:100%; max-width:420px; box-shadow:0 32px 80px rgba(0,0,0,0.6),0 0 60px rgba(102,126,234,0.08); animation:xcCardIn 0.6s cubic-bezier(0.175,0.885,0.32,1.275); margin:auto; }
-@keyframes xcCardIn { from { opacity:0; transform:translateY(32px) scale(0.95); } to { opacity:1; transform:none; } }
-#auth-gate .xc-login-logo { position:relative; width:80px; height:80px; margin:0 auto 24px; display:flex; align-items:center; justify-content:center; overflow:visible; }
-#auth-gate .xc-login-logo-ring { position:absolute; border-radius:50%; border:2px solid transparent; pointer-events:none; }
-#auth-gate .xc-login-logo-ring--outer { inset:-12px; background:linear-gradient(#0f0f1a,#0f0f1a) padding-box,linear-gradient(135deg,#667eea,#f093fb,#50fa7b,#667eea) border-box; animation:xcRingSpin 5s linear infinite; }
-#auth-gate .xc-login-logo-ring--inner { inset:-4px; border-width:1px; background:linear-gradient(#0f0f1a,#0f0f1a) padding-box,linear-gradient(225deg,#667eea 0%,#764ba2 100%) border-box; animation:xcRingSpin 8s linear infinite reverse; }
-#auth-gate .xc-login-logo-orb { position:absolute; border-radius:50%; pointer-events:none; width:10px; height:10px; }
-#auth-gate .xc-login-logo-orb--1 { background:#667eea; box-shadow:0 0 12px 4px rgba(102,126,234,0.8); animation:xcLoginOrb1 2.5s linear infinite; }
-#auth-gate .xc-login-logo-orb--2 { background:#f093fb; box-shadow:0 0 12px 4px rgba(240,147,251,0.8); animation:xcLoginOrb2 3.8s linear infinite; }
-#auth-gate .xc-login-logo-orb--3 { background:#50fa7b; box-shadow:0 0 10px 3px rgba(80,250,123,0.7); animation:xcLoginOrb3 5s linear infinite reverse; }
-@keyframes xcLoginOrb1 { 0%{transform:translate(0,-44px)}25%{transform:translate(44px,0)}50%{transform:translate(0,44px)}75%{transform:translate(-44px,0)}100%{transform:translate(0,-44px)} }
-@keyframes xcLoginOrb2 { 0%{transform:translate(44px,0)}25%{transform:translate(0,44px)}50%{transform:translate(-44px,0)}75%{transform:translate(0,-44px)}100%{transform:translate(44px,0)} }
-@keyframes xcLoginOrb3 { 0%{transform:translate(-32px,-32px)}50%{transform:translate(32px,32px)}100%{transform:translate(-32px,-32px)} }
-@keyframes xcRingSpin { to { transform:rotate(360deg); } }
-#auth-gate .xc-login-logo-svg { width:52px; height:52px; position:relative; z-index:2; animation:xcLogoBreath 3s ease-in-out infinite; }
-@keyframes xcLogoBreath { 0%,100%{filter:drop-shadow(0 0 8px rgba(102,126,234,0.4));transform:scale(1)}50%{filter:drop-shadow(0 0 22px rgba(240,147,251,0.7)) drop-shadow(0 0 40px rgba(102,126,234,0.3));transform:scale(1.06)} }
-#auth-gate .xc-login-title { text-align:center; margin-bottom:32px; }
-#auth-gate .xc-login-title-x { display:block; font-size:32px; font-weight:900; letter-spacing:-1px; background:linear-gradient(135deg,#fff 0%,#667eea 50%,#f093fb 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-#auth-gate .xc-login-title-sub { display:block; font-size:12px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:rgba(152,152,184,0.7); margin-top:4px; }
-#auth-gate .xc-login-form { display:flex; flex-direction:column; gap:16px; }
-#auth-gate .xc-login-field { display:flex; flex-direction:column; gap:6px; }
-#auth-gate .xc-login-label { font-size:12px; font-weight:700; letter-spacing:0.5px; text-transform:uppercase; color:rgba(152,152,184,0.8); }
-#auth-gate .xc-login-input { background:rgba(255,255,255,0.05); border:1px solid rgba(102,126,234,0.2); border-radius:14px; padding:14px 16px; color:rgba(232,232,240,0.94); font-size:15px; font-family:'Montserrat',sans-serif; font-weight:500; outline:none; transition:border-color 0.2s,box-shadow 0.2s; width:100%; box-sizing:border-box; }
-#auth-gate .xc-login-input:focus { border-color:rgba(102,126,234,0.5); box-shadow:0 0 0 3px rgba(102,126,234,0.12); }
-#auth-gate .xc-login-input::placeholder { color:rgba(152,152,184,0.4); }
-#auth-gate .xc-login-pw-wrap { position:relative; }
-#auth-gate .xc-login-pw-wrap .xc-login-input { padding-right:48px; }
-#auth-gate .xc-login-pw-toggle { position:absolute; right:14px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; font-size:18px; line-height:1; color:rgba(152,152,184,0.6); padding:4px; transition:color 0.2s; }
-#auth-gate .xc-login-pw-toggle:hover { color:rgba(232,232,240,0.8); }
-#auth-gate .xc-login-error { background:rgba(248,113,113,0.1); border:1px solid rgba(248,113,113,0.3); border-radius:12px; padding:12px 16px; font-size:13px; color:#f87171; text-align:center; }
-#auth-gate .xc-login-btn { padding:16px 24px; border-radius:16px; border:1px solid rgba(102,126,234,0.2); cursor:pointer; font-family:'Montserrat',sans-serif; font-size:15px; font-weight:700; background:rgba(255,255,255,0.08); color:rgba(232,232,240,0.9); transition:all 0.2s; text-align:center; width:100%; }
-#auth-gate .xc-login-btn:disabled { opacity:0.6; cursor:not-allowed; }
-#auth-gate .xc-login-btn--primary { background:linear-gradient(135deg,#667eea 0%,#764ba2 50%,#f093fb 100%); background-size:200% auto; color:#fff; border:none; box-shadow:0 8px 24px rgba(102,126,234,0.35); animation:xcBtnShimmer 3s linear infinite; }
-@keyframes xcBtnShimmer { 0%{background-position:0% center}100%{background-position:200% center} }
-#auth-gate .xc-login-btn--primary:not(:disabled):hover { box-shadow:0 12px 32px rgba(102,126,234,0.5); transform:translateY(-2px) scale(1.01); }
-#auth-gate .xc-login-footer-hint { text-align:center; font-size:12px; color:rgba(152,152,184,0.5); margin-top:16px; }
-@media (max-width:480px) { #auth-gate .xc-login-card { padding:32px 20px; border-radius:20px; } }
-@media print { #auth-gate { display:none!important; } }
-</style>
-
+<!-- Auth guard (unified module) -->
 <script>
-(function xcReportAuthGuard(){
-  'use strict';
-  const _r = (k,d) => { try { const v=localStorage.getItem(k); return v?JSON.parse(v):d; } catch{return d;} };
-  const _w = (k,v) => { try { localStorage.setItem(k,JSON.stringify(v)); } catch{} };
-  const _hash = async (s) => {
-    const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
-    return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');
-  };
-
-  const trySignIn = async (username, password) => {
-    const u = username.toLowerCase().trim();
-    // 1. Try Firebase online auth
-    if (window.xcFirebaseReady) {
-      try {
-        const cred = await window.xcAuth.signInWithEmailAndPassword(`${u}@xcelias.internal`, password);
-        const snap = await window.xcDB.ref(`users/${cred.user.uid}`).once('value');
-        const profile = snap.val();
-        if (!profile) throw new Error('Account profile not found');
-        const user = { uid:cred.user.uid, ...profile };
-        if (user.role !== 'admin') throw new Error('Report Generator is restricted to admin accounts');
-        _w('xcCurrentUser', user);
-        return user;
-      } catch (e) {
-        if (e.code==='auth/wrong-password'||e.code==='auth/user-not-found'||e.code==='auth/invalid-credential') throw new Error('Invalid username or password');
-        throw e;
-      }
-    }
-    // 2. Offline fallback — check xcAdminSetup from Activities
-    const adminSetup = _r('xcAdminSetup', null);
-    if (u === 'admin') {
-      if (!adminSetup) throw new Error('No admin found. Log in via Training Academy first.');
-      const h = await _hash(password);
-      if (h !== adminSetup.passwordHash) throw new Error('Invalid username or password');
-      const user = { uid:'admin_local', username:'admin', displayName:'Admin', role:'admin', batchId:'admin' };
-      _w('xcCurrentUser', user);
-      return user;
-    }
-    throw new Error('Report Generator is restricted to admin accounts');
-  };
-
-  const overlay = document.getElementById('auth-gate');
-  const cur = _r('xcCurrentUser', null);
-
-  // Already logged in as admin — verify via Firebase before trusting localStorage
-  if (cur && cur.role === 'admin') {
-    if (window.xcFirebaseReady && window.xcAuth) {
-      const _unsub = window.xcAuth.onAuthStateChanged((fbUser) => {
-        _unsub();
-        if (fbUser) {
-          if (overlay) overlay.remove();
-        } else {
-          const adminSetup = _r('xcAdminSetup', null);
-          if (cur.uid === 'admin_local' && adminSetup) {
-            if (overlay) overlay.remove();
-          } else {
-            try { localStorage.removeItem('xcCurrentUser'); } catch {}
-            location.reload();
-          }
-        }
-      });
-    } else {
-      if (overlay) overlay.remove();
-    }
-    return;
+XceliasAuth.guard({
+  moduleName: 'Report Generator',
+  requiredRoles: ['admin'],
+  onReady: function () {
+    var shell = document.getElementById('app-shell');
+    if (shell) shell.style.visibility = 'visible';
   }
-
-  // Not admin — hide app, show login
-  document.getElementById('app-shell').style.visibility = 'hidden';
-
-  const form     = document.getElementById('rg-form');
-  const errEl    = document.getElementById('rg-error');
-  const submitEl = document.getElementById('rg-submit');
-  const unameEl  = document.getElementById('rg-username');
-  const pwEl     = document.getElementById('rg-password');
-  const toggle   = document.getElementById('rg-pw-toggle');
-
-  if (toggle) toggle.addEventListener('click', () => {
-    pwEl.type = pwEl.type==='password' ? 'text' : 'password';
-    toggle.textContent = pwEl.type==='password' ? '👁' : '🙈';
-  });
-
-  const showErr = (m) => { if(errEl){errEl.textContent=m;errEl.style.display=m?'block':'none';} };
-  const setLoad = (on) => { if(submitEl){submitEl.disabled=on;submitEl.textContent=on?'· · ·':'⚡ Sign In';} };
-
-  setTimeout(()=>{ if(unameEl) unameEl.focus(); }, 400);
-
-  if (form) form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const uname = (unameEl?.value||'').trim();
-    const pw    = pwEl?.value||'';
-    if (!uname||!pw) { showErr('Enter username and password'); return; }
-    setLoad(true); showErr('');
-    try {
-      await trySignIn(uname, pw);
-      if (overlay) {
-        overlay.style.transition = 'opacity 0.4s ease';
-        overlay.style.opacity = '0';
-        document.getElementById('app-shell').style.visibility = 'visible';
-        setTimeout(()=>overlay.remove(), 400);
-      }
-    } catch (err) { showErr(err.message||'Login failed'); }
-    setLoad(false);
-  });
-})();
+});
 </script>
 
 <div id="toast-box"></div>

@@ -29,7 +29,7 @@ const PROJECTS = {
   },
   website: {
     name:  'Property Explorer',
-    url:   IS_LOCAL ? 'http://localhost:3000' : '/website/index.html',
+    url:   '/website/index.html',
     mode:  'iframe'
   }
 };
@@ -297,158 +297,46 @@ document.addEventListener('keydown', (e) => {
 });
 
 /* ═══════════════════════════════════════════════════════════════
-   XC PORTAL AUTH GUARD
+   XC PORTAL AUTH (using shared xcelias-auth.js module)
    ═══════════════════════════════════════════════════════════════ */
-(function xcPortalAuthGuard() {
-  'use strict';
-  const _r = (k, d) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } };
-  const _w = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
-  const _hash = async (s) => {
-    try {
-      const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
-      return Array.from(new Uint8Array(b)).map(x => x.toString(16).padStart(2, '0')).join('');
-    } catch {
-      throw new Error('Secure hashing unavailable — HTTPS required');
-    }
-  };
-
-  function applyRoles(user) {
-    xcPortalUser = user;
-    // Populate user chip
-    const chip = document.getElementById('xcp-user-chip');
-    if (chip) {
-      const roleLabel = { admin: '👑 Admin', agent: '🏠 Agent', trainee: '🎓 Trainee' }[user.role] || user.role;
-      chip.innerHTML = `<span class="xcp-chip-name">${escHtml(user.displayName || user.username)}</span><span class="xcp-chip-role">${escHtml(roleLabel)}</span><button class="xcp-chip-signout" id="xcp-signout">Sign Out</button>`;
-      chip.style.display = 'flex';
-      document.getElementById('xcp-signout').addEventListener('click', () => {
-        try { localStorage.removeItem('xcCurrentUser'); } catch {}
-        if (window.xcFirebaseReady && window.xcAuth) window.xcAuth.signOut().catch(() => {});
-        location.reload();
-      });
-    }
-    // Apply locked state to restricted cards
-    document.querySelectorAll('.project-card').forEach(card => {
-      const key = card.dataset.project;
-      const required = XCP_ROLE_MAP[key];
-      if (required && !required.includes(user.role)) {
-        card.classList.add('xcp-card-locked');
-        card.style.position = 'relative';
-        const badge = document.createElement('div');
-        badge.className = 'xcp-lock-badge';
-        badge.textContent = '🔒 Agent Only';
-        card.appendChild(badge);
-      }
+function applyPortalRoles(user) {
+  xcPortalUser = user;
+  // Populate user chip
+  const chip = document.getElementById('xcp-user-chip');
+  if (chip) {
+    const roleLabel = { admin: '👑 Admin', agent: '🏠 Agent', trainee: '🎓 Trainee' }[user.role] || user.role;
+    chip.innerHTML = `<span class="xcp-chip-name">${escHtml(user.displayName || user.username)}</span><span class="xcp-chip-role">${escHtml(roleLabel)}</span><button class="xcp-chip-signout" id="xcp-signout">Sign Out</button>`;
+    chip.style.display = 'flex';
+    document.getElementById('xcp-signout').addEventListener('click', () => {
+      XceliasAuth.signOut();
     });
   }
-
-  const trySignIn = async (username, password) => {
-    const u = username.toLowerCase().trim();
-    if (window.xcFirebaseReady) {
-      try {
-        const cred = await window.xcAuth.signInWithEmailAndPassword(`${u}@xcelias.internal`, password);
-        const snap = await window.xcDB.ref(`users/${cred.user.uid}`).once('value');
-        const profile = snap.val();
-        if (!profile) throw new Error('Account profile not found');
-        const user = { uid: cred.user.uid, ...profile };
-        _w('xcCurrentUser', user);
-        return user;
-      } catch (e) {
-        if (e.code === 'auth/wrong-password' || e.code === 'auth/user-not-found' || e.code === 'auth/invalid-credential') throw new Error('Invalid username or password');
-        throw e;
-      }
+  // Apply locked state to restricted cards
+  document.querySelectorAll('.project-card').forEach(card => {
+    const key = card.dataset.project;
+    const required = XCP_ROLE_MAP[key];
+    if (required && !required.includes(user.role)) {
+      card.classList.add('xcp-card-locked');
+      card.style.position = 'relative';
+      const badge = document.createElement('div');
+      badge.className = 'xcp-lock-badge';
+      badge.textContent = '🔒 Agent Only';
+      card.appendChild(badge);
     }
-    // Offline
-    const adminSetup = _r('xcAdminSetup', null);
-    if (u === 'admin') {
-      if (!adminSetup) throw new Error('No admin found. Log in via Training Academy first.');
-      const h = await _hash(password);
-      if (h !== adminSetup.passwordHash) throw new Error('Invalid username or password');
-      const user = { uid: 'admin_local', username: 'admin', displayName: 'Admin', role: 'admin', batchId: 'admin' };
-      _w('xcCurrentUser', user);
-      return user;
-    }
-    const accounts = _r('xcAccounts', []);
-    if (!accounts.length) throw new Error('No accounts found. Log in via Training Academy first.');
-    const account = accounts.find(a => (a.username || '').toLowerCase() === u);
-    if (!account) throw new Error('Invalid username or password');
-    const h = await _hash(password);
-    if (h !== account.passwordHash) throw new Error('Invalid username or password');
-    _w('xcCurrentUser', account);
-    return account;
-  };
-
-  const overlay  = document.getElementById('xcp-auth-guard');
-  const cur = _r('xcCurrentUser', null);
-
-  // Already logged in — verify via Firebase before trusting localStorage
-  if (cur && cur.role) {
-    if (window.xcFirebaseReady && window.xcAuth) {
-      // Online: verify a real Firebase session backs this localStorage claim
-      const _unsub = window.xcAuth.onAuthStateChanged((fbUser) => {
-        _unsub();
-        if (fbUser) {
-          // Real Firebase session — proceed
-          if (overlay) overlay.remove();
-          applyRoles(cur);
-        } else {
-          // No Firebase session — check for legitimate offline accounts
-          const adminSetup = _r('xcAdminSetup', null);
-          const accounts = _r('xcAccounts', []);
-          const isOfflineAdmin = cur.uid === 'admin_local' && adminSetup;
-          const isOfflineAccount = accounts.some(a => a.uid === cur.uid);
-          if (isOfflineAdmin || isOfflineAccount) {
-            if (overlay) overlay.remove();
-            applyRoles(cur);
-          } else {
-            // Forged localStorage — wipe and force re-login
-            try { localStorage.removeItem('xcCurrentUser'); } catch {}
-            location.reload();
-          }
-        }
-      });
-    } else {
-      // Offline: trust localStorage (legitimate offline flow)
-      if (overlay) overlay.remove();
-      applyRoles(cur);
-    }
-    return;
-  }
-
-  // Show overlay and attach form handlers
-  const form     = document.getElementById('xcp-form');
-  const errEl    = document.getElementById('xcp-error');
-  const submitEl = document.getElementById('xcp-submit');
-  const unameEl  = document.getElementById('xcp-username');
-  const pwEl     = document.getElementById('xcp-password');
-  const toggle   = document.getElementById('xcp-pw-toggle');
-
-  if (toggle) toggle.addEventListener('click', () => {
-    pwEl.type = pwEl.type === 'password' ? 'text' : 'password';
-    toggle.textContent = pwEl.type === 'password' ? '👁' : '🙈';
   });
+}
 
-  const showErr  = (m) => {
-    if (errEl) {
-      errEl.textContent = m;
-      errEl.style.display = m ? 'block' : 'none';
-    }
-  };
-  const setLoad  = (on) => { if (submitEl) { submitEl.disabled = on; submitEl.textContent = on ? '· · ·' : '⚡ Enter Portal'; } };
-
-  if (form) form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const uname = (unameEl?.value || '').trim();
-    const pw    = pwEl?.value || '';
-    if (!uname || !pw) { showErr('Enter username and password'); return; }
-    setLoad(true); showErr('');
-    try {
-      const user = await trySignIn(uname, pw);
-      if (overlay) overlay.remove();
-      applyRoles(user);
-    } catch (err) { showErr(err.message || 'Login failed'); }
-    setLoad(false);
-  });
+// Remove the old static auth guard overlay (replaced by dynamic one from xcelias-auth.js)
+(function () {
+  const oldGuard = document.getElementById('xcp-auth-guard');
+  if (oldGuard) oldGuard.remove();
 })();
+
+XceliasAuth.guard({
+  moduleName: 'Portal',
+  requiredRoles: null,   // any authenticated user can access home
+  onReady: applyPortalRoles
+});
 
 /* ─── Card click / keyboard bindings ─── */
 document.querySelectorAll('.project-card').forEach(card => {

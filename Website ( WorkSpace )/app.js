@@ -1,125 +1,14 @@
-// ─── XCELIAS AUTH GUARD ─────────────────────────────────────────────────────
-(function xcWebsiteAuthGuard() {
-  'use strict';
-  const _r = (k, d) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } };
-  const _w = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
-  const _hash = async (s) => {
-    try {
-      const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
-      return Array.from(new Uint8Array(b)).map(x => x.toString(16).padStart(2, '0')).join('');
-    } catch {
-      throw new Error('Secure hashing unavailable — HTTPS required');
-    }
-  };
-  const _allowed = u => u && (u.role === 'admin' || u.role === 'agent');
-
-  // Already logged in with sufficient role → verify via Firebase before trusting
-  const cur = _r('xcCurrentUser', null);
-  if (_allowed(cur)) {
-    if (window.xcFirebaseReady && window.xcAuth) {
-      // Online: verify a real Firebase session backs this localStorage claim
-      const _unsub = window.xcAuth.onAuthStateChanged((fbUser) => {
-        _unsub();
-        if (fbUser) {
-          // Real Firebase session — proceed
-          const ov = document.getElementById('xc-auth-guard');
-          if (ov) ov.remove();
-        } else {
-          // No Firebase session — check for legitimate offline accounts
-          const adminSetup = _r('xcAdminSetup', null);
-          const accounts = _r('xcAccounts', []);
-          const isOfflineAdmin = cur.uid === 'admin_local' && adminSetup;
-          const isOfflineAccount = accounts.some(a => a.uid === cur.uid);
-          if (isOfflineAdmin || isOfflineAccount) {
-            const ov = document.getElementById('xc-auth-guard');
-            if (ov) ov.remove();
-          } else {
-            // Forged localStorage — wipe and force re-login
-            try { localStorage.removeItem('xcCurrentUser'); } catch {}
-            location.reload();
-          }
-        }
-      });
-    } else {
-      // Offline: trust localStorage (legitimate offline flow)
-      const ov = document.getElementById('xc-auth-guard');
-      if (ov) ov.remove();
-    }
-    return;
+// ─── XCELIAS AUTH GUARD (unified module) ────────────────────────────────────
+// Auth is now handled by xcelias-auth.js loaded in index.html.
+// The guard requires admin or agent role for the Property Explorer.
+(function () {
+  if (window.XceliasAuth) {
+    XceliasAuth.guard({
+      moduleName: 'Property Explorer',
+      requiredRoles: ['admin', 'agent'],
+      onReady: function () { /* auth verified, app proceeds */ }
+    });
   }
-
-  // Show overlay on DOM ready (it starts visible via HTML style attribute)
-  const initGuard = () => {
-    const overlay  = document.getElementById('xc-auth-guard');
-    const form     = document.getElementById('xca-form');
-    const errEl    = document.getElementById('xca-error');
-    const submitEl = document.getElementById('xca-submit');
-    const unameEl  = document.getElementById('xca-username');
-    const pwEl     = document.getElementById('xca-password');
-    const toggle   = document.getElementById('xca-pw-toggle');
-    if (!overlay || !form) return;
-
-    if (toggle) toggle.addEventListener('click', () => {
-      pwEl.type = pwEl.type === 'password' ? 'text' : 'password';
-      toggle.textContent = pwEl.type === 'password' ? '👁' : '🙈';
-    });
-
-    const showErr = (m) => { if (errEl) { errEl.textContent = m; errEl.style.display = 'block'; } };
-    const setLoad = (on) => { if (submitEl) { submitEl.disabled = on; submitEl.textContent = on ? '⏳' : 'Sign In →'; } };
-
-    const trySignIn = async (username, password) => {
-      const u = username.toLowerCase().trim();
-      // Online (Firebase, if loaded by firebase-config.js)
-      if (window.xcFirebaseReady) {
-        try {
-          const cred = await window.xcAuth.signInWithEmailAndPassword(`${u}@xcelias.internal`, password);
-          const snap = await window.xcDB.ref(`users/${cred.user.uid}`).once('value');
-          const profile = snap.val();
-          if (!profile) throw new Error('Account profile not found');
-          const user = { uid: cred.user.uid, ...profile };
-          if (!_allowed(user)) { await window.xcAuth.signOut(); throw new Error('Your account is Activities-only. Ask admin to upgrade to Agent.'); }
-          _w('xcCurrentUser', user);
-          return user;
-        } catch (e) {
-          if (e.code === 'auth/wrong-password' || e.code === 'auth/user-not-found' || e.code === 'auth/invalid-credential') throw new Error('Invalid username or password');
-          throw e;
-        }
-      }
-      // Offline
-      const adminSetup = _r('xcAdminSetup', null);
-      if (u === 'admin') {
-        if (!adminSetup) throw new Error('No admin found. Log in via Training Academy first.');
-        const h = await _hash(password);
-        if (h !== adminSetup.passwordHash) throw new Error('Invalid username or password');
-        const user = { uid: 'admin_local', username: 'admin', displayName: 'Admin', role: 'admin', batchId: 'admin' };
-        _w('xcCurrentUser', user);
-        return user;
-      }
-      const accounts = _r('xcAccounts', []);
-      if (!accounts.length) throw new Error('No accounts found. Log in via Training Academy first.');
-      const account = accounts.find(a => (a.username || '').toLowerCase() === u);
-      if (!account) throw new Error('Invalid username or password');
-      const h = await _hash(password);
-      if (h !== account.passwordHash) throw new Error('Invalid username or password');
-      if (!_allowed(account)) throw new Error('Your account is Activities-only. Ask admin to upgrade to Agent.');
-      _w('xcCurrentUser', account);
-      return account;
-    };
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const uname = (unameEl?.value || '').trim();
-      const pw    = pwEl?.value || '';
-      if (!uname || !pw) { showErr('Enter username and password'); return; }
-      setLoad(true); showErr('');
-      try { await trySignIn(uname, pw); overlay.remove(); }
-      catch (err) { showErr(err.message || 'Login failed'); }
-      setLoad(false);
-    });
-  };
-
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initGuard);
-  else initGuard();
 })();
 
 // ─── HTML ESCAPE UTILITY (XSS prevention for innerHTML) ─────────────────

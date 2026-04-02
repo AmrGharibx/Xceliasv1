@@ -6925,29 +6925,6 @@ button:focus-visible, input:focus-visible {
 }
 
 /* ──────────────────────────────────────────────────────────────────────
-   XC AUTH GUARD — Login overlay for Xcelias Property Explorer
+   XC AUTH GUARD — Now handled by unified xcelias-auth.js module
    ────────────────────────────────────────────────────────────────────── */
-#xc-auth-guard { font-family:'Montserrat',sans-serif; }
-.xca-bg { position:absolute; inset:0; overflow:hidden; pointer-events:none; }
-.xca-orb { position:absolute; border-radius:50%; filter:blur(80px); opacity:0.35; }
-.xca-orb--1 { width:500px; height:500px; background:radial-gradient(circle,#667eea,transparent 70%); top:-150px; right:-100px; }
-.xca-orb--2 { width:400px; height:400px; background:radial-gradient(circle,#f093fb,transparent 70%); bottom:-100px; left:-80px; }
-.xca-card { position:relative; z-index:1; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius:28px; padding:40px 36px; width:100%; max-width:420px; box-shadow:0 40px 100px rgba(0,0,0,0.5); }
-.xca-logo { width:64px; height:64px; margin:0 auto 20px; background:linear-gradient(135deg,#667eea,#764ba2); border-radius:16px; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 28px rgba(102,126,234,0.4); font-size:28px; font-weight:900; color:#fff; }
-.xca-title { font-size:26px; font-weight:900; text-align:center; color:#e8e8f0; margin-bottom:4px; }
-.xca-subtitle { font-size:13px; color:#9898b8; text-align:center; margin-bottom:28px; }
-.xca-field { margin-bottom:16px; }
-.xca-label { display:block; font-size:12px; font-weight:800; color:#9898b8; text-transform:uppercase; letter-spacing:0.8px; margin-bottom:8px; }
-.xca-input { width:100%; padding:14px 16px; border-radius:14px; border:1.5px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.06); color:#e8e8f0; font-family:inherit; font-size:15px; box-sizing:border-box; transition:border-color 0.2s; outline:none; }
-.xca-input:focus { border-color:rgba(102,126,234,0.6); }
-.xca-input::placeholder { color:#5a5a7a; }
-.xca-pw-wrap { position:relative; }
-.xca-pw-wrap .xca-input { padding-right:48px; }
-.xca-pw-toggle { position:absolute; right:14px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; font-size:16px; padding:4px; line-height:1; }
-.xca-error { background:rgba(245,101,101,0.12); border:1px solid rgba(245,101,101,0.3); color:#fc8181; padding:12px 14px; border-radius:12px; font-size:13px; margin-bottom:14px; display:none; }
-.xca-btn { width:100%; padding:15px; border-radius:16px; border:none; background:linear-gradient(135deg,#667eea,#764ba2); color:#fff; font-family:inherit; font-size:15px; font-weight:800; cursor:pointer; transition:opacity 0.2s; margin-top:4px; }
-.xca-btn:disabled { opacity:0.6; cursor:default; }
-.xca-btn:not(:disabled):hover { opacity:0.88; }
-.xca-hint { text-align:center; color:#5a5a7a; font-size:12px; margin-top:16px; line-height:1.6; }
-@media (max-width:480px) { .xca-card { padding:32px 20px; border-radius:20px; } }
 

@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
+const http = require('http');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -37,25 +38,41 @@ app.use('/reports', express.static(REPORTS_DIR));
  *  To start it:  cd "System Before Prompting V2/avaria" && npm run dev     */
 
 /* ─── Project 5: Website / Property Explorer ─── */
-/*  The website's index.html uses absolute paths (/styles.css, /data.json, etc.)
-    which break when served under /website/. Rewrite them on the fly.          */
-app.get(['/website/', '/website/index.html'], (req, res) => {
-  if (req.hostname === 'localhost' || req.hostname === '127.0.0.1') {
-    return res.redirect(302, WEBSITE_LOCAL_ORIGIN);
-  }
+/*  Serve the website under /website/ on all environments (same-origin for shared auth).
+    The website's index.html uses absolute paths — rewrite them on the fly.
+    API calls are proxied to the standalone website server when it's running.    */
+app.use(express.json({ limit: '1mb' }));
+app.post(['/api/gemini', '/api/route/route', '/api/route/table', '/api/route/trip'], (req, res) => {
+  const body = JSON.stringify(req.body);
+  const proxyReq = http.request({
+    hostname: 'localhost', port: 3000, path: req.originalUrl,
+    method: 'POST', headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) }
+  }, (proxyRes) => {
+    res.status(proxyRes.statusCode);
+    Object.entries(proxyRes.headers).forEach(([k, v]) => { if (k !== 'transfer-encoding') res.setHeader(k, v); });
+    proxyRes.pipe(res);
+  });
+  proxyReq.on('error', () => res.status(502).json({ error: 'Website server not reachable on port 3000' }));
+  proxyReq.end(body);
+});
 
+app.get(['/website/', '/website/index.html'], (req, res) => {
   const htmlPath = path.join(WEBSITE_DIR, 'index.html');
   let html = fs.readFileSync(htmlPath, 'utf8');
   // Rewrite absolute paths in href="/..." and src="/..." attributes
-  html = html.replace(/(href|src)="\/(?!\/)/g, '$1="/website/');
+  // Exclude: protocol-relative (//), xcelias-auth.js, activities/ (firebase-config)
+  html = html.replace(/(href|src)="\/(?!\/|xcelias-auth|activities\/)/g, '$1="/website/');
   // Rewrite service worker registration path in inline scripts
   html = html.replace(/register\('\/sw\.js'\)/g, "register('/website/sw.js')");
   res.type('html').send(html);
 });
 app.use('/website', express.static(WEBSITE_DIR));
 
-/* Fallback: any root-level request for website assets (in case JS uses absolute paths) */
-const WEBSITE_ASSETS = ['data.json','styles.css','app.js','sw.js','search.worker.js','manifest.json'];
+/* Fallback: root-level requests for website assets (JS uses absolute paths) */
+const WEBSITE_ASSETS = [
+  'data.json','styles.css','app.js','sw.js','search.worker.js','manifest.json',
+  'cairo.json','gouna.json','north_coast.json','sokhna.json','others.json'
+];
 WEBSITE_ASSETS.forEach(file => {
   app.get('/' + file, (req, res, next) => {
     const fp = path.join(WEBSITE_DIR, file);

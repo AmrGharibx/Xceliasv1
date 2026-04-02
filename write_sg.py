@@ -1,4 +1,8 @@
-<!DOCTYPE html>
+import pathlib, textwrap
+
+OUT = pathlib.Path(r"j:\Excelias V2\Study Guide & Excersies\index.html")
+
+HTML = r"""<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
@@ -1670,4 +1674,7 @@ window.addEventListener('resize',()=>{if(curSection)updNavPill(curSection)});
 
 </script>
 </body>
-</html>
+</html>"""
+
+OUT.write_text(HTML, encoding='utf-8')
+print(f"Written {OUT} — {len(HTML.splitlines())} lines")

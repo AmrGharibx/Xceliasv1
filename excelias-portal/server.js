@@ -11,10 +11,11 @@ const WEBSITE_LOCAL_ORIGIN = process.env.WEBSITE_LOCAL_ORIGIN || 'http://localho
 const WS = path.resolve(__dirname, '..');
 
 /* ─── Project paths ─── */
-const ACTIVITIES_DIR = path.join(WS, 'Activites ( WorkSpace )', 'RedMaterialsAcademy');
-const CONTENT_BUILD  = path.join(WS, 'Content ( WorkSpace )', 'red-materials-app', 'build');
-const REPORTS_DIR    = path.join(WS, 'Report Generation 3');
-const WEBSITE_DIR    = path.join(WS, 'Website ( WorkSpace )');
+const ACTIVITIES_DIR  = path.join(WS, 'Activites ( WorkSpace )', 'RedMaterialsAcademy');
+const CONTENT_BUILD   = path.join(WS, 'Content ( WorkSpace )', 'red-materials-app', 'build');
+const REPORTS_DIR     = path.join(WS, 'Report Generation 3');
+const WEBSITE_DIR     = path.join(WS, 'Website ( WorkSpace )');
+const STUDY_GUIDE_DIR = path.join(WS, 'Study Guide & Excersies');
 
 /* ─── Portal static files (this folder) ─── */
 app.use(express.static(__dirname, { index: 'index.html' }));
@@ -30,6 +31,9 @@ app.use('/static', express.static(path.join(CONTENT_BUILD, 'static')));
 
 /* ─── Project 3: Report Generator (single HTML files) ─── */
 app.use('/reports', express.static(REPORTS_DIR));
+
+/* ─── Project 6: Study Guide ─── */
+app.use('/studyguide', express.static(STUDY_GUIDE_DIR));
 
 /* ─── Project 4: Avaria Academy (Next.js — runs on port 3005) ─── *
  *  Avaria cannot be iframed because it sets X-Frame-Options: DENY

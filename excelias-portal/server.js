@@ -300,6 +300,13 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(PORTAL_DIR, 'index.html'));
 });
 
+/* ─── Global error handler — suppress stack traces and file paths ─── */
+app.use((err, _req, res, _next) => {
+  const status = err.status || err.statusCode || 500;
+  const safeMessages = { 413: 'Payload too large', 400: 'Bad request' };
+  res.status(status).json({ error: safeMessages[status] || 'Internal server error' });
+});
+
 /* ─── Launch ─── */
 app.listen(PORT, () => {
   const u = `http://localhost:${PORT}`;

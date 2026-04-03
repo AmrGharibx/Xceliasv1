@@ -808,7 +808,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--v);outline-offs
 </nav>
 
 <!-- SCORE MODAL -->
-<div class="score-ov" id="score-ov" role="dialog" aria-modal="true">
+<div class="score-ov" id="score-ov" role="dialog" aria-modal="true" onclick="if(event.target===this)closeScore()">
   <div class="score-card">
     <div class="score-card-bg"></div>
     <span class="sc-emoji" id="sc-emoji">🏆</span>
@@ -1012,12 +1012,12 @@ const BATCHES=[{
 function buildQ(projs){
   const qs=[];
   projs.forEach(p=>{
-    qs.push({q:`Who is the developer behind "${p.projectName}"?`,opts:shuffle(projs.map(x=>x.devName)),ans:p.devName,ex:`${p.projectName} is by ${p.devName} (${p.devOwner}).`});
-    qs.push({q:`Payment plan for "${p.projectName}"?`,opts:shuffle([p.paymentPlan,...projs.filter(x=>x.id!==p.id).slice(0,3).map(x=>x.paymentPlan)]).slice(0,4),ans:p.paymentPlan,ex:`Payment plan: ${p.paymentPlan}`});
-    qs.push({q:`Total area of "${p.projectName}"?`,opts:shuffle([p.area,...projs.filter(x=>x.id!==p.id).slice(0,3).map(x=>x.area)]).slice(0,4),ans:p.area,ex:`${p.projectName} covers ${p.area}.`});
-    if(p.maintenance)qs.push({q:`Maintenance fee for "${p.projectName}"?`,opts:shuffle([p.maintenance,'5%','12%','15%']).slice(0,4),ans:p.maintenance,ex:`Maintenance: ${p.maintenance}.`});
+    qs.push({q:`Who is the developer behind "${p.projectName}"?`,opts:qopts(p.devName,projs.map(x=>x.devName)),ans:p.devName,ex:`${p.projectName} is by ${p.devName} (${p.devOwner}).`});
+    qs.push({q:`Payment plan for "${p.projectName}"?`,opts:qopts(p.paymentPlan,projs.filter(x=>x.id!==p.id).slice(0,3).map(x=>x.paymentPlan)),ans:p.paymentPlan,ex:`Payment plan: ${p.paymentPlan}`});
+    qs.push({q:`Total area of "${p.projectName}"?`,opts:qopts(p.area,projs.filter(x=>x.id!==p.id).slice(0,3).map(x=>x.area)),ans:p.area,ex:`${p.projectName} covers ${p.area}.`});
+    if(p.maintenance)qs.push({q:`Maintenance fee for "${p.projectName}"?`,opts:qopts(p.maintenance,['5%','12%','15%']),ans:p.maintenance,ex:`Maintenance: ${p.maintenance}.`});
     const cheap=p.units.filter(u=>u.n>0).sort((a,b)=>a.n-b.n)[0];
-    if(cheap)qs.push({q:`Entry-level unit in "${p.projectName}"?`,opts:shuffle([`${cheap.t} — ${cheap.p}`,...projs.filter(x=>x.id!==p.id).slice(0,3).map(x=>{const c=x.units.filter(u=>u.n>0).sort((a,b)=>a.n-b.n)[0];return c?`${c.t} — ${c.p}`:'1 BR — 5M'})]).slice(0,4),ans:`${cheap.t} — ${cheap.p}`,ex:`Entry: ${cheap.t} (${cheap.s}) at ${cheap.p}.`});
+    if(cheap){const cAns=`${cheap.t} — ${cheap.p}`;qs.push({q:`Entry-level unit in "${p.projectName}"?`,opts:qopts(cAns,projs.filter(x=>x.id!==p.id).slice(0,3).map(x=>{const c=x.units.filter(u=>u.n>0).sort((a,b)=>a.n-b.n)[0];return c?`${c.t} — ${c.p}`:'1 BR — 5M'})),ans:cAns,ex:`Entry: ${cheap.t} (${cheap.s}) at ${cheap.p}.`});}
   });
   // ── Dynamic extras (work for any batch) ──
   const getYrs=s=>{const m=String(s||'').match(/(\d+)\s*year/i);return m?+m[1]:0};
@@ -1025,25 +1025,25 @@ function buildQ(projs){
   const byArea=[...projs].sort((a,b)=>numF(a.area)-numF(b.area));
   if(byArea.length>=2){
     const sm=byArea[0],lg=byArea[byArea.length-1];
-    qs.push({q:'Smallest area project in this batch?',opts:shuffle([sm.projectName+' — '+sm.area,...projs.filter(p=>p.id!==sm.id).slice(0,3).map(p=>p.projectName+' — '+p.area)]),ans:sm.projectName+' — '+sm.area,ex:sm.projectName+' covers only '+sm.area+'.'});
-    qs.push({q:'Largest area project in this batch?',opts:shuffle([lg.projectName+' — '+lg.area,...projs.filter(p=>p.id!==lg.id).slice(0,3).map(p=>p.projectName+' — '+p.area)]),ans:lg.projectName+' — '+lg.area,ex:lg.projectName+' is the largest at '+lg.area+'.'});
+    qs.push({q:'Smallest area project in this batch?',opts:qopts(sm.projectName+' — '+sm.area,projs.filter(p=>p.id!==sm.id).slice(0,3).map(p=>p.projectName+' — '+p.area)),ans:sm.projectName+' — '+sm.area,ex:sm.projectName+' covers only '+sm.area+'.'});
+    qs.push({q:'Largest area project in this batch?',opts:qopts(lg.projectName+' — '+lg.area,projs.filter(p=>p.id!==lg.id).slice(0,3).map(p=>p.projectName+' — '+p.area)),ans:lg.projectName+' — '+lg.area,ex:lg.projectName+' is the largest at '+lg.area+'.'});
   }
   const mosPrj=projs.find(p=>(p.location||'').includes('Mostakbal'));
-  if(mosPrj)qs.push({q:'Which project is in Mostakbal City, not New Capital?',opts:shuffle([mosPrj.projectName,...projs.filter(p=>p.id!==mosPrj.id).map(p=>p.projectName)]).slice(0,4),ans:mosPrj.projectName,ex:mosPrj.projectName+' ('+mosPrj.devName+') is in Mostakbal City.'});
+  if(mosPrj)qs.push({q:'Which project is in Mostakbal City, not New Capital?',opts:qopts(mosPrj.projectName,projs.filter(p=>p.id!==mosPrj.id).map(p=>p.projectName)),ans:mosPrj.projectName,ex:mosPrj.projectName+' ('+mosPrj.devName+') is in Mostakbal City.'});
   const planLabel=p=>p.projectName+' — '+(p.paymentPlan.match(/\d+\s*year/i)?.[0]||p.paymentPlan);
   const byPlan=[...projs].sort((a,b)=>getYrs(a.paymentPlan)-getYrs(b.paymentPlan));
   const longP=byPlan[byPlan.length-1];
-  if(longP)qs.push({q:'Longest payment plan (most years) in this batch?',opts:shuffle([planLabel(longP),...byPlan.slice(0,-1).slice(0,3).map(planLabel)]),ans:planLabel(longP),ex:longP.projectName+': '+longP.paymentPlan+'.'});
+  if(longP)qs.push({q:'Longest payment plan (most years) in this batch?',opts:qopts(planLabel(longP),byPlan.slice(0,-1).slice(0,3).map(planLabel)),ans:planLabel(longP),ex:longP.projectName+': '+longP.paymentPlan+'.'});
   const withDel=[...projs].filter(p=>p.delivery&&getYrs(p.delivery)>0).sort((a,b)=>getYrs(a.delivery)-getYrs(b.delivery));
-  if(withDel.length>=2){const fast=withDel[0];qs.push({q:'Fastest delivery in this batch?',opts:shuffle([fast.projectName+' — '+fast.delivery,...withDel.slice(1).slice(0,3).map(p=>p.projectName+' — '+p.delivery)]),ans:fast.projectName+' — '+fast.delivery,ex:fast.projectName+' delivers in just '+fast.delivery+'.'});}
+  if(withDel.length>=2){const fast=withDel[0];qs.push({q:'Fastest delivery in this batch?',opts:qopts(fast.projectName+' — '+fast.delivery,withDel.slice(1).slice(0,3).map(p=>p.projectName+' — '+p.delivery)),ans:fast.projectName+' — '+fast.delivery,ex:fast.projectName+' delivers in just '+fast.delivery+'.'});}
   const ffPrj=projs.find(p=>p.finishing&&p.finishing.some(f=>/fully finished/i.test(f)));
-  if(ffPrj)qs.push({q:'Which project offers Fully Finished apartments?',opts:shuffle([ffPrj.projectName,...projs.filter(p=>p.id!==ffPrj.id).map(p=>p.projectName)]).slice(0,4),ans:ffPrj.projectName,ex:ffPrj.projectName+' is Fully Finished — move-in ready.'});
+  if(ffPrj)qs.push({q:'Which project offers Fully Finished apartments?',opts:qopts(ffPrj.projectName,projs.filter(p=>p.id!==ffPrj.id).map(p=>p.projectName)),ans:ffPrj.projectName,ex:ffPrj.projectName+' is Fully Finished — move-in ready.'});
   const soldPrj=projs.find(p=>p.units.some(u=>/(sold.?out)/i.test(u.p)));
-  if(soldPrj){const su=soldPrj.units.find(u=>/(sold.?out)/i.test(u.p));qs.push({q:'Which project has a Sold Out unit type?',opts:shuffle([soldPrj.projectName,...projs.filter(p=>p.id!==soldPrj.id).map(p=>p.projectName)]).slice(0,4),ans:soldPrj.projectName,ex:soldPrj.projectName+': '+su.t+' ('+su.s+') is Sold Out.'});}
+  if(soldPrj){const su=soldPrj.units.find(u=>/(sold.?out)/i.test(u.p));qs.push({q:'Which project has a Sold Out unit type?',opts:qopts(soldPrj.projectName,projs.filter(p=>p.id!==soldPrj.id).map(p=>p.projectName)),ans:soldPrj.projectName,ex:soldPrj.projectName+': '+su.t+' ('+su.s+') is Sold Out.'});}
   const ceoPrj=projs.find(p=>(p.devOwner||'').includes('CEO'));
-  if(ceoPrj)qs.push({q:'Which developer title is CEO in this batch?',opts:shuffle([ceoPrj.devOwner,...projs.filter(p=>p.id!==ceoPrj.id).map(p=>p.devOwner)]).slice(0,4),ans:ceoPrj.devOwner,ex:ceoPrj.devName+' CEO: '+ceoPrj.devOwner+'.'});
+  if(ceoPrj)qs.push({q:'Which developer title is CEO in this batch?',opts:qopts(ceoPrj.devOwner,projs.filter(p=>p.id!==ceoPrj.id).map(p=>p.devOwner)),ans:ceoPrj.devOwner,ex:ceoPrj.devName+' CEO: '+ceoPrj.devOwner+'.'});
   const vdlcPrj=projs.find(p=>(p.facilities||[]).some(f=>/95%/.test(f)));
-  if(vdlcPrj)qs.push({q:'% of '+vdlcPrj.projectName+' units with landscape/water view?',opts:shuffle(['95%','80%','70%','60%']),ans:'95%',ex:'95% of units in '+vdlcPrj.projectName+' overlook landscape or water.'});
+  if(vdlcPrj)qs.push({q:'% of '+vdlcPrj.projectName+' units with landscape/water view?',opts:qopts('95%',['80%','70%','60%']),ans:'95%',ex:'95% of units in '+vdlcPrj.projectName+' overlook landscape or water.'});
   return shuffle(qs);
 }
 
@@ -1096,11 +1096,13 @@ let quizQs=[],quizIdx=0,quizOk=0,quizDone=false;
 let fcards=[],fcIdx=0,fcRes=[];
 let blanks=[],blIdx=0;
 let matchPairs=[],matchSel=null,matchDone=[];
-let mastered=JSON.parse(localStorage.getItem('xc_sg2_mas')||'{}');
-let scores=JSON.parse(localStorage.getItem('xc_sg2_sc')||'[]');
+let mastered=(function(){try{return JSON.parse(localStorage.getItem('xc_sg2_mas'))||{}}catch(e){return{}}})();
+let scores=(function(){try{return JSON.parse(localStorage.getItem('xc_sg2_sc'))||[]}catch(e){return[]}})();
 
 /* ══ UTILS ══ */
 function shuffle(a){const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]]}return r}
+function dedup(arr){const seen=new Set();return arr.filter(x=>{const k=String(x);if(seen.has(k))return false;seen.add(k);return true})}
+function qopts(ans,pool,n){n=n||4;let a=[ans,...pool.filter(x=>x!==ans)];a=[...new Set(a)];while(a.length<n)a.push('Option '+a.length);return shuffle(a.slice(0,n))}
 function esc(s){const d=document.createElement('div');d.textContent=String(s||'');return d.innerHTML}
 function $id(id){return document.getElementById(id)}
 function norm(s){return String(s||'').toLowerCase().replace(/[^a-z0-9%\/\. ]/g,'').trim()}
@@ -1286,7 +1288,7 @@ function renderProjDetail(i){
   const det=$id('study-det');if(!det)return;
   applyProjVars(det,p.id);
   const c=pc(p.id);
-  const key=curBatch.id+'_'+p.id;
+  const key=curBatch.id+'_all';
   const isMast=!!mastered[key];
   const tiles=[
     {icon:'📐',val:p.area,key:'Area'},
@@ -1471,7 +1473,7 @@ function renderQuiz(area){
 }
 
 function answerQ(idx){
-  if(quizDone)return;quizDone=true;
+  if(quizDone||idx<0||idx>=quizQs[quizIdx].opts.length)return;quizDone=true;
   const q=quizQs[quizIdx];const chosen=q.opts[idx];const ok=chosen===q.ans;
   if(ok)quizOk++;
   document.querySelectorAll('.qopt').forEach((b,i)=>{
@@ -1664,7 +1666,7 @@ document.addEventListener('keydown',e=>{
   if(e.key==='ArrowRight'&&curSection==='flash')fcNext(true);
   if(e.key==='ArrowLeft'&&curSection==='flash')fcNext(false);
   if((e.key===' '||e.key==='Enter')&&curSection==='flash'){e.preventDefault();flipFC()}
-  if(e.key==='Escape')closeScore();
+  if(e.key==='Escape'){closeScore();return}
 });
 window.addEventListener('resize',()=>{if(curSection)updNavPill(curSection)});
 

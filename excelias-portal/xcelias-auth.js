@@ -21,8 +21,14 @@
   var _r = function (k, d) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } };
   var _w = function (k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
 
-  /* ── Batch student identifiers (NO secrets — password hashes are server-side only) ── */
+  /* ── Batch student accounts (client-side fallback for static deploys) ──
+     Password hashes are SHA-256 (one-way). Used ONLY when the Express
+     server API is unreachable (e.g. Vercel static hosting). ── */
   var _BATCH_UIDS = ['batch33_shared'];
+  var _BATCH_ACCOUNTS = [
+    { uid: 'batch33_shared', username: 'batch33', displayName: 'Batch 33', role: 'student', batchId: 'batch33',
+      passwordHash: '31ce6a05ffacf76fed282f2af228582e5fcab3300f07be6a5624c86aa6596aea' }
+  ];
 
   /* ── SHA-256 using SubtleCrypto ── */
   var _hash = function (s) {
@@ -123,13 +129,31 @@
                 throw new Error('Invalid username or password');
               }
               if (e.code === 'auth/user-not-found') {
-                throw new Error('Invalid username or password');
+                /* Not in Firebase — fall through to batch/offline fallback */
+                return null;
               }
               throw e;
             });
         }
 
-        /* 3 — Offline fallback (no server, no Firebase) */
+        return null; /* no Firebase — fall through */
+      })
+      .then(function (firebaseUser) {
+        if (firebaseUser) return firebaseUser;
+
+        /* 3 — Client-side batch account fallback (static deploys without Express) */
+        var batchAcct = _BATCH_ACCOUNTS.find(function (a) { return a.username === u; });
+        if (batchAcct) {
+          return _hash(password).then(function (h) {
+            if (h !== batchAcct.passwordHash) throw new Error('Invalid username or password');
+            var user = { uid: batchAcct.uid, username: batchAcct.username, displayName: batchAcct.displayName, role: batchAcct.role, batchId: batchAcct.batchId };
+            if (!_roleOk(user, requiredRoles)) throw new Error('Your account does not have access to this module.');
+            _w('xcCurrentUser', user);
+            return _syncServerSession(user, password).then(function () { return user; });
+          });
+        }
+
+        /* 4 — Offline fallback (no server, no Firebase) */
         return (function () {
           var adminSetup = _r('xcAdminSetup', null);
           if (u === 'admin') {

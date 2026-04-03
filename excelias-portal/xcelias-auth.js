@@ -44,12 +44,17 @@
     return requiredRoles.indexOf(user.role) !== -1;
   };
 
-  /* helper: POST JSON to a server endpoint */
+  /* helper: POST JSON to a server endpoint.
+     Gracefully handles non-JSON responses (e.g. static hosting 404 HTML pages). */
   var _postJSON = function (url, body) {
     return fetch(url, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body), credentials: 'same-origin'
-    }).then(function (r) { return r.json().then(function (d) { return { status: r.status, data: d }; }); });
+    }).then(function (r) {
+      return r.json()
+        .then(function (d) { return { status: r.status, data: d }; })
+        .catch(function () { return { status: r.status, data: null }; });
+    });
   };
 
   /* notify server of a Firebase session so it sets the signed httpOnly cookie.
@@ -72,7 +77,7 @@
     /* 1 — Try server-side batch login FIRST (issues signed httpOnly cookie) */
     return _postJSON('/api/auth/login', { username: u, password: password })
       .then(function (res) {
-        if (res.status === 200) {
+        if (res.status === 200 && res.data) {
           /* Server validated batch credentials and set httpOnly cookie */
           var user = res.data;
           if (!_roleOk(user, requiredRoles)) throw new Error('Your account does not have access to this module.');
@@ -80,7 +85,12 @@
           return user;
         }
         if (res.status === 401) throw new Error('Invalid username or password');
-        /* 404 = not a batch account — fall through to Firebase */
+        /* 404 or non-JSON (static hosting) = not a batch account — fall through to Firebase */
+        return null;
+      })
+      .catch(function (e) {
+        /* Server unreachable (no Express server, e.g. static deployment) — skip to Firebase */
+        if (e && e.message && (e.message === 'Invalid username or password' || e.message.indexOf('does not have access') !== -1)) throw e;
         return null;
       })
       .then(function (batchUser) {

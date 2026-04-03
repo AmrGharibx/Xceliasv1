@@ -17,6 +17,10 @@ dist/
 .env.local
 .env.*.local
 
+# Server session secrets
+.session-secret
+**/.session-secret
+
 # Firebase service account (real secret — never commit)
 service-account.json
 **/service-account.json

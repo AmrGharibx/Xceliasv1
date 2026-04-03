@@ -47,85 +47,100 @@
     return requiredRoles.indexOf(user.role) !== -1;
   };
 
+  /* helper: POST JSON to a server endpoint */
+  var _postJSON = function (url, body) {
+    return fetch(url, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body), credentials: 'same-origin'
+    }).then(function (r) { return r.json().then(function (d) { return { status: r.status, data: d }; }); });
+  };
+
+  /* notify server of a Firebase session so it sets the signed httpOnly cookie */
+  var _syncServerSession = function (user) {
+    return _postJSON('/api/auth/firebase-session', { uid: user.uid, role: user.role, displayName: user.displayName })
+      .catch(function () { /* server unreachable — degrade gracefully */ });
+  };
+
   /* ═══════════════════════════════════════
-     SIGN IN (Firebase + offline fallback)
+     SIGN IN (server-validated batch + Firebase + offline fallback)
      ═══════════════════════════════════════ */
   var _signIn = function (username, password, requiredRoles) {
     var u = username.toLowerCase().trim();
 
-    /* 1 — Firebase online auth */
-    if (window.xcFirebaseReady && window.xcAuth) {
-      return window.xcAuth.signInWithEmailAndPassword(_fbEmail(u), password)
-        .then(function (cred) {
-          return window.xcDB.ref('users/' + cred.user.uid).once('value').then(function (snap) {
-            var profile = snap.val();
-            if (!profile) {
-              /* Auto-create missing DB profile from Firebase Auth user */
-              var isAdmin = u === 'admin';
-              profile = { username: u, displayName: isAdmin ? 'Admin' : u, role: isAdmin ? 'admin' : 'trainee', batchId: isAdmin ? 'admin' : 'default', createdAt: Date.now() };
-              window.xcDB.ref('users/' + cred.user.uid).set(profile).catch(function () {});
-            }
-            var user = Object.assign({ uid: cred.user.uid }, profile);
-            if (!_roleOk(user, requiredRoles)) {
-              return window.xcAuth.signOut().then(function () {
-                throw new Error('Your account does not have access to this module. Required role: ' + (requiredRoles || []).join(' or '));
-              });
-            }
-            _w('xcCurrentUser', user);
-            return user;
-          });
-        })
-        .catch(function (e) {
-          if (e.code === 'auth/wrong-password' || e.code === 'auth/user-not-found' || e.code === 'auth/invalid-credential') {
-            /* Batch credentials live offline only — fall through if user not in Firebase */
-            var batchCred = _BATCH_CREDS.find(function (b) { return b.username === u; });
-            if (batchCred && e.code !== 'auth/wrong-password') {
-              return _hash(password).then(function (h) {
-                if (h !== batchCred.passwordHash) throw new Error('Invalid username or password');
-                if (!_roleOk(batchCred, requiredRoles)) throw new Error('Your account does not have access to this module.');
-                _w('xcCurrentUser', batchCred);
-                return batchCred;
-              });
-            }
-            throw new Error('Invalid username or password');
-          }
-          throw e;
-        });
-    }
-
-    /* 2 — Offline fallback */
-    return (function () {
-      var adminSetup = _r('xcAdminSetup', null);
-      if (u === 'admin') {
-        if (!adminSetup) return Promise.reject(new Error('No admin found. Set up admin via Training Academy first.'));
-        return _hash(password).then(function (h) {
-          if (h !== adminSetup.passwordHash) throw new Error('Invalid username or password');
-          var user = { uid: 'admin_local', username: 'admin', displayName: 'Admin', role: 'admin', batchId: 'admin' };
+    /* 1 — Try server-side batch login FIRST (issues signed httpOnly cookie) */
+    return _postJSON('/api/auth/login', { username: u, password: password })
+      .then(function (res) {
+        if (res.status === 200) {
+          /* Server validated batch credentials and set httpOnly cookie */
+          var user = res.data;
           if (!_roleOk(user, requiredRoles)) throw new Error('Your account does not have access to this module.');
           _w('xcCurrentUser', user);
           return user;
-        });
-      }
-      /* Batch shared accounts */
-      var batchCred = _BATCH_CREDS.find(function (b) { return b.username === u; });
-      if (batchCred) {
-        return _hash(password).then(function (h) {
-          if (h !== batchCred.passwordHash) throw new Error('Invalid username or password');
-          if (!_roleOk(batchCred, requiredRoles)) throw new Error('Your account does not have access to this module.');
-          _w('xcCurrentUser', batchCred);
-          return batchCred;
-        });
-      }
-      var accounts = _r('xcAccounts', []);
-      var account = accounts.find(function (a) { return (a.username || '').toLowerCase() === u; });
-      if (!account) return Promise.reject(new Error('Invalid username or password'));
-      return _hash(password).then(function (h) {
-        if (h !== account.passwordHash) throw new Error('Invalid username or password');
-        if (!_roleOk(account, requiredRoles)) throw new Error('Your account does not have access to this module.');
-        _w('xcCurrentUser', account);
-        return account;
+        }
+        if (res.status === 401) throw new Error('Invalid username or password');
+        /* 404 = not a batch account — fall through to Firebase */
+        return null;
+      })
+      .then(function (batchUser) {
+        if (batchUser) return batchUser;
+
+        /* 2 — Firebase online auth */
+        if (window.xcFirebaseReady && window.xcAuth) {
+          return window.xcAuth.signInWithEmailAndPassword(_fbEmail(u), password)
+            .then(function (cred) {
+              return window.xcDB.ref('users/' + cred.user.uid).once('value').then(function (snap) {
+                var profile = snap.val();
+                if (!profile) {
+                  var isAdmin = u === 'admin';
+                  profile = { username: u, displayName: isAdmin ? 'Admin' : u, role: isAdmin ? 'admin' : 'trainee', batchId: isAdmin ? 'admin' : 'default', createdAt: Date.now() };
+                  window.xcDB.ref('users/' + cred.user.uid).set(profile).catch(function () {});
+                }
+                var user = Object.assign({ uid: cred.user.uid }, profile);
+                if (!_roleOk(user, requiredRoles)) {
+                  return window.xcAuth.signOut().then(function () {
+                    throw new Error('Your account does not have access to this module. Required role: ' + (requiredRoles || []).join(' or '));
+                  });
+                }
+                _w('xcCurrentUser', user);
+                /* Tell server about the Firebase session so it sets httpOnly cookie */
+                return _syncServerSession(user).then(function () { return user; });
+              });
+            })
+            .catch(function (e) {
+              if (e.code === 'auth/wrong-password' || e.code === 'auth/invalid-credential') {
+                throw new Error('Invalid username or password');
+              }
+              if (e.code === 'auth/user-not-found') {
+                throw new Error('Invalid username or password');
+              }
+              throw e;
+            });
+        }
+
+        /* 3 — Offline fallback (no server, no Firebase) */
+        return (function () {
+          var adminSetup = _r('xcAdminSetup', null);
+          if (u === 'admin') {
+            if (!adminSetup) return Promise.reject(new Error('No admin found. Set up admin via Training Academy first.'));
+            return _hash(password).then(function (h) {
+              if (h !== adminSetup.passwordHash) throw new Error('Invalid username or password');
+              var user = { uid: 'admin_local', username: 'admin', displayName: 'Admin', role: 'admin', batchId: 'admin' };
+              if (!_roleOk(user, requiredRoles)) throw new Error('Your account does not have access to this module.');
+              _w('xcCurrentUser', user);
+              return _syncServerSession(user).then(function () { return user; });
+            });
+          }
+          var accounts = _r('xcAccounts', []);
+          var account = accounts.find(function (a) { return (a.username || '').toLowerCase() === u; });
+          if (!account) return Promise.reject(new Error('Invalid username or password'));
+          return _hash(password).then(function (h) {
+            if (h !== account.passwordHash) throw new Error('Invalid username or password');
+            if (!_roleOk(account, requiredRoles)) throw new Error('Your account does not have access to this module.');
+            _w('xcCurrentUser', account);
+            return _syncServerSession(account).then(function () { return account; });
+          });
+        })();
       });
-    })();
   };
 
   /* ═══════════════════════════════════════
@@ -133,6 +148,8 @@
      ═══════════════════════════════════════ */
   var _signOut = function () {
     try { localStorage.removeItem('xcCurrentUser'); } catch (e) {}
+    /* Clear server-side session cookie */
+    fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' }).catch(function () {});
     if (window.xcFirebaseReady && window.xcAuth) {
       window.xcAuth.signOut().catch(function () {});
     }
@@ -145,6 +162,14 @@
   var _verifySession = function (cur, requiredRoles, onVerified, onFailed) {
     if (!_roleOk(cur, requiredRoles)) { onFailed(); return; }
 
+    /* SECURITY: Detect batch UID role tampering.
+       If localStorage says role=admin but the UID belongs to a batch account,
+       the role was tampered with via DevTools. Reject immediately. */
+    var batchMatch = _BATCH_CREDS.find(function (b) { return b.uid === cur.uid; });
+    if (batchMatch && cur.role !== batchMatch.role) {
+      onFailed(); return;
+    }
+
     if (window.xcFirebaseReady && window.xcAuth) {
       var unsub = window.xcAuth.onAuthStateChanged(function (fbUser) {
         unsub();
@@ -154,7 +179,7 @@
         var accounts = _r('xcAccounts', []);
         var isOfflineAdmin = cur.uid === 'admin_local' && adminSetup;
         var isOfflineAccount = accounts.some(function (a) { return a.uid === cur.uid; });
-        var isBatchAccount = _BATCH_CREDS.some(function (b) { return b.uid === cur.uid; });
+        var isBatchAccount = !!batchMatch;
         if (isOfflineAdmin || isOfflineAccount || isBatchAccount) { onVerified(cur); }
         else { onFailed(); }
       });
@@ -360,7 +385,7 @@
           + '<p style="font-size:.82rem;color:rgba(152,152,184,.6);margin:0 0 28px;line-height:1.6">This module requires <strong style="color:rgba(232,232,240,.85)">Admin</strong> or <strong style="color:rgba(232,232,240,.85)">Agent</strong> credentials.<br>Your account only has access to the Study Guide.</p>'
           + '<div style="display:flex;flex-direction:column;gap:10px">'
           + '<a href="/studyguide/index.html" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 24px;border-radius:14px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;font-size:.85rem;font-weight:700;text-decoration:none;border:none;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 20px rgba(102,126,234,.3)" onmouseover="this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.transform=\'none\'">📖 Go to Study Guide</a>'
-          + '<button onclick="try{localStorage.removeItem(\'xcCurrentUser\')}catch(e){}location.reload()" style="padding:12px 24px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:rgba(232,232,240,.7);font-size:.8rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s" onmouseover="this.style.background=\'rgba(255,255,255,.1)\';this.style.color=\'#fff\'" onmouseout="this.style.background=\'rgba(255,255,255,.05)\';this.style.color=\'rgba(232,232,240,.7)\'">Sign Out &amp; Log in as Admin</button>'
+          + '<button onclick="fetch(\'/api/auth/logout\',{method:\'POST\',credentials:\'same-origin\'}).catch(function(){});try{localStorage.removeItem(\'xcCurrentUser\')}catch(e){}location.reload()" style="padding:12px 24px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:rgba(232,232,240,.7);font-size:.8rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s" onmouseover="this.style.background=\'rgba(255,255,255,.1)\';this.style.color=\'#fff\'" onmouseout="this.style.background=\'rgba(255,255,255,.05)\';this.style.color=\'rgba(232,232,240,.7)\'">Sign Out &amp; Log in as Admin</button>'
           + '</div></div>';
         document.body.appendChild(ov);
         return;

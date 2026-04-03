@@ -2,10 +2,96 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const http = require('http');
+const crypto = require('crypto');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
 const WEBSITE_LOCAL_ORIGIN = process.env.WEBSITE_LOCAL_ORIGIN || 'http://localhost:3000';
+
+/* ═══════════════════════════════════════════════════════════════════
+   SERVER-SIDE SESSION SECURITY
+   ═══════════════════════════════════════════════════════════════════
+   HMAC-signed httpOnly cookies. Client JS cannot read or modify them.
+   The server is the ONLY authority for role-based access control.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Session secret — persisted to .session-secret so it survives restarts */
+const SECRET_PATH = path.join(__dirname, '.session-secret');
+let SESSION_SECRET;
+if (process.env.XC_SESSION_SECRET) {
+  SESSION_SECRET = process.env.XC_SESSION_SECRET;
+} else if (fs.existsSync(SECRET_PATH)) {
+  SESSION_SECRET = fs.readFileSync(SECRET_PATH, 'utf8').trim();
+} else {
+  SESSION_SECRET = crypto.randomBytes(48).toString('hex');
+  fs.writeFileSync(SECRET_PATH, SESSION_SECRET, 'utf8');
+}
+
+/* ── Batch credentials (server-side source of truth) ── */
+const BATCH_CREDS = [
+  { uid: 'batch33_shared', username: 'batch33', displayName: 'Batch 33', role: 'student', batchId: 'batch33',
+    passwordHash: '31ce6a05ffacf76fed282f2af228582e5fcab3300f07be6a5624c86aa6596aea' }
+];
+const BATCH_UIDS = new Set(BATCH_CREDS.map(c => c.uid));
+
+/* ── Cookie helpers ── */
+function signSession(payload) {
+  const data = Buffer.from(JSON.stringify(payload)).toString('base64url');
+  const sig = crypto.createHmac('sha256', SESSION_SECRET).update(data).digest('base64url');
+  return data + '.' + sig;
+}
+
+function verifySession(token) {
+  if (!token || typeof token !== 'string') return null;
+  const dot = token.indexOf('.');
+  if (dot < 1) return null;
+  const data = token.slice(0, dot);
+  const sig = token.slice(dot + 1);
+  const expected = crypto.createHmac('sha256', SESSION_SECRET).update(data).digest('base64url');
+  if (sig.length !== expected.length) return null;
+  if (!crypto.timingSafeEqual(Buffer.from(sig, 'utf8'), Buffer.from(expected, 'utf8'))) return null;
+  try {
+    const payload = JSON.parse(Buffer.from(data, 'base64url').toString());
+    if (payload.exp && Date.now() > payload.exp) return null;
+    return payload;
+  } catch { return null; }
+}
+
+function parseCookies(req) {
+  const cookies = {};
+  (req.headers.cookie || '').split(';').forEach(c => {
+    const eq = c.indexOf('=');
+    if (eq > 0) cookies[c.slice(0, eq).trim()] = decodeURIComponent(c.slice(eq + 1).trim());
+  });
+  return cookies;
+}
+
+function setSessionCookie(res, payload) {
+  const maxAge = 24 * 60 * 60 * 1000; // 24h
+  payload.exp = Date.now() + maxAge;
+  const token = signSession(payload);
+  res.setHeader('Set-Cookie', `xc_session=${token}; HttpOnly; SameSite=Lax; Path=/; Max-Age=${maxAge / 1000}`);
+}
+
+function clearSessionCookie(res) {
+  res.setHeader('Set-Cookie', 'xc_session=; HttpOnly; SameSite=Lax; Path=/; Max-Age=0');
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   SERVER-SIDE ROLE ENFORCEMENT MIDDLEWARE
+   ═══════════════════════════════════════════════════════════════════
+   Runs BEFORE static file serving. Checks the signed httpOnly cookie.
+   - Student cookie on restricted path → 302 redirect to /studyguide/
+   - No cookie → serve page (client-side login form will be shown)
+   - Admin/agent cookie → serve page normally
+   ═══════════════════════════════════════════════════════════════════ */
+function studentGuardMiddleware(req, res, next) {
+  const session = verifySession(parseCookies(req).xc_session);
+  if (session && session.role === 'student') {
+    return res.redirect(302, '/studyguide/index.html');
+  }
+  next();
+}
 
 /* ─── Workspace root (parent of this folder) ─── */
 const WS = path.resolve(__dirname, '..');
@@ -20,23 +106,79 @@ const WEBSITE_DIR     = useDist ? path.join(DIST, 'website')     : path.join(WS,
 const STUDY_GUIDE_DIR = useDist ? path.join(DIST, 'studyguide') : path.join(WS, 'Study Guide & Excersies');
 const PORTAL_DIR      = useDist ? DIST                           : __dirname;
 
-/* ─── Portal static files ─── */
-app.use(express.static(PORTAL_DIR, { index: 'index.html' }));
+/* ─── JSON body parser for auth API ─── */
+app.use(express.json({ limit: '1mb' }));
 
-/* ─── Project 1: Activities (CDN-based React + Babel) ─── */
-app.use('/activities', express.static(ACTIVITIES_DIR));
+/* ═══════════════════════════════════════════════════════════════════
+   AUTH API ENDPOINTS
+   ═══════════════════════════════════════════════════════════════════ */
 
-/* ─── Project 2: Content / Training Manual (CRA build) ─── */
-/*  CRA build uses absolute paths like /static/js/main.xxx.js
-    so we serve /static/ from the build's static folder as well. */
-app.use('/content', express.static(CONTENT_BUILD));
-const staticDir = useDist ? path.join(CONTENT_BUILD, 'static') : path.join(CONTENT_BUILD, 'static');
-app.use('/static', express.static(staticDir));
+/* POST /api/auth/login — validates credentials server-side, issues signed cookie */
+app.post('/api/auth/login', (req, res) => {
+  const { username, password } = req.body || {};
+  if (!username || !password) return res.status(400).json({ error: 'Missing credentials' });
+  const u = username.toLowerCase().trim();
+  const hash = crypto.createHash('sha256').update(password).digest('hex');
 
-/* ─── Project 3: Report Generator (single HTML files) ─── */
-app.use('/reports', express.static(REPORTS_DIR));
+  /* Check batch credentials */
+  const batch = BATCH_CREDS.find(c => c.username === u && c.passwordHash === hash);
+  if (batch) {
+    setSessionCookie(res, { uid: batch.uid, role: batch.role });
+    return res.json({ uid: batch.uid, username: batch.username, displayName: batch.displayName, role: batch.role, batchId: batch.batchId });
+  }
+  /* Check batch username with wrong password */
+  if (BATCH_CREDS.some(c => c.username === u)) {
+    return res.status(401).json({ error: 'Invalid password' });
+  }
+  /* Not a batch account — 404 so client falls through to Firebase */
+  return res.status(404).json({ error: 'not_batch' });
+});
 
-/* ─── Project 6: Study Guide ─── */
+/* POST /api/auth/firebase-session — called after Firebase auth succeeds on client.
+   Issues a server-side session cookie. Batch UIDs are NEVER given non-student roles. */
+app.post('/api/auth/firebase-session', (req, res) => {
+  const { uid, role, displayName } = req.body || {};
+  if (!uid || !role) return res.status(400).json({ error: 'Missing fields' });
+
+  /* CRITICAL: never let a batch UID upgrade to a non-student role */
+  if (BATCH_UIDS.has(uid)) {
+    return res.status(403).json({ error: 'Forbidden: batch accounts are student-only' });
+  }
+  setSessionCookie(res, { uid, role });
+  res.json({ ok: true });
+});
+
+/* POST /api/auth/logout — clears the server session cookie */
+app.post('/api/auth/logout', (_req, res) => {
+  clearSessionCookie(res);
+  res.json({ ok: true });
+});
+
+/* ═══════════════════════════════════════════════════════════════════
+   STATIC SERVING WITH SERVER-SIDE GUARDS
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Restricted modules — server-side student guard BEFORE static serving.
+   IMPORTANT: these must come BEFORE the portal static handler because
+   PORTAL_DIR (dist/) contains all module subdirectories. If portal static
+   was first, it would serve /activities/index.html directly from dist/
+   without going through the guard middleware. */
+app.use('/activities', studentGuardMiddleware, express.static(ACTIVITIES_DIR));
+app.use('/content', studentGuardMiddleware, express.static(CONTENT_BUILD));
+app.use('/static', express.static(path.join(CONTENT_BUILD, 'static')));
+app.use('/reports', studentGuardMiddleware, express.static(REPORTS_DIR));
+
+/* Portal — guard students away from the home page */
+app.use((req, res, next) => {
+  if (req.path === '/' || req.path === '/index.html') {
+    const session = verifySession(parseCookies(req).xc_session);
+    if (session && session.role === 'student') {
+      return res.redirect(302, '/studyguide/index.html');
+    }
+  }
+  next();
+});
+/* Study Guide — no guard needed (students ARE allowed here) */
 app.use('/studyguide', express.static(STUDY_GUIDE_DIR));
 
 /* ─── Project 4: Avaria Academy (Next.js — runs on port 3005) ─── *
@@ -49,7 +191,6 @@ app.use('/studyguide', express.static(STUDY_GUIDE_DIR));
 /*  Serve the website under /website/ on all environments (same-origin for shared auth).
     The website's index.html uses absolute paths — rewrite them on the fly.
     API calls are proxied to the standalone website server when it's running.    */
-app.use(express.json({ limit: '1mb' }));
 app.post(['/api/gemini', '/api/route/route', '/api/route/table', '/api/route/trip'], (req, res) => {
   const body = JSON.stringify(req.body);
   const proxyReq = http.request({
@@ -66,7 +207,7 @@ app.post(['/api/gemini', '/api/route/route', '/api/route/table', '/api/route/tri
 
 if (!useDist) {
   /* Source mode only: rewrite absolute paths in website index.html on-the-fly */
-  app.get(['/website/', '/website/index.html'], (req, res) => {
+  app.get(['/website/', '/website/index.html'], studentGuardMiddleware, (req, res) => {
     const htmlPath = path.join(WEBSITE_DIR, 'index.html');
     let html = fs.readFileSync(htmlPath, 'utf8');
     html = html.replace(/(href|src)="\/(?!\/|xcelias-auth|activities\/)/g, '$1="/website/');
@@ -74,7 +215,12 @@ if (!useDist) {
     res.type('html').send(html);
   });
 }
-app.use('/website', express.static(WEBSITE_DIR));
+app.use('/website', studentGuardMiddleware, express.static(WEBSITE_DIR));
+
+/* ═══ Portal static — MUST come AFTER all /module/ routes ═══
+   Because PORTAL_DIR (dist/) contains module subdirectories,
+   this would serve /activities/index.html without the guard. */
+app.use(express.static(PORTAL_DIR, { index: 'index.html' }));
 
 /* Fallback: root-level requests for website assets (JS uses absolute paths) */
 const WEBSITE_ASSETS = [

@@ -21,11 +21,8 @@
   var _r = function (k, d) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } };
   var _w = function (k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
 
-  /* ── Batch student credentials (shared per-batch, role: student) ── */
-  var _BATCH_CREDS = [
-    { uid: 'batch33_shared', username: 'batch33', displayName: 'Batch 33', role: 'student', batchId: 'batch33',
-      passwordHash: '31ce6a05ffacf76fed282f2af228582e5fcab3300f07be6a5624c86aa6596aea' }
-  ];
+  /* ── Batch student identifiers (NO secrets — password hashes are server-side only) ── */
+  var _BATCH_UIDS = ['batch33_shared'];
 
   /* ── SHA-256 using SubtleCrypto ── */
   var _hash = function (s) {
@@ -55,9 +52,14 @@
     }).then(function (r) { return r.json().then(function (d) { return { status: r.status, data: d }; }); });
   };
 
-  /* notify server of a Firebase session so it sets the signed httpOnly cookie */
-  var _syncServerSession = function (user) {
-    return _postJSON('/api/auth/firebase-session', { uid: user.uid, role: user.role, displayName: user.displayName })
+  /* notify server of a Firebase session so it sets the signed httpOnly cookie.
+     Non-student roles must include the password for server-side verification. */
+  var _syncServerSession = function (user, password) {
+    var body = { uid: user.uid, role: user.role, displayName: user.displayName };
+    if (user.role && user.role !== 'student' && user.role !== 'trainee' && password) {
+      body.password = password;
+    }
+    return _postJSON('/api/auth/firebase-session', body)
       .catch(function () { /* server unreachable — degrade gracefully */ });
   };
 
@@ -103,7 +105,7 @@
                 }
                 _w('xcCurrentUser', user);
                 /* Tell server about the Firebase session so it sets httpOnly cookie */
-                return _syncServerSession(user).then(function () { return user; });
+                return _syncServerSession(user, password).then(function () { return user; });
               });
             })
             .catch(function (e) {
@@ -127,7 +129,7 @@
               var user = { uid: 'admin_local', username: 'admin', displayName: 'Admin', role: 'admin', batchId: 'admin' };
               if (!_roleOk(user, requiredRoles)) throw new Error('Your account does not have access to this module.');
               _w('xcCurrentUser', user);
-              return _syncServerSession(user).then(function () { return user; });
+              return _syncServerSession(user, password).then(function () { return user; });
             });
           }
           var accounts = _r('xcAccounts', []);
@@ -137,7 +139,7 @@
             if (h !== account.passwordHash) throw new Error('Invalid username or password');
             if (!_roleOk(account, requiredRoles)) throw new Error('Your account does not have access to this module.');
             _w('xcCurrentUser', account);
-            return _syncServerSession(account).then(function () { return account; });
+            return _syncServerSession(account, password).then(function () { return account; });
           });
         })();
       });
@@ -165,8 +167,8 @@
     /* SECURITY: Detect batch UID role tampering.
        If localStorage says role=admin but the UID belongs to a batch account,
        the role was tampered with via DevTools. Reject immediately. */
-    var batchMatch = _BATCH_CREDS.find(function (b) { return b.uid === cur.uid; });
-    if (batchMatch && cur.role !== batchMatch.role) {
+    var isBatchUID = _BATCH_UIDS.indexOf(cur.uid) !== -1;
+    if (isBatchUID && cur.role !== 'student') {
       onFailed(); return;
     }
 
@@ -179,8 +181,7 @@
         var accounts = _r('xcAccounts', []);
         var isOfflineAdmin = cur.uid === 'admin_local' && adminSetup;
         var isOfflineAccount = accounts.some(function (a) { return a.uid === cur.uid; });
-        var isBatchAccount = !!batchMatch;
-        if (isOfflineAdmin || isOfflineAccount || isBatchAccount) { onVerified(cur); }
+        if (isOfflineAdmin || isOfflineAccount || isBatchUID) { onVerified(cur); }
         else { onFailed(); }
       });
     } else {

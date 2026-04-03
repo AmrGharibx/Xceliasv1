@@ -34,6 +34,37 @@ const BATCH_CREDS = [
 ];
 const BATCH_UIDS = new Set(BATCH_CREDS.map(c => c.uid));
 
+/* ── Admin credentials (server-side source of truth) ── */
+const ADMIN_PASSWORD_HASH = '0b5ea6a441206e8d38d7c68ee3e44963f876d935cfef12ddfe3576451621f389'; // SHA-256 of admin password
+
+/* ── Rate limiter (in-memory, per-IP) ── */
+const _loginAttempts = new Map();
+const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
+const RATE_LIMIT_MAX = 5; // max 5 attempts per minute per IP
+function rateLimitCheck(req, res) {
+  const ip = req.ip || req.connection.remoteAddress;
+  const now = Date.now();
+  let record = _loginAttempts.get(ip);
+  if (!record || now - record.start > RATE_LIMIT_WINDOW) {
+    record = { count: 1, start: now };
+    _loginAttempts.set(ip, record);
+    return false; // not limited
+  }
+  record.count++;
+  if (record.count > RATE_LIMIT_MAX) {
+    res.status(429).json({ error: 'Too many login attempts. Try again later.' });
+    return true; // limited
+  }
+  return false;
+}
+// Cleanup stale entries every 5 minutes
+setInterval(() => {
+  const now = Date.now();
+  for (const [ip, rec] of _loginAttempts) {
+    if (now - rec.start > RATE_LIMIT_WINDOW) _loginAttempts.delete(ip);
+  }
+}, 5 * 60 * 1000).unref();
+
 /* ── Cookie helpers ── */
 function signSession(payload) {
   const data = Buffer.from(JSON.stringify(payload)).toString('base64url');
@@ -106,8 +137,21 @@ const WEBSITE_DIR     = useDist ? path.join(DIST, 'website')     : path.join(WS,
 const STUDY_GUIDE_DIR = useDist ? path.join(DIST, 'studyguide') : path.join(WS, 'Study Guide & Excersies');
 const PORTAL_DIR      = useDist ? DIST                           : __dirname;
 
-/* ─── JSON body parser for auth API ─── */
-app.use(express.json({ limit: '1mb' }));
+/* ═══════════════════════════════════════════════════════════════════
+   SECURITY HARDENING MIDDLEWARE
+   ═══════════════════════════════════════════════════════════════════ */
+app.disable('x-powered-by');
+app.use((req, res, next) => {
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(self)');
+  next();
+});
+
+/* ─── JSON body parser for auth API (tight limit for auth endpoints) ─── */
+app.use(express.json({ limit: '50kb' }));
 
 /* ═══════════════════════════════════════════════════════════════════
    AUTH API ENDPOINTS
@@ -115,6 +159,7 @@ app.use(express.json({ limit: '1mb' }));
 
 /* POST /api/auth/login — validates credentials server-side, issues signed cookie */
 app.post('/api/auth/login', (req, res) => {
+  if (rateLimitCheck(req, res)) return;
   const { username, password } = req.body || {};
   if (!username || !password) return res.status(400).json({ error: 'Missing credentials' });
   const u = username.toLowerCase().trim();
@@ -126,24 +171,39 @@ app.post('/api/auth/login', (req, res) => {
     setSessionCookie(res, { uid: batch.uid, role: batch.role });
     return res.json({ uid: batch.uid, username: batch.username, displayName: batch.displayName, role: batch.role, batchId: batch.batchId });
   }
-  /* Check batch username with wrong password */
+  /* Unified error — do NOT reveal whether username exists (prevents enumeration) */
   if (BATCH_CREDS.some(c => c.username === u)) {
-    return res.status(401).json({ error: 'Invalid password' });
+    return res.status(401).json({ error: 'Invalid username or password' });
   }
   /* Not a batch account — 404 so client falls through to Firebase */
   return res.status(404).json({ error: 'not_batch' });
 });
 
 /* POST /api/auth/firebase-session — called after Firebase auth succeeds on client.
-   Issues a server-side session cookie. Batch UIDs are NEVER given non-student roles. */
+   Issues a server-side session cookie.
+   SECURITY: Non-student roles MUST prove identity with the admin password.
+   This prevents unauthenticated users from forging admin cookies by POSTing directly. */
 app.post('/api/auth/firebase-session', (req, res) => {
-  const { uid, role, displayName } = req.body || {};
+  if (rateLimitCheck(req, res)) return;
+  const { uid, role, displayName, password } = req.body || {};
   if (!uid || !role) return res.status(400).json({ error: 'Missing fields' });
 
   /* CRITICAL: never let a batch UID upgrade to a non-student role */
   if (BATCH_UIDS.has(uid)) {
     return res.status(403).json({ error: 'Forbidden: batch accounts are student-only' });
   }
+
+  /* Non-student roles require server-side password verification */
+  if (role !== 'student' && role !== 'trainee') {
+    if (!password) {
+      return res.status(403).json({ error: 'Admin verification required' });
+    }
+    const pwHash = crypto.createHash('sha256').update(password).digest('hex');
+    if (pwHash !== ADMIN_PASSWORD_HASH) {
+      return res.status(403).json({ error: 'Admin verification failed' });
+    }
+  }
+
   setSessionCookie(res, { uid, role });
   res.json({ ok: true });
 });

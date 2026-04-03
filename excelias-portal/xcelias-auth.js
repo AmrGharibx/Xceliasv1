@@ -58,10 +58,10 @@
   };
 
   /* notify server of a Firebase session so it sets the signed httpOnly cookie.
-     Non-student roles must include the password for server-side verification. */
+     ALL roles must include the password for server-side verification. */
   var _syncServerSession = function (user, password) {
     var body = { uid: user.uid, role: user.role, displayName: user.displayName };
-    if (user.role && user.role !== 'student' && user.role !== 'trainee' && password) {
+    if (password) {
       body.password = password;
     }
     return _postJSON('/api/auth/firebase-session', body)

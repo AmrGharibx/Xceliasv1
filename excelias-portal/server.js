@@ -172,11 +172,9 @@ app.post('/api/auth/login', (req, res) => {
     setSessionCookie(res, { uid: batch.uid, role: batch.role });
     return res.json({ uid: batch.uid, username: batch.username, displayName: batch.displayName, role: batch.role, batchId: batch.batchId });
   }
-  /* Unified error — do NOT reveal whether username exists (prevents enumeration) */
-  if (BATCH_CREDS.some(c => c.username === u)) {
-    return res.status(401).json({ error: 'Invalid username or password' });
-  }
-  /* Not a batch account — 404 so client falls through to Firebase */
+  /* SECURITY: Unified 404 for BOTH wrong-password and non-existent usernames.
+     This prevents username enumeration — attacker cannot distinguish
+     "user exists but wrong password" from "user doesn't exist". */
   return res.status(404).json({ error: 'not_batch' });
 });
 
@@ -194,15 +192,22 @@ app.post('/api/auth/firebase-session', (req, res) => {
     return res.status(403).json({ error: 'Forbidden: batch accounts are student-only' });
   }
 
-  /* Non-student roles require server-side password verification */
-  if (role !== 'student' && role !== 'trainee') {
-    if (!password) {
-      return res.status(403).json({ error: 'Admin verification required' });
-    }
-    const pwHash = crypto.createHash('sha256').update(password).digest('hex');
-    if (pwHash !== ADMIN_PASSWORD_HASH) {
-      return res.status(403).json({ error: 'Admin verification failed' });
-    }
+  /* ALL roles require password verification to prevent unauthenticated cookie forgery.
+     Admin/agent: must provide the admin password.
+     Student/trainee: must provide a password that matches any batch credential OR admin password.
+     This prevents attackers from POSTing {uid:'x', role:'student'} without credentials. */
+  if (!password) {
+    return res.status(403).json({ error: 'Password verification required' });
+  }
+  const pwHash = crypto.createHash('sha256').update(password).digest('hex');
+  const isAdminPw = pwHash === ADMIN_PASSWORD_HASH;
+  const isBatchPw = BATCH_CREDS.some(c => c.passwordHash === pwHash);
+  if (!isAdminPw && !isBatchPw) {
+    return res.status(403).json({ error: 'Verification failed' });
+  }
+  /* Extra guard: only admin password can create non-student cookies */
+  if (role !== 'student' && role !== 'trainee' && !isAdminPw) {
+    return res.status(403).json({ error: 'Admin verification failed' });
   }
 
   setSessionCookie(res, { uid, role });

@@ -9,16 +9,19 @@ const WEBSITE_LOCAL_ORIGIN = process.env.WEBSITE_LOCAL_ORIGIN || 'http://localho
 
 /* ─── Workspace root (parent of this folder) ─── */
 const WS = path.resolve(__dirname, '..');
+const DIST = path.join(WS, 'dist');
 
-/* ─── Project paths ─── */
-const ACTIVITIES_DIR  = path.join(WS, 'Activites ( WorkSpace )', 'RedMaterialsAcademy');
-const CONTENT_BUILD   = path.join(WS, 'Content ( WorkSpace )', 'red-materials-app', 'build');
-const REPORTS_DIR     = path.join(WS, 'Report Generation 3');
-const WEBSITE_DIR     = path.join(WS, 'Website ( WorkSpace )');
-const STUDY_GUIDE_DIR = path.join(WS, 'Study Guide & Excersies');
+/* ─── Project paths (use dist/ when it exists, fall back to source) ─── */
+const useDist = fs.existsSync(DIST);
+const ACTIVITIES_DIR  = useDist ? path.join(DIST, 'activities')  : path.join(WS, 'Activites ( WorkSpace )', 'RedMaterialsAcademy');
+const CONTENT_BUILD   = useDist ? path.join(DIST, 'content')     : path.join(WS, 'Content ( WorkSpace )', 'red-materials-app', 'build');
+const REPORTS_DIR     = useDist ? path.join(DIST, 'reports')     : path.join(WS, 'Report Generation 3');
+const WEBSITE_DIR     = useDist ? path.join(DIST, 'website')     : path.join(WS, 'Website ( WorkSpace )');
+const STUDY_GUIDE_DIR = useDist ? path.join(DIST, 'studyguide') : path.join(WS, 'Study Guide & Excersies');
+const PORTAL_DIR      = useDist ? DIST                           : __dirname;
 
-/* ─── Portal static files (this folder) ─── */
-app.use(express.static(__dirname, { index: 'index.html' }));
+/* ─── Portal static files ─── */
+app.use(express.static(PORTAL_DIR, { index: 'index.html' }));
 
 /* ─── Project 1: Activities (CDN-based React + Babel) ─── */
 app.use('/activities', express.static(ACTIVITIES_DIR));
@@ -27,7 +30,8 @@ app.use('/activities', express.static(ACTIVITIES_DIR));
 /*  CRA build uses absolute paths like /static/js/main.xxx.js
     so we serve /static/ from the build's static folder as well. */
 app.use('/content', express.static(CONTENT_BUILD));
-app.use('/static', express.static(path.join(CONTENT_BUILD, 'static')));
+const staticDir = useDist ? path.join(CONTENT_BUILD, 'static') : path.join(CONTENT_BUILD, 'static');
+app.use('/static', express.static(staticDir));
 
 /* ─── Project 3: Report Generator (single HTML files) ─── */
 app.use('/reports', express.static(REPORTS_DIR));
@@ -60,16 +64,16 @@ app.post(['/api/gemini', '/api/route/route', '/api/route/table', '/api/route/tri
   proxyReq.end(body);
 });
 
-app.get(['/website/', '/website/index.html'], (req, res) => {
-  const htmlPath = path.join(WEBSITE_DIR, 'index.html');
-  let html = fs.readFileSync(htmlPath, 'utf8');
-  // Rewrite absolute paths in href="/..." and src="/..." attributes
-  // Exclude: protocol-relative (//), xcelias-auth.js, activities/ (firebase-config)
-  html = html.replace(/(href|src)="\/(?!\/|xcelias-auth|activities\/)/g, '$1="/website/');
-  // Rewrite service worker registration path in inline scripts
-  html = html.replace(/register\('\/sw\.js'\)/g, "register('/website/sw.js')");
-  res.type('html').send(html);
-});
+if (!useDist) {
+  /* Source mode only: rewrite absolute paths in website index.html on-the-fly */
+  app.get(['/website/', '/website/index.html'], (req, res) => {
+    const htmlPath = path.join(WEBSITE_DIR, 'index.html');
+    let html = fs.readFileSync(htmlPath, 'utf8');
+    html = html.replace(/(href|src)="\/(?!\/|xcelias-auth|activities\/)/g, '$1="/website/');
+    html = html.replace(/register\('\/sw\.js'\)/g, "register('/website/sw.js')");
+    res.type('html').send(html);
+  });
+}
 app.use('/website', express.static(WEBSITE_DIR));
 
 /* Fallback: root-level requests for website assets (JS uses absolute paths) */
@@ -87,7 +91,7 @@ WEBSITE_ASSETS.forEach(file => {
 
 /* ─── Fallback: serve portal index.html for any unknown GET ─── */
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
+  res.sendFile(path.join(PORTAL_DIR, 'index.html'));
 });
 
 /* ─── Launch ─── */
@@ -105,6 +109,7 @@ app.listen(PORT, () => {
   console.log(`  ║  Avaria (ext) ..... ${'http://localhost:3005'.padEnd(24)}║`);
   console.log(`  ║  Website .......... ${(u + '/website/').padEnd(24)}║`);
   console.log('  ╚══════════════════════════════════════════════╝');
+  console.log(`  Serving from: ${useDist ? 'dist/' : 'source directories'}`);
   console.log('');
   console.log('  Note: Avaria Academy runs separately.');
   console.log('  Start it with: cd "System Before Prompting V2/avaria" && npm run dev');

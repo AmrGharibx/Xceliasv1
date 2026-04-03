@@ -346,7 +346,23 @@
 
       /* Student role is restricted to /studyguide only */
       if (cur && cur.role === 'student' && window.location.pathname.indexOf('/studyguide') === -1) {
-        window.location.replace('/studyguide/index.html');
+        _injectStyles();
+        var ov = document.createElement('div');
+        ov.id = _guardId;
+        ov.innerHTML = '<div class="xca-bg"><div class="xca-orb xca-orb--1"></div><div class="xca-orb xca-orb--2"></div></div>'
+          + '<div class="xca-card" style="text-align:center">'
+          + '<div style="font-size:3.2rem;margin-bottom:16px">🔒</div>'
+          + '<h2 style="font-family:Montserrat,sans-serif;font-size:1.35rem;font-weight:800;color:rgba(232,232,240,.95);margin:0 0 8px">Access Denied</h2>'
+          + '<p style="font-size:.85rem;color:rgba(152,152,184,.8);margin:0 0 20px;line-height:1.6">'
+          + 'You are signed in as <strong style="color:#f093fb">' + _esc(cur.displayName || cur.username) + '</strong> '
+          + '<span style="display:inline-block;padding:2px 10px;border-radius:99px;background:rgba(240,147,251,.12);border:1px solid rgba(240,147,251,.25);font-size:.72rem;font-weight:700;color:#f093fb;margin-left:4px">Student</span>'
+          + '</p>'
+          + '<p style="font-size:.82rem;color:rgba(152,152,184,.6);margin:0 0 28px;line-height:1.6">This module requires <strong style="color:rgba(232,232,240,.85)">Admin</strong> or <strong style="color:rgba(232,232,240,.85)">Agent</strong> credentials.<br>Your account only has access to the Study Guide.</p>'
+          + '<div style="display:flex;flex-direction:column;gap:10px">'
+          + '<a href="/studyguide/index.html" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 24px;border-radius:14px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;font-size:.85rem;font-weight:700;text-decoration:none;border:none;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 20px rgba(102,126,234,.3)" onmouseover="this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.transform=\'none\'">📖 Go to Study Guide</a>'
+          + '<button onclick="try{localStorage.removeItem(\'xcCurrentUser\')}catch(e){}location.reload()" style="padding:12px 24px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:rgba(232,232,240,.7);font-size:.8rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s" onmouseover="this.style.background=\'rgba(255,255,255,.1)\';this.style.color=\'#fff\'" onmouseout="this.style.background=\'rgba(255,255,255,.05)\';this.style.color=\'rgba(232,232,240,.7)\'">Sign Out &amp; Log in as Admin</button>'
+          + '</div></div>';
+        document.body.appendChild(ov);
         return;
       }
 

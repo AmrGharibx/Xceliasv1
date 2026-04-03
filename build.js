@@ -55,7 +55,7 @@ copyFile(path.join(portalDir, 'portal.js'), path.join(DIST, 'portal.js'));
 copyFile(path.join(portalDir, 'xcelias-auth.js'), path.join(DIST, 'xcelias-auth.js'));
 
 /* ─── Student guard: injected into modules that have no role-based auth ─── */
-const studentGuard = '<script>!function(){try{var u=JSON.parse(localStorage.getItem(\'xcCurrentUser\'));if(u&&u.role===\'student\')window.location.replace(\'/studyguide/index.html\');}catch(e){}}();</script>';
+const studentGuard = '<script>!function(){try{var u=JSON.parse(localStorage.getItem(\'xcCurrentUser\'));if(u&&u.role===\'student\'){window.location.replace(\'/studyguide/index.html\');document.write(\'<!--\');}}catch(e){}}();<\/script>';
 
 /* ════════ 2. Activities (Project 1) ════════ */
 console.log('[2/5] Activities...');
@@ -85,7 +85,7 @@ copyDir(contentBuild, path.join(DIST, 'content'));
 const contentHtml = path.join(DIST, 'content', 'index.html');
 let cHtml = fs.readFileSync(contentHtml, 'utf8');
 cHtml = cHtml.replace(/(src|href)="\/static\//g, '$1="static/');
-cHtml = cHtml.replace('<head>', '<head>\n<base href="/content/" />');
+cHtml = cHtml.replace('<head>', '<head>\n<base href="/content/" />\n' + studentGuard);
 fs.writeFileSync(contentHtml, cHtml);
 console.log('    → Added <base href="/content/"> + rewrote CRA paths');
 
@@ -102,7 +102,7 @@ for (const f of fs.readdirSync(reportsSrc, { withFileTypes: true })) {
 // Add <base> tag for Reports
 const reportsHtml = path.join(reportsDest, 'index.html');
 let rHtml = fs.readFileSync(reportsHtml, 'utf8');
-rHtml = rHtml.replace('<head>', '<head>\n    <base href="/reports/" />');
+rHtml = rHtml.replace('<head>', '<head>\n    <base href="/reports/" />\n    ' + studentGuard);
 fs.writeFileSync(reportsHtml, rHtml);
 console.log('    → Added <base href="/reports/">');
 

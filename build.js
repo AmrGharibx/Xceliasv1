@@ -54,6 +54,9 @@ copyFile(path.join(portalDir, 'portal.css'), path.join(DIST, 'portal.css'));
 copyFile(path.join(portalDir, 'portal.js'), path.join(DIST, 'portal.js'));
 copyFile(path.join(portalDir, 'xcelias-auth.js'), path.join(DIST, 'xcelias-auth.js'));
 
+/* ─── Student guard: injected into modules that have no role-based auth ─── */
+const studentGuard = '<script>!function(){try{var u=JSON.parse(localStorage.getItem(\'xcCurrentUser\'));if(u&&u.role===\'student\')window.location.replace(\'/studyguide/index.html\');}catch(e){}}();</script>';
+
 /* ════════ 2. Activities (Project 1) ════════ */
 console.log('[2/5] Activities...');
 const actSrc = path.join(ROOT, 'Activites ( WorkSpace )', 'RedMaterialsAcademy');
@@ -69,9 +72,9 @@ if (fs.existsSync(actJsx)) {
 const actHtml = path.join(DIST, 'activities', 'index.html');
 let aHtml = fs.readFileSync(actHtml, 'utf8');
 aHtml = aHtml.replace('src="app.jsx"', 'src="app.js"');
-aHtml = aHtml.replace('<head>', '<head>\n    <base href="/activities/" />');
+aHtml = aHtml.replace('<head>', '<head>\n    <base href="/activities/" />\n    ' + studentGuard);
 fs.writeFileSync(actHtml, aHtml);
-console.log('    → Renamed app.jsx → app.js + added <base> tag');
+console.log('    → Renamed app.jsx → app.js + added <base> tag + student guard');
 
 /* ════════ 3. Content / CRA Build (Project 2) ════════ */
 console.log('[3/5] Content (CRA build)...');
@@ -145,9 +148,9 @@ wHtml = wHtml.replace(/(href|src)="\/(?!\/|xcelias-auth|activities\/)/g, '$1="')
 // Fix service worker registration absolute path
 wHtml = wHtml.replace(/register\('\/sw\.js'\)/g, "register('sw.js')");
 // Add <base> so all relative paths resolve to /website/
-wHtml = wHtml.replace('<head>', '<head>\n    <base href="/website/" />');
+wHtml = wHtml.replace('<head>', '<head>\n    <base href="/website/" />\n    ' + studentGuard);
 fs.writeFileSync(webHtml, wHtml);
-console.log('    → Added <base href="/website/"> + rewrote paths');
+console.log('    → Added <base href="/website/"> + student guard + rewrote paths');
 
 /* ════════ Done ════════ */
 const total = countFiles(DIST);

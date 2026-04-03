@@ -220,6 +220,11 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--v);outline-offs
   background:rgba(74,72,112,.12);border:1px solid rgba(74,72,112,.25);
   font-size:.56rem;font-weight:900;color:var(--dim);
 }
+.bcard-archived{
+  padding:5px 13px;border-radius:99px;
+  background:rgba(245,158,11,.09);border:1px solid rgba(245,158,11,.22);
+  font-size:.56rem;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:#b08050;
+}
 @keyframes glowpulse{0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,0)}60%{box-shadow:0 0 0 6px rgba(16,185,129,.12)}}
 .bcard-name{font-family:var(--fontH);font-size:1.55rem;font-weight:900;letter-spacing:-.02em;margin-bottom:5px}
 .bcard-tagline{font-size:.76rem;color:var(--muted);margin-bottom:18px;line-height:1.5}
@@ -771,9 +776,9 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--v);outline-offs
       <p class="sg-desc">Master every developer, project, and payment plan through<br>cinematic study sessions and interactive challenges.</p>
       <div class="sg-stats">
         <div class="sg-stat"><span class="sg-stat-n" id="st-batches">3</span><span class="sg-stat-l">Batches</span></div>
-        <div class="sg-stat"><span class="sg-stat-n" id="st-projects">10</span><span class="sg-stat-l">Projects</span></div>
-        <div class="sg-stat"><span class="sg-stat-n" id="st-devs">6</span><span class="sg-stat-l">Developers</span></div>
-        <div class="sg-stat"><span class="sg-stat-n" id="st-mastered">0/2</span><span class="sg-stat-l">Complete</span></div>
+        <div class="sg-stat"><span class="sg-stat-n" id="st-projects">5</span><span class="sg-stat-l">Projects</span></div>
+        <div class="sg-stat"><span class="sg-stat-n" id="st-devs">5</span><span class="sg-stat-l">Developers</span></div>
+        <div class="sg-stat"><span class="sg-stat-n" id="st-current">Batch 33</span><span class="sg-stat-l">Current</span></div>
       </div>
     </div>
     <div class="batch-section">
@@ -922,7 +927,7 @@ function pc(id){return PC[id]||{hex:'#8b5cf6',rgb:'139,92,246',grad:'linear-grad
 
 /* ══ DATA ══ */
 const BATCHES=[{
-  id:'batch31',label:'Batch 31',status:'available',icon:'🏙️',
+  id:'batch31',label:'Batch 31',status:'archived',icon:'🏙️',
   tagline:'New Capital · HDP Grand Lane Edition',
   projects:[
     {id:'cityzen',devName:'Al Qamzi',devIcon:'🏢',devOwner:'Abdalla Al Qamzi',
@@ -965,7 +970,7 @@ const BATCHES=[{
   ]
 },
 {
-  id:'batch32',label:'Batch 32',status:'available',icon:'🌆',
+  id:'batch32',label:'Batch 32',status:'archived',icon:'🌆',
   tagline:'Updated Prices · New STM Mayan Project',
   projects:[
     {id:'cityzen',devName:'Al Qamzi',devIcon:'🏢',devOwner:'Abdalla Al Qamzi',
@@ -1169,18 +1174,13 @@ function initApp(){
   renderBatchGrid();
   showScreen('screen-batches');
   const bnav=$id('bnav');if(bnav)bnav.style.display='none';
-  // Dynamic stats
-  const totP=BATCHES.reduce((s,b)=>s+b.projects.length,0);
-  const uniqDevs=new Set(BATCHES.flatMap(b=>b.projects.map(p=>p.devName)));
+  // Stats: counts from the latest (most current) batch only
+  const latest=BATCHES[BATCHES.length-1];
+  const latestDevs=new Set(latest.projects.map(p=>p.devName));
   const elB=$id('st-batches');if(elB)elB.textContent=BATCHES.length;
-  const elP=$id('st-projects');if(elP)elP.textContent=totP;
-  const elD=$id('st-devs');if(elD)elD.textContent=uniqDevs.size;
-  updMastered();
-}
-
-function updMastered(){
-  const mastB=BATCHES.filter(b=>mastered[b.id+'_all']).length;
-  const el=$id('st-mastered');if(el)el.textContent=mastB+'/'+BATCHES.length;
+  const elP=$id('st-projects');if(elP)elP.textContent=latest.projects.length;
+  const elD=$id('st-devs');if(elD)elD.textContent=latestDevs.size;
+  const elC=$id('st-current');if(elC)elC.textContent=latest.label;
 }
 
 function showScreen(id){
@@ -1193,19 +1193,23 @@ function showScreen(id){
 function renderBatchGrid(){
   const g=$id('batch-grid');if(!g)return;
   g.innerHTML=BATCHES.map((b,i)=>{
-    const locked=b.status!=='available';
-    const isMast=!locked&&!!mastered[b.id+'_all'];
+    const available=b.status==='available';
+    const archived=b.status==='archived';
+    const unclickable=!available;
+    const isMast=available&&!!mastered[b.id+'_all'];
     const pills=b.projects.map(p=>`<span class="bcard-proj"><span class="bcard-proj-dot" style="background:${pc(p.id).hex}"></span>${esc(p.projectName)}</span>`).join('');
-    const topBadge=locked?'bcard-locked':isMast?'bcard-mastered-top':'bcard-available';
-    const topLabel=locked?'🔒 Coming Soon':isMast?'🏆 Mastered':'✦ Available';
-    const ctaHtml=locked
-      ?`<div class="bcard-cta"><span>Unlocks soon</span><span class="cta-arrow">🔒</span></div>`
-      :isMast
-        ?`<div class="bcard-mastered-badge">🏆 Batch Complete · Quiz Passed</div>`
-        :`<div class="bcard-cta"><span>Begin Studying</span><span class="cta-arrow">→</span></div>`;
-    return `<div class="bcard" style="--i:${i}" tabindex="${locked?-1:0}" role="button" aria-disabled="${locked}"
-      onclick="${locked?'':'openBatch(\''+b.id+'\')'}"
-      onkeydown="if(event.key==='Enter'&&!${locked})openBatch('${b.id}')">
+    const topBadge=archived?'bcard-archived':unclickable?'bcard-locked':isMast?'bcard-mastered-top':'bcard-available';
+    const topLabel=archived?'📦 Past Batch':unclickable?'🔒 Coming Soon':isMast?'🏆 Mastered':'✦ Available';
+    const ctaHtml=archived
+      ?`<div class="bcard-cta" style="opacity:.5;pointer-events:none"><span>Past Batch</span><span class="cta-arrow">📦</span></div>`
+      :unclickable
+        ?`<div class="bcard-cta"><span>Unlocks soon</span><span class="cta-arrow">🔒</span></div>`
+        :isMast
+          ?`<div class="bcard-mastered-badge">🏆 Batch Complete · Quiz Passed</div>`
+          :`<div class="bcard-cta"><span>Begin Studying</span><span class="cta-arrow">→</span></div>`;
+    return `<div class="bcard" style="--i:${i}${unclickable?';opacity:.55;filter:grayscale(.4)':''}" tabindex="${unclickable?-1:0}" role="button" aria-disabled="${unclickable}"
+      onclick="${unclickable?'':'openBatch(\''+b.id+'\')'}"
+      onkeydown="if(event.key==='Enter'&&!${unclickable})openBatch('${b.id}')">
       <div class="bcard-inner">
         <div class="bcard-top">
           <div class="bcard-icon">${esc(b.icon)}</div>

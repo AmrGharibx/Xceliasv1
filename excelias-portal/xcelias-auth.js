@@ -344,6 +344,12 @@
 
       var cur = _r('xcCurrentUser', null);
 
+      /* Student role is restricted to /studyguide only */
+      if (cur && cur.role === 'student' && window.location.pathname.indexOf('/studyguide') === -1) {
+        window.location.replace('/studyguide/index.html');
+        return;
+      }
+
       /* Already logged in — verify */
       if (cur && _roleOk(cur, requiredRoles)) {
         _verifySession(cur, requiredRoles, function (user) {

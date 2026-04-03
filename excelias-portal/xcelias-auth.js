@@ -21,6 +21,12 @@
   var _r = function (k, d) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } };
   var _w = function (k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
 
+  /* ── Batch student credentials (shared per-batch, role: student) ── */
+  var _BATCH_CREDS = [
+    { uid: 'batch33_shared', username: 'batch33', displayName: 'Batch 33', role: 'student', batchId: 'batch33',
+      passwordHash: '31ce6a05ffacf76fed282f2af228582e5fcab3300f07be6a5624c86aa6596aea' }
+  ];
+
   /* ── SHA-256 using SubtleCrypto ── */
   var _hash = function (s) {
     return crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)).then(function (b) {
@@ -71,6 +77,16 @@
         })
         .catch(function (e) {
           if (e.code === 'auth/wrong-password' || e.code === 'auth/user-not-found' || e.code === 'auth/invalid-credential') {
+            /* Batch credentials live offline only — fall through if user not in Firebase */
+            var batchCred = _BATCH_CREDS.find(function (b) { return b.username === u; });
+            if (batchCred && e.code !== 'auth/wrong-password') {
+              return _hash(password).then(function (h) {
+                if (h !== batchCred.passwordHash) throw new Error('Invalid username or password');
+                if (!_roleOk(batchCred, requiredRoles)) throw new Error('Your account does not have access to this module.');
+                _w('xcCurrentUser', batchCred);
+                return batchCred;
+              });
+            }
             throw new Error('Invalid username or password');
           }
           throw e;
@@ -88,6 +104,16 @@
           if (!_roleOk(user, requiredRoles)) throw new Error('Your account does not have access to this module.');
           _w('xcCurrentUser', user);
           return user;
+        });
+      }
+      /* Batch shared accounts */
+      var batchCred = _BATCH_CREDS.find(function (b) { return b.username === u; });
+      if (batchCred) {
+        return _hash(password).then(function (h) {
+          if (h !== batchCred.passwordHash) throw new Error('Invalid username or password');
+          if (!_roleOk(batchCred, requiredRoles)) throw new Error('Your account does not have access to this module.');
+          _w('xcCurrentUser', batchCred);
+          return batchCred;
         });
       }
       var accounts = _r('xcAccounts', []);
@@ -128,7 +154,8 @@
         var accounts = _r('xcAccounts', []);
         var isOfflineAdmin = cur.uid === 'admin_local' && adminSetup;
         var isOfflineAccount = accounts.some(function (a) { return a.uid === cur.uid; });
-        if (isOfflineAdmin || isOfflineAccount) { onVerified(cur); }
+        var isBatchAccount = _BATCH_CREDS.some(function (b) { return b.uid === cur.uid; });
+        if (isOfflineAdmin || isOfflineAccount || isBatchAccount) { onVerified(cur); }
         else { onFailed(); }
       });
     } else {

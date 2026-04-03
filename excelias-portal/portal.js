@@ -1,6 +1,6 @@
-/* ═══════════════════════════════════════════════════════════
-   XCELIAS PORTAL — NAVIGATION + PARTICLE SYSTEM + EFFECTS
-   ═══════════════════════════════════════════════════════════ */
+﻿/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   XCELIAS PORTAL â€” NAVIGATION + PARTICLE SYSTEM + EFFECTS
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 function escHtml(s){const d=document.createElement('div');d.textContent=String(s??'');return d.innerHTML;}
 
@@ -39,18 +39,18 @@ const PROJECTS = {
   }
 };
 
-/* ─── State ─── */
+/* â”€â”€â”€ State â”€â”€â”€ */
 let activeProject = null;
 let currentIframeUrl = null;
 
-/* ─── Auth State ─── */
+/* â”€â”€â”€ Auth State â”€â”€â”€ */
 let xcPortalUser = null;
 // Keys not listed = accessible to any logged-in user
 const XCP_ROLE_MAP = {
   website: ['admin', 'agent']
 };
 
-/* ─── DOM refs ─── */
+/* â”€â”€â”€ DOM refs â”€â”€â”€ */
 const homeView     = document.getElementById('home-view');
 const projectView  = document.getElementById('project-view');
 const iframe       = document.getElementById('project-iframe');
@@ -58,9 +58,9 @@ const topbarTitle  = document.getElementById('topbar-title');
 const topbarNewTab = document.getElementById('topbar-newtab');
 const iframeLoader = document.getElementById('iframe-loading');
 
-/* ═══════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    PARTICLE SYSTEM (ambient floating particles)
-   ═══════════════════════════════════════════════════ */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 (function initParticles() {
   const canvas = document.getElementById('particle-canvas');
   if (!canvas) return;
@@ -152,9 +152,9 @@ const iframeLoader = document.getElementById('iframe-loading');
   obs.observe(projectView, { attributes: true, attributeFilter: ['class'] });
 })();
 
-/* ═══════════════════════════════════════════════════
-   COUNTER ANIMATION (hero stats) — rAF-based
-   ═══════════════════════════════════════════════════ */
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   COUNTER ANIMATION (hero stats) â€” rAF-based
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 (function animateCounters() {
   const nums = document.querySelectorAll('.hero-stat-num[data-count]');
   const io = new IntersectionObserver((entries) => {
@@ -181,9 +181,9 @@ const iframeLoader = document.getElementById('iframe-loading');
   nums.forEach(n => io.observe(n));
 })();
 
-/* ═══════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    LAUNCH PROJECT
-   ═══════════════════════════════════════════════════ */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function launchProject(key) {
   const proj = PROJECTS[key];
   if (!proj) return;
@@ -193,7 +193,7 @@ function launchProject(key) {
   if (allowedRoles && xcPortalUser && !allowedRoles.includes(xcPortalUser.role)) {
     const el = document.getElementById('xcp-access-denied');
     if (el) {
-      el.textContent = '🔒 Agent access required. Ask your admin to upgrade your account.';
+      el.textContent = 'ðŸ”’ Agent access required. Ask your admin to upgrade your account.';
       el.classList.add('show');
       setTimeout(() => el.classList.remove('show'), 3500);
     }
@@ -245,7 +245,7 @@ function launchProject(key) {
   history.pushState({ project: key }, proj.name, '#' + key);
 }
 
-/* ─── Return to home ─── */
+/* â”€â”€â”€ Return to home â”€â”€â”€ */
 function goHome() {
   activeProject = null;
   currentIframeUrl = null;
@@ -267,7 +267,7 @@ function goHome() {
   }
 }
 
-/* ─── Show iframe load error ─── */
+/* â”€â”€â”€ Show iframe load error â”€â”€â”€ */
 function showIframeError(projectName) {
   iframeLoader.classList.add('hidden');
 
@@ -278,7 +278,7 @@ function showIframeError(projectName) {
   overlay.id = 'iframe-error';
   overlay.style.cssText = 'position:absolute;inset:48px 0 0 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:var(--bg,#0f0f1a);z-index:6;text-align:center;padding:24px';
   overlay.innerHTML = `
-    <div style="font-size:3rem;opacity:0.5">⚠️</div>
+    <div style="font-size:3rem;opacity:0.5">âš ï¸</div>
     <h3 style="font-size:1.1rem;font-weight:700;color:#e8e8f0">Failed to Load</h3>
     <p style="font-size:0.82rem;color:#9898b8;max-width:360px;line-height:1.6">${escHtml(projectName || 'This module')} didn't respond. Make sure the server is running and try again.</p>
     <div style="display:flex;gap:12px;margin-top:8px">
@@ -289,33 +289,39 @@ function showIframeError(projectName) {
   projectView.appendChild(overlay);
 }
 
-/* ─── Open in new tab ─── */
+/* â”€â”€â”€ Open in new tab â”€â”€â”€ */
 function openInNewTab() {
   if (currentIframeUrl) {
     window.open(currentIframeUrl, '_blank', 'noopener');
   }
 }
 
-/* ─── Keyboard shortcuts ─── */
+/* â”€â”€â”€ Keyboard shortcuts â”€â”€â”€ */
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && activeProject) goHome();
 });
 
-/* ═══════════════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    XC PORTAL AUTH (using shared xcelias-auth.js module)
-   ═══════════════════════════════════════════════════════════════ */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function applyPortalRoles(user) {
   xcPortalUser = user;
   // Populate user chip
   const chip = document.getElementById('xcp-user-chip');
   if (chip) {
-    const roleLabel = { admin: '👑 Admin', agent: '🏠 Agent', trainee: '🎓 Trainee' }[user.role] || user.role;
+    const roleLabel = { admin: '\u{1F451} Admin', agent: '\u{1F3E0} Agent', trainee: '\u{1F393} Trainee', student: '\u{1F4D6} Student' }[user.role] || user.role;
     chip.innerHTML = `<span class="xcp-chip-name">${escHtml(user.displayName || user.username)}</span><span class="xcp-chip-role">${escHtml(roleLabel)}</span><button class="xcp-chip-signout" id="xcp-signout">Sign Out</button>`;
     chip.style.display = 'flex';
     document.getElementById('xcp-signout').addEventListener('click', () => {
       XceliasAuth.signOut();
     });
   }
+  // Student role: redirect directly to Study Guide (no portal access)
+  if (user.role === 'student') {
+    window.location.replace('/studyguide/index.html');
+    return;
+  }
+
   // Apply locked state to restricted cards
   document.querySelectorAll('.project-card').forEach(card => {
     const key = card.dataset.project;
@@ -325,7 +331,7 @@ function applyPortalRoles(user) {
       card.style.position = 'relative';
       const badge = document.createElement('div');
       badge.className = 'xcp-lock-badge';
-      badge.textContent = '🔒 Agent Only';
+      badge.textContent = 'ðŸ”’ Agent Only';
       card.appendChild(badge);
     }
   });
@@ -343,7 +349,7 @@ XceliasAuth.guard({
   onReady: applyPortalRoles
 });
 
-/* ─── Card click / keyboard bindings ─── */
+/* â”€â”€â”€ Card click / keyboard bindings â”€â”€â”€ */
 document.querySelectorAll('.project-card').forEach(card => {
   const key = card.dataset.project;
 
@@ -368,7 +374,7 @@ document.querySelectorAll('.project-card').forEach(card => {
   }
 });
 
-/* ─── Browser back/forward ─── */
+/* â”€â”€â”€ Browser back/forward â”€â”€â”€ */
 window.addEventListener('popstate', (e) => {
   if (e.state && e.state.project) {
     launchProject(e.state.project);
@@ -377,9 +383,9 @@ window.addEventListener('popstate', (e) => {
   }
 });
 
-/* ═══════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    AVARIA BANNER (graceful server-required notice)
-   ═══════════════════════════════════════════════════ */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function showAvariaBanner() {
   // Remove existing banner if any
   const existing = document.getElementById('avaria-banner');
@@ -390,7 +396,7 @@ function showAvariaBanner() {
   overlay.style.cssText = 'position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);animation:fadeIn .3s ease';
   overlay.innerHTML = `
     <div style="background:linear-gradient(180deg,rgba(30,30,50,0.97),rgba(15,15,26,0.98));border:1px solid rgba(102,126,234,0.25);border-radius:20px;padding:40px;max-width:480px;width:90%;box-shadow:0 24px 80px rgba(0,0,0,0.6),0 0 60px rgba(102,126,234,0.08);text-align:center">
-      <div style="width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 20px">🏛️</div>
+      <div style="width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 20px">ðŸ›ï¸</div>
       <h3 style="font-size:20px;font-weight:700;color:#e8e8f0;margin-bottom:8px">Server Required</h3>
       <p style="color:#9898b8;font-size:14px;line-height:1.6;margin-bottom:24px">Academy Operations runs on a local Next.js server with database and authentication. It requires a separate setup.</p>
       <div style="background:rgba(0,0,0,0.3);border:1px solid rgba(102,126,234,0.15);border-radius:12px;padding:16px;margin-bottom:24px;text-align:left">
@@ -407,10 +413,11 @@ function showAvariaBanner() {
   });
 }
 
-/* ─── Deep linking ─── */
+/* â”€â”€â”€ Deep linking â”€â”€â”€ */
 (function handleInitialHash() {
   const hash = location.hash.replace('#', '');
   if (hash && PROJECTS[hash]) {
     launchProject(hash);
   }
 })();
+

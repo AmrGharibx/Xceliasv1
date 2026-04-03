@@ -1138,8 +1138,10 @@ let quizQs=[],quizIdx=0,quizOk=0,quizDone=false;
 let fcards=[],fcIdx=0,fcRes=[];
 let blanks=[],blIdx=0;
 let matchPairs=[],matchSel=null,matchDone=[];
-let mastered=(function(){try{return JSON.parse(localStorage.getItem('xc_sg2_mas'))||{}}catch(e){return{}}})();
-let scores=(function(){try{return JSON.parse(localStorage.getItem('xc_sg2_sc'))||[]}catch(e){return[]}})();
+/* Storage adapter: students get sessionStorage (auto-resets per tab), admins get localStorage */
+let _store=localStorage;
+let mastered={};
+let scores=[];
 
 /* ══ UTILS ══ */
 function shuffle(a){const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]]}return r}
@@ -1154,6 +1156,10 @@ XceliasAuth.guard({
   moduleName:'Study Guide',requiredRoles:null,
   onReady:function(user){
     $id('tb-uname').textContent=user.displayName||user.username||'Trainee';
+    /* Students get sessionStorage so each tab is a clean slate */
+    _store=(user.role==='student')?sessionStorage:localStorage;
+    mastered=(function(){try{return JSON.parse(_store.getItem('xc_sg2_mas'))||{}}catch(e){return{}}})();
+    scores=(function(){try{return JSON.parse(_store.getItem('xc_sg2_sc'))||[]}catch(e){return[]}})();
     initApp();
   }
 });
@@ -1549,7 +1555,7 @@ function showQuizResults(){
   const arc=$id('sc-arc');
   if(arc){const c=334;arc.style.strokeDashoffset=c;requestAnimationFrame(()=>requestAnimationFrame(()=>{arc.style.strokeDashoffset=c-(c*pct/100)}))}
   saveScore(pct);
-  if(pct>=80&&curBatch){const k=curBatch.id+'_all';mastered[k]=true;localStorage.setItem('xc_sg2_mas',JSON.stringify(mastered));updMastered()}
+  if(pct>=80&&curBatch){const k=curBatch.id+'_all';mastered[k]=true;_store.setItem('xc_sg2_mas',JSON.stringify(mastered));updMastered()}
   const ov=$id('score-ov');if(ov)ov.classList.add('on');
   setTimeout(()=>launchConfetti(pct),400);
 }
@@ -1558,7 +1564,7 @@ function saveScore(pct){
   const u=XceliasAuth.currentUser();
   scores.unshift({name:u?(u.displayName||u.username):'?',score:pct,batch:curBatch?curBatch.label:'',date:new Date().toLocaleDateString()});
   if(scores.length>50)scores=scores.slice(0,50);
-  localStorage.setItem('xc_sg2_sc',JSON.stringify(scores));
+  _store.setItem('xc_sg2_sc',JSON.stringify(scores));
 }
 
 function retryQuiz(){closeScore();quizQs=buildQ(curBatch.projects);quizIdx=0;quizOk=0;switchSection('quiz')}

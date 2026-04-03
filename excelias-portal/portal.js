@@ -9,12 +9,12 @@ const IS_LOCAL = location.hostname === 'localhost' || location.hostname === '127
 const PROJECTS = {
   activities: {
     name:  'Training Academy',
-    url:   '/activities/index.html',
+    url:   '/activities/',
     mode:  'iframe'
   },
   content: {
     name:  'Training Manual',
-    url:   '/content/index.html',
+    url:   '/content/',
     mode:  'iframe'
   },
   avaria: {
@@ -24,17 +24,17 @@ const PROJECTS = {
   },
   reports: {
     name:  'Report Generator',
-    url:   '/reports/index.html',
+    url:   '/reports/',
     mode:  'iframe'
   },
   studyguide: {
     name:  'Study Guide',
-    url:   '/studyguide/index.html',
+    url:   '/studyguide/',
     mode:  'iframe'
   },
   website: {
     name:  'Property Explorer',
-    url:   '/website/index.html',
+    url:   '/website/',
     mode:  'iframe'
   }
 };
@@ -318,7 +318,7 @@ function applyPortalRoles(user) {
   }
   // Student role: redirect directly to Study Guide (no portal access)
   if (user.role === 'student') {
-    window.location.replace('/studyguide/index.html');
+    window.location.replace('/studyguide/');
     return;
   }
 

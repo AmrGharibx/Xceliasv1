@@ -119,7 +119,7 @@ function clearSessionCookie(res) {
 function studentGuardMiddleware(req, res, next) {
   const session = verifySession(parseCookies(req).xc_session);
   if (session && session.role === 'student') {
-    return res.redirect(302, '/studyguide/index.html');
+    return res.redirect(302, '/studyguide/');
   }
   next();
 }
@@ -233,7 +233,7 @@ app.use((req, res, next) => {
   if (req.path === '/' || req.path === '/index.html') {
     const session = verifySession(parseCookies(req).xc_session);
     if (session && session.role === 'student') {
-      return res.redirect(302, '/studyguide/index.html');
+      return res.redirect(302, '/studyguide/');
     }
   }
   next();

@@ -102,7 +102,20 @@
       .then(function (batchUser) {
         if (batchUser) return batchUser;
 
-        /* 2 — Firebase online auth */
+        /* 2 — Client-side batch account check (runs BEFORE Firebase so batch
+               usernames never hit Firebase where they don't exist) */
+        var batchAcct = _BATCH_ACCOUNTS.find(function (a) { return a.username === u; });
+        if (batchAcct) {
+          return _hash(password).then(function (h) {
+            if (h !== batchAcct.passwordHash) throw new Error('Invalid username or password');
+            var user = { uid: batchAcct.uid, username: batchAcct.username, displayName: batchAcct.displayName, role: batchAcct.role, batchId: batchAcct.batchId };
+            if (!_roleOk(user, requiredRoles)) throw new Error('Your account does not have access to this module.');
+            _w('xcCurrentUser', user);
+            return _syncServerSession(user, password).then(function () { return user; });
+          });
+        }
+
+        /* 3 — Firebase online auth (non-batch accounts only) */
         if (window.xcFirebaseReady && window.xcAuth) {
           return window.xcAuth.signInWithEmailAndPassword(_fbEmail(u), password)
             .then(function (cred) {
@@ -129,8 +142,7 @@
                 throw new Error('Invalid username or password');
               }
               if (e.code === 'auth/user-not-found') {
-                /* Not in Firebase — fall through to batch/offline fallback */
-                return null;
+                throw new Error('Invalid username or password');
               }
               throw e;
             });
@@ -138,20 +150,8 @@
 
         return null; /* no Firebase — fall through */
       })
-      .then(function (firebaseUser) {
-        if (firebaseUser) return firebaseUser;
-
-        /* 3 — Client-side batch account fallback (static deploys without Express) */
-        var batchAcct = _BATCH_ACCOUNTS.find(function (a) { return a.username === u; });
-        if (batchAcct) {
-          return _hash(password).then(function (h) {
-            if (h !== batchAcct.passwordHash) throw new Error('Invalid username or password');
-            var user = { uid: batchAcct.uid, username: batchAcct.username, displayName: batchAcct.displayName, role: batchAcct.role, batchId: batchAcct.batchId };
-            if (!_roleOk(user, requiredRoles)) throw new Error('Your account does not have access to this module.');
-            _w('xcCurrentUser', user);
-            return _syncServerSession(user, password).then(function () { return user; });
-          });
-        }
+      .then(function (authedUser) {
+        if (authedUser) return authedUser;
 
         /* 4 — Offline fallback (no server, no Firebase) */
         return (function () {

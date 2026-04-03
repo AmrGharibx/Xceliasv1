@@ -33,6 +33,7 @@ const BATCH_CREDS = [
     passwordHash: '31ce6a05ffacf76fed282f2af228582e5fcab3300f07be6a5624c86aa6596aea' }
 ];
 const BATCH_UIDS = new Set(BATCH_CREDS.map(c => c.uid));
+BATCH_UIDS.add('OKZ7mPrvE0cvMH8LPTUY13yXw9d2'); // batch33 Firebase UID
 
 /* ── Admin credentials (server-side source of truth) ── */
 const ADMIN_PASSWORD_HASH = '0b5ea6a441206e8d38d7c68ee3e44963f876d935cfef12ddfe3576451621f389'; // SHA-256 of admin password

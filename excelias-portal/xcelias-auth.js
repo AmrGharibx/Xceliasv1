@@ -21,14 +21,8 @@
   var _r = function (k, d) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } };
   var _w = function (k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
 
-  /* ── Batch student accounts (client-side fallback for static deploys) ──
-     Password hashes are SHA-256 (one-way). Used ONLY when the Express
-     server API is unreachable (e.g. Vercel static hosting). ── */
-  var _BATCH_UIDS = ['batch33_shared'];
-  var _BATCH_ACCOUNTS = [
-    { uid: 'batch33_shared', username: 'batch33', displayName: 'Batch 33', role: 'student', batchId: 'batch33',
-      passwordHash: '31ce6a05ffacf76fed282f2af228582e5fcab3300f07be6a5624c86aa6596aea' }
-  ];
+  /* ── Batch student identifiers (NO secrets — all auth goes through server or Firebase) ── */
+  var _BATCH_UIDS = ['batch33_shared', 'OKZ7mPrvE0cvMH8LPTUY13yXw9d2'];
 
   /* ── SHA-256 using SubtleCrypto ── */
   var _hash = function (s) {
@@ -102,20 +96,7 @@
       .then(function (batchUser) {
         if (batchUser) return batchUser;
 
-        /* 2 — Client-side batch account check (runs BEFORE Firebase so batch
-               usernames never hit Firebase where they don't exist) */
-        var batchAcct = _BATCH_ACCOUNTS.find(function (a) { return a.username === u; });
-        if (batchAcct) {
-          return _hash(password).then(function (h) {
-            if (h !== batchAcct.passwordHash) throw new Error('Invalid username or password');
-            var user = { uid: batchAcct.uid, username: batchAcct.username, displayName: batchAcct.displayName, role: batchAcct.role, batchId: batchAcct.batchId };
-            if (!_roleOk(user, requiredRoles)) throw new Error('Your account does not have access to this module.');
-            _w('xcCurrentUser', user);
-            return _syncServerSession(user, password).then(function () { return user; });
-          });
-        }
-
-        /* 3 — Firebase online auth (non-batch accounts only) */
+        /* 2 — Firebase online auth (batch33 + admin both exist in Firebase) */
         if (window.xcFirebaseReady && window.xcAuth) {
           return window.xcAuth.signInWithEmailAndPassword(_fbEmail(u), password)
             .then(function (cred) {
@@ -123,7 +104,8 @@
                 var profile = snap.val();
                 if (!profile) {
                   var isAdmin = u === 'admin';
-                  profile = { username: u, displayName: isAdmin ? 'Admin' : u, role: isAdmin ? 'admin' : 'trainee', batchId: isAdmin ? 'admin' : 'default', createdAt: Date.now() };
+                  var isBatch = u.indexOf('batch') === 0;
+                  profile = { username: u, displayName: isAdmin ? 'Admin' : isBatch ? ('Batch ' + u.replace('batch', '')) : u, role: isAdmin ? 'admin' : isBatch ? 'student' : 'trainee', batchId: isAdmin ? 'admin' : isBatch ? u : 'default', createdAt: Date.now() };
                   window.xcDB.ref('users/' + cred.user.uid).set(profile).catch(function () {});
                 }
                 var user = Object.assign({ uid: cred.user.uid }, profile);
@@ -153,7 +135,7 @@
       .then(function (authedUser) {
         if (authedUser) return authedUser;
 
-        /* 4 — Offline fallback (no server, no Firebase) */
+        /* 3 — Offline fallback (no server, no Firebase) */
         return (function () {
           var adminSetup = _r('xcAdminSetup', null);
           if (u === 'admin') {

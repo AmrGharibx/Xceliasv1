@@ -62,7 +62,11 @@ const studentGuard = '<script>!function(){try{var u=JSON.parse(localStorage.getI
 /* ════════ 2. Activities (Project 1) ════════ */
 console.log('[2/5] Activities...');
 const actSrc = path.join(ROOT, 'Activites ( WorkSpace )', 'RedMaterialsAcademy');
-copyDir(actSrc, path.join(DIST, 'activities'));
+copyDir(actSrc, path.join(DIST, 'activities'), (name) => {
+  /* Exclude non-runtime files from production build */
+  const skip = ['.md', '_backup'];
+  return !skip.some(s => name.toLowerCase().includes(s));
+});
 
 // Rename .jsx → .js so Vercel serves it with correct MIME type
 const actJsx = path.join(DIST, 'activities', 'app.jsx');
@@ -96,8 +100,10 @@ console.log('[4/6] Reports...');
 const reportsSrc = path.join(ROOT, 'Report Generation 3');
 const reportsDest = path.join(DIST, 'reports');
 mkDir(reportsDest);
+/* Exclude backup files, READMEs, and other non-runtime files from production */
+const reportsSkip = ['_backup', '.md'];
 for (const f of fs.readdirSync(reportsSrc, { withFileTypes: true })) {
-  if (f.isFile()) {
+  if (f.isFile() && !reportsSkip.some(s => f.name.toLowerCase().includes(s))) {
     copyFile(path.join(reportsSrc, f.name), path.join(reportsDest, f.name));
   }
 }

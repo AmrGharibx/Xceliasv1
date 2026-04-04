@@ -44,6 +44,16 @@
     return requiredRoles.indexOf(user.role) !== -1;
   };
 
+  /* helper: GET JSON from a server endpoint. Used for session verification. */
+  var _postJSON_GET = function (url) {
+    return fetch(url, { credentials: 'same-origin' })
+      .then(function (r) {
+        return r.json()
+          .then(function (d) { return { status: r.status, data: d }; })
+          .catch(function () { return { status: r.status, data: null }; });
+      });
+  };
+
   /* helper: POST JSON to a server endpoint.
      Gracefully handles non-JSON responses (e.g. static hosting 404 HTML pages). */
   var _postJSON = function (url, body) {
@@ -115,29 +125,9 @@
       .then(function (authedUser) {
         if (authedUser) return authedUser;
 
-        /* 2 — Offline fallback (no Firebase available) */
-        return (function () {
-          var adminSetup = _r('xcAdminSetup', null);
-          if (u === 'admin') {
-            if (!adminSetup) return Promise.reject(new Error('No admin found. Set up admin via Training Academy first.'));
-            return _hash(password).then(function (h) {
-              if (h !== adminSetup.passwordHash) throw new Error('Invalid username or password');
-              var user = { uid: 'admin_local', username: 'admin', displayName: 'Admin', role: 'admin', batchId: 'admin' };
-              if (!_roleOk(user, requiredRoles)) throw new Error('Your account does not have access to this module.');
-              _w('xcCurrentUser', user);
-              return _syncServerSession(null).then(function () { return user; });
-            });
-          }
-          var accounts = _r('xcAccounts', []);
-          var account = accounts.find(function (a) { return (a.username || '').toLowerCase() === u; });
-          if (!account) return Promise.reject(new Error('Invalid username or password'));
-          return _hash(password).then(function (h) {
-            if (h !== account.passwordHash) throw new Error('Invalid username or password');
-            if (!_roleOk(account, requiredRoles)) throw new Error('Your account does not have access to this module.');
-            _w('xcCurrentUser', account);
-            return _syncServerSession(null).then(function () { return account; });
-          });
-        })();
+        /* Firebase unavailable — cannot authenticate.
+           All auth goes through Firebase now; offline fallback removed for security. */
+        return Promise.reject(new Error('Authentication service unavailable. Please check your internet connection and try again.'));
       });
   };
 
@@ -172,17 +162,18 @@
       var unsub = window.xcAuth.onAuthStateChanged(function (fbUser) {
         unsub();
         if (fbUser) { onVerified(cur); return; }
-        /* No Firebase session — check offline legitimacy */
-        var adminSetup = _r('xcAdminSetup', null);
-        var accounts = _r('xcAccounts', []);
-        var isOfflineAdmin = cur.uid === 'admin_local' && adminSetup;
-        var isOfflineAccount = accounts.some(function (a) { return a.uid === cur.uid; });
-        if (isOfflineAdmin || isOfflineAccount || isBatchUID) { onVerified(cur); }
-        else { onFailed(); }
+        /* No Firebase session — verify via server-side cookie */
+        _postJSON_GET('/api/auth/whoami').then(function (resp) {
+          if (resp.status === 200 && resp.data && resp.data.role) { onVerified(cur); }
+          else { onFailed(); }
+        }).catch(function () { onFailed(); });
       });
     } else {
-      /* Offline — trust localStorage */
-      onVerified(cur);
+      /* Firebase unavailable — verify via server-side cookie instead of trusting localStorage */
+      _postJSON_GET('/api/auth/whoami').then(function (resp) {
+        if (resp.status === 200 && resp.data && resp.data.role) { onVerified(cur); }
+        else { onFailed(); }
+      }).catch(function () { onFailed(); });
     }
   };
 

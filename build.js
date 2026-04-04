@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const babel = require('@babel/core');
 
 const ROOT = __dirname;
 const DIST = path.join(ROOT, 'dist');
@@ -48,6 +49,11 @@ mkDir(DIST);
 
 console.log('Building Excelias portal for deployment...\n');
 
+/* ─── Student guard: external script injected into module HTML files (CSP-safe) ─── */
+/* Server-side studentGuardMiddleware handles redirection; this is defence-in-depth.  */
+const studentGuardSrc = `(function(){try{var u=JSON.parse(localStorage.getItem('xcCurrentUser'));if(u&&u.role==='student'){window.location.replace('/studyguide/');}}catch(e){}})();`;
+const studentGuardTag = '<script src="/student-guard.js"></script>';
+
 /* ════════ 1. Portal files ════════ */
 console.log('[1/5] Portal files...');
 const portalDir = path.join(ROOT, 'excelias-portal');
@@ -63,32 +69,66 @@ if (fs.existsSync(fbConfigSrc)) {
   copyFile(fbConfigSrc, path.join(DIST, 'firebase-config.js'));
   console.log('    → Copied firebase-config.js to root');
 }
-
-/* ─── Student guard: injected into modules that have no role-based auth ─── */
-const studentGuard = '<script>!function(){try{var u=JSON.parse(localStorage.getItem(\'xcCurrentUser\'));if(u&&u.role===\'student\'){window.location.replace(\'/studyguide/index.html\');document.write(\'<!--\');}}catch(e){}}();<\/script>';
+/* Write student-guard.js to dist root — modules inject an external script tag (no inline = CSP safe) */
+fs.writeFileSync(path.join(DIST, 'student-guard.js'), studentGuardSrc);
+console.log('    → Wrote student-guard.js to root');
 
 /* ════════ 2. Activities (Project 1) ════════ */
 console.log('[2/5] Activities...');
 const actSrc = path.join(ROOT, 'Activites ( WorkSpace )', 'RedMaterialsAcademy');
 copyDir(actSrc, path.join(DIST, 'activities'), (name) => {
   /* Exclude non-runtime files from production build */
-  const skip = ['.md', '_backup'];
+  const skip = ['.md', '_backup', 'babel.min.js'];
   return !skip.some(s => name.toLowerCase().includes(s));
 });
 
-// Rename .jsx → .js so Vercel serves it with correct MIME type
-const actJsx = path.join(DIST, 'activities', 'app.jsx');
-const actJs  = path.join(DIST, 'activities', 'app.js');
-if (fs.existsSync(actJsx)) {
-  fs.renameSync(actJsx, actJs);
+// Pre-compile app.jsx → app.js using Babel (eliminates runtime Babel and unsafe-eval CSP requirement)
+const actJsxSrc = path.join(actSrc, 'app.jsx');
+const actJsDest = path.join(DIST, 'activities', 'app.js');
+const actJsxDist = path.join(DIST, 'activities', 'app.jsx');
+if (fs.existsSync(actJsxSrc)) {
+  const jsxCode = fs.readFileSync(actJsxSrc, 'utf8');
+  const compiled = babel.transformSync(jsxCode, {
+    presets: [
+      ['@babel/preset-env', { targets: { ie: 11 } }],  // transforms const/let→var (matches Babel standalone default)
+      '@babel/preset-react'
+    ],
+    filename: 'app.jsx'
+  });
+  fs.writeFileSync(actJsDest, compiled.code);
+  if (fs.existsSync(actJsxDist)) fs.unlinkSync(actJsxDist);
+  console.log('    → Compiled app.jsx → app.js (JSX pre-compiled, Babel no longer needed at runtime)');
+} else if (fs.existsSync(actJsxDist)) {
+  // Fallback if running from dist source
+  fs.renameSync(actJsxDist, actJsDest);
 }
-// Add <base> tag + fix script path for Activities
+
+// Patch index.html: add <base> tag, replace babel CDN with student-guard.js external script,
+// remove type="text/babel" (compiled JS needs to load as a regular script)
 const actHtml = path.join(DIST, 'activities', 'index.html');
 let aHtml = fs.readFileSync(actHtml, 'utf8');
+// Replace babel.min.js script with nothing (no longer needed at runtime)
+aHtml = aHtml.replace('<script src="babel.min.js"></script>', '');
+// Update the JSX script tag: remove type="text/babel", change app.jsx to app.js
 aHtml = aHtml.replace('src="app.jsx"', 'src="app.js"');
-aHtml = aHtml.replace('<head>', '<head>\n    <base href="/activities/" />\n    ' + studentGuard);
+aHtml = aHtml.replace(' type="text/babel"', '');
+// Add <base>, student-guard.js external tag (CSP-safe), and firebase-config path fix
+aHtml = aHtml.replace('<head>', '<head>\n    <base href="/activities/" />\n    ' + studentGuardTag);
+aHtml = aHtml.replace('src="firebase-config.js"', 'src="/firebase-config.js"');
 fs.writeFileSync(actHtml, aHtml);
-console.log('    → Renamed app.jsx → app.js + added <base> tag + student guard');
+// Remove babel.min.js from dist (no longer needed)
+const babelDist = path.join(DIST, 'activities', 'babel.min.js');
+if (fs.existsSync(babelDist)) fs.unlinkSync(babelDist);
+// Extract remaining inline <script> (RITA chat) to external file for CSP compliance
+let aHtml2 = fs.readFileSync(actHtml, 'utf8');
+const actInlineMatch = aHtml2.match(/<script>\s*(\(function\(\)[\s\S]*?\}\)\(\);)\s*<\/script>\s*<\/body>/);
+if (actInlineMatch) {
+  fs.writeFileSync(path.join(DIST, 'activities', 'activities-rita.js'), actInlineMatch[1]);
+  aHtml2 = aHtml2.replace(actInlineMatch[0], '<script src="activities-rita.js"></script>\n</body>');
+  fs.writeFileSync(actHtml, aHtml2);
+  console.log('    → Extracted inline RITA script → activities-rita.js');
+}
+console.log('    → Patched index.html: <base> + student-guard.js + pre-compiled JS script');
 
 /* ════════ 3. Content / CRA Build (Project 2) ════════ */
 console.log('[3/5] Content (CRA build)...');
@@ -99,7 +139,21 @@ copyDir(contentBuild, path.join(DIST, 'content'));
 const contentHtml = path.join(DIST, 'content', 'index.html');
 let cHtml = fs.readFileSync(contentHtml, 'utf8');
 cHtml = cHtml.replace(/(src|href)="\/static\//g, '$1="static/');
-cHtml = cHtml.replace('<head>', '<head>\n<base href="/content/" />\n' + studentGuard);
+cHtml = cHtml.replace('<head>', '<head>\n<base href="/content/" />\n' + studentGuardTag);
+/* Fix firebase-config.js path — load from root instead of /activities/ to avoid student guard */
+cHtml = cHtml.replace('src="/activities/firebase-config.js"', 'src="/firebase-config.js"');
+/* Extract inline RITA/API bootstrap script → content-rita.js (CSP compliance) */
+const cRitaMatch = cHtml.match(/<script>(!function\(\)[\s\S]*?)<\/script>/);
+if (cRitaMatch) {
+  fs.writeFileSync(path.join(DIST, 'content', 'content-rita.js'), cRitaMatch[1].trim());
+  cHtml = cHtml.replace(cRitaMatch[0], '<script src="content-rita.js"></script>');
+}
+/* Extract inline XceliasAuth.guard() call → content-guard.js (CSP compliance) */
+const cGuardMatch = cHtml.match(/<script>\s*(XceliasAuth\.guard[\s\S]*?)<\/script>/);
+if (cGuardMatch) {
+  fs.writeFileSync(path.join(DIST, 'content', 'content-guard.js'), cGuardMatch[1].trim());
+  cHtml = cHtml.replace(cGuardMatch[0], '<script src="content-guard.js"></script>');
+}
 fs.writeFileSync(contentHtml, cHtml);
 console.log('    → Added <base href="/content/"> + rewrote CRA paths');
 
@@ -118,9 +172,23 @@ for (const f of fs.readdirSync(reportsSrc, { withFileTypes: true })) {
 // Add <base> tag for Reports
 const reportsHtml = path.join(reportsDest, 'index.html');
 let rHtml = fs.readFileSync(reportsHtml, 'utf8');
-rHtml = rHtml.replace('<head>', '<head>\n    <base href="/reports/" />\n    ' + studentGuard);
+rHtml = rHtml.replace('<head>', '<head>\n    <base href="/reports/" />\n    ' + studentGuardTag);
+/* Fix firebase-config.js path — load from root instead of /activities/ */
+rHtml = rHtml.replace('src="/activities/firebase-config.js"', 'src="/firebase-config.js"');
+/* Extract inline XceliasAuth.guard() call → reports-guard.js (CSP compliance) */
+const rGuardMatch = rHtml.match(/<script>\s*(XceliasAuth\.guard[\s\S]*?)<\/script>/);
+if (rGuardMatch) {
+  fs.writeFileSync(path.join(reportsDest, 'reports-guard.js'), rGuardMatch[1].trim());
+  rHtml = rHtml.replace(rGuardMatch[0], '<script src="reports-guard.js"></script>');
+}
+/* Extract main app inline script → reports-app.js (CSP compliance) */
+const rAppMatch = rHtml.match(/<script>\s*(\/\/ =+[\s\S]*?)<\/script>\s*<\/body>/);
+if (rAppMatch) {
+  fs.writeFileSync(path.join(reportsDest, 'reports-app.js'), rAppMatch[1].trim());
+  rHtml = rHtml.replace(rAppMatch[0], '<script src="reports-app.js"></script>\n</body>');
+}
 fs.writeFileSync(reportsHtml, rHtml);
-console.log('    → Added <base href="/reports/">');
+console.log('    → Added <base href="/reports/"> + student-guard.js external script');
 
 /* ════════ 5. Study Guide (Project 4) ════════ */
 console.log('[5/6] Study Guide...');
@@ -173,9 +241,21 @@ wHtml = wHtml.replace(/(href|src)="\/(?!\/|xcelias-auth|activities\/)/g, '$1="')
 // Fix service worker registration absolute path
 wHtml = wHtml.replace(/register\('\/sw\.js'\)/g, "register('sw.js')");
 // Add <base> so all relative paths resolve to /website/
-wHtml = wHtml.replace('<head>', '<head>\n    <base href="/website/" />\n    ' + studentGuard);
+wHtml = wHtml.replace('<head>', '<head>\n    <base href="/website/" />\n    ' + studentGuardTag);
+/* Extract service worker inline script → website-sw.js (CSP compliance) */
+const wSwMatch = wHtml.match(/<script>\s*((?:const isLocalDevHost|\/\/ Service Worker)[\s\S]*?)<\/script>/);
+if (wSwMatch) {
+  fs.writeFileSync(path.join(webDest, 'website-sw.js'), wSwMatch[1].trim());
+  wHtml = wHtml.replace(wSwMatch[0], '<script src="website-sw.js"></script>');
+}
+/* Extract GSAP lazy-loader inline script → website-gsap.js (CSP compliance) */
+const wGsapMatch = wHtml.match(/<script>(if\(window\.innerWidth[\s\S]*?)<\/script>/);
+if (wGsapMatch) {
+  fs.writeFileSync(path.join(webDest, 'website-gsap.js'), wGsapMatch[1].trim());
+  wHtml = wHtml.replace(wGsapMatch[0], '<script src="website-gsap.js"></script>');
+}
 fs.writeFileSync(webHtml, wHtml);
-console.log('    → Added <base href="/website/"> + student guard + rewrote paths');
+console.log('    → Added <base href="/website/"> + student-guard.js external script + rewrote paths');
 
 /* ════════ Done ════════ */
 const total = countFiles(DIST);

@@ -119,14 +119,24 @@ function clearSessionCookie(res) {
    SERVER-SIDE ROLE ENFORCEMENT MIDDLEWARE
    ═══════════════════════════════════════════════════════════════════
    Runs BEFORE static file serving. Checks the signed httpOnly cookie.
+   - No cookie on an HTML page   → 302 redirect to portal login (/)
    - Student cookie on restricted path → 302 redirect to /studyguide/
-   - No cookie → serve page (client-side login form will be shown)
    - Admin/agent cookie → serve page normally
+   Only HTML navigation requests are gated; JS/CSS/image assets are
+   served without auth so the browser can load the login page itself.
    ═══════════════════════════════════════════════════════════════════ */
+function _isHtmlReq(path) {
+  /* No file extension (directory index) OR explicit .html/.htm request */
+  return !path.match(/\.\w{1,5}$/) || /\.html?$/i.test(path);
+}
+
 function studentGuardMiddleware(req, res, next) {
   const session = verifySession(parseCookies(req).xc_session);
+  if (!session && _isHtmlReq(req.path)) {
+    return res.redirect(302, '/');           // unauthenticated → portal login
+  }
   if (session && session.role === 'student') {
-    return res.redirect(302, '/studyguide/');
+    return res.redirect(302, '/studyguide/'); // student → study guide only
   }
   next();
 }
@@ -156,11 +166,11 @@ app.use((req, res, next) => {
   res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(self)');
   res.setHeader('Content-Security-Policy', [
     "default-src 'self'",
-    "script-src 'self' https://www.gstatic.com https://*.firebasedatabase.app",
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    "script-src 'self' https://www.gstatic.com https://*.firebasedatabase.app https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com",
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com",
     "font-src 'self' https://fonts.gstatic.com",
-    "connect-src 'self' https://*.googleapis.com https://*.firebasedatabase.app wss://*.firebasedatabase.app",
-    "img-src 'self' data:",
+    "connect-src 'self' https://*.googleapis.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://overpass-api.de",
+    "img-src 'self' data: https://*.basemaps.cartocdn.com",
     "frame-src 'self' https://lms.xcelias.com https://*.firebasedatabase.app",
     "object-src 'none'",
     "base-uri 'self'",
@@ -254,7 +264,9 @@ app.use((req, res, next) => {
   }
   next();
 });
-/* Study Guide — no guard needed (students ARE allowed here) */
+/* Study Guide — students ARE allowed here; client-side xcelias-auth.js handles
+   authentication (including Firebase session refresh for expired cookies).
+   No server-side cookie guard here to avoid redirect loops when cookie expires. */
 app.use('/studyguide', express.static(STUDY_GUIDE_DIR));
 
 /* ─── Project 4: Avaria Academy (Next.js — runs on port 3005) ─── *

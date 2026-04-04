@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Xcelias</title>
-    <script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" integrity="sha384-DGyLxAyjq0f9SPpVevD6IgztCFlnMF6oW/XQGmfe+IsZ8TqEiDrcHkMLKI6fiB/Z" crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" integrity="sha384-gTGxhz21lVGYNMcdJOyq01Edg0jhn/c22nsx0kyqP0TxaV5WVdsSH1fSDUf5YJj1" crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/@babel/standalone@7.26.10/babel.min.js" integrity="sha384-BcI7nduYchENm39cFMEVJXHEE7fwHONANyn/pY2YTa+BNtrWF2bKBZeI0wqVithi" crossorigin="anonymous"></script>
+    <script src="react.production.min.js"></script>
+    <script src="react-dom.production.min.js"></script>
+    <script src="babel.min.js"></script>
     <!-- Firebase SDK (optional — configure firebase-config.js to enable real-time sync) -->
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js" integrity="sha384-AQ3POAMqIhwS81FrUH95ekxqBZHeP5tG2JfEL3+7GuTtfRLWnrRh32UxwzM+//A9" crossorigin="anonymous"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js" integrity="sha384-TnlRYaR4JYz/lpaGuaiU61PjNberSA4vjLjtF+oRC/IkohkJqnWxw5EmDSOt1vA1" crossorigin="anonymous"></script>
@@ -2042,7 +2042,7 @@
     </style>
 
     <div class="rita-fab" id="ritaFab">
-        <button class="rita-fab-btn" onclick="window.RITA.toggle()" aria-label="Open RITA AI Coach">
+        <button class="rita-fab-btn" id="ritaFabBtn" aria-label="Open RITA AI Coach">
             <div class="rita-fab-pulse"></div>
             <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/><path d="M18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z"/></svg>
             <span class="rita-fab-label">✨ Ask RITA</span>
@@ -2056,14 +2056,14 @@
                 <h3>RITA ✦ Sales Coach <span class="rita-badge">AGENT MODE</span></h3>
                 <small>Xcelias Training AI</small>
             </div>
-            <button class="rita-close" onclick="window.RITA.toggle()" aria-label="Close">
+            <button class="rita-close" id="ritaCloseBtn" aria-label="Close">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
         </div>
         <div class="rita-messages" id="ritaMessages"></div>
         <div class="rita-input-area">
-            <textarea id="ritaInput" rows="1" placeholder="Ask RITA anything..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();window.RITA.send()}"></textarea>
-            <button class="rita-send" onclick="window.RITA.send()" aria-label="Send">
+            <textarea id="ritaInput" rows="1" placeholder="Ask RITA anything..."></textarea>
+            <button class="rita-send" id="ritaSendBtn" aria-label="Send">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
             </button>
         </div>
@@ -2194,6 +2194,26 @@ Keep responses concise and actionable. Use bullet points. End with a coaching ti
         }
 
         window.RITA = { toggle, send };
+
+        /* Wire up event listeners (replaces inline onclick/onkeydown to satisfy CSP) */
+        document.addEventListener('DOMContentLoaded', function() {
+            var fabBtn = document.getElementById('ritaFabBtn');
+            var closeBtn = document.getElementById('ritaCloseBtn');
+            var sendBtn = document.getElementById('ritaSendBtn');
+            var inp = document.getElementById('ritaInput');
+            if (fabBtn)   fabBtn.addEventListener('click', toggle);
+            if (closeBtn) closeBtn.addEventListener('click', toggle);
+            if (sendBtn)  sendBtn.addEventListener('click', function() { send(); });
+            if (inp) inp.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
+            });
+        });
+
+        /* Pill buttons use data-q attributes — event delegation for CSP compliance */
+        document.addEventListener('click', function(e) {
+            var q = e.target.getAttribute && e.target.getAttribute('data-q');
+            if (q) send(q);
+        });
     })();
     </script>
 </body>

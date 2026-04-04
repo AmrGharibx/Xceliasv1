@@ -28,7 +28,7 @@ service-account.json
 # Databases
 *.db
 
-# OS files
+# Thumbs
 Thumbs.db
 .DS_Store
 
@@ -48,3 +48,6 @@ yarn-error.log*
 
 # Firebase Admin credentials
 service-account.json
+
+# Downloaded CDN files no longer used at runtime (pre-compiled via Babel)
+**/babel.min.js

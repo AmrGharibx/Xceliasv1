@@ -24,6 +24,8 @@ function copyDir(src, dest, filter) {
     const sp = path.join(src, entry.name);
     const dp = path.join(dest, entry.name);
     if (filter && !filter(entry.name, sp, entry)) continue;
+    /* Skip source maps in production builds — prevents source code exposure */
+    if (!entry.isDirectory() && entry.name.endsWith('.map')) continue;
     if (entry.isDirectory()) {
       copyDir(sp, dp, filter);
     } else {

@@ -204,7 +204,7 @@ app.post('/api/auth/logout', (_req, res) => {
    without going through the guard middleware. */
 app.use('/activities', studentGuardMiddleware, express.static(ACTIVITIES_DIR));
 app.use('/content', studentGuardMiddleware, express.static(CONTENT_BUILD));
-app.use('/static', express.static(path.join(CONTENT_BUILD, 'static')));
+app.use('/static', studentGuardMiddleware, express.static(path.join(CONTENT_BUILD, 'static')));
 app.use('/reports', studentGuardMiddleware, express.static(REPORTS_DIR));
 
 /* Portal — guard students away from the home page */
@@ -267,7 +267,7 @@ const WEBSITE_ASSETS = [
   'cairo.json','gouna.json','north_coast.json','sokhna.json','others.json'
 ];
 WEBSITE_ASSETS.forEach(file => {
-  app.get('/' + file, (req, res, next) => {
+  app.get('/' + file, studentGuardMiddleware, (req, res, next) => {
     const fp = path.join(WEBSITE_DIR, file);
     if (fs.existsSync(fp)) return res.sendFile(fp);
     next();

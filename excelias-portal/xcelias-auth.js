@@ -158,36 +158,44 @@
       onFailed(); return;
     }
 
-    /* Always verify against server-side cookie and adopt server's role.
-       This prevents role escalation via localStorage/RTDB tampering. */
-    var _adoptServerRole = function (cur, onVerified, onFailed) {
+    /* Try server-side role verification; when the server endpoint is not
+       available (Vercel/static hosting) call the fallback instead. */
+    var _verifyViaServer = function (onSuccess, onNoServer) {
       _postJSON_GET('/api/auth/whoami').then(function (resp) {
         if (resp.status === 200 && resp.data && resp.data.role) {
-          /* Adopt server's authoritative role — override any client tampering */
+          /* Server available — adopt its authoritative role */
           if (cur.role !== resp.data.role) {
             cur.role = resp.data.role;
             _w('xcCurrentUser', cur);
           }
           if (!_roleOk(cur, requiredRoles)) { onFailed(); return; }
-          onVerified(cur);
-        } else { onFailed(); }
-      }).catch(function () { onFailed(); });
+          onSuccess(cur);
+        } else if (onNoServer) {
+          onNoServer();
+        } else {
+          onFailed();
+        }
+      }).catch(function () {
+        if (onNoServer) onNoServer(); else onFailed();
+      });
     };
 
     if (window.xcFirebaseReady && window.xcAuth) {
       var unsub = window.xcAuth.onAuthStateChanged(function (fbUser) {
         unsub();
         if (fbUser) {
-          /* Firebase session active — still verify + adopt server role */
-          _adoptServerRole(cur, onVerified, onFailed);
+          /* Firebase session active — try server role adoption.
+             If server unavailable (Vercel/static), Firebase session
+             is sufficient proof of identity; batch UID already checked above. */
+          _verifyViaServer(onVerified, function () { onVerified(cur); });
           return;
         }
-        /* No Firebase session — verify via server-side cookie */
-        _adoptServerRole(cur, onVerified, onFailed);
+        /* No Firebase session — server cookie is the ONLY proof */
+        _verifyViaServer(onVerified, null);
       });
     } else {
-      /* Firebase unavailable — verify via server-side cookie */
-      _adoptServerRole(cur, onVerified, onFailed);
+      /* Firebase unavailable — server cookie is the ONLY proof */
+      _verifyViaServer(onVerified, null);
     }
   };
 

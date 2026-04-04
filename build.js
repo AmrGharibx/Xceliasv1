@@ -56,6 +56,14 @@ copyFile(path.join(portalDir, 'portal.css'), path.join(DIST, 'portal.css'));
 copyFile(path.join(portalDir, 'portal.js'), path.join(DIST, 'portal.js'));
 copyFile(path.join(portalDir, 'xcelias-auth.js'), path.join(DIST, 'xcelias-auth.js'));
 
+/* Copy firebase-config.js to dist root so it's accessible without the /activities
+   student guard. The study guide (and any future module) loads it from /firebase-config.js. */
+const fbConfigSrc = path.join(ROOT, 'Activites ( WorkSpace )', 'RedMaterialsAcademy', 'firebase-config.js');
+if (fs.existsSync(fbConfigSrc)) {
+  copyFile(fbConfigSrc, path.join(DIST, 'firebase-config.js'));
+  console.log('    → Copied firebase-config.js to root');
+}
+
 /* ─── Student guard: injected into modules that have no role-based auth ─── */
 const studentGuard = '<script>!function(){try{var u=JSON.parse(localStorage.getItem(\'xcCurrentUser\'));if(u&&u.role===\'student\'){window.location.replace(\'/studyguide/index.html\');document.write(\'<!--\');}}catch(e){}}();<\/script>';
 
@@ -124,6 +132,8 @@ copyFile(path.join(studySrc, 'index.html'), path.join(studyDest, 'index.html'));
 const studyHtml = path.join(studyDest, 'index.html');
 let sgHtml = fs.readFileSync(studyHtml, 'utf8');
 sgHtml = sgHtml.replace('<head>', '<head>\n    <base href="/studyguide/" />');
+/* Fix firebase-config.js path — load from root instead of /activities/ to avoid student guard */
+sgHtml = sgHtml.replace('src="/activities/firebase-config.js"', 'src="/firebase-config.js"');
 fs.writeFileSync(studyHtml, sgHtml);
 console.log('    → Copied Study Guide + added <base href="/studyguide/">');
 

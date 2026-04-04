@@ -207,6 +207,14 @@ app.post('/api/auth/logout', (_req, res) => {
    STATIC SERVING WITH SERVER-SIDE GUARDS
    ═══════════════════════════════════════════════════════════════════ */
 
+/* Serve firebase-config.js from root — not behind student guard.
+   Study guide needs it to initialize Firebase, but /activities/ has student guard. */
+app.get('/firebase-config.js', (req, res, next) => {
+  const fp = path.join(ACTIVITIES_DIR, 'firebase-config.js');
+  if (fs.existsSync(fp)) return res.sendFile(fp);
+  next();
+});
+
 /* Restricted modules — server-side student guard BEFORE static serving.
    IMPORTANT: these must come BEFORE the portal static handler because
    PORTAL_DIR (dist/) contains all module subdirectories. If portal static

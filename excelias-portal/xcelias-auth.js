@@ -1,8 +1,8 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   XCELIAS UNIFIED AUTH MODULE  v1.0
+   XCELIAS UNIFIED AUTH MODULE  v1.1
    ═══════════════════════════════════════════════════════════════════════════
    Shared authentication guard for ALL Xcelias modules.
-   Provides Firebase Auth + offline fallback with consistent UI.
+   Firebase Auth only — all roles enforced server-side via HMAC cookie.
 
    Usage:
      <script src="/xcelias-auth.js"></script>
@@ -23,13 +23,6 @@
 
   /* ── Batch student identifiers (NO secrets — all auth goes through Firebase) ── */
   var _BATCH_UIDS = ['OKZ7mPrvE0cvMH8LPTUY13yXw9d2'];
-
-  /* ── SHA-256 using SubtleCrypto ── */
-  var _hash = function (s) {
-    return crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)).then(function (b) {
-      return Array.from(new Uint8Array(b)).map(function (x) { return x.toString(16).padStart(2, '0'); }).join('');
-    });
-  };
 
   /* ── Escape HTML ── */
   var _esc = function (s) { var d = document.createElement('div'); d.textContent = String(s || ''); return d.innerHTML; };
@@ -76,7 +69,7 @@
     }
     return firebaseUser.getIdToken().then(function (idToken) {
       return _postJSON('/api/auth/firebase-session', { idToken: idToken });
-    }).catch(function () { /* server unreachable — degrade gracefully */ });
+    }).catch(function () { return { status: 0, data: null }; /* server unreachable — degrade gracefully */ });
   };
 
   /* ═══════════════════════════════════════
@@ -106,9 +99,16 @@
                   throw new Error('Your account does not have access to this module. Required role: ' + (requiredRoles || []).join(' or '));
                 });
               }
-              _w('xcCurrentUser', user);
-              /* Send Firebase ID token to server so it can verify and set httpOnly cookie */
-              return _syncServerSession(cred.user).then(function () { return user; });
+              /* Send Firebase ID token to server so it can verify and set httpOnly cookie.
+                 Server response contains the authoritative role from KNOWN_USERS map. */
+              return _syncServerSession(cred.user).then(function (serverResp) {
+                /* Adopt server-determined role — RTDB profile role is untrusted */
+                if (serverResp && serverResp.data && serverResp.data.role) {
+                  user.role = serverResp.data.role;
+                }
+                _w('xcCurrentUser', user);
+                return user;
+              });
             });
           })
           .catch(function (e) {
@@ -158,22 +158,36 @@
       onFailed(); return;
     }
 
+    /* Always verify against server-side cookie and adopt server's role.
+       This prevents role escalation via localStorage/RTDB tampering. */
+    var _adoptServerRole = function (cur, onVerified, onFailed) {
+      _postJSON_GET('/api/auth/whoami').then(function (resp) {
+        if (resp.status === 200 && resp.data && resp.data.role) {
+          /* Adopt server's authoritative role — override any client tampering */
+          if (cur.role !== resp.data.role) {
+            cur.role = resp.data.role;
+            _w('xcCurrentUser', cur);
+          }
+          if (!_roleOk(cur, requiredRoles)) { onFailed(); return; }
+          onVerified(cur);
+        } else { onFailed(); }
+      }).catch(function () { onFailed(); });
+    };
+
     if (window.xcFirebaseReady && window.xcAuth) {
       var unsub = window.xcAuth.onAuthStateChanged(function (fbUser) {
         unsub();
-        if (fbUser) { onVerified(cur); return; }
+        if (fbUser) {
+          /* Firebase session active — still verify + adopt server role */
+          _adoptServerRole(cur, onVerified, onFailed);
+          return;
+        }
         /* No Firebase session — verify via server-side cookie */
-        _postJSON_GET('/api/auth/whoami').then(function (resp) {
-          if (resp.status === 200 && resp.data && resp.data.role) { onVerified(cur); }
-          else { onFailed(); }
-        }).catch(function () { onFailed(); });
+        _adoptServerRole(cur, onVerified, onFailed);
       });
     } else {
-      /* Firebase unavailable — verify via server-side cookie instead of trusting localStorage */
-      _postJSON_GET('/api/auth/whoami').then(function (resp) {
-        if (resp.status === 200 && resp.data && resp.data.role) { onVerified(cur); }
-        else { onFailed(); }
-      }).catch(function () { onFailed(); });
+      /* Firebase unavailable — verify via server-side cookie */
+      _adoptServerRole(cur, onVerified, onFailed);
     }
   };
 

@@ -103,7 +103,9 @@ function setSessionCookie(res, payload) {
   const maxAge = 24 * 60 * 60 * 1000; // 24h
   payload.exp = Date.now() + maxAge;
   const token = signSession(payload);
-  res.setHeader('Set-Cookie', `xc_session=${token}; HttpOnly; SameSite=Lax; Path=/; Max-Age=${maxAge / 1000}`);
+  const isSecure = process.env.NODE_ENV === 'production' || (process.env.VERCEL === '1');
+  const securePart = isSecure ? ' Secure;' : '';
+  res.setHeader('Set-Cookie', `xc_session=${token}; HttpOnly;${securePart} SameSite=Lax; Path=/; Max-Age=${maxAge / 1000}`);
 }
 
 function clearSessionCookie(res) {

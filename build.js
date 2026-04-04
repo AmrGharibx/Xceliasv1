@@ -134,6 +134,13 @@ let sgHtml = fs.readFileSync(studyHtml, 'utf8');
 sgHtml = sgHtml.replace('<head>', '<head>\n    <base href="/studyguide/" />');
 /* Fix firebase-config.js path — load from root instead of /activities/ to avoid student guard */
 sgHtml = sgHtml.replace('src="/activities/firebase-config.js"', 'src="/firebase-config.js"');
+/* Extract inline <script> to external file for CSP compliance */
+const inlineMatch = sgHtml.match(/<script>\s*'use strict';([\s\S]*?)<\/script>\s*<\/body>/);
+if (inlineMatch) {
+  const scriptContent = "'use strict';" + inlineMatch[1];
+  fs.writeFileSync(path.join(studyDest, 'studyguide.js'), scriptContent);
+  sgHtml = sgHtml.replace(inlineMatch[0], '<script src="studyguide.js"><\/script>\n</body>');
+}
 fs.writeFileSync(studyHtml, sgHtml);
 console.log('    → Copied Study Guide + added <base href="/studyguide/">');
 

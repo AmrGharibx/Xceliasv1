@@ -394,10 +394,17 @@
           + '</p>'
           + '<p style="font-size:.82rem;color:rgba(152,152,184,.6);margin:0 0 28px;line-height:1.6">This module requires <strong style="color:rgba(232,232,240,.85)">Admin</strong> or <strong style="color:rgba(232,232,240,.85)">Agent</strong> credentials.<br>Your account only has access to the Study Guide.</p>'
           + '<div style="display:flex;flex-direction:column;gap:10px">'
-          + '<a href="/studyguide/" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 24px;border-radius:14px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;font-size:.85rem;font-weight:700;text-decoration:none;border:none;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 20px rgba(102,126,234,.3)" onmouseover="this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.transform=\'none\'">📖 Go to Study Guide</a>'
-          + '<button onclick="fetch(\'/api/auth/logout\',{method:\'POST\',credentials:\'same-origin\'}).catch(function(){});try{localStorage.removeItem(\'xcCurrentUser\')}catch(e){}location.reload()" style="padding:12px 24px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:rgba(232,232,240,.7);font-size:.8rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s" onmouseover="this.style.background=\'rgba(255,255,255,.1)\';this.style.color=\'#fff\'" onmouseout="this.style.background=\'rgba(255,255,255,.05)\';this.style.color=\'rgba(232,232,240,.7)\'">Sign Out &amp; Log in as Admin</button>'
+          + '<a id="xca-go-study" href="/studyguide/" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 24px;border-radius:14px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;font-size:.85rem;font-weight:700;text-decoration:none;border:none;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 20px rgba(102,126,234,.3)">📖 Go to Study Guide</a>'
+          + '<button id="xca-signout-btn" style="padding:12px 24px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:rgba(232,232,240,.7);font-size:.8rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s">Sign Out &amp; Log in as Admin</button>'
           + '</div></div>';
         document.body.appendChild(ov);
+        var _goStudy = ov.querySelector('#xca-go-study');
+        _goStudy.addEventListener('mouseover', function () { this.style.transform = 'translateY(-2px)'; });
+        _goStudy.addEventListener('mouseout', function () { this.style.transform = 'none'; });
+        var _signOutBtn = ov.querySelector('#xca-signout-btn');
+        _signOutBtn.addEventListener('click', function () { fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' }).catch(function () {}); try { localStorage.removeItem('xcCurrentUser'); } catch (e) {} location.reload(); });
+        _signOutBtn.addEventListener('mouseover', function () { this.style.background = 'rgba(255,255,255,.1)'; this.style.color = '#fff'; });
+        _signOutBtn.addEventListener('mouseout', function () { this.style.background = 'rgba(255,255,255,.05)'; this.style.color = 'rgba(232,232,240,.7)'; });
         return;
       }
 

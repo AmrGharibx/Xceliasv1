@@ -58,6 +58,10 @@ const topbarTitle  = document.getElementById('topbar-title');
 const topbarNewTab = document.getElementById('topbar-newtab');
 const iframeLoader = document.getElementById('iframe-loading');
 
+/* ── Topbar button handlers (no inline onclick for CSP) ── */
+document.getElementById('topbar-back').addEventListener('click', function () { goHome(); });
+topbarNewTab.addEventListener('click', function () { openInNewTab(); });
+
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    PARTICLE SYSTEM (ambient floating particles)
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
@@ -282,11 +286,13 @@ function showIframeError(projectName) {
     <h3 style="font-size:1.1rem;font-weight:700;color:#e8e8f0">Failed to Load</h3>
     <p style="font-size:0.82rem;color:#9898b8;max-width:360px;line-height:1.6">${escHtml(projectName || 'This module')} didn't respond. Make sure the server is running and try again.</p>
     <div style="display:flex;gap:12px;margin-top:8px">
-      <button onclick="location.reload()" style="padding:10px 24px;border-radius:50px;border:1px solid rgba(102,126,234,0.3);background:rgba(102,126,234,0.1);color:#a5b4fc;font-family:inherit;font-size:0.78rem;font-weight:600;cursor:pointer">Retry</button>
-      <button onclick="goHome()" style="padding:10px 24px;border-radius:50px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.05);color:#9898b8;font-family:inherit;font-size:0.78rem;font-weight:600;cursor:pointer">Back to Home</button>
+      <button id="iframe-err-retry" style="padding:10px 24px;border-radius:50px;border:1px solid rgba(102,126,234,0.3);background:rgba(102,126,234,0.1);color:#a5b4fc;font-family:inherit;font-size:0.78rem;font-weight:600;cursor:pointer">Retry</button>
+      <button id="iframe-err-home" style="padding:10px 24px;border-radius:50px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.05);color:#9898b8;font-family:inherit;font-size:0.78rem;font-weight:600;cursor:pointer">Back to Home</button>
     </div>
   `;
   projectView.appendChild(overlay);
+  overlay.querySelector('#iframe-err-retry').addEventListener('click', function () { location.reload(); });
+  overlay.querySelector('#iframe-err-home').addEventListener('click', function () { goHome(); });
 }
 
 /* â”€â”€â”€ Open in new tab â”€â”€â”€ */
@@ -404,10 +410,11 @@ function showAvariaBanner() {
         <code style="font-family:monospace;font-size:13px;color:#f093fb;line-height:1.8;display:block">cd "System Before Prompting V2/avaria"</code>
         <code style="font-family:monospace;font-size:13px;color:#f093fb;display:block">npm run dev</code>
       </div>
-      <button onclick="document.getElementById('avaria-banner').remove()" style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;padding:12px 36px;border-radius:50px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s ease;box-shadow:0 8px 24px rgba(102,126,234,0.3)">Got it</button>
+      <button id="avaria-dismiss" style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;padding:12px 36px;border-radius:50px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s ease;box-shadow:0 8px 24px rgba(102,126,234,0.3)">Got it</button>
     </div>
   `;
   document.body.appendChild(overlay);
+  overlay.querySelector('#avaria-dismiss').addEventListener('click', function () { overlay.remove(); });
   overlay.addEventListener('click', (e) => {
     if (e.target === overlay) overlay.remove();
   });

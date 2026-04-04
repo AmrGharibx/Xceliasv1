@@ -10,6 +10,9 @@ admin.initializeApp({ projectId: 'xcelias-academy' });
 
 const app = express();
 const PORT = process.env.PORT || 4000;
+
+/* ── Trust first proxy (Vercel / nginx) so req.ip returns real client IP ── */
+if (process.env.VERCEL || process.env.TRUST_PROXY) app.set('trust proxy', 1);
 const WEBSITE_LOCAL_ORIGIN = process.env.WEBSITE_LOCAL_ORIGIN || 'http://localhost:3000';
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -54,7 +57,7 @@ function rateLimitCheck(req, res) {
   }
   record.count++;
   if (record.count > RATE_LIMIT_MAX) {
-    res.status(429).json({ error: 'Too many login attempts. Try again later.' });
+    res.status(429).json({ error: 'Too many requests. Try again later.' });
     return true; // limited
   }
   return false;
@@ -151,6 +154,9 @@ app.use((req, res, next) => {
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('X-XSS-Protection', '1; mode=block');
   res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(self)');
+  if (process.env.NODE_ENV === 'production' || process.env.VERCEL) {
+    res.setHeader('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
+  }
   next();
 });
 
@@ -249,6 +255,7 @@ app.use('/studyguide', express.static(STUDY_GUIDE_DIR));
     The website's index.html uses absolute paths — rewrite them on the fly.
     API calls are proxied to the standalone website server when it's running.    */
 app.post(['/api/gemini', '/api/route/route', '/api/route/table', '/api/route/trip'], (req, res) => {
+  if (rateLimitCheck(req, res)) return; // prevent API quota abuse
   const body = JSON.stringify(req.body);
   const proxyReq = http.request({
     hostname: 'localhost', port: 3000, path: req.originalUrl,
@@ -258,7 +265,7 @@ app.post(['/api/gemini', '/api/route/route', '/api/route/table', '/api/route/tri
     Object.entries(proxyRes.headers).forEach(([k, v]) => { if (k !== 'transfer-encoding') res.setHeader(k, v); });
     proxyRes.pipe(res);
   });
-  proxyReq.on('error', () => res.status(502).json({ error: 'Website server not reachable on port 3000' }));
+  proxyReq.on('error', () => res.status(502).json({ error: 'Upstream service unavailable' }));
   proxyReq.end(body);
 });
 

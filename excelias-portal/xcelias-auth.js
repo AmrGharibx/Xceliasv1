@@ -21,8 +21,8 @@
   var _r = function (k, d) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } };
   var _w = function (k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
 
-  /* ── Batch student identifiers (NO secrets — all auth goes through server or Firebase) ── */
-  var _BATCH_UIDS = ['batch33_shared', 'OKZ7mPrvE0cvMH8LPTUY13yXw9d2'];
+  /* ── Batch student identifiers (NO secrets — all auth goes through Firebase) ── */
+  var _BATCH_UIDS = ['OKZ7mPrvE0cvMH8LPTUY13yXw9d2'];
 
   /* ── SHA-256 using SubtleCrypto ── */
   var _hash = function (s) {
@@ -58,84 +58,64 @@
   };
 
   /* notify server of a Firebase session so it sets the signed httpOnly cookie.
-     ALL roles must include the password for server-side verification. */
-  var _syncServerSession = function (user, password) {
-    var body = { uid: user.uid, role: user.role, displayName: user.displayName };
-    if (password) {
-      body.password = password;
+     Sends a Firebase ID token which the server verifies cryptographically.
+     No passwords leave the client — the token proves identity via Google’s signing keys. */
+  var _syncServerSession = function (firebaseUser) {
+    if (!firebaseUser || typeof firebaseUser.getIdToken !== 'function') {
+      return Promise.resolve(); /* offline fallback — no Firebase user available */
     }
-    return _postJSON('/api/auth/firebase-session', body)
-      .catch(function () { /* server unreachable — degrade gracefully */ });
+    return firebaseUser.getIdToken().then(function (idToken) {
+      return _postJSON('/api/auth/firebase-session', { idToken: idToken });
+    }).catch(function () { /* server unreachable — degrade gracefully */ });
   };
 
   /* ═══════════════════════════════════════
-     SIGN IN (server-validated batch + Firebase + offline fallback)
+     SIGN IN (Firebase-first + offline fallback)
      ═══════════════════════════════════════ */
   var _signIn = function (username, password, requiredRoles) {
     var u = username.toLowerCase().trim();
 
-    /* 1 — Try server-side batch login FIRST (issues signed httpOnly cookie) */
-    return _postJSON('/api/auth/login', { username: u, password: password })
-      .then(function (res) {
-        if (res.status === 200 && res.data) {
-          /* Server validated batch credentials and set httpOnly cookie */
-          var user = res.data;
-          if (!_roleOk(user, requiredRoles)) throw new Error('Your account does not have access to this module.');
-          _w('xcCurrentUser', user);
-          return user;
-        }
-        if (res.status === 401) throw new Error('Invalid username or password');
-        /* 404 or non-JSON (static hosting) = not a batch account — fall through to Firebase */
-        return null;
-      })
-      .catch(function (e) {
-        /* Server unreachable (no Express server, e.g. static deployment) — skip to Firebase */
-        if (e && e.message && (e.message === 'Invalid username or password' || e.message.indexOf('does not have access') !== -1)) throw e;
-        return null;
-      })
-      .then(function (batchUser) {
-        if (batchUser) return batchUser;
+    /* 1 — Firebase auth (all accounts — batch + admin — live on Firebase) */
+    return Promise.resolve()
+      .then(function () {
+        if (!window.xcFirebaseReady || !window.xcAuth) return null;
 
-        /* 2 — Firebase online auth (batch33 + admin both exist in Firebase) */
-        if (window.xcFirebaseReady && window.xcAuth) {
-          return window.xcAuth.signInWithEmailAndPassword(_fbEmail(u), password)
-            .then(function (cred) {
-              return window.xcDB.ref('users/' + cred.user.uid).once('value').then(function (snap) {
-                var profile = snap.val();
-                if (!profile) {
-                  var isAdmin = u === 'admin';
-                  var isBatch = u.indexOf('batch') === 0;
-                  profile = { username: u, displayName: isAdmin ? 'Admin' : isBatch ? ('Batch ' + u.replace('batch', '')) : u, role: isAdmin ? 'admin' : isBatch ? 'student' : 'trainee', batchId: isAdmin ? 'admin' : isBatch ? u : 'default', createdAt: Date.now() };
-                  window.xcDB.ref('users/' + cred.user.uid).set(profile).catch(function () {});
-                }
-                var user = Object.assign({ uid: cred.user.uid }, profile);
-                if (!_roleOk(user, requiredRoles)) {
-                  return window.xcAuth.signOut().then(function () {
-                    throw new Error('Your account does not have access to this module. Required role: ' + (requiredRoles || []).join(' or '));
-                  });
-                }
-                _w('xcCurrentUser', user);
-                /* Tell server about the Firebase session so it sets httpOnly cookie */
-                return _syncServerSession(user, password).then(function () { return user; });
-              });
-            })
-            .catch(function (e) {
-              if (e.code === 'auth/wrong-password' || e.code === 'auth/invalid-credential') {
-                throw new Error('Invalid username or password');
+        return window.xcAuth.signInWithEmailAndPassword(_fbEmail(u), password)
+          .then(function (cred) {
+            return window.xcDB.ref('users/' + cred.user.uid).once('value').then(function (snap) {
+              var profile = snap.val();
+              if (!profile) {
+                var isAdmin = u === 'admin';
+                var isBatch = u.indexOf('batch') === 0;
+                profile = { username: u, displayName: isAdmin ? 'Admin' : isBatch ? ('Batch ' + u.replace('batch', '')) : u, role: isAdmin ? 'admin' : isBatch ? 'student' : 'trainee', batchId: isAdmin ? 'admin' : isBatch ? u : 'default', createdAt: Date.now() };
+                window.xcDB.ref('users/' + cred.user.uid).set(profile).catch(function () {});
               }
-              if (e.code === 'auth/user-not-found') {
-                throw new Error('Invalid username or password');
+              var user = Object.assign({ uid: cred.user.uid }, profile);
+              if (!_roleOk(user, requiredRoles)) {
+                return window.xcAuth.signOut().then(function () {
+                  throw new Error('Your account does not have access to this module. Required role: ' + (requiredRoles || []).join(' or '));
+                });
               }
-              throw e;
+              _w('xcCurrentUser', user);
+              /* Send Firebase ID token to server so it can verify and set httpOnly cookie */
+              return _syncServerSession(cred.user).then(function () { return user; });
             });
-        }
-
-        return null; /* no Firebase — fall through */
+          })
+          .catch(function (e) {
+            if (e.code === 'auth/wrong-password' || e.code === 'auth/invalid-credential') {
+              throw new Error('Invalid username or password');
+            }
+            if (e.code === 'auth/user-not-found') {
+              throw new Error('Invalid username or password');
+            }
+            if (e.message && e.message.indexOf('does not have access') !== -1) throw e;
+            return null; /* Firebase unavailable — fall through to offline */
+          });
       })
       .then(function (authedUser) {
         if (authedUser) return authedUser;
 
-        /* 3 — Offline fallback (no server, no Firebase) */
+        /* 2 — Offline fallback (no Firebase available) */
         return (function () {
           var adminSetup = _r('xcAdminSetup', null);
           if (u === 'admin') {
@@ -145,7 +125,7 @@
               var user = { uid: 'admin_local', username: 'admin', displayName: 'Admin', role: 'admin', batchId: 'admin' };
               if (!_roleOk(user, requiredRoles)) throw new Error('Your account does not have access to this module.');
               _w('xcCurrentUser', user);
-              return _syncServerSession(user, password).then(function () { return user; });
+              return _syncServerSession(null).then(function () { return user; });
             });
           }
           var accounts = _r('xcAccounts', []);
@@ -155,7 +135,7 @@
             if (h !== account.passwordHash) throw new Error('Invalid username or password');
             if (!_roleOk(account, requiredRoles)) throw new Error('Your account does not have access to this module.');
             _w('xcCurrentUser', account);
-            return _syncServerSession(account, password).then(function () { return account; });
+            return _syncServerSession(null).then(function () { return account; });
           });
         })();
       });

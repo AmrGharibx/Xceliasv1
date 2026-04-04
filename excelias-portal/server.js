@@ -3,6 +3,10 @@ const path = require('path');
 const fs = require('fs');
 const http = require('http');
 const crypto = require('crypto');
+const admin = require('firebase-admin');
+
+/* ── Firebase Admin SDK (for verifying client ID tokens — no secrets in code) ── */
+admin.initializeApp({ projectId: 'xcelias-academy' });
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -27,16 +31,13 @@ if (process.env.XC_SESSION_SECRET) {
   fs.writeFileSync(SECRET_PATH, SESSION_SECRET, 'utf8');
 }
 
-/* ── Batch credentials (server-side source of truth) ── */
-const BATCH_CREDS = [
-  { uid: 'batch33_shared', username: 'batch33', displayName: 'Batch 33', role: 'student', batchId: 'batch33',
-    passwordHash: '31ce6a05ffacf76fed282f2af228582e5fcab3300f07be6a5624c86aa6596aea' }
-];
-const BATCH_UIDS = new Set(BATCH_CREDS.map(c => c.uid));
-BATCH_UIDS.add('OKZ7mPrvE0cvMH8LPTUY13yXw9d2'); // batch33 Firebase UID
-
-/* ── Admin credentials (server-side source of truth) ── */
-const ADMIN_PASSWORD_HASH = '0b5ea6a441206e8d38d7c68ee3e44963f876d935cfef12ddfe3576451621f389'; // SHA-256 of admin password
+/* ── Firebase UID → role mapping (server determines roles from verified tokens) ── */
+const KNOWN_USERS = {
+  'OKZ7mPrvE0cvMH8LPTUY13yXw9d2': { role: 'student', batchId: 'batch33', displayName: 'Batch 33', username: 'batch33' },
+  '1olZC4rnatZlGkYPgIg2lZFjZ782': { role: 'admin', batchId: 'admin', displayName: 'Admin', username: 'admin' }
+};
+/* ── Batch UIDs that can NEVER be admin (safety net) ── */
+const BATCH_UIDS = new Set(['OKZ7mPrvE0cvMH8LPTUY13yXw9d2']);
 
 /* ── Rate limiter (in-memory, per-IP) ── */
 const _loginAttempts = new Map();
@@ -158,60 +159,32 @@ app.use(express.json({ limit: '50kb' }));
    AUTH API ENDPOINTS
    ═══════════════════════════════════════════════════════════════════ */
 
-/* POST /api/auth/login — validates credentials server-side, issues signed cookie */
-app.post('/api/auth/login', (req, res) => {
-  if (rateLimitCheck(req, res)) return;
-  const { username, password } = req.body || {};
-  if (!username || !password) return res.status(400).json({ error: 'Missing credentials' });
-  const u = username.toLowerCase().trim();
-  const hash = crypto.createHash('sha256').update(password).digest('hex');
-
-  /* Check batch credentials */
-  const batch = BATCH_CREDS.find(c => c.username === u && c.passwordHash === hash);
-  if (batch) {
-    setSessionCookie(res, { uid: batch.uid, role: batch.role });
-    return res.json({ uid: batch.uid, username: batch.username, displayName: batch.displayName, role: batch.role, batchId: batch.batchId });
-  }
-  /* SECURITY: Unified 404 for BOTH wrong-password and non-existent usernames.
-     This prevents username enumeration — attacker cannot distinguish
-     "user exists but wrong password" from "user doesn't exist". */
-  return res.status(404).json({ error: 'not_batch' });
-});
-
 /* POST /api/auth/firebase-session — called after Firebase auth succeeds on client.
-   Issues a server-side session cookie.
-   SECURITY: Non-student roles MUST prove identity with the admin password.
-   This prevents unauthenticated users from forging admin cookies by POSTing directly. */
-app.post('/api/auth/firebase-session', (req, res) => {
+   Verifies the Firebase ID token cryptographically, then issues a server-side cookie.
+   SECURITY: No passwords in code. The server verifies the token signed by Google,
+   extracts the UID, and determines the role from its own KNOWN_USERS map. */
+app.post('/api/auth/firebase-session', async (req, res) => {
   if (rateLimitCheck(req, res)) return;
-  const { uid, role, displayName, password } = req.body || {};
-  if (!uid || !role) return res.status(400).json({ error: 'Missing fields' });
-
-  /* CRITICAL: never let a batch UID upgrade to a non-student role */
-  if (BATCH_UIDS.has(uid)) {
-    return res.status(403).json({ error: 'Forbidden: batch accounts are student-only' });
+  const { idToken } = req.body || {};
+  if (!idToken || typeof idToken !== 'string') {
+    return res.status(400).json({ error: 'Missing ID token' });
   }
 
-  /* ALL roles require password verification to prevent unauthenticated cookie forgery.
-     Admin/agent: must provide the admin password.
-     Student/trainee: must provide a password that matches any batch credential OR admin password.
-     This prevents attackers from POSTing {uid:'x', role:'student'} without credentials. */
-  if (!password) {
-    return res.status(403).json({ error: 'Password verification required' });
-  }
-  const pwHash = crypto.createHash('sha256').update(password).digest('hex');
-  const isAdminPw = pwHash === ADMIN_PASSWORD_HASH;
-  const isBatchPw = BATCH_CREDS.some(c => c.passwordHash === pwHash);
-  if (!isAdminPw && !isBatchPw) {
-    return res.status(403).json({ error: 'Verification failed' });
-  }
-  /* Extra guard: only admin password can create non-student cookies */
-  if (role !== 'student' && role !== 'trainee' && !isAdminPw) {
-    return res.status(403).json({ error: 'Admin verification failed' });
-  }
+  try {
+    const decoded = await admin.auth().verifyIdToken(idToken);
+    const uid = decoded.uid;
 
-  setSessionCookie(res, { uid, role });
-  res.json({ ok: true });
+    const profile = KNOWN_USERS[uid];
+    if (!profile) return res.status(403).json({ error: 'Unknown user' });
+
+    /* CRITICAL: batch UIDs can never be admin */
+    const role = BATCH_UIDS.has(uid) ? 'student' : profile.role;
+
+    setSessionCookie(res, { uid, role });
+    return res.json({ ok: true, uid, role, displayName: profile.displayName, batchId: profile.batchId, username: profile.username });
+  } catch (e) {
+    return res.status(401).json({ error: 'Invalid or expired token' });
+  }
 });
 
 /* POST /api/auth/logout — clears the server session cookie */

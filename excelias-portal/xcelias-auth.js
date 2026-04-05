@@ -134,12 +134,12 @@
   /* ═══════════════════════════════════════
      SIGN OUT
      ═══════════════════════════════════════ */
-  var _signOut = function () {
+  var _signOut = async function () {
     try { localStorage.removeItem('xcCurrentUser'); } catch (e) {}
-    /* Clear server-side session cookie */
-    fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' }).catch(function () {});
+    /* Clear server-side session cookie — await so cookie is cleared before reload */
+    try { await fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' }); } catch (e) {}
     if (window.xcFirebaseReady && window.xcAuth) {
-      window.xcAuth.signOut().catch(function () {});
+      try { await window.xcAuth.signOut(); } catch (e) {}
     }
     location.reload();
   };
@@ -402,7 +402,7 @@
         _goStudy.addEventListener('mouseover', function () { this.style.transform = 'translateY(-2px)'; });
         _goStudy.addEventListener('mouseout', function () { this.style.transform = 'none'; });
         var _signOutBtn = ov.querySelector('#xca-signout-btn');
-        _signOutBtn.addEventListener('click', function () { fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' }).catch(function () {}); try { localStorage.removeItem('xcCurrentUser'); } catch (e) {} location.reload(); });
+        _signOutBtn.addEventListener('click', async function () { try { await fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' }); } catch (e) {} try { localStorage.removeItem('xcCurrentUser'); } catch (e) {} location.reload(); });
         _signOutBtn.addEventListener('mouseover', function () { this.style.background = 'rgba(255,255,255,.1)'; this.style.color = '#fff'; });
         _signOutBtn.addEventListener('mouseout', function () { this.style.background = 'rgba(255,255,255,.05)'; this.style.color = 'rgba(232,232,240,.7)'; });
         return;

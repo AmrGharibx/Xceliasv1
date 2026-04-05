@@ -5,8 +5,10 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node server.js",
-    "test": "jest --testTimeout=10000"
+    "dev": "nodemon server.js",
+    "test": "jest --testTimeout=10000",
+    "lint": "eslint server.js portal.js xcelias-auth.js admin-reset.js",
+    "format": "prettier --write server.js portal.js xcelias-auth.js admin-reset.js"
   },
   "dependencies": {
     "express": "^4.21.0",
@@ -14,7 +16,12 @@
     "http-proxy-middleware": "^3.0.0"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.2.0",
+    "eslint-config-prettier": "^10.1.8",
     "jest": "^30.3.0",
+    "nodemon": "^3.1.14",
+    "prettier": "^3.8.1",
     "supertest": "^7.2.2"
   }
 }

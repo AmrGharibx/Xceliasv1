@@ -9614,19 +9614,19 @@ const ActivityGameShell = ({ children, updateScore }) => {
   // Countdown: 3 → 2 → 1 → GO! → play
   React.useEffect(() => {
     let frame = 3;
+    let timerId;
     const tick = () => {
       frame--;
       if (frame <= 0) {
         setCountVal('GO!');
-        const t = setTimeout(() => setPhase('playing'), 700);
-        return () => clearTimeout(t);
+        timerId = setTimeout(() => setPhase('playing'), 700);
       } else {
         setCountVal(frame);
-        setTimeout(tick, 800);
+        timerId = setTimeout(tick, 800);
       }
     };
-    const t = setTimeout(tick, 700);
-    return () => clearTimeout(t);
+    timerId = setTimeout(tick, 700);
+    return () => clearTimeout(timerId);
   }, []);
 
   const wrappedUpdateScore = React.useCallback((points, isCorrect) => {

@@ -207,13 +207,6 @@
             100% { transform: translateY(0px) scale(1); opacity: 1; }
         }
 
-        /* PERF: Kept but no longer assigned to any element — available for one-shot use */
-        @keyframes rmGradientShift {
-            0% { opacity: 0.9; }
-            50% { opacity: 1; }
-            100% { opacity: 0.9; }
-        }
-
         @keyframes rmPulseGlow {
             0% { transform: scale(1); opacity: 1; }
             50% { transform: scale(1.02); opacity: 0.95; }
@@ -1352,7 +1345,6 @@
         }
 
         /* ═══════════════════════════════════════════════════════
-        /* ═══════════════════════════════════════════════════════
            ACTIVITY GAME SHELL — countdown + HUD + combo banner
         ═══════════════════════════════════════════════════════ */
 
@@ -2113,10 +2105,10 @@ Keep responses concise and actionable. Use bullet points. End with a coaching ti
                     <p>I'm RITA — your AI sales coach. Ask me anything about the training, or let me quiz you!</p>
                     <p style="font-size:.8rem;color:rgba(152,152,184,.7);margin-top:6px">💡 بتكلم عربي ولا English — أنا بتكلم الاتنين</p>
                     <div class="rita-pills">
-                        <button onclick="window.RITA.send('Quiz me on property types')">📋 Quiz Me</button>
-                        <button onclick="window.RITA.send('Explain the 7-pillar qualification framework')">🎯 7 Pillars</button>
-                        <button onclick="window.RITA.send('عميل قالي غالي أقوله إيه')">🔥 Objection Help</button>
-                        <button onclick="window.RITA.send('Role-play as a difficult client')">🎭 Role Play</button>
+                        <button data-q="Quiz me on property types">📋 Quiz Me</button>
+                        <button data-q="Explain the 7-pillar qualification framework">🎯 7 Pillars</button>
+                        <button data-q="عميل قالي غالي أقوله إيه">🔥 Objection Help</button>
+                        <button data-q="Role-play as a difficult client">🎭 Role Play</button>
                     </div>
                 </div>
             </div>`;

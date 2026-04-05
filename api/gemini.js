@@ -138,6 +138,6 @@ module.exports = async function handler(req, res) {
         res.json({ success: true, text });
     } catch (err) {
         console.error('Gemini proxy error:', err.message);
-        res.status(502).json({ success: false, error: err.message || 'Gemini request failed' });
+        res.status(502).json({ success: false, error: 'Gemini request failed' });
     }
 }

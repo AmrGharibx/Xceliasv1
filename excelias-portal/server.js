@@ -280,6 +280,7 @@ app.use('/studyguide', express.static(STUDY_GUIDE_DIR));
     The website's index.html uses absolute paths — rewrite them on the fly.
     API calls are proxied to the standalone website server when it's running.    */
 app.post(['/api/gemini', '/api/route/route', '/api/route/table', '/api/route/trip'], (req, res) => {
+  if (!verifySession(parseCookies(req).xc_session)) return res.status(401).json({ error: 'Authentication required' });
   if (rateLimitCheck(req, res)) return; // prevent API quota abuse
   const body = JSON.stringify(req.body);
   const proxyReq = http.request({
@@ -336,8 +337,10 @@ app.use((err, _req, res, _next) => {
   res.status(status).json({ error: safeMessages[status] || 'Internal server error' });
 });
 
+module.exports = { app, signSession, verifySession, parseCookies, _loginAttempts };
+
 /* ─── Launch ─── */
-app.listen(PORT, () => {
+if (require.main === module) app.listen(PORT, () => {
   const u = `http://localhost:${PORT}`;
   console.log('');
   console.log('  ╔══════════════════════════════════════════════╗');

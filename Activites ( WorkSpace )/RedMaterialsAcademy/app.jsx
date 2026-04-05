@@ -460,7 +460,7 @@ const getRandomItem = (array) => {
 };
 
 // Generate unique ID
-const generateId = () => Math.random().toString(36).substr(2, 9);
+const generateId = () => Math.random().toString(36).substring(2, 11);
 
 // ============================================
 // THEME HELPERS
@@ -9731,6 +9731,8 @@ const App = () => {
     await XC.signOut();
     setCurrentUser(null);
     setGlobalScore(0); setGlobalStreak(0); setCurrentActivity(null); setSelectedCategory(null);
+    setAcademyProgress({ activityStats: {}, recentSessions: [], lastPlayedId: null, claimedMissionKeys: [], seenUnlockIds: [] });
+    try { localStorage.removeItem(APP_STORAGE.academyProgress); localStorage.removeItem(APP_STORAGE.globalScore); localStorage.removeItem(APP_STORAGE.globalStreak); } catch {}
   };
 
   // ─── VERIFY LOCALSTORAGE AUTH AGAINST FIREBASE SESSION ─────
@@ -9751,13 +9753,13 @@ const App = () => {
       }
     });
     return () => unsub();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [currentUser]); // re-run whenever currentUser changes (e.g. after login)
 
   const [currentActivity, setCurrentActivity] = useState(null);
   const [globalScore, setGlobalScore] = useState(() => {
     try {
       const raw = parseInt(localStorage.getItem(APP_STORAGE.globalScore) || '0', 10);
-      return Number.isFinite(raw) ? raw : 0;
+      return Number.isFinite(raw) ? Math.max(0, raw) : 0;
     } catch {
       return 0;
     }
@@ -9841,7 +9843,7 @@ const App = () => {
       XC.pushScore(currentUser.uid, currentUser.batchId, globalScore, globalStreak, rank.en, activitiesPlayed);
     }, 1500);
     return () => clearTimeout(timer);
-  }, [globalScore, globalStreak]);
+  }, [globalScore, globalStreak, currentUser]);
 
   useEffect(() => {
     try {
@@ -10059,6 +10061,7 @@ const App = () => {
       };
 
       return {
+        ...prev,
         activityStats: {
           ...prev.activityStats,
           [currentActivity.id]: nextTrack
@@ -10549,7 +10552,7 @@ const App = () => {
           <div style={{ maxWidth: 680, flex: '1 1 380px' }}>
             <div style={{ display: 'inline-flex', gap: 10, alignItems: 'center', marginBottom: 16, flexWrap: 'wrap' }}>
               <span style={{ ...styles.badge, ...styles.badgeRed }}>{lang === 'eg' ? 'أكاديمية الأداء' : 'Performance Academy'}</span>
-              <span style={{ ...styles.badge, ...styles.badgeBlue }}>{lang === 'eg' ? '42 نشاط' : '42 Activities'}</span>
+              <span style={{ ...styles.badge, ...styles.badgeBlue }}>{lang === 'eg' ? `${activityInsights.length} نشاط` : `${activityInsights.length} Activities`}</span>
               {projectorMode && <span style={{ ...styles.badge, ...styles.badgeGreen }}>{lang === 'eg' ? 'وضع بروجكتور' : 'Projector Ready'}</span>}
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 18, marginBottom: 14 }}>
@@ -11115,7 +11118,7 @@ const App = () => {
         {/* ── Mobile Bottom Navigation ── */}
         <nav className="xc-bottom-nav">
           <button className={`xc-bnav-item${mobileTab==='home'?' active':''}`}
-            onClick={() => { setMobileTab('home'); setCurrentActivity && setCurrentActivity(null); }}>
+            onClick={() => { setMobileTab('home'); setCurrentActivity(null); setSelectedCategory(null); }}>
             <span className="xc-bnav-icon">🏠</span>
             <span className="xc-bnav-label">Home</span>
           </button>
@@ -11135,7 +11138,7 @@ const App = () => {
             <span className="xc-bnav-label">Room</span>
           </button>
           <button className={`xc-bnav-item${mobileTab==='profile'?' active':''}`}
-            onClick={() => setMobileTab('profile')}>
+            onClick={() => { setMobileTab('profile'); setCurrentActivity(null); setSelectedCategory(null); }}>
             <span className="xc-bnav-icon">👤</span>
             <span className="xc-bnav-label">Profile</span>
           </button>
@@ -11740,7 +11743,12 @@ const XcAdminPanel = ({ currentUser, onClose }) => {
   useEffect(() => {
     (async () => {
       setLoading(true);
-      try { setAccounts(await XC.listAccounts()); } catch {}
+      try {
+        const accs = await XC.listAccounts();
+        setAccounts(accs);
+        const firstBatch = accs.find(a => a.batchId && a.batchId !== 'admin' && a.role !== 'admin');
+        if (firstBatch) { setBatchId(firstBatch.batchId); setBatchName(firstBatch.batchName || firstBatch.batchId); }
+      } catch {}
       setLoading(false);
     })();
   }, []);

@@ -365,7 +365,7 @@ app.post('/api/gemini', async (req, res) => {
       } catch { continue; }
       if (!response.ok) {
         if (response.status === 503 || response.status === 429 || response.status === 404) continue;
-        break; // non-retryable — try next model
+        break; // hard error (e.g. 400/401/403) — no point trying other models
       }
       const data = await response.json();
       const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';

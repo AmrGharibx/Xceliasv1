@@ -13,8 +13,6 @@ const PORT = process.env.PORT || 4000;
 
 /* ── Trust first proxy (Vercel / nginx) so req.ip returns real client IP ── */
 if (process.env.VERCEL || process.env.TRUST_PROXY) app.set('trust proxy', 1);
-const WEBSITE_LOCAL_ORIGIN = process.env.WEBSITE_LOCAL_ORIGIN || 'http://localhost:3000';
-
 /* ═══════════════════════════════════════════════════════════════════
    SERVER-SIDE SESSION SECURITY
    ═══════════════════════════════════════════════════════════════════

@@ -940,62 +940,6 @@ body {
   .orb { display: none; }
 }
 
-/* ──────────────────────────────────────────────────────────────────────
-   XCP AUTH GUARD + USER CHIP
-   ────────────────────────────────────────────────────────────────────── */
-/* ─────────────────────────────────────────────────────────────────────
-   PORTAL AUTH GUARD — same design as Training Academy login
-   ───────────────────────────────────────────────────────────────────── */
-#xcp-auth-guard {
-  position:fixed; inset:0; z-index:9999;
-  display:grid; place-items:center;
-  background:radial-gradient(ellipse 120% 80% at 20% 20%,rgba(102,126,234,0.18),transparent 55%),
-             radial-gradient(ellipse 100% 80% at 80% 80%,rgba(240,147,251,0.14),transparent 55%),
-             linear-gradient(180deg,#070710 0%,#0d0d1e 100%);
-  padding:20px; overflow-y:auto; font-family:'Montserrat',sans-serif;
-}
-.xc-login-bg { position:absolute; inset:0; overflow:hidden; pointer-events:none; }
-.xc-login-orb { position:absolute; border-radius:50%; filter:blur(80px); opacity:0.18; animation:xcLoginOrbFloat 8s ease-in-out infinite; }
-.xc-login-orb--1 { width:500px; height:500px; background:#667eea; top:-150px; left:-150px; animation-delay:0s; }
-.xc-login-orb--2 { width:400px; height:400px; background:#f093fb; bottom:-100px; right:-100px; animation-delay:-3s; }
-.xc-login-orb--3 { width:300px; height:300px; background:#50fa7b; top:30%; left:40%; animation-delay:-5s; }
-@keyframes xcLoginOrbFloat { 0%,100% { transform:translate(0,0) scale(1); } 33% { transform:translate(30px,-20px) scale(1.05); } 66% { transform:translate(-20px,30px) scale(0.95); } }
-.xc-login-card { position:relative; z-index:2; background:rgba(15,15,26,0.82); backdrop-filter:blur(28px); border:1px solid rgba(102,126,234,0.18); border-radius:28px; padding:48px 40px; width:100%; max-width:420px; box-shadow:0 32px 80px rgba(0,0,0,0.6),0 0 60px rgba(102,126,234,0.08); animation:xcCardIn 0.6s cubic-bezier(0.175,0.885,0.32,1.275); margin:auto; }
-@keyframes xcCardIn { from { opacity:0; transform:translateY(32px) scale(0.95); } to { opacity:1; transform:none; } }
-.xc-login-logo { position:relative; width:80px; height:80px; margin:0 auto 24px; display:flex; align-items:center; justify-content:center; overflow:visible; }
-.xc-login-logo-ring { position:absolute; border-radius:50%; border:2px solid transparent; pointer-events:none; }
-.xc-login-logo-ring--outer { inset:-12px; background:linear-gradient(#0f0f1a,#0f0f1a) padding-box,linear-gradient(135deg,#667eea,#f093fb,#50fa7b,#667eea) border-box; animation:xcRingSpin 5s linear infinite; }
-.xc-login-logo-ring--inner { inset:-4px; border-width:1px; background:linear-gradient(#0f0f1a,#0f0f1a) padding-box,linear-gradient(225deg,#667eea 0%,#764ba2 100%) border-box; animation:xcRingSpin 8s linear infinite reverse; }
-.xc-login-logo-orb { position:absolute; border-radius:50%; pointer-events:none; width:10px; height:10px; }
-.xc-login-logo-orb--1 { background:#667eea; box-shadow:0 0 12px 4px rgba(102,126,234,0.8); animation:xcLoginOrb1 2.5s linear infinite; }
-.xc-login-logo-orb--2 { background:#f093fb; box-shadow:0 0 12px 4px rgba(240,147,251,0.8); animation:xcLoginOrb2 3.8s linear infinite; }
-.xc-login-logo-orb--3 { background:#50fa7b; box-shadow:0 0 10px 3px rgba(80,250,123,0.7); animation:xcLoginOrb3 5s linear infinite reverse; }
-@keyframes xcLoginOrb1 { 0%{transform:translate(0,-44px)}25%{transform:translate(44px,0)}50%{transform:translate(0,44px)}75%{transform:translate(-44px,0)}100%{transform:translate(0,-44px)} }
-@keyframes xcLoginOrb2 { 0%{transform:translate(44px,0)}25%{transform:translate(0,44px)}50%{transform:translate(-44px,0)}75%{transform:translate(0,-44px)}100%{transform:translate(44px,0)} }
-@keyframes xcLoginOrb3 { 0%{transform:translate(-32px,-32px)}50%{transform:translate(32px,32px)}100%{transform:translate(-32px,-32px)} }
-@keyframes xcRingSpin { to { transform:rotate(360deg); } }
-.xc-login-logo-svg { width:52px; height:52px; position:relative; z-index:2; animation:xcLogoBreath 3s ease-in-out infinite; }
-@keyframes xcLogoBreath { 0%,100%{filter:drop-shadow(0 0 8px rgba(102,126,234,0.4));transform:scale(1)}50%{filter:drop-shadow(0 0 22px rgba(240,147,251,0.7)) drop-shadow(0 0 40px rgba(102,126,234,0.3));transform:scale(1.06)} }
-.xc-login-title { text-align:center; margin-bottom:32px; }
-.xc-login-title-x { display:block; font-size:32px; font-weight:900; letter-spacing:-1px; background:linear-gradient(135deg,#fff 0%,#667eea 50%,#f093fb 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-.xc-login-title-sub { display:block; font-size:12px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:rgba(152,152,184,0.7); margin-top:4px; }
-.xc-login-form { display:flex; flex-direction:column; gap:16px; }
-.xc-login-field { display:flex; flex-direction:column; gap:6px; }
-.xc-login-label { font-size:12px; font-weight:700; letter-spacing:0.5px; text-transform:uppercase; color:rgba(152,152,184,0.8); }
-.xc-login-input { background:rgba(255,255,255,0.05); border:1px solid rgba(102,126,234,0.2); border-radius:14px; padding:14px 16px; color:rgba(232,232,240,0.94); font-size:15px; font-family:'Montserrat',sans-serif; font-weight:500; outline:none; transition:border-color 0.2s,box-shadow 0.2s; width:100%; box-sizing:border-box; }
-.xc-login-input:focus { border-color:rgba(102,126,234,0.5); box-shadow:0 0 0 3px rgba(102,126,234,0.12); }
-.xc-login-input::placeholder { color:rgba(152,152,184,0.4); }
-.xc-login-pw-wrap { position:relative; }
-.xc-login-pw-wrap .xc-login-input { padding-right:48px; }
-.xc-login-pw-toggle { position:absolute; right:14px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; font-size:18px; line-height:1; color:rgba(152,152,184,0.6); padding:4px; transition:color 0.2s; }
-.xc-login-pw-toggle:hover { color:rgba(232,232,240,0.8); }
-.xc-login-error { background:rgba(248,113,113,0.1); border:1px solid rgba(248,113,113,0.3); border-radius:12px; padding:12px 16px; font-size:13px; color:#f87171; text-align:center; }
-.xc-login-btn { padding:16px 24px; border-radius:16px; border:1px solid rgba(102,126,234,0.2); cursor:pointer; font-family:'Montserrat',sans-serif; font-size:15px; font-weight:700; background:rgba(255,255,255,0.08); color:rgba(232,232,240,0.9); transition:all 0.2s; text-align:center; width:100%; }
-.xc-login-btn:disabled { opacity:0.6; cursor:not-allowed; }
-.xc-login-btn--primary { background:linear-gradient(135deg,#667eea 0%,#764ba2 50%,#f093fb 100%); background-size:200% auto; color:#fff; border:none; box-shadow:0 8px 24px rgba(102,126,234,0.35); animation:xcBtnShimmer 3s linear infinite; }
-@keyframes xcBtnShimmer { 0%{background-position:0% center}100%{background-position:200% center} }
-.xc-login-btn--primary:not(:disabled):hover { box-shadow:0 12px 32px rgba(102,126,234,0.5); transform:translateY(-2px) scale(1.01); }
-.xc-login-footer-hint { text-align:center; font-size:12px; color:rgba(152,152,184,0.5); margin-top:16px; }
 /* User chip */
 #xcp-user-chip { display:none; align-items:center; gap:10px; padding:8px 14px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius:50px; font-size:13px; }
 .xcp-chip-name { font-weight:700; color:#e8e8f0; max-width:120px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
@@ -1009,4 +953,3 @@ body {
 /* Access denied flash */
 #xcp-access-denied { position:fixed; bottom:32px; left:50%; transform:translateX(-50%); background:rgba(245,101,101,0.12); border:1px solid rgba(245,101,101,0.3); color:#fc8181; padding:14px 24px; border-radius:16px; font-size:13px; font-weight:600; font-family:'Montserrat',sans-serif; opacity:0; transition:opacity 0.3s; pointer-events:none; z-index:99; white-space:nowrap; }
 #xcp-access-denied.show { opacity:1; }
-@media (max-width:480px) { .xc-login-card { padding:32px 20px; border-radius:20px; } }

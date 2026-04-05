@@ -20,7 +20,7 @@ const PROJECTS = {
   avaria: {
     name:  'Academy Operations',
     url:   IS_LOCAL ? 'http://localhost:3005' : 'https://lms.xcelias.com',
-    mode:  'iframe'
+    mode:  'tab'
   },
   reports: {
     name:  'Report Generator',
@@ -137,20 +137,30 @@ topbarNewTab.addEventListener('click', function () { openInNewTab(); });
   }
 
   let animId;
+  let isAnimating = false;
   function animate() {
     ctx.clearRect(0, 0, W, H);
     particles.forEach(p => { p.update(); p.draw(); });
     drawLines();
     animId = requestAnimationFrame(animate);
   }
-  animate();
+  function startAnimation() {
+    if (isAnimating) return;
+    isAnimating = true;
+    animate();
+  }
+  function stopAnimation() {
+    cancelAnimationFrame(animId);
+    isAnimating = false;
+  }
+  startAnimation();
 
   // Pause when in project view
   const obs = new MutationObserver(() => {
     if (!projectView.classList.contains('hidden')) {
-      cancelAnimationFrame(animId);
+      stopAnimation();
     } else {
-      animate();
+      startAnimation();
     }
   });
   obs.observe(projectView, { attributes: true, attributeFilter: ['class'] });
@@ -181,7 +191,7 @@ topbarNewTab.addEventListener('click', function () { openInNewTab(); });
         io.unobserve(el);
       }
     });
-  }, { threshold: 0.3 });
+  }, { threshold: 0.1 });
   nums.forEach(n => io.observe(n));
 })();
 
@@ -205,10 +215,6 @@ function launchProject(key) {
   }
 
   if (proj.mode === 'tab') {
-    if (!proj.url) {
-      showAvariaBanner();
-      return;
-    }
     window.open(proj.url, '_blank', 'noopener');
     return;
   }
@@ -343,12 +349,6 @@ function applyPortalRoles(user) {
   });
 }
 
-// Remove the old static auth guard overlay (replaced by dynamic one from xcelias-auth.js)
-(function () {
-  const oldGuard = document.getElementById('xcp-auth-guard');
-  if (oldGuard) oldGuard.remove();
-})();
-
 XceliasAuth.guard({
   moduleName: 'Portal',
   requiredRoles: null,   // any authenticated user can access home
@@ -389,36 +389,6 @@ window.addEventListener('popstate', (e) => {
   }
 });
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   AVARIA BANNER (graceful server-required notice)
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
-function showAvariaBanner() {
-  // Remove existing banner if any
-  const existing = document.getElementById('avaria-banner');
-  if (existing) existing.remove();
-
-  const overlay = document.createElement('div');
-  overlay.id = 'avaria-banner';
-  overlay.style.cssText = 'position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);animation:fadeIn .3s ease';
-  overlay.innerHTML = `
-    <div style="background:linear-gradient(180deg,rgba(30,30,50,0.97),rgba(15,15,26,0.98));border:1px solid rgba(102,126,234,0.25);border-radius:20px;padding:40px;max-width:480px;width:90%;box-shadow:0 24px 80px rgba(0,0,0,0.6),0 0 60px rgba(102,126,234,0.08);text-align:center">
-      <div style="width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 20px">ðŸ›ï¸</div>
-      <h3 style="font-size:20px;font-weight:700;color:#e8e8f0;margin-bottom:8px">Server Required</h3>
-      <p style="color:#9898b8;font-size:14px;line-height:1.6;margin-bottom:24px">Academy Operations runs on a local Next.js server with database and authentication. It requires a separate setup.</p>
-      <div style="background:rgba(0,0,0,0.3);border:1px solid rgba(102,126,234,0.15);border-radius:12px;padding:16px;margin-bottom:24px;text-align:left">
-        <div style="font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:#667eea;margin-bottom:10px;font-weight:600">Run locally</div>
-        <code style="font-family:monospace;font-size:13px;color:#f093fb;line-height:1.8;display:block">cd "System Before Prompting V2/avaria"</code>
-        <code style="font-family:monospace;font-size:13px;color:#f093fb;display:block">npm run dev</code>
-      </div>
-      <button id="avaria-dismiss" style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;padding:12px 36px;border-radius:50px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s ease;box-shadow:0 8px 24px rgba(102,126,234,0.3)">Got it</button>
-    </div>
-  `;
-  document.body.appendChild(overlay);
-  overlay.querySelector('#avaria-dismiss').addEventListener('click', function () { overlay.remove(); });
-  overlay.addEventListener('click', (e) => {
-    if (e.target === overlay) overlay.remove();
-  });
-}
 
 /* â”€â”€â”€ Deep linking â”€â”€â”€ */
 (function handleInitialHash() {

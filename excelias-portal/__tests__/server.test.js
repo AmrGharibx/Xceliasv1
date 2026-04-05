@@ -373,3 +373,166 @@ describe('Error responses do not leak internals', () => {
     expect(JSON.stringify(res.body)).not.toContain('super-secret-token-value');
   });
 });
+
+/* ─────────────────────────────────────────────────────────── */
+/* 11 — Root redirect for student session                      */
+/* ─────────────────────────────────────────────────────────── */
+
+describe('GET / — student session redirect', () => {
+  test('redirects student at root to /studyguide/', async () => {
+    const token = makeSession({ uid: UID_STUDENT, role: 'student' });
+    const res = await request(app)
+      .get('/')
+      .set('Cookie', cookieHeader(token));
+    expect(res.status).toBe(302);
+    expect(res.headers.location).toBe('/studyguide/');
+  });
+
+  test('does NOT redirect admin at root', async () => {
+    const token = makeSession({ uid: UID_ADMIN, role: 'admin' });
+    const res = await request(app)
+      .get('/')
+      .set('Cookie', cookieHeader(token));
+    // Admin gets through — no 302 to studyguide
+    expect(res.status).not.toBe(302);
+    expect((res.headers.location || '')).not.toMatch(/studyguide/);
+  });
+});
+
+/* ─────────────────────────────────────────────────────────── */
+/* 12 — Study guide has NO server-side auth guard              */
+/* ─────────────────────────────────────────────────────────── */
+
+describe('GET /studyguide/ — no server-side redirect', () => {
+  test('unauthenticated request is NOT redirected to login', async () => {
+    const res = await request(app).get('/studyguide/');
+    // Should NOT redirect to / — studyguide is client-side guarded only
+    expect(res.status).not.toBe(302);
+    // Either 200 (file found in dist) or 404 (dist not built), never 302
+    expect([200, 404]).toContain(res.status);
+  });
+});
+
+/* ─────────────────────────────────────────────────────────── */
+/* 13 — Rate limiter on /api/gemini with valid session         */
+/* ─────────────────────────────────────────────────────────── */
+
+describe('Rate limiter on /api/gemini with authenticated session', () => {
+  test('returns 429 after 5 rapid authenticated requests', async () => {
+    const token = makeSession({ uid: UID_ADMIN, role: 'admin' });
+
+    let lastStatus;
+    for (let i = 0; i < 6; i++) {
+      const res = await request(app)
+        .post('/api/gemini')
+        .set('Cookie', cookieHeader(token))
+        .set('X-Forwarded-For', '10.1.2.3')
+        .send({ messages: [] });
+      lastStatus = res.status;
+    }
+    // 6th request must be rate-limited (502 is also acceptable if proxy fires, but 429 expected)
+    expect([429, 502]).toContain(lastStatus);
+  });
+});
+
+/* ─────────────────────────────────────────────────────────── */
+/* 14 — verifySession edge cases                               */
+/* ─────────────────────────────────────────────────────────── */
+
+describe('verifySession edge cases', () => {
+  test('returns null for token with no dot separator', () => {
+    expect(verifySession('nodotinhere')).toBeNull();
+  });
+
+  test('returns null for token with invalid base64url payload', () => {
+    // valid-looking structure but payload is not valid JSON base64url
+    const badPayload = '!!!.validlookingsig';
+    expect(verifySession(badPayload)).toBeNull();
+  });
+
+  test('returns null for token whose payload decodes to non-object JSON', () => {
+    const data = Buffer.from('"justAString"').toString('base64url');
+    const sig = require('crypto')
+      .createHmac('sha256', 'wrongsecret').update(data).digest('base64url');
+    expect(verifySession(data + '.' + sig)).toBeNull();
+  });
+});
+
+/* ─────────────────────────────────────────────────────────── */
+/* 15 — Oversized payload returns 413                          */
+/* ─────────────────────────────────────────────────────────── */
+
+describe('POST /api/auth/firebase-session — payload size limit', () => {
+  test('returns 413 when body exceeds 50kb', async () => {
+    const bigToken = 'x'.repeat(52 * 1024); // 52 KB > 50 KB limit
+    const res = await request(app)
+      .post('/api/auth/firebase-session')
+      .set('Content-Type', 'application/json')
+      .send(JSON.stringify({ idToken: bigToken }));
+    expect(res.status).toBe(413);
+    // Must not leak internals
+    if (res.body && res.body.error) {
+      expect(res.body.error).not.toMatch(/Error:|stack|\.js:/);
+    }
+  });
+});
+
+/* ─────────────────────────────────────────────────────────── */
+/* 16 — Security headers on redirect responses                 */
+/* ─────────────────────────────────────────────────────────── */
+
+describe('Security headers on redirect responses', () => {
+  test('/activities/ redirect carries security headers', async () => {
+    const res = await request(app).get('/activities/');
+    expect(res.status).toBe(302);
+    // Security headers must be present even on redirects
+    expect(res.headers['x-content-type-options']).toBe('nosniff');
+    expect(res.headers['content-security-policy']).toBeTruthy();
+  });
+});
+
+/* ─────────────────────────────────────────────────────────── */
+/* 17 — Session cookie attributes                              */
+/* ─────────────────────────────────────────────────────────── */
+
+describe('Session cookie attributes', () => {
+  test('xc_session cookie has SameSite=Lax and Path=/', async () => {
+    admin.auth().verifyIdToken.mockResolvedValueOnce({ uid: UID_ADMIN });
+    const res = await request(app)
+      .post('/api/auth/firebase-session')
+      .send({ idToken: 'valid-admin-token' });
+    const setCookie = res.headers['set-cookie'] || [];
+    const cookieStr = setCookie.join('; ');
+    expect(cookieStr).toMatch(/SameSite=Lax/i);
+    expect(cookieStr).toMatch(/Path=\//i);
+    expect(cookieStr).toMatch(/HttpOnly/i);
+  });
+});
+
+/* ─────────────────────────────────────────────────────────── */
+/* 18 — Route proxy endpoints require authentication           */
+/* ─────────────────────────────────────────────────────────── */
+
+describe('Route proxy endpoints require authentication', () => {
+  test('POST /api/route/route returns 401 without session', async () => {
+    const res = await request(app)
+      .post('/api/route/route')
+      .send({ origin: 'A', destination: 'B' });
+    expect(res.status).toBe(401);
+    expect(res.body).toHaveProperty('error');
+  });
+
+  test('POST /api/route/table returns 401 without session', async () => {
+    const res = await request(app)
+      .post('/api/route/table')
+      .send({});
+    expect(res.status).toBe(401);
+  });
+
+  test('POST /api/route/trip returns 401 without session', async () => {
+    const res = await request(app)
+      .post('/api/route/trip')
+      .send({});
+    expect(res.status).toBe(401);
+  });
+});

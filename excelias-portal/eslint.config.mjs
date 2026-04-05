@@ -4,7 +4,9 @@ import prettier from 'eslint-config-prettier';
 export default [
   js.configs.recommended,
   prettier,
+  /* ── Server-side files (Node.js) ─────────────────────────────── */
   {
+    files: ['server.js', 'admin-reset.js'],
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'commonjs',
@@ -30,6 +32,48 @@ export default [
       'no-eval': 'error',
       'no-implied-eval': 'error',
     },
-    ignores: ['node_modules/**', '__tests__/**'],
+  },
+  /* ── Client-side browser files ────────────────────────────────── */
+  {
+    files: ['portal.js', 'xcelias-auth.js'],
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'script',
+      globals: {
+        window: 'readonly',
+        document: 'readonly',
+        location: 'readonly',
+        history: 'readonly',
+        navigator: 'readonly',
+        fetch: 'readonly',
+        localStorage: 'readonly',
+        sessionStorage: 'readonly',
+        requestAnimationFrame: 'readonly',
+        cancelAnimationFrame: 'readonly',
+        MutationObserver: 'readonly',
+        IntersectionObserver: 'readonly',
+        performance: 'readonly',
+        console: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearInterval: 'readonly',
+        URL: 'readonly',
+        XMLHttpRequest: 'readonly',
+        FormData: 'readonly',
+        Event: 'readonly',
+        CustomEvent: 'readonly',
+        XceliasAuth: 'readonly',
+      },
+    },
+    rules: {
+      'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+      'no-console': 'off',
+      eqeqeq: ['error', 'always'],
+      'no-eval': 'error',
+      'no-implied-eval': 'error',
+      'no-empty': ['warn', { allowEmptyCatch: true }],
+      'no-irregular-whitespace': ['error', { skipTemplates: true }],
+    },
   },
 ];

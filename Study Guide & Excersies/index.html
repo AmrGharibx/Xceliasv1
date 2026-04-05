@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
@@ -1234,7 +1234,7 @@ function openBatch(id){
   curProjIdx=0;
   const tb=$id('tb-batch');if(tb){tb.textContent=curBatch.label;tb.style.display=''}
   if($id('tb-mod'))$id('tb-mod').textContent=curBatch.label+' · Study Guide';
-  const bnav=$id('bnav');if(bnav)bnav.style.display='block';
+  const bnav=$id('bnav');if(bnav)bnav.style.display='';
   buildModeTabs();
   switchSection('study');
   showScreen('screen-study');
@@ -1703,6 +1703,8 @@ function checkBlank(){
   }
 }
 
+function updMastered(){renderBatchGrid()}
+
 /* ══ NAV ══ */
 function goBack(){
   curBatch=null;
@@ -1721,6 +1723,7 @@ document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){closeScore();return}
 });
 window.addEventListener('resize',()=>{if(curSection)updNavPill(curSection)});
+
 
 </script>
 </body>

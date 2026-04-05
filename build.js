@@ -160,57 +160,73 @@ console.log('    → Added <base href="/content/"> + rewrote CRA paths');
 /* ════════ 4. Reports (Project 3) ════════ */
 console.log('[4/6] Reports...');
 const reportsSrc = path.join(ROOT, 'Report Generation 3');
+const reportsCspSrc = path.join(reportsSrc, 'csp');
 const reportsDest = path.join(DIST, 'reports');
 mkDir(reportsDest);
-/* Exclude backup files, READMEs, and other non-runtime files from production */
-const reportsSkip = ['_backup', '.md'];
-for (const f of fs.readdirSync(reportsSrc, { withFileTypes: true })) {
-  if (f.isFile() && !reportsSkip.some(s => f.name.toLowerCase().includes(s))) {
-    copyFile(path.join(reportsSrc, f.name), path.join(reportsDest, f.name));
+const hasReportsCspBuild = fs.existsSync(path.join(reportsCspSrc, 'index.html'))
+  && fs.existsSync(path.join(reportsCspSrc, 'reports-app.js'));
+if (hasReportsCspBuild) {
+  copyDir(reportsCspSrc, reportsDest);
+  console.log('    → Copied CSP-safe reports assets from Report Generation 3/csp');
+} else {
+  /* Exclude backup files, READMEs, and other non-runtime files from production */
+  const reportsSkip = ['_backup', '.md'];
+  for (const f of fs.readdirSync(reportsSrc, { withFileTypes: true })) {
+    if (f.isFile() && !reportsSkip.some(s => f.name.toLowerCase().includes(s))) {
+      copyFile(path.join(reportsSrc, f.name), path.join(reportsDest, f.name));
+    }
   }
+  // Add <base> tag for Reports
+  const reportsHtml = path.join(reportsDest, 'index.html');
+  let rHtml = fs.readFileSync(reportsHtml, 'utf8');
+  rHtml = rHtml.replace('<head>', '<head>\n    <base href="/reports/" />\n    ' + studentGuardTag);
+  /* Fix firebase-config.js path — load from root instead of /activities/ */
+  rHtml = rHtml.replace('src="/activities/firebase-config.js"', 'src="/firebase-config.js"');
+  /* Extract inline XceliasAuth.guard() call → reports-guard.js (CSP compliance) */
+  const rGuardMatch = rHtml.match(/<script>\s*(XceliasAuth\.guard[\s\S]*?)<\/script>/);
+  if (rGuardMatch) {
+    fs.writeFileSync(path.join(reportsDest, 'reports-guard.js'), rGuardMatch[1].trim());
+    rHtml = rHtml.replace(rGuardMatch[0], '<script src="reports-guard.js"></script>');
+  }
+  /* Extract main app inline script → reports-app.js (CSP compliance) */
+  const rAppMatch = rHtml.match(/<script>\s*(\/\/ =+[\s\S]*?)<\/script>\s*<\/body>/);
+  if (rAppMatch) {
+    fs.writeFileSync(path.join(reportsDest, 'reports-app.js'), rAppMatch[1].trim());
+    rHtml = rHtml.replace(rAppMatch[0], '<script src="reports-app.js"></script>\n</body>');
+  }
+  fs.writeFileSync(reportsHtml, rHtml);
+  console.log('    → Added <base href="/reports/"> + student-guard.js external script');
 }
-// Add <base> tag for Reports
-const reportsHtml = path.join(reportsDest, 'index.html');
-let rHtml = fs.readFileSync(reportsHtml, 'utf8');
-rHtml = rHtml.replace('<head>', '<head>\n    <base href="/reports/" />\n    ' + studentGuardTag);
-/* Fix firebase-config.js path — load from root instead of /activities/ */
-rHtml = rHtml.replace('src="/activities/firebase-config.js"', 'src="/firebase-config.js"');
-/* Extract inline XceliasAuth.guard() call → reports-guard.js (CSP compliance) */
-const rGuardMatch = rHtml.match(/<script>\s*(XceliasAuth\.guard[\s\S]*?)<\/script>/);
-if (rGuardMatch) {
-  fs.writeFileSync(path.join(reportsDest, 'reports-guard.js'), rGuardMatch[1].trim());
-  rHtml = rHtml.replace(rGuardMatch[0], '<script src="reports-guard.js"></script>');
-}
-/* Extract main app inline script → reports-app.js (CSP compliance) */
-const rAppMatch = rHtml.match(/<script>\s*(\/\/ =+[\s\S]*?)<\/script>\s*<\/body>/);
-if (rAppMatch) {
-  fs.writeFileSync(path.join(reportsDest, 'reports-app.js'), rAppMatch[1].trim());
-  rHtml = rHtml.replace(rAppMatch[0], '<script src="reports-app.js"></script>\n</body>');
-}
-fs.writeFileSync(reportsHtml, rHtml);
-console.log('    → Added <base href="/reports/"> + student-guard.js external script');
 
 /* ════════ 5. Study Guide (Project 4) ════════ */
 console.log('[5/6] Study Guide...');
 const studySrc = path.join(ROOT, 'Study Guide & Excersies');
+const studyCspSrc = path.join(studySrc, 'csp');
 const studyDest = path.join(DIST, 'studyguide');
 mkDir(studyDest);
-copyFile(path.join(studySrc, 'index.html'), path.join(studyDest, 'index.html'));
-// Add <base> tag for Study Guide
-const studyHtml = path.join(studyDest, 'index.html');
-let sgHtml = fs.readFileSync(studyHtml, 'utf8');
-sgHtml = sgHtml.replace('<head>', '<head>\n    <base href="/studyguide/" />');
-/* Fix firebase-config.js path — load from root instead of /activities/ to avoid student guard */
-sgHtml = sgHtml.replace('src="/activities/firebase-config.js"', 'src="/firebase-config.js"');
-/* Extract inline <script> to external file for CSP compliance */
-const inlineMatch = sgHtml.match(/<script>\s*'use strict';([\s\S]*?)<\/script>\s*<\/body>/);
-if (inlineMatch) {
-  const scriptContent = "'use strict';" + inlineMatch[1];
-  fs.writeFileSync(path.join(studyDest, 'studyguide.js'), scriptContent);
-  sgHtml = sgHtml.replace(inlineMatch[0], '<script src="studyguide.js"><\/script>\n</body>');
+const hasStudyCspBuild = fs.existsSync(path.join(studyCspSrc, 'index.html'))
+  && fs.existsSync(path.join(studyCspSrc, 'studyguide.js'));
+if (hasStudyCspBuild) {
+  copyDir(studyCspSrc, studyDest);
+  console.log('    → Copied CSP-safe study guide assets from Study Guide & Excersies/csp');
+} else {
+  copyFile(path.join(studySrc, 'index.html'), path.join(studyDest, 'index.html'));
+  // Add <base> tag for Study Guide
+  const studyHtml = path.join(studyDest, 'index.html');
+  let sgHtml = fs.readFileSync(studyHtml, 'utf8');
+  sgHtml = sgHtml.replace('<head>', '<head>\n    <base href="/studyguide/" />');
+  /* Fix firebase-config.js path — load from root instead of /activities/ to avoid student guard */
+  sgHtml = sgHtml.replace('src="/activities/firebase-config.js"', 'src="/firebase-config.js"');
+  /* Extract inline <script> to external file for CSP compliance */
+  const inlineMatch = sgHtml.match(/<script>\s*'use strict';([\s\S]*?)<\/script>\s*<\/body>/);
+  if (inlineMatch) {
+    const scriptContent = "'use strict';" + inlineMatch[1];
+    fs.writeFileSync(path.join(studyDest, 'studyguide.js'), scriptContent);
+    sgHtml = sgHtml.replace(inlineMatch[0], '<script src="studyguide.js"></script>\n</body>');
+  }
+  fs.writeFileSync(studyHtml, sgHtml);
+  console.log('    → Copied Study Guide + added <base href="/studyguide/">');
 }
-fs.writeFileSync(studyHtml, sgHtml);
-console.log('    → Copied Study Guide + added <base href="/studyguide/">');
 
 /* ════════ 6. Website / Property Explorer (Project 5) ════════ */
 console.log('[6/6] Website...');

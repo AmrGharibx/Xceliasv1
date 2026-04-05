@@ -170,14 +170,20 @@ function studentGuardMiddleware(req, res, next) {
 /* ─── Workspace root (parent of this folder) ─── */
 const WS = path.resolve(__dirname, '..');
 const DIST = path.join(WS, 'dist');
+const REPORTS_SRC = fs.existsSync(path.join(WS, 'Report Generation 3', 'csp'))
+  ? path.join(WS, 'Report Generation 3', 'csp')
+  : path.join(WS, 'Report Generation 3');
+const STUDY_GUIDE_SRC = fs.existsSync(path.join(WS, 'Study Guide & Excersies', 'csp'))
+  ? path.join(WS, 'Study Guide & Excersies', 'csp')
+  : path.join(WS, 'Study Guide & Excersies');
 
 /* ─── Project paths (use dist/ when it exists, fall back to source) ─── */
 const useDist = fs.existsSync(DIST);
 const ACTIVITIES_DIR  = useDist ? path.join(DIST, 'activities')  : path.join(WS, 'Activites ( WorkSpace )', 'RedMaterialsAcademy');
 const CONTENT_BUILD   = useDist ? path.join(DIST, 'content')     : path.join(WS, 'Content ( WorkSpace )', 'red-materials-app', 'build');
-const REPORTS_DIR     = useDist ? path.join(DIST, 'reports')     : path.join(WS, 'Report Generation 3');
+const REPORTS_DIR     = useDist ? path.join(DIST, 'reports')     : REPORTS_SRC;
 const WEBSITE_DIR     = useDist ? path.join(DIST, 'website')     : path.join(WS, 'Website ( WorkSpace )');
-const STUDY_GUIDE_DIR = useDist ? path.join(DIST, 'studyguide') : path.join(WS, 'Study Guide & Excersies');
+const STUDY_GUIDE_DIR = useDist ? path.join(DIST, 'studyguide') : STUDY_GUIDE_SRC;
 const PORTAL_DIR      = useDist ? DIST                           : __dirname;
 
 /* ═══════════════════════════════════════════════════════════════════

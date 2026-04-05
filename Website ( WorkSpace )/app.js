@@ -18,6 +18,209 @@ function escHtml(s) {
   return d.innerHTML;
 }
 
+// ─── CSP-SAFE INLINE HANDLER BRIDGE ─────────────────────────────────────
+// The portal CSP blocks inline onclick/onchange/onkeydown handlers. The
+// Website module still contains many legacy inline attributes in both static
+// HTML and dynamic template strings, so this bridge interprets a small,
+// explicit subset of those handler strings without using eval/new Function.
+const GLOBAL_SCOPE = globalThis;
+const INLINE_COMPARISON_PATTERN = /^(.*?)\s*(===|!==)\s*(.*)$/;
+const INLINE_IF_PATTERN = /^if\((.*)\)(.+)$/;
+
+function pushInlinePart(parts, current) {
+    if (current.trim()) parts.push(current.trim());
+}
+
+function splitInlineToken(source, token) {
+    const parts = [];
+    let current = '';
+    let depthParen = 0;
+    let depthBracket = 0;
+    let quote = null;
+
+    for (let index = 0; index < source.length; index++) {
+        const char = source[index];
+        const prev = source[index - 1];
+
+        if (quote) {
+            current += char;
+            if (char === quote && prev !== '\\') quote = null;
+            continue;
+        }
+
+        if (char === '\'' || char === '"') {
+            quote = char;
+            current += char;
+            continue;
+        }
+
+        if (char === '(') depthParen++;
+        else if (char === ')') depthParen--;
+        else if (char === '[') depthBracket++;
+        else if (char === ']') depthBracket--;
+
+        if (depthParen === 0 && depthBracket === 0 && source.slice(index, index + token.length) === token) {
+            pushInlinePart(parts, current);
+            current = '';
+            index += token.length - 1;
+            continue;
+        }
+
+        current += char;
+    }
+
+    pushInlinePart(parts, current);
+    return parts;
+}
+
+function splitInlineParts(source, delimiter) {
+    return splitInlineToken(source, delimiter);
+}
+
+function splitInlineLogical(source, operator) {
+    return splitInlineToken(source, operator);
+}
+
+function unwrapInlineString(expr) {
+    const q = expr[0];
+    const body = expr.slice(1, -1);
+    const escapedQuote = String.raw`\` + q;
+    return body.replaceAll(escapedQuote, q).replaceAll('\\n', '\n');
+}
+
+function resolveInlinePath(path, scope) {
+    const parts = path.split('.').filter(Boolean);
+    if (!parts.length) return undefined;
+
+    let value;
+    if (parts[0] === 'this') value = scope.element;
+    else if (parts[0] === 'event') value = scope.event;
+    else if (parts[0] === 'window') value = GLOBAL_SCOPE;
+    else value = GLOBAL_SCOPE[parts[0]];
+
+    for (let index = 1; index < parts.length; index++) {
+        value = value?.[parts[index]];
+    }
+    return value;
+}
+
+function parseInlineValue(expr, scope) {
+    const value = expr.trim();
+    if (!value) return undefined;
+    if (value === 'event') return scope.event;
+    if (value === 'this') return scope.element;
+    if (value === 'this.value') return scope.element?.value;
+    if ((value.startsWith('\'') && value.endsWith('\'')) || (value.startsWith('"') && value.endsWith('"'))) {
+        return unwrapInlineString(value);
+    }
+    if (value === 'true') return true;
+    if (value === 'false') return false;
+    if (/^-?\d+(?:\.\d+)?$/.test(value)) return Number(value);
+    if (value.startsWith('[') && value.endsWith(']')) {
+        return splitInlineParts(value.slice(1, -1), ',').map(part => parseInlineValue(part, scope));
+    }
+    return resolveInlinePath(value, scope);
+}
+
+function evaluateInlineCondition(condition, scope) {
+    const orParts = splitInlineLogical(condition, '||');
+    return orParts.some(orPart => {
+        const andParts = splitInlineLogical(orPart, '&&');
+        return andParts.every(andPart => {
+            const match = INLINE_COMPARISON_PATTERN.exec(andPart);
+            if (!match) return Boolean(parseInlineValue(andPart, scope));
+            const left = parseInlineValue(match[1], scope);
+            const right = parseInlineValue(match[3], scope);
+            return match[2] === '===' ? left === right : left !== right;
+        });
+    });
+}
+
+function invokeInlineCall(statement, scope) {
+    const match = statement.match(/^([A-Za-z_$][\w.$]*)\((.*)\)$/);
+    if (!match) return false;
+
+    const path = match[1];
+    const args = splitInlineParts(match[2], ',').map(arg => parseInlineValue(arg, scope));
+    const segments = path.split('.');
+    const methodName = segments.pop();
+    const context = segments.length ? resolveInlinePath(segments.join('.'), scope) : GLOBAL_SCOPE;
+    const method = context?.[methodName];
+
+    if (typeof method !== 'function') return false;
+    method.apply(context, args);
+    return true;
+}
+
+function runInlineHandlerSource(source, event, element) {
+    const scope = { event, element };
+    const statements = splitInlineParts(source, ';');
+
+    for (const statement of statements) {
+        if (!statement) continue;
+        const ifMatch = INLINE_IF_PATTERN.exec(statement);
+        if (ifMatch) {
+            if (evaluateInlineCondition(ifMatch[1], scope)) {
+                runInlineHandlerSource(ifMatch[2], event, element);
+            }
+            continue;
+        }
+        invokeInlineCall(statement, scope);
+    }
+}
+
+function cspDataAttrName(attributeName) {
+    return `data-csp-${attributeName.slice(2)}`;
+}
+
+function moveInlineHandlerAttribute(element, attributeName) {
+    if (!element?.hasAttribute?.(attributeName)) return;
+    const dataName = cspDataAttrName(attributeName);
+    if (!element.hasAttribute(dataName)) {
+        element.setAttribute(dataName, element.getAttribute(attributeName));
+    }
+    element.removeAttribute(attributeName);
+}
+
+function migrateInlineHandlers(root) {
+    const scope = root?.nodeType === 1 ? root : document.documentElement;
+    if (!scope) return;
+
+    ['onclick', 'onchange', 'oninput', 'onkeydown'].forEach((attributeName) => {
+        moveInlineHandlerAttribute(scope, attributeName);
+        scope.querySelectorAll?.(`[${attributeName}]`).forEach((element) => {
+            moveInlineHandlerAttribute(element, attributeName);
+        });
+    });
+}
+
+function bindInlineHandlerBridge(attributeName, eventName) {
+    const dataName = cspDataAttrName(attributeName);
+    document.addEventListener(eventName, (event) => {
+        const element = event.target.closest(`[${dataName}]`);
+        if (!element) return;
+        const source = element.getAttribute(dataName);
+        if (!source) return;
+        runInlineHandlerSource(source, event, element);
+    }, true);
+}
+
+migrateInlineHandlers(document.documentElement);
+
+const inlineHandlerObserver = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach((node) => {
+            if (node.nodeType === 1) migrateInlineHandlers(node);
+        });
+    });
+});
+inlineHandlerObserver.observe(document.documentElement, { childList: true, subtree: true });
+
+bindInlineHandlerBridge('onclick', 'click');
+bindInlineHandlerBridge('onchange', 'change');
+bindInlineHandlerBridge('oninput', 'input');
+bindInlineHandlerBridge('onkeydown', 'keydown');
+
 if (!window.gsap) {
     const noopTimeline = {
         to() { return this; },
@@ -936,6 +1139,8 @@ const PriceAlerts = {
     }
 };
 
+GLOBAL_SCOPE.PriceAlerts = PriceAlerts;
+
 // Global functions for HTML onclick handlers
 function togglePriceAlertsPanel() {
     PriceAlerts.togglePanel();
@@ -1445,6 +1650,8 @@ const map = L.map("map", {
   updateWhenIdle: true, // Update tiles when map stops moving
   keepBuffer: 4, // Keep 4 tiles buffer around viewport (more cached tiles visible)
 }).setView([30.0, 31.0], 7);
+
+GLOBAL_SCOPE.map = map;
 
 // Map Tile Layers
 const darkTiles = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";

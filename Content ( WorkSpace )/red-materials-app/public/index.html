@@ -288,7 +288,7 @@ Keep responses educational and insightful. Use the training material as your sou
                 history.push({role:'assistant', content:reply});
             }catch(e){
                 if(thinking) thinking.remove();
-                addMsg('bot','<p style="color:#ff6b6b">⚠️ ' + (e.message || 'Connection error') + '</p>');
+                addMsg('bot','<p style="color:#ff6b6b">⚠️ ' + escHtml(e.message || 'Connection error') + '</p>');
             }
             if(history.length > 20) history = history.slice(-16);
         }

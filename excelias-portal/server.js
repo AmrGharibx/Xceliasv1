@@ -66,7 +66,35 @@ setInterval(() => {
   for (const [ip, rec] of _loginAttempts) {
     if (now - rec.start > RATE_LIMIT_WINDOW) _loginAttempts.delete(ip);
   }
+  for (const [ip, rec] of _geminiAttempts) {
+    if (now - rec.start > GEMINI_RATE_WINDOW) _geminiAttempts.delete(ip);
+  }
 }, 5 * 60 * 1000).unref();
+
+/* ── Gemini rate limiter (separate bucket — higher limit for chat UX) ── */
+const _geminiAttempts = new Map();
+const GEMINI_RATE_WINDOW = 60 * 1000; // 1 minute
+const GEMINI_RATE_MAX = 20;           // 20 AI messages per minute per IP
+function geminiRateLimitCheck(req, res) {
+  const ip = req.ip || req.connection.remoteAddress;
+  const now = Date.now();
+  let record = _geminiAttempts.get(ip);
+  if (!record || now - record.start > GEMINI_RATE_WINDOW) {
+    record = { count: 1, start: now };
+    _geminiAttempts.set(ip, record);
+    return false;
+  }
+  record.count++;
+  if (record.count > GEMINI_RATE_MAX) {
+    res.status(429).json({ error: 'Too many requests. Try again later.' });
+    return true;
+  }
+  return false;
+}
+
+/* ── Gemini model list (ordered by preference — most capable first) ── */
+const GEMINI_MODELS = ['gemini-2.5-flash-lite', 'gemini-2.0-flash-lite', 'gemini-2.5-flash', 'gemini-2.0-flash'];
+const GEMINI_BASE = 'https://generativelanguage.googleapis.com/v1beta/models';
 
 /* ── Cookie helpers ── */
 function signSession(payload) {
@@ -277,7 +305,7 @@ app.use('/studyguide', express.static(STUDY_GUIDE_DIR));
 /*  Serve the website under /website/ on all environments (same-origin for shared auth).
     The website's index.html uses absolute paths — rewrite them on the fly.
     API calls are proxied to the standalone website server when it's running.    */
-app.post(['/api/gemini', '/api/route/route', '/api/route/table', '/api/route/trip'], (req, res) => {
+app.post(['/api/route/route', '/api/route/table', '/api/route/trip'], (req, res) => {
   if (!verifySession(parseCookies(req).xc_session)) return res.status(401).json({ error: 'Authentication required' });
   if (rateLimitCheck(req, res)) return; // prevent API quota abuse
   const body = JSON.stringify(req.body);
@@ -291,6 +319,63 @@ app.post(['/api/gemini', '/api/route/route', '/api/route/table', '/api/route/tri
   });
   proxyReq.on('error', () => res.status(502).json({ error: 'Upstream service unavailable' }));
   proxyReq.end(body);
+});
+
+/* ─── RITA AI — Gemini proxy (direct call, no external server dependency) ─── */
+app.post('/api/gemini', async (req, res) => {
+  const session = verifySession(parseCookies(req).xc_session);
+  if (!session) return res.status(401).json({ error: 'Authentication required' });
+  if (geminiRateLimitCheck(req, res)) return;
+
+  const apiKey = process.env.GEMINI_API_KEY || '';
+  if (!apiKey) return res.status(503).json({ error: 'AI service not configured' });
+
+  try {
+    const { systemPrompt, messages, generationConfig } = req.body;
+    if (!messages || !Array.isArray(messages) || messages.length === 0) {
+      return res.status(400).json({ error: 'messages array required' });
+    }
+
+    const contents = messages.map(m => ({
+      role: m.role === 'assistant' ? 'model' : 'user',
+      parts: [{ text: String(m.content || '') }]
+    }));
+
+    const geminiBody = {
+      contents,
+      generationConfig: {
+        temperature: 0.9,
+        topP: 0.95,
+        maxOutputTokens: Math.min((generationConfig && generationConfig.maxOutputTokens) || 1200, 4096)
+      }
+    };
+    if (systemPrompt) {
+      geminiBody.systemInstruction = { parts: [{ text: String(systemPrompt).slice(0, 8000) }] };
+    }
+
+    for (const model of GEMINI_MODELS) {
+      const url = `${GEMINI_BASE}/${model}:generateContent?key=${apiKey}`;
+      let response;
+      try {
+        response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(geminiBody)
+        });
+      } catch { continue; }
+      if (!response.ok) {
+        if (response.status === 503 || response.status === 429 || response.status === 404) continue;
+        break; // non-retryable — try next model
+      }
+      const data = await response.json();
+      const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+      return res.json({ success: true, text });
+    }
+    res.status(502).json({ error: 'AI service temporarily unavailable' });
+  } catch (err) {
+    console.error('Gemini handler error:', err.message);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 });
 
 if (!useDist) {
@@ -335,7 +420,7 @@ app.use((err, _req, res, _next) => {
   res.status(status).json({ error: safeMessages[status] || 'Internal server error' });
 });
 
-module.exports = { app, signSession, verifySession, parseCookies, _loginAttempts };
+module.exports = { app, signSession, verifySession, parseCookies, _loginAttempts, _geminiAttempts };
 
 /* ─── Launch ─── */
 if (require.main === module) app.listen(PORT, () => {

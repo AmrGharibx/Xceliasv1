@@ -79,8 +79,8 @@ async function streamGemini(apiKey, geminiBody, res) {
 }
 
 module.exports = async function handler(req, res) {
-    // CORS — restrict to xcelias.com
-    const allowedOrigin = /^https?:\/\/(www\.)?xcelias\.com$/i;
+    // CORS — allow xcelias.com and excelias.vercel.app (Vercel preview URL)
+    const allowedOrigin = /^https?:\/\/((www\.)?xcelias\.com|excelias\.vercel\.app)$/i;
     const reqOrigin = req.headers.origin || '';
     if (allowedOrigin.test(reqOrigin)) {
         res.setHeader('Access-Control-Allow-Origin', reqOrigin);
@@ -92,10 +92,10 @@ module.exports = async function handler(req, res) {
         return res.status(405).json({ success: false, error: 'Method not allowed' });
     }
 
-    // Origin/Referer guard
+    // Origin/Referer guard — allow xcelias.com and excelias.vercel.app
     const origin  = req.headers.origin  || '';
     const referer = req.headers.referer || '';
-    const allowed = /^https?:\/\/(www\.)?xcelias\.com(\/|$)/i;
+    const allowed = /^https?:\/\/((www\.)?xcelias\.com|excelias\.vercel\.app)(\/|$)/i;
     if (!allowed.test(origin) && !allowed.test(referer)) {
         return res.status(403).json({ success: false, error: 'Forbidden' });
     }

@@ -22,13 +22,14 @@ jest.mock('firebase-admin', () => {
 
 const request  = require('supertest');
 const admin    = require('firebase-admin');
-const { app, signSession, verifySession, parseCookies, _loginAttempts } = require('../server');
+const { app, signSession, verifySession, parseCookies, _loginAttempts, _geminiAttempts } = require('../server');
 
 /* ─────────────────────────────────────────────────────────── */
 /* Global setup — clear rate-limiter state before each test   */
 /* ─────────────────────────────────────────────────────────── */
 beforeEach(() => {
   _loginAttempts.clear();
+  _geminiAttempts.clear();
 });
 
 /* ─────────────────────────────────────────────────────────── */
@@ -418,20 +419,56 @@ describe('GET /studyguide/ — no server-side redirect', () => {
 /* ─────────────────────────────────────────────────────────── */
 
 describe('Rate limiter on /api/gemini with authenticated session', () => {
-  test('returns 429 after 5 rapid authenticated requests', async () => {
+  test('returns 429 after 20 rapid authenticated requests', async () => {
     const token = makeSession({ uid: UID_ADMIN, role: 'admin' });
 
     let lastStatus;
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 21; i++) {
       const res = await request(app)
         .post('/api/gemini')
         .set('Cookie', cookieHeader(token))
         .set('X-Forwarded-For', '10.1.2.3')
-        .send({ messages: [] });
+        .send({ messages: [{ role: 'user', content: 'hi' }] });
       lastStatus = res.status;
     }
-    // 6th request must be rate-limited (502 is also acceptable if proxy fires, but 429 expected)
-    expect([429, 502]).toContain(lastStatus);
+    // 21st request must be rate-limited
+    expect(lastStatus).toBe(429);
+  });
+
+  test('returns 503 when GEMINI_API_KEY is not set (authenticated, not rate-limited)', async () => {
+    const token = makeSession({ uid: UID_ADMIN, role: 'admin' });
+    const savedKey = process.env.GEMINI_API_KEY;
+    delete process.env.GEMINI_API_KEY;
+    try {
+      const res = await request(app)
+        .post('/api/gemini')
+        .set('Cookie', cookieHeader(token))
+        .set('X-Forwarded-For', '10.5.6.7')
+        .send({ messages: [{ role: 'user', content: 'hello' }] });
+      expect(res.status).toBe(503);
+      expect(res.body).toHaveProperty('error');
+      expect(res.body.error).not.toMatch(/key|apiKey|GEMINI/i);
+    } finally {
+      if (savedKey !== undefined) process.env.GEMINI_API_KEY = savedKey;
+    }
+  });
+
+  test('returns 400 for empty messages array (authenticated)', async () => {
+    const token = makeSession({ uid: UID_ADMIN, role: 'admin' });
+    const saved = process.env.GEMINI_API_KEY;
+    process.env.GEMINI_API_KEY = 'test-key';
+    try {
+      const res = await request(app)
+        .post('/api/gemini')
+        .set('Cookie', cookieHeader(token))
+        .set('X-Forwarded-For', '10.8.9.0')
+        .send({ messages: [] });
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty('error');
+    } finally {
+      if (saved !== undefined) process.env.GEMINI_API_KEY = saved;
+      else delete process.env.GEMINI_API_KEY;
+    }
   });
 });
 

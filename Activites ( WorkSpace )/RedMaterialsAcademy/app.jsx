@@ -9806,7 +9806,6 @@ const App = () => {
     try { return localStorage.getItem(APP_STORAGE.projectorMode) === '1'; } catch { return false; }
   });
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const domArabicObserverRef = React.useRef(null);
 
   useEffect(() => {
     try { localStorage.setItem(APP_STORAGE.tone, tone); } catch {}

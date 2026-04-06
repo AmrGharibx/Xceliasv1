@@ -822,7 +822,10 @@ Keep responses educational and insightful. Use the training material as your sou
                 stream: false,
               }),
             });
-            if (!res.ok) throw new Error("API returned " + res.status);
+            if (!res.ok) {
+              const errBody = await res.json().catch(() => null);
+              throw new Error(errBody && errBody.error ? errBody.error : "API returned " + res.status);
+            }
             const data = await res.json();
             const reply =
               data.text ||

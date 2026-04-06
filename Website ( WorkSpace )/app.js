@@ -1033,7 +1033,7 @@ const PriceAlerts = {
             <div class="alert-item ${alert.triggered ? 'triggered' : ''}" data-id="${alert.id}">
                 <div class="alert-item-header">
                     <span class="alert-project-name">${escHtml(alert.projectName)}</span>
-                    <button class="alert-remove-btn" onclick="PriceAlerts.remove(${alert.id})" title="${i18n.t('removeAlert')}">
+                    <button class="alert-remove-btn" data-action="remove-alert" data-alert-id="${alert.id}" title="${i18n.t('removeAlert')}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                     </button>
                 </div>
@@ -2167,14 +2167,15 @@ function parseProjectData() {
     const details = window.projectDetails[p.name];
     
     // --- MOCK DATA GENERATION (1000x Intelligence) ---
-    // Assign Delivery Year (2020-2030) based on status
+    // Assign Delivery Year (2020-2030) based on status — deterministic from project name
     if (!p.deliveryYear) {
+        const _yearHash = p.name.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
         if (details && details.status) {
             const s = details.status.toLowerCase();
             if (s.includes('delivered') || s.includes('ready')) {
-                p.deliveryYear = Math.floor(Math.random() * (2024 - 2020 + 1)) + 2020; // 2020-2024
+                p.deliveryYear = 2020 + (_yearHash % 5); // deterministic 2020-2024
             } else {
-                p.deliveryYear = Math.floor(Math.random() * (2030 - 2025 + 1)) + 2025; // 2025-2030
+                p.deliveryYear = 2025 + (_yearHash % 6); // deterministic 2025-2030
             }
         } else {
             p.deliveryYear = 2026; // Default
@@ -2284,11 +2285,11 @@ let compareList = [];
 
 function addToCompare(projectName) {
   if (compareList.length >= 3) {
-    alert("You can only compare up to 3 projects.");
+    PriceAlerts.showToast('You can only compare up to 3 projects.', 'error');
     return;
   }
   if (compareList.find(p => p.name === projectName)) {
-    alert("Project already in comparison list.");
+    PriceAlerts.showToast('Project already in comparison list.', 'info');
     return;
   }
   
@@ -4091,6 +4092,36 @@ document.addEventListener('click', (e) => {
   else if (action === 'route') routeProjectActionEncoded(token, btn.dataset.routeType);
 });
 
+// ─── DELEGATED PRICE ALERT HANDLER (XSS-safe — no inline onclick) ─────
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-action="remove-alert"][data-alert-id]');
+  if (!btn) return;
+  const id = parseInt(btn.dataset.alertId, 10);
+  if (Number.isFinite(id)) PriceAlerts.remove(id);
+});
+
+// ─── DELEGATED ROUTE PLANNER HANDLER (XSS-safe — no inline onclick) ─────
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-route-planner-action]');
+  if (!btn) return;
+  const action = btn.dataset.routePlannerAction;
+  const idx = parseInt(btn.dataset.stopIndex, 10);
+  const delta = parseInt(btn.dataset.stopDelta, 10);
+  if (action === 'move-stop' && Number.isFinite(idx) && Number.isFinite(delta)) {
+    RoutePlanner.moveStop(idx, delta);
+  } else if (action === 'remove-stop' && Number.isFinite(idx)) {
+    RoutePlanner.removeStop(idx);
+  } else if (action === 'switch-alt' && Number.isFinite(idx)) {
+    RoutePlanner.switchToAlternative(idx);
+  } else if (action === 'select-mode') {
+    const mode = btn.dataset.ritaMode;
+    if (mode) selectRitaMode(mode);
+  } else if (action === 'send-ai') {
+    const msg = btn.dataset.aiMessage;
+    if (msg) sendAIMessage(msg);
+  }
+});
+
 // ─── DELEGATED RECENT ITEMS HANDLER (XSS-safe — no inline onclick) ─────
 document.addEventListener('click', (e) => {
   const item = e.target.closest('[data-action][data-project-name]');
@@ -4166,7 +4197,7 @@ async function downloadBrochure() {
       const includeAI = chkAI ? chkAI.checked : true;
 
       if (!includeData && !includeCalc && !includeAI) {
-          alert("Please select at least one section to include in the PDF.");
+          PriceAlerts.showToast('Please select at least one section to include in the PDF.', 'error');
           return;
       }
       
@@ -4176,7 +4207,7 @@ async function downloadBrochure() {
               await lazyLoadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js', 'sha384-fCAW/rDWORTbQxSiB7mOg0QtQ5c+r0f544y6XoKjuVva0nMBlCpNUjiFeG5iMdS3');
           } catch (e) {
               console.error('Failed to load jsPDF:', e);
-              alert('PDF generation is temporarily unavailable. Please try again.');
+              PriceAlerts.showToast('PDF generation is temporarily unavailable. Please try again.', 'error');
               return;
           }
       }
@@ -4551,7 +4582,7 @@ async function downloadBrochure() {
       doc.save(`${currentProject.name}_Brochure.pdf`);
   } catch (e) {
       console.error("PDF Generation Error:", e);
-      alert("Failed to generate PDF. Please check console for details.");
+      PriceAlerts.showToast('Failed to generate PDF. Please check the console for details.', 'error');
   }
 }
 
@@ -4597,7 +4628,7 @@ function switchTab(tabName) {
     
     const buttons = document.querySelectorAll('.modal-tab');
     buttons.forEach(btn => {
-        if(btn.getAttribute('onclick').includes(tabName)) {
+        if(btn.dataset.tab === tabName) {
             btn.classList.add('active');
         }
     });
@@ -4921,8 +4952,7 @@ function applyTheme() {
   // Update active state of buttons
   document.querySelectorAll('.theme-btn').forEach(btn => {
       btn.classList.remove('active');
-      // Simple check to see if the button corresponds to the current base theme
-      if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(`'${currentBaseTheme}'`)) {
+      if (btn.dataset.themeName === currentBaseTheme) {
           btn.classList.add('active');
       }
   });
@@ -7312,15 +7342,15 @@ function selectRitaMode(role) {
                 </div>
                 <p style="margin-top: 10px; direction: rtl; text-align: right; font-size: 0.85rem;">سواء عميل بيقولك "غالي" أو "هفكر" أو مش عارف تقفل الـ deal — قولي وأنا هساعدك بأحسن script و talking points تخلّيك تقفل أي deal 🔥</p>
                 <div class="ai-suggestions">
-                    <button onclick="sendAIMessage('عميل قالي غالي أوي — أقوله إيه؟')">🔥 عميل قال غالي</button>
-                    <button onclick="sendAIMessage('إزاي أقفل deal مع عميل متردد؟')">🎯 أقفل deal</button>
-                    <button onclick="sendAIMessage('عايز script لـ cold call')">📞 Cold call script</button>
-                    <button onclick="sendAIMessage('عميل بيقارن بمشروع تاني أرخص')">⚡ عميل بيقارن</button>
+                    <button data-route-planner-action="send-ai" data-ai-message="عميل قالي غالي أوي — أقوله إيه؟">🔥 عميل قال غالي</button>
+                    <button data-route-planner-action="send-ai" data-ai-message="إزاي أقفل deal مع عميل متردد؟">🎯 أقفل deal</button>
+                    <button data-route-planner-action="send-ai" data-ai-message="عايز script لـ cold call">📞 Cold call script</button>
+                    <button data-route-planner-action="send-ai" data-ai-message="عميل بيقارن بمشروع تاني أرخص">⚡ عميل بيقارن</button>
                 </div>
                 <p style="margin-top: 12px; font-size: 0.78rem; color: var(--avaria-text-muted); direction: ltr; text-align: left;">💡 I speak both English & Egyptian Arabic — switch anytime.</p>
                 <div class="ai-suggestions" style="margin-top: 6px;">
-                    <button onclick="sendAIMessage('How do I qualify a client using the 7-pillar framework?')">📋 Qualification Framework</button>
-                    <button onclick="sendAIMessage('Give me the buyer psychology cheat sheet')">🧠 Buyer Psychology</button>
+                    <button data-route-planner-action="send-ai" data-ai-message="How do I qualify a client using the 7-pillar framework?">📋 Qualification Framework</button>
+                    <button data-route-planner-action="send-ai" data-ai-message="Give me the buyer psychology cheat sheet">🧠 Buyer Psychology</button>
                 </div>
             </div>`;
     } else {
@@ -7335,9 +7365,9 @@ function selectRitaMode(role) {
                 </div>
                 <p style="margin-top: 10px; direction: rtl; text-align: right; font-size: 0.85rem;">أنا هنا عشان أساعدك تلاقي عقار أحلامك — شاليه على البحر، استثمار ذكي، أو أي حاجة في بالك. قولي عايز إيه وأنا تحت أمرك! 💫</p>
                 <div class="ai-suggestions">
-                    <button onclick="sendAIMessage('عايز شاليه على البحر في الساحل')">🏖️ شاليه على البحر</button>
-                    <button onclick="sendAIMessage('إيه أحسن استثمار عقاري دلوقتي؟')">📈 نصيحة استثمار</button>
-                    <button onclick="sendAIMessage('عايز فيلا بمقدم قليل')">🏡 فيلا بمقدم قليل</button>
+                    <button data-route-planner-action="send-ai" data-ai-message="عايز شاليه على البحر في الساحل">🏖️ شاليه على البحر</button>
+                    <button data-route-planner-action="send-ai" data-ai-message="إيه أحسن استثمار عقاري دلوقتي؟">📈 نصيحة استثمار</button>
+                    <button data-route-planner-action="send-ai" data-ai-message="عايز فيلا بمقدم قليل">🏡 فيلا بمقدم قليل</button>
                 </div>
             </div>`;
     }
@@ -7371,12 +7401,12 @@ function clearAIChat() {
                 <h4 class="ai-mode-title">أنا ريتا</h4>
                 <p class="ai-mode-subtitle">إيه اللي يوصفك أكتر؟</p>
                 <div class="ai-mode-cards">
-                    <button class="ai-mode-card" onclick="selectRitaMode('customer')">
+                    <button class="ai-mode-card" data-route-planner-action="select-mode" data-rita-mode="customer">
                         <span class="ai-mode-icon">🏠</span>
                         <span class="ai-mode-label">عميل</span>
                         <span class="ai-mode-desc">عايز ألاقي عقار أحلامي</span>
                     </button>
-                    <button class="ai-mode-card" onclick="selectRitaMode('agent')">
+                    <button class="ai-mode-card" data-route-planner-action="select-mode" data-rita-mode="agent">
                         <span class="ai-mode-icon">🎯</span>
                         <span class="ai-mode-label">Sales Agent</span>
                         <span class="ai-mode-desc">عايز مساعدة في البيع</span>
@@ -8961,9 +8991,9 @@ const RoutePlanner = {
               <span class="route-stop-index">${index + 1}</span>
               <span class="route-stop-name">${escHtml(stop.name)}</span>
               <span class="route-stop-actions">
-                <button type="button" onclick="moveRouteStop(${index}, -1)" aria-label="Move stop up">↑</button>
-                <button type="button" onclick="moveRouteStop(${index}, 1)" aria-label="Move stop down">↓</button>
-                <button type="button" onclick="removeRouteStop(${index})" aria-label="Remove stop">×</button>
+                <button type="button" data-route-planner-action="move-stop" data-stop-index="${index}" data-stop-delta="-1" aria-label="Move stop up">↑</button>
+                <button type="button" data-route-planner-action="move-stop" data-stop-index="${index}" data-stop-delta="1" aria-label="Move stop down">↓</button>
+                <button type="button" data-route-planner-action="remove-stop" data-stop-index="${index}" aria-label="Remove stop">×</button>
               </span>
             </div>
         `).join('');
@@ -9035,7 +9065,7 @@ const RoutePlanner = {
                     const timeDiff = alt.duration - routeData.primaryRoute.duration;
                     const timeDiffStr = timeDiff > 0 ? `+${this.formatDuration(Math.abs(timeDiff))}` : `-${this.formatDuration(Math.abs(timeDiff))}`;
                     const label = escHtml(alt.summary || `Alternative ${i + 1}`);
-                    return `<div class="route-alt-option" onclick="RoutePlanner.switchToAlternative(${i})">
+                    return `<div class="route-alt-option" data-route-planner-action="switch-alt" data-stop-index="${i}">
                       <div class="route-alt-label">${XI.route} ${label}</div>
                       <div class="route-alt-meta">${this.formatDistance(alt.distance)} · ${this.formatDuration(alt.duration)} <span class="route-alt-diff">${timeDiffStr}</span></div>
                     </div>`;

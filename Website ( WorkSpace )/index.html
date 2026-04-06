@@ -1248,13 +1248,13 @@
       
         <div class="sidebar-footer">
       <div class="theme-switcher" role="group" aria-label="Theme Selection">
-        <div class="theme-btn active" style="background: linear-gradient(135deg, #667eea, #764ba2);" onclick="setTheme('default')" title="Xcelias Purple" role="button" tabindex="0" aria-label="Xcelias Purple Theme" aria-pressed="true"></div>
-        <div class="theme-btn" style="background: #06b6d4;" onclick="setTheme('midnight')" title="Midnight Blue" role="button" tabindex="0" aria-label="Midnight Blue Theme" aria-pressed="false"></div>
-        <div class="theme-btn" style="background: #4ade80;" onclick="setTheme('forest')" title="Forest Green" role="button" tabindex="0" aria-label="Forest Green Theme" aria-pressed="false"></div>
-        <div class="theme-btn" style="background: #d8b4fe;" onclick="setTheme('royal')" title="Royal Purple" role="button" tabindex="0" aria-label="Royal Purple Theme" aria-pressed="false"></div>
-        <div class="theme-btn" style="background: #fb923c;" onclick="setTheme('sunset')" title="Sunset Orange" role="button" tabindex="0" aria-label="Sunset Orange Theme" aria-pressed="false"></div>
-        <div class="theme-btn" style="background: #94a3b8;" onclick="setTheme('slate')" title="Slate Monochrome" role="button" tabindex="0" aria-label="Slate Monochrome Theme" aria-pressed="false"></div>
-        <div class="theme-btn" style="background: #991b1b;" onclick="setTheme('dark-red')" title="Dark Red" role="button" tabindex="0" aria-label="Dark Red Theme" aria-pressed="false"></div>
+        <div class="theme-btn active" data-theme-name="default" style="background: linear-gradient(135deg, #667eea, #764ba2);" onclick="setTheme('default')" title="Xcelias Purple" role="button" tabindex="0" aria-label="Xcelias Purple Theme" aria-pressed="true"></div>
+        <div class="theme-btn" data-theme-name="midnight" style="background: #06b6d4;" onclick="setTheme('midnight')" title="Midnight Blue" role="button" tabindex="0" aria-label="Midnight Blue Theme" aria-pressed="false"></div>
+        <div class="theme-btn" data-theme-name="forest" style="background: #4ade80;" onclick="setTheme('forest')" title="Forest Green" role="button" tabindex="0" aria-label="Forest Green Theme" aria-pressed="false"></div>
+        <div class="theme-btn" data-theme-name="royal" style="background: #d8b4fe;" onclick="setTheme('royal')" title="Royal Purple" role="button" tabindex="0" aria-label="Royal Purple Theme" aria-pressed="false"></div>
+        <div class="theme-btn" data-theme-name="sunset" style="background: #fb923c;" onclick="setTheme('sunset')" title="Sunset Orange" role="button" tabindex="0" aria-label="Sunset Orange Theme" aria-pressed="false"></div>
+        <div class="theme-btn" data-theme-name="slate" style="background: #94a3b8;" onclick="setTheme('slate')" title="Slate Monochrome" role="button" tabindex="0" aria-label="Slate Monochrome Theme" aria-pressed="false"></div>
+        <div class="theme-btn" data-theme-name="dark-red" style="background: #991b1b;" onclick="setTheme('dark-red')" title="Dark Red" role="button" tabindex="0" aria-label="Dark Red Theme" aria-pressed="false"></div>
       </div>
 
       <div class="signature">GH</div>
@@ -1435,9 +1435,9 @@
 
           <!-- Tabs -->
           <div class="modal-tabs" role="tablist" aria-label="Project Information Tabs">
-            <button class="modal-tab active" onclick="switchTab('overview')" data-i18n="modalOverview" role="tab" aria-selected="true" aria-controls="tab-overview">Overview</button>
-            <button class="modal-tab" onclick="switchTab('masterplan')" data-i18n="modalMasterplan" role="tab" aria-selected="false" aria-controls="tab-masterplan">Masterplan</button>
-            <button class="modal-tab" onclick="switchTab('layouts')" data-i18n="modalLayouts" role="tab" aria-selected="false" aria-controls="tab-layouts">Layouts</button>
+            <button class="modal-tab active" onclick="switchTab('overview')" data-tab="overview" data-i18n="modalOverview" role="tab" aria-selected="true" aria-controls="tab-overview">Overview</button>
+            <button class="modal-tab" onclick="switchTab('masterplan')" data-tab="masterplan" data-i18n="modalMasterplan" role="tab" aria-selected="false" aria-controls="tab-masterplan">Masterplan</button>
+            <button class="modal-tab" onclick="switchTab('layouts')" data-tab="layouts" data-i18n="modalLayouts" role="tab" aria-selected="false" aria-controls="tab-layouts">Layouts</button>
           </div>
 
           <!-- Tab Content: Overview -->

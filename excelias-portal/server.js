@@ -222,6 +222,7 @@ app.use((req, res, next) => {
     "font-src 'self' https://fonts.gstatic.com",
     "connect-src 'self' https://*.googleapis.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://overpass-api.de",
     "img-src 'self' data: https://*.basemaps.cartocdn.com",
+    "worker-src 'self' https://cdn.jsdelivr.net",
     "frame-src 'self' https://lms.xcelias.com https://*.firebasedatabase.app",
     "object-src 'none'",
     "base-uri 'self'",

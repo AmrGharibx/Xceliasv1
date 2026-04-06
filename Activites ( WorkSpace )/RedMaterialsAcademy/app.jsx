@@ -19199,13 +19199,18 @@ const XcLoginScreen = ({ onLogin }) => {
     }
     setAdminStatus("checking");
     setSetupError("");
+    const tid = setTimeout(() => {
+      if (alive) setAdminStatus("missing");
+    }, 4000);
     window.xcAuth
       .fetchSignInMethodsForEmail(XC.fbEmail("admin"))
       .then((methods) => {
+        clearTimeout(tid);
         if (!alive) return;
         setAdminStatus(methods && methods.length ? "ready" : "missing");
       })
       .catch((err) => {
+        clearTimeout(tid);
         if (!alive) return;
         if (err && err.code === "auth/operation-not-allowed") {
           setSetupError(
@@ -19216,6 +19221,7 @@ const XcLoginScreen = ({ onLogin }) => {
       });
     return () => {
       alive = false;
+      clearTimeout(tid);
     };
   }, []);
 

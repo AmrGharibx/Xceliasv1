@@ -139,7 +139,7 @@ if (fs.existsSync(babelDist)) fs.unlinkSync(babelDist);
 // Extract remaining inline <script> (RITA chat) to external file for CSP compliance
 let aHtml2 = fs.readFileSync(actHtml, "utf8");
 const actInlineMatch = aHtml2.match(
-  /<script>\s*(\(function\(\)[\s\S]*?\}\)\(\);)\s*<\/script>\s*<\/body>/,
+  /<script>\s*(\(function\s*\([\s\S]*?\}\s*\)\s*\(\s*\)\s*;)\s*<\/script>\s*<\/body>/,
 );
 if (actInlineMatch) {
   fs.writeFileSync(
@@ -183,9 +183,15 @@ cHtml = cHtml.replace(
 /* Extract inline RITA/API bootstrap script → content-rita.js (CSP compliance) */
 const cRitaMatch = cHtml.match(/<script>(!function\(\)[\s\S]*?)<\/script>/);
 if (cRitaMatch) {
+  let ritaCode = cRitaMatch[1].trim();
+  // Fix API_URL: always use relative /api/gemini (works for both localhost and Vercel)
+  ritaCode = ritaCode.replace(
+    /"localhost"===window\.location\.hostname\|\|"127\.0\.0\.1"===window\.location\.hostname\?"\/api\/gemini":"https:\/\/excelias\.vercel\.app\/api\/gemini"/,
+    '"/api/gemini"',
+  );
   fs.writeFileSync(
     path.join(DIST, "content", "content-rita.js"),
-    cRitaMatch[1].trim(),
+    ritaCode,
   );
   cHtml = cHtml.replace(
     cRitaMatch[0],

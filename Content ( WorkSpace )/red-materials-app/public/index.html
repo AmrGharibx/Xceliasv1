@@ -713,11 +713,7 @@
 
     <script>
       (function () {
-        const API_URL =
-          window.location.hostname === "localhost" ||
-          window.location.hostname === "127.0.0.1"
-            ? "/api/gemini"
-            : "https://excelias.vercel.app/api/gemini";
+        const API_URL = "/api/gemini";
 
         const SYSTEM_PROMPT = `You are "RITA" — an AI study guide embedded inside the Xcelias Real Estate Mastery Guide.
 You help agents deeply understand the training material as they read through each chapter.

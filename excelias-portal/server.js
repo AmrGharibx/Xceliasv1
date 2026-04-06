@@ -5,6 +5,25 @@ const http = require('http');
 const crypto = require('crypto');
 const admin = require('firebase-admin');
 
+/* ── Dev convenience: load missing env vars from workspace root .env.local ──
+   Production env vars (process.env) always win; this only fills gaps.
+   Skipped in test environment so Jest tests retain full env control.
+   Handles both quoted ("val") and unquoted (val) assignments.              ── */
+(function loadEnvLocal() {
+  if (process.env.NODE_ENV === 'test') return;
+  const envFile = path.join(__dirname, '..', '.env.local');
+  if (!fs.existsSync(envFile)) return;
+  try {
+    fs.readFileSync(envFile, 'utf8').split('\n').forEach(line => {
+      const m = /^([A-Z_][A-Z0-9_]*)=(.+)$/.exec(line.trim());
+      if (!m) return;
+      const key = m[1];
+      const val = m[2].replace(/^["']|["']$/g, '').trim();
+      if (!process.env[key]) process.env[key] = val;
+    });
+  } catch (_) { /* ignore parse errors — env vars remain unset */ }
+}());
+
 /* ── Firebase Admin SDK (for verifying client ID tokens — no secrets in code) ── */
 admin.initializeApp({ projectId: 'xcelias-academy' });
 

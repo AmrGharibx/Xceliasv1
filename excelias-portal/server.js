@@ -251,7 +251,7 @@ app.use((req, res, next) => {
     [
       "default-src 'self'",
       "script-src 'self' https://www.gstatic.com https://*.firebasedatabase.app https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com",
-      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com",
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com https://cdn.jsdelivr.net",
       "font-src 'self' https://fonts.gstatic.com",
       "connect-src 'self' https://*.googleapis.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://overpass-api.de https://server.arcgisonline.com",
       "img-src 'self' data: blob: https://*.basemaps.cartocdn.com https://server.arcgisonline.com",

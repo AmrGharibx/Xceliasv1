@@ -307,6 +307,7 @@ function lazyLoadCSS(url, integrity) {
         link.href = url;
         if (integrity) { link.integrity = integrity; link.crossOrigin = 'anonymous'; }
         link.onload = resolve;
+        link.onerror = resolve; // resolve on error so CSP blocks don't hang the caller
         document.head.appendChild(link);
     });
     return _lazyCache[url];
@@ -4794,9 +4795,12 @@ async function openModal(proj) {
       
       if (swiperInstance) {
           swiperInstance.destroy(true, true);
+          swiperInstance = null;
       }
       
-      if (!window.Swiper) return;
+      if (!window.Swiper) {
+          swiperContainer.style.display = "none"; // gallery unavailable — continue to open modal
+      } else {
       swiperInstance = new Swiper(".mySwiper", {
           spaceBetween: 30,
           centeredSlides: true,
@@ -4814,6 +4818,7 @@ async function openModal(proj) {
           },
           loop: true
       });
+      } // end of else (window.Swiper loaded)
   } else {
       swiperContainer.style.display = "none";
   }

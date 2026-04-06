@@ -1,7 +1,7 @@
 ---
-name: 'JavaScript Security Rules'
-description: 'OWASP security rules for all JS files in the portal'
-applyTo: '**/*.js'
+name: "JavaScript Security Rules"
+description: "OWASP security rules for all JS files in the portal"
+applyTo: "**/*.js"
 ---
 
 ## Security — apply to every JS file

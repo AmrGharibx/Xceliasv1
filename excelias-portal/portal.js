@@ -2,41 +2,45 @@
    XCELIAS PORTAL â€” NAVIGATION + PARTICLE SYSTEM + EFFECTS
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
-function escHtml(s){const d=document.createElement('div');d.textContent=String(s??'');return d.innerHTML;}
+function escHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = String(s ?? '');
+  return d.innerHTML;
+}
 
 const IS_LOCAL = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
 
 const PROJECTS = {
   activities: {
-    name:  'Training Academy',
-    url:   '/activities/',
-    mode:  'iframe'
+    name: 'Training Academy',
+    url: '/activities/',
+    mode: 'iframe',
   },
   content: {
-    name:  'Training Manual',
-    url:   '/content/',
-    mode:  'iframe'
+    name: 'Training Manual',
+    url: '/content/',
+    mode: 'iframe',
   },
   avaria: {
-    name:  'Academy Operations',
-    url:   IS_LOCAL ? 'http://localhost:3005' : 'https://lms.xcelias.com',
-    mode:  'tab'
+    name: 'Academy Operations',
+    url: IS_LOCAL ? 'http://localhost:3005' : 'https://lms.xcelias.com',
+    mode: 'tab',
   },
   reports: {
-    name:  'Report Generator',
-    url:   '/reports/',
-    mode:  'iframe'
+    name: 'Report Generator',
+    url: '/reports/',
+    mode: 'iframe',
   },
   studyguide: {
-    name:  'Study Guide',
-    url:   '/studyguide/',
-    mode:  'iframe'
+    name: 'Study Guide',
+    url: '/studyguide/',
+    mode: 'iframe',
   },
   website: {
-    name:  'Property Explorer',
-    url:   '/website/',
-    mode:  'iframe'
-  }
+    name: 'Property Explorer',
+    url: '/website/',
+    mode: 'iframe',
+  },
 };
 
 /* â”€â”€â”€ State â”€â”€â”€ */
@@ -47,20 +51,24 @@ let currentIframeUrl = null;
 let xcPortalUser = null;
 // Keys not listed = accessible to any logged-in user
 const XCP_ROLE_MAP = {
-  website: ['admin', 'agent']
+  website: ['admin', 'agent'],
 };
 
 /* â”€â”€â”€ DOM refs â”€â”€â”€ */
-const homeView     = document.getElementById('home-view');
-const projectView  = document.getElementById('project-view');
-const iframe       = document.getElementById('project-iframe');
-const topbarTitle  = document.getElementById('topbar-title');
+const homeView = document.getElementById('home-view');
+const projectView = document.getElementById('project-view');
+const iframe = document.getElementById('project-iframe');
+const topbarTitle = document.getElementById('topbar-title');
 const topbarNewTab = document.getElementById('topbar-newtab');
 const iframeLoader = document.getElementById('iframe-loading');
 
 /* ── Topbar button handlers (no inline onclick for CSP) ── */
-document.getElementById('topbar-back').addEventListener('click', function () { goHome(); });
-topbarNewTab.addEventListener('click', function () { openInNewTab(); });
+document.getElementById('topbar-back').addEventListener('click', function () {
+  goHome();
+});
+topbarNewTab.addEventListener('click', function () {
+  openInNewTab();
+});
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    PARTICLE SYSTEM (ambient floating particles)
@@ -90,7 +98,9 @@ topbarNewTab.addEventListener('click', function () { openInNewTab(); });
   window.addEventListener('resize', resize);
 
   class Particle {
-    constructor() { this.reset(); }
+    constructor() {
+      this.reset();
+    }
     reset() {
       this.x = Math.random() * W;
       this.y = Math.random() * H;
@@ -140,7 +150,10 @@ topbarNewTab.addEventListener('click', function () { openInNewTab(); });
   let isAnimating = false;
   function animate() {
     ctx.clearRect(0, 0, W, H);
-    particles.forEach(p => { p.update(); p.draw(); });
+    particles.forEach((p) => {
+      p.update();
+      p.draw();
+    });
     drawLines();
     animId = requestAnimationFrame(animate);
   }
@@ -171,28 +184,31 @@ topbarNewTab.addEventListener('click', function () { openInNewTab(); });
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 (function animateCounters() {
   const nums = document.querySelectorAll('.hero-stat-num[data-count]');
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const el = entry.target;
-        const target = parseInt(el.dataset.count, 10);
-        const suffix = el.dataset.count.includes('+') ? '+' : '';
-        const duration = 800; // ms
-        const start = performance.now();
-        function tick(now) {
-          const elapsed = now - start;
-          const progress = Math.min(elapsed / duration, 1);
-          // Ease out cubic
-          const eased = 1 - Math.pow(1 - progress, 3);
-          el.textContent = Math.round(target * eased) + suffix;
-          if (progress < 1) requestAnimationFrame(tick);
+  const io = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const el = entry.target;
+          const target = parseInt(el.dataset.count, 10);
+          const suffix = el.dataset.count.includes('+') ? '+' : '';
+          const duration = 800; // ms
+          const start = performance.now();
+          function tick(now) {
+            const elapsed = now - start;
+            const progress = Math.min(elapsed / duration, 1);
+            // Ease out cubic
+            const eased = 1 - Math.pow(1 - progress, 3);
+            el.textContent = Math.round(target * eased) + suffix;
+            if (progress < 1) requestAnimationFrame(tick);
+          }
+          requestAnimationFrame(tick);
+          io.unobserve(el);
         }
-        requestAnimationFrame(tick);
-        io.unobserve(el);
-      }
-    });
-  }, { threshold: 0.1 });
-  nums.forEach(n => io.observe(n));
+      });
+    },
+    { threshold: 0.1 }
+  );
+  nums.forEach((n) => io.observe(n));
 })();
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
@@ -236,13 +252,19 @@ function launchProject(key) {
   // Hide loader when iframe loads
   iframe.onload = () => {
     iframeLoader.classList.add('hidden');
-    if (window._iframeTimeout) { clearTimeout(window._iframeTimeout); window._iframeTimeout = null; }
+    if (window._iframeTimeout) {
+      clearTimeout(window._iframeTimeout);
+      window._iframeTimeout = null;
+    }
   };
 
   // Error handler
   iframe.onerror = () => {
     showIframeError(proj.name);
-    if (window._iframeTimeout) { clearTimeout(window._iframeTimeout); window._iframeTimeout = null; }
+    if (window._iframeTimeout) {
+      clearTimeout(window._iframeTimeout);
+      window._iframeTimeout = null;
+    }
   };
 
   // Timeout: if iframe hasn't loaded in 30s, show error
@@ -262,7 +284,10 @@ function goHome() {
   iframe.src = 'about:blank';
   iframe.onload = null;
   iframe.onerror = null;
-  if (window._iframeTimeout) { clearTimeout(window._iframeTimeout); window._iframeTimeout = null; }
+  if (window._iframeTimeout) {
+    clearTimeout(window._iframeTimeout);
+    window._iframeTimeout = null;
+  }
 
   // Remove any error overlay
   const errOverlay = document.getElementById('iframe-error');
@@ -286,7 +311,8 @@ function showIframeError(projectName) {
 
   const overlay = document.createElement('div');
   overlay.id = 'iframe-error';
-  overlay.style.cssText = 'position:absolute;inset:48px 0 0 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:var(--bg,#0f0f1a);z-index:6;text-align:center;padding:24px';
+  overlay.style.cssText =
+    'position:absolute;inset:48px 0 0 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:var(--bg,#0f0f1a);z-index:6;text-align:center;padding:24px';
   overlay.innerHTML = `
     <div style="font-size:3rem;opacity:0.5">âš ï¸</div>
     <h3 style="font-size:1.1rem;font-weight:700;color:#e8e8f0">Failed to Load</h3>
@@ -297,8 +323,12 @@ function showIframeError(projectName) {
     </div>
   `;
   projectView.appendChild(overlay);
-  overlay.querySelector('#iframe-err-retry').addEventListener('click', function () { location.reload(); });
-  overlay.querySelector('#iframe-err-home').addEventListener('click', function () { goHome(); });
+  overlay.querySelector('#iframe-err-retry').addEventListener('click', function () {
+    location.reload();
+  });
+  overlay.querySelector('#iframe-err-home').addEventListener('click', function () {
+    goHome();
+  });
 }
 
 /* â”€â”€â”€ Open in new tab â”€â”€â”€ */
@@ -321,7 +351,13 @@ function applyPortalRoles(user) {
   // Populate user chip
   const chip = document.getElementById('xcp-user-chip');
   if (chip) {
-    const roleLabel = { admin: '\u{1F451} Admin', agent: '\u{1F3E0} Agent', trainee: '\u{1F393} Trainee', student: '\u{1F4D6} Student' }[user.role] || user.role;
+    const roleLabel =
+      {
+        admin: '\u{1F451} Admin',
+        agent: '\u{1F3E0} Agent',
+        trainee: '\u{1F393} Trainee',
+        student: '\u{1F4D6} Student',
+      }[user.role] || user.role;
     chip.innerHTML = `<span class="xcp-chip-name">${escHtml(user.displayName || user.username)}</span><span class="xcp-chip-role">${escHtml(roleLabel)}</span><button class="xcp-chip-signout" id="xcp-signout">Sign Out</button>`;
     chip.style.display = 'flex';
     document.getElementById('xcp-signout').addEventListener('click', () => {
@@ -335,7 +371,7 @@ function applyPortalRoles(user) {
   }
 
   // Apply locked state to restricted cards
-  document.querySelectorAll('.project-card').forEach(card => {
+  document.querySelectorAll('.project-card').forEach((card) => {
     const key = card.dataset.project;
     const required = XCP_ROLE_MAP[key];
     if (required && !required.includes(user.role)) {
@@ -351,12 +387,12 @@ function applyPortalRoles(user) {
 
 XceliasAuth.guard({
   moduleName: 'Portal',
-  requiredRoles: null,   // any authenticated user can access home
-  onReady: applyPortalRoles
+  requiredRoles: null, // any authenticated user can access home
+  onReady: applyPortalRoles,
 });
 
 /* â”€â”€â”€ Card click / keyboard bindings â”€â”€â”€ */
-document.querySelectorAll('.project-card').forEach(card => {
+document.querySelectorAll('.project-card').forEach((card) => {
   const key = card.dataset.project;
 
   card.addEventListener('click', (e) => {
@@ -389,7 +425,6 @@ window.addEventListener('popstate', (e) => {
   }
 });
 
-
 /* â”€â”€â”€ Deep linking â”€â”€â”€ */
 (function handleInitialHash() {
   const hash = location.hash.replace('#', '');
@@ -397,4 +432,3 @@ window.addEventListener('popstate', (e) => {
     launchProject(hash);
   }
 })();
-

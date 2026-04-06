@@ -115,21 +115,24 @@ cd excelias-portal && npm run format
 ## Key Patterns to Follow
 
 ### Adding a new protected API route
+
 ```js
-app.post('/api/my-route', (req, res) => {
+app.post("/api/my-route", (req, res) => {
   const session = verifySession(parseCookies(req).xc_session);
-  if (!session) return res.status(401).json({ error: 'Authentication required' });
+  if (!session)
+    return res.status(401).json({ error: "Authentication required" });
   // ... handler logic
   try {
     // work
   } catch (err) {
-    console.error('my-route error:', err.message); // log internally
-    res.status(500).json({ error: 'Internal server error' }); // never leak err.message
+    console.error("my-route error:", err.message); // log internally
+    res.status(500).json({ error: "Internal server error" }); // never leak err.message
   }
 });
 ```
 
 ### Safe innerHTML (always escape user data)
+
 ```js
 // CORRECT
 element.innerHTML = `<span class="chip">${escHtml(user.displayName)}</span>`;
@@ -139,23 +142,24 @@ element.innerHTML = `<span>${user.displayName}</span>`;
 ```
 
 ### Adding a module guard
+
 ```js
-app.use('/mymodule', studentGuardMiddleware, express.static(MY_MODULE_DIR));
+app.use("/mymodule", studentGuardMiddleware, express.static(MY_MODULE_DIR));
 ```
 
 ---
 
 ## Modules Overview
 
-| Module | Path | Auth |
-|--------|------|------|
-| Portal (home) | `/` | Admin only |
-| Activities | `/activities/` | Admin only (student guard) |
-| Content | `/content/` | Admin only (student guard) |
-| Reports | `/reports/` | Admin only (student guard) |
-| Study Guide | `/studyguide/` | All authenticated users |
-| Website | `/website/` | Student guard |
-| Avaria | `http://localhost:3005` | Runs separately (Next.js) |
+| Module        | Path                    | Auth                       |
+| ------------- | ----------------------- | -------------------------- |
+| Portal (home) | `/`                     | Admin only                 |
+| Activities    | `/activities/`          | Admin only (student guard) |
+| Content       | `/content/`             | Admin only (student guard) |
+| Reports       | `/reports/`             | Admin only (student guard) |
+| Study Guide   | `/studyguide/`          | All authenticated users    |
+| Website       | `/website/`             | Student guard              |
+| Avaria        | `http://localhost:3005` | Runs separately (Next.js)  |
 
 ---
 

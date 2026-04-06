@@ -1,303 +1,402 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#0f0f1a" />
-  <meta name="description" content="Xcelias — Real Estate Training & Intelligence Hub" />
-  <title>Xcelias — Real Estate Training & Intelligence Hub</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0f0f1a" />
+    <meta name="description" content="Xcelias — Real Estate Training & Intelligence Hub" />
+    <title>Xcelias — Real Estate Training & Intelligence Hub</title>
 
-  <!-- Fonts (matching Property Explorer) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <!-- Fonts (matching Property Explorer) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
 
-  <link rel="stylesheet" href="portal.css" />
-</head>
-<body>
+    <link rel="stylesheet" href="portal.css" />
+  </head>
+  <body>
+    <!-- ═══════ CANVAS PARTICLES ═══════ -->
+    <canvas id="particle-canvas"></canvas>
 
-  <!-- ═══════ CANVAS PARTICLES ═══════ -->
-  <canvas id="particle-canvas"></canvas>  
+    <!-- ═══════ HOME VIEW ═══════ -->
+    <div id="home-view">
+      <!-- Ambient glow orbs -->
+      <div class="orb orb--1"></div>
+      <div class="orb orb--2"></div>
+      <div class="orb orb--3"></div>
+      <div class="orb orb--4"></div>
 
-  <!-- ═══════ HOME VIEW ═══════ -->
-  <div id="home-view">
-
-    <!-- Ambient glow orbs -->  
-    <div class="orb orb--1"></div>
-    <div class="orb orb--2"></div>
-    <div class="orb orb--3"></div>
-    <div class="orb orb--4"></div>
-
-    <!-- Header -->
-    <header class="portal-header">
-      <div class="logo-group">
-        <div class="xc-logo-icon" style="width:56px;height:56px;background:linear-gradient(135deg,#667eea,#764ba2);border-radius:12px;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 28px rgba(102,126,234,0.35);">
-          <div class="xc-logo-ring-spin"></div>
-          <div class="xc-logo-ring-pulse"></div>
-          <div class="xc-orb-track xc-orb-track--1"><span class="xc-orb xc-orb--1"></span></div>
-          <div class="xc-orb-track xc-orb-track--2"><span class="xc-orb xc-orb--2"></span></div>
-          <div class="xc-orb-track xc-orb-track--3"><span class="xc-orb xc-orb--3"></span></div>
-          <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg"
-               class="xc-logo-svg" style="width:28px;height:28px;position:relative;z-index:2">
-            <defs>
-              <linearGradient id="xlg-portal" x1="0" y1="0" x2="56" y2="56">
-                <stop offset="0%" stop-color="#667eea"/>
-                <stop offset="50%" stop-color="#764ba2"/>
-                <stop offset="100%" stop-color="#f093fb"/>
-              </linearGradient>
-            </defs>
-            <rect x="4" y="4" width="48" height="48" rx="14" stroke="url(#xlg-portal)" stroke-width="2" fill="none" opacity="0.8"/>
-            <text x="28" y="37" text-anchor="middle" fill="url(#xlg-portal)" font-family="Montserrat" font-weight="900" font-size="26">X</text>
-          </svg>
+      <!-- Header -->
+      <header class="portal-header">
+        <div class="logo-group">
+          <div
+            class="xc-logo-icon"
+            style="
+              width: 56px;
+              height: 56px;
+              background: linear-gradient(135deg, #667eea, #764ba2);
+              border-radius: 12px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              box-shadow: 0 8px 28px rgba(102, 126, 234, 0.35);
+            "
+          >
+            <div class="xc-logo-ring-spin"></div>
+            <div class="xc-logo-ring-pulse"></div>
+            <div class="xc-orb-track xc-orb-track--1"><span class="xc-orb xc-orb--1"></span></div>
+            <div class="xc-orb-track xc-orb-track--2"><span class="xc-orb xc-orb--2"></span></div>
+            <div class="xc-orb-track xc-orb-track--3"><span class="xc-orb xc-orb--3"></span></div>
+            <svg
+              viewBox="0 0 56 56"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              class="xc-logo-svg"
+              style="width: 28px; height: 28px; position: relative; z-index: 2"
+            >
+              <defs>
+                <linearGradient id="xlg-portal" x1="0" y1="0" x2="56" y2="56">
+                  <stop offset="0%" stop-color="#667eea" />
+                  <stop offset="50%" stop-color="#764ba2" />
+                  <stop offset="100%" stop-color="#f093fb" />
+                </linearGradient>
+              </defs>
+              <rect
+                x="4"
+                y="4"
+                width="48"
+                height="48"
+                rx="14"
+                stroke="url(#xlg-portal)"
+                stroke-width="2"
+                fill="none"
+                opacity="0.8"
+              />
+              <text
+                x="28"
+                y="37"
+                text-anchor="middle"
+                fill="url(#xlg-portal)"
+                font-family="Montserrat"
+                font-weight="900"
+                font-size="26"
+              >
+                X
+              </text>
+            </svg>
+          </div>
+          <div class="logo-text">
+            <h1 class="logo-title">XCELIAS</h1>
+            <span class="logo-sub"><span class="logo-red">by red</span> Training Academy</span>
+          </div>
         </div>
-        <div class="logo-text">
-          <h1 class="logo-title">XCELIAS</h1>
-          <span class="logo-sub"><span class="logo-red">by red</span> Training Academy</span>
+        <div class="header-tagline">
+          <span class="tagline-line"></span>
+          <span class="tagline-text">Real Estate Training &amp; Intelligence Hub</span>
+          <span class="tagline-line"></span>
         </div>
-      </div>
-      <div class="header-tagline">
-        <span class="tagline-line"></span>
-        <span class="tagline-text">Real Estate Training &amp; Intelligence Hub</span>
-        <span class="tagline-line"></span>
-      </div>
-      <div id="xcp-user-chip"></div>
-    </header>
+        <div id="xcp-user-chip"></div>
+      </header>
 
-    <!-- Hero Stats -->
-    <section class="hero-section">
-      <div class="hero-stats">
-        <div class="hero-stat">
-          <span class="hero-stat-num" data-count="6">0</span>
-          <span class="hero-stat-label">Modules</span>
+      <!-- Hero Stats -->
+      <section class="hero-section">
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <span class="hero-stat-num" data-count="6">0</span>
+            <span class="hero-stat-label">Modules</span>
+          </div>
+          <div class="hero-stat-divider"></div>
+          <div class="hero-stat">
+            <span class="hero-stat-num" data-count="43">0</span>
+            <span class="hero-stat-label">Activities</span>
+          </div>
+          <div class="hero-stat-divider"></div>
+          <div class="hero-stat">
+            <span class="hero-stat-num" data-count="200">0</span>
+            <span class="hero-stat-label">Properties</span>
+          </div>
+          <div class="hero-stat-divider"></div>
+          <div class="hero-stat">
+            <span class="hero-stat-num" data-count="23">0</span>
+            <span class="hero-stat-label">API Routes</span>
+          </div>
         </div>
-        <div class="hero-stat-divider"></div>
-        <div class="hero-stat">
-          <span class="hero-stat-num" data-count="43">0</span>
-          <span class="hero-stat-label">Activities</span>
-        </div>
-        <div class="hero-stat-divider"></div>
-        <div class="hero-stat">
-          <span class="hero-stat-num" data-count="200">0</span>
-          <span class="hero-stat-label">Properties</span>
-        </div>
-        <div class="hero-stat-divider"></div>
-        <div class="hero-stat">
-          <span class="hero-stat-num" data-count="23">0</span>
-          <span class="hero-stat-label">API Routes</span>
-        </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- Cards grid -->
-    <main class="card-grid">
-
-      <!-- Card 1: Training Academy -->
-      <div class="project-card" data-project="activities" tabindex="0">
-        <div class="card-shimmer"></div>
-        <div class="card-border-glow"></div>
-        <div class="card-inner">
-          <div class="card-head">
-            <div class="card-icon-wrap card-icon--activities">
-              <span class="card-icon">🎮</span>
+      <!-- Cards grid -->
+      <main class="card-grid">
+        <!-- Card 1: Training Academy -->
+        <div class="project-card" data-project="activities" tabindex="0">
+          <div class="card-shimmer"></div>
+          <div class="card-border-glow"></div>
+          <div class="card-inner">
+            <div class="card-head">
+              <div class="card-icon-wrap card-icon--activities">
+                <span class="card-icon">🎮</span>
+              </div>
+              <div class="card-badge badge--activities">43 Activities</div>
             </div>
-            <div class="card-badge badge--activities">43 Activities</div>
-          </div>
-          <h2 class="card-title">Training Academy</h2>
-          <p class="card-subtitle">Interactive Learning Activities</p>
-          <p class="card-desc">Master real estate skills through gamified challenges, quizzes, and simulations across 9 training categories.</p>
-          <div class="card-tags">
-            <span class="tag">9 Categories</span>
-            <span class="tag">Bilingual</span>
-            <span class="tag">6 Ranks</span>
-          </div>
-          <button class="card-launch" aria-label="Launch Training Academy">
-            <span class="launch-text">Launch</span>
-            <span class="launch-arrow">→</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Card 2: Training Manual -->
-      <div class="project-card" data-project="content" tabindex="0">
-        <div class="card-shimmer"></div>
-        <div class="card-border-glow"></div>
-        <div class="card-inner">
-          <div class="card-head">
-            <div class="card-icon-wrap card-icon--content">
-              <span class="card-icon">📚</span>
+            <h2 class="card-title">Training Academy</h2>
+            <p class="card-subtitle">Interactive Learning Activities</p>
+            <p class="card-desc">
+              Master real estate skills through gamified challenges, quizzes, and simulations across
+              9 training categories.
+            </p>
+            <div class="card-tags">
+              <span class="tag">9 Categories</span>
+              <span class="tag">Bilingual</span>
+              <span class="tag">6 Ranks</span>
             </div>
-            <div class="card-badge badge--content">8 Chapters</div>
+            <button class="card-launch" aria-label="Launch Training Academy">
+              <span class="launch-text">Launch</span>
+              <span class="launch-arrow">→</span>
+            </button>
           </div>
-          <h2 class="card-title">Training Manual</h2>
-          <p class="card-subtitle">Real Estate Mastery Guide</p>
-          <p class="card-desc">Immersive chapter-based training manual with 3D visuals, interactive charts, and the complete curriculum.</p>
-          <div class="card-tags">
-            <span class="tag">30 Slides</span>
-            <span class="tag">3D Visuals</span>
-            <span class="tag">Interactive</span>
-          </div>
-          <button class="card-launch" aria-label="Launch Training Manual">
-            <span class="launch-text">Launch</span>
-            <span class="launch-arrow">→</span>
-          </button>
         </div>
-      </div>
 
-      <!-- Card 3: Academy Operations (featured) -->
-      <div class="project-card card--featured" data-project="avaria" tabindex="0">
-        <div class="card-shimmer"></div>
-        <div class="card-border-glow"></div>
-        <div class="card-inner">
-          <div class="card-featured-layout">
-            <div class="card-featured-left">
-              <div class="card-head">
-                <div class="card-icon-wrap card-icon--avaria">
-                  <span class="card-icon">🏛️</span>
+        <!-- Card 2: Training Manual -->
+        <div class="project-card" data-project="content" tabindex="0">
+          <div class="card-shimmer"></div>
+          <div class="card-border-glow"></div>
+          <div class="card-inner">
+            <div class="card-head">
+              <div class="card-icon-wrap card-icon--content">
+                <span class="card-icon">📚</span>
+              </div>
+              <div class="card-badge badge--content">8 Chapters</div>
+            </div>
+            <h2 class="card-title">Training Manual</h2>
+            <p class="card-subtitle">Real Estate Mastery Guide</p>
+            <p class="card-desc">
+              Immersive chapter-based training manual with 3D visuals, interactive charts, and the
+              complete curriculum.
+            </p>
+            <div class="card-tags">
+              <span class="tag">30 Slides</span>
+              <span class="tag">3D Visuals</span>
+              <span class="tag">Interactive</span>
+            </div>
+            <button class="card-launch" aria-label="Launch Training Manual">
+              <span class="launch-text">Launch</span>
+              <span class="launch-arrow">→</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Card 3: Academy Operations (featured) -->
+        <div class="project-card card--featured" data-project="avaria" tabindex="0">
+          <div class="card-shimmer"></div>
+          <div class="card-border-glow"></div>
+          <div class="card-inner">
+            <div class="card-featured-layout">
+              <div class="card-featured-left">
+                <div class="card-head">
+                  <div class="card-icon-wrap card-icon--avaria">
+                    <span class="card-icon">🏛️</span>
+                  </div>
+                  <div class="card-badge badge--avaria">Full LMS</div>
                 </div>
-                <div class="card-badge badge--avaria">Full LMS</div>
+                <h2 class="card-title">Academy Operations</h2>
+                <p class="card-subtitle">LMS &amp; Analytics Dashboard</p>
               </div>
-              <h2 class="card-title">Academy Operations</h2>
-              <p class="card-subtitle">LMS &amp; Analytics Dashboard</p>
-            </div>
-            <div class="card-featured-right">
-              <p class="card-desc">Complete learning management system — batches, trainees, attendance, assessments, analytics with cinematic UI.</p>
-              <div class="card-tags">
-                <span class="tag">14 Pages</span>
-                <span class="tag">23 APIs</span>
-                <span class="tag">SQLite</span>
-                <span class="tag">JWT Auth</span>
+              <div class="card-featured-right">
+                <p class="card-desc">
+                  Complete learning management system — batches, trainees, attendance, assessments,
+                  analytics with cinematic UI.
+                </p>
+                <div class="card-tags">
+                  <span class="tag">14 Pages</span>
+                  <span class="tag">23 APIs</span>
+                  <span class="tag">SQLite</span>
+                  <span class="tag">JWT Auth</span>
+                </div>
+                <button class="card-launch card-launch--tab" aria-label="Launch Academy Operations">
+                  <span class="launch-text">Launch in New Tab</span>
+                  <span class="launch-arrow">↗</span>
+                </button>
+                <p class="card-note">Requires local Next.js server · port 3005</p>
               </div>
-              <button class="card-launch card-launch--tab" aria-label="Launch Academy Operations">
-                <span class="launch-text">Launch in New Tab</span>
-                <span class="launch-arrow">↗</span>
-              </button>
-              <p class="card-note">Requires local Next.js server · port 3005</p>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Card 4: Report Generator -->
-      <div class="project-card" data-project="reports" tabindex="0">
-        <div class="card-shimmer"></div>
-        <div class="card-border-glow"></div>
-        <div class="card-inner">
-          <div class="card-head">
-            <div class="card-icon-wrap card-icon--reports">
-              <span class="card-icon">📊</span>
+        <!-- Card 4: Report Generator -->
+        <div class="project-card" data-project="reports" tabindex="0">
+          <div class="card-shimmer"></div>
+          <div class="card-border-glow"></div>
+          <div class="card-inner">
+            <div class="card-head">
+              <div class="card-icon-wrap card-icon--reports">
+                <span class="card-icon">📊</span>
+              </div>
+              <div class="card-badge badge--reports">OCR Powered</div>
             </div>
-            <div class="card-badge badge--reports">OCR Powered</div>
-          </div>
-          <h2 class="card-title">Report Generator</h2>
-          <p class="card-subtitle">Trainee Performance Reports</p>
-          <p class="card-desc">Generate professional A4 PDF reports from screenshots. OCR extraction, smart scoring, and instant PDF download.</p>
-          <div class="card-tags">
-            <span class="tag">Smart Scoring</span>
-            <span class="tag">PDF Export</span>
-            <span class="tag">Zero API</span>
-          </div>
-          <button class="card-launch" aria-label="Launch Report Generator">
-            <span class="launch-text">Launch</span>
-            <span class="launch-arrow">→</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Card 5: Study Guide -->
-      <div class="project-card" data-project="studyguide" tabindex="0">
-        <div class="card-shimmer"></div>
-        <div class="card-border-glow"></div>
-        <div class="card-inner">
-          <div class="card-head">
-            <div class="card-icon-wrap card-icon--studyguide">
-              <span class="card-icon">🎓</span>
+            <h2 class="card-title">Report Generator</h2>
+            <p class="card-subtitle">Trainee Performance Reports</p>
+            <p class="card-desc">
+              Generate professional A4 PDF reports from screenshots. OCR extraction, smart scoring,
+              and instant PDF download.
+            </p>
+            <div class="card-tags">
+              <span class="tag">Smart Scoring</span>
+              <span class="tag">PDF Export</span>
+              <span class="tag">Zero API</span>
             </div>
-            <div class="card-badge badge--studyguide">3 Batches</div>
+            <button class="card-launch" aria-label="Launch Report Generator">
+              <span class="launch-text">Launch</span>
+              <span class="launch-arrow">→</span>
+            </button>
           </div>
-          <h2 class="card-title">Study Guide</h2>
-          <p class="card-subtitle">Projects &amp; Developer Mastery</p>
-          <p class="card-desc">Deep-study real estate projects with flash cards, quizzes, memory games, and fill-in-the-blank exercises before assessment.</p>
-          <div class="card-tags">
-            <span class="tag">15 Projects</span>
-            <span class="tag">Flash Cards</span>
-            <span class="tag">Exercises</span>
-          </div>
-          <button class="card-launch" aria-label="Launch Study Guide">
-            <span class="launch-text">Launch</span>
-            <span class="launch-arrow">→</span>
-          </button>
         </div>
-      </div>
 
-      <!-- Card 6: Property Explorer -->
-      <div class="project-card" data-project="website" tabindex="0">
-        <div class="card-shimmer"></div>
-        <div class="card-border-glow"></div>
-        <div class="card-inner">
-          <div class="card-head">
-            <div class="card-icon-wrap card-icon--website">
-              <span class="card-icon">🗺️</span>
+        <!-- Card 5: Study Guide -->
+        <div class="project-card" data-project="studyguide" tabindex="0">
+          <div class="card-shimmer"></div>
+          <div class="card-border-glow"></div>
+          <div class="card-inner">
+            <div class="card-head">
+              <div class="card-icon-wrap card-icon--studyguide">
+                <span class="card-icon">🎓</span>
+              </div>
+              <div class="card-badge badge--studyguide">3 Batches</div>
             </div>
-            <div class="card-badge badge--website">200+ Projects</div>
+            <h2 class="card-title">Study Guide</h2>
+            <p class="card-subtitle">Projects &amp; Developer Mastery</p>
+            <p class="card-desc">
+              Deep-study real estate projects with flash cards, quizzes, memory games, and
+              fill-in-the-blank exercises before assessment.
+            </p>
+            <div class="card-tags">
+              <span class="tag">15 Projects</span>
+              <span class="tag">Flash Cards</span>
+              <span class="tag">Exercises</span>
+            </div>
+            <button class="card-launch" aria-label="Launch Study Guide">
+              <span class="launch-text">Launch</span>
+              <span class="launch-arrow">→</span>
+            </button>
           </div>
-          <h2 class="card-title">Property Explorer</h2>
-          <p class="card-subtitle">Real Estate Map &amp; Intelligence</p>
-          <p class="card-desc">Interactive property map with AI chatbot, route planning, investment analysis, and 8 visual themes.</p>
-          <div class="card-tags">
-            <span class="tag">AI Chatbot</span>
-            <span class="tag">Routes</span>
-            <span class="tag">8 Themes</span>
-          </div>
-          <button class="card-launch" aria-label="Launch Property Explorer">
-            <span class="launch-text">Launch</span>
-            <span class="launch-arrow">→</span>
-          </button>
         </div>
-      </div>
 
-    </main>
+        <!-- Card 6: Property Explorer -->
+        <div class="project-card" data-project="website" tabindex="0">
+          <div class="card-shimmer"></div>
+          <div class="card-border-glow"></div>
+          <div class="card-inner">
+            <div class="card-head">
+              <div class="card-icon-wrap card-icon--website">
+                <span class="card-icon">🗺️</span>
+              </div>
+              <div class="card-badge badge--website">200+ Projects</div>
+            </div>
+            <h2 class="card-title">Property Explorer</h2>
+            <p class="card-subtitle">Real Estate Map &amp; Intelligence</p>
+            <p class="card-desc">
+              Interactive property map with AI chatbot, route planning, investment analysis, and 8
+              visual themes.
+            </p>
+            <div class="card-tags">
+              <span class="tag">AI Chatbot</span>
+              <span class="tag">Routes</span>
+              <span class="tag">8 Themes</span>
+            </div>
+            <button class="card-launch" aria-label="Launch Property Explorer">
+              <span class="launch-text">Launch</span>
+              <span class="launch-arrow">→</span>
+            </button>
+          </div>
+        </div>
+      </main>
 
-    <!-- Footer -->
-    <footer class="portal-footer">
-      <div class="footer-glow"></div>
-      <p>&copy; 2026 Xcelias &mdash; Real Estate Training &amp; Intelligence Hub</p>
-    </footer>
-  </div>
-
-  <!-- ═══════ PROJECT VIEW (iframe container) ═══════ -->
-  <div id="project-view" class="project-view hidden">
-    <div class="project-topbar">
-      <button class="back-btn" id="topbar-back" aria-label="Back to Home">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
-        <span>Home</span>
-      </button>
-      <span class="project-topbar-title" id="topbar-title"></span>
-      <button class="topbar-newtab" id="topbar-newtab" aria-label="Open in new tab" title="Open in new tab">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-      </button>
+      <!-- Footer -->
+      <footer class="portal-footer">
+        <div class="footer-glow"></div>
+        <p>&copy; 2026 Xcelias &mdash; Real Estate Training &amp; Intelligence Hub</p>
+      </footer>
     </div>
-    <div class="iframe-loading" id="iframe-loading">
-      <div class="loading-ring">
-        <div class="loading-ring-inner"></div>
+
+    <!-- ═══════ PROJECT VIEW (iframe container) ═══════ -->
+    <div id="project-view" class="project-view hidden">
+      <div class="project-topbar">
+        <button class="back-btn" id="topbar-back" aria-label="Back to Home">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M19 12H5" />
+            <path d="m12 19-7-7 7-7" />
+          </svg>
+          <span>Home</span>
+        </button>
+        <span class="project-topbar-title" id="topbar-title"></span>
+        <button
+          class="topbar-newtab"
+          id="topbar-newtab"
+          aria-label="Open in new tab"
+          title="Open in new tab"
+        >
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+            <polyline points="15 3 21 3 21 9" />
+            <line x1="10" y1="14" x2="21" y2="3" />
+          </svg>
+        </button>
       </div>
-      <span class="loading-label">Loading module…</span>
+      <div class="iframe-loading" id="iframe-loading">
+        <div class="loading-ring">
+          <div class="loading-ring-inner"></div>
+        </div>
+        <span class="loading-label">Loading module…</span>
+      </div>
+      <iframe
+        id="project-iframe"
+        class="project-iframe"
+        allow="clipboard-write; web-share; geolocation; fullscreen"
+      ></iframe>
     </div>
-    <iframe id="project-iframe" class="project-iframe" allow="clipboard-write; web-share; geolocation; fullscreen"></iframe>
-  </div>
 
-  <!-- Firebase (enables online auth) -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js" integrity="sha384-AQ3POAMqIhwS81FrUH95ekxqBZHeP5tG2JfEL3+7GuTtfRLWnrRh32UxwzM+//A9" crossorigin="anonymous"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js" integrity="sha384-TnlRYaR4JYz/lpaGuaiU61PjNberSA4vjLjtF+oRC/IkohkJqnWxw5EmDSOt1vA1" crossorigin="anonymous"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js" integrity="sha384-1/m+A1jVWbD3yiK3/vtFvm1+LjK1WLpSoDY+Kaxppwn/yP9BVSgdHTNQVOjrzUO5" crossorigin="anonymous"></script>
-  <script src="/activities/firebase-config.js"></script>
+    <!-- Firebase (enables online auth) -->
+    <script
+      src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"
+      integrity="sha384-AQ3POAMqIhwS81FrUH95ekxqBZHeP5tG2JfEL3+7GuTtfRLWnrRh32UxwzM+//A9"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"
+      integrity="sha384-TnlRYaR4JYz/lpaGuaiU61PjNberSA4vjLjtF+oRC/IkohkJqnWxw5EmDSOt1vA1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"
+      integrity="sha384-1/m+A1jVWbD3yiK3/vtFvm1+LjK1WLpSoDY+Kaxppwn/yP9BVSgdHTNQVOjrzUO5"
+      crossorigin="anonymous"
+    ></script>
+    <script src="/activities/firebase-config.js"></script>
 
-  <!-- Unified Auth Module -->
-  <script src="xcelias-auth.js"></script>
+    <!-- Unified Auth Module -->
+    <script src="xcelias-auth.js"></script>
 
-  <!-- Access denied flash notification -->
-  <div id="xcp-access-denied"></div>
+    <!-- Access denied flash notification -->
+    <div id="xcp-access-denied"></div>
 
-  <script src="portal.js"></script>
-
-</body>
+    <script src="portal.js"></script>
+  </body>
 </html>

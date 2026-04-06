@@ -14,15 +14,19 @@ const admin = require('firebase-admin');
   const envFile = path.join(__dirname, '..', '.env.local');
   if (!fs.existsSync(envFile)) return;
   try {
-    fs.readFileSync(envFile, 'utf8').split('\n').forEach(line => {
-      const m = /^([A-Z_][A-Z0-9_]*)=(.+)$/.exec(line.trim());
-      if (!m) return;
-      const key = m[1];
-      const val = m[2].replace(/^["']|["']$/g, '').trim();
-      if (!process.env[key]) process.env[key] = val;
-    });
-  } catch (_) { /* ignore parse errors — env vars remain unset */ }
-}());
+    fs.readFileSync(envFile, 'utf8')
+      .split('\n')
+      .forEach((line) => {
+        const m = /^([A-Z_][A-Z0-9_]*)=(.+)$/.exec(line.trim());
+        if (!m) return;
+        const key = m[1];
+        const val = m[2].replace(/^["']|["']$/g, '').trim();
+        if (!process.env[key]) process.env[key] = val;
+      });
+  } catch (_) {
+    /* ignore parse errors — env vars remain unset */
+  }
+})();
 
 /* ── Firebase Admin SDK (for verifying client ID tokens — no secrets in code) ── */
 admin.initializeApp({ projectId: 'xcelias-academy' });
@@ -53,8 +57,18 @@ if (process.env.XC_SESSION_SECRET) {
 
 /* ── Firebase UID → role mapping (server determines roles from verified tokens) ── */
 const KNOWN_USERS = {
-  'OKZ7mPrvE0cvMH8LPTUY13yXw9d2': { role: 'student', batchId: 'batch33', displayName: 'Batch 33', username: 'batch33' },
-  '1olZC4rnatZlGkYPgIg2lZFjZ782': { role: 'admin', batchId: 'admin', displayName: 'Admin', username: 'admin' }
+  OKZ7mPrvE0cvMH8LPTUY13yXw9d2: {
+    role: 'student',
+    batchId: 'batch33',
+    displayName: 'Batch 33',
+    username: 'batch33',
+  },
+  '1olZC4rnatZlGkYPgIg2lZFjZ782': {
+    role: 'admin',
+    batchId: 'admin',
+    displayName: 'Admin',
+    username: 'admin',
+  },
 };
 /* ── Batch UIDs that can NEVER be admin (safety net) ── */
 const BATCH_UIDS = new Set(['OKZ7mPrvE0cvMH8LPTUY13yXw9d2']);
@@ -80,20 +94,23 @@ function rateLimitCheck(req, res) {
   return false;
 }
 // Cleanup stale entries every 5 minutes
-setInterval(() => {
-  const now = Date.now();
-  for (const [ip, rec] of _loginAttempts) {
-    if (now - rec.start > RATE_LIMIT_WINDOW) _loginAttempts.delete(ip);
-  }
-  for (const [ip, rec] of _geminiAttempts) {
-    if (now - rec.start > GEMINI_RATE_WINDOW) _geminiAttempts.delete(ip);
-  }
-}, 5 * 60 * 1000).unref();
+setInterval(
+  () => {
+    const now = Date.now();
+    for (const [ip, rec] of _loginAttempts) {
+      if (now - rec.start > RATE_LIMIT_WINDOW) _loginAttempts.delete(ip);
+    }
+    for (const [ip, rec] of _geminiAttempts) {
+      if (now - rec.start > GEMINI_RATE_WINDOW) _geminiAttempts.delete(ip);
+    }
+  },
+  5 * 60 * 1000
+).unref();
 
 /* ── Gemini rate limiter (separate bucket — higher limit for chat UX) ── */
 const _geminiAttempts = new Map();
 const GEMINI_RATE_WINDOW = 60 * 1000; // 1 minute
-const GEMINI_RATE_MAX = 20;           // 20 AI messages per minute per IP
+const GEMINI_RATE_MAX = 20; // 20 AI messages per minute per IP
 function geminiRateLimitCheck(req, res) {
   const ip = req.ip || req.connection.remoteAddress;
   const now = Date.now();
@@ -112,7 +129,12 @@ function geminiRateLimitCheck(req, res) {
 }
 
 /* ── Gemini model list (ordered by preference — most capable first) ── */
-const GEMINI_MODELS = ['gemini-2.5-flash-lite', 'gemini-2.0-flash-lite', 'gemini-2.5-flash', 'gemini-2.0-flash'];
+const GEMINI_MODELS = [
+  'gemini-2.5-flash-lite',
+  'gemini-2.0-flash-lite',
+  'gemini-2.5-flash',
+  'gemini-2.0-flash',
+];
 const GEMINI_BASE = 'https://generativelanguage.googleapis.com/v1beta/models';
 
 /* ── Cookie helpers ── */
@@ -135,12 +157,14 @@ function verifySession(token) {
     const payload = JSON.parse(Buffer.from(data, 'base64url').toString());
     if (payload.exp && Date.now() > payload.exp) return null;
     return payload;
-  } catch { return null; }
+  } catch {
+    return null;
+  }
 }
 
 function parseCookies(req) {
   const cookies = {};
-  (req.headers.cookie || '').split(';').forEach(c => {
+  (req.headers.cookie || '').split(';').forEach((c) => {
     const eq = c.indexOf('=');
     if (eq > 0) cookies[c.slice(0, eq).trim()] = decodeURIComponent(c.slice(eq + 1).trim());
   });
@@ -151,9 +175,12 @@ function setSessionCookie(res, payload) {
   const maxAge = 24 * 60 * 60 * 1000; // 24h
   payload.exp = Date.now() + maxAge;
   const token = signSession(payload);
-  const isSecure = process.env.NODE_ENV === 'production' || (process.env.VERCEL === '1');
+  const isSecure = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1';
   const securePart = isSecure ? ' Secure;' : '';
-  res.setHeader('Set-Cookie', `xc_session=${token}; HttpOnly;${securePart} SameSite=Lax; Path=/; Max-Age=${maxAge / 1000}`);
+  res.setHeader(
+    'Set-Cookie',
+    `xc_session=${token}; HttpOnly;${securePart} SameSite=Lax; Path=/; Max-Age=${maxAge / 1000}`
+  );
 }
 
 function clearSessionCookie(res) {
@@ -178,7 +205,7 @@ function _isHtmlReq(path) {
 function studentGuardMiddleware(req, res, next) {
   const session = verifySession(parseCookies(req).xc_session);
   if (!session && _isHtmlReq(req.path)) {
-    return res.redirect(302, '/');           // unauthenticated → portal login
+    return res.redirect(302, '/'); // unauthenticated → portal login
   }
   if (session && session.role === 'student') {
     return res.redirect(302, '/studyguide/'); // student → study guide only
@@ -198,12 +225,16 @@ const STUDY_GUIDE_SRC = fs.existsSync(path.join(WS, 'Study Guide & Excersies', '
 
 /* ─── Project paths (use dist/ when it exists, fall back to source) ─── */
 const useDist = fs.existsSync(DIST);
-const ACTIVITIES_DIR  = useDist ? path.join(DIST, 'activities')  : path.join(WS, 'Activites ( WorkSpace )', 'RedMaterialsAcademy');
-const CONTENT_BUILD   = useDist ? path.join(DIST, 'content')     : path.join(WS, 'Content ( WorkSpace )', 'red-materials-app', 'build');
-const REPORTS_DIR     = useDist ? path.join(DIST, 'reports')     : REPORTS_SRC;
-const WEBSITE_DIR     = useDist ? path.join(DIST, 'website')     : path.join(WS, 'Website ( WorkSpace )');
+const ACTIVITIES_DIR = useDist
+  ? path.join(DIST, 'activities')
+  : path.join(WS, 'Activites ( WorkSpace )', 'RedMaterialsAcademy');
+const CONTENT_BUILD = useDist
+  ? path.join(DIST, 'content')
+  : path.join(WS, 'Content ( WorkSpace )', 'red-materials-app', 'build');
+const REPORTS_DIR = useDist ? path.join(DIST, 'reports') : REPORTS_SRC;
+const WEBSITE_DIR = useDist ? path.join(DIST, 'website') : path.join(WS, 'Website ( WorkSpace )');
 const STUDY_GUIDE_DIR = useDist ? path.join(DIST, 'studyguide') : STUDY_GUIDE_SRC;
-const PORTAL_DIR      = useDist ? DIST                           : __dirname;
+const PORTAL_DIR = useDist ? DIST : __dirname;
 
 /* ═══════════════════════════════════════════════════════════════════
    SECURITY HARDENING MIDDLEWARE
@@ -214,21 +245,24 @@ app.use((req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('X-XSS-Protection', '1; mode=block');
-  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(self)');
-  res.setHeader('Content-Security-Policy', [
-    "default-src 'self'",
-    "script-src 'self' https://www.gstatic.com https://*.firebasedatabase.app https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com",
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com",
-    "font-src 'self' https://fonts.gstatic.com",
-    "connect-src 'self' https://*.googleapis.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://overpass-api.de",
-    "img-src 'self' data: https://*.basemaps.cartocdn.com",
-    "worker-src 'self' https://cdn.jsdelivr.net",
-    "frame-src 'self' https://lms.xcelias.com https://*.firebasedatabase.app",
-    "object-src 'none'",
-    "base-uri 'self'",
-    "form-action 'self'",
-    "frame-ancestors 'self'"
-  ].join('; '));
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(self), geolocation=(self)');
+  res.setHeader(
+    'Content-Security-Policy',
+    [
+      "default-src 'self'",
+      "script-src 'self' https://www.gstatic.com https://*.firebasedatabase.app https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com",
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com",
+      "font-src 'self' https://fonts.gstatic.com",
+      "connect-src 'self' https://*.googleapis.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://overpass-api.de https://server.arcgisonline.com",
+      "img-src 'self' data: blob: https://*.basemaps.cartocdn.com https://server.arcgisonline.com",
+      "worker-src 'self' https://cdn.jsdelivr.net",
+      "frame-src 'self' https://lms.xcelias.com https://*.firebasedatabase.app",
+      "object-src 'none'",
+      "base-uri 'self'",
+      "form-action 'self'",
+      "frame-ancestors 'self'",
+    ].join('; ')
+  );
   if (process.env.NODE_ENV === 'production' || process.env.VERCEL) {
     res.setHeader('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
   }
@@ -264,7 +298,14 @@ app.post('/api/auth/firebase-session', async (req, res) => {
     const role = BATCH_UIDS.has(uid) ? 'student' : profile.role;
 
     setSessionCookie(res, { uid, role });
-    return res.json({ ok: true, uid, role, displayName: profile.displayName, batchId: profile.batchId, username: profile.username });
+    return res.json({
+      ok: true,
+      uid,
+      role,
+      displayName: profile.displayName,
+      batchId: profile.batchId,
+      username: profile.username,
+    });
   } catch (e) {
     return res.status(401).json({ error: 'Invalid or expired token' });
   }
@@ -332,17 +373,26 @@ app.use('/studyguide', express.static(STUDY_GUIDE_DIR));
     The website's index.html uses absolute paths — rewrite them on the fly.
     API calls are proxied to the standalone website server when it's running.    */
 app.post(['/api/route/route', '/api/route/table', '/api/route/trip'], (req, res) => {
-  if (!verifySession(parseCookies(req).xc_session)) return res.status(401).json({ error: 'Authentication required' });
+  if (!verifySession(parseCookies(req).xc_session))
+    return res.status(401).json({ error: 'Authentication required' });
   if (rateLimitCheck(req, res)) return; // prevent API quota abuse
   const body = JSON.stringify(req.body);
-  const proxyReq = http.request({
-    hostname: 'localhost', port: 3000, path: req.originalUrl,
-    method: 'POST', headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) }
-  }, (proxyRes) => {
-    res.status(proxyRes.statusCode);
-    Object.entries(proxyRes.headers).forEach(([k, v]) => { if (k !== 'transfer-encoding') res.setHeader(k, v); });
-    proxyRes.pipe(res);
-  });
+  const proxyReq = http.request(
+    {
+      hostname: 'localhost',
+      port: 3000,
+      path: req.originalUrl,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) },
+    },
+    (proxyRes) => {
+      res.status(proxyRes.statusCode);
+      Object.entries(proxyRes.headers).forEach(([k, v]) => {
+        if (k !== 'transfer-encoding') res.setHeader(k, v);
+      });
+      proxyRes.pipe(res);
+    }
+  );
   proxyReq.on('error', () => res.status(502).json({ error: 'Upstream service unavailable' }));
   proxyReq.end(body);
 });
@@ -362,9 +412,9 @@ app.post('/api/gemini', async (req, res) => {
       return res.status(400).json({ error: 'messages array required' });
     }
 
-    const contents = messages.map(m => ({
+    const contents = messages.map((m) => ({
       role: m.role === 'assistant' ? 'model' : 'user',
-      parts: [{ text: String(m.content || '') }]
+      parts: [{ text: String(m.content || '') }],
     }));
 
     const geminiBody = {
@@ -372,8 +422,11 @@ app.post('/api/gemini', async (req, res) => {
       generationConfig: {
         temperature: 0.9,
         topP: 0.95,
-        maxOutputTokens: Math.min((generationConfig && generationConfig.maxOutputTokens) || 1200, 4096)
-      }
+        maxOutputTokens: Math.min(
+          (generationConfig && generationConfig.maxOutputTokens) || 1200,
+          4096
+        ),
+      },
     };
     if (systemPrompt) {
       geminiBody.systemInstruction = { parts: [{ text: String(systemPrompt).slice(0, 8000) }] };
@@ -386,9 +439,11 @@ app.post('/api/gemini', async (req, res) => {
         response = await fetch(url, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(geminiBody)
+          body: JSON.stringify(geminiBody),
         });
-      } catch { continue; }
+      } catch {
+        continue;
+      }
       if (!response.ok) {
         if (response.status === 503 || response.status === 429 || response.status === 404) continue;
         break; // hard error (e.g. 400/401/403) — no point trying other models
@@ -423,10 +478,19 @@ app.use(express.static(PORTAL_DIR, { index: 'index.html' }));
 
 /* Fallback: root-level requests for website assets (JS uses absolute paths) */
 const WEBSITE_ASSETS = [
-  'data.json','styles.css','app.js','sw.js','search.worker.js','manifest.json',
-  'cairo.json','gouna.json','north_coast.json','sokhna.json','others.json'
+  'data.json',
+  'styles.css',
+  'app.js',
+  'sw.js',
+  'search.worker.js',
+  'manifest.json',
+  'cairo.json',
+  'gouna.json',
+  'north_coast.json',
+  'sokhna.json',
+  'others.json',
 ];
-WEBSITE_ASSETS.forEach(file => {
+WEBSITE_ASSETS.forEach((file) => {
   app.get('/' + file, studentGuardMiddleware, (req, res, next) => {
     const fp = path.join(WEBSITE_DIR, file);
     if (fs.existsSync(fp)) return res.sendFile(fp);
@@ -449,23 +513,24 @@ app.use((err, _req, res, _next) => {
 module.exports = { app, signSession, verifySession, parseCookies, _loginAttempts, _geminiAttempts };
 
 /* ─── Launch ─── */
-if (require.main === module) app.listen(PORT, () => {
-  const u = `http://localhost:${PORT}`;
-  console.log('');
-  console.log('  ╔══════════════════════════════════════════════╗');
-  console.log('  ║         EXCELIAS — UNIFIED PORTAL            ║');
-  console.log('  ║       RED Training Academy Platform           ║');
-  console.log('  ╠══════════════════════════════════════════════╣');
-  console.log(`  ║  Portal ........... ${u.padEnd(24)}║`);
-  console.log(`  ║  Activities ....... ${(u + '/activities/').padEnd(24)}║`);
-  console.log(`  ║  Content .......... ${(u + '/content/').padEnd(24)}║`);
-  console.log(`  ║  Reports .......... ${(u + '/reports/').padEnd(24)}║`);
-  console.log(`  ║  Avaria (ext) ..... ${'http://localhost:3005'.padEnd(24)}║`);
-  console.log(`  ║  Website .......... ${(u + '/website/').padEnd(24)}║`);
-  console.log('  ╚══════════════════════════════════════════════╝');
-  console.log(`  Serving from: ${useDist ? 'dist/' : 'source directories'}`);
-  console.log('');
-  console.log('  Note: Avaria Academy runs separately.');
-  console.log('  Start it with: cd "System Before Prompting V2/avaria" && npm run dev');
-  console.log('');
-});
+if (require.main === module)
+  app.listen(PORT, () => {
+    const u = `http://localhost:${PORT}`;
+    console.log('');
+    console.log('  ╔══════════════════════════════════════════════╗');
+    console.log('  ║         EXCELIAS — UNIFIED PORTAL            ║');
+    console.log('  ║       RED Training Academy Platform           ║');
+    console.log('  ╠══════════════════════════════════════════════╣');
+    console.log(`  ║  Portal ........... ${u.padEnd(24)}║`);
+    console.log(`  ║  Activities ....... ${(u + '/activities/').padEnd(24)}║`);
+    console.log(`  ║  Content .......... ${(u + '/content/').padEnd(24)}║`);
+    console.log(`  ║  Reports .......... ${(u + '/reports/').padEnd(24)}║`);
+    console.log(`  ║  Avaria (ext) ..... ${'http://localhost:3005'.padEnd(24)}║`);
+    console.log(`  ║  Website .......... ${(u + '/website/').padEnd(24)}║`);
+    console.log('  ╚══════════════════════════════════════════════╝');
+    console.log(`  Serving from: ${useDist ? 'dist/' : 'source directories'}`);
+    console.log('');
+    console.log('  Note: Avaria Academy runs separately.');
+    console.log('  Start it with: cd "System Before Prompting V2/avaria" && npm run dev');
+    console.log('');
+  });

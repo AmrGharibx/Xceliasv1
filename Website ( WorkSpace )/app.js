@@ -84,8 +84,8 @@ function splitInlineLogical(source, operator) {
 function unwrapInlineString(expr) {
     const q = expr[0];
     const body = expr.slice(1, -1);
-    const escapedQuote = String.raw`\` + q;
-    return body.replaceAll(escapedQuote, q).replaceAll('\\n', '\n');
+    const escapedQuote = `${String.fromCodePoint(92)}${q}`;
+    return body.replaceAll(escapedQuote, q).replaceAll(String.raw`\n`, '\n');
 }
 
 function resolveInlinePath(path, scope) {
@@ -1075,7 +1075,7 @@ const PriceAlerts = {
         if (projectNameEl) projectNameEl.textContent = projectName;
         if (priceInput) priceInput.value = suggestedPrice;
         
-        modal.classList.add('active');
+        setOverlayVisibility(modal, true);
         modal.setAttribute('data-project', projectName);
         
         // Focus the input
@@ -1086,7 +1086,7 @@ const PriceAlerts = {
     closeSetAlertModal() {
         const modal = document.getElementById('priceAlertModal');
         if (modal) {
-            modal.classList.remove('active');
+            setOverlayVisibility(modal, false);
             modal.removeAttribute('data-project');
         }
     },
@@ -1283,6 +1283,7 @@ const AdvancedFilters = {
                 textEl.textContent = count + ' ' + (i18n.currentLang === 'ar' ? 'فلتر نشط' : 'filter' + (count > 1 ? 's' : '') + ' active');
             } else {
                 countEl.style.display = 'none';
+                textEl.textContent = '';
             }
         }
         
@@ -1920,6 +1921,44 @@ function toggle3DMode() {
 let mainRoadsLayer = null;
 let secondaryRoadsLayer = null;
 
+function overpassRoadsToGeoJson(data) {
+    const elements = Array.isArray(data && data.elements) ? data.elements : [];
+    const nodeCoordinates = new Map();
+
+    elements.forEach(element => {
+        if (element.type !== 'node') return;
+        if (!Number.isFinite(element.lon) || !Number.isFinite(element.lat)) return;
+        nodeCoordinates.set(element.id, [element.lon, element.lat]);
+    });
+
+    const features = [];
+    elements.forEach(element => {
+        if (element.type !== 'way' || !Array.isArray(element.nodes)) return;
+        const coordinates = element.nodes
+            .map(nodeId => nodeCoordinates.get(nodeId))
+            .filter(Boolean);
+
+        if (coordinates.length < 2) return;
+
+        features.push({
+            type: 'Feature',
+            properties: {
+                ...(element.tags || {}),
+                id: element.id
+            },
+            geometry: {
+                type: 'LineString',
+                coordinates
+            }
+        });
+    });
+
+    return {
+        type: 'FeatureCollection',
+        features
+    };
+}
+
 async function fetchAndDrawRoads() {
   // Bounding box covering the North Coast project area
   const bbox = "30.80,27.60,31.30,30.00"; 
@@ -1950,18 +1989,8 @@ async function fetchAndDrawRoads() {
         }
 
         const data = await response.json();
-    
-    if (!window.osmtogeojson) {
-        try {
-            await lazyLoadScript('https://unpkg.com/osmtogeojson@2.2.12/osmtogeojson.js', 'sha384-fAlU0IIimkdHdu7mvEMWsgmkz5GQe7P6r0z7pHCYOru6JzHyo3GcNwqxARCMVU02');
-        } catch (e) {
-            console.error('Failed to load osmtogeojson:', e);
-            return;
-        }
-    }
-    if (!window.osmtogeojson) return;
-    
-    const geojson = osmtogeojson(data);
+
+    const geojson = overpassRoadsToGeoJson(data);
 
     // Filter features
     const mainRoads = {
@@ -2323,6 +2352,23 @@ function removeFromCompareEncoded(projectToken) {
     return removeFromCompare(decodeProjectToken(projectToken));
 }
 
+function setOverlayVisibility(modal, isOpen) {
+    if (!modal) return;
+
+    if (isOpen) {
+        modal.hidden = false;
+        modal.removeAttribute('inert');
+        modal.setAttribute('aria-hidden', 'false');
+        modal.classList.add('active');
+        return;
+    }
+
+    modal.classList.remove('active');
+    modal.setAttribute('aria-hidden', 'true');
+    modal.setAttribute('inert', '');
+    modal.hidden = true;
+}
+
 function updateComparisonDrawer() {
   const drawer = document.getElementById('comparison-drawer');
   const itemsContainer = document.getElementById('drawer-items');
@@ -2396,7 +2442,7 @@ function openComparisonModal() {
   
   table.innerHTML = html;
   
-  modal.classList.add('active');
+    setOverlayVisibility(modal, true);
   
   const modalContent = modal.querySelector('.modal-content');
   if (modalContent && typeof gsap !== 'undefined') {
@@ -2409,7 +2455,7 @@ function openComparisonModal() {
 
 function closeComparisonModal() {
   const modal = document.getElementById('comparisonModal');
-  if (modal) modal.classList.remove('active');
+    setOverlayVisibility(modal, false);
 }
 
 // --- 3. FUSE.JS SETUP & WORKER ---
@@ -3208,7 +3254,7 @@ async function ensureQRCodeLibrary() {
     if (!qrCodeLoaderPromise) {
         qrCodeLoaderPromise = new Promise(resolve => {
             const script = document.createElement('script');
-            script.src = '/node_modules/qrcode-generator/qrcode.js';
+            script.src = 'qrcode.js';
             script.async = true;
             script.onload = () => resolve(typeof window.qrcode === 'function');
             script.onerror = () => resolve(false);
@@ -3700,8 +3746,25 @@ if (searchInputEl) {
 const voiceBtn = document.getElementById('voice-command-btn');
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
+function getSpeechRecognitionErrorMessage(error, fallbackMessage) {
+    switch (error) {
+            case 'not-allowed':
+            case 'service-not-allowed':
+                    return 'Microphone access was blocked. Please allow microphone access and try again.';
+            case 'no-speech':
+                    return 'No speech was detected. Please try again.';
+            case 'audio-capture':
+                    return 'No microphone was detected. Please check your audio input and try again.';
+            case 'network':
+                    return 'Voice recognition is temporarily unavailable due to a network issue.';
+            default:
+                    return fallbackMessage;
+    }
+}
+
 if (SpeechRecognition && voiceBtn) {
   const recognition = new SpeechRecognition();
+    let recognitionHadError = false;
   recognition.continuous = false;
   recognition.lang = 'en-US';
   recognition.interimResults = false;
@@ -3715,12 +3778,19 @@ if (SpeechRecognition && voiceBtn) {
   });
 
   recognition.onstart = () => {
+      recognitionHadError = false;
       voiceBtn.classList.add('listening');
       searchInput.placeholder = "Listening...";
   };
 
   recognition.onend = () => {
       voiceBtn.classList.remove('listening');
+      if (recognitionHadError) {
+          setTimeout(() => {
+              if (searchInput) searchInput.placeholder = "Ask AI Concierge (e.g., 'Villas in Sahel with 8 years')";
+          }, 2500);
+          return;
+      }
       searchInput.placeholder = "Ask AI Concierge (e.g., 'Villas in Sahel with 8 years')";
   };
 
@@ -3737,9 +3807,12 @@ if (SpeechRecognition && voiceBtn) {
   };
 
   recognition.onerror = (event) => {
+      recognitionHadError = true;
       console.error("Speech recognition error", event.error);
       voiceBtn.classList.remove('listening');
-      if (searchInput) searchInput.placeholder = "Error. Try again.";
+      if (searchInput) {
+          searchInput.placeholder = getSpeechRecognitionErrorMessage(event.error, 'Voice input failed. Please try again.');
+      }
   };
 } else {
   if (voiceBtn) voiceBtn.style.display = 'none';
@@ -4056,6 +4129,23 @@ if (window.innerWidth <= 768) {
 }
 
 // --- RIGHT DOCK TOGGLE ---
+function syncDockGroupState(activeGroup = null) {
+    document.querySelectorAll('.dock-group').forEach(group => {
+        const isOpen = group === activeGroup;
+        group.classList.toggle('active', isOpen);
+
+        const toggle = group.querySelector('.dock-toggle');
+        if (toggle) {
+            toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        }
+
+        const content = group.querySelector('.dock-content');
+        if (content) {
+            content.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+        }
+    });
+}
+
 function toggleDockGroup(groupId, event) {
   if (event) event.stopPropagation();
   
@@ -4063,22 +4153,18 @@ function toggleDockGroup(groupId, event) {
   if (!group) return;
   
   const isActive = group.classList.contains('active');
-  
-  // Close all other groups
-  document.querySelectorAll('.dock-group').forEach(g => g.classList.remove('active'));
-  
-  // Toggle current group
-  if (!isActive) {
-    group.classList.add('active');
-  }
+
+    syncDockGroupState(isActive ? null : group);
 }
 
 // Close dock when clicking outside
 document.addEventListener('click', (e) => {
   if (!e.target.closest('.right-dock')) {
-    document.querySelectorAll('.dock-group').forEach(g => g.classList.remove('active'));
+        syncDockGroupState(null);
   }
 });
+
+syncDockGroupState(document.querySelector('.dock-group.active'));
 
 // ─── DELEGATED POPUP BUTTON HANDLER (XSS-safe — no inline onclick) ─────
 document.addEventListener('click', (e) => {
@@ -4162,7 +4248,7 @@ function toggleSidebar(event) {
 
 function closeModal() {
   const modal = document.getElementById("projectModal");
-  if (modal) modal.classList.remove("active");
+    setOverlayVisibility(modal, false);
     document.body.classList.remove('modal-open');
   AIConcierge.setViewContext({ modalOpen: false });
   
@@ -4872,7 +4958,7 @@ async function openModal(proj) {
       if (landmarksSection) landmarksSection.style.display = "none";
   }
 
-    if (modal) modal.classList.add("active");
+    setOverlayVisibility(modal, true);
     document.body.classList.add('modal-open');
 }
 
@@ -7293,16 +7379,28 @@ function formatAIMarkdown(text) {
 }
 
 // UI Functions for Chatbot
+function setAIChatOpen(isOpen) {
+    const chatWindow = document.getElementById('aiChatWindow');
+    if (!chatWindow) return;
+
+    chatWindow.classList.toggle('active', isOpen);
+    AIConcierge.isOpen = chatWindow.classList.contains('active');
+    if (window.matchMedia('(max-width: 768px)').matches) {
+        document.querySelectorAll('.nav-tab').forEach(function(tab) {
+            tab.classList.toggle('active', tab.dataset.tab === (isOpen ? 'rita' : 'map'));
+        });
+    }
+    if (AIConcierge.isOpen) {
+        const input = document.getElementById('aiChatInput');
+        if (input) setTimeout(() => input.focus(), 300);
+    }
+}
+
 function toggleAIChat() {
     const chatWindow = document.getElementById('aiChatWindow');
-    if (chatWindow) {
-        chatWindow.classList.toggle('active');
-        AIConcierge.isOpen = chatWindow.classList.contains('active');
-        if (AIConcierge.isOpen) {
-            const input = document.getElementById('aiChatInput');
-            if (input) setTimeout(() => input.focus(), 300);
-        }
-    }
+    if (!chatWindow) return;
+
+    setAIChatOpen(!chatWindow.classList.contains('active'));
 }
 
 function selectRitaMode(role) {
@@ -7781,8 +7879,9 @@ function toggleAIVoice() {
             if (voiceBtn) voiceBtn.classList.remove('listening');
         };
         
-        aiVoiceRecognition.onerror = () => {
+        aiVoiceRecognition.onerror = (event) => {
             if (voiceBtn) voiceBtn.classList.remove('listening');
+            addChatMessage(getSpeechRecognitionErrorMessage(event.error, 'Voice input failed. Please type your question instead.'), 'bot');
         };
     }
     
@@ -10114,50 +10213,54 @@ function toggleRouteMenu(forceOpen) {
         }
     }
 
-    var navTabs = document.querySelectorAll('.nav-tab');
-    for (var i = 0; i < navTabs.length; i++) {
-        navTabs[i].addEventListener('click', function() {
-            var tab = this.dataset.tab;
-            _setActiveTab(tab);
+    function handleNavTab(tab) {
+        _setActiveTab(tab);
 
-            switch (tab) {
-                case 'map':
-                    setSheetState('hidden');
-                    if (typeof switchMode === 'function') switchMode('zone');
-                    closeFabMenu();
-                    // Close chatbot if open
-                    var chatWin = document.getElementById('aiChatWindow');
-                    if (chatWin && chatWin.classList.contains('active')) {
-                        chatWin.classList.remove('active');
-                    }
-                    break;
+        switch (tab) {
+            case 'map':
+                setSheetState('hidden');
+                if (typeof switchMode === 'function') switchMode('zone');
+                closeFabMenu();
+                if (typeof setAIChatOpen === 'function') {
+                    setAIChatOpen(false);
+                }
+                break;
 
-                case 'search':
-                    if (typeof switchMode === 'function') switchMode('zone');
-                    setSheetState('half');
-                    setTimeout(function() {
-                        var input = document.getElementById('searchInput');
-                        if (input) input.focus();
-                    }, 400);
-                    break;
+            case 'search':
+                if (typeof switchMode === 'function') switchMode('zone');
+                setSheetState('half');
+                setTimeout(function() {
+                    var input = document.getElementById('searchInput');
+                    if (input) input.focus();
+                }, 400);
+                break;
 
-                case 'favorites':
-                    if (typeof switchMode === 'function') switchMode('fav');
-                    setSheetState('half');
-                    break;
+            case 'favorites':
+                if (typeof switchMode === 'function') switchMode('fav');
+                setSheetState('half');
+                break;
 
-                case 'rita':
-                    setSheetState('hidden');
-                    if (typeof toggleAIChat === 'function') toggleAIChat();
-                    _setActiveTab('rita');
-                    break;
+            case 'rita':
+                setSheetState('hidden');
+                if (typeof setAIChatOpen === 'function') {
+                    setAIChatOpen(true);
+                } else if (typeof toggleAIChat === 'function') {
+                    toggleAIChat();
+                }
+                _setActiveTab('rita');
+                break;
 
-                case 'more':
-                    setSheetState('full');
-                    break;
-            }
-        });
+            case 'more':
+                setSheetState('full');
+                break;
+        }
     }
+
+    document.addEventListener('click', function(e) {
+        var tabBtn = e.target.closest('.nav-tab');
+        if (!tabBtn) return;
+        handleNavTab(tabBtn.dataset.tab);
+    });
 
     // ── FAB Menu ──
     function toggleFabMenu() {

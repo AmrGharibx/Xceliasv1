@@ -261,7 +261,22 @@
              If server unavailable (Vercel/static), Firebase session
              is sufficient proof of identity; batch UID already checked above. */
           _verifyViaServer(onVerified, function () {
-            onVerified(cur);
+            /* Server returned 401: xc_session cookie is missing or expired,
+               but Firebase says the user is logged in. Re-issue the server
+               cookie from the Firebase token, then verify once more.
+               This handles the common case where the 24-hour cookie expired
+               but the Firebase session (much longer-lived) is still valid. */
+            _syncServerSession(fbUser)
+              .then(function () {
+                _verifyViaServer(onVerified, function () {
+                  /* True fallback: server is genuinely unreachable (static hosting).
+                     Accept Firebase identity alone. */
+                  onVerified(cur);
+                });
+              })
+              .catch(function () {
+                onVerified(cur);
+              });
           });
           return;
         }

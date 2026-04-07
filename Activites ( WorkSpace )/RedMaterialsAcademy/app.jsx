@@ -18897,15 +18897,13 @@ const XC = {
           password,
         );
         const uid = cred.user.uid;
-        await window.xcDB
-          .ref(`users/${uid}`)
-          .set({
-            username: "admin",
-            displayName: "Admin",
-            role: "admin",
-            batchId: "admin",
-            createdAt: Date.now(),
-          });
+        await window.xcDB.ref(`users/${uid}`).set({
+          username: "admin",
+          displayName: "Admin",
+          role: "admin",
+          batchId: "admin",
+          createdAt: Date.now(),
+        });
         const user = {
           uid,
           username: "admin",
@@ -18995,17 +18993,15 @@ const XC = {
         createdAt: Date.now(),
       };
       await window.xcDB.ref(`users/${uid}`).set(profile);
-      await window.xcDB
-        .ref(`leaderboard/${batchId}/${uid}`)
-        .set({
-          displayName,
-          username: u,
-          totalScore: 0,
-          streak: 0,
-          rank: "Rookie",
-          activitiesPlayed: 0,
-          lastActive: Date.now(),
-        });
+      await window.xcDB.ref(`leaderboard/${batchId}/${uid}`).set({
+        displayName,
+        username: u,
+        totalScore: 0,
+        streak: 0,
+        rank: "Rookie",
+        activitiesPlayed: 0,
+        lastActive: Date.now(),
+      });
       return { uid, ...profile };
     }
     const accounts = xcRead(XC_KEYS.accounts, []);
@@ -19051,15 +19047,13 @@ const XC = {
   pushScore: (uid, batchId, totalScore, streak, rank, activitiesPlayed) => {
     if (!uid || !batchId || batchId === "admin") return;
     if (XC.isOnline()) {
-      window.xcDB
-        .ref(`leaderboard/${batchId}/${uid}`)
-        .update({
-          totalScore,
-          streak,
-          rank,
-          activitiesPlayed,
-          lastActive: Date.now(),
-        });
+      window.xcDB.ref(`leaderboard/${batchId}/${uid}`).update({
+        totalScore,
+        streak,
+        rank,
+        activitiesPlayed,
+        lastActive: Date.now(),
+      });
     }
     const accounts = xcRead(XC_KEYS.accounts, []);
     const idx = accounts.findIndex((a) => a.uid === uid);

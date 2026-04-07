@@ -40,7 +40,7 @@ This audit covered the live Property Explorer runtime, the portal serving layer,
 - Fixed a real configuration bug where Permissions-Policy blocked microphone access before app logic could run.
 - Updated local server policy in excelias-portal/server.js.
 - Updated deployment parity in vercel.json.
-- Added regression coverage in excelias-portal/__tests__/server.test.js.
+- Added regression coverage in excelias-portal/**tests**/server.test.js.
 - Re-ran tests successfully: 49/49 passed.
 - Rebuilt dist successfully and verified the portal is serving from dist.
 
@@ -91,7 +91,7 @@ If needed, convert this audit into a shorter release or PR summary.
 - Website ( WorkSpace )/website-sw.js
 - build.js
 - excelias-portal/server.js
-- excelias-portal/__tests__/server.test.js
+- excelias-portal/**tests**/server.test.js
 - vercel.json
 
 ## Final Status

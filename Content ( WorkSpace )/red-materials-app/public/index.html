@@ -825,7 +825,11 @@ Keep responses educational and insightful. Use the training material as your sou
             });
             if (!res.ok) {
               const errBody = await res.json().catch(() => null);
-              throw new Error(errBody && errBody.error ? errBody.error : "API returned " + res.status);
+              throw new Error(
+                errBody && errBody.error
+                  ? errBody.error
+                  : "API returned " + res.status,
+              );
             }
             const data = await res.json();
             const reply =

@@ -41,6 +41,11 @@ const PROJECTS = {
     url: '/website/',
     mode: 'iframe',
   },
+  pitchlab: {
+    name: 'Pitch Lab',
+    url: '/pitch-lab/',
+    mode: 'iframe',
+  },
 };
 
 /* â”€â”€â”€ State â”€â”€â”€ */

@@ -55,7 +55,7 @@ const studentGuardSrc = `(function(){try{var u=JSON.parse(localStorage.getItem('
 const studentGuardTag = '<script src="/student-guard.js"></script>';
 
 /* ════════ 1. Portal files ════════ */
-console.log("[1/5] Portal files...");
+console.log("[1/7] Portal files...");
 const portalDir = path.join(ROOT, "excelias-portal");
 copyFile(path.join(portalDir, "index.html"), path.join(DIST, "index.html"));
 copyFile(path.join(portalDir, "portal.css"), path.join(DIST, "portal.css"));
@@ -82,7 +82,7 @@ fs.writeFileSync(path.join(DIST, "student-guard.js"), studentGuardSrc);
 console.log("    → Wrote student-guard.js to root");
 
 /* ════════ 2. Activities (Project 1) ════════ */
-console.log("[2/5] Activities...");
+console.log("[2/7] Activities...");
 const actSrc = path.join(
   ROOT,
   "Activites ( WorkSpace )",
@@ -158,7 +158,7 @@ console.log(
 );
 
 /* ════════ 3. Content / CRA Build (Project 2) ════════ */
-console.log("[3/5] Content (CRA build)...");
+console.log("[3/7] Content (CRA build)...");
 const contentBuild = path.join(
   ROOT,
   "Content ( WorkSpace )",
@@ -189,10 +189,7 @@ if (cRitaMatch) {
     /"localhost"===window\.location\.hostname\|\|"127\.0\.0\.1"===window\.location\.hostname\?"\/api\/gemini":"https:\/\/excelias\.vercel\.app\/api\/gemini"/,
     '"/api/gemini"',
   );
-  fs.writeFileSync(
-    path.join(DIST, "content", "content-rita.js"),
-    ritaCode,
-  );
+  fs.writeFileSync(path.join(DIST, "content", "content-rita.js"), ritaCode);
   cHtml = cHtml.replace(
     cRitaMatch[0],
     '<script src="content-rita.js"></script>',
@@ -216,7 +213,7 @@ fs.writeFileSync(contentHtml, cHtml);
 console.log('    → Added <base href="/content/"> + rewrote CRA paths');
 
 /* ════════ 4. Reports (Project 3) ════════ */
-console.log("[4/6] Reports...");
+console.log("[4/7] Reports...");
 const reportsSrc = path.join(ROOT, "Report Generation 3");
 const reportsCspSrc = path.join(reportsSrc, "csp");
 const reportsDest = path.join(DIST, "reports");
@@ -287,7 +284,7 @@ if (hasReportsCspBuild) {
 }
 
 /* ════════ 5. Study Guide (Project 4) ════════ */
-console.log("[5/6] Study Guide...");
+console.log("[5/7] Study Guide...");
 const studySrc = path.join(ROOT, "Study Guide & Excersies");
 const studyCspSrc = path.join(studySrc, "csp");
 const studyDest = path.join(DIST, "studyguide");
@@ -331,7 +328,7 @@ if (hasStudyCspBuild) {
 }
 
 /* ════════ 6. Website / Property Explorer (Project 5) ════════ */
-console.log("[6/6] Website...");
+console.log("[6/7] Website...");
 const webSrc = path.join(ROOT, "Website ( WorkSpace )");
 const webDest = path.join(DIST, "website");
 mkDir(webDest);
@@ -403,6 +400,26 @@ console.log(
   '    → Added <base href="/website/"> + student-guard.js external script + rewrote paths',
 );
 
+/* ════════ 7. Pitch Lab (Project 6) ════════ */
+console.log("[7/7] Pitch Lab...");
+const pitchSrc  = path.join(ROOT, "Pitch Lab ( WorkSpace )");
+const pitchDest = path.join(DIST, "pitch-lab");
+mkDir(pitchDest);
+// Copy all source files
+for (const f of ["index.html", "pitch-lab.css", "pitch-lab.js"]) {
+  const fp = path.join(pitchSrc, f);
+  if (fs.existsSync(fp)) copyFile(fp, path.join(pitchDest, f));
+}
+// Add <base> tag and student-guard to index.html
+const pitchHtml = path.join(pitchDest, "index.html");
+let pHtml = fs.readFileSync(pitchHtml, "utf8");
+pHtml = pHtml.replace(
+  "<head>",
+  '<head>\n  <base href="/pitch-lab/" />\n  ' + studentGuardTag,
+);
+fs.writeFileSync(pitchHtml, pHtml);
+console.log('    → Added <base href="/pitch-lab/"> + student-guard.js external script');
+
 /* ════════ Done ════════ */
 const total = countFiles(DIST);
 console.log(`\n✅ Build complete!`);
@@ -415,4 +432,5 @@ console.log(`   ✓ Content (Training Manual)`);
 console.log(`   ✓ Reports (Report Generator)`);
 console.log(`   ✓ Study Guide (Batch Library)`);
 console.log(`   ✓ Website (Property Explorer)`);
+console.log(`   ✓ Pitch Lab (AI Call Simulation Studio)`);
 console.log(`   ⊘ Avaria (requires separate server — opens in new tab)`);

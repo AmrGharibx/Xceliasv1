@@ -299,6 +299,25 @@ describe('Student guard middleware', () => {
     expect(res.status).toBe(302);
     expect(res.headers.location).toBe('/');
   });
+
+  test('redirects unauthenticated HTML request to /pitch-lab/', async () => {
+    const res = await request(app).get('/pitch-lab/');
+    expect(res.status).toBe(302);
+    expect(res.headers.location).toBe('/');
+  });
+
+  test('redirects student session from /pitch-lab/ to /studyguide/', async () => {
+    const token = makeSession({ uid: UID_STUDENT, role: 'student' });
+    const res = await request(app).get('/pitch-lab/').set('Cookie', cookieHeader(token));
+    expect(res.status).toBe(302);
+    expect(res.headers.location).toBe('/studyguide/');
+  });
+
+  test('allows admin session through /pitch-lab/ guard', async () => {
+    const token = makeSession({ uid: UID_ADMIN, role: 'admin' });
+    const res = await request(app).get('/pitch-lab/').set('Cookie', cookieHeader(token));
+    expect(res.status).not.toBe(302);
+  });
 });
 
 /* ─────────────────────────────────────────────────────────── */
@@ -344,7 +363,9 @@ describe('Security headers on page responses', () => {
 
   test('allows same-origin microphone access in Permissions-Policy', async () => {
     const res = await request(app).get('/');
-    expect(res.headers['permissions-policy']).toBe('camera=(), microphone=(self), geolocation=(self)');
+    expect(res.headers['permissions-policy']).toBe(
+      'camera=(), microphone=(self), geolocation=(self)'
+    );
   });
 
   test('does not expose X-Powered-By', async () => {

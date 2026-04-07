@@ -473,6 +473,7 @@ body {
 .card-icon--reports    { background: rgba(240, 147, 251, 0.12); border-color: rgba(240, 147, 251, 0.2); }
 .card-icon--website    { background: rgba(102, 126, 234, 0.12); border-color: rgba(102, 126, 234, 0.2); }
 .card-icon--studyguide { background: rgba(80, 250, 123, 0.12); border-color: rgba(80, 250, 123, 0.2); }
+.card-icon--pitchlab  { background: rgba(255, 130, 40, 0.12); border-color: rgba(255, 130, 40, 0.2); }
 
 .card-icon {
   font-size: 1.5rem;
@@ -495,6 +496,7 @@ body {
 .badge--reports    { background: rgba(240, 147, 251, 0.15); color: #f093fb; }
 .badge--website    { background: rgba(102, 126, 234, 0.15); color: #a5b4fc; }
 .badge--studyguide { background: rgba(80, 250, 123, 0.15); color: #50fa7b; }
+.badge--pitchlab   { background: rgba(255, 130, 40, 0.15); color: #ff8228; border: 1px solid rgba(255,130,40,0.25); }
 
 .card-title {
   font-size: 1.2rem;

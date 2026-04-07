@@ -234,6 +234,7 @@ const CONTENT_BUILD = useDist
 const REPORTS_DIR = useDist ? path.join(DIST, 'reports') : REPORTS_SRC;
 const WEBSITE_DIR = useDist ? path.join(DIST, 'website') : path.join(WS, 'Website ( WorkSpace )');
 const STUDY_GUIDE_DIR = useDist ? path.join(DIST, 'studyguide') : STUDY_GUIDE_SRC;
+const PITCH_LAB_DIR = useDist ? path.join(DIST, 'pitch-lab') : path.join(WS, 'Pitch Lab ( WorkSpace )');
 const PORTAL_DIR = useDist ? DIST : __dirname;
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -346,6 +347,7 @@ app.use('/activities', studentGuardMiddleware, express.static(ACTIVITIES_DIR));
 app.use('/content', studentGuardMiddleware, express.static(CONTENT_BUILD));
 app.use('/static', studentGuardMiddleware, express.static(path.join(CONTENT_BUILD, 'static')));
 app.use('/reports', studentGuardMiddleware, express.static(REPORTS_DIR));
+app.use('/pitch-lab', studentGuardMiddleware, express.static(PITCH_LAB_DIR));
 
 /* Portal — guard students away from the home page */
 app.use((req, res, next) => {

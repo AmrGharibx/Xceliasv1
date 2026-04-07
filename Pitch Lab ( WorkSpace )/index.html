@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pitch Lab — Call Simulation Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cairo:wght@400;600;700&display=swap" />
+  <link rel="stylesheet" href="pitch-lab.css" />
+</head>
+<body>
+
+<!-- ── SCREEN 1: HOME ────────────────────────────────────────────── -->
+<div id="screen-home" class="screen active">
+  <header class="lab-header">
+    <div class="lab-logo">
+      <span class="lab-logo-icon">🎙️</span>
+      <div>
+        <h1 class="lab-logo-title">Pitch Lab</h1>
+        <p class="lab-logo-sub">AI Call Simulation Studio</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <button class="btn-icon" id="btn-history" title="Session History" aria-label="View session history">
+        📋
+      </button>
+      <button class="btn-icon" id="btn-lang" title="Toggle language" aria-label="Toggle language">
+        🌐
+      </button>
+    </div>
+  </header>
+
+  <section class="home-hero">
+    <p class="home-tagline" data-en="Practice calls. Make mistakes safely. Close better." data-ar="تدرّب على المكالمات. أخطئ بأمان. أغلق الصفقات بشكل أفضل.">
+      Practice calls. Make mistakes safely. Close better.
+    </p>
+  </section>
+
+  <section class="scenarios-grid" id="scenarios-grid" aria-label="Available scenarios">
+    <!-- Injected by JS -->
+  </section>
+
+  <!-- History panel (slide-in) -->
+  <aside class="history-panel" id="history-panel" aria-label="Session history" hidden>
+    <div class="history-header">
+      <h2 class="history-title" data-en="Recent Sessions" data-ar="الجلسات الأخيرة">Recent Sessions</h2>
+      <button class="btn-icon" id="btn-history-close" aria-label="Close history">✕</button>
+    </div>
+    <div id="history-list"></div>
+    <button class="btn-danger" id="btn-clear-history" data-en="Clear History" data-ar="مسح السجل">Clear History</button>
+  </aside>
+</div>
+
+<!-- ── SCREEN 2: BRIEFING ─────────────────────────────────────────── -->
+<div id="screen-briefing" class="screen">
+  <div class="briefing-wrapper">
+    <div class="briefing-card">
+      <button class="btn-back" id="briefing-back" aria-label="Back to scenarios">← <span data-en="Back" data-ar="رجوع">Back</span></button>
+      <div class="briefing-badge" id="briefing-badge"></div>
+      <h2 class="briefing-name" id="briefing-name"></h2>
+      <p class="briefing-profile-label" data-en="Client Profile" data-ar="ملف العميل">Client Profile</p>
+      <p class="briefing-profile" id="briefing-profile"></p>
+      <div class="briefing-objective-box">
+        <p class="briefing-objective-label" data-en="Your Objective" data-ar="هدفك">Your Objective</p>
+        <p class="briefing-objective" id="briefing-objective"></p>
+      </div>
+      <div class="briefing-tips" id="briefing-tips"></div>
+      <div class="briefing-timer-row">
+        <span class="briefing-timer-text" data-en="Call starts in:" data-ar="تبدأ المكالمة في:">Call starts in:</span>
+        <span class="briefing-countdown" id="briefing-countdown">8</span>
+      </div>
+      <button class="btn-primary btn-start-now" id="btn-start-call" data-en="Start Call Now →" data-ar="← ابدأ المكالمة الآن">Start Call Now →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── SCREEN 3: CALL ──────────────────────────────────────────────── -->
+<div id="screen-call" class="screen">
+  <div class="call-wrapper">
+    <header class="call-header">
+      <div class="call-persona-info">
+        <div class="call-avatar" id="call-avatar"></div>
+        <div>
+          <p class="call-persona-name" id="call-persona-name"></p>
+          <p class="call-persona-sub" id="call-persona-sub"></p>
+        </div>
+      </div>
+      <div class="call-header-right">
+        <div class="call-timer-badge" id="call-timer-badge">
+          <span class="call-timer-dot"></span>
+          <span id="call-timer">00:00</span>
+        </div>
+        <button class="btn-end-call" id="btn-end-call" data-en="End Call" data-ar="إنهاء المكالمة">End Call</button>
+      </div>
+    </header>
+
+    <div class="chat-area" id="chat-area" role="log" aria-live="polite" aria-label="Call transcript">
+      <!-- Messages injected here -->
+    </div>
+
+    <div class="chat-input-row" id="chat-input-row">
+      <textarea
+        id="chat-input"
+        class="chat-input"
+        rows="1"
+        placeholder="Type your response..."
+        aria-label="Your message"
+        maxlength="1200"
+      ></textarea>
+      <button class="btn-send" id="btn-send" aria-label="Send message">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </div>
+    <p class="call-hint" id="call-hint" data-en="Respond as if this is a real phone call. Be professional." data-ar="أجب كما لو كانت هذه مكالمة حقيقية. كن محترفاً.">
+      Respond as if this is a real phone call. Be professional.
+    </p>
+  </div>
+</div>
+
+<!-- ── SCREEN 4: DEBRIEF ──────────────────────────────────────────── -->
+<div id="screen-debrief" class="screen">
+  <div class="debrief-wrapper">
+    <div class="debrief-card">
+      <div class="debrief-header-row">
+        <div class="debrief-scenario-badge" id="debrief-scenario-badge"></div>
+        <div class="debrief-total-wrap">
+          <div class="debrief-total" id="debrief-total">--</div>
+          <div class="debrief-total-label" data-en="/ 100" data-ar="/ 100">/ 100</div>
+        </div>
+      </div>
+      <h2 class="debrief-title" data-en="Call Debrief" data-ar="تحليل المكالمة">Call Debrief</h2>
+
+      <div class="debrief-scores" id="debrief-scores">
+        <!-- Score bars injected here -->
+      </div>
+
+      <div class="debrief-coaching" id="debrief-coaching">
+        <!-- Coaching tips injected here -->
+      </div>
+
+      <div class="debrief-actions">
+        <button class="btn-secondary" id="btn-retry" data-en="Retry Same Scenario" data-ar="إعادة نفس السيناريو">Retry Same Scenario</button>
+        <button class="btn-primary" id="btn-home" data-en="Try Another Scenario" data-ar="جرّب سيناريو آخر">Try Another Scenario</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loading overlay -->
+<div class="loading-overlay" id="loading-overlay" hidden aria-busy="true" aria-label="Loading">
+  <div class="loading-spinner"></div>
+  <p class="loading-text" id="loading-text">Connecting to client...</p>
+</div>
+
+<script src="pitch-lab.js"></script>
+</body>
+</html>

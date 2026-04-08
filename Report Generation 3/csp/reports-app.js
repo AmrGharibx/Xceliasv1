@@ -1480,10 +1480,10 @@ function recalc(i){
     const pk=t.scores.productKnowledge.score,mp=t.scores.mapping.score;
     const ss=t.scores.softSkills.score,pr=t.scores.presentability.score;
     t.scores.totalCore=pk+mp;
-    t.scores.techScorePercent=((pk+mp)/10)*100;
+    t.scores.techScorePercent=parseFloat(((pk+mp)/10*100).toFixed(2));
     t.scores.professionalConductRating.score=ss+pr;
-    t.scores.softScorePercent=((ss+pr)/10)*100;
-    t.overallScore=Math.round(((t.scores.techScorePercent+t.scores.softScorePercent)/2)*10)/10;
+    t.scores.softScorePercent=parseFloat(((ss+pr)/10*100).toFixed(2));
+    t.overallScore=parseFloat(((t.scores.techScorePercent+t.scores.softScorePercent)/2).toFixed(2));
 
     // Auto-calculate Missed Content % from absent days and total training days
     const att=t.attendance.attendanceDays;

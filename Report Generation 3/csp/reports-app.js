@@ -1471,6 +1471,9 @@ function uf(i,path,val){
         syncAssessmentState(S.trainees[i]);
         renderCards();
     }
+    if(path==='attendance.attendanceDays'||path==='attendance.absent'){
+        recalc(i);
+    }
 }
 function us(i,f,v){S.trainees[i].scores[f].score=clampScore(v)}
 

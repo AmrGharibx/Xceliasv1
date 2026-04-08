@@ -272,7 +272,9 @@ app.use((req, res, next) => {
   next();
 });
 
-/* ─── JSON body parser for auth API (tight limit for auth endpoints) ─── */
+/* ─── JSON body parser — tight limit for auth, generous for Gemini vision ─── */
+/* Vision requests carry base64 images; allow up to 10MB for /api/gemini only */
+app.use('/api/gemini', express.json({ limit: '10mb' }));
 app.use(express.json({ limit: '50kb' }));
 
 /* ═══════════════════════════════════════════════════════════════════

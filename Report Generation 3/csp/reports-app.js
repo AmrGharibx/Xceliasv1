@@ -168,7 +168,8 @@ function resizeImageForOCR(dataUrl,maxDim){
             const c=document.createElement('canvas');
             c.width=w;c.height=h;
             c.getContext('2d').drawImage(img,0,0,w,h);
-            resolve(c.toDataURL('image/jpeg',0.88));
+            // 0.75 quality keeps base64 payload small enough for the 10MB body limit
+            resolve(c.toDataURL('image/jpeg',0.75));
         };
         img.onerror=()=>resolve(dataUrl); // fallback: return original if load fails
         img.src=dataUrl;
@@ -287,8 +288,8 @@ async function extractFromScreenshots(){
             ocrProg('Analyzing image '+(i+1)+' of '+S.imgs.length+' with AI...',pct);
             ocrStep(2);
 
-            // Resize to max 1600px to keep payload manageable
-            const resized=await resizeImageForOCR(S.imgs[i].url,1600);
+            // Resize to max 1024px to keep payload manageable (well under 10MB body limit)
+            const resized=await resizeImageForOCR(S.imgs[i].url,1024);
             const matchB64=resized.match(/^data:(image\/[a-zA-Z+]+);base64,(.+)$/);
             if(!matchB64){toast('Invalid image format for image '+(i+1),'err');ov.classList.remove('on');return;}
             const mimeType=matchB64[1];

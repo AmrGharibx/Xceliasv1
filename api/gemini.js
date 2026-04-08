@@ -6,8 +6,22 @@ const GEMINI_MODELS = [
 ];
 const GEMINI_BASE = "https://generativelanguage.googleapis.com/v1beta/models";
 
-async function callGeminiWithRetry(apiKey, geminiBody, retries = 2) {
-  for (const model of GEMINI_MODELS) {
+// Vercel body size limit — allow up to 10MB for vision payloads
+module.exports.config = {
+  api: {
+    bodyParser: {
+      sizeLimit: "10mb",
+    },
+  },
+};
+
+async function callGeminiWithRetry(apiKey, geminiBody, hasImages, retries = 2) {
+  // Vision requests require full flash models — lite variants don't support multimodal
+  const models = hasImages
+    ? GEMINI_MODELS.filter((m) => !m.includes("lite"))
+    : GEMINI_MODELS;
+
+  for (const model of models) {
     for (let attempt = 0; attempt < retries; attempt++) {
       const url = `${GEMINI_BASE}/${model}:generateContent?key=${apiKey}`;
       const response = await fetch(url, {
@@ -27,6 +41,8 @@ async function callGeminiWithRetry(apiKey, geminiBody, retries = 2) {
         await new Promise((r) => setTimeout(r, 1500 * (attempt + 1)));
         continue;
       }
+      // For vision requests a 400 may mean model doesn't support multimodal — try next
+      if (hasImages && status === 400) break;
       // Non-retryable error for this model, try next model
       console.warn(`Gemini ${model}: ${status}, trying next model...`);
       break;
@@ -129,8 +145,25 @@ module.exports = async function handler(req, res) {
 
     const contents = messages.map((m) => ({
       role: m.role === "assistant" ? "model" : "user",
-      parts: [{ text: String(m.content || "") }],
+      // Support both m.parts (vision/multipart) and m.content (plain text)
+      parts: Array.isArray(m.parts)
+        ? m.parts.map((p) => {
+            if (p && p.inlineData) {
+              const mime = String(p.inlineData.mimeType || "");
+              if (!/^image\/(png|jpeg|jpg|gif|webp)$/.test(mime)) {
+                throw new Error("Invalid image mime type");
+              }
+              return { inlineData: { mimeType: mime, data: String(p.inlineData.data || "") } };
+            }
+            return { text: String(p && p.text != null ? p.text : "") };
+          })
+        : [{ text: String(m.content || "") }],
     }));
+
+    // Detect if any message contains an image
+    const hasImages = contents.some(
+      (c) => c.parts && c.parts.some((p) => p && p.inlineData)
+    );
 
     const geminiBody = {
       contents,
@@ -152,7 +185,7 @@ module.exports = async function handler(req, res) {
       return await streamGemini(GEMINI_API_KEY, geminiBody, res);
     }
 
-    const text = await callGeminiWithRetry(GEMINI_API_KEY, geminiBody);
+    const text = await callGeminiWithRetry(GEMINI_API_KEY, geminiBody, hasImages);
     res.json({ success: true, text });
   } catch (err) {
     console.error("Gemini proxy error:", err.message);

@@ -1491,7 +1491,7 @@ function recalc(i){
     const absNum=(abs!=null&&abs!==''&&!isNaN(parseInt(abs,10)))?parseInt(abs,10):0;
     if(attNum!=null&&attNum>=0){
         const totalDays=attNum+absNum;
-        t.attendance.missedContent=totalDays>0?Math.round((absNum/totalDays)*100):0;
+        t.attendance.missedContent=totalDays>0?parseFloat(((absNum/totalDays)*100).toFixed(1)):0;
     }
     // If attendanceDays is unknown but we have absences, leave missedContent as-is
 

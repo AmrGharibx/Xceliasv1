@@ -1238,8 +1238,6 @@ function heuristicMap(nums){
 
 function clampScore(v){
     v=parseFloat(v)||0;
-    // Round to nearest 0.5
-    v=Math.round(v*2)/2;
     return Math.max(0,Math.min(5,v));
 }
 
@@ -1432,10 +1430,10 @@ function makeCard(t,i){
             </div>
             <div class="csec"><h4>Scores (enter from screenshot)</h4>
                 <div class="grid c4">
-                    <div class="fld"><label>Product Knowledge (/5)</label><input type="number" step="0.5" min="0" max="5" value="${t.scores.productKnowledge.score}" data-i="${i}" data-score="productKnowledge"></div>
-                    <div class="fld"><label>Mapping (/5)</label><input type="number" step="0.5" min="0" max="5" value="${t.scores.mapping.score}" data-i="${i}" data-score="mapping"></div>
-                    <div class="fld"><label>Soft Skills (/5)</label><input type="number" step="0.5" min="0" max="5" value="${t.scores.softSkills.score}" data-i="${i}" data-score="softSkills"></div>
-                    <div class="fld"><label>Presentability (/5)</label><input type="number" step="0.5" min="0" max="5" value="${t.scores.presentability.score}" data-i="${i}" data-score="presentability"></div>
+                    <div class="fld"><label>Product Knowledge (/5)</label><input type="number" step="0.1" min="0" max="5" value="${t.scores.productKnowledge.score}" data-i="${i}" data-score="productKnowledge"></div>
+                    <div class="fld"><label>Mapping (/5)</label><input type="number" step="0.1" min="0" max="5" value="${t.scores.mapping.score}" data-i="${i}" data-score="mapping"></div>
+                    <div class="fld"><label>Soft Skills (/5)</label><input type="number" step="0.1" min="0" max="5" value="${t.scores.softSkills.score}" data-i="${i}" data-score="softSkills"></div>
+                    <div class="fld"><label>Presentability (/5)</label><input type="number" step="0.1" min="0" max="5" value="${t.scores.presentability.score}" data-i="${i}" data-score="presentability"></div>
                 </div>
                 <div style="margin-top:10px;padding:10px 14px;background:var(--g50);border-radius:8px;font-size:.82rem;color:var(--g500)">
                     <strong>Auto-calculated:</strong> Tech Score: <strong>${t.scores.techScorePercent}%</strong> · Professionalism: <strong>${t.scores.softScorePercent}%</strong> · Overall: <strong>${t.overallScore}%</strong> → <span class="badge ${t.badgeClass}">${ee(displayAssessmentOutcome(t)||t.assessmentResult)}</span>

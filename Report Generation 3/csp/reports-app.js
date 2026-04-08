@@ -296,23 +296,27 @@ async function extractFromScreenshots(){
 
             if(_ocrCancelled){ov.classList.remove('on');return;}
 
-            const prompt='You are analyzing a screenshot from a training management system (Notion).\n'+
-                'Extract ALL trainee data visible in this screenshot.\n'+
-                'Return a JSON array (raw JSON only, no markdown code blocks, no explanation) where each element is:\n'+
-                '{"name":"Full Name","mapping":null,"productKnowledge":null,"softSkills":null,"presentability":null,'+
-                '"attendanceDays":null,"absent":null,"assessmentOutcome":"","comments":"","batch":"","company":""}\n'+
-                'Rules:\n'+
-                '- name: trainee full name (string, required — skip rows with no valid name)\n'+
-                '- mapping, productKnowledge, softSkills, presentability: score 0–5 (number or null if not visible)\n'+
-                '- attendanceDays: number of days attended (integer or null)\n'+
-                '- absent: number of absences (integer or null)\n'+
-                '- assessmentOutcome: "Excellent", "Very Good", "Good", "Average", "Passed", "Failed", or "" if not visible\n'+
-                '- comments: instructor comment text or ""\n'+
-                '- batch: batch number/label visible in screenshot or ""\n'+
-                '- company: company name visible in screenshot or ""\n'+
-                'If this is a table view with multiple rows, extract each trainee row.\n'+
-                'If this is a single-trainee detail card, extract that one trainee.\n'+
-                'Return ONLY a valid JSON array. If no trainees found, return [].';
+            const prompt='Look at this image carefully. It is a screenshot of a training management system.\n'+
+                'Your task: extract every trainee/person you can see in the image.\n\n'+
+                'Output a JSON array where each trainee is an object with these keys:\n'+
+                '  name (string - full name, required)\n'+
+                '  mapping (number 0-5 or null)\n'+
+                '  productKnowledge (number 0-5 or null)\n'+
+                '  softSkills (number 0-5 or null)\n'+
+                '  presentability (number 0-5 or null)\n'+
+                '  attendanceDays (integer or null)\n'+
+                '  absent (integer or null)\n'+
+                '  assessmentOutcome (one of: "Excellent","Very Good","Good","Average","Passed","Failed" or "")\n'+
+                '  comments (string)\n'+
+                '  batch (string)\n'+
+                '  company (string)\n\n'+
+                'If scores appear as fractions like "4/5" use the numerator (4).\n'+
+                'If you see a table, extract each row as a separate trainee.\n'+
+                'If you see a card/detail view, extract that single trainee.\n'+
+                'Do not include header rows or empty rows.\n'+
+                'Respond with ONLY the JSON array, no explanations, no markdown fences.\n'+
+                'Example: [{"name":"Ahmed Ali","mapping":4,"productKnowledge":3,"softSkills":5,"presentability":4,"attendanceDays":10,"absent":1,"assessmentOutcome":"Good","comments":"","batch":"32","company":"RED"}]\n'+
+                'If no trainee data is visible at all, respond with exactly: []';
 
             let resp;
             try{
@@ -338,14 +342,20 @@ async function extractFromScreenshots(){
 
             const result=await resp.json();
             const raw=(result.text||'').trim();
-            // Strip markdown code fences if present
-            const cleaned=raw.replace(/^```(?:json)?\n?/i,'').replace(/\n?```\s*$/,'').trim();
+            // Strip markdown code fences if present, then extract JSON array
+            let cleaned=raw.replace(/^```(?:json)?\s*/i,'').replace(/\s*```\s*$/,'').trim();
+            // If the model wrapped in an object, try to find the array inside
+            if(!cleaned.startsWith('[')){
+                const arrMatch=cleaned.match(/(\[[\s\S]*\])/);
+                if(arrMatch)cleaned=arrMatch[1];
+            }
+            console.log('[OCR] raw response for image',i+1,':',cleaned.slice(0,200));
             try{
                 const parsed=JSON.parse(cleaned);
                 const arr=Array.isArray(parsed)?parsed:[parsed];
                 arr.forEach(t=>{if(t&&typeof t.name==='string'&&t.name.trim())allTrainees.push(t);});
             }catch(parseErr){
-                console.warn('[OCR] JSON parse failed for image',i,cleaned,parseErr);
+                console.warn('[OCR] JSON parse failed for image',i+1,cleaned,parseErr);
                 // Non-fatal — continue to next image
             }
         }

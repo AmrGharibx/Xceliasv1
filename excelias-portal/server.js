@@ -447,7 +447,15 @@ app.post('/api/gemini', async (req, res) => {
       geminiBody.systemInstruction = { parts: [{ text: String(systemPrompt).slice(0, 8000) }] };
     }
 
-    for (const model of GEMINI_MODELS) {
+    // Vision requests require full flash models — lite variants don't support multimodal
+    const hasImages = contents.some(
+      (c) => c.parts && c.parts.some((p) => p && p.inlineData)
+    );
+    const modelsToTry = hasImages
+      ? GEMINI_MODELS.filter((m) => !m.includes('lite'))
+      : GEMINI_MODELS;
+
+    for (const model of modelsToTry) {
       const url = `${GEMINI_BASE}/${model}:generateContent?key=${apiKey}`;
       let response;
       try {
@@ -461,7 +469,9 @@ app.post('/api/gemini', async (req, res) => {
       }
       if (!response.ok) {
         if (response.status === 503 || response.status === 429 || response.status === 404) continue;
-        break; // hard error (e.g. 400/401/403) — no point trying other models
+        // For vision requests a 400 may mean model doesn't support multimodal — try next
+        if (hasImages && response.status === 400) continue;
+        break; // hard error — no point trying other models
       }
       const data = await response.json();
       const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';

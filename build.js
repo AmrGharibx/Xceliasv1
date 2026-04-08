@@ -402,7 +402,7 @@ console.log(
 
 /* ════════ 7. Pitch Lab (Project 6) ════════ */
 console.log("[7/7] Pitch Lab...");
-const pitchSrc  = path.join(ROOT, "Pitch Lab ( WorkSpace )");
+const pitchSrc = path.join(ROOT, "Pitch Lab ( WorkSpace )");
 const pitchDest = path.join(DIST, "pitch-lab");
 mkDir(pitchDest);
 // Copy all source files
@@ -418,7 +418,9 @@ pHtml = pHtml.replace(
   '<head>\n  <base href="/pitch-lab/" />\n  ' + studentGuardTag,
 );
 fs.writeFileSync(pitchHtml, pHtml);
-console.log('    → Added <base href="/pitch-lab/"> + student-guard.js external script');
+console.log(
+  '    → Added <base href="/pitch-lab/"> + student-guard.js external script',
+);
 
 /* ════════ Done ════════ */
 const total = countFiles(DIST);

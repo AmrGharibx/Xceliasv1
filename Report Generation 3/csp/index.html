@@ -22,11 +22,6 @@
       integrity="sha384-JcnsjUPPylna1s1fvi1u12X5qjY5OL56iySh75FdtrwhO/SWXgMjoVqcKyIIWOLk"
       crossorigin="anonymous"
     ></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"
-      integrity="sha384-GJqSu7vueQ9qN0E9yLPb3Wtpd7OrgK8KmYzC8T1IysG1bcvxvIO4qtYR/D3A991F"
-      crossorigin="anonymous"
-    ></script>
     <style>
       *,
       *::before,
@@ -2117,7 +2112,7 @@
     <div id="ocr-overlay">
       <div class="ocr-box">
         <h3>🔍 Extracting Data...</h3>
-        <p class="ocr-sub">Tesseract.js OCR engine running in your browser</p>
+        <p class="ocr-sub">Gemini AI Vision — smart &amp; accurate extraction</p>
         <div class="ocr-pct" id="ocr-pct">0%</div>
         <div class="pbar-out">
           <div class="pbar-in" id="ocr-bar" style="width: 0%"></div>
@@ -2125,13 +2120,13 @@
         <p class="ocr-msg" id="ocr-msg">Initializing...</p>
         <div class="ocr-steps" id="ocr-steps">
           <div class="ocr-step active" id="os-1">
-            <span class="sico">⏳</span>Loading OCR engine
+            <span class="sico">⏳</span>Preparing images
           </div>
           <div class="ocr-step" id="os-2">
-            <span class="sico">⏳</span>Preprocessing images
+            <span class="sico">⏳</span>Analyzing with AI
           </div>
           <div class="ocr-step" id="os-3">
-            <span class="sico">⏳</span>Reading text from screenshots
+            <span class="sico">⏳</span>Processing results
           </div>
           <div class="ocr-step" id="os-4">
             <span class="sico">⏳</span>Parsing trainee data
@@ -2261,11 +2256,11 @@
                 <path d="M12 16v-4M12 8h.01" />
               </svg>
               <span
-                ><strong>Built-in OCR + Smart Text Engine.</strong> Upload
-                screenshots → the app reads scores automatically using
-                Tesseract.js (runs in your browser, no API key). Then it
+                ><strong>Gemini AI Vision + Smart Text Engine.</strong> Upload
+                screenshots → the AI reads scores automatically using
+                Gemini Vision (uses your portal session). Then it
                 generates all assessments, tiers, and report text from the
-                numbers. Zero cost, zero limits.</span
+                numbers.</span
               >
             </div>
             <div class="grid">
@@ -2304,9 +2299,8 @@
           <div class="card">
             <h2 class="card-title">Upload Evaluation Screenshots</h2>
             <p class="card-desc">
-              Upload your spreadsheet screenshots. The built-in OCR engine will
-              read the text and extract all trainee scores automatically — no
-              API key needed.
+              Upload your screenshots. Gemini AI Vision will
+              analyze each image and extract all trainee scores automatically.
             </p>
             <div class="upzone" id="upzone">
               <input type="file" multiple accept="image/*" id="file-in" />
@@ -2358,8 +2352,7 @@
                   Extract Data from Screenshots
                 </button>
                 <p>
-                  Tesseract.js OCR runs entirely in your browser — no data
-                  leaves your device
+                  Gemini AI Vision analyzes your screenshots and extracts trainee data automatically
                 </p>
               </div>
               <div id="raw-area" style="display: none">

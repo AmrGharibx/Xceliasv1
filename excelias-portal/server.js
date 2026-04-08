@@ -234,7 +234,9 @@ const CONTENT_BUILD = useDist
 const REPORTS_DIR = useDist ? path.join(DIST, 'reports') : REPORTS_SRC;
 const WEBSITE_DIR = useDist ? path.join(DIST, 'website') : path.join(WS, 'Website ( WorkSpace )');
 const STUDY_GUIDE_DIR = useDist ? path.join(DIST, 'studyguide') : STUDY_GUIDE_SRC;
-const PITCH_LAB_DIR = useDist ? path.join(DIST, 'pitch-lab') : path.join(WS, 'Pitch Lab ( WorkSpace )');
+const PITCH_LAB_DIR = useDist
+  ? path.join(DIST, 'pitch-lab')
+  : path.join(WS, 'Pitch Lab ( WorkSpace )');
 const PORTAL_DIR = useDist ? DIST : __dirname;
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -254,9 +256,9 @@ app.use((req, res, next) => {
       "script-src 'self' https://www.gstatic.com https://*.firebasedatabase.app https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com https://cdn.jsdelivr.net",
       "font-src 'self' https://fonts.gstatic.com",
-      "connect-src 'self' https://*.googleapis.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://overpass-api.de https://server.arcgisonline.com",
+      "connect-src 'self' https://*.googleapis.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://overpass-api.de https://server.arcgisonline.com https://cdn.jsdelivr.net",
       "img-src 'self' data: blob: https://*.basemaps.cartocdn.com https://server.arcgisonline.com",
-      "worker-src 'self' https://cdn.jsdelivr.net",
+      "worker-src 'self' blob: https://cdn.jsdelivr.net",
       "frame-src 'self' https://lms.xcelias.com https://*.firebasedatabase.app",
       "object-src 'none'",
       "base-uri 'self'",
@@ -416,7 +418,18 @@ app.post('/api/gemini', async (req, res) => {
 
     const contents = messages.map((m) => ({
       role: m.role === 'assistant' ? 'model' : 'user',
-      parts: [{ text: String(m.content || '') }],
+      parts: Array.isArray(m.parts)
+        ? m.parts.map((p) => {
+            if (p && p.inlineData) {
+              const mime = String(p.inlineData.mimeType || '');
+              if (!/^image\/(png|jpeg|jpg|gif|webp)$/.test(mime)) {
+                throw new Error('Invalid image mime type');
+              }
+              return { inlineData: { mimeType: mime, data: String(p.inlineData.data || '') } };
+            }
+            return { text: String(p && p.text != null ? p.text : '') };
+          })
+        : [{ text: String(m.content || '') }],
     }));
 
     const geminiBody = {

@@ -146,7 +146,7 @@ document.addEventListener('click',function(e){const t=e.target.closest('.ref-lb-
 function openLB(url){document.getElementById('lb-img').src=url;document.getElementById('lightbox').classList.add('on')}
 
 // ============================================================
-//  BUILT-IN OCR ENGINE (Tesseract.js — 100% Browser, No API)
+//  GEMINI VISION EXTRACTION ENGINE
 // ============================================================
 
 let _ocrCancelled=false;
@@ -155,7 +155,24 @@ function cancelOCR(){
     _ocrCancelled=true;
     if(_ocrTimeoutId){clearTimeout(_ocrTimeoutId);_ocrTimeoutId=null;}
     document.getElementById('ocr-overlay').classList.remove('on');
-    toast('OCR cancelled','info');
+    toast('Extraction cancelled','info');
+}
+
+// Resize image to max dimension for API efficiency
+function resizeImageForOCR(dataUrl,maxDim){
+    return new Promise(resolve=>{
+        const img=new Image();
+        img.onload=()=>{
+            const scale=Math.min(1,maxDim/Math.max(img.width,img.height,1));
+            const w=Math.round(img.width*scale)||1,h=Math.round(img.height*scale)||1;
+            const c=document.createElement('canvas');
+            c.width=w;c.height=h;
+            c.getContext('2d').drawImage(img,0,0,w,h);
+            resolve(c.toDataURL('image/jpeg',0.88));
+        };
+        img.onerror=()=>resolve(dataUrl); // fallback: return original if load fails
+        img.src=dataUrl;
+    });
 }
 
 function ocrStep(n,state){
@@ -249,108 +266,158 @@ function ocrPreprocess(dataUrl){
     });
 }
 
-// Main extraction function
+// Main extraction function — uses Gemini Vision API
 async function extractFromScreenshots(){
     if(!S.imgs.length){toast('Upload screenshots first','err');return}
-    if(!window.Tesseract){toast('OCR engine not loaded — check internet connection','err');return}
 
     const ov=document.getElementById('ocr-overlay');
     ov.classList.add('on');
     _ocrCancelled=false;
-    ocrProg('Loading OCR engine...',2);ocrStep(1);
-
-    // 90-second timeout
-    _ocrTimeoutId=setTimeout(()=>{
-        _ocrCancelled=true;
-        ov.classList.remove('on');
-        toast('OCR timed out after 90s. Try fewer or smaller images, or enter data manually.','err');
-    },90000);
+    if(_ocrTimeoutId){clearTimeout(_ocrTimeoutId);_ocrTimeoutId=null;}
+    ocrProg('Preparing images...',5);ocrStep(1);
 
     try{
-        // Create Tesseract worker with optimized settings
-        const worker=await Tesseract.createWorker('eng',1,{
-            logger:m=>{
-                if(m.status==='loading tesseract core')ocrProg('Loading Tesseract core...',5);
-                else if(m.status==='initializing tesseract')ocrProg('Initializing engine...',10);
-                else if(m.status==='loading language traineddata')ocrProg('Loading English language data...',15);
-                else if(m.status==='initializing api')ocrProg('Preparing OCR API...',22);
-                else if(m.status==='recognizing text'){
-                    const imgPct=25+Math.round(m.progress*50);
-                    ocrProg('Reading text... '+Math.round(m.progress*100)+'%',imgPct);
-                }
-            }
-        });
-        // Set Tesseract parameters for better structured document reading
-        await worker.setParameters({
-            tessedit_pageseg_mode: '6',      // Assume uniform block of text (better for card layouts)
-            preserve_interword_spaces: '1',   // Keep spacing for field:value pairs
-            tessedit_char_whitelist: ''        // Allow all characters (default)
-        });
-        ocrStep(1,'done');ocrStep(2);
-        if(_ocrCancelled){await worker.terminate();return;}
-
-        let allTexts=[];
+        const allTrainees=[];
+        ocrStep(1,'done');
 
         for(let i=0;i<S.imgs.length;i++){
-            if(_ocrCancelled){await worker.terminate();return;}
-            const base=25+(i/S.imgs.length)*60;
-            ocrProg(`Preprocessing image ${i+1}/${S.imgs.length}...`,base);
+            if(_ocrCancelled){ov.classList.remove('on');return;}
+
+            const pct=10+Math.round((i/S.imgs.length)*65);
+            ocrProg('Analyzing image '+(i+1)+' of '+S.imgs.length+' with AI...',pct);
             ocrStep(2);
 
-            const processed=await ocrPreprocess(S.imgs[i].url);
+            // Resize to max 1600px to keep payload manageable
+            const resized=await resizeImageForOCR(S.imgs[i].url,1600);
+            const matchB64=resized.match(/^data:(image\/[a-zA-Z+]+);base64,(.+)$/);
+            if(!matchB64){toast('Invalid image format for image '+(i+1),'err');ov.classList.remove('on');return;}
+            const mimeType=matchB64[1];
+            const b64=matchB64[2];
 
-            ocrProg(`OCR reading image ${i+1}/${S.imgs.length}...`,base+15);
-            ocrStep(3);
+            if(_ocrCancelled){ov.classList.remove('on');return;}
 
-            const{data:{text}}=await worker.recognize(processed);
-            allTexts.push(text);
-            console.log(`[OCR] Image ${i+1} raw text:`,text);
+            const prompt='You are analyzing a screenshot from a training management system (Notion).\n'+
+                'Extract ALL trainee data visible in this screenshot.\n'+
+                'Return a JSON array (raw JSON only, no markdown code blocks, no explanation) where each element is:\n'+
+                '{"name":"Full Name","mapping":null,"productKnowledge":null,"softSkills":null,"presentability":null,'+
+                '"attendanceDays":null,"absent":null,"assessmentOutcome":"","comments":"","batch":"","company":""}\n'+
+                'Rules:\n'+
+                '- name: trainee full name (string, required — skip rows with no valid name)\n'+
+                '- mapping, productKnowledge, softSkills, presentability: score 0–5 (number or null if not visible)\n'+
+                '- attendanceDays: number of days attended (integer or null)\n'+
+                '- absent: number of absences (integer or null)\n'+
+                '- assessmentOutcome: "Excellent", "Very Good", "Good", "Average", "Passed", "Failed", or "" if not visible\n'+
+                '- comments: instructor comment text or ""\n'+
+                '- batch: batch number/label visible in screenshot or ""\n'+
+                '- company: company name visible in screenshot or ""\n'+
+                'If this is a table view with multiple rows, extract each trainee row.\n'+
+                'If this is a single-trainee detail card, extract that one trainee.\n'+
+                'Return ONLY a valid JSON array. If no trainees found, return [].';
+
+            let resp;
+            try{
+                resp=await fetch('/api/gemini',{
+                    method:'POST',
+                    headers:{'Content-Type':'application/json'},
+                    body:JSON.stringify({
+                        messages:[{role:'user',parts:[
+                            {text:prompt},
+                            {inlineData:{mimeType,data:b64}}
+                        ]}],
+                        generationConfig:{maxOutputTokens:4096}
+                    })
+                });
+            }catch(netErr){
+                throw new Error('Network error: '+(netErr&&netErr.message?netErr.message:'connection failed'));
+            }
+
+            if(!resp.ok){
+                const errData=await resp.json().catch(()=>({}));
+                throw new Error(errData.error||'AI service returned '+resp.status);
+            }
+
+            const result=await resp.json();
+            const raw=(result.text||'').trim();
+            // Strip markdown code fences if present
+            const cleaned=raw.replace(/^```(?:json)?\n?/i,'').replace(/\n?```\s*$/,'').trim();
+            try{
+                const parsed=JSON.parse(cleaned);
+                const arr=Array.isArray(parsed)?parsed:[parsed];
+                arr.forEach(t=>{if(t&&typeof t.name==='string'&&t.name.trim())allTrainees.push(t);});
+            }catch(parseErr){
+                console.warn('[OCR] JSON parse failed for image',i,cleaned,parseErr);
+                // Non-fatal — continue to next image
+            }
         }
 
-        await worker.terminate();
+        ocrStep(2,'done');ocrStep(3);
+        ocrProg('Processing extracted data...',82);
 
-        ocrProg('Parsing extracted data...',90);ocrStep(4);
-
-        const combined=allTexts.join('\n---IMAGE-BREAK---\n');
-        // Show raw text for debugging
-        const rawEl=document.getElementById('raw-box');
-        if(rawEl){rawEl.textContent=combined;document.getElementById('raw-area').style.display='block';rawEl.classList.add('on');}
-
-        const trainees=parseOCRText(combined);
-
-        if(trainees.length===0){
-            ocrProg('No trainee data found',100);ocrStep(4,'done');
+        if(allTrainees.length===0){
+            ocrProg('No trainee data found',100);ocrStep(3,'done');ocrStep(4);
             setTimeout(()=>{
                 ov.classList.remove('on');
-                toast('Could not find trainee data in screenshots. Try clearer images, or enter data manually.','err');
+                toast('No trainee data found. Try clearer images or enter data manually.','err');
             },800);
             return;
         }
 
-        // Populate state
-        S.trainees=trainees;
+        // Map Gemini JSON to internal trainee format
+        S.trainees=allTrainees.map(t=>{
+            const mp=clampScore(t.mapping);
+            const pk=clampScore(t.productKnowledge);
+            const ss=clampScore(t.softSkills);
+            const pr=clampScore(t.presentability);
+            return{
+                name:(t.name||'').trim(),
+                company:(t.company&&t.company.trim())||S.co||'',
+                batch:(t.batch&&t.batch.trim())||('Batch '+S.batch),
+                overallScore:0,
+                rawAssessmentOutcome:t.assessmentOutcome||'',
+                assessmentResult:'',
+                badgeClass:'b-gray',
+                overallAssessment:'',
+                scores:{
+                    presentability:{score:pr,max:5},
+                    softSkills:{score:ss,max:5},
+                    mapping:{score:mp,max:5},
+                    productKnowledge:{score:pk,max:5},
+                    techScorePercent:0,softScorePercent:0,totalCore:0,
+                    professionalConductRating:{score:0,max:10}
+                },
+                attendance:{
+                    late:'N/A',
+                    attendanceDays:t.attendanceDays!=null?parseInt(t.attendanceDays,10):'N/A',
+                    absent:t.absent!=null?parseInt(t.absent,10):0,
+                    missedContent:'N/A'
+                },
+                comments:t.comments||''
+            };
+        });
+
         S.trainees.forEach((_,i)=>recalc(i));
-        S.trainees.forEach((t,i)=>{
+        S.trainees.forEach(t=>{
             if(t.name){
                 t.overallAssessment=genAssessment(t);
                 if(!t.comments)t.comments=genComments(t);
             }
         });
 
-        ocrProg('Done! '+trainees.length+' trainee(s) extracted',100);ocrStep(4,'done');
-        if(_ocrTimeoutId){clearTimeout(_ocrTimeoutId);_ocrTimeoutId=null;}
+        ocrStep(3,'done');ocrStep(4,'done');
+        ocrProg('Done! '+S.trainees.length+' trainee(s) extracted',100);
 
         setTimeout(()=>{
             ov.classList.remove('on');
             renderRefPanel();renderCards();go(3);
-            toast(`Extracted ${trainees.length} trainee(s) from screenshots!`,'ok');
+            toast('Extracted '+S.trainees.length+' trainee(s) from screenshots!','ok');
         },700);
 
     }catch(e){
         if(_ocrTimeoutId){clearTimeout(_ocrTimeoutId);_ocrTimeoutId=null;}
         console.error('[OCR] Error:',e);
         ov.classList.remove('on');
-        toast('OCR failed: '+e.message+'. Try entering data manually.','err');
+        const msg=e&&e.message?e.message:'unknown error';
+        toast('AI extraction failed: '+msg+'. Try entering data manually.','err');
     }
 }
 

@@ -1303,16 +1303,23 @@ function genAssessment(t){
     text+='.';
 
     // Attendance
+    const missed=t.attendance.missedContent;
+    const missedPct=(missed!=='N/A'&&missed!=null&&missed!=='')?parseInt(missed,10):null;
     if(absent===0&&attendanceDays!=='N/A'&&attendanceDays!=null){
         text+=` ${heOrShe(name)} maintained full attendance across ${attendanceDays} training day${attendanceDays!==1?'s':''} with no absences.`;
     }else if(absent===0){
         text+=` ${heOrShe(name)} maintained perfect attendance with no absences throughout the training period.`;
     }else if(attendanceDays!=='N/A'&&attendanceDays!=null){
-        text+=` Attendance was ${attendanceDays} day${attendanceDays!==1?'s':''} with ${absent} absence${absent!==1?'s':''} during the training period.`;
+        const totalDays=parseInt(attendanceDays,10)+absent;
+        text+=` Attendance was ${attendanceDays} day${attendanceDays!==1?'s':''} out of ${totalDays} with ${absent} absence${absent!==1?'s':''}`;
+        if(missedPct!=null&&missedPct>0){
+            text+=`, resulting in ${missedPct}% missed content`;
+        }
+        text+='.';
     }else if(absent===1){
         text+=` ${heOrShe(name)} had 1 absence during the training period.`;
     }else if(absent>1){
-        text+=` ${heOrShe(name)} had ${absent} absences during the training period, which may have impacted content coverage.`;
+        text+=` ${heOrShe(name)} had ${absent} absences during the training period${missedPct!=null&&missedPct>0?`, missing approximately ${missedPct}% of content`:''}`.trimEnd()+'.';
     }
 
     return text;
@@ -1442,7 +1449,7 @@ function makeCard(t,i){
                     <div class="fld"><label>Absent Days</label><input type="number" min="0" value="${t.attendance.absent}" data-i="${i}" data-field="attendance.absent" data-coerce="parseInt"></div>
                 </div>
                 <div class="grid">
-                    <div class="fld"><label>Missed Content %</label><input value="${ee(t.attendance.missedContent)}" data-i="${i}" data-field="attendance.missedContent"></div>
+                    <div class="fld"><label>Missed Content % <span style="font-weight:400;font-size:11px;opacity:.6">(auto: absent÷total×100)</span></label><input value="${ee(t.attendance.missedContent)}" data-i="${i}" data-field="attendance.missedContent" title="Auto-calculated from absent÷(attendance+absent)×100. Override manually if needed."></div>
                 </div>
             </div>
             <div class="csec"><h4>Overall Assessment <button class="btn btn-s btn-sm" data-action="regenText" data-i="${i}" style="float:right;margin-top:-4px">↻ Auto-Generate</button></h4>
@@ -1476,6 +1483,18 @@ function recalc(i){
     t.scores.professionalConductRating.score=ss+pr;
     t.scores.softScorePercent=((ss+pr)/10)*100;
     t.overallScore=Math.round(((t.scores.techScorePercent+t.scores.softScorePercent)/2)*10)/10;
+
+    // Auto-calculate Missed Content % from absent days and total training days
+    const att=t.attendance.attendanceDays;
+    const abs=t.attendance.absent;
+    const attNum=(att!=='N/A'&&att!=null&&att!=='')?parseInt(att,10):null;
+    const absNum=(abs!=null&&abs!==''&&!isNaN(parseInt(abs,10)))?parseInt(abs,10):0;
+    if(attNum!=null&&attNum>=0){
+        const totalDays=attNum+absNum;
+        t.attendance.missedContent=totalDays>0?Math.round((absNum/totalDays)*100):0;
+    }
+    // If attendanceDays is unknown but we have absences, leave missedContent as-is
+
     syncAssessmentState(t);
     renderCards();
 }

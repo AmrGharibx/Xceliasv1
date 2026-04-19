@@ -450,9 +450,7 @@ app.post('/api/gemini', async (req, res) => {
     }
 
     // Vision requests require full flash models — lite variants don't support multimodal
-    const hasImages = contents.some(
-      (c) => c.parts && c.parts.some((p) => p && p.inlineData)
-    );
+    const hasImages = contents.some((c) => c.parts && c.parts.some((p) => p && p.inlineData));
     const modelsToTry = hasImages
       ? GEMINI_MODELS.filter((m) => !m.includes('lite'))
       : GEMINI_MODELS;
@@ -523,6 +521,11 @@ WEBSITE_ASSETS.forEach((file) => {
     if (fs.existsSync(fp)) return res.sendFile(fp);
     next();
   });
+});
+
+/* ─── Removed module guard — redirect stale /atlas URLs to home ─── */
+app.use('/atlas', (_req, res) => {
+  res.redirect(302, '/');
 });
 
 /* ─── Fallback: serve portal index.html for any unknown GET ─── */

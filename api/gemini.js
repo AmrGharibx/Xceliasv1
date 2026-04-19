@@ -153,7 +153,12 @@ module.exports = async function handler(req, res) {
               if (!/^image\/(png|jpeg|jpg|gif|webp)$/.test(mime)) {
                 throw new Error("Invalid image mime type");
               }
-              return { inlineData: { mimeType: mime, data: String(p.inlineData.data || "") } };
+              return {
+                inlineData: {
+                  mimeType: mime,
+                  data: String(p.inlineData.data || ""),
+                },
+              };
             }
             return { text: String(p && p.text != null ? p.text : "") };
           })
@@ -162,7 +167,7 @@ module.exports = async function handler(req, res) {
 
     // Detect if any message contains an image
     const hasImages = contents.some(
-      (c) => c.parts && c.parts.some((p) => p && p.inlineData)
+      (c) => c.parts && c.parts.some((p) => p && p.inlineData),
     );
 
     const geminiBody = {
@@ -185,7 +190,11 @@ module.exports = async function handler(req, res) {
       return await streamGemini(GEMINI_API_KEY, geminiBody, res);
     }
 
-    const text = await callGeminiWithRetry(GEMINI_API_KEY, geminiBody, hasImages);
+    const text = await callGeminiWithRetry(
+      GEMINI_API_KEY,
+      geminiBody,
+      hasImages,
+    );
     res.json({ success: true, text });
   } catch (err) {
     console.error("Gemini proxy error:", err.message);

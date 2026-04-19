@@ -318,6 +318,12 @@ describe('Student guard middleware', () => {
     const res = await request(app).get('/pitch-lab/').set('Cookie', cookieHeader(token));
     expect(res.status).not.toBe(302);
   });
+
+  test('redirects removed /atlas/ route to /', async () => {
+    const res = await request(app).get('/atlas/');
+    expect(res.status).toBe(302);
+    expect(res.headers.location).toBe('/');
+  });
 });
 
 /* ─────────────────────────────────────────────────────────── */

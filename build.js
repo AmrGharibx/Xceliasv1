@@ -181,12 +181,14 @@ cHtml = cHtml.replace(
   'src="/firebase-config.js"',
 );
 /* Extract inline RITA/API bootstrap script → content-rita.js (CSP compliance) */
-const cRitaMatch = cHtml.match(/<script>(!function\(\)[\s\S]*?)<\/script>/);
+// Match by unique DOM ID "ritaMessages" — handles any IIFE format (!(function(){} or !function(){})
+const cRitaMatch = cHtml.match(/<script>\s*([\s\S]*?"ritaMessages"[\s\S]*?)<\/script>/);
 if (cRitaMatch) {
   let ritaCode = cRitaMatch[1].trim();
   // Fix API_URL: always use relative /api/gemini (works for both localhost and Vercel)
+  // Handles spaced and minified variants of the localhost ternary check
   ritaCode = ritaCode.replace(
-    /"localhost"===window\.location\.hostname\|\|"127\.0\.0\.1"===window\.location\.hostname\?"\/api\/gemini":"https:\/\/excelias\.vercel\.app\/api\/gemini"/,
+    /"localhost"\s*===\s*window\.location\.hostname\s*\|\|\s*"127\.0\.0\.1"\s*===\s*window\.location\.hostname\s*\?\s*"\/api\/gemini"\s*:\s*"https:\/\/excelias\.vercel\.app\/api\/gemini"/,
     '"/api/gemini"',
   );
   fs.writeFileSync(path.join(DIST, "content", "content-rita.js"), ritaCode);

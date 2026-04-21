@@ -97,16 +97,20 @@ document.addEventListener("click", function (e) {
 });
 
 /* ── FILE INPUT: photo upload ── */
-document.addEventListener("change", function (e) {
-  const el = e.target;
-  if (el.dataset.photoFor != null) {
-    const i = +el.dataset.photoFor;
-    const file = el.files[0];
-    handlePhotoUpload(i, file);
-    el.value = "";
-    return;
-  }
-}, true); // capture phase so it runs before the other change listener
+document.addEventListener(
+  "change",
+  function (e) {
+    const el = e.target;
+    if (el.dataset.photoFor != null) {
+      const i = +el.dataset.photoFor;
+      const file = el.files[0];
+      handlePhotoUpload(i, file);
+      el.value = "";
+      return;
+    }
+  },
+  true,
+); // capture phase so it runs before the other change listener
 
 /* ── CHANGE DELEGATION for trainee card fields ── */
 document.addEventListener("change", function (e) {
@@ -2061,15 +2065,17 @@ function makeCard(t, i) {
         <div class="tcard-b">
             <div class="csec"><h4>📷 Trainee Photo</h4>
                 <div class="photo-upload-row">
-                    <div class="photo-thumb-box ${t.photo ? 'has-photo' : ''}">
-                        ${t.photo
-                          ? `<img src="${t.photo}" alt=""><button class="photo-clear" data-action="clearPhoto" data-i="${i}" title="Remove photo">✕</button>`
-                          : '<div class="no-ph"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>No photo</span></div>'}
+                    <div class="photo-thumb-box ${t.photo ? "has-photo" : ""}">
+                        ${
+                          t.photo
+                            ? `<img src="${t.photo}" alt=""><button class="photo-clear" data-action="clearPhoto" data-i="${i}" title="Remove photo">✕</button>`
+                            : '<div class="no-ph"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>No photo</span></div>'
+                        }
                     </div>
                     <div>
                         <label class="photo-upload-lbl" for="ph-${i}">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                            ${t.photo ? 'Replace Photo' : 'Upload Photo'}
+                            ${t.photo ? "Replace Photo" : "Upload Photo"}
                         </label>
                         <input type="file" id="ph-${i}" accept="image/*" style="display:none" data-photo-for="${i}">
                         <p class="photo-hint">Portrait photo · Will appear on the report page</p>
@@ -2214,10 +2220,18 @@ function handlePhotoUpload(i, file) {
     const img = new Image();
     img.onload = () => {
       const canvas = document.createElement("canvas");
-      const MAX_H = 1400, MAX_W = 1000;
-      let w = img.width, h = img.height;
-      if (h > MAX_H) { w = Math.round(w * MAX_H / h); h = MAX_H; }
-      if (w > MAX_W) { h = Math.round(h * MAX_W / w); w = MAX_W; }
+      const MAX_H = 1400,
+        MAX_W = 1000;
+      let w = img.width,
+        h = img.height;
+      if (h > MAX_H) {
+        w = Math.round((w * MAX_H) / h);
+        h = MAX_H;
+      }
+      if (w > MAX_W) {
+        h = Math.round((h * MAX_W) / w);
+        w = MAX_W;
+      }
       canvas.width = w;
       canvas.height = h;
       canvas.getContext("2d").drawImage(img, 0, 0, w, h);

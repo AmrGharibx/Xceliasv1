@@ -1787,7 +1787,6 @@ const map = L.map("map", {
   fadeAnimation: true,
   zoomAnimation: true,
   updateWhenZooming: false, // Don't update tiles while zooming (smoother)
-  updateWhenIdle: true, // Update tiles when map stops moving
   keepBuffer: 2, // Reduced buffer — saves memory while keeping smooth panning
 }).setView([30.0, 31.0], 7);
 
@@ -1816,7 +1815,7 @@ const layers = {
       maxZoom: 22,
       detectRetina: true,
       className: "high-quality-tiles",
-      keepBuffer: 6, // Extra buffer for satellite (more caching)
+      keepBuffer: 3,
       updateWhenZooming: false,
       crossOrigin: "anonymous",
     },
@@ -1827,7 +1826,7 @@ const layers = {
       {
         maxZoom: 22,
         detectRetina: true,
-        keepBuffer: 6,
+        keepBuffer: 3,
         updateWhenZooming: false,
         crossOrigin: "anonymous",
       },
@@ -1867,6 +1866,8 @@ function completeInitialLoad() {
 map.whenReady(() => {
   updateLoadingStatus("Map ready. Rendering projects...");
   completeInitialLoad();
+  // Auto-enable instant road tiles on first load — visible within 300ms
+  setTimeout(() => setRoadTilesVisible(true), 600);
 });
 
 // Hard fallback so the UI never stays trapped behind the loading overlay.
@@ -2081,6 +2082,11 @@ function toggle3DMode() {
 let mainRoadsLayer = null;
 let secondaryRoadsLayer = null;
 
+// ── Instant road tile overlay (CartoDB Voyager Labels — zero Overpass delay) ──
+const ROAD_TILE_URL = "https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}{r}.png";
+let roadTileLayer = null;
+let _roadTilesVisible = false;
+
 // ── Visibility state ──
 let _roadsVisible = true;
 let _showMainRoads = true;
@@ -2233,24 +2239,28 @@ async function _decompressStr(envelope) {
  * even for 11 MB payloads. Falls back to synchronous parse if Workers
  * are unavailable (CSP-restricted envs).
  */
+// Singleton blob URL — created once, reused for every JSON parse call
+let _workerBlobUrl = null;
+function _getWorkerUrl() {
+  if (!_workerBlobUrl) {
+    const blob = new Blob(
+      ["self.onmessage=function(e){try{postMessage({ok:true,d:JSON.parse(e.data)});}catch(x){postMessage({ok:false,e:x.message});}}" ],
+      { type: "application/javascript" },
+    );
+    _workerBlobUrl = URL.createObjectURL(blob);
+  }
+  return _workerBlobUrl;
+}
+
 function _parseJsonWorker(str) {
   return new Promise((resolve, reject) => {
     try {
-      const blob = new Blob(
-        [
-          "self.onmessage=function(e){try{postMessage({ok:true,d:JSON.parse(e.data)});}catch(x){postMessage({ok:false,e:x.message});}}",
-        ],
-        { type: "application/javascript" },
-      );
-      const url = URL.createObjectURL(blob);
-      const worker = new Worker(url);
+      const worker = new Worker(_getWorkerUrl());
       worker.onmessage = (e) => {
-        URL.revokeObjectURL(url);
         worker.terminate();
         e.data.ok ? resolve(e.data.d) : reject(new Error(e.data.e));
       };
       worker.onerror = (e) => {
-        URL.revokeObjectURL(url);
         worker.terminate();
         reject(new Error(e.message));
       };
@@ -2453,7 +2463,7 @@ function _updateCacheSize() {
   const el = document.getElementById("road-cache-size");
   if (!el) return;
   try {
-    const keys = [EGYPT_HW_CACHE_KEY, "xc_egypt_hw_v2"];
+    const keys = [EGYPT_HW_CACHE_KEY];
     let bytes = 0;
     keys.forEach((k) => {
       const v = localStorage.getItem(k);
@@ -2952,42 +2962,6 @@ async function loadFullEgyptHighways() {
       features = null;
     }
 
-    // ── 1b. Migrate legacy v2 cache → v3 (one-time upgrade for existing users) ──
-    if (!features) {
-      try {
-        const v2raw = localStorage.getItem("xc_egypt_hw_v2");
-        if (v2raw) {
-          if (sub) sub.textContent = "جاري ترقية الكاش…";
-          const v2data = await _parseJsonWorker(v2raw);
-          if (Array.isArray(v2data) && v2data.length > 0) {
-            features = v2data.map((f) => ({
-              i: f.i,
-              h: f.h,
-              n: f.n,
-              a: f.a,
-              r: f.r,
-              s: f.s || "",
-              c: f.c,
-            }));
-            fromCache = true;
-            // Compress and store as v3, drop the old key
-            try {
-              const compressed = await _compressStr(JSON.stringify(features));
-              localStorage.setItem(
-                EGYPT_HW_CACHE_KEY,
-                JSON.stringify({ v: 3, ts: Date.now(), ...compressed }),
-              );
-              localStorage.removeItem("xc_egypt_hw_v2");
-            } catch (_) {
-              /* quota — skip upgrade, keep reading from v2 next time */
-            }
-          }
-        }
-      } catch (_) {
-        features = null;
-      }
-    }
-
     // ── 2. First load or stale cache: fetch from Overpass ──
     if (!features) {
       if (sub) sub.textContent = "جاري التحميل من الإنترنت (أول مرة)…";
@@ -3097,6 +3071,303 @@ document.addEventListener(
   { passive: true },
 );
 
+/** Toggle the instant tile-based road overlay — loads in <300ms, no Overpass needed */
+function setRoadTilesVisible(visible) {
+  _roadTilesVisible = visible;
+  if (visible) {
+    if (!roadTileLayer) {
+      roadTileLayer = L.tileLayer(ROAD_TILE_URL, {
+        subdomains: "abcd",
+        maxZoom: 22,
+        detectRetina: true,
+        opacity: 0.72,
+        pane: "overlayPane",
+        updateWhenZooming: false,
+        keepBuffer: 3,
+        attribution: "",
+      });
+    }
+    if (!map.hasLayer(roadTileLayer)) roadTileLayer.addTo(map);
+  } else {
+    if (roadTileLayer && map.hasLayer(roadTileLayer)) {
+      map.removeLayer(roadTileLayer);
+    }
+  }
+  const cb = document.getElementById("road-tile-toggle");
+  if (cb) cb.checked = visible;
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// PLACES / AREAS OVERLAY — OSM neighborhoods with Xcelias project intelligence
+// ────────────────────────────────────────────────────────────────────────────
+
+// ── State ──
+let placesLayer = null;
+let _placesVisible = false;
+let _placesLoaded = false;
+let _placesLoading = false;
+const PLACES_CACHE_KEY = "xc_places_v1";
+const PLACES_TTL_MS = 60 * 24 * 60 * 60 * 1000; // 60 days — boundaries rarely change
+
+/** Flatten polygon/multipolygon geometry to a flat array of [lng,lat] coords */
+function _flattenCoords(geometry) {
+  if (!geometry) return [];
+  if (geometry.type === "LineString") return geometry.coordinates;
+  if (geometry.type === "Polygon") return geometry.coordinates[0] || [];
+  if (geometry.type === "MultiPolygon") {
+    return geometry.coordinates.flatMap((p) => p[0] || []);
+  }
+  return [];
+}
+
+/** Build Arabic-first tooltip for a neighborhood feature */
+function _buildPlaceTooltip(feature) {
+  const p = feature.properties || {};
+  const nameAr = p["name:ar"] || "";
+  const nameEn = p.name || p["name:en"] || "";
+  const type = p.place || p.boundary || "منطقة";
+  const typeMap = {
+    suburb: "حي", neighbourhood: "حي", quarter: "ربع",
+    village: "قرية", town: "مدينة", administrative: "منطقة إدارية",
+  };
+  const typeLabel = typeMap[type] || type;
+
+  // Count projects inside this area's bbox (fast approximation)
+  let projectCount = 0;
+  if (window.projects && feature.geometry) {
+    const coords = _flattenCoords(feature.geometry);
+    if (coords.length > 0) {
+      const lats = coords.map((c) => c[1]);
+      const lngs = coords.map((c) => c[0]);
+      const bS = Math.min(...lats), bN = Math.max(...lats);
+      const bW = Math.min(...lngs), bE = Math.max(...lngs);
+      projectCount = window.projects.filter(
+        (proj) => proj.lat >= bS && proj.lat <= bN && proj.lng >= bW && proj.lng <= bE,
+      ).length;
+    }
+  }
+  const countBadge = projectCount > 0
+    ? `<div class="place-tt-count">${projectCount} مشروع</div>`
+    : "";
+  return `<div class="place-tooltip">
+    ${nameAr ? `<div class="place-tt-ar">${escHtml(nameAr)}</div>` : ""}
+    ${nameEn ? `<div class="place-tt-en">${escHtml(nameEn)}</div>` : ""}
+    <div class="place-tt-type">${escHtml(typeLabel)}</div>
+    ${countBadge}
+  </div>`;
+}
+
+/** Convert raw Overpass ways to GeoJSON polygon features */
+function overpassPlacesToGeoJson(data) {
+  const features = [];
+  if (!data || !data.elements) return { type: "FeatureCollection", features };
+  for (const el of data.elements) {
+    if (el.type !== "way" || !el.geometry || el.geometry.length < 3) continue;
+    const coordinates = el.geometry.map((n) => [n.lon, n.lat]);
+    if (coordinates[0][0] !== coordinates[coordinates.length - 1][0]) {
+      coordinates.push(coordinates[0]); // close ring
+    }
+    features.push({
+      type: "Feature",
+      properties: { id: el.id, ...(el.tags || {}) },
+      geometry: { type: "Polygon", coordinates: [coordinates] },
+    });
+  }
+  return { type: "FeatureCollection", features };
+}
+
+/** Show the Place Intelligence panel for a clicked feature */
+function _showPlacePanel(feature) {
+  const p = feature.properties || {};
+  const nameAr = p["name:ar"] || p.name || "منطقة";
+  const nameEn = p.name || "";
+
+  const coords = _flattenCoords(feature.geometry);
+  let nearProjects = [];
+  if (coords.length > 0 && window.projects) {
+    const lats = coords.map((c) => c[1]);
+    const lngs = coords.map((c) => c[0]);
+    const bS = Math.min(...lats), bN = Math.max(...lats);
+    const bW = Math.min(...lngs), bE = Math.max(...lngs);
+    nearProjects = window.projects.filter(
+      (proj) => proj.lat >= bS && proj.lat <= bN && proj.lng >= bW && proj.lng <= bE,
+    );
+  }
+
+  const priced = nearProjects.filter((proj) => parseFloat(proj.minPrice) > 0);
+  const avgPrice = priced.length > 0
+    ? priced.reduce((s, proj) => s + parseFloat(proj.minPrice), 0) / priced.length
+    : 0;
+
+  const projectRows = nearProjects.slice(0, 5).map((proj) =>
+    `<div class="place-proj-row">
+      <span class="place-proj-name">${escHtml(proj.name || "")}</span>
+      <span class="place-proj-dev">${escHtml(proj.dev || "")}</span>
+    </div>`,
+  ).join("");
+
+  const panel = document.getElementById("place-intel-panel");
+  if (!panel) return;
+  panel.innerHTML =
+    `<div class="pip-header">
+      <div>
+        <h3 class="pip-name-ar">${escHtml(nameAr)}</h3>
+        ${nameEn ? `<p class="pip-name-en">${escHtml(nameEn)}</p>` : ""}
+      </div>
+      <button class="pip-close" onclick="document.getElementById('place-intel-panel').hidden=true">✕</button>
+    </div>
+    <div class="pip-stats">
+      <div class="pip-stat">
+        <span class="pip-stat-num">${nearProjects.length}</span>
+        <span class="pip-stat-label">مشروع</span>
+      </div>
+      ${avgPrice > 0 ? `<div class="pip-stat">
+        <span class="pip-stat-num">${(avgPrice / 1e6).toFixed(1)}M</span>
+        <span class="pip-stat-label">متوسط السعر EGP</span>
+      </div>` : ""}
+    </div>
+    ${nearProjects.length > 0
+      ? `<div class="pip-projects">
+          <div class="pip-proj-title">أبرز المشاريع</div>
+          ${projectRows}
+          ${nearProjects.length > 5 ? `<div class="pip-more">+ ${nearProjects.length - 5} مشاريع أخرى</div>` : ""}
+        </div>`
+      : `<div class="pip-empty">لا توجد مشاريع مسجلة في هذه المنطقة</div>`
+    }`;
+  panel.hidden = false;
+}
+
+/** Toggle places layer visibility; respects zoom gate (≥ 9) */
+function setPlacesVisible(visible) {
+  _placesVisible = visible;
+  const cb = document.getElementById("places-toggle");
+  if (cb) cb.checked = visible;
+  if (!placesLayer) return;
+  const zoom = map.getZoom();
+  if (visible && zoom >= 9) {
+    if (!map.hasLayer(placesLayer)) placesLayer.addTo(map);
+  } else {
+    if (map.hasLayer(placesLayer)) map.removeLayer(placesLayer);
+  }
+}
+
+/** Load OSM neighborhoods + districts for Egypt, with localStorage cache */
+async function loadPlacesLayer() {
+  if (_placesLoaded) { setPlacesVisible(true); return; }
+  if (_placesLoading) return;
+  _placesLoading = true;
+
+  const cb = document.getElementById("places-toggle");
+  if (cb) cb.disabled = true;
+
+  try {
+    let features = null;
+
+    // ── 1. Try localStorage cache ──
+    try {
+      const raw = localStorage.getItem(PLACES_CACHE_KEY);
+      if (raw) {
+        const env = JSON.parse(raw);
+        if (env && env.v === 1 && Date.now() - (env.ts || 0) < PLACES_TTL_MS) {
+          const jsonStr = await _decompressStr(env);
+          const parsed = await _parseJsonWorker(jsonStr);
+          if (Array.isArray(parsed) && parsed.length > 0) features = parsed;
+        }
+      }
+    } catch (_) { features = null; }
+
+    // ── 2. Fetch from Overpass ──
+    if (!features) {
+      const query = [
+        "[out:json][timeout:30][bbox:22.0,24.7,31.8,36.9];",
+        "(way[\"place\"~\"suburb|neighbourhood|quarter|village|town\"](22.0,24.7,31.8,36.9);",
+        "way[\"boundary\"=\"administrative\"][\"admin_level\"~\"^(8|9|10)$\"](22.0,24.7,31.8,36.9););",
+        "out geom qt;",
+      ].join("");
+      const response = await _fetchOverpass(query, 30000);
+      const ct = response.headers.get("content-type") || "";
+      if (!ct.includes("json")) throw new Error("Overpass returned non-JSON");
+      const data = await _parseJsonWorker(await response.text());
+      const geojson = overpassPlacesToGeoJson(data);
+
+      // Compact storage — strip all unused tags
+      features = geojson.features.map((f) => ({
+        i: f.properties.id,
+        n: f.properties.name || "",
+        a: f.properties["name:ar"] || "",
+        p: f.properties.place || "",
+        b: f.properties.boundary || "",
+        l: f.properties.admin_level || "",
+        c: f.geometry.coordinates[0],
+      }));
+
+      // Cache with compression
+      try {
+        const compressed = await _compressStr(JSON.stringify(features));
+        localStorage.setItem(PLACES_CACHE_KEY, JSON.stringify({ v: 1, ts: Date.now(), ...compressed }));
+      } catch (_) { /* quota — skip */ }
+    }
+
+    // ── 3. Build GeoJSON layer ──
+    const renderer = L.canvas({ padding: 0.5, tolerance: 8 });
+    placesLayer = L.geoJSON(null, {
+      renderer,
+      style: {
+        color: "rgba(102, 126, 234, 0.55)",
+        weight: 1.5,
+        fillColor: "rgba(102, 126, 234, 0.04)",
+        fillOpacity: 1,
+        lineCap: "round",
+      },
+      onEachFeature: (feature, layer) => {
+        layer.bindTooltip(_buildPlaceTooltip(feature), {
+          sticky: true,
+          direction: "top",
+          className: "place-name-tooltip",
+          opacity: 0.98,
+        });
+        layer.on("mouseover", function () {
+          this.setStyle({ color: "rgba(102, 126, 234, 0.95)", fillColor: "rgba(102, 126, 234, 0.12)", weight: 2.5 });
+        });
+        layer.on("mouseout", function () {
+          this.setStyle({ color: "rgba(102, 126, 234, 0.55)", fillColor: "rgba(102, 126, 234, 0.04)", weight: 1.5 });
+        });
+        layer.on("click", (e) => {
+          L.DomEvent.stopPropagation(e);
+          _showPlacePanel(feature);
+        });
+      },
+    });
+
+    // Add all features from compact format
+    for (const f of features) {
+      if (!f.c || f.c.length < 3) continue;
+      placesLayer.addData({
+        type: "Feature",
+        properties: { id: f.i, name: f.n, "name:ar": f.a, place: f.p, boundary: f.b, admin_level: f.l },
+        geometry: { type: "Polygon", coordinates: [f.c] },
+      });
+    }
+
+    _placesLoaded = true;
+    _placesLoading = false;
+    if (cb) cb.disabled = false;
+    setPlacesVisible(true);
+  } catch (err) {
+    _placesLoading = false;
+    if (cb) { cb.disabled = false; cb.checked = false; }
+    console.warn("Places layer failed:", err.message);
+  }
+}
+
+// Zoom-gate: auto-show/hide places layer based on zoom level
+map.on("zoomend", () => {
+  if (!_placesVisible || !placesLayer) return;
+  const zoom = map.getZoom();
+  if (zoom >= 9 && !map.hasLayer(placesLayer)) placesLayer.addTo(map);
+  if (zoom < 9 && map.hasLayer(placesLayer)) map.removeLayer(placesLayer);
+});
+
 // Keyboard shortcut: R toggles road panel
 document.addEventListener(
   "keydown",
@@ -3189,13 +3460,17 @@ map.on("moveend", loadRoads);
 map.on("zoomend", loadRoads);
 // Sync label visibility and refresh label positions on zoom/move
 map.on("zoomend", _syncRoadLabelVisibility);
+let _labelRefreshTimer = null;
 map.on("moveend", () => {
   if (map.getZoom() >= 13 && _roadsVisible) {
-    if (typeof requestIdleCallback === "function") {
-      requestIdleCallback(() => _refreshRoadLabels(), { timeout: 300 });
-    } else {
-      setTimeout(_refreshRoadLabels, 16);
-    }
+    clearTimeout(_labelRefreshTimer);
+    _labelRefreshTimer = setTimeout(() => {
+      if (typeof requestIdleCallback === "function") {
+        requestIdleCallback(() => _refreshRoadLabels(), { timeout: 500 });
+      } else {
+        _refreshRoadLabels();
+      }
+    }, 400);
   }
 });
 document.addEventListener("touchstart", loadRoads, {
@@ -3210,6 +3485,136 @@ document.addEventListener("click", loadRoads, { passive: true, once: true });
 
 // Fallback: load after 5 s if no interaction occurs
 setTimeout(loadRoads, 5000);
+
+// ────────────────────────────────────────────────────────────────────────────
+// PHASE 4: XCELIAS INTELLIGENCE LAYER
+// ────────────────────────────────────────────────────────────────────────────
+
+// ── 4.2 Property Density Rings — right-click any map location ──
+let _densityRings = [];
+let _densityTimer = null;
+
+function showDensityRings(latlng) {
+  // Clear previous rings + timer
+  _densityRings.forEach((l) => { try { map.removeLayer(l); } catch (_) {} });
+  _densityRings = [];
+  clearTimeout(_densityTimer);
+
+  const radii = [1000, 3000, 5000];
+  const colors = ["rgba(240,147,251,0.65)", "rgba(102,126,234,0.55)", "rgba(100,210,255,0.4)"];
+
+  radii.forEach((r, i) => {
+    const circle = L.circle(latlng, {
+      radius: r,
+      color: colors[i],
+      weight: 1.5,
+      fill: true,
+      fillColor: colors[i],
+      fillOpacity: 0.04,
+      interactive: false,
+    }).addTo(map);
+    _densityRings.push(circle);
+
+    // Count projects inside this ring (Haversine via map.distance)
+    const count = (window.projects || []).filter((p) => {
+      const dist = map.distance(latlng, L.latLng(p.lat, p.lng));
+      return dist <= r;
+    }).length;
+
+    // Label at east edge of ring
+    const eastLng = latlng.lng + (r / (111320 * Math.cos((latlng.lat * Math.PI) / 180)));
+    const label = L.marker(L.latLng(latlng.lat, eastLng), {
+      icon: L.divIcon({
+        html: `<div class="density-ring-label">${count} مشروع · ${r >= 1000 ? r / 1000 + "km" : r + "m"}</div>`,
+        className: "",
+        iconAnchor: [0, 10],
+      }),
+      interactive: false,
+    }).addTo(map);
+    _densityRings.push(label);
+  });
+
+  // Auto-remove after 15 seconds
+  _densityTimer = setTimeout(() => {
+    _densityRings.forEach((l) => { try { map.removeLayer(l); } catch (_) {} });
+    _densityRings = [];
+  }, 15000);
+}
+
+// Right-click on map = show density rings
+map.on("contextmenu", (e) => {
+  L.DomEvent.preventDefault(e.originalEvent);
+  showDensityRings(e.latlng);
+});
+
+// ── 4.1 Zone Price Choropleth — visual price heat per zone ──
+let _choroplethLayers = [];
+
+function showZoneChoropleth() {
+  // Clear existing
+  _choroplethLayers.forEach((l) => { try { map.removeLayer(l); } catch (_) {} });
+  _choroplethLayers = [];
+
+  const zones = Object.keys(ZONE_ROAD_BBOXES);
+  const zoneData = [];
+
+  zones.forEach((z) => {
+    const bbox = ZONE_ROAD_BBOXES[z];
+    if (!bbox) return;
+    const zProjects = (window.projects || []).filter(
+      (p) => p.lat >= bbox.south && p.lat <= bbox.north && p.lng >= bbox.west && p.lng <= bbox.east && parseFloat(p.minPrice) > 0,
+    );
+    if (!zProjects.length) return;
+    const avg = zProjects.reduce((s, p) => s + parseFloat(p.minPrice), 0) / zProjects.length;
+    zoneData.push({ z, bbox, avg, count: zProjects.length });
+  });
+
+  if (!zoneData.length) return;
+
+  const prices = zoneData.map((d) => d.avg);
+  const minP = Math.min(...prices);
+  const maxP = Math.max(...prices);
+
+  zoneData.forEach(({ z, bbox, avg, count }) => {
+    // Normalize 0–1 then map to color (low = cool blue, mid = purple, high = hot red)
+    const t = maxP > minP ? (avg - minP) / (maxP - minP) : 0.5;
+    const r = Math.round(102 + t * (220 - 102));
+    const g = Math.round(126 - t * 80);
+    const b = Math.round(234 - t * 180);
+    const fillColor = `rgba(${r},${g},${b},0.22)`;
+    const strokeColor = `rgba(${r},${g},${b},0.7)`;
+
+    const rect = L.rectangle(
+      [[bbox.south, bbox.west], [bbox.north, bbox.east]],
+      {
+        color: strokeColor,
+        weight: 2,
+        fillColor,
+        fillOpacity: 1,
+        interactive: true,
+      },
+    ).addTo(map);
+
+    const ZONE_LABELS = {
+      "north-coast": "الساحل الشمالي",
+      sokhna: "العين السخنة",
+      gouna: "الجونة",
+      "new-capital": "العاصمة الإدارية",
+      october: "6 أكتوبر / زايد",
+      "new-cairo": "القاهرة الجديدة",
+    };
+    rect.bindTooltip(
+      `<b>${escHtml(ZONE_LABELS[z] || z)}</b><br>${count} مشروع · متوسط ${(avg / 1e6).toFixed(1)}M EGP`,
+      { sticky: true, className: "place-name-tooltip", opacity: 0.96 },
+    );
+    _choroplethLayers.push(rect);
+  });
+}
+
+function clearZoneChoropleth() {
+  _choroplethLayers.forEach((l) => { try { map.removeLayer(l); } catch (_) {} });
+  _choroplethLayers = [];
+}
 
 // --- 2. DATASET (North Coast Projects) ---
 

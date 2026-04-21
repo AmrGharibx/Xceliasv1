@@ -6,6 +6,8 @@
 
 const OVERPASS_MIRRORS = [
   "https://overpass-api.de/api/interpreter",
+  "https://overpass.openstreetmap.ru/api/interpreter",
+  "https://overpass.private.coffee/api/interpreter",
   "https://overpass.kumi.systems/api/interpreter",
   "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
 ];
@@ -21,7 +23,7 @@ module.exports.config = {
 
 async function tryOverpass(query, mirror) {
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 28000); // 28 s timeout
+  const timer = setTimeout(() => controller.abort(), 8000); // 8 s per mirror (stay under Vercel 60s limit)
   try {
     const res = await fetch(mirror, {
       method: "POST",
@@ -30,11 +32,15 @@ async function tryOverpass(query, mirror) {
       signal: controller.signal,
     });
     clearTimeout(timer);
-    if (!res.ok) return null;
+    if (!res.ok) {
+      console.warn(`Overpass ${mirror}: HTTP ${res.status}`);
+      return null;
+    }
     const json = await res.json();
     return json;
-  } catch {
+  } catch (err) {
     clearTimeout(timer);
+    console.warn(`Overpass ${mirror}: ${err.message}`);
     return null;
   }
 }

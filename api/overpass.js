@@ -27,7 +27,11 @@ async function tryOverpass(query, mirror) {
   try {
     const res = await fetch(mirror, {
       method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "Excelias-Portal/2.0 (https://excelias.vercel.app; educational real estate map)",
+        "Accept": "application/json",
+      },
       body: `data=${encodeURIComponent(query)}`,
       signal: controller.signal,
     });

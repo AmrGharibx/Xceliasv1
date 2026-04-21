@@ -2166,9 +2166,34 @@ const OVERPASS_ENDPOINTS = [
 
 /**
  * POST a query to the first Overpass mirror that responds OK.
- * Uses AbortSignal.timeout so each mirror is bounded independently.
+ * On production (non-localhost) uses a server-side proxy to avoid CORS/IP-block issues.
+ * Falls back to direct mirrors on localhost or if proxy fails.
  */
 async function _fetchOverpass(query, timeoutMs = 40000) {
+  const isLocalhost = ["localhost", "127.0.0.1"].includes(
+    window.location.hostname,
+  );
+
+  // Production: route through Vercel proxy function (/api/overpass)
+  if (!isLocalhost) {
+    try {
+      const ctrl = new AbortController();
+      const tid = setTimeout(() => ctrl.abort(), timeoutMs);
+      const r = await fetch("/api/overpass", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query }),
+        signal: ctrl.signal,
+      });
+      clearTimeout(tid);
+      if (r.ok) return r;
+      console.warn("Overpass proxy: HTTP", r.status, "— falling back to direct");
+    } catch (e) {
+      console.warn("Overpass proxy failed:", e.message, "— falling back to direct");
+    }
+  }
+
+  // localhost or proxy failed: try direct mirrors
   let lastErr;
   for (const endpoint of OVERPASS_ENDPOINTS) {
     try {

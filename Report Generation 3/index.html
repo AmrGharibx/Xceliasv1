@@ -484,6 +484,25 @@
 
         /* NOTE: .page, .cover-*, .report-*, .data-table inside .page are NOT overridden
            — the A4 PDF report pages stay white for printing */
+
+        /* ====== TRAINEE PHOTO — step 3 upload zone ====== */
+        .photo-upload-row{display:flex;align-items:center;gap:16px}
+        .photo-thumb-box{position:relative;flex-shrink:0;width:72px;height:96px;border-radius:10px;overflow:hidden;background:rgba(0,0,0,0.25);border:1.5px dashed rgba(102,126,234,0.35);display:flex;align-items:center;justify-content:center;transition:border-color .3s}
+        .photo-thumb-box.has-photo{border-style:solid;border-color:rgba(102,126,234,0.65)}
+        .photo-thumb-box img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block}
+        .no-ph{display:flex;flex-direction:column;align-items:center;gap:5px;color:rgba(140,140,175,0.5);font-size:.63rem;font-family:'Montserrat',sans-serif;text-align:center;padding:6px}
+        .no-ph svg{opacity:.5}
+        .photo-clear{position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:50%;background:rgba(220,38,38,.88);color:#fff;border:none;cursor:pointer;font-size:.6rem;display:flex;align-items:center;justify-content:center;line-height:1;backdrop-filter:blur(4px);transition:background .2s}
+        .photo-clear:hover{background:#dc2626}
+        .photo-upload-lbl{display:inline-flex;align-items:center;gap:8px;padding:8px 18px;font-size:.79rem;font-weight:700;border-radius:50px;background:rgba(255,255,255,0.05);border:1px solid rgba(102,126,234,0.28);color:rgba(200,200,225,.9);cursor:pointer;font-family:'Montserrat',sans-serif;letter-spacing:.04em;transition:all .3s;user-select:none;margin-bottom:6px}
+        .photo-upload-lbl:hover{background:linear-gradient(135deg,#667eea,#764ba2,#f093fb);color:#fff;border-color:transparent;box-shadow:0 8px 24px rgba(102,126,234,.4);transform:translateY(-1px)}
+        .photo-hint{font-size:.72rem;color:rgba(120,120,155,.7);font-family:'Montserrat',sans-serif;margin:0}
+
+        /* ====== TRAINEE PHOTO — A4 report page (white) ====== */
+        .report-photo-col{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:5px;margin-right:6px}
+        .report-photo-col img{width:86px;height:114px;object-fit:cover;object-position:center 12%;border-radius:8px;border:2.5px solid #c1121f;display:block;box-shadow:0 4px 18px rgba(0,0,0,.18);-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+        .report-photo-col .rph-lbl{font-size:.57rem;color:#6b7280;font-weight:700;letter-spacing:.06em;text-transform:uppercase;text-align:center;line-height:1.3}
+        .details-card-info{flex:1}
     </style>
 
 <!-- Firebase (enables shared Xcelias auth) -->
@@ -1484,10 +1503,10 @@ function parseCardView(text){
     assessmentResult=normalizeAssessmentOutcome(rawAssessmentOutcome)||assessmentResult||'Passed';
 
     return{
-        name,company,batch,overallScore:0,
+        name,company,batch,overallScore:0,photo:'',
         rawAssessmentOutcome,
         assessmentResult,
-        badgeClass:'b-gray',overallAssessment:'',
+        badgeClass:'b-gray',overallAssessment:'','
         scores:{
             presentability:{score:pr,max:5},
             softSkills:{score:ss,max:5},
@@ -1714,8 +1733,8 @@ function parseDataRow(line,colOrder){
     if(pk===0&&mp===0&&ss===0&&pr===0)return null; // all zeros = probably not a real row
 
     return{
-        name:namePart,company:S.co,batch:'Batch '+S.batch,overallScore:0,
-        rawAssessmentOutcome:'',assessmentResult:'Passed',badgeClass:'b-gray',overallAssessment:'',
+        name:namePart,company:S.co,batch:'Batch '+S.batch,overallScore:0,photo:'',
+        rawAssessmentOutcome:'',assessmentResult:'Passed',badgeClass:'b-gray',overallAssessment:'','
         scores:{
             presentability:{score:pr,max:5},softSkills:{score:ss,max:5},
             mapping:{score:mp,max:5},productKnowledge:{score:pk,max:5},
@@ -1908,8 +1927,8 @@ function genComments(t){
 // ============================================================
 function addTrainee(){
     S.trainees.push({
-        name:'',company:S.co,batch:'Batch '+S.batch,overallScore:0,
-        rawAssessmentOutcome:'',assessmentResult:'Passed',badgeClass:'b-gray',overallAssessment:'',
+        name:'',company:S.co,batch:'Batch '+S.batch,overallScore:0,photo:'',
+        rawAssessmentOutcome:'',assessmentResult:'Passed',badgeClass:'b-gray',overallAssessment:'','
         scores:{
             presentability:{score:0,max:5},softSkills:{score:0,max:5},
             mapping:{score:0,max:5},productKnowledge:{score:0,max:5},
@@ -1952,6 +1971,21 @@ function makeCard(t,i){
             </div>
         </div>
         <div class="tcard-b">
+            <div class="csec"><h4>📷 Trainee Photo</h4>
+                <div class="photo-upload-row">
+                    <div class="photo-thumb-box ${t.photo?'has-photo':''}">
+                        ${t.photo?`<img src="${t.photo}" alt=""><button class="photo-clear" onclick="event.stopPropagation();clearPhoto(${i})" title="Remove photo">✕</button>`:'<div class="no-ph"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>No photo</span></div>'}
+                    </div>
+                    <div>
+                        <label class="photo-upload-lbl" for="ph-${i}">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                            ${t.photo?'Replace Photo':'Upload Photo'}
+                        </label>
+                        <input type="file" id="ph-${i}" accept="image/*" style="display:none" onchange="handlePhotoUpload(${i},event)">
+                        <p class="photo-hint">Portrait photo · Will appear on the report page</p>
+                    </div>
+                </div>
+            </div>
             <div class="csec"><h4>Personal Info</h4>
                 <div class="grid c4">
                     <div class="fld"><label>Name</label><input value="${ee(t.name)}" onchange="uf(${i},'name',this.value)"></div>
@@ -2044,6 +2078,32 @@ function regenComments(i){
     renderCards();toast('Comments generated!','ok');
 }
 
+function handlePhotoUpload(i,event){
+    const file=event.target.files[0];
+    if(!file)return;
+    if(!file.type.startsWith('image/')){toast('Only image files are allowed','err');return;}
+    const r=new FileReader();
+    r.onload=e=>{
+        const img=new Image();
+        img.onload=()=>{
+            const canvas=document.createElement('canvas');
+            const MAX_H=900,MAX_W=700;
+            let w=img.width,h=img.height;
+            if(h>MAX_H){w=Math.round(w*MAX_H/h);h=MAX_H;}
+            if(w>MAX_W){h=Math.round(h*MAX_W/w);w=MAX_W;}
+            canvas.width=w;canvas.height=h;
+            canvas.getContext('2d').drawImage(img,0,0,w,h);
+            S.trainees[i].photo=canvas.toDataURL('image/jpeg',0.88);
+            renderCards();toast('Photo uploaded!','ok');
+        };
+        img.src=e.target.result;
+    };
+    r.readAsDataURL(file);
+    event.target.value='';
+}
+
+function clearPhoto(i){S.trainees[i].photo='';renderCards();toast('Photo removed','info');}
+
 // ============================================================
 //  STEP 4 — GENERATE REPORT
 // ============================================================
@@ -2104,7 +2164,7 @@ function mkPage(t){
     return`<div class="page">
     <div class="report-header"><div class="report-header-logo">${LOGO}</div><div class="report-header-right"><h1>Trainee Performance Report</h1><p>${ee(t.batch)}</p></div></div>
     <div class="report-body">
-        <div class="details-card"><div><h3>Trainee Details</h3><p><span class="label">Name:</span> ${ee(t.name)}</p><p><span class="label">Company:</span> ${ee(t.company)}</p></div>
+        <div class="details-card">${t.photo?`<div class="report-photo-col"><img src="${t.photo}" alt="${ee(t.name)}"><span class="rph-lbl">${ee(t.name.split(' ')[0])}</span></div>`:''}<div class="details-card-info"><h3>Trainee Details</h3><p><span class="label">Name:</span> ${ee(t.name)}</p><p><span class="label">Company:</span> ${ee(t.company)}</p></div>
         <div style="text-align:right"><h3>Overall Performance</h3><div class="score-big ${sc}">${t.overallScore}<span>%</span></div><div class="badge ${t.badgeClass}">${ee(outcomeLabel)}</div></div></div>
         <h3 class="section-title">Overall Assessment</h3><div class="assessment-box"><p>${ee(t.overallAssessment)}</p></div>
         <div class="two-col"><div>

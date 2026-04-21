@@ -1,0 +1,214 @@
+﻿/* =================================================================
+   Xcelias Project Intelligence Maps — Geographic Map Stylesheet
+   RED Training Academy · 2025
+   ================================================================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: #0a0f1a;
+  font-family:
+    "Inter",
+    -apple-system,
+    "Segoe UI",
+    sans-serif;
+  color: #e0eaf8;
+  min-height: 100vh;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ── UI Chrome ──────────────────────────────────────────────── */
+.ui-chrome {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 32px;
+  background: #060c18;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.header-brand {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.logo {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 26px;
+  font-weight: 900;
+  color: #fff;
+}
+.logo em {
+  color: #e03040;
+  font-style: normal;
+}
+.logo-tag {
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #5a7090;
+}
+
+.header-title {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #c9a84c;
+}
+
+.confidential {
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #5a7090;
+  border: 1px solid #2a3a50;
+  padding: 4px 10px;
+  border-radius: 3px;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 32px;
+  background: #080e1c;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.tab-group {
+  display: flex;
+  gap: 4px;
+}
+.tab {
+  padding: 9px 22px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: #6080a0;
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.tab:hover {
+  color: #c0d8f0;
+  border-color: rgba(255, 255, 255, 0.25);
+}
+.tab.active {
+  background: rgba(201, 168, 76, 0.12);
+  border-color: #c9a84c;
+  color: #c9a84c;
+}
+
+.export-group {
+  display: flex;
+  gap: 8px;
+}
+.btn-export {
+  padding: 8px 18px;
+  border-radius: 6px;
+  border: 1px solid;
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  letter-spacing: 0.5px;
+}
+.btn-pdf {
+  background: rgba(224, 48, 64, 0.1);
+  border-color: #e03040;
+  color: #e03040;
+}
+.btn-pdf:hover {
+  background: #e03040;
+  color: #fff;
+}
+.btn-png {
+  background: rgba(201, 168, 76, 0.1);
+  border-color: #c9a84c;
+  color: #c9a84c;
+}
+.btn-png:hover {
+  background: #c9a84c;
+  color: #060c18;
+}
+
+.loading-veil {
+  position: fixed;
+  inset: 0;
+  background: rgba(6, 12, 24, 0.92);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  z-index: 9999;
+  font-size: 14px;
+  color: #c0d8f0;
+}
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top-color: #c9a84c;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ── Stage / Map Wrapper ────────────────────────────────────── */
+.stage {
+  padding: 32px;
+  display: flex;
+  justify-content: center;
+}
+
+.map-wrap {
+  /* SVG fills itself */
+  line-height: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow:
+    0 30px 100px rgba(0, 0, 0, 0.8),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+  max-width: 100%;
+}
+
+.map-wrap svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+@media (max-width: 900px) {
+  .stage {
+    padding: 0;
+  }
+  .map-wrap {
+    border-radius: 0;
+    box-shadow: none;
+  }
+}

@@ -1,0 +1,78 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>Xcelias — Project Intelligence Maps</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600;700&display=swap"
+    />
+    <link rel="stylesheet" href="maps.css" />
+  </head>
+  <body>
+    <!-- UI chrome (not exported) -->
+    <div class="ui-chrome">
+      <header class="app-header">
+        <div class="header-brand">
+          <span class="logo"><em>X</em>celias</span>
+          <span class="logo-tag">Project Intelligence</span>
+        </div>
+        <h1 class="header-title">Real Estate Map Series</h1>
+        <span class="confidential">CONFIDENTIAL · RED Training Academy</span>
+      </header>
+
+      <div class="controls">
+        <div class="tab-group" role="tablist">
+          <button
+            class="tab active"
+            data-map="nc"
+            role="tab"
+            aria-selected="true"
+          >
+            🌊&ensp;North Coast — Sahel
+          </button>
+          <button
+            class="tab"
+            data-map="sokhna"
+            role="tab"
+            aria-selected="false"
+          >
+            🏖&ensp;Ain Sokhna — Red Sea
+          </button>
+        </div>
+        <div class="export-group">
+          <button class="btn-export btn-pdf" id="btnPdf">⬇ Save PDF</button>
+          <button class="btn-export btn-png" id="btnPng">⬇ Save PNG</button>
+        </div>
+      </div>
+
+      <div class="loading-veil hidden" id="loadingVeil">
+        <div class="spinner"></div>
+        <p>Generating high-resolution export…</p>
+      </div>
+    </div>
+
+    <!-- Map canvases (these get exported) -->
+    <div class="stage">
+      <div class="map-wrap" id="mapNc"></div>
+      <div class="map-wrap hidden" id="mapSokhna"></div>
+    </div>
+
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
+      integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"
+      integrity="sha512-qZvrmS2ekKPF2mSznTQsxqPgnpkI4DNTlrdUmTzrDgektczlKNRRhy5X5AAOnx5S09ydFYWWNSfcEqDTTHgtNA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script src="maps.js"></script>
+  </body>
+</html>

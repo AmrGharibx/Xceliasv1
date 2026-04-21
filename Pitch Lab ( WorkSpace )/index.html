@@ -4,6 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pitch Lab — Call Simulation Studio</title>
+    <meta
+      name="description"
+      content="Practice real estate call simulations with AI-powered client personas"
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -53,6 +57,47 @@
         </p>
       </section>
 
+      <!-- Difficulty filter chips -->
+      <div
+        class="difficulty-filter"
+        id="difficulty-filter"
+        role="group"
+        aria-label="Filter scenarios by difficulty"
+      >
+        <button
+          class="diff-filter-btn active"
+          data-diff="all"
+          data-en="All"
+          data-ar="الكل"
+        >
+          All
+        </button>
+        <button
+          class="diff-filter-btn"
+          data-diff="easy"
+          data-en="Easy"
+          data-ar="سهل"
+        >
+          Easy
+        </button>
+        <button
+          class="diff-filter-btn"
+          data-diff="medium"
+          data-en="Medium"
+          data-ar="متوسط"
+        >
+          Medium
+        </button>
+        <button
+          class="diff-filter-btn"
+          data-diff="hard"
+          data-en="Hard"
+          data-ar="صعب"
+        >
+          Hard
+        </button>
+      </div>
+
       <section
         class="scenarios-grid"
         id="scenarios-grid"
@@ -66,24 +111,130 @@
         <div class="campaign-section-header">
           <span class="campaign-section-icon" aria-hidden="true">🏆</span>
           <div>
-            <h2 class="campaign-section-title" data-en="Campaign Mode" data-ar="وضع الحملة">Campaign Mode</h2>
-            <p class="campaign-section-sub" data-en="3-call sprint — earn a medal" data-ar="3 مكالمات — اكسب ميدالية">3-call sprint — earn a medal</p>
+            <h2
+              class="campaign-section-title"
+              data-en="Campaign Mode"
+              data-ar="وضع الحملة"
+            >
+              Campaign Mode
+            </h2>
+            <p
+              class="campaign-section-sub"
+              data-en="3-call sprint — earn a medal"
+              data-ar="3 مكالمات — اكسب ميدالية"
+            >
+              3-call sprint — earn a medal
+            </p>
           </div>
         </div>
         <div class="campaign-tracks">
-          <button class="campaign-track-btn" id="cp-classic" aria-label="Start Classic Sprint campaign">
+          <button
+            class="campaign-track-btn"
+            id="cp-classic"
+            aria-label="Start Classic Sprint campaign"
+          >
             <span class="campaign-track-icon" aria-hidden="true">🎯</span>
             <div class="campaign-track-info">
-              <span class="campaign-track-name" data-en="The Classic Sprint" data-ar="السباق الكلاسيكي">The Classic Sprint</span>
-              <span class="campaign-track-desc" data-en="Cold Lead → Price Hammerer → Skeptical Engineer" data-ar="عميل بارد ← ضارب أسعار ← مهندس مشكّك">Cold Lead → Price Hammerer → Skeptical Engineer</span>
+              <span
+                class="campaign-track-name"
+                data-en="The Classic Sprint"
+                data-ar="السباق الكلاسيكي"
+                >The Classic Sprint</span
+              >
+              <span
+                class="campaign-track-desc"
+                data-en="Cold Lead → Price Hammerer → Skeptical Engineer"
+                data-ar="عميل بارد ← ضارب أسعار ← مهندس مشكّك"
+                >Cold Lead → Price Hammerer → Skeptical Engineer</span
+              >
             </div>
             <span class="campaign-track-arrow" aria-hidden="true">→</span>
           </button>
-          <button class="campaign-track-btn" id="cp-gauntlet" aria-label="Start The Gauntlet campaign">
+          <button
+            class="campaign-track-btn"
+            id="cp-gauntlet"
+            aria-label="Start The Gauntlet campaign"
+          >
             <span class="campaign-track-icon" aria-hidden="true">🏆</span>
             <div class="campaign-track-info">
-              <span class="campaign-track-name" data-en="The Gauntlet" data-ar="الاختبار الكبير">The Gauntlet</span>
-              <span class="campaign-track-desc" data-en="Urgent Buyer → Impatient Investor → Indecisive Couple" data-ar="مشترٍ عاجل ← مستثمر متسرّع ← زوجان مترددان">Urgent Buyer → Impatient Investor → Indecisive Couple</span>
+              <span
+                class="campaign-track-name"
+                data-en="The Gauntlet"
+                data-ar="الاختبار الكبير"
+                >The Gauntlet</span
+              >
+              <span
+                class="campaign-track-desc"
+                data-en="Urgent Buyer → Impatient Investor → Indecisive Couple"
+                data-ar="مشترٍ عاجل ← مستثمر متسرّع ← زوجان مترددان"
+                >Urgent Buyer → Impatient Investor → Indecisive Couple</span
+              >
+            </div>
+            <span class="campaign-track-arrow" aria-hidden="true">→</span>
+          </button>
+          <button
+            class="campaign-track-btn"
+            id="cp-luxury"
+            aria-label="Start The Luxury Circuit campaign"
+          >
+            <span class="campaign-track-icon" aria-hidden="true">👑</span>
+            <div class="campaign-track-info">
+              <span
+                class="campaign-track-name"
+                data-en="The Luxury Circuit"
+                data-ar="دائرة الفاخر"
+                >The Luxury Circuit</span
+              >
+              <span
+                class="campaign-track-desc"
+                data-en="Gulf Returnee → Maadi Elite → Diaspora Caller"
+                data-ar="عائد من الخليج ← نخبة المعادي ← المغترب"
+                >Gulf Returnee → Maadi Elite → Diaspora Caller</span
+              >
+            </div>
+            <span class="campaign-track-arrow" aria-hidden="true">→</span>
+          </button>
+          <button
+            class="campaign-track-btn"
+            id="cp-human"
+            aria-label="Start The Human Factor campaign"
+          >
+            <span class="campaign-track-icon" aria-hidden="true">❤️</span>
+            <div class="campaign-track-info">
+              <span
+                class="campaign-track-name"
+                data-en="The Human Factor"
+                data-ar="العامل الإنساني"
+                >The Human Factor</span
+              >
+              <span
+                class="campaign-track-desc"
+                data-en="Sa'eedi Father → Time-Waster → Govt Employee"
+                data-ar="الأب الصعيدي ← مضيّع الوقت ← الموظف الحكومي"
+                >Sa'eedi Father → Time-Waster → Govt Employee</span
+              >
+            </div>
+            <span class="campaign-track-arrow" aria-hidden="true">→</span>
+          </button>
+          <button
+            class="campaign-track-btn"
+            id="cp-coastal"
+            aria-label="Start the Coastal Sprint campaign"
+          >
+            <span class="campaign-track-icon" aria-hidden="true">🏖️</span>
+            <div class="campaign-track-info">
+              <span
+                class="campaign-track-name"
+                data-en="Coastal Sprint"
+                data-ar="سباق الساحل"
+                >Coastal Sprint</span
+              >
+              <span
+                class="campaign-track-desc"
+                data-en="North Coast Seeker → Silent Prospect → Cold Lead"
+                data-ar="باحث الساحل ← العميل الصامت ← العميل المتجمّد"
+                >North Coast Seeker → Silent Prospect → Cold Lead</span
+              >
             </div>
             <span class="campaign-track-arrow" aria-hidden="true">→</span>
           </button>
@@ -129,23 +280,59 @@
     <div id="screen-incoming" class="screen">
       <div class="incoming-wrapper">
         <div class="ring-container">
-          <span class="ring-wave" style="--d:0s"></span>
-          <span class="ring-wave" style="--d:0.75s"></span>
-          <span class="ring-wave" style="--d:1.5s"></span>
+          <span class="ring-wave" style="--d: 0s"></span>
+          <span class="ring-wave" style="--d: 0.75s"></span>
+          <span class="ring-wave" style="--d: 1.5s"></span>
           <div class="incoming-avatar" id="incoming-avatar"></div>
         </div>
-        <p class="incoming-badge" data-en="Incoming Call" data-ar="مكالمة واردة">Incoming Call</p>
+        <p
+          class="incoming-badge"
+          data-en="Incoming Call"
+          data-ar="مكالمة واردة"
+        >
+          Incoming Call
+        </p>
         <h2 class="incoming-name" id="incoming-name"></h2>
         <p class="incoming-sub" id="incoming-sub"></p>
         <div class="incoming-actions">
-          <button class="btn-decline" id="btn-decline" aria-label="Decline call">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 5.26L16.09 6.67C17.32 8.02 18 9.96 18 12h2c0-2.54-.92-4.91-2.5-6.74zM7.91 6.67L6.5 5.26C4.92 7.09 4 9.46 4 12h2c0-2.04.68-3.98 1.91-5.33zM12 1L8 5h3v5.27l-5 2.99V15h12v-1.74l-5-2.99V5h3L12 1zm0 21c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2z"/></svg>
+          <button
+            class="btn-decline"
+            id="btn-decline"
+            aria-label="Decline call"
+          >
+            <svg
+              width="26"
+              height="26"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                d="M17.5 5.26L16.09 6.67C17.32 8.02 18 9.96 18 12h2c0-2.54-.92-4.91-2.5-6.74zM7.91 6.67L6.5 5.26C4.92 7.09 4 9.46 4 12h2c0-2.04.68-3.98 1.91-5.33zM12 1L8 5h3v5.27l-5 2.99V15h12v-1.74l-5-2.99V5h3L12 1zm0 21c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2z"
+              />
+            </svg>
           </button>
           <button class="btn-answer" id="btn-answer" aria-label="Answer call">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/></svg>
+            <svg
+              width="26"
+              height="26"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"
+              />
+            </svg>
           </button>
         </div>
-        <p class="incoming-hint" data-en="Answer to begin your practice call" data-ar="أجب لبدء مكالمة التدريب">Answer to begin your practice call</p>
+        <p
+          class="incoming-hint"
+          data-en="Answer to begin your practice call"
+          data-ar="أجب لبدء مكالمة التدريب"
+        >
+          Answer to begin your practice call
+        </p>
       </div>
     </div>
 
@@ -183,11 +370,23 @@
           <div class="briefing-tips" id="briefing-tips"></div>
           <!-- Speed Round toggle -->
           <label class="speed-toggle-row" id="speed-toggle-row">
-            <input type="checkbox" id="speed-mode-checkbox" aria-label="Speed Round mode">
-            <span class="speed-toggle-track"><span class="speed-toggle-thumb"></span></span>
+            <input
+              type="checkbox"
+              id="speed-mode-checkbox"
+              aria-label="Speed Round mode"
+            />
+            <span class="speed-toggle-track"
+              ><span class="speed-toggle-thumb"></span
+            ></span>
             <span class="speed-toggle-label">
-              ⚡ <span data-en="Speed Round" data-ar="جولة سرعة">Speed Round</span>
-              <span class="speed-toggle-hint" data-en="Respond before time runs out" data-ar="أجب قبل انتهاء الوقت">Respond before time runs out</span>
+              ⚡
+              <span data-en="Speed Round" data-ar="جولة سرعة">Speed Round</span>
+              <span
+                class="speed-toggle-hint"
+                data-en="Respond before time runs out"
+                data-ar="أجب قبل انتهاء الوقت"
+                >Respond before time runs out</span
+              >
             </span>
           </label>
 
@@ -215,13 +414,16 @@
     <!-- ── SCREEN 3: CALL ──────────────────────────────────────────────── -->
     <div id="screen-call" class="screen">
       <div class="call-layout">
-
         <!-- ── LEFT SIDEBAR ── -->
         <aside class="call-sidebar">
           <div class="sidebar-client">
             <div class="call-avatar-wrap">
               <div class="call-avatar" id="call-avatar"></div>
-              <div class="avatar-waveform" id="avatar-waveform" aria-hidden="true">
+              <div
+                class="avatar-waveform"
+                id="avatar-waveform"
+                aria-hidden="true"
+              >
                 <span class="wv-bar"></span>
                 <span class="wv-bar"></span>
                 <span class="wv-bar"></span>
@@ -242,8 +444,14 @@
               <span class="call-timer-dot"></span>
               <span id="call-timer">00:00</span>
             </div>
-            <div class="campaign-progress-pill" id="campaign-progress-pill" hidden>
-              <span class="cpp-label" data-en="Campaign" data-ar="حملة">Campaign</span>
+            <div
+              class="campaign-progress-pill"
+              id="campaign-progress-pill"
+              hidden
+            >
+              <span class="cpp-label" data-en="Campaign" data-ar="حملة"
+                >Campaign</span
+              >
               <div class="cpp-dots" id="cpp-dots"></div>
             </div>
           </div>
@@ -255,11 +463,17 @@
             <p class="deal-commission-val" id="deal-commission">—</p>
             <div class="closing-meter-wrap">
               <div class="closing-meter-row">
-                <span class="sidebar-sect-label" style="margin:0">DEAL TEMP</span>
+                <span class="sidebar-sect-label" style="margin: 0"
+                  >DEAL TEMP</span
+                >
                 <span class="closing-pct-badge" id="closing-pct">COLD</span>
               </div>
               <div class="closing-track">
-                <div class="closing-fill" id="closing-fill" style="width:0%"></div>
+                <div
+                  class="closing-fill"
+                  id="closing-fill"
+                  style="width: 0%"
+                ></div>
               </div>
               <div class="closing-labels">
                 <span>❄️ Cold</span><span>🌡️ Warm</span><span>🔥 Hot</span>
@@ -267,26 +481,64 @@
             </div>
           </div>
 
-          <button class="btn-coach-toggle" id="btn-coach-toggle" aria-label="Toggle live coach">
-            🧠 <span data-en="Live Coach" data-ar="المدرب الحي">Live Coach</span>
+          <button
+            class="btn-coach-toggle"
+            id="btn-coach-toggle"
+            aria-label="Toggle live coach"
+          >
+            🧠
+            <span data-en="Live Coach" data-ar="المدرب الحي">Live Coach</span>
           </button>
 
-          <button class="btn-objections-toggle" id="btn-objections-toggle" aria-label="Toggle objection library">
-            📚 <span data-en="Objection Lib" data-ar="الاعتراضات">Objection Lib</span>
+          <button
+            class="btn-objections-toggle"
+            id="btn-objections-toggle"
+            aria-label="Toggle objection library"
+          >
+            📚
+            <span data-en="Objection Lib" data-ar="الاعتراضات"
+              >Objection Lib</span
+            >
           </button>
 
           <button class="btn-end-call" id="btn-end-call">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 5.26L16.09 6.67C17.32 8.02 18 9.96 18 12h2c0-2.54-.92-4.91-2.5-6.74zM12 1L8 5h3v5.27l-5 2.99V15h12v-1.74l-5-2.99V5h3L12 1zm0 21c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2z"/></svg>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                d="M17.5 5.26L16.09 6.67C17.32 8.02 18 9.96 18 12h2c0-2.54-.92-4.91-2.5-6.74zM12 1L8 5h3v5.27l-5 2.99V15h12v-1.74l-5-2.99V5h3L12 1zm0 21c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2z"
+              />
+            </svg>
             <span data-en="End Call" data-ar="إنهاء">End Call</span>
           </button>
         </aside>
 
         <!-- ── COACH PANEL (right column, toggled) ── -->
-        <aside class="call-coach" id="call-coach" aria-label="Live coaching panel" hidden>
+        <aside
+          class="call-coach"
+          id="call-coach"
+          aria-label="Live coaching panel"
+          hidden
+        >
           <div class="coach-header">
             <span class="coach-header-icon">🧠</span>
-            <span class="coach-header-title" data-en="Live Coach" data-ar="المدرب الحي">Live Coach</span>
-            <button class="coach-close" id="coach-close" aria-label="Close coach panel">✕</button>
+            <span
+              class="coach-header-title"
+              data-en="Live Coach"
+              data-ar="المدرب الحي"
+              >Live Coach</span
+            >
+            <button
+              class="coach-close"
+              id="coach-close"
+              aria-label="Close coach panel"
+            >
+              ✕
+            </button>
           </div>
           <div class="coach-body">
             <div class="coach-signal-pill" id="coach-signal-pill">
@@ -294,12 +546,28 @@
               <span id="coach-signal-text">Opening phase</span>
             </div>
             <div class="coach-card">
-              <p class="coach-card-label" data-en="TACTIC NOW" data-ar="التكتيك الآن">TACTIC NOW</p>
-              <p class="coach-card-body" id="coach-tactic-body">Make your opening move.</p>
+              <p
+                class="coach-card-label"
+                data-en="TACTIC NOW"
+                data-ar="التكتيك الآن"
+              >
+                TACTIC NOW
+              </p>
+              <p class="coach-card-body" id="coach-tactic-body">
+                Make your opening move.
+              </p>
             </div>
             <div class="coach-card">
-              <p class="coach-card-label" data-en="TRY SAYING" data-ar="جرب أن تقول">TRY SAYING</p>
-              <p class="coach-card-body coach-phrase" id="coach-phrase-body">Introduce yourself and ask an open question.</p>
+              <p
+                class="coach-card-label"
+                data-en="TRY SAYING"
+                data-ar="جرب أن تقول"
+              >
+                TRY SAYING
+              </p>
+              <p class="coach-card-body coach-phrase" id="coach-phrase-body">
+                Introduce yourself and ask an open question.
+              </p>
             </div>
             <div class="coach-card coach-card-psych">
               <p class="coach-card-label">🔑 PSYCH KEY</p>
@@ -309,11 +577,27 @@
         </aside>
 
         <!-- ── OBJECTION LIBRARY PANEL ── -->
-        <aside class="call-objections" id="call-objections" aria-label="Objection library" hidden>
+        <aside
+          class="call-objections"
+          id="call-objections"
+          aria-label="Objection library"
+          hidden
+        >
           <div class="objections-header">
             <span class="objections-icon" aria-hidden="true">📚</span>
-            <span class="objections-title" data-en="Objection Library" data-ar="مكتبة الاعتراضات">Objection Library</span>
-            <button class="objections-close" id="objections-close" aria-label="Close objection library">✕</button>
+            <span
+              class="objections-title"
+              data-en="Objection Library"
+              data-ar="مكتبة الاعتراضات"
+              >Objection Library</span
+            >
+            <button
+              class="objections-close"
+              id="objections-close"
+              aria-label="Close objection library"
+            >
+              ✕
+            </button>
           </div>
           <div class="objections-body" id="objections-body">
             <!-- Injected per scenario -->
@@ -322,7 +606,13 @@
 
         <!-- ── MAIN CHAT ── -->
         <div class="call-main">
-          <div class="chat-area" id="chat-area" role="log" aria-live="polite" aria-label="Call transcript">
+          <div
+            class="chat-area"
+            id="chat-area"
+            role="log"
+            aria-live="polite"
+            aria-label="Call transcript"
+          >
             <!-- Messages injected here -->
           </div>
           <div class="chat-footer">
@@ -341,20 +631,42 @@
                 aria-label="Your message"
                 maxlength="1200"
               ></textarea>
-              <button class="btn-mic" id="btn-mic" aria-label="Voice input" title="Voice input" hidden>
+              <button
+                class="btn-mic"
+                id="btn-mic"
+                aria-label="Voice input"
+                title="Voice input"
+                hidden
+              >
                 🎙️
               </button>
               <button class="btn-send" id="btn-send" aria-label="Send message">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
                   <line x1="22" y1="2" x2="11" y2="13"></line>
                   <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
                 </svg>
               </button>
             </div>
-            <p class="call-hint" id="call-hint" data-en="Respond as if this were a real phone call. Be professional." data-ar="أجب كما لو كانت مكالمة حقيقية. كن محترفاً.">Respond as if this were a real phone call. Be professional.</p>
+            <p
+              class="call-hint"
+              id="call-hint"
+              data-en="Respond as if this were a real phone call. Be professional."
+              data-ar="أجب كما لو كانت مكالمة حقيقية. كن محترفاً."
+            >
+              Respond as if this were a real phone call. Be professional.
+            </p>
           </div>
         </div>
-
       </div>
     </div>
 
@@ -363,29 +675,80 @@
       <div class="debrief-wrapper">
         <div class="debrief-card">
           <div class="debrief-header-row">
-            <div class="debrief-scenario-badge" id="debrief-scenario-badge"></div>
+            <div
+              class="debrief-scenario-badge"
+              id="debrief-scenario-badge"
+            ></div>
             <div class="debrief-total-wrap">
               <div class="debrief-total" id="debrief-total">--</div>
-              <div class="debrief-total-label" data-en="/ 100" data-ar="/ 100">/ 100</div>
+              <div class="debrief-total-label" data-en="/ 100" data-ar="/ 100">
+                / 100
+              </div>
             </div>
           </div>
-          <h2 class="debrief-title" data-en="Call Debrief" data-ar="تحليل المكالمة">Call Debrief</h2>
+          <h2
+            class="debrief-title"
+            data-en="Call Debrief"
+            data-ar="تحليل المكالمة"
+          >
+            Call Debrief
+          </h2>
 
           <!-- Radar chart + score bars side by side -->
           <div class="debrief-top-grid" id="debrief-top-grid">
-            <canvas id="debrief-radar" class="debrief-radar" width="300" height="300" aria-label="Performance radar chart" role="img"></canvas>
+            <canvas
+              id="debrief-radar"
+              class="debrief-radar"
+              width="300"
+              height="300"
+              aria-label="Performance radar chart"
+              role="img"
+            ></canvas>
             <div class="debrief-scores" id="debrief-scores"></div>
+          </div>
+
+          <!-- Momentum sparkline -->
+          <div
+            class="debrief-sparkline-wrap"
+            id="debrief-sparkline-wrap"
+            hidden
+          >
+            <p
+              class="debrief-sect-title"
+              data-en="Deal Momentum"
+              data-ar="زخم الصفقة"
+            >
+              Deal Momentum
+            </p>
+            <canvas
+              id="debrief-sparkline"
+              class="debrief-sparkline"
+              width="560"
+              height="90"
+              aria-label="Deal momentum over the call"
+              role="img"
+            ></canvas>
           </div>
 
           <!-- Win/Loss moments -->
           <div class="debrief-moments" id="debrief-moments"></div>
 
           <!-- Better phrase suggestion -->
-          <div class="debrief-better-phrase" id="debrief-better-phrase" hidden></div>
+          <div
+            class="debrief-better-phrase"
+            id="debrief-better-phrase"
+            hidden
+          ></div>
 
           <!-- Conversation heatmap -->
           <div class="debrief-heatmap-wrap" id="debrief-heatmap-wrap" hidden>
-            <p class="debrief-sect-title" data-en="Turn-by-Turn Analysis" data-ar="تحليل كل دور">Turn-by-Turn Analysis</p>
+            <p
+              class="debrief-sect-title"
+              data-en="Turn-by-Turn Analysis"
+              data-ar="تحليل كل دور"
+            >
+              Turn-by-Turn Analysis
+            </p>
             <div class="debrief-heatmap" id="debrief-heatmap"></div>
           </div>
 
@@ -393,8 +756,30 @@
           <div class="debrief-coaching" id="debrief-coaching"></div>
 
           <div class="debrief-actions">
-            <button class="btn-secondary" id="btn-retry" data-en="Retry Same Scenario" data-ar="إعادة نفس السيناريو">Retry Same Scenario</button>
-            <button class="btn-primary" id="btn-home" data-en="Try Another Scenario" data-ar="جرّب سيناريو آخر">Try Another Scenario</button>
+            <button
+              class="btn-secondary"
+              id="btn-export"
+              data-en="Export Transcript"
+              data-ar="تصدير النص"
+            >
+              Export Transcript
+            </button>
+            <button
+              class="btn-secondary"
+              id="btn-retry"
+              data-en="Retry Same Scenario"
+              data-ar="إعادة نفس السيناريو"
+            >
+              Retry Same Scenario
+            </button>
+            <button
+              class="btn-primary"
+              id="btn-home"
+              data-en="Try Another Scenario"
+              data-ar="جرّب سيناريو آخر"
+            >
+              Try Another Scenario
+            </button>
           </div>
         </div>
       </div>

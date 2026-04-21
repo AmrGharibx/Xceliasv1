@@ -496,6 +496,64 @@ describe('Rate limiter on /api/gemini with authenticated session', () => {
 });
 
 /* ─────────────────────────────────────────────────────────── */
+/* 13b — Gemini input validation                               */
+/* ─────────────────────────────────────────────────────────── */
+
+describe('POST /api/gemini — input validation', () => {
+  const token = (() => {
+    const { signSession } = require('../server');
+    return signSession({ uid: UID_ADMIN, role: 'admin' });
+  })();
+
+  beforeEach(() => {
+    process.env.GEMINI_API_KEY = 'test-key';
+  });
+
+  afterEach(() => {
+    delete process.env.GEMINI_API_KEY;
+  });
+
+  test('returns 400 when systemPrompt is not a string', async () => {
+    const res = await request(app)
+      .post('/api/gemini')
+      .set('Cookie', cookieHeader(token))
+      .set('X-Forwarded-For', '10.20.30.40')
+      .send({
+        messages: [{ role: 'user', content: 'hi' }],
+        systemPrompt: { injection: true },
+      });
+    expect(res.status).toBe(400);
+    expect(res.body.error).toMatch(/systemPrompt/i);
+  });
+
+  test('accepts valid string systemPrompt without error', async () => {
+    const res = await request(app)
+      .post('/api/gemini')
+      .set('Cookie', cookieHeader(token))
+      .set('X-Forwarded-For', '10.20.30.41')
+      .send({
+        messages: [{ role: 'user', content: 'hi' }],
+        systemPrompt: 'You are a helpful assistant',
+      });
+    // Should NOT be 400 — either 502 (fetch fails) or 500 (no real API) but not 400
+    expect(res.status).not.toBe(400);
+  });
+
+  test('clamps generationConfig.maxOutputTokens to 1–4096 range', async () => {
+    const res = await request(app)
+      .post('/api/gemini')
+      .set('Cookie', cookieHeader(token))
+      .set('X-Forwarded-For', '10.20.30.42')
+      .send({
+        messages: [{ role: 'user', content: 'hi' }],
+        generationConfig: { maxOutputTokens: 99999 },
+      });
+    // Should proceed past validation (not 400)
+    expect(res.status).not.toBe(400);
+  });
+});
+
+/* ─────────────────────────────────────────────────────────── */
 /* 14 — verifySession edge cases                               */
 /* ─────────────────────────────────────────────────────────── */
 

@@ -14,7 +14,12 @@ function escHtml(str) {
 }
 
 /* ── Language state ── */
-let lang = localStorage.getItem("pitchlab_lang") || "en";
+let lang;
+try {
+  lang = localStorage.getItem("pitchlab_lang") || "en";
+} catch {
+  lang = "en";
+}
 
 function t(el) {
   if (!el) return;
@@ -35,7 +40,9 @@ function applyLang() {
 // Hex → "R,G,B" for CSS rgba() injection
 function hexToRgb(hex) {
   const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  return m ? `${parseInt(m[1],16)},${parseInt(m[2],16)},${parseInt(m[3],16)}` : null;
+  return m
+    ? `${Number.parseInt(m[1], 16)},${Number.parseInt(m[2], 16)},${Number.parseInt(m[3], 16)}`
+    : null;
 }
 
 const SCENARIOS = [
@@ -253,7 +260,11 @@ Win condition: Agent asks 3 genuinely open questions — Nour volunteers at leas
     commissionRate: 0.025,
     replyDelayMs: 1400,
     replyVarianceMs: 900,
-    psychTags: ["⏳ No urgency", "💬 Loves chatting", "❤️ Hidden family driver"],
+    psychTags: [
+      "⏳ No urgency",
+      "💬 Loves chatting",
+      "❤️ Hidden family driver",
+    ],
     name: { en: "The Time-Waster", ar: "مضيّع الوقت" },
     client: {
       en: 'Hassan, 52 — Business owner, always "thinking about it"',
@@ -409,9 +420,18 @@ Win condition: Agent confirms 2-3 matching options and closes Tarek on a same-da
       ar: "اكسب ثقته بالاحترام والبساطة. وضّح موعد التسليم ونوع التشطيب. أكّد وحدة مناسبة لبيت حسن الجديد.",
     },
     tips: [
-      { en: "Address him as 'Hader Sayed' — always use respectful titles", ar: "ناديه 'حضرة سيد' — استخدم الألقاب المحترمة دائماً" },
-      { en: "Keep language simple — zero jargon", ar: "ابقَ بسيطاً وتجنّب المصطلحات تماماً" },
-      { en: "Connect the unit to Hassan's future family", ar: "اربط الوحدة بمستقبل عائلة حسن" },
+      {
+        en: "Address him as 'Hader Sayed' — always use respectful titles",
+        ar: "ناديه 'حضرة سيد' — استخدم الألقاب المحترمة دائماً",
+      },
+      {
+        en: "Keep language simple — zero jargon",
+        ar: "ابقَ بسيطاً وتجنّب المصطلحات تماماً",
+      },
+      {
+        en: "Connect the unit to Hassan's future family",
+        ar: "اربط الوحدة بمستقبل عائلة حسن",
+      },
     ],
     systemPrompt: function (a) {
       return `You are Sayed, 58, a retired military officer originally from Sohag, now living in Cairo. Phone call with a real estate agent about buying an apartment for your son Hassan's upcoming wedding.
@@ -434,7 +454,11 @@ Win condition: Agent addresses him respectfully (uses حضرتك), gives deliver
     commissionRate: 0.02,
     replyDelayMs: 950,
     replyVarianceMs: 600,
-    psychTags: ["🌴 Gulf influenced", "💵 Dollar mindset", "👑 VIP expectations"],
+    psychTags: [
+      "🌴 Gulf influenced",
+      "💵 Dollar mindset",
+      "👑 VIP expectations",
+    ],
     name: { en: "The Gulf Returnee", ar: "العائد من الخليج" },
     client: {
       en: "Magdy, 45 — Engineer returned from Riyadh after 12 years",
@@ -449,9 +473,18 @@ Win condition: Agent addresses him respectfully (uses حضرتك), gives deliver
       ar: "وازِن توقعاته العالية بهدوء. قدّم هيبة الكمبوند الراقي وإمكانيات الاستثمار. أغلق على جولة خاصة.",
     },
     tips: [
-      { en: "Lead with compound prestige — not price", ar: "ابدأ بهيبة الكمبوند لا بالسعر" },
-      { en: "Use investment framing — appreciation since 2021", ar: "استخدم إطار الاستثمار — نسبة الارتفاع منذ 2021" },
-      { en: "Offer a private exclusive tour — not a group visit", ar: "اقترح جولة خاصة حصرية لا زيارة جماعية" },
+      {
+        en: "Lead with compound prestige — not price",
+        ar: "ابدأ بهيبة الكمبوند لا بالسعر",
+      },
+      {
+        en: "Use investment framing — appreciation since 2021",
+        ar: "استخدم إطار الاستثمار — نسبة الارتفاع منذ 2021",
+      },
+      {
+        en: "Offer a private exclusive tour — not a group visit",
+        ar: "اقترح جولة خاصة حصرية لا زيارة جماعية",
+      },
     ],
     systemPrompt: function (a) {
       return `You are Magdy, 45, an Egyptian engineer who just returned to Egypt after 12 years in Riyadh. Phone call with a real estate agent about buying a luxury property.
@@ -473,7 +506,11 @@ Win condition: Agent confidently names a premium compound (Palm Hills / Mountain
     commissionRate: 0.02,
     replyDelayMs: 1600,
     replyVarianceMs: 800,
-    psychTags: ["🗂️ Budget-limited", "😰 Mortgage fears", "🙏 First-time buyer"],
+    psychTags: [
+      "🗂️ Budget-limited",
+      "😰 Mortgage fears",
+      "🙏 First-time buyer",
+    ],
     name: { en: "The Government Employee", ar: "الموظف الحكومي" },
     client: {
       en: "Walid, 47 — Ministry clerk, first-time buyer on a tight salary",
@@ -488,9 +525,18 @@ Win condition: Agent confidently names a premium compound (Palm Hills / Mountain
       ar: "ساعده يفهم إيه اللي ممكن تحقيقه فعلاً. احسب له قسطاً شهرياً محتملاً في حدود ميزانيته. أعطه وضوحاً وثقة للمضي قُدُماً.",
     },
     tips: [
-      { en: "Confirm what his 400k covers as a down payment first", ar: "أكّد ما يمكن أن يغطيه الـ400 ألف جنيه كمقدم دفع أولاً" },
-      { en: "Use simple EGP monthly numbers — avoid percentages", ar: "استخدم أرقام الجنيه الشهرية البسيطة — تجنّب النسب المئوية" },
-      { en: "Reassure him about what happens if a payment is missed", ar: "طمئنه على ما يحدث إذا فاته قسط" },
+      {
+        en: "Confirm what his 400k covers as a down payment first",
+        ar: "أكّد ما يمكن أن يغطيه الـ400 ألف جنيه كمقدم دفع أولاً",
+      },
+      {
+        en: "Use simple EGP monthly numbers — avoid percentages",
+        ar: "استخدم أرقام الجنيه الشهرية البسيطة — تجنّب النسب المئوية",
+      },
+      {
+        en: "Reassure him about what happens if a payment is missed",
+        ar: "طمئنه على ما يحدث إذا فاته قسط",
+      },
     ],
     systemPrompt: function (a) {
       return `You are Walid, 47, a government ministry employee in Egypt. This is your first time seriously speaking with a real estate agent about buying an apartment.
@@ -528,9 +574,18 @@ Win condition: Agent calculates a realistic monthly installment that fits his bu
       ar: "اشرح عملية الشراء عن بُعد بوضوح. ناقش خيارات الدفع بالعملة الأجنبية. أغلق على جولة افتراضية وناقش التوكيل الرسمي.",
     },
     tips: [
-      { en: "Mention virtual tours immediately — don't wait for him to ask", ar: "اذكر الجولات الافتراضية فوراً — لا تنتظر حتى يسأل" },
-      { en: "Explain the Power of Attorney (TOW) process for remote signing", ar: "اشرح عملية التوكيل الرسمي للتوقيع عن بُعد" },
-      { en: "Discuss EGP/EUR — some developers accept USD direct transfer", ar: "ناقش خيارات جنيه/يورو — بعض المطورين يقبلون تحويل دولار مباشر" },
+      {
+        en: "Mention virtual tours immediately — don't wait for him to ask",
+        ar: "اذكر الجولات الافتراضية فوراً — لا تنتظر حتى يسأل",
+      },
+      {
+        en: "Explain the Power of Attorney (TOW) process for remote signing",
+        ar: "اشرح عملية التوكيل الرسمي للتوقيع عن بُعد",
+      },
+      {
+        en: "Discuss EGP/EUR — some developers accept USD direct transfer",
+        ar: "ناقش خيارات جنيه/يورو — بعض المطورين يقبلون تحويل دولار مباشر",
+      },
     ],
     systemPrompt: function (a) {
       return `You are Sherif, 40, an Egyptian electrical engineer living in Frankfurt, Germany. Phone call with a Cairo real estate agent — you are calling from abroad.
@@ -568,9 +623,18 @@ Win condition: Agent clearly explains virtual tour option AND Power of Attorney 
       ar: "وازِن معاييرها بثقة هادئة. قدّم فقط الخيارات المرموقة حقاً. أنشئ تواصلاً من نظير لنظير — لا تبدو جائعاً للصفقة.",
     },
     tips: [
-      { en: "Never mention price first — open with project credentials", ar: "لا تذكر السعر أولاً — ابدأ بمؤهلات المشروع" },
-      { en: "Match her code-switching naturally — use English when she does", ar: "وازِن تبديل لغتها بشكل طبيعي — استخدم الإنجليزية عندما تفعل ذلك" },
-      { en: "Ask about her previous residence — she loves discussing that", ar: "اسأل عن سكنها السابق — تحب الحديث عن ذلك" },
+      {
+        en: "Never mention price first — open with project credentials",
+        ar: "لا تذكر السعر أولاً — ابدأ بمؤهلات المشروع",
+      },
+      {
+        en: "Match her code-switching naturally — use English when she does",
+        ar: "وازِن تبديل لغتها بشكل طبيعي — استخدم الإنجليزية عندما تفعل ذلك",
+      },
+      {
+        en: "Ask about her previous residence — she loves discussing that",
+        ar: "اسأل عن سكنها السابق — تحب الحديث عن ذلك",
+      },
     ],
     systemPrompt: function (a) {
       return `You are Hind, 52, an upper-class Cairo woman — former diplomat's wife. You have lived in Maadi, London, and briefly Paris. Phone call with a real estate agent.
@@ -592,7 +656,11 @@ Win condition: Agent impresses Hind by confidently naming a specific premium pro
     commissionRate: 0.02,
     replyDelayMs: 850,
     replyVarianceMs: 500,
-    psychTags: ["🏖️ Vacation buyer", "💬 WhatsApp style", "🤔 Management concern"],
+    psychTags: [
+      "🏖️ Vacation buyer",
+      "💬 WhatsApp style",
+      "🤔 Management concern",
+    ],
     name: { en: "The North Coast Seeker", ar: "باحث الساحل الشمالي" },
     client: {
       en: "Youssef, 36 — Cairo entrepreneur, holiday property buyer",
@@ -607,9 +675,18 @@ Win condition: Agent impresses Hind by confidently naming a specific premium pro
       ar: "أهّل احتياجاته الصيفية. قدّم حلاً لإدارة التأجير. أغلق على زيارة للكمبوند في نهاية الأسبوع.",
     },
     tips: [
-      { en: "Mention property management service immediately — it's his #1 concern", ar: "اذكر خدمة إدارة العقار فوراً — ده قلقه الأول" },
-      { en: "Be brief and punchy — WhatsApp voice-note energy", ar: "كن موجزاً وقوياً — بأجواء رسائل الواتساب الصوتية" },
-      { en: "Share seasonal rental yield data for North Coast", ar: "شارك بيانات العائد الإيجاري الموسمي للساحل الشمالي" },
+      {
+        en: "Mention property management service immediately — it's his #1 concern",
+        ar: "اذكر خدمة إدارة العقار فوراً — ده قلقه الأول",
+      },
+      {
+        en: "Be brief and punchy — WhatsApp voice-note energy",
+        ar: "كن موجزاً وقوياً — بأجواء رسائل الواتساب الصوتية",
+      },
+      {
+        en: "Share seasonal rental yield data for North Coast",
+        ar: "شارك بيانات العائد الإيجاري الموسمي للساحل الشمالي",
+      },
     ],
     systemPrompt: function (a) {
       return `You are Youssef, 36, a young Cairo entrepreneur. Phone call about buying a North Coast vacation property.
@@ -628,7 +705,8 @@ Win condition: Agent names a specific North Coast compound with in-house rental 
 // ══════════════════════════════════════════════════════════════════════
 //  MARKET KNOWLEDGE BASE  (injected into every AI call as grounding context)
 // ══════════════════════════════════════════════════════════════════════
-const MARKET_KNOWLEDGE = `=== EGYPTIAN REAL ESTATE — SIMULATION GROUNDING CONTEXT ===
+const MARKET_KNOWLEDGE =
+  `=== EGYPTIAN REAL ESTATE — SIMULATION GROUNDING CONTEXT ===
 
 PRICE BENCHMARKS (2024-2025, primary market):
 • New Cairo / El Mostakbal City: 18,000–28,000 EGP/sqm
@@ -793,7 +871,7 @@ function buildScenarioFromRaw(raw) {
     tips: Array.isArray(raw.tips) ? raw.tips : [],
     isGenerated: true,
     systemPrompt: function (langLabel) {
-      return template.replace(/\{LANG\}/g, langLabel);
+      return template.replaceAll("{LANG}", langLabel);
     },
   };
 }
@@ -861,7 +939,10 @@ async function generateAIScenario(difficulty) {
   _isGenerating = true;
 
   const existingNames = SCENARIOS.map((s) => s.name.en);
-  const prompt = buildScenarioGeneratorPrompt(difficulty || "medium", existingNames);
+  const prompt = buildScenarioGeneratorPrompt(
+    difficulty || "medium",
+    existingNames,
+  );
 
   showLoading(
     lang === "ar"
@@ -894,7 +975,8 @@ async function generateAIScenario(difficulty) {
     renderScenarios();
 
     const newCard = document.querySelector('[data-id="' + raw.id + '"]');
-    if (newCard) newCard.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    if (newCard)
+      newCard.scrollIntoView({ behavior: "smooth", block: "nearest" });
   } catch (err) {
     hideLoading();
     console.error("Scenario generation error:", err);
@@ -918,89 +1000,257 @@ async function generateAIScenario(difficulty) {
 //  OBJECTION LIBRARY  (per-scenario Q&A for the Objection panel)
 // ══════════════════════════════════════════════════════════════════════
 const OBJECTION_LIBRARY = {
-  'skeptical-engineer': [
-    { q: "Your price per sqm is too high", a: "Let's compare: 3.5M for 160sqm = ~21k/sqm. Competitor at 19k/sqm BUT has 6% annual maintenance vs our 1.5%. That gap is 250k+ over 5 years." },
-    { q: "All agents make the same promises", a: "Understood — skip the pitch. Give me your top 3 questions right now and I'll get you exact numbers before we hang up." },
-    { q: "I heard this project is delayed", a: "Valid concern. The project is 78% complete. I can send today's construction photos and the official Q3 handover schedule within 5 minutes." },
-    { q: "I don't trust your payment plan numbers", a: "I can arrange a 3-way call with the developer's finance team right now to walk through the contract schedule line by line." },
+  "skeptical-engineer": [
+    {
+      q: "Your price per sqm is too high",
+      a: "Let's compare: 3.5M for 160sqm = ~21k/sqm. Competitor at 19k/sqm BUT has 6% annual maintenance vs our 1.5%. That gap is 250k+ over 5 years.",
+    },
+    {
+      q: "All agents make the same promises",
+      a: "Understood — skip the pitch. Give me your top 3 questions right now and I'll get you exact numbers before we hang up.",
+    },
+    {
+      q: "I heard this project is delayed",
+      a: "Valid concern. The project is 78% complete. I can send today's construction photos and the official Q3 handover schedule within 5 minutes.",
+    },
+    {
+      q: "I don't trust your payment plan numbers",
+      a: "I can arrange a 3-way call with the developer's finance team right now to walk through the contract schedule line by line.",
+    },
   ],
-  'impatient-investor': [
-    { q: "What's the rental yield?", a: "Similar units on Palm Hills Katameya yield 7.2%. This unit is positioned to hit 8.5% based on Q1 2024 rental data in this exact zone." },
-    { q: "I can get a better ROI elsewhere", a: "Which benchmark? If it's 6% on older stock — true. But this compound appreciates 12-15% annually vs 6-7% on older buildings. Net ROI is higher." },
-    { q: "Is this unit actually rentable?", a: "Compound occupancy for similar units is 94%. Average contract: 2 years. I can connect you with 2 current tenants in the same building." },
-    { q: "How quickly can I resell?", a: "Secondary market: avg 4-6 months to sell at 8-12% above purchase. I have 2 comp transactions from Q1 2024 I can share now." },
+  "impatient-investor": [
+    {
+      q: "What's the rental yield?",
+      a: "Similar units on Palm Hills Katameya yield 7.2%. This unit is positioned to hit 8.5% based on Q1 2024 rental data in this exact zone.",
+    },
+    {
+      q: "I can get a better ROI elsewhere",
+      a: "Which benchmark? If it's 6% on older stock — true. But this compound appreciates 12-15% annually vs 6-7% on older buildings. Net ROI is higher.",
+    },
+    {
+      q: "Is this unit actually rentable?",
+      a: "Compound occupancy for similar units is 94%. Average contract: 2 years. I can connect you with 2 current tenants in the same building.",
+    },
+    {
+      q: "How quickly can I resell?",
+      a: "Secondary market: avg 4-6 months to sell at 8-12% above purchase. I have 2 comp transactions from Q1 2024 I can share now.",
+    },
   ],
-  'indecisive-couple': [
-    { q: "We can't agree on location", a: "Let me solve both: Omar needs amenities, Sara needs schools. Zayed compound — 3 schools within 800m AND pool/gym. Can we agree it's worth a quick visit?" },
-    { q: "We need more time to think", a: "Totally fine. Let me shortlist 2 options — one for Omar's priorities, one for Sara's. Just see them. No decision needed before the visit." },
-    { q: "Our budgets don't match", a: "Sara at 3.5M, Omar at 4.5M — there's a 4M 3BR that checks both lists. Let me pull that one scenario and show you both." },
-    { q: "We've already visited too many places", a: "What did you like best in any of them? I want to build on what already worked — not repeat what didn't." },
+  "indecisive-couple": [
+    {
+      q: "We can't agree on location",
+      a: "Let me solve both: Omar needs amenities, Sara needs schools. Zayed compound — 3 schools within 800m AND pool/gym. Can we agree it's worth a quick visit?",
+    },
+    {
+      q: "We need more time to think",
+      a: "Totally fine. Let me shortlist 2 options — one for Omar's priorities, one for Sara's. Just see them. No decision needed before the visit.",
+    },
+    {
+      q: "Our budgets don't match",
+      a: "Sara at 3.5M, Omar at 4.5M — there's a 4M 3BR that checks both lists. Let me pull that one scenario and show you both.",
+    },
+    {
+      q: "We've already visited too many places",
+      a: "What did you like best in any of them? I want to build on what already worked — not repeat what didn't.",
+    },
   ],
-  'price-hammerer': [
-    { q: "This is too expensive!", a: "Compared to what you saw — or what you expected? Share the number and I'll tell you exactly what's different, line by line." },
-    { q: "Can you give me a discount?", a: "I can't move the base price. But covered parking (70k value) is available if we move this week. More useful than a 2% cut?" },
-    { q: "I heard better prices somewhere else", a: "Which project? Some quotes exclude maintenance fees, finishing quality, and parking. Show me the quote — let's compare all-in." },
-    { q: "I'll think about it and call back", a: "The unit is available now. There's another appointment request for tomorrow. Can I lock you in for a visit today so you have priority?" },
+  "price-hammerer": [
+    {
+      q: "This is too expensive!",
+      a: "Compared to what you saw — or what you expected? Share the number and I'll tell you exactly what's different, line by line.",
+    },
+    {
+      q: "Can you give me a discount?",
+      a: "I can't move the base price. But covered parking (70k value) is available if we move this week. More useful than a 2% cut?",
+    },
+    {
+      q: "I heard better prices somewhere else",
+      a: "Which project? Some quotes exclude maintenance fees, finishing quality, and parking. Show me the quote — let's compare all-in.",
+    },
+    {
+      q: "I'll think about it and call back",
+      a: "The unit is available now. There's another appointment request for tomorrow. Can I lock you in for a visit today so you have priority?",
+    },
   ],
-  'silent-prospect': [
-    { q: "Yes. (one-word answer)", a: "Tell me more about that 'yes' — what matters most to you in this? I want to make sure we're on the same page about your priorities." },
-    { q: "Maybe.", a: "Fair answer. What would need to be true for it to become a 'yes'? Just one specific thing — I want to work toward that for you." },
-    { q: "I don't know.", a: "That's okay. Specific question: if you were to visit one property this Saturday, what would make that 20 minutes worth your time?" },
-    { q: "(Long silence)", a: "Take your time — I'm not going anywhere. Or if easier, I can ask just 3 quick questions — one minute total. Completely up to you." },
+  "silent-prospect": [
+    {
+      q: "Yes. (one-word answer)",
+      a: "Tell me more about that 'yes' — what matters most to you in this? I want to make sure we're on the same page about your priorities.",
+    },
+    {
+      q: "Maybe.",
+      a: "Fair answer. What would need to be true for it to become a 'yes'? Just one specific thing — I want to work toward that for you.",
+    },
+    {
+      q: "I don't know.",
+      a: "That's okay. Specific question: if you were to visit one property this Saturday, what would make that 20 minutes worth your time?",
+    },
+    {
+      q: "(Long silence)",
+      a: "Take your time — I'm not going anywhere. Or if easier, I can ask just 3 quick questions — one minute total. Completely up to you.",
+    },
   ],
-  'time-waster': [
-    { q: "I'm still thinking, not ready yet", a: "You've been thinking for a while — what's the ONE thing still holding you back? If I can answer that today, are you closer to moving forward?" },
-    { q: "Send me brochures first", a: "I can send materials, but they won't show what matters to you personally. A 20-minute visit gives more info than 20 brochures. Which day this week?" },
-    { q: "I have another agent already", a: "I respect that. One question: how long have you been waiting for them to deliver something specific? I have an option for you right now." },
-    { q: "Prices will drop soon", a: "Let me show you 3 years of pricing data in this area. The trend hasn't gone the direction most people expect. Can I walk you through 2 minutes of numbers?" },
+  "time-waster": [
+    {
+      q: "I'm still thinking, not ready yet",
+      a: "You've been thinking for a while — what's the ONE thing still holding you back? If I can answer that today, are you closer to moving forward?",
+    },
+    {
+      q: "Send me brochures first",
+      a: "I can send materials, but they won't show what matters to you personally. A 20-minute visit gives more info than 20 brochures. Which day this week?",
+    },
+    {
+      q: "I have another agent already",
+      a: "I respect that. One question: how long have you been waiting for them to deliver something specific? I have an option for you right now.",
+    },
+    {
+      q: "Prices will drop soon",
+      a: "Let me show you 3 years of pricing data in this area. The trend hasn't gone the direction most people expect. Can I walk you through 2 minutes of numbers?",
+    },
   ],
-  'cold-lead': [
-    { q: "I don't remember any form", a: "Totally understandable. You filled a property inquiry form on [platform] about 2 months ago for a unit in [compound]. Does that ring a bell at all?" },
-    { q: "I'm not really looking right now", a: "No pressure. Quick question: what would need to change for you to start looking? Just curious — genuinely not a sales pitch." },
-    { q: "How did you get my number?", a: "You shared it on a property inquiry form. I only contact people who've expressed interest. Is now a bad time? I can call back at a better moment." },
-    { q: "I already have an agent", a: "Great — I won't interfere. One thing: do they have access to off-market listings? Those are rare. Just want to make sure you're not missing anything." },
+  "cold-lead": [
+    {
+      q: "I don't remember any form",
+      a: "Totally understandable. You filled a property inquiry form on [platform] about 2 months ago for a unit in [compound]. Does that ring a bell at all?",
+    },
+    {
+      q: "I'm not really looking right now",
+      a: "No pressure. Quick question: what would need to change for you to start looking? Just curious — genuinely not a sales pitch.",
+    },
+    {
+      q: "How did you get my number?",
+      a: "You shared it on a property inquiry form. I only contact people who've expressed interest. Is now a bad time? I can call back at a better moment.",
+    },
+    {
+      q: "I already have an agent",
+      a: "Great — I won't interfere. One thing: do they have access to off-market listings? Those are rare. Just want to make sure you're not missing anything.",
+    },
   ],
-  'urgent-buyer': [
-    { q: "Can you arrange a visit this week?", a: "Yes — tomorrow at 10am or Saturday at 2pm. Which works? I'll confirm the slot right now and make sure the unit is ready for you." },
-    { q: "Is the unit vacant and move-in ready?", a: "Yes, fully finished and vacant. Handover walk-through can happen the same day you sign — this week if your mortgage is already approved." },
-    { q: "My mortgage might take time", a: "Your broker can fast-track with our finance partner — 48-hour in-principle approval. I'll connect you both right after this call." },
-    { q: "What if I find something better?", a: "I want you to find the best option. But this unit matches your criteria exactly and there are 2 pending requests. To get priority, we need to move today." },
+  "urgent-buyer": [
+    {
+      q: "Can you arrange a visit this week?",
+      a: "Yes — tomorrow at 10am or Saturday at 2pm. Which works? I'll confirm the slot right now and make sure the unit is ready for you.",
+    },
+    {
+      q: "Is the unit vacant and move-in ready?",
+      a: "Yes, fully finished and vacant. Handover walk-through can happen the same day you sign — this week if your mortgage is already approved.",
+    },
+    {
+      q: "My mortgage might take time",
+      a: "Your broker can fast-track with our finance partner — 48-hour in-principle approval. I'll connect you both right after this call.",
+    },
+    {
+      q: "What if I find something better?",
+      a: "I want you to find the best option. But this unit matches your criteria exactly and there are 2 pending requests. To get priority, we need to move today.",
+    },
   ],
-  'sayed-father': [
-    { q: "How do I know this developer is trustworthy?", a: "سؤال في محله يا حضرة سيد. المطوّر ده سلّم 3 مشاريع قبل كده في مواعيدها. أنا هبعتلك قائمة بأسماء عملاء في نفس الكمبوند تقدر تتكلمهم بنفسك." },
-    { q: "The price seems too high for what I get", a: "السوق اتغيّر — مش غلطتك يا حاج سيد. بس قارن: نفس المساحة في موقع أضعف بـ200 ألف أرخص — بس الفرق في الجار والأمان والمصايف. الأسعار مش بتنزل في مصر من 2016." },
-    { q: "I need more time — this is a big decision", a: "أكيد يا حضرتك — ده قرار مهم. بس قولي: حسن عنده تاريخ محدد للأفراح؟ عشان أنسّق التسليم بشكل صح وأضمنلك الوحدة متتحجزش." },
-    { q: "Can I bring my son to see it first?", a: "ده أصح قرار يا حضرة سيد. أنا هرتّب جولة حضرتك وحسن مع بعض ونشوف الوحدة بالتفصيل. يوم الجمعة مناسب ولا السبت أحسن؟" },
+  "sayed-father": [
+    {
+      q: "How do I know this developer is trustworthy?",
+      a: "سؤال في محله يا حضرة سيد. المطوّر ده سلّم 3 مشاريع قبل كده في مواعيدها. أنا هبعتلك قائمة بأسماء عملاء في نفس الكمبوند تقدر تتكلمهم بنفسك.",
+    },
+    {
+      q: "The price seems too high for what I get",
+      a: "السوق اتغيّر — مش غلطتك يا حاج سيد. بس قارن: نفس المساحة في موقع أضعف بـ200 ألف أرخص — بس الفرق في الجار والأمان والمصايف. الأسعار مش بتنزل في مصر من 2016.",
+    },
+    {
+      q: "I need more time — this is a big decision",
+      a: "أكيد يا حضرتك — ده قرار مهم. بس قولي: حسن عنده تاريخ محدد للأفراح؟ عشان أنسّق التسليم بشكل صح وأضمنلك الوحدة متتحجزش.",
+    },
+    {
+      q: "Can I bring my son to see it first?",
+      a: "ده أصح قرار يا حضرة سيد. أنا هرتّب جولة حضرتك وحسن مع بعض ونشوف الوحدة بالتفصيل. يوم الجمعة مناسب ولا السبت أحسن؟",
+    },
   ],
-  'gulf-returnee': [
-    { q: "Everything here has changed — I don't recognise Egypt anymore", a: "التغيير ده صبّ في صالح المستثمر يا مجدي. من 2021 لحد دلوقتي أسعار القاهرة الجديدة اتضاعفت تقريباً. اللي اشترى وقتها اتعوّض ضعفين على مدخراته." },
-    { q: "The quality here is nothing like Saudi", a: "مفيش حاجة زي ما تشوف بعينك. أنا هآخدك في جولة خاصة في مشروع واحد بس — على مستوى اللي تعودت عليه. لو مش مقنعك خالص، مفيش مشكلة." },
-    { q: "I need to discuss this with my wife first", a: "أحسن قرار. هل مدام معاك في مصر ولا لسه هناك؟ ممكن نرتّب جولة للاتنين مع بعض — ومعاكم وقت كافي تشوفوا بالراحة." },
-    { q: "What's the return if I rent it out?", a: "كمبوند من مستوى Palm Hills Katameya بيدّي 7-9% عائد سنوي إيجاري. اللي اشترى في Badya 2021 بيعيد بيعه دلوقتي بزيادة فوق 60%. أنا هبعتلك مقارنة كاملة." },
+  "gulf-returnee": [
+    {
+      q: "Everything here has changed — I don't recognise Egypt anymore",
+      a: "التغيير ده صبّ في صالح المستثمر يا مجدي. من 2021 لحد دلوقتي أسعار القاهرة الجديدة اتضاعفت تقريباً. اللي اشترى وقتها اتعوّض ضعفين على مدخراته.",
+    },
+    {
+      q: "The quality here is nothing like Saudi",
+      a: "مفيش حاجة زي ما تشوف بعينك. أنا هآخدك في جولة خاصة في مشروع واحد بس — على مستوى اللي تعودت عليه. لو مش مقنعك خالص، مفيش مشكلة.",
+    },
+    {
+      q: "I need to discuss this with my wife first",
+      a: "أحسن قرار. هل مدام معاك في مصر ولا لسه هناك؟ ممكن نرتّب جولة للاتنين مع بعض — ومعاكم وقت كافي تشوفوا بالراحة.",
+    },
+    {
+      q: "What's the return if I rent it out?",
+      a: "كمبوند من مستوى Palm Hills Katameya بيدّي 7-9% عائد سنوي إيجاري. اللي اشترى في Badya 2021 بيعيد بيعه دلوقتي بزيادة فوق 60%. أنا هبعتلك مقارنة كاملة.",
+    },
   ],
-  'govt-employee': [
-    { q: "I can't afford the down payment", a: "لحظة — الـ400,000 جنيه اللي معاك هي المقدم المطلوب بالظبط لوحدة بـ1.3 مليون. مش محتاج تدفع أكتر دلوقتي. الباقي على 8 سنين = قسط شهري حوالي 1,100 جنيه." },
-    { q: "What if I miss an installment one month?", a: "عادةً في العقود، لو فاتت قسط واحدة مش بيحصل حاجة فورية — بيتواصلوا معاك ويدوك grace period. الأهم تفتح خط تواصل مع المطوّر. أنا هشرح لك البند ده في العقد بالتفصيل." },
-    { q: "All prices are too high for my budget", a: "في مشاريع بتبدأ من 1.2 مليون في 6 أكتوبر والبدر. مش فاخرة — بس نظيفة وآمنة ومطوّر محترم. خليني أشوفلك الأنسب لميزانيتك بالظبط." },
-    { q: "I've never signed a developer contract before", a: "مش محتاج تعرف كل حاجة — ده دوري. أنا هبقى معاك في كل خطوة من أول التفاوض لحد التسليم. أي سؤال مش ممنوع — اسألني أي حاجة." },
+  "govt-employee": [
+    {
+      q: "I can't afford the down payment",
+      a: "لحظة — الـ400,000 جنيه اللي معاك هي المقدم المطلوب بالظبط لوحدة بـ1.3 مليون. مش محتاج تدفع أكتر دلوقتي. الباقي على 8 سنين = قسط شهري حوالي 1,100 جنيه.",
+    },
+    {
+      q: "What if I miss an installment one month?",
+      a: "عادةً في العقود، لو فاتت قسط واحدة مش بيحصل حاجة فورية — بيتواصلوا معاك ويدوك grace period. الأهم تفتح خط تواصل مع المطوّر. أنا هشرح لك البند ده في العقد بالتفصيل.",
+    },
+    {
+      q: "All prices are too high for my budget",
+      a: "في مشاريع بتبدأ من 1.2 مليون في 6 أكتوبر والبدر. مش فاخرة — بس نظيفة وآمنة ومطوّر محترم. خليني أشوفلك الأنسب لميزانيتك بالظبط.",
+    },
+    {
+      q: "I've never signed a developer contract before",
+      a: "مش محتاج تعرف كل حاجة — ده دوري. أنا هبقى معاك في كل خطوة من أول التفاوض لحد التسليم. أي سؤال مش ممنوع — اسألني أي حاجة.",
+    },
   ],
-  'diaspora-caller': [
-    { q: "Can I really buy a property without being in Egypt?", a: "Yes — وده بيحصل كتير مع مصريين في الخارج. التوكيل الرسمي لشخص تثق فيه أو محامي، الدفع أونلاين، وكل الأوراق على الإيميل. اشتغلت مع عملاء من ألمانيا وهولندا بنفس الطريقة بالظبط." },
-    { q: "How do I pay in EUR or USD?", a: "بعض المطورين الكبار — Emaar وغيرهم — بيقبلوا تحويل بالدولار مباشرةً على حسابات الشركة. غيرهم بيحوّلوا بسعر السوق. أنا هبعتلك التفاصيل بعد ما تختار المشروع." },
-    { q: "What if the EGP falls even more?", a: "دي بالظبط الفرصة. العقار المصري بيحمي من التضخم تاريخياً — من 2016 لحد 2024 سعر المتر اتضاعف 4-5 مرات. أنت مش بتشتري بالجنيه — أنت بتحوّل EUR لأصل حقيقي ثابت." },
-    { q: "How do I see the property virtually?", a: "عندي جولة فيديو كاملة للمشروع، وأقدر أعمل معك Zoom وأنا جوّا الوحدة بنفسي. إيه وقت مناسب الأسبوع الجاي؟" },
+  "diaspora-caller": [
+    {
+      q: "Can I really buy a property without being in Egypt?",
+      a: "Yes — وده بيحصل كتير مع مصريين في الخارج. التوكيل الرسمي لشخص تثق فيه أو محامي، الدفع أونلاين، وكل الأوراق على الإيميل. اشتغلت مع عملاء من ألمانيا وهولندا بنفس الطريقة بالظبط.",
+    },
+    {
+      q: "How do I pay in EUR or USD?",
+      a: "بعض المطورين الكبار — Emaar وغيرهم — بيقبلوا تحويل بالدولار مباشرةً على حسابات الشركة. غيرهم بيحوّلوا بسعر السوق. أنا هبعتلك التفاصيل بعد ما تختار المشروع.",
+    },
+    {
+      q: "What if the EGP falls even more?",
+      a: "دي بالظبط الفرصة. العقار المصري بيحمي من التضخم تاريخياً — من 2016 لحد 2024 سعر المتر اتضاعف 4-5 مرات. أنت مش بتشتري بالجنيه — أنت بتحوّل EUR لأصل حقيقي ثابت.",
+    },
+    {
+      q: "How do I see the property virtually?",
+      a: "عندي جولة فيديو كاملة للمشروع، وأقدر أعمل معك Zoom وأنا جوّا الوحدة بنفسي. إيه وقت مناسب الأسبوع الجاي؟",
+    },
   ],
-  'maadi-elite': [
-    { q: "I've seen every project — nothing has impressed me", a: "I believe you — بس this one opened last quarter and it's genuinely different. The interior specs are على مستوى Maadi Degla, and it's not yet open publicly. Would you like a private preview before it is?" },
-    { q: "Typical agents always disappoint me", a: "That's fair — والصراحة أحسن من الإطراء. I won't pitch you anything that doesn't match what you've lived in. Tell me: what was the one thing about Maadi you truly couldn't compromise on?" },
-    { q: "The location has to be exactly right", a: "Absolutely. The compound is في قلب التجمع الخامس — same privacy as Maadi Degla, completely gated. لا جيران من الخارج خالص. Shall I elaborate on the immediate neighbourhood profile?" },
-    { q: "I'll take time to decide — no rush", a: "Of course — هده قرارك. I just want to make sure you have the right information. There are only a few penthouses in that block and two are under negotiation. No pressure — I just didn't want you to miss it." },
+  "maadi-elite": [
+    {
+      q: "I've seen every project — nothing has impressed me",
+      a: "I believe you — بس this one opened last quarter and it's genuinely different. The interior specs are على مستوى Maadi Degla, and it's not yet open publicly. Would you like a private preview before it is?",
+    },
+    {
+      q: "Typical agents always disappoint me",
+      a: "That's fair — والصراحة أحسن من الإطراء. I won't pitch you anything that doesn't match what you've lived in. Tell me: what was the one thing about Maadi you truly couldn't compromise on?",
+    },
+    {
+      q: "The location has to be exactly right",
+      a: "Absolutely. The compound is في قلب التجمع الخامس — same privacy as Maadi Degla, completely gated. لا جيران من الخارج خالص. Shall I elaborate on the immediate neighbourhood profile?",
+    },
+    {
+      q: "I'll take time to decide — no rush",
+      a: "Of course — هده قرارك. I just want to make sure you have the right information. There are only a few penthouses in that block and two are under negotiation. No pressure — I just didn't want you to miss it.",
+    },
   ],
-  'north-coast-seeker': [
-    { q: "Who manages the property when I'm in Cairo?", a: "ده السؤال الصح — الكمبوند ده عنده rental management service داخلية. هم بيديروا التأجير ويبعتولك الفلوس شهرياً مع تقرير. مش محتاج تعمل حاجة." },
-    { q: "What rental income can I realistically expect?", a: "موسم الصيف (يونيو-سبتمبر) متوسط 10,000–16,000 جنيه في الأسبوع لشاليه 2 غرف في منطقة مرسى مطروح. 4 أسابيع = 40,000–65,000 جنيه — ده بيغطي الصيانة السنوية وزيادة." },
-    { q: "Is North Coast a good investment right now?", a: "الساحل الشمالي ارتفع 70-90% من 2021 لحد 2024. غير الإيجار الموسمي — القيمة نفسها بترتفع سنة بعد سنة. الطلب مش بيوقف." },
-    { q: "Can I see it online before visiting?", a: "أكيد — بعتلك drone footage للكمبوند وجولة 360 للوحدة على واتساب دلوقتي. بس صدقني النوع ده من العقار لازم تحسّه بنفسك — يوم الجمعة مناسب لزيارة سريعة؟" },
+  "north-coast-seeker": [
+    {
+      q: "Who manages the property when I'm in Cairo?",
+      a: "ده السؤال الصح — الكمبوند ده عنده rental management service داخلية. هم بيديروا التأجير ويبعتولك الفلوس شهرياً مع تقرير. مش محتاج تعمل حاجة.",
+    },
+    {
+      q: "What rental income can I realistically expect?",
+      a: "موسم الصيف (يونيو-سبتمبر) متوسط 10,000–16,000 جنيه في الأسبوع لشاليه 2 غرف في منطقة مرسى مطروح. 4 أسابيع = 40,000–65,000 جنيه — ده بيغطي الصيانة السنوية وزيادة.",
+    },
+    {
+      q: "Is North Coast a good investment right now?",
+      a: "الساحل الشمالي ارتفع 70-90% من 2021 لحد 2024. غير الإيجار الموسمي — القيمة نفسها بترتفع سنة بعد سنة. الطلب مش بيوقف.",
+    },
+    {
+      q: "Can I see it online before visiting?",
+      a: "أكيد — بعتلك drone footage للكمبوند وجولة 360 للوحدة على واتساب دلوقتي. بس صدقني النوع ده من العقار لازم تحسّه بنفسك — يوم الجمعة مناسب لزيارة سريعة؟",
+    },
   ],
 };
 
@@ -1020,53 +1270,98 @@ const CAMPAIGN_TRACKS = [
     name: { en: "The Gauntlet", ar: "الاختبار الكبير" },
     scenarioIds: ["urgent-buyer", "impatient-investor", "indecisive-couple"],
   },
+  {
+    id: "luxury",
+    icon: "👑",
+    name: { en: "The Luxury Circuit", ar: "دائرة الفاخر" },
+    scenarioIds: ["gulf-returnee", "maadi-elite", "diaspora-caller"],
+  },
+  {
+    id: "human",
+    icon: "❤️",
+    name: { en: "The Human Factor", ar: "العامل الإنساني" },
+    scenarioIds: ["sayed-father", "time-waster", "govt-employee"],
+  },
+  {
+    id: "coastal",
+    icon: "🏖️",
+    name: { en: "Coastal Sprint", ar: "سباق الساحل" },
+    scenarioIds: ["north-coast-seeker", "silent-prospect", "cold-lead"],
+  },
 ];
 
 // ══════════════════════════════════════════════════════════════════════
 //  CLIENT OPENING LINES  (client speaks first when call connects)
 // ══════════════════════════════════════════════════════════════════════
 const OPENING_LINES = {
-  'skeptical-engineer':  { en: "Hello? ...Yeah, who's this?", ar: "آلو؟ ... أيوه — مين معايا لو سمحت؟" },
-  'impatient-investor':  { en: "Yeah? Make it fast.", ar: "آلو — نعم؟ سريع." },
-  'indecisive-couple':   { en: "Omar: Hello? ...Sara (in background): Omar who is that?", ar: "عمر: آلو؟ ... سارة (في الخلفية): عمر مين ده؟" },
-  'price-hammerer':      { en: "Hello — yeah?", ar: "آلو — أيوه؟ قولي." },
-  'silent-prospect':     { en: "... Hello.", ar: "... آلو." },
-  'time-waster':         { en: "Hellooo! Welcome welcome! Who is this? How are you?", ar: "آلووو! أهلاً أهلاً أهلاً! مين معايا يا فندم؟ إزيك؟" },
-  'cold-lead':           { en: "Hello? Yes, who's calling?", ar: "آلو؟ نعم — مين بيكلمني؟" },
-  'urgent-buyer':        { en: "Tarek speaking — go ahead.", ar: "معاك طارق — اتكلم." },
-  'sayed-father':        { en: "Hello... yes... who is this, son?", ar: "آلو... نعم يا ابني... مين حضرتك؟" },
-  'gulf-returnee':       { en: "آلو — yes, go ahead يا عم.", ar: "آلو — أيوه اتفضل يا عم." },
-  'govt-employee':       { en: "Hello? ... Yes?", ar: "آلو؟ ... أيوه، نعم؟" },
-  'diaspora-caller':     { en: "Hello? آلو — okay one sec, connection's bad. Alright, go ahead.", ar: "هاي؟ آلو — ثانية الاتصال وحيش. أوكي، اتكلم." },
-  'maadi-elite':         { en: "Yes? Speaking.", ar: "آلو — أيوه، معاكي هند." },
-  'north-coast-seeker':  { en: "Hey — yeah, go ahead man.", ar: "آلو — أيوه كلمني يا عم." },
+  "skeptical-engineer": {
+    en: "Hello? ...Yeah, who's this?",
+    ar: "آلو؟ ... أيوه — مين معايا لو سمحت؟",
+  },
+  "impatient-investor": { en: "Yeah? Make it fast.", ar: "آلو — نعم؟ سريع." },
+  "indecisive-couple": {
+    en: "Omar: Hello? ...Sara (in background): Omar who is that?",
+    ar: "عمر: آلو؟ ... سارة (في الخلفية): عمر مين ده؟",
+  },
+  "price-hammerer": { en: "Hello — yeah?", ar: "آلو — أيوه؟ قولي." },
+  "silent-prospect": { en: "... Hello.", ar: "... آلو." },
+  "time-waster": {
+    en: "Hellooo! Welcome welcome! Who is this? How are you?",
+    ar: "آلووو! أهلاً أهلاً أهلاً! مين معايا يا فندم؟ إزيك؟",
+  },
+  "cold-lead": {
+    en: "Hello? Yes, who's calling?",
+    ar: "آلو؟ نعم — مين بيكلمني؟",
+  },
+  "urgent-buyer": {
+    en: "Tarek speaking — go ahead.",
+    ar: "معاك طارق — اتكلم.",
+  },
+  "sayed-father": {
+    en: "Hello... yes... who is this, son?",
+    ar: "آلو... نعم يا ابني... مين حضرتك؟",
+  },
+  "gulf-returnee": {
+    en: "آلو — yes, go ahead يا عم.",
+    ar: "آلو — أيوه اتفضل يا عم.",
+  },
+  "govt-employee": { en: "Hello? ... Yes?", ar: "آلو؟ ... أيوه، نعم؟" },
+  "diaspora-caller": {
+    en: "Hello? آلو — okay one sec, connection's bad. Alright, go ahead.",
+    ar: "هاي؟ آلو — ثانية الاتصال وحيش. أوكي، اتكلم.",
+  },
+  "maadi-elite": { en: "Yes? Speaking.", ar: "آلو — أيوه، معاكي هند." },
+  "north-coast-seeker": {
+    en: "Hey — yeah, go ahead man.",
+    ar: "آلو — أيوه كلمني يا عم.",
+  },
 };
 
 // ══════════════════════════════════════════════════════════════════════
 //  DIALECT LABELS  (shown on scenario cards)
 // ══════════════════════════════════════════════════════════════════════
 const DIALECT_LABELS = {
-  'skeptical-engineer':  '🗣️ Formal Cairo',
-  'impatient-investor':  '🗣️ Cairo Business',
-  'indecisive-couple':   '🗣️ Mixed Cairo',
-  'price-hammerer':      '🗣️ Informal Egyptian',
-  'silent-prospect':     '🗣️ Minimal Dialect',
-  'time-waster':         '🗣️ Warm Cairo',
-  'cold-lead':           '🗣️ Polite Cairo',
-  'urgent-buyer':        '🗣️ Direct MSA',
-  'sayed-father':        '🗣️ Saʿeedi / Upper Egypt',
-  'gulf-returnee':       '🗣️ Egyptian × Gulf',
-  'govt-employee':       '🗣️ Middle-Class Cairo',
-  'diaspora-caller':     '🗣️ Arabic × English',
-  'maadi-elite':         '🗣️ Code-switching',
-  'north-coast-seeker':  '🗣️ Young Cairene',
+  "skeptical-engineer": "🗣️ Formal Cairo",
+  "impatient-investor": "🗣️ Cairo Business",
+  "indecisive-couple": "🗣️ Mixed Cairo",
+  "price-hammerer": "🗣️ Informal Egyptian",
+  "silent-prospect": "🗣️ Minimal Dialect",
+  "time-waster": "🗣️ Warm Cairo",
+  "cold-lead": "🗣️ Polite Cairo",
+  "urgent-buyer": "🗣️ Direct MSA",
+  "sayed-father": "🗣️ Saʿeedi / Upper Egypt",
+  "gulf-returnee": "🗣️ Egyptian × Gulf",
+  "govt-employee": "🗣️ Middle-Class Cairo",
+  "diaspora-caller": "🗣️ Arabic × English",
+  "maadi-elite": "🗣️ Code-switching",
+  "north-coast-seeker": "🗣️ Young Cairene",
 };
 
 // ══════════════════════════════════════════════════════════════════════
 //  SESSION HISTORY
 // ══════════════════════════════════════════════════════════════════════
 const HISTORY_KEY = "pitchlab_history";
-const MAX_HISTORY = 5;
+const MAX_HISTORY = 10;
 
 function loadHistory() {
   try {
@@ -1089,7 +1384,11 @@ function saveHistoryEntry(entry) {
 const PB_KEY = "pitchlab_pb";
 
 function loadPBs() {
-  try { return JSON.parse(localStorage.getItem(PB_KEY) || "{}"); } catch { return {}; }
+  try {
+    return JSON.parse(localStorage.getItem(PB_KEY) || "{}");
+  } catch {
+    return {};
+  }
 }
 
 function savePB(scenarioId, total) {
@@ -1117,7 +1416,7 @@ let callTimerHandle = null;
 let callSeconds = 0;
 let briefingTimer = null;
 let isWaitingForAI = false;
-let closingTemp = 0;  // 0–100 deal temperature
+let closingTemp = 0; // 0–100 deal temperature
 let ringTimer = null; // auto-answer timer for incoming screen
 let coachOpen = false; // live coach panel visible
 
@@ -1132,9 +1431,15 @@ const SPEED_LIMITS = { easy: 20, medium: 15, hard: 10 };
 let objectionOpen = false;
 
 // Campaign state
-let campaignMode  = false;
-let campaignTrack = null;   // CAMPAIGN_TRACKS entry
-let campaignScores = [];    // [{name, score, stars}] — grows per completed call
+let campaignMode = false;
+let campaignTrack = null; // CAMPAIGN_TRACKS entry
+let campaignScores = []; // [{name, score, stars}] — grows per completed call
+
+// Momentum log — records closingTemp after each AI reply for sparkline
+let momentumLog = [];
+
+// Difficulty filter state for home screen
+let activeFilter = "all";
 
 // ══════════════════════════════════════════════════════════════════════
 //  WEB AUDIO — RING TONE
@@ -1145,7 +1450,11 @@ let _ringHandle = null;
 
 function getAudioCtx() {
   if (!_audioCtx) {
-    try { _audioCtx = new AudioContext(); } catch { return null; }
+    try {
+      _audioCtx = new AudioContext();
+    } catch {
+      return null;
+    }
   }
   if (_audioCtx.state === "suspended") _audioCtx.resume().catch(() => {});
   return _audioCtx;
@@ -1175,7 +1484,9 @@ function playRingTone() {
       osc1.stop(ctx.currentTime + 0.85);
       osc2.stop(ctx.currentTime + 0.85);
       _ringOscillators.push(osc1, osc2);
-    } catch { /* audio not available */ }
+    } catch {
+      /* audio not available */
+    }
   }
 
   ringOnce();
@@ -1184,7 +1495,13 @@ function playRingTone() {
 
 function stopRingTone() {
   clearInterval(_ringHandle);
-  _ringOscillators.forEach((o) => { try { o.stop(); } catch { /* stopped already */ } });
+  _ringOscillators.forEach((o) => {
+    try {
+      o.stop();
+    } catch {
+      /* stopped already */
+    }
+  });
   _ringOscillators = [];
 }
 
@@ -1267,9 +1584,12 @@ function updateClosingMeter(temp) {
 }
 
 function estimateClosingTemp(aiText) {
-  const strongPos = /site visit|موعد|نزور|نروح نشوف|اتفقنا|let.*go|when can|when are|متى|نيجي|نشوف|deal|هنعمل|confirmed/i;
-  const pos = /okay|ok يلا|agree|متفق|جميل|آه طب|طيب|interested|more|tell me|أكتر|أشوف|opening up|مناسب|follow|نكمل|يمكن|possible|sure|ممكن/i;
-  const neg = /bye|goodbye|شكراً.*مش|مش محتاج|not interested|later|مش مهتم|مش مناسب|هنتكلم|وداعاً/i;
+  const strongPos =
+    /site visit|موعد|نزور|نروح نشوف|اتفقنا|let.*go|when can|when are|متى|نيجي|نشوف|deal|هنعمل|confirmed/i;
+  const pos =
+    /okay|ok يلا|agree|متفق|جميل|آه طب|طيب|interested|more|tell me|أكتر|أشوف|opening up|مناسب|follow|نكمل|يمكن|possible|sure|ممكن/i;
+  const neg =
+    /bye|goodbye|شكراً.*مش|مش محتاج|not interested|later|مش مهتم|مش مناسب|هنتكلم|وداعاً/i;
 
   let delta = 4; // base increment per exchange
   if (strongPos.test(aiText)) delta = 22;
@@ -1277,6 +1597,7 @@ function estimateClosingTemp(aiText) {
   else if (neg.test(aiText)) delta = -12;
 
   closingTemp = Math.max(0, Math.min(100, closingTemp + delta));
+  momentumLog.push(closingTemp);
   updateClosingMeter(closingTemp);
 }
 
@@ -1284,156 +1605,511 @@ function estimateClosingTemp(aiText) {
 //  LIVE COACH SYSTEM
 // ══════════════════════════════════════════════════════════════════════
 const COACH_SIGNALS = {
-  opening:   { icon: "🎯", label: "Opening phase",   cls: "" },
-  curious:   { icon: "✅", label: "They're curious",  cls: "good" },
-  warming:   { icon: "🔥", label: "Warming up",       cls: "hot" },
-  objecting: { icon: "⚡", label: "Objecting",         cls: "warning" },
-  cooling:   { icon: "⚠️", label: "Cooling off",       cls: "danger" },
-  neutral:   { icon: "💬", label: "Neutral exchange",  cls: "" },
+  opening: { icon: "🎯", label: "Opening phase", cls: "" },
+  curious: { icon: "✅", label: "They're curious", cls: "good" },
+  warming: { icon: "🔥", label: "Warming up", cls: "hot" },
+  objecting: { icon: "⚡", label: "Objecting", cls: "warning" },
+  cooling: { icon: "⚠️", label: "Cooling off", cls: "danger" },
+  neutral: { icon: "💬", label: "Neutral exchange", cls: "" },
 };
 
 function analyzeSignal(aiText) {
-  const cooling   = /bye|وداعاً|مش مهتم|not interested|مشغول|مش وقته|مش محتاج|مش مناسب|هنتكلم|بعدين خليني/i;
-  const warming   = /site visit|موعد|نزور|نروح نشوف|اتفقنا|let.*go|when can|متى|يلا|نيجي|deal|هنعمل|confirmed|مظبوط|أيوه تمام|ممتاز/i;
-  const curious   = /tell me more|أكمّل|أكمل|عايز أعرف|ايه التفاصيل|و إيه|وإيه|more details|كمان|و بعدين|طيب و|أقولي|اشرحلي|interested|قوليلي/i;
-  const objecting = /غالي|too expensive|expensive|ده غالي|ارخص|discount|خصم|مش مقتنع|prove|بيقولوا|سمعت إن|مش متأكد|not sure|دليل/i;
-  if (cooling.test(aiText))   return "cooling";
-  if (warming.test(aiText))   return "warming";
-  if (curious.test(aiText))   return "curious";
+  const cooling =
+    /bye|وداعاً|مش مهتم|not interested|مشغول|مش وقته|مش محتاج|مش مناسب|هنتكلم|بعدين خليني/i;
+  const warming =
+    /site visit|موعد|نزور|نروح نشوف|اتفقنا|let.*go|when can|متى|يلا|نيجي|deal|هنعمل|confirmed|مظبوط|أيوه تمام|ممتاز/i;
+  const curious =
+    /tell me more|أكمّل|أكمل|عايز أعرف|ايه التفاصيل|و إيه|وإيه|more details|كمان|و بعدين|طيب و|أقولي|اشرحلي|interested|قوليلي/i;
+  const objecting =
+    /غالي|too expensive|expensive|ده غالي|ارخص|discount|خصم|مش مقتنع|prove|بيقولوا|سمعت إن|مش متأكد|not sure|دليل/i;
+  if (cooling.test(aiText)) return "cooling";
+  if (warming.test(aiText)) return "warming";
+  if (curious.test(aiText)) return "curious";
   if (objecting.test(aiText)) return "objecting";
   return "neutral";
 }
 
 const SCENARIO_COACH = {
   "skeptical-engineer": {
-    opening:   { tactic: "Lead with one verifiable fact — never an unproven claim.", phrase: "أنا عارف إنك بتحتاج أرقام أكيدة — عندي تقرير تسليم ومعدل إيجار فعلي هبعتهولك." },
-    curious:   { tactic: "Give a specific yield % or delivery record — don't generalise.", phrase: "الوحدات في نفس المشروع بتوفر 8–9% عائد إيجاري — عندي الشيت هبعته دلوقتي." },
-    objecting: { tactic: "Never counter a skeptic. Agree + give independent proof.", phrase: "محق تماماً إنك تشك — ده بالظبط إيه دفعني أجيبلك مقارنة بـ 3 مشاريع." },
-    cooling:   { tactic: "Offer a step they can verify without trusting you.", phrase: "مش هطلبك تثق فيّ — فقط اتصل بمكتب تسجيل عقاري وأكد الأرقام اللي قوليك." },
-    warming:   { tactic: "Mirror his analytical language — use % not EGP sums.", phrase: "ممتاز — إيه الـ IRR اللي بتستهدفه؟ نشوف لو المشروع ده يوفره." },
-    neutral:   { tactic: "Apply the '3-data-point' rule — every claim needs proof.", phrase: "عندك حق تفكر بعناية — خلينا نبدأ بالأرقام الفعلية." },
+    opening: {
+      tactic: "Lead with one verifiable fact — never an unproven claim.",
+      phrase:
+        "أنا عارف إنك بتحتاج أرقام أكيدة — عندي تقرير تسليم ومعدل إيجار فعلي هبعتهولك.",
+    },
+    curious: {
+      tactic: "Give a specific yield % or delivery record — don't generalise.",
+      phrase:
+        "الوحدات في نفس المشروع بتوفر 8–9% عائد إيجاري — عندي الشيت هبعته دلوقتي.",
+    },
+    objecting: {
+      tactic: "Never counter a skeptic. Agree + give independent proof.",
+      phrase:
+        "محق تماماً إنك تشك — ده بالظبط إيه دفعني أجيبلك مقارنة بـ 3 مشاريع.",
+    },
+    cooling: {
+      tactic: "Offer a step they can verify without trusting you.",
+      phrase:
+        "مش هطلبك تثق فيّ — فقط اتصل بمكتب تسجيل عقاري وأكد الأرقام اللي قوليك.",
+    },
+    warming: {
+      tactic: "Mirror his analytical language — use % not EGP sums.",
+      phrase: "ممتاز — إيه الـ IRR اللي بتستهدفه؟ نشوف لو المشروع ده يوفره.",
+    },
+    neutral: {
+      tactic: "Apply the '3-data-point' rule — every claim needs proof.",
+      phrase: "عندك حق تفكر بعناية — خلينا نبدأ بالأرقام الفعلية.",
+    },
   },
   "impatient-investor": {
-    opening:   { tactic: "Get to ROI within 15 seconds or he'll disengage.", phrase: "خالد — الوحدة دي 8.5% عائد إيجاري في منطقة بيتصاعد فيها السعر 20% سنوياً." },
-    curious:   { tactic: "Feed another number — ROI → flipping potential → timeline.", phrase: "طيب والـ exit strategy — نفس المشروع ارتفع 22% ومع التسليم هتقدر تبيع فوراً." },
-    objecting: { tactic: "Don't negotiate price — reframe as investment math.", phrase: "مش بنبيعلك شقة — بنبيعلك asset بقيمة X اللي هتبقى Y في 3 سنين." },
-    cooling:   { tactic: "One sharp scarcity fact — limit creates urgency for investors.", phrase: "تمام — في 2 وحدة بس بنفس الـ floor plan. لو مش مهتم عندي مشتري ثاني." },
-    warming:   { tactic: "Jump to closing — propose a 24h decision window.", phrase: "يلا — بكرة أوعدلك بجولة ومعاها محاسب يأكد الأرقام. الساعة كام يريحك؟" },
-    neutral:   { tactic: "Cut fluff. Numbers only. He respects speed and directness.", phrase: "باختصار — عائد 8.5%، تسليم 2026، New Cairo من أعلى 3 مناطق طلب." },
+    opening: {
+      tactic: "Get to ROI within 15 seconds or he'll disengage.",
+      phrase:
+        "خالد — الوحدة دي 8.5% عائد إيجاري في منطقة بيتصاعد فيها السعر 20% سنوياً.",
+    },
+    curious: {
+      tactic: "Feed another number — ROI → flipping potential → timeline.",
+      phrase:
+        "طيب والـ exit strategy — نفس المشروع ارتفع 22% ومع التسليم هتقدر تبيع فوراً.",
+    },
+    objecting: {
+      tactic: "Don't negotiate price — reframe as investment math.",
+      phrase: "مش بنبيعلك شقة — بنبيعلك asset بقيمة X اللي هتبقى Y في 3 سنين.",
+    },
+    cooling: {
+      tactic: "One sharp scarcity fact — limit creates urgency for investors.",
+      phrase:
+        "تمام — في 2 وحدة بس بنفس الـ floor plan. لو مش مهتم عندي مشتري ثاني.",
+    },
+    warming: {
+      tactic: "Jump to closing — propose a 24h decision window.",
+      phrase:
+        "يلا — بكرة أوعدلك بجولة ومعاها محاسب يأكد الأرقام. الساعة كام يريحك؟",
+    },
+    neutral: {
+      tactic: "Cut fluff. Numbers only. He respects speed and directness.",
+      phrase: "باختصار — عائد 8.5%، تسليم 2026، New Cairo من أعلى 3 مناطق طلب.",
+    },
   },
   "indecisive-couple": {
-    opening:   { tactic: "Don't pick sides — validate BOTH Omar and Sara by name.", phrase: "عمر وسارة — فاهم إن عمر شايف الـ amenities مهمة وسارة محتاجة المدارس قريبة. عندنا الاتنين." },
-    curious:   { tactic: "Anchor to the children's future — it unites both spouses.", phrase: "لما البنت دي تصحى في البيت الجديد هتلاقي مدرسة بـ 5 دقايق وحديقة قدام الباب." },
-    objecting: { tactic: "When they disagree with each other, bridge — never take sides.", phrase: "أنا شايف إن الإثنين محقين — ولا أنتم عايزين تعيشوا بدون الاتنين؟ المشروع ده فيه الاتنين." },
-    cooling:   { tactic: "Use the neighborhood community as a family anchor.", phrase: "أكتر ناس اشتروا في الكومباوند ده عائلات زيكم — هيتعرفوا على ناس بنفس المرحلة." },
-    warming:   { tactic: "Soft close — invite them for a visit with the kids, no commitment.", phrase: "تعالوا تشوفوه مع الأولاد — مش لازم تقرروا. بس لما تشوفوا عينيهم هيقولولكم." },
-    neutral:   { tactic: "Speak to the family unit — pitch the life, not the features.", phrase: "الشقة دي مش بس 3 أوضة — دي حياة جديدة لعيلتكم كاملة." },
+    opening: {
+      tactic: "Don't pick sides — validate BOTH Omar and Sara by name.",
+      phrase:
+        "عمر وسارة — فاهم إن عمر شايف الـ amenities مهمة وسارة محتاجة المدارس قريبة. عندنا الاتنين.",
+    },
+    curious: {
+      tactic: "Anchor to the children's future — it unites both spouses.",
+      phrase:
+        "لما البنت دي تصحى في البيت الجديد هتلاقي مدرسة بـ 5 دقايق وحديقة قدام الباب.",
+    },
+    objecting: {
+      tactic: "When they disagree with each other, bridge — never take sides.",
+      phrase:
+        "أنا شايف إن الإثنين محقين — ولا أنتم عايزين تعيشوا بدون الاتنين؟ المشروع ده فيه الاتنين.",
+    },
+    cooling: {
+      tactic: "Use the neighborhood community as a family anchor.",
+      phrase:
+        "أكتر ناس اشتروا في الكومباوند ده عائلات زيكم — هيتعرفوا على ناس بنفس المرحلة.",
+    },
+    warming: {
+      tactic:
+        "Soft close — invite them for a visit with the kids, no commitment.",
+      phrase:
+        "تعالوا تشوفوه مع الأولاد — مش لازم تقرروا. بس لما تشوفوا عينيهم هيقولولكم.",
+    },
+    neutral: {
+      tactic: "Speak to the family unit — pitch the life, not the features.",
+      phrase: "الشقة دي مش بس 3 أوضة — دي حياة جديدة لعيلتكم كاملة.",
+    },
   },
   "price-hammerer": {
-    opening:   { tactic: "Expect 'ده غالي أوي' as the first line. Don't flinch.", phrase: "أنا عارف إن السعر أول سؤال — خليني أقولك ليه الناس بتدفع وبتكون عارفة قيمته." },
-    curious:   { tactic: "Use social proof — specific recent buyers, not vague stats.", phrase: "في الشهر اللي فات اتباعوا 4 وحدات بنفس المواصفات — كلهم سألوا نفس السؤال اللي بتسأله." },
-    objecting: { tactic: "Hold the price. Counter with scarcity + comparable market data.", phrase: "لو قدرت تجيبلي بيت زي ده بسعر أقل — جيبه وأنا أشتريه. السعر ده هو السوق." },
-    cooling:   { tactic: "Don't chase. Plant scarcity and let silence work.", phrase: "تمام — أنا مش هضغط عليك. بس متعجبش لو الوحدة أتباعت قبل ما ترد." },
-    warming:   { tactic: "Confirm price and get a micro-commitment: WhatsApp or visit.", phrase: "يلا — أبعتلك الـ offer sheet على الواتساب دلوقتي وبكرة نحدد موعد المشروع." },
-    neutral:   { tactic: "Never defend price — reframe as value per EGP paid.", phrase: "مش بتدفع للمساحة — بتدفع للموقع وللموعد التسليم اللي هيضاعف السعر." },
+    opening: {
+      tactic: "Expect 'ده غالي أوي' as the first line. Don't flinch.",
+      phrase:
+        "أنا عارف إن السعر أول سؤال — خليني أقولك ليه الناس بتدفع وبتكون عارفة قيمته.",
+    },
+    curious: {
+      tactic: "Use social proof — specific recent buyers, not vague stats.",
+      phrase:
+        "في الشهر اللي فات اتباعوا 4 وحدات بنفس المواصفات — كلهم سألوا نفس السؤال اللي بتسأله.",
+    },
+    objecting: {
+      tactic: "Hold the price. Counter with scarcity + comparable market data.",
+      phrase:
+        "لو قدرت تجيبلي بيت زي ده بسعر أقل — جيبه وأنا أشتريه. السعر ده هو السوق.",
+    },
+    cooling: {
+      tactic: "Don't chase. Plant scarcity and let silence work.",
+      phrase: "تمام — أنا مش هضغط عليك. بس متعجبش لو الوحدة أتباعت قبل ما ترد.",
+    },
+    warming: {
+      tactic: "Confirm price and get a micro-commitment: WhatsApp or visit.",
+      phrase:
+        "يلا — أبعتلك الـ offer sheet على الواتساب دلوقتي وبكرة نحدد موعد المشروع.",
+    },
+    neutral: {
+      tactic: "Never defend price — reframe as value per EGP paid.",
+      phrase:
+        "مش بتدفع للمساحة — بتدفع للموقع وللموعد التسليم اللي هيضاعف السعر.",
+    },
   },
   "silent-prospect": {
-    opening:   { tactic: "One open question, then wait. NEVER fill the silence.", phrase: "نور — إيه اللي كان بيدور في بالك لما عبيتي الفورم؟" },
-    curious:   { tactic: "Match her pace — short sentences. Never overwhelm.", phrase: "حلو — إيه أهم حاجة في الشقة بالنسبالك؟" },
-    objecting: { tactic: "Silence is NOT a no. Ask what would make it easier.", phrase: "مش محتاج منك إجابة دلوقتي — إيه اللي ممكن يخلي القرار ده أسهل؟" },
-    cooling:   { tactic: "Direct binary re-engagement — give her an easy out.", phrase: "قوليني بصراحة — في اهتمام ولو بسيط، ولا خير بنكمل وقت تاني؟" },
-    warming:   { tactic: "She's warming — confirm slowly, zero pressure.", phrase: "ممتاز — ياريت آخد رقمك على الواتساب وأبعتلك صور المشروع تفكري في راحتك." },
-    neutral:   { tactic: "Speak less than she does. Let the conversation breathe.", phrase: "على مهلك — في أي وقت عايزة تكملي الكلام أنا موجود." },
+    opening: {
+      tactic: "One open question, then wait. NEVER fill the silence.",
+      phrase: "نور — إيه اللي كان بيدور في بالك لما عبيتي الفورم؟",
+    },
+    curious: {
+      tactic: "Match her pace — short sentences. Never overwhelm.",
+      phrase: "حلو — إيه أهم حاجة في الشقة بالنسبالك؟",
+    },
+    objecting: {
+      tactic: "Silence is NOT a no. Ask what would make it easier.",
+      phrase: "مش محتاج منك إجابة دلوقتي — إيه اللي ممكن يخلي القرار ده أسهل؟",
+    },
+    cooling: {
+      tactic: "Direct binary re-engagement — give her an easy out.",
+      phrase: "قوليني بصراحة — في اهتمام ولو بسيط، ولا خير بنكمل وقت تاني؟",
+    },
+    warming: {
+      tactic: "She's warming — confirm slowly, zero pressure.",
+      phrase:
+        "ممتاز — ياريت آخد رقمك على الواتساب وأبعتلك صور المشروع تفكري في راحتك.",
+    },
+    neutral: {
+      tactic: "Speak less than she does. Let the conversation breathe.",
+      phrase: "على مهلك — في أي وقت عايزة تكملي الكلام أنا موجود.",
+    },
   },
   "time-waster": {
-    opening:   { tactic: "Let him chat briefly — then introduce urgency gently.", phrase: "حسن بيه — بسمعك بتقول دايماً بكرة. إيه اللي ناقص يخليك تقول أيوه النهارده؟" },
-    curious:   { tactic: "Use the Amira driver: daughter's engagement = need for home.", phrase: "ده بالظبط اللي بيقولهولي الناس — لو عندك خطوبة أو جواز قرّب، ده الوقت الصح." },
-    objecting: { tactic: "Don't debate — redirect to the compounding cost of waiting.", phrase: "كل سنة تعدي السعر بيزيد 15–20%. 'بكرة' بتكلف فلوس حقيقية يا حسن." },
-    cooling:   { tactic: "Name-drop 'أميرة' — his daughter is the hidden urgency driver.", phrase: "أنا فاكر قلتلي قبل إن أميرة مخطوبة — إمتى الفرح؟ ده الوقت المناسب نفكر في الشقة." },
-    warming:   { tactic: "Convert warmth into a specific appointment this week.", phrase: "يلا تعالى الأسبوع ده — أنا بعرض عليك موعد يناسبك، مش لازم أكتر من ساعة." },
-    neutral:   { tactic: "Redirect every 2 turns to a concrete decision point.", phrase: "حسن بيه — كل كلامك صح. بس سؤال واحد: إيه اللي لازم يتغير عشان تقول أيوه النهارده؟" },
+    opening: {
+      tactic: "Let him chat briefly — then introduce urgency gently.",
+      phrase:
+        "حسن بيه — بسمعك بتقول دايماً بكرة. إيه اللي ناقص يخليك تقول أيوه النهارده؟",
+    },
+    curious: {
+      tactic: "Use the Amira driver: daughter's engagement = need for home.",
+      phrase:
+        "ده بالظبط اللي بيقولهولي الناس — لو عندك خطوبة أو جواز قرّب، ده الوقت الصح.",
+    },
+    objecting: {
+      tactic: "Don't debate — redirect to the compounding cost of waiting.",
+      phrase:
+        "كل سنة تعدي السعر بيزيد 15–20%. 'بكرة' بتكلف فلوس حقيقية يا حسن.",
+    },
+    cooling: {
+      tactic: "Name-drop 'أميرة' — his daughter is the hidden urgency driver.",
+      phrase:
+        "أنا فاكر قلتلي قبل إن أميرة مخطوبة — إمتى الفرح؟ ده الوقت المناسب نفكر في الشقة.",
+    },
+    warming: {
+      tactic: "Convert warmth into a specific appointment this week.",
+      phrase:
+        "يلا تعالى الأسبوع ده — أنا بعرض عليك موعد يناسبك، مش لازم أكتر من ساعة.",
+    },
+    neutral: {
+      tactic: "Redirect every 2 turns to a concrete decision point.",
+      phrase:
+        "حسن بيه — كل كلامك صح. بس سؤال واحد: إيه اللي لازم يتغير عشان تقول أيوه النهارده؟",
+    },
   },
   "cold-lead": {
-    opening:   { tactic: "Don't pitch. Remind her why she filled the form — no pressure.", phrase: "أسماء — مش مشكلة لو مش فاكرة الفورم. بس سؤال واحد: الإيجار اللي بتدفعيه — بيريحك؟" },
-    curious:   { tactic: "Educate lightly — one market insight, not a sales pitch.", phrase: "معظم الناس في سنك بيكتشفوا إن التمليك أرخص على المدى البعيد من الإيجار — أوريلك بالأرقام؟" },
-    objecting: { tactic: "Absolutely zero pressure — offer only information.", phrase: "أنا مش بطلبك تشتري — بس اسمحيلي أبعتلك ورقة صغيرة توضح الفرق. تقفلي التليفون بعدين لو مش مهتمة." },
-    cooling:   { tactic: "Don't fight it. Leave a soft door open for later.", phrase: "لا مشكلة خالص — هبعتلك واتساب فيه معلومات بسيطة. في يوم متفرغة تشوفي." },
-    warming:   { tactic: "She's curious — move gently to a low-commitment visit.", phrase: "يلا لو وقتك يسمح — أبعتلك لوكيشن المشروع وتعدي في يوم مناسب. مفيش إلزام." },
-    neutral:   { tactic: "Plant a seed — ask about her current monthly rent.", phrase: "قوليلي — دلوقتي بتدفعي إيجار؟ عشان أقدر أقولك لو التمليك أفضل ليكي." },
+    opening: {
+      tactic: "Don't pitch. Remind her why she filled the form — no pressure.",
+      phrase:
+        "أسماء — مش مشكلة لو مش فاكرة الفورم. بس سؤال واحد: الإيجار اللي بتدفعيه — بيريحك؟",
+    },
+    curious: {
+      tactic: "Educate lightly — one market insight, not a sales pitch.",
+      phrase:
+        "معظم الناس في سنك بيكتشفوا إن التمليك أرخص على المدى البعيد من الإيجار — أوريلك بالأرقام؟",
+    },
+    objecting: {
+      tactic: "Absolutely zero pressure — offer only information.",
+      phrase:
+        "أنا مش بطلبك تشتري — بس اسمحيلي أبعتلك ورقة صغيرة توضح الفرق. تقفلي التليفون بعدين لو مش مهتمة.",
+    },
+    cooling: {
+      tactic: "Don't fight it. Leave a soft door open for later.",
+      phrase:
+        "لا مشكلة خالص — هبعتلك واتساب فيه معلومات بسيطة. في يوم متفرغة تشوفي.",
+    },
+    warming: {
+      tactic: "She's curious — move gently to a low-commitment visit.",
+      phrase:
+        "يلا لو وقتك يسمح — أبعتلك لوكيشن المشروع وتعدي في يوم مناسب. مفيش إلزام.",
+    },
+    neutral: {
+      tactic: "Plant a seed — ask about her current monthly rent.",
+      phrase:
+        "قوليلي — دلوقتي بتدفعي إيجار؟ عشان أقدر أقولك لو التمليك أفضل ليكي.",
+    },
   },
   "urgent-buyer": {
-    opening:   { tactic: "Match his urgency — give a direct answer within 20 seconds.", phrase: "طارق — معاك وحدة جاهزة في القاهرة الجديدة، تسليم فوري، وهقولك السعر دلوقتي." },
-    curious:   { tactic: "Answer direct questions directly. No detours.", phrase: "نعم — الوحدة متاحة، سند مُسجَّل، تسليم خلال 30 يوم. إيه السؤال الجاي؟" },
-    objecting: { tactic: "Address the objection in one sentence then move forward.", phrase: "السعر ده هو سوق الوحدات السريعة التسليم — وميزته إنك مش هتلاقي تاني بنفس الشروط." },
-    cooling:   { tactic: "Restate his 30-day deadline as the reason to act now.", phrase: "أنا فاهم وقتك ضيق — ده بالظبط سبب إني اتصلت بيك. مش وقت بحث طويل، وقت حركة." },
-    warming:   { tactic: "He's ready — propose the site visit for TODAY or TOMORROW.", phrase: "ممتاز — قولي النهارده ولا بكرة وأنا هرتب الجولة. الوقت يناسبك إمتى؟" },
-    neutral:   { tactic: "Be brief and confident. Urgency mirrors urgency.", phrase: "طارق — خلينا بالموضوع مباشرة. إيه اللي بتحتاجه في الوحدة؟" },
+    opening: {
+      tactic: "Match his urgency — give a direct answer within 20 seconds.",
+      phrase:
+        "طارق — معاك وحدة جاهزة في القاهرة الجديدة، تسليم فوري، وهقولك السعر دلوقتي.",
+    },
+    curious: {
+      tactic: "Answer direct questions directly. No detours.",
+      phrase:
+        "نعم — الوحدة متاحة، سند مُسجَّل، تسليم خلال 30 يوم. إيه السؤال الجاي؟",
+    },
+    objecting: {
+      tactic: "Address the objection in one sentence then move forward.",
+      phrase:
+        "السعر ده هو سوق الوحدات السريعة التسليم — وميزته إنك مش هتلاقي تاني بنفس الشروط.",
+    },
+    cooling: {
+      tactic: "Restate his 30-day deadline as the reason to act now.",
+      phrase:
+        "أنا فاهم وقتك ضيق — ده بالظبط سبب إني اتصلت بيك. مش وقت بحث طويل، وقت حركة.",
+    },
+    warming: {
+      tactic: "He's ready — propose the site visit for TODAY or TOMORROW.",
+      phrase:
+        "ممتاز — قولي النهارده ولا بكرة وأنا هرتب الجولة. الوقت يناسبك إمتى؟",
+    },
+    neutral: {
+      tactic: "Be brief and confident. Urgency mirrors urgency.",
+      phrase: "طارق — خلينا بالموضوع مباشرة. إيه اللي بتحتاجه في الوحدة؟",
+    },
   },
   "sayed-father": {
-    opening:   { tactic: "Address him as 'Hader Sayed' — formal respect opens everything.", phrase: "حضرة سيد بيه — أنا سامعك معاه. عايز أساعدك توصل لأفضل حاجة لحسن إن شاء الله." },
-    curious:   { tactic: "Mention Hassan by name — he responds to family references.", phrase: "الوحدة دي يا حضرة سيد كـأنها اتعملت لبيت حسن — التسليم على المقاس." },
-    objecting: { tactic: "Offer to show him past delivery certificates — papers beat words.", phrase: "حضرتك صح — الكلام مش كفاية. هبعتلك بالواتساب صور التسليم اللي اتعمل السنة دي." },
-    cooling:   { tactic: "Never push. Say 'take your time, this is important'. Patience earns respect.", phrase: "مفيش أي عجلة يا حضرة سيد — ده قرار مهم وحضرتك اللي بتعرف الأصلح لأولادك." },
-    warming:   { tactic: "Invite him AND Hassan for a joint visit — two-generation approach.", phrase: "يا ريت حضرتك تيجي مع حسن تشوفها مع بعض — علشان رأيه مهم زي رأي حضرتك." },
-    neutral:   { tactic: "Speak slowly and formally. Use 'يا حضرتك' often.", phrase: "يا حضرة سيد — إيه اللي أهمه في الوحدة بالنسبالك أكتر حاجة؟" },
+    opening: {
+      tactic: "Address him as 'Hader Sayed' — formal respect opens everything.",
+      phrase:
+        "حضرة سيد بيه — أنا سامعك معاه. عايز أساعدك توصل لأفضل حاجة لحسن إن شاء الله.",
+    },
+    curious: {
+      tactic: "Mention Hassan by name — he responds to family references.",
+      phrase:
+        "الوحدة دي يا حضرة سيد كـأنها اتعملت لبيت حسن — التسليم على المقاس.",
+    },
+    objecting: {
+      tactic:
+        "Offer to show him past delivery certificates — papers beat words.",
+      phrase:
+        "حضرتك صح — الكلام مش كفاية. هبعتلك بالواتساب صور التسليم اللي اتعمل السنة دي.",
+    },
+    cooling: {
+      tactic:
+        "Never push. Say 'take your time, this is important'. Patience earns respect.",
+      phrase:
+        "مفيش أي عجلة يا حضرة سيد — ده قرار مهم وحضرتك اللي بتعرف الأصلح لأولادك.",
+    },
+    warming: {
+      tactic:
+        "Invite him AND Hassan for a joint visit — two-generation approach.",
+      phrase:
+        "يا ريت حضرتك تيجي مع حسن تشوفها مع بعض — علشان رأيه مهم زي رأي حضرتك.",
+    },
+    neutral: {
+      tactic: "Speak slowly and formally. Use 'يا حضرتك' often.",
+      phrase: "يا حضرة سيد — إيه اللي أهمه في الوحدة بالنسبالك أكتر حاجة؟",
+    },
   },
   "gulf-returnee": {
-    opening:   { tactic: "Lead immediately with a premium compound name — don't warm up.", phrase: "مجدي بيه — عندنا وحدة في Emaar Mivida، على مستوى أحسن ما شفته في القاهرة الجديدة." },
-    curious:   { tactic: "Give capital appreciation % since 2021 — investor language.", phrase: "نفس الكمبوند ارتفع 75% من 2021 لحد دلوقتي. ده أفضل من معظم ما كنت تعمله بالسعودية." },
-    objecting: { tactic: "Never over-justify. Calmly name another comparable project.", phrase: "صح — في خيارات تانية. بس هل شفت Sodic East؟ دي تقريباً نفس المستوى اللي بتفكر فيه." },
-    cooling:   { tactic: "Offer a private exclusive viewing — VIP treatment wins him back.", phrase: "لو حضرتك تديني ساعة — بنزور الوحدة لوحدنا، مفيش عملاء تانيين. هيبة الزيارة مختلفة." },
-    warming:   { tactic: "Invite him to a quiet private tour — match his VIP expectations.", phrase: "ممتاز — يلا نحدد جولة خاصة يا مجدي بيه. نهار الجمعة بعد الظهر؟" },
-    neutral:   { tactic: "Speak with quiet confidence — he reads desperation instantly.", phrase: "يا مجدي بيه — إيه المواصفات اللي حضرتك شايفها في الكمبوند الأنسب؟" },
+    opening: {
+      tactic: "Lead immediately with a premium compound name — don't warm up.",
+      phrase:
+        "مجدي بيه — عندنا وحدة في Emaar Mivida، على مستوى أحسن ما شفته في القاهرة الجديدة.",
+    },
+    curious: {
+      tactic: "Give capital appreciation % since 2021 — investor language.",
+      phrase:
+        "نفس الكمبوند ارتفع 75% من 2021 لحد دلوقتي. ده أفضل من معظم ما كنت تعمله بالسعودية.",
+    },
+    objecting: {
+      tactic: "Never over-justify. Calmly name another comparable project.",
+      phrase:
+        "صح — في خيارات تانية. بس هل شفت Sodic East؟ دي تقريباً نفس المستوى اللي بتفكر فيه.",
+    },
+    cooling: {
+      tactic:
+        "Offer a private exclusive viewing — VIP treatment wins him back.",
+      phrase:
+        "لو حضرتك تديني ساعة — بنزور الوحدة لوحدنا، مفيش عملاء تانيين. هيبة الزيارة مختلفة.",
+    },
+    warming: {
+      tactic:
+        "Invite him to a quiet private tour — match his VIP expectations.",
+      phrase: "ممتاز — يلا نحدد جولة خاصة يا مجدي بيه. نهار الجمعة بعد الظهر؟",
+    },
+    neutral: {
+      tactic: "Speak with quiet confidence — he reads desperation instantly.",
+      phrase:
+        "يا مجدي بيه — إيه المواصفات اللي حضرتك شايفها في الكمبوند الأنسب؟",
+    },
   },
   "govt-employee": {
-    opening:   { tactic: "Open with empathy about savings — acknowledge the effort.", phrase: "وليد بيه — إيه اللي حضرتك عايزه بالظبط؟ عشان أقدر أفيدك بالأنسب في ميزانيتك." },
-    curious:   { tactic: "Break down monthly installment in plain EGP — avoid % and jargon.", phrase: "لو الأمر عليّ — وحدة بـ1.3 مليون بمقدم 400 ألف = قسط شهري حوالي 1,100 جنيه على 8 سنين." },
-    objecting: { tactic: "Validate the fear. Then simplify. One step at a time.", phrase: "خوفك طبيعي جداً يا وليد بيه — بس خليني أورّيك خطوة خطوة إيه اللي هيحصل بالظبط." },
-    cooling:   { tactic: "Remind him of inflation eroding savings — turn waiting into risk.", phrase: "كل سنة تعدي قيمة الـ400 ألف بتنقص بالتضخم. الشراء دلوقتي بيحمي فلوسك مش يخاطر بيها." },
-    warming:   { tactic: "Offer to come with him to the site — reduce friction maximally.", phrase: "ممتاز يا وليد بيه — أنا قادر أيجي معاك وأشرح كل حاجة في الموقع. السبت مناسب؟" },
-    neutral:   { tactic: "Patience is your greatest asset with this profile. Never rush.", phrase: "خد وقتك خالص يا وليد بيه — السؤال الجاي: تقريباً إيه أكبر قسط شهري مريح ليك؟" },
+    opening: {
+      tactic: "Open with empathy about savings — acknowledge the effort.",
+      phrase:
+        "وليد بيه — إيه اللي حضرتك عايزه بالظبط؟ عشان أقدر أفيدك بالأنسب في ميزانيتك.",
+    },
+    curious: {
+      tactic:
+        "Break down monthly installment in plain EGP — avoid % and jargon.",
+      phrase:
+        "لو الأمر عليّ — وحدة بـ1.3 مليون بمقدم 400 ألف = قسط شهري حوالي 1,100 جنيه على 8 سنين.",
+    },
+    objecting: {
+      tactic: "Validate the fear. Then simplify. One step at a time.",
+      phrase:
+        "خوفك طبيعي جداً يا وليد بيه — بس خليني أورّيك خطوة خطوة إيه اللي هيحصل بالظبط.",
+    },
+    cooling: {
+      tactic:
+        "Remind him of inflation eroding savings — turn waiting into risk.",
+      phrase:
+        "كل سنة تعدي قيمة الـ400 ألف بتنقص بالتضخم. الشراء دلوقتي بيحمي فلوسك مش يخاطر بيها.",
+    },
+    warming: {
+      tactic: "Offer to come with him to the site — reduce friction maximally.",
+      phrase:
+        "ممتاز يا وليد بيه — أنا قادر أيجي معاك وأشرح كل حاجة في الموقع. السبت مناسب؟",
+    },
+    neutral: {
+      tactic: "Patience is your greatest asset with this profile. Never rush.",
+      phrase:
+        "خد وقتك خالص يا وليد بيه — السؤال الجاي: تقريباً إيه أكبر قسط شهري مريح ليك؟",
+    },
   },
   "diaspora-caller": {
-    opening:   { tactic: "Immediately confirm you can handle remote buyers — remove the #1 blocker.", phrase: "شريف — أنا اشتغلت مع عملاء في ألمانيا وكندا. كل حاجة بتتعمل أونلاين، مفيش مشكلة." },
-    curious:   { tactic: "Explain Power of Attorney clearly — it's the deal enabler.", phrase: "التوكيل الرسمي بيشيل كل عقبة. محامي معتمد بيوقع عنك هنا، وحضرتك بتوقع من ألمانيا أونلاين." },
-    objecting: { tactic: "Address EGP devaluation fear with a real appreciation argument.", phrase: "بالظبط — ده سبب إن أفضل توقيت هو دلوقتي. العقار المصري بيحمي من انخفاض العملة تاريخياً." },
-    cooling:   { tactic: "Offer a Zoom virtual tour at his convenient time zone.", phrase: "مش لازم تيجي — عندي فيديو كامل للوحدة. لو فيه وقت على Zoom، نعمل جولة افتراضية دلوقتي." },
-    warming:   { tactic: "Name a specific next step: Zoom tour → WhatsApp contract → transfer.", phrase: "يلا — نحدد Zoom tour الأسبوع الجاي؟ بعدها بعتلك العقد على الإيميل وتراجعه براحتك." },
-    neutral:   { tactic: "Match his efficiency — short, direct answers. Never over-explain.", phrase: "شريف — سؤال مباشر: القاهرة الجديدة ولا الساحل الشمالي؟ كل منهم ليه logic تاني." },
+    opening: {
+      tactic:
+        "Immediately confirm you can handle remote buyers — remove the #1 blocker.",
+      phrase:
+        "شريف — أنا اشتغلت مع عملاء في ألمانيا وكندا. كل حاجة بتتعمل أونلاين، مفيش مشكلة.",
+    },
+    curious: {
+      tactic: "Explain Power of Attorney clearly — it's the deal enabler.",
+      phrase:
+        "التوكيل الرسمي بيشيل كل عقبة. محامي معتمد بيوقع عنك هنا، وحضرتك بتوقع من ألمانيا أونلاين.",
+    },
+    objecting: {
+      tactic: "Address EGP devaluation fear with a real appreciation argument.",
+      phrase:
+        "بالظبط — ده سبب إن أفضل توقيت هو دلوقتي. العقار المصري بيحمي من انخفاض العملة تاريخياً.",
+    },
+    cooling: {
+      tactic: "Offer a Zoom virtual tour at his convenient time zone.",
+      phrase:
+        "مش لازم تيجي — عندي فيديو كامل للوحدة. لو فيه وقت على Zoom، نعمل جولة افتراضية دلوقتي.",
+    },
+    warming: {
+      tactic:
+        "Name a specific next step: Zoom tour → WhatsApp contract → transfer.",
+      phrase:
+        "يلا — نحدد Zoom tour الأسبوع الجاي؟ بعدها بعتلك العقد على الإيميل وتراجعه براحتك.",
+    },
+    neutral: {
+      tactic:
+        "Match his efficiency — short, direct answers. Never over-explain.",
+      phrase:
+        "شريف — سؤال مباشر: القاهرة الجديدة ولا الساحل الشمالي؟ كل منهم ليه logic تاني.",
+    },
   },
   "maadi-elite": {
-    opening:   { tactic: "Start with a project name she'll recognise. Never start with price.", phrase: "هند هانم — أنا اتصلت بحضرتك عشان في وحدة في Villette مش معلنة للعموم لسه." },
-    curious:   { tactic: "Match her code-switching naturally — use English when she does.", phrase: "The penthouse في Mivida literally just came back available — the previous buyer withdrew. Would you like a private preview before it's relisted?" },
-    objecting: { tactic: "Never justify or defend. Calmly redirect to a project she respects.", phrase: "Totally understand. Il Primo has a unit with the same finishes — different building, same standards. Should I arrange a quiet look?" },
-    cooling:   { tactic: "Let silence work. One final mention of exclusivity, then stop.", phrase: "مفيش ضغط خالص يا هند هانم — بس الوحدة دي مش هتتعلن. I just wanted to make sure you had first refusal." },
-    warming:   { tactic: "Propose a private viewing — just the two of you. No group tours.", phrase: "Perfect — أقترح يوم الخميس في الصبح؟ هنكون لوحدنا، مفيش وكلاء تانيين." },
-    neutral:   { tactic: "Ask about her previous home — she loves discussing taste and standards.", phrase: "هند هانم — اللي كنتم فيه في Maadi Degla — إيه اللي كانت بتحبيه فيه أكتر؟" },
+    opening: {
+      tactic:
+        "Start with a project name she'll recognise. Never start with price.",
+      phrase:
+        "هند هانم — أنا اتصلت بحضرتك عشان في وحدة في Villette مش معلنة للعموم لسه.",
+    },
+    curious: {
+      tactic: "Match her code-switching naturally — use English when she does.",
+      phrase:
+        "The penthouse في Mivida literally just came back available — the previous buyer withdrew. Would you like a private preview before it's relisted?",
+    },
+    objecting: {
+      tactic:
+        "Never justify or defend. Calmly redirect to a project she respects.",
+      phrase:
+        "Totally understand. Il Primo has a unit with the same finishes — different building, same standards. Should I arrange a quiet look?",
+    },
+    cooling: {
+      tactic: "Let silence work. One final mention of exclusivity, then stop.",
+      phrase:
+        "مفيش ضغط خالص يا هند هانم — بس الوحدة دي مش هتتعلن. I just wanted to make sure you had first refusal.",
+    },
+    warming: {
+      tactic:
+        "Propose a private viewing — just the two of you. No group tours.",
+      phrase:
+        "Perfect — أقترح يوم الخميس في الصبح؟ هنكون لوحدنا، مفيش وكلاء تانيين.",
+    },
+    neutral: {
+      tactic:
+        "Ask about her previous home — she loves discussing taste and standards.",
+      phrase:
+        "هند هانم — اللي كنتم فيه في Maadi Degla — إيه اللي كانت بتحبيه فيه أكتر؟",
+    },
   },
   "north-coast-seeker": {
-    opening:   { tactic: "Be casual and punchy — match his voice-note energy.", phrase: "يوسف — شاليه اتنين غرف في Marassi، على البحر مباشرة، إدارة تأجير مدمجة. إيه رأيك؟" },
-    curious:   { tactic: "Immediately address property management — it's his #1 blockers.", phrase: "والإدارة مش مشكلة — الكمبوند ده عنده rental service داخلية بتديرك التأجير وتبعتلك الفلوس كل شهر." },
-    objecting: { tactic: "Give seasonal rental math quickly — let the numbers do the talking.", phrase: "4 أسابيع في الصيف × 12,000 جنيه/أسبوع = 48,000 جنيه. ده بيغطي الصيانة السنوية وزيادة." },
-    cooling:   { tactic: "Offer drone footage on WhatsApp immediately — digital-first buyer.", phrase: "حلو — ابعتلك فيديو بالدرون للكمبوند على الواتساب دلوقتي. تشوف وترجعلي." },
-    warming:   { tactic: "Close on a weekend visit — frame it as a fun trip not a sales visit.", phrase: "اعتبرها يوم فرفشة مش زيارة عقار — إيه رأيك نيجي الجمعة؟ بتكون الساحل ولسه مشيتش." },
-    neutral:   { tactic: "Short messages only. He's a voice-note buyer — 1-2 sentence replies.", phrase: "سؤال واحد — Marassi ولا Hacienda Bay — إيه اللي بتميل له أكتر؟" },
+    opening: {
+      tactic: "Be casual and punchy — match his voice-note energy.",
+      phrase:
+        "يوسف — شاليه اتنين غرف في Marassi، على البحر مباشرة، إدارة تأجير مدمجة. إيه رأيك؟",
+    },
+    curious: {
+      tactic: "Immediately address property management — it's his #1 blockers.",
+      phrase:
+        "والإدارة مش مشكلة — الكمبوند ده عنده rental service داخلية بتديرك التأجير وتبعتلك الفلوس كل شهر.",
+    },
+    objecting: {
+      tactic:
+        "Give seasonal rental math quickly — let the numbers do the talking.",
+      phrase:
+        "4 أسابيع في الصيف × 12,000 جنيه/أسبوع = 48,000 جنيه. ده بيغطي الصيانة السنوية وزيادة.",
+    },
+    cooling: {
+      tactic:
+        "Offer drone footage on WhatsApp immediately — digital-first buyer.",
+      phrase:
+        "حلو — ابعتلك فيديو بالدرون للكمبوند على الواتساب دلوقتي. تشوف وترجعلي.",
+    },
+    warming: {
+      tactic:
+        "Close on a weekend visit — frame it as a fun trip not a sales visit.",
+      phrase:
+        "اعتبرها يوم فرفشة مش زيارة عقار — إيه رأيك نيجي الجمعة؟ بتكون الساحل ولسه مشيتش.",
+    },
+    neutral: {
+      tactic:
+        "Short messages only. He's a voice-note buyer — 1-2 sentence replies.",
+      phrase: "سؤال واحد — Marassi ولا Hacienda Bay — إيه اللي بتميل له أكتر؟",
+    },
   },
 };
 
 const PSYCH_KEYS = {
-  "skeptical-engineer": "Fear of deception — he needs 3+ independent data points before trusting.",
-  "impatient-investor": "Ego validation — speak his language: ROI, IRR, exit strategy only.",
-  "indecisive-couple":  "Family anchor — children's future unites both spouses instantly.",
-  "price-hammerer":     "Scarcity + social proof — never cave on price before they push hard.",
-  "silent-prospect":    "Curiosity + zero pressure — silence is NOT rejection.",
-  "time-waster":        "Daughter Amira's engagement — the hidden urgency driver.",
-  "cold-lead":          "Seed planting — compare her monthly rent vs. ownership cost.",
-  "urgent-buyer":       "Competence + speed — match his directness, give direct answers.",
-  "sayed-father":       "Family honour — this apartment is Hassan's wedding gift; frame it as legacy.",
-  "gulf-returnee":      "Peer respect — treat him as equal, not as a client; lead with prestige.",
-  "govt-employee":      "Financial safety — break down monthly EGP numbers simply; he just needs clarity.",
-  "diaspora-caller":    "Remote-process confidence — explain exactly how overseas buyers close deals.",
-  "maadi-elite":        "Composed authority — any hint of desperation ends the call instantly.",
-  "north-coast-seeker": "Property management answer — solve 'who runs it' and the deal unlocks.",
+  "skeptical-engineer":
+    "Fear of deception — he needs 3+ independent data points before trusting.",
+  "impatient-investor":
+    "Ego validation — speak his language: ROI, IRR, exit strategy only.",
+  "indecisive-couple":
+    "Family anchor — children's future unites both spouses instantly.",
+  "price-hammerer":
+    "Scarcity + social proof — never cave on price before they push hard.",
+  "silent-prospect": "Curiosity + zero pressure — silence is NOT rejection.",
+  "time-waster": "Daughter Amira's engagement — the hidden urgency driver.",
+  "cold-lead": "Seed planting — compare her monthly rent vs. ownership cost.",
+  "urgent-buyer":
+    "Competence + speed — match his directness, give direct answers.",
+  "sayed-father":
+    "Family honour — this apartment is Hassan's wedding gift; frame it as legacy.",
+  "gulf-returnee":
+    "Peer respect — treat him as equal, not as a client; lead with prestige.",
+  "govt-employee":
+    "Financial safety — break down monthly EGP numbers simply; he just needs clarity.",
+  "diaspora-caller":
+    "Remote-process confidence — explain exactly how overseas buyers close deals.",
+  "maadi-elite":
+    "Composed authority — any hint of desperation ends the call instantly.",
+  "north-coast-seeker":
+    "Property management answer — solve 'who runs it' and the deal unlocks.",
 };
 
 function getPsychKey(scenario) {
@@ -1445,27 +2121,47 @@ function getCoachData(scenario, state) {
   if (tips && tips[state]) return tips[state];
   if (tips && tips.neutral) return tips.neutral;
   const fallback = {
-    opening:   { tactic: "Start with one open question about their situation.", phrase: "قوليلي — إيه اللي بيخليك تفكر في العقار دلوقتي تحديداً؟" },
-    curious:   { tactic: "Give one solid fact then ask what matters most to them.", phrase: "ممتاز — إيه أهم شيء في الوحدة بالنسبالك غير السعر؟" },
-    objecting: { tactic: "Don't defend. Acknowledge + pivot to value.", phrase: "وجهة نظرك مهمة — ده بالظبط اللي عايز أفهمه عشان أقدم أنسب حاجة ليك." },
-    cooling:   { tactic: "Pattern interrupt — ask one surprising question.", phrase: "أنا مش هضغطك — بس قبل ما نخلّص، قولي: إيه اللي لو اتغير كان خلّاك تفكر؟" },
-    warming:   { tactic: "Propose a small concrete next step.", phrase: "يلا — نحدد موعد سريع تشوف المشروع، مفيش إلزام خالص." },
-    neutral:   { tactic: "Listen more than you speak.", phrase: "عايزك تكمل — قولي أكتر عن اللي بتدور عليه." },
+    opening: {
+      tactic: "Start with one open question about their situation.",
+      phrase: "قوليلي — إيه اللي بيخليك تفكر في العقار دلوقتي تحديداً؟",
+    },
+    curious: {
+      tactic: "Give one solid fact then ask what matters most to them.",
+      phrase: "ممتاز — إيه أهم شيء في الوحدة بالنسبالك غير السعر؟",
+    },
+    objecting: {
+      tactic: "Don't defend. Acknowledge + pivot to value.",
+      phrase:
+        "وجهة نظرك مهمة — ده بالظبط اللي عايز أفهمه عشان أقدم أنسب حاجة ليك.",
+    },
+    cooling: {
+      tactic: "Pattern interrupt — ask one surprising question.",
+      phrase:
+        "أنا مش هضغطك — بس قبل ما نخلّص، قولي: إيه اللي لو اتغير كان خلّاك تفكر؟",
+    },
+    warming: {
+      tactic: "Propose a small concrete next step.",
+      phrase: "يلا — نحدد موعد سريع تشوف المشروع، مفيش إلزام خالص.",
+    },
+    neutral: {
+      tactic: "Listen more than you speak.",
+      phrase: "عايزك تكمل — قولي أكتر عن اللي بتدور عليه.",
+    },
   };
   return fallback[state] || fallback.neutral;
 }
 
 function updateCoach(aiText) {
   if (!currentScenario || !coachOpen) return;
-  const state  = analyzeSignal(aiText);
-  const sig    = COACH_SIGNALS[state] || COACH_SIGNALS.neutral;
+  const state = analyzeSignal(aiText);
+  const sig = COACH_SIGNALS[state] || COACH_SIGNALS.neutral;
   const advice = getCoachData(currentScenario, state);
 
-  const pill    = $("coach-signal-pill");
-  const iconEl  = $("coach-signal-icon");
-  const textEl  = $("coach-signal-text");
-  const tactic  = $("coach-tactic-body");
-  const phrase  = $("coach-phrase-body");
+  const pill = $("coach-signal-pill");
+  const iconEl = $("coach-signal-icon");
+  const textEl = $("coach-signal-text");
+  const tactic = $("coach-tactic-body");
+  const phrase = $("coach-phrase-body");
   if (!pill) return;
 
   pill.className = `coach-signal-pill${sig.cls ? " " + sig.cls : ""}`;
@@ -1477,15 +2173,15 @@ function updateCoach(aiText) {
 
 function initCoach() {
   if (!currentScenario) return;
-  const advice   = getCoachData(currentScenario, "opening");
+  const advice = getCoachData(currentScenario, "opening");
   const psychKey = getPsychKey(currentScenario);
 
-  const pill   = $("coach-signal-pill");
+  const pill = $("coach-signal-pill");
   const iconEl = $("coach-signal-icon");
   const textEl = $("coach-signal-text");
   const tactic = $("coach-tactic-body");
   const phrase = $("coach-phrase-body");
-  const psych  = $("coach-psych-body");
+  const psych = $("coach-psych-body");
 
   if (pill) {
     pill.className = "coach-signal-pill";
@@ -1494,7 +2190,7 @@ function initCoach() {
   }
   if (tactic) tactic.textContent = advice.tactic;
   if (phrase) phrase.textContent = advice.phrase;
-  if (psych)  psych.textContent  = psychKey;
+  if (psych) psych.textContent = psychKey;
 }
 
 // ══════════════════════════════════════════════════════════════════════
@@ -1521,7 +2217,11 @@ function renderScenarios() {
   const grid = $("scenarios-grid");
   if (!grid) return;
   const pbs = loadPBs();
-  const cards = SCENARIOS.map((s) => {
+  const filtered =
+    activeFilter === "all"
+      ? SCENARIOS
+      : SCENARIOS.filter((s) => s.difficulty === activeFilter);
+  const cards = filtered.map((s) => {
     const name = escHtml(s.name[lang] || s.name.en);
     const client = escHtml(s.client[lang] || s.client.en);
     const desc = escHtml(
@@ -1532,7 +2232,8 @@ function renderScenarios() {
     const diff = escHtml(s.difficulty);
     const diffLabel =
       lang === "ar"
-        ? { easy: "سهل", medium: "متوسط", hard: "صعب" }[s.difficulty] || s.difficulty
+        ? { easy: "سهل", medium: "متوسط", hard: "صعب" }[s.difficulty] ||
+          s.difficulty
         : s.difficulty.charAt(0).toUpperCase() + s.difficulty.slice(1);
     const aiBadge = s.isGenerated
       ? `<span class="scenario-ai-badge" aria-label="AI generated">✨ AI</span>`
@@ -1547,7 +2248,7 @@ function renderScenarios() {
 
     // Psychology chips
     const chipsHtml = (s.psychTags || []).length
-      ? `<div class="scenario-psych-chips">${(s.psychTags).map((t) => `<span class="psych-chip">${escHtml(t)}</span>`).join("")}</div>`
+      ? `<div class="scenario-psych-chips">${s.psychTags.map((t) => `<span class="psych-chip">${escHtml(t)}</span>`).join("")}</div>`
       : "";
 
     // Personal best row
@@ -1556,7 +2257,8 @@ function renderScenarios() {
     if (pb) {
       const stars = getStars(pb.best);
       const isGold = pb.best >= 70;
-      const pbLabel = lang === "ar" ? `أفضل: ${pb.best}/100` : `PB: ${pb.best}/100`;
+      const pbLabel =
+        lang === "ar" ? `أفضل: ${pb.best}/100` : `PB: ${pb.best}/100`;
       pbRowHtml = `<div class="scenario-pb-row">
         <span class="scenario-stars" aria-label="${escHtml(stars)}">${escHtml(stars)}</span>
         <span class="scenario-pb-chip${isGold ? " pb-gold" : ""}">${escHtml(pbLabel)}</span>
@@ -1564,7 +2266,9 @@ function renderScenarios() {
     }
 
     const dialectLabel = DIALECT_LABELS[s.id] || "";
-    const dialectHtml = dialectLabel ? `<span class="scenario-dialect">${escHtml(dialectLabel)}</span>` : "";
+    const dialectHtml = dialectLabel
+      ? `<span class="scenario-dialect">${escHtml(dialectLabel)}</span>`
+      : "";
 
     return `<div class="scenario-card${s.isGenerated ? " scenario-ai-card" : ""}" ${styleAttr} data-id="${escHtml(s.id)}" role="button" tabindex="0" aria-label="${name}">
       ${aiBadge}
@@ -1580,7 +2284,10 @@ function renderScenarios() {
   });
 
   // Difficulty picker cards for generating new scenarios
-  const genLabel = lang === "ar" ? "توليد عميل جديد بالذكاء الاصطناعي" : "Generate New AI Client";
+  const genLabel =
+    lang === "ar"
+      ? "توليد عميل جديد بالذكاء الاصطناعي"
+      : "Generate New AI Client";
   const genSub = lang === "ar" ? "اختر مستوى الصعوبة" : "Choose difficulty";
   cards.push(
     `<div class="scenario-card scenario-generate" id="generate-card" role="group" aria-label="${genLabel}">
@@ -1597,15 +2304,17 @@ function renderScenarios() {
 
   grid.innerHTML = cards.join("");
 
-  grid.querySelectorAll(".scenario-card:not(.scenario-generate)").forEach((card) => {
-    card.addEventListener("click", () => openBriefing(card.dataset.id));
-    card.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        openBriefing(card.dataset.id);
-      }
+  grid
+    .querySelectorAll(".scenario-card:not(.scenario-generate)")
+    .forEach((card) => {
+      card.addEventListener("click", () => openBriefing(card.dataset.id));
+      card.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          openBriefing(card.dataset.id);
+        }
+      });
     });
-  });
 
   grid.querySelectorAll(".gen-btn").forEach((btn) => {
     btn.addEventListener("click", (e) => {
@@ -1679,6 +2388,7 @@ function startCall() {
   callTranscript = [];
   callSeconds = 0;
   closingTemp = 0;
+  momentumLog = [];
   coachOpen = false;
   objectionOpen = false;
   isWaitingForAI = false;
@@ -1701,14 +2411,16 @@ function startCall() {
   const priceEl = $("deal-price");
   const commEl = $("deal-commission");
   if (s.dealPrice) {
-    const priceNum = parseFloat(s.dealPrice.replace(/,/g, ""));
+    const priceNum = parseFloat(s.dealPrice.replaceAll(",", ""));
     const commRate = s.commissionRate || 0.025;
-    const commAmount = isNaN(priceNum) ? "—" : Math.round(priceNum * commRate).toLocaleString() + " EGP";
+    const commAmount = Number.isNaN(priceNum)
+      ? "—"
+      : Math.round(priceNum * commRate).toLocaleString() + " EGP";
     if (priceEl) priceEl.textContent = s.dealPrice + " EGP";
-    if (commEl)  commEl.textContent  = commAmount;
+    if (commEl) commEl.textContent = commAmount;
   } else {
     if (priceEl) priceEl.textContent = "—";
-    if (commEl)  commEl.textContent  = "—";
+    if (commEl) commEl.textContent = "—";
   }
 
   // Reset closing meter
@@ -1726,17 +2438,17 @@ function startCall() {
   animateSignalBars();
 
   // Reset coach panel to opening state
-  const coachPanel = $('call-coach');
+  const coachPanel = $("call-coach");
   if (coachPanel) coachPanel.hidden = true;
-  const coachToggle = $('btn-coach-toggle');
-  if (coachToggle) coachToggle.classList.remove('active');
+  const coachToggle = $("btn-coach-toggle");
+  if (coachToggle) coachToggle.classList.remove("active");
   initCoach();
 
   // Reset objection panel
-  const objPanel  = $('call-objections');
-  const objToggle = $('btn-objections-toggle');
-  if (objPanel)  objPanel.hidden = true;
-  if (objToggle) objToggle.classList.remove('active');
+  const objPanel = $("call-objections");
+  const objToggle = $("btn-objections-toggle");
+  if (objPanel) objPanel.hidden = true;
+  if (objToggle) objToggle.classList.remove("active");
 
   // Populate objections for this scenario
   populateObjections(s);
@@ -1747,7 +2459,8 @@ function startCall() {
   const input = $("chat-input");
   if (input) {
     input.value = "";
-    input.placeholder = lang === "ar" ? "اكتب ردّك..." : "Type your response...";
+    input.placeholder =
+      lang === "ar" ? "اكتب ردّك..." : "Type your response...";
     input.focus();
     autoResize(input);
   }
@@ -1758,16 +2471,20 @@ function startCall() {
   // Client opening line — if scenario has one, client speaks first
   const _openLine = OPENING_LINES[currentScenario.id];
   if (_openLine) {
-    const _line = lang === 'ar' ? _openLine.ar : _openLine.en;
+    const _line = lang === "ar" ? _openLine.ar : _openLine.en;
     setTimeout(() => {
       if (!currentScenario) return; // call was ended
-      appendBubble('client', _line);
-      callMessages.push({ role: 'assistant', content: _line });
-      callTranscript.push({ speaker: 'Client', text: _line });
+      appendBubble("client", _line);
+      callMessages.push({ role: "assistant", content: _line });
+      callTranscript.push({ speaker: "Client", text: _line });
       startSpeedTimer(); // now it's agent's turn
     }, 1600);
   } else {
-    appendSystem(lang === 'ar' ? 'المكالمة بدأت — أنت تتحدث أولاً.' : 'Call connected — you speak first.');
+    appendSystem(
+      lang === "ar"
+        ? "المكالمة بدأت — أنت تتحدث أولاً."
+        : "Call connected — you speak first.",
+    );
     startSpeedTimer();
   }
 
@@ -1811,8 +2528,15 @@ function appendBubble(role, text) {
     const senderSpan = document.createElement("span");
     senderSpan.className = "bubble-sender";
     if (role === "client" && currentScenario) {
-      const raw = (currentScenario.client[lang] || currentScenario.client.en || "");
-      senderSpan.textContent = raw.split(/,|،/)[0].split(/&/)[0].trim().split(" ").slice(0, 2).join(" ");
+      const raw =
+        currentScenario.client[lang] || currentScenario.client.en || "";
+      senderSpan.textContent = raw
+        .split(/,|،/)[0]
+        .split(/&/)[0]
+        .trim()
+        .split(" ")
+        .slice(0, 2)
+        .join(" ");
     } else {
       senderSpan.textContent = lang === "ar" ? "أنت" : "You";
     }
@@ -1830,7 +2554,7 @@ function appendBubble(role, text) {
 
   const textEl = document.createElement("div");
   textEl.className = "bubble-text";
-  textEl.setAttribute('dir', 'auto'); // auto-detect RTL for Arabic agent text
+  textEl.setAttribute("dir", "auto"); // auto-detect RTL for Arabic agent text
   textEl.textContent = text; // safe — AI text is rendered as textContent
   outer.appendChild(textEl);
   chatArea.appendChild(outer);
@@ -1875,7 +2599,10 @@ async function sendMessage() {
 
   stopSpeedTimer(); // stop countdown the moment agent sends
 
-  if (input) { input.value = ""; autoResize(input); }
+  if (input) {
+    input.value = "";
+    autoResize(input);
+  }
 
   // Record agent message
   appendBubble("agent", text);
@@ -1888,7 +2615,7 @@ async function sendMessage() {
   try {
     // Variable think delay — simulates persona reaction time
     const baseDelay = Math.min(currentScenario.replyDelayMs || 1200, 2800);
-    const variance  = Math.min(currentScenario.replyVarianceMs || 800, 1200);
+    const variance = Math.min(currentScenario.replyVarianceMs || 800, 1200);
     const delay = baseDelay + Math.floor(Math.random() * variance);
 
     await new Promise((resolve) => setTimeout(resolve, delay));
@@ -1902,9 +2629,12 @@ async function sendMessage() {
     if (avtEl) avtEl.classList.add("is-talking");
     if (wvEl) wvEl.classList.add("visible");
 
-    const sysPrompt = currentScenario.systemPrompt(
-      lang === "ar" ? "Egyptian Arabic" : "English",
-    ) + "\n\n" + MARKET_KNOWLEDGE;
+    const sysPrompt =
+      currentScenario.systemPrompt(
+        lang === "ar" ? "Egyptian Arabic" : "English",
+      ) +
+      "\n\n" +
+      MARKET_KNOWLEDGE;
     const aiText = await callGemini(sysPrompt, callMessages);
 
     if (avtEl) avtEl.classList.remove("is-talking");
@@ -1920,7 +2650,6 @@ async function sendMessage() {
     updateCoach(aiText);
     // Resume speed timer — it's the agent's turn again
     startSpeedTimer();
-
   } catch (err) {
     const avtEl = $("call-avatar");
     const wvEl2 = $("avatar-waveform");
@@ -2025,7 +2754,7 @@ async function endCall() {
     // Campaign mode: record score and update debrief action button
     if (campaignMode && campaignTrack) {
       campaignScores.push({
-        name:  currentScenario.name.en,
+        name: currentScenario.name.en,
         score: finalTotal,
         stars: getStars(finalTotal),
       });
@@ -2034,11 +2763,12 @@ async function endCall() {
       if (btnHomeEl) {
         if (isLast) {
           appendCampaignResult();
-          btnHomeEl.textContent = lang === "ar" ? "← انتهت الحملة" : "Campaign Complete ←";
+          btnHomeEl.textContent =
+            lang === "ar" ? "← انتهت الحملة" : "Campaign Complete ←";
         } else {
           const nextId = campaignTrack.scenarioIds[campaignScores.length];
           const nextSc = SCENARIOS.find((s) => s.id === nextId);
-          const nextName = nextSc ? (nextSc.name[lang] || nextSc.name.en) : "";
+          const nextName = nextSc ? nextSc.name[lang] || nextSc.name.en : "";
           btnHomeEl.textContent =
             lang === "ar" ? `التالي: ${nextName} ←` : `Next: ${nextName} →`;
         }
@@ -2072,7 +2802,10 @@ function buildFallbackDebrief() {
     losses: [],
     betterPhrase: "",
     coaching: [
-      { emoji: "💡", tip: "Could not generate detailed feedback. Review the transcript manually." },
+      {
+        emoji: "💡",
+        tip: "Could not generate detailed feedback. Review the transcript manually.",
+      },
     ],
   };
 }
@@ -2097,12 +2830,12 @@ function drawRadar(canvasId, scores) {
   const H = canvas.height;
   ctx.clearRect(0, 0, W, H);
 
-  const keys  = Object.keys(SCORE_LABELS);
-  const n     = keys.length;
-  const cx    = W / 2;
-  const cy    = H / 2;
-  const R     = Math.min(cx, cy) - 60;
-  const step  = (Math.PI * 2) / n;
+  const keys = Object.keys(SCORE_LABELS);
+  const n = keys.length;
+  const cx = W / 2;
+  const cy = H / 2;
+  const R = Math.min(cx, cy) - 60;
+  const step = (Math.PI * 2) / n;
   const offset = -Math.PI / 2; // start at top
 
   // Grid rings (5 levels)
@@ -2187,21 +2920,112 @@ function drawRadar(canvasId, scores) {
   });
 }
 
+// ── Momentum sparkline ───────────────────────────────────────────────
+function drawSparkline(canvasId, data) {
+  const canvas = $(canvasId);
+  if (!canvas || !canvas.getContext || !data.length) return;
+  const ctx = canvas.getContext("2d");
+  const W = canvas.width;
+  const H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+  if (data.length < 2) return;
+
+  const pad = 10;
+  const maxVal = 100;
+  const minVal = 0;
+  const xStep = (W - pad * 2) / (data.length - 1);
+
+  const toX = (i) => pad + i * xStep;
+  const toY = (v) =>
+    H - pad - ((v - minVal) / (maxVal - minVal)) * (H - pad * 2);
+
+  // Reference zones (Cold/Warm/Hot bands)
+  const zones = [
+    { from: 65, to: 100, color: "rgba(255,85,0,0.06)" },
+    { from: 30, to: 65, color: "rgba(255,152,0,0.06)" },
+    { from: 0, to: 30, color: "rgba(100,160,255,0.06)" },
+  ];
+  zones.forEach(({ from, to, color }) => {
+    ctx.fillStyle = color;
+    ctx.fillRect(0, toY(to), W, toY(from) - toY(to));
+  });
+
+  // Zone dividers
+  [30, 65].forEach((v) => {
+    ctx.beginPath();
+    ctx.moveTo(0, toY(v));
+    ctx.lineTo(W, toY(v));
+    ctx.strokeStyle = "rgba(255,255,255,0.06)";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  });
+
+  // Gradient fill under the line
+  const grad = ctx.createLinearGradient(0, 0, 0, H);
+  grad.addColorStop(0, "rgba(0,150,255,0.25)");
+  grad.addColorStop(1, "rgba(0,150,255,0)");
+  ctx.beginPath();
+  data.forEach((v, i) => {
+    i === 0 ? ctx.moveTo(toX(i), toY(v)) : ctx.lineTo(toX(i), toY(v));
+  });
+  ctx.lineTo(toX(data.length - 1), H);
+  ctx.lineTo(toX(0), H);
+  ctx.closePath();
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  // Sparkline itself (coloured by final value)
+  const finalVal = data[data.length - 1];
+  const lineColor =
+    finalVal >= 65 ? "#ff5500" : finalVal >= 30 ? "#ff9800" : "#0096ff";
+  ctx.beginPath();
+  data.forEach((v, i) => {
+    i === 0 ? ctx.moveTo(toX(i), toY(v)) : ctx.lineTo(toX(i), toY(v));
+  });
+  ctx.strokeStyle = lineColor;
+  ctx.lineWidth = 2.5;
+  ctx.lineJoin = "round";
+  ctx.stroke();
+
+  // Terminal dot
+  const lastX = toX(data.length - 1);
+  const lastY = toY(data[data.length - 1]);
+  ctx.beginPath();
+  ctx.arc(lastX, lastY, 5, 0, Math.PI * 2);
+  ctx.fillStyle = lineColor;
+  ctx.fill();
+
+  // Zone labels on the right
+  ctx.font = "600 9px Inter, sans-serif";
+  ctx.textAlign = "right";
+  ctx.textBaseline = "middle";
+  const labels = [
+    { y: toY(82), text: "HOT 🔥", color: "rgba(255,100,0,0.7)" },
+    { y: toY(47), text: "WARM", color: "rgba(255,180,0,0.7)" },
+    { y: toY(15), text: "COLD ❄️", color: "rgba(100,160,255,0.7)" },
+  ];
+  labels.forEach(({ y, text, color }) => {
+    ctx.fillStyle = color;
+    ctx.fillText(text, W - 4, y);
+  });
+}
+
 function showDebrief(debrief) {
   const scores = debrief.scores || {};
   const total = Object.values(scores).reduce((a, b) => a + (b || 0), 0);
 
   const scBadge = $("debrief-scenario-badge");
-  if (scBadge) scBadge.textContent = currentScenario.name[lang] || currentScenario.name.en;
+  if (scBadge)
+    scBadge.textContent = currentScenario.name[lang] || currentScenario.name.en;
   const totalEl = $("debrief-total");
   if (totalEl) totalEl.textContent = String(Math.round(total));
 
   // Commission banner (before top-grid)
   const topGrid = $("debrief-top-grid");
   if (currentScenario.dealPrice) {
-    const priceNum = parseFloat(currentScenario.dealPrice.replace(/,/g, ""));
+    const priceNum = parseFloat(currentScenario.dealPrice.replaceAll(",", ""));
     const commRate = currentScenario.commissionRate || 0.025;
-    if (!isNaN(priceNum)) {
+    if (!Number.isNaN(priceNum)) {
       const old = document.querySelector(".debrief-commission-banner");
       if (old) old.remove();
       const commAmount = Math.round(priceNum * commRate).toLocaleString();
@@ -2231,9 +3055,10 @@ function showDebrief(debrief) {
     scoresEl.innerHTML = Object.entries(SCORE_LABELS)
       .map(([key, labels]) => {
         const score = Math.max(0, Math.min(20, scores[key] || 0));
-        const pct   = (score / 20) * 100;
+        const pct = (score / 20) * 100;
         const label = escHtml(labels[lang] || labels.en);
-        const cls   = pct >= 65 ? "score-high" : pct >= 40 ? "score-medium" : "score-low";
+        const cls =
+          pct >= 65 ? "score-high" : pct >= 40 ? "score-medium" : "score-low";
         return `<div class="score-row ${escHtml(cls)}">
           <div class="score-row-head">
             <span class="score-label">${label}</span>
@@ -2255,11 +3080,26 @@ function showDebrief(debrief) {
   // Draw radar (slight delay so canvas is in DOM)
   requestAnimationFrame(() => drawRadar("debrief-radar", scores));
 
+  // Momentum sparkline (deal temperature over the call)
+  const sparkWrap = $("debrief-sparkline-wrap");
+  if (sparkWrap) {
+    if (momentumLog.length >= 2) {
+      sparkWrap.hidden = false;
+      requestAnimationFrame(() =>
+        drawSparkline("debrief-sparkline", momentumLog),
+      );
+    } else {
+      sparkWrap.hidden = true;
+    }
+  }
+
   // Wins / Losses
   const momentsEl = $("debrief-moments");
   if (momentsEl) {
-    const wins   = Array.isArray(debrief.wins)   ? debrief.wins.slice(0, 2)   : [];
-    const losses = Array.isArray(debrief.losses) ? debrief.losses.slice(0, 2) : [];
+    const wins = Array.isArray(debrief.wins) ? debrief.wins.slice(0, 2) : [];
+    const losses = Array.isArray(debrief.losses)
+      ? debrief.losses.slice(0, 2)
+      : [];
     let html = "";
     if (wins.length || losses.length) {
       html += `<p class="debrief-sect-title">${escHtml(lang === "ar" ? "اللحظات البارزة" : "Key Moments")}</p>`;
@@ -2297,14 +3137,16 @@ function showDebrief(debrief) {
 
   // Turn heatmap
   const heatmapWrap = $("debrief-heatmap-wrap");
-  const heatmapEl   = $("debrief-heatmap");
-  const ratings     = Array.isArray(debrief.turnRatings) ? debrief.turnRatings : [];
+  const heatmapEl = $("debrief-heatmap");
+  const ratings = Array.isArray(debrief.turnRatings) ? debrief.turnRatings : [];
   if (heatmapEl && ratings.length > 0) {
     const ratingMap = { strong: "✅", ok: "⚡", weak: "❌" };
     heatmapEl.innerHTML = ratings
       .map((r) => {
-        const cls   = ["strong","ok","weak"].includes(r.rating) ? r.rating : "ok";
-        const icon  = ratingMap[cls] || "⚡";
+        const cls = ["strong", "ok", "weak"].includes(r.rating)
+          ? r.rating
+          : "ok";
+        const icon = ratingMap[cls] || "⚡";
         const label = `${escHtml(lang === "ar" ? "دور" : "Turn")} ${escHtml(String(r.turn))}`;
         return `<div class="hm-turn ${escHtml(cls)}" title="${escHtml(r.reason || "")}">
           <span class="hm-dot"></span>
@@ -2321,7 +3163,9 @@ function showDebrief(debrief) {
   // Coaching tips
   const coachingEl = $("debrief-coaching");
   if (coachingEl) {
-    const coachingItems = Array.isArray(debrief.coaching) ? debrief.coaching : [];
+    const coachingItems = Array.isArray(debrief.coaching)
+      ? debrief.coaching
+      : [];
     coachingEl.innerHTML =
       `<p class="coaching-title">${escHtml(lang === "ar" ? "ملاحظات المدرّب" : "Trainer Notes")}</p>` +
       coachingItems
@@ -2361,6 +3205,35 @@ function renderHistory() {
     </div>`,
     )
     .join("");
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  TRANSCRIPT EXPORT
+// ══════════════════════════════════════════════════════════════════════
+function exportTranscript() {
+  if (!callTranscript.length) return;
+  const scenarioName =
+    (currentScenario &&
+      (currentScenario.name[lang] || currentScenario.name.en)) ||
+    "Scenario";
+  const dateStr = new Date().toLocaleDateString();
+  const header =
+    `PITCH LAB — Call Transcript\n` +
+    `Scenario: ${scenarioName}\n` +
+    `Date: ${dateStr}\n` +
+    `${"─".repeat(40)}\n\n`;
+  const body = callTranscript
+    .map((m) => `${m.speaker}: ${m.text}`)
+    .join("\n\n");
+  const blob = new Blob([header + body], { type: "text/plain" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `pitchlab-${currentScenario?.id || "call"}-${Date.now()}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
 
 // ══════════════════════════════════════════════════════════════════════
@@ -2422,8 +3295,8 @@ function getSpeedLimit() {
 function startSpeedTimer() {
   if (!speedMode || isWaitingForAI) return;
   stopSpeedTimer();
-  const wrap  = $("speed-bar-wrap");
-  const fill  = $("speed-bar-fill");
+  const wrap = $("speed-bar-wrap");
+  const fill = $("speed-bar-fill");
   const label = $("speed-bar-label");
   if (!wrap || !fill || !label) return;
 
@@ -2460,7 +3333,10 @@ function stopSpeedTimer() {
     wrap.classList.remove("urgent");
   }
   const fill = $("speed-bar-fill");
-  if (fill) { fill.style.transition = "none"; fill.style.width = "100%"; }
+  if (fill) {
+    fill.style.transition = "none";
+    fill.style.width = "100%";
+  }
 }
 
 function handleSpeedTimeout() {
@@ -2470,9 +3346,8 @@ function handleSpeedTimeout() {
   if (input && input.value.trim()) {
     sendMessage();
   } else {
-    const msg = lang === "ar"
-      ? `⏱ انتهى الوقت! (-5 نقاط)`
-      : `⏱ Time's up! (-5 pts)`;
+    const msg =
+      lang === "ar" ? `⏱ انتهى الوقت! (-5 نقاط)` : `⏱ Time's up! (-5 pts)`;
     const el = appendSystem(msg);
     if (el) el.classList.add("timeout-msg");
     // Re-start so trainer can still reply
@@ -2507,9 +3382,9 @@ function populateObjections(scenario) {
 
 function toggleObjections() {
   objectionOpen = !objectionOpen;
-  const panel  = $("call-objections");
+  const panel = $("call-objections");
   const toggle = $("btn-objections-toggle");
-  if (panel)  panel.hidden = !objectionOpen;
+  if (panel) panel.hidden = !objectionOpen;
   if (toggle) toggle.classList.toggle("active", objectionOpen);
 }
 
@@ -2519,8 +3394,8 @@ function toggleObjections() {
 function startCampaign(trackId) {
   const track = CAMPAIGN_TRACKS.find((t) => t.id === trackId);
   if (!track) return;
-  campaignMode   = true;
-  campaignTrack  = track;
+  campaignMode = true;
+  campaignTrack = track;
   campaignScores = [];
   openBriefing(track.scenarioIds[0]);
 }
@@ -2532,7 +3407,7 @@ function advanceCampaign() {
     openBriefing(nextId);
   } else {
     // Shouldn't happen normally, but guard anyway
-    campaignMode  = false;
+    campaignMode = false;
     campaignScores = [];
     campaignTrack = null;
     renderScenarios();
@@ -2548,12 +3423,20 @@ function appendCampaignResult() {
   const medal = avg >= 80 ? "🥇" : avg >= 60 ? "🥈" : avg >= 40 ? "🥉" : "🎖️";
   const title =
     avg >= 80
-      ? lang === "ar" ? "أداء ذهبي" : "Gold Performance"
+      ? lang === "ar"
+        ? "أداء ذهبي"
+        : "Gold Performance"
       : avg >= 60
-        ? lang === "ar" ? "فضي ممتاز" : "Silver Run"
+        ? lang === "ar"
+          ? "فضي ممتاز"
+          : "Silver Run"
         : avg >= 40
-          ? lang === "ar" ? "برونزي جيد" : "Bronze Effort"
-          : lang === "ar" ? "واصل التدريب" : "Keep Practicing";
+          ? lang === "ar"
+            ? "برونزي جيد"
+            : "Bronze Effort"
+          : lang === "ar"
+            ? "واصل التدريب"
+            : "Keep Practicing";
 
   const div = document.createElement("div");
   div.className = "campaign-result";
@@ -2591,7 +3474,7 @@ function updateCampaignProgress() {
   }
   pill.hidden = false;
   const total = campaignTrack.scenarioIds.length;
-  const done  = campaignScores.length;
+  const done = campaignScores.length;
   dotsEl.innerHTML = Array.from({ length: total }, (_, i) => {
     const cls = i < done ? "done" : i === done ? "active" : "pending";
     return `<span class="cpp-dot ${cls}" title="${escHtml(lang === "ar" ? `مكالمة ${i + 1}` : `Call ${i + 1}`)}"></span>`;
@@ -2657,7 +3540,8 @@ function initVoice() {
     // If no auto-send was scheduled (e.g. no-speech), restore placeholder
     if (input && !input.value.trim()) {
       removeVoiceHint();
-      input.placeholder = lang === "ar" ? "اكتب ردّك..." : "Type your response...";
+      input.placeholder =
+        lang === "ar" ? "اكتب ردّك..." : "Type your response...";
     }
   };
 
@@ -2679,7 +3563,8 @@ function showVoiceHint() {
   if (!footer || footer.querySelector(".voice-hint")) return;
   const hint = document.createElement("p");
   hint.className = "voice-hint";
-  hint.textContent = lang === "ar" ? "🎙️ يستمع... تكلّم الآن" : "🎙️ Listening... speak now";
+  hint.textContent =
+    lang === "ar" ? "🎙️ يستمع... تكلّم الآن" : "🎙️ Listening... speak now";
   footer.insertBefore(hint, footer.querySelector(".call-hint"));
 }
 
@@ -2690,7 +3575,7 @@ function removeVoiceHint() {
 function toggleVoice() {
   if (!voiceRec) return;
   const micBtn = $("btn-mic");
-  const input  = $("chat-input");
+  const input = $("chat-input");
   if (!micBtn) return;
 
   if (voiceListening) {
@@ -2698,7 +3583,9 @@ function toggleVoice() {
     voiceListening = false;
     micBtn.classList.remove("listening");
     removeVoiceHint();
-    if (input) input.placeholder = lang === "ar" ? "اكتب ردّك..." : "Type your response...";
+    if (input)
+      input.placeholder =
+        lang === "ar" ? "اكتب ردّك..." : "Type your response...";
   } else {
     clearTimeout(voiceAutoSendTimer);
     voiceRec.lang = lang === "ar" ? "ar-EG" : "en-US";
@@ -2728,67 +3615,76 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* Language toggle */
   const btnLang = $("btn-lang");
-  if (btnLang) btnLang.addEventListener("click", () => {
-    lang = lang === "en" ? "ar" : "en";
-    localStorage.setItem("pitchlab_lang", lang);
-    applyLang();
-    renderScenarios();
-    if ($("screen-call").classList.contains("active")) {
-      const h = $("call-hint");
-      if (h) h.textContent =
-        lang === "ar"
-          ? "أجب كما لو كانت هذه مكالمة حقيقية. كن محترفاً."
-          : "Respond as if this is a real phone call. Be professional.";
-    }
-  });
+  if (btnLang)
+    btnLang.addEventListener("click", () => {
+      lang = lang === "en" ? "ar" : "en";
+      localStorage.setItem("pitchlab_lang", lang);
+      applyLang();
+      renderScenarios();
+      if ($("screen-call").classList.contains("active")) {
+        const h = $("call-hint");
+        if (h)
+          h.textContent =
+            lang === "ar"
+              ? "أجب كما لو كانت هذه مكالمة حقيقية. كن محترفاً."
+              : "Respond as if this is a real phone call. Be professional.";
+      }
+    });
 
   /* History panel */
   const btnHistory = $("btn-history");
-  if (btnHistory) btnHistory.addEventListener("click", () => {
-    renderHistory();
-    const panel = $("history-panel");
-    if (panel) panel.hidden = false;
-  });
+  if (btnHistory)
+    btnHistory.addEventListener("click", () => {
+      renderHistory();
+      const panel = $("history-panel");
+      if (panel) panel.hidden = false;
+    });
   const btnHistoryClose = $("btn-history-close");
-  if (btnHistoryClose) btnHistoryClose.addEventListener("click", () => {
-    const panel = $("history-panel");
-    if (panel) panel.hidden = true;
-  });
+  if (btnHistoryClose)
+    btnHistoryClose.addEventListener("click", () => {
+      const panel = $("history-panel");
+      if (panel) panel.hidden = true;
+    });
   const btnClearHistory = $("btn-clear-history");
-  if (btnClearHistory) btnClearHistory.addEventListener("click", () => {
-    localStorage.removeItem(HISTORY_KEY);
-    renderHistory();
-  });
+  if (btnClearHistory)
+    btnClearHistory.addEventListener("click", () => {
+      localStorage.removeItem(HISTORY_KEY);
+      renderHistory();
+    });
 
   /* Briefing back */
   const briefingBack = $("briefing-back");
-  if (briefingBack) briefingBack.addEventListener("click", () => {
-    clearInterval(briefingTimer);
-    showScreen("screen-home");
-  });
+  if (briefingBack)
+    briefingBack.addEventListener("click", () => {
+      clearInterval(briefingTimer);
+      showScreen("screen-home");
+    });
 
   /* Start call now (override countdown) → goes to incoming screen */
   const btnStartCall = $("btn-start-call");
-  if (btnStartCall) btnStartCall.addEventListener("click", () => {
-    clearInterval(briefingTimer);
-    showIncomingCall();
-  });
+  if (btnStartCall)
+    btnStartCall.addEventListener("click", () => {
+      clearInterval(briefingTimer);
+      showIncomingCall();
+    });
 
   /* Incoming call — Answer */
   const btnAnswer = $("btn-answer");
-  if (btnAnswer) btnAnswer.addEventListener("click", () => {
-    clearTimeout(ringTimer);
-    stopRingTone();
-    startCall();
-  });
+  if (btnAnswer)
+    btnAnswer.addEventListener("click", () => {
+      clearTimeout(ringTimer);
+      stopRingTone();
+      startCall();
+    });
 
   /* Incoming call — Decline */
   const btnDecline = $("btn-decline");
-  if (btnDecline) btnDecline.addEventListener("click", () => {
-    clearTimeout(ringTimer);
-    stopRingTone();
-    showScreen("screen-home");
-  });
+  if (btnDecline)
+    btnDecline.addEventListener("click", () => {
+      clearTimeout(ringTimer);
+      stopRingTone();
+      showScreen("screen-home");
+    });
 
   /* Send message */
   const btnSend = $("btn-send");
@@ -2810,22 +3706,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* Live Coach toggle */
   const btnCoachToggle = $("btn-coach-toggle");
-  if (btnCoachToggle) btnCoachToggle.addEventListener("click", () => {
-    const panel = $("call-coach");
-    if (!panel) return;
-    coachOpen = !coachOpen;
-    panel.hidden = !coachOpen;
-    btnCoachToggle.classList.toggle("active", coachOpen);
-    if (coachOpen) initCoach();
-  });
+  if (btnCoachToggle)
+    btnCoachToggle.addEventListener("click", () => {
+      const panel = $("call-coach");
+      if (!panel) return;
+      coachOpen = !coachOpen;
+      panel.hidden = !coachOpen;
+      btnCoachToggle.classList.toggle("active", coachOpen);
+      if (coachOpen) initCoach();
+    });
   const coachClose = $("coach-close");
-  if (coachClose) coachClose.addEventListener("click", () => {
-    const panel  = $("call-coach");
-    const toggle = $("btn-coach-toggle");
-    if (panel)  panel.hidden = true;
-    if (toggle) toggle.classList.remove("active");
-    coachOpen = false;
-  });
+  if (coachClose)
+    coachClose.addEventListener("click", () => {
+      const panel = $("call-coach");
+      const toggle = $("btn-coach-toggle");
+      if (panel) panel.hidden = true;
+      if (toggle) toggle.classList.remove("active");
+      coachOpen = false;
+    });
 
   /* Speed Round toggle */
   const speedCb = $("speed-mode-checkbox");
@@ -2841,39 +3739,75 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* Debrief buttons */
   const btnRetry = $("btn-retry");
-  if (btnRetry) btnRetry.addEventListener("click", () => {
-    if (currentScenario) openBriefing(currentScenario.id);
-    else showScreen("screen-home");
-  });
+  if (btnRetry)
+    btnRetry.addEventListener("click", () => {
+      if (currentScenario) openBriefing(currentScenario.id);
+      else showScreen("screen-home");
+    });
   const btnHome = $("btn-home");
-  if (btnHome) btnHome.addEventListener("click", () => {
-    // If in campaign and more calls remain, advance; otherwise go home
-    if (campaignMode && campaignTrack && campaignScores.length < campaignTrack.scenarioIds.length) {
-      advanceCampaign();
-    } else {
-      campaignMode   = false;
-      campaignScores = [];
-      campaignTrack  = null;
-      renderScenarios();
-      showScreen("screen-home");
-    }
-  });
+  if (btnHome)
+    btnHome.addEventListener("click", () => {
+      // If in campaign and more calls remain, advance; otherwise go home
+      if (
+        campaignMode &&
+        campaignTrack &&
+        campaignScores.length < campaignTrack.scenarioIds.length
+      ) {
+        advanceCampaign();
+      } else {
+        campaignMode = false;
+        campaignScores = [];
+        campaignTrack = null;
+        renderScenarios();
+        showScreen("screen-home");
+      }
+    });
 
   /* Objection library panel */
   const objToggle = $("btn-objections-toggle");
   if (objToggle) objToggle.addEventListener("click", toggleObjections);
   const objClose = $("objections-close");
-  if (objClose) objClose.addEventListener("click", () => {
-    const panel  = $("call-objections");
-    const toggle = $("btn-objections-toggle");
-    if (panel)  panel.hidden = true;
-    if (toggle) toggle.classList.remove("active");
-    objectionOpen = false;
-  });
+  if (objClose)
+    objClose.addEventListener("click", () => {
+      const panel = $("call-objections");
+      const toggle = $("btn-objections-toggle");
+      if (panel) panel.hidden = true;
+      if (toggle) toggle.classList.remove("active");
+      objectionOpen = false;
+    });
 
   /* Campaign track buttons */
-  const cpClassic  = $("cp-classic");
-  if (cpClassic)  cpClassic.addEventListener("click",  () => startCampaign("classic"));
+  const cpClassic = $("cp-classic");
+  if (cpClassic)
+    cpClassic.addEventListener("click", () => startCampaign("classic"));
   const cpGauntlet = $("cp-gauntlet");
-  if (cpGauntlet) cpGauntlet.addEventListener("click", () => startCampaign("gauntlet"));
+  if (cpGauntlet)
+    cpGauntlet.addEventListener("click", () => startCampaign("gauntlet"));
+  const cpLuxury = $("cp-luxury");
+  if (cpLuxury)
+    cpLuxury.addEventListener("click", () => startCampaign("luxury"));
+  const cpHuman = $("cp-human");
+  if (cpHuman) cpHuman.addEventListener("click", () => startCampaign("human"));
+  const cpCoastal = $("cp-coastal");
+  if (cpCoastal)
+    cpCoastal.addEventListener("click", () => startCampaign("coastal"));
+
+  /* Difficulty filter buttons */
+  const diffFilter = $("difficulty-filter");
+  if (diffFilter) {
+    diffFilter.querySelectorAll(".diff-filter-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        activeFilter = btn.dataset.diff;
+        diffFilter
+          .querySelectorAll(".diff-filter-btn")
+          .forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        renderScenarios();
+      });
+    });
+  }
+
+  /* Transcript export */
+  const btnExport = $("btn-export");
+  if (btnExport) btnExport.addEventListener("click", exportTranscript);
 });

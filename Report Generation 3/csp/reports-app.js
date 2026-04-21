@@ -93,7 +93,20 @@ document.addEventListener("click", function (e) {
   } else if (a === "recalc") recalc(+el.dataset.i);
   else if (a === "regenText") regenText(+el.dataset.i);
   else if (a === "regenComments") regenComments(+el.dataset.i);
+  else if (a === "clearPhoto") clearPhoto(+el.dataset.i);
 });
+
+/* ── FILE INPUT: photo upload ── */
+document.addEventListener("change", function (e) {
+  const el = e.target;
+  if (el.dataset.photoFor != null) {
+    const i = +el.dataset.photoFor;
+    const file = el.files[0];
+    handlePhotoUpload(i, file);
+    el.value = "";
+    return;
+  }
+}, true); // capture phase so it runs before the other change listener
 
 /* ── CHANGE DELEGATION for trainee card fields ── */
 document.addEventListener("change", function (e) {
@@ -530,12 +543,6 @@ async function extractFromScreenshots() {
         const arrMatch = cleaned.match(/(\[[\s\S]*\])/);
         if (arrMatch) cleaned = arrMatch[1];
       }
-      console.log(
-        "[OCR] raw response for image",
-        i + 1,
-        ":",
-        cleaned.slice(0, 200),
-      );
       try {
         const parsed = JSON.parse(cleaned);
         const arr = Array.isArray(parsed) ? parsed : [parsed];
@@ -544,12 +551,7 @@ async function extractFromScreenshots() {
             allTrainees.push(t);
         });
       } catch (parseErr) {
-        console.warn(
-          "[OCR] JSON parse failed for image",
-          i + 1,
-          cleaned,
-          parseErr,
-        );
+        console.warn("[OCR] JSON parse failed for image", i + 1);
         // Non-fatal — continue to next image
       }
     }
@@ -1121,8 +1123,6 @@ function parseCardView(text) {
     batch = "Batch " + S.batch;
   let gotAttFromAI = false;
 
-  console.log("[CardParser] fullText preview:", fullText.substring(0, 300));
-
   // ===========================================================
   // PASS 1 — AI summary paragraph (most reliable — clean typed text)
   // Notion AI writes: "Attendance was 8 with no absences. ...
@@ -1135,7 +1135,6 @@ function parseCardView(text) {
     /[Rr]atings?\s*[:\s,]+([\s\S]{10,120}?)(?:\s*\.\s|\s*$)/,
   );
   const ratZone = ratBlockM ? ratBlockM[1] : "";
-  console.log("[CardParser] Ratings zone:", ratZone);
 
   // Score patterns: summary text, then explicit field/value pairs.
   mp = summaryData.mapping;
@@ -1162,9 +1161,6 @@ function parseCardView(text) {
       /present[a-z]*\s*:\s*(\d+\.?\d*)/i,
       /present[a-z.]*[\s:,]+(\d+\.?\d*)(?!\s*%)/i,
     ]);
-  console.log(
-    "[CardParser] Scores → mp:" + mp + " pk:" + pk + " ss:" + ss + " pr:" + pr,
-  );
 
   // 1b. Attendance / Absence from the summary paragraph
   if (summaryData.attendanceDays !== null) {
@@ -1176,15 +1172,6 @@ function parseCardView(text) {
     absent = 0;
     gotAttFromAI = true;
   }
-  console.log(
-    "[CardParser] Attendance → att:" +
-      attendanceDays +
-      " absent:" +
-      absent +
-      " (fromAI:" +
-      gotAttFromAI +
-      ")",
-  );
 
   // 1c. Outcome / comments from the summary paragraph
   rawAssessmentOutcome = summaryData.rawAssessmentOutcome;
@@ -1412,20 +1399,6 @@ function parseCardView(text) {
       }
     }
   }
-  console.log(
-    "[CardParser] Final → name:",
-    name,
-    "mp:",
-    mp,
-    "pk:",
-    pk,
-    "ss:",
-    ss,
-    "pr:",
-    pr,
-    "absent:",
-    absent,
-  );
 
   if (!name || name.length < 2) return null;
   if (mp === null && pk === null && ss === null && pr === null) return null;
@@ -1444,6 +1417,7 @@ function parseCardView(text) {
     company,
     batch,
     overallScore: 0,
+    photo: "",
     rawAssessmentOutcome,
     assessmentResult,
     badgeClass: "b-gray",
@@ -1473,12 +1447,8 @@ function parseOCRText(raw) {
   const cardTrainees = [];
   for (const block of imageBlocks) {
     if (isCardView(block)) {
-      console.log(
-        "[Parser] Detected card view in block, attempting card parser",
-      );
       const t = parseCardView(block);
       if (t) {
-        console.log("[Parser] Card parsed:", t.name);
         cardTrainees.push(t);
       }
     }
@@ -1559,19 +1529,10 @@ function parseOCRText(raw) {
     }
   }
 
-  console.log(
-    "[Parser] Best header line:",
-    bestHeaderIdx,
-    "score:",
-    bestHeaderScore,
-    bestHeaderIdx >= 0 ? lines[bestHeaderIdx] : "none",
-  );
-
   // Determine column order from header if found
   let colOrder = null;
   if (bestHeaderScore >= 2 && bestHeaderIdx >= 0) {
     colOrder = detectColumnOrder(lines[bestHeaderIdx]);
-    console.log("[Parser] Detected column order:", colOrder);
   }
 
   // Parse data lines
@@ -1744,6 +1705,7 @@ function parseDataRow(line, colOrder) {
     company: S.co,
     batch: "Batch " + S.batch,
     overallScore: 0,
+    photo: "",
     rawAssessmentOutcome: "",
     assessmentResult: "Passed",
     badgeClass: "b-gray",
@@ -2026,6 +1988,7 @@ function addTrainee() {
     company: S.co,
     batch: "Batch " + S.batch,
     overallScore: 0,
+    photo: "",
     rawAssessmentOutcome: "",
     assessmentResult: "Passed",
     badgeClass: "b-gray",
@@ -2096,6 +2059,23 @@ function makeCard(t, i) {
             </div>
         </div>
         <div class="tcard-b">
+            <div class="csec"><h4>📷 Trainee Photo</h4>
+                <div class="photo-upload-row">
+                    <div class="photo-thumb-box ${t.photo ? 'has-photo' : ''}">
+                        ${t.photo
+                          ? `<img src="${t.photo}" alt=""><button class="photo-clear" data-action="clearPhoto" data-i="${i}" title="Remove photo">✕</button>`
+                          : '<div class="no-ph"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>No photo</span></div>'}
+                    </div>
+                    <div>
+                        <label class="photo-upload-lbl" for="ph-${i}">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                            ${t.photo ? 'Replace Photo' : 'Upload Photo'}
+                        </label>
+                        <input type="file" id="ph-${i}" accept="image/*" style="display:none" data-photo-for="${i}">
+                        <p class="photo-hint">Portrait photo · Will appear on the report page</p>
+                    </div>
+                </div>
+            </div>
             <div class="csec"><h4>Personal Info</h4>
                 <div class="grid c4">
                     <div class="fld"><label>Name</label><input value="${ee(t.name)}" data-i="${i}" data-field="name"></div>
@@ -2223,6 +2203,39 @@ function regenComments(i) {
   toast("Comments generated!", "ok");
 }
 
+function handlePhotoUpload(i, file) {
+  if (!file) return;
+  if (!file.type.startsWith("image/")) {
+    toast("Only image files are allowed", "err");
+    return;
+  }
+  const r = new FileReader();
+  r.onload = (e) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      const MAX_H = 1400, MAX_W = 1000;
+      let w = img.width, h = img.height;
+      if (h > MAX_H) { w = Math.round(w * MAX_H / h); h = MAX_H; }
+      if (w > MAX_W) { h = Math.round(h * MAX_W / w); w = MAX_W; }
+      canvas.width = w;
+      canvas.height = h;
+      canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+      S.trainees[i].photo = canvas.toDataURL("image/jpeg", 0.93);
+      renderCards();
+      toast("Photo uploaded!", "ok");
+    };
+    img.src = e.target.result;
+  };
+  r.readAsDataURL(file);
+}
+
+function clearPhoto(i) {
+  S.trainees[i].photo = "";
+  renderCards();
+  toast("Photo removed", "info");
+}
+
 // ============================================================
 //  STEP 4 — GENERATE REPORT
 // ============================================================
@@ -2320,7 +2333,7 @@ function mkPage(t) {
   return `<div class="page">
     <div class="report-header"><div class="report-header-logo">${LOGO}</div><div class="report-header-right"><h1>Trainee Performance Report</h1><p>${ee(t.batch)}</p></div></div>
     <div class="report-body">
-        <div class="details-card"><div><h3>Trainee Details</h3><p><span class="label">Name:</span> ${ee(t.name)}</p><p><span class="label">Company:</span> ${ee(t.company)}</p></div>
+        <div class="details-card">${t.photo ? `<div class="report-photo-col"><img src="${t.photo}" alt="${ee(t.name)}"><span class="rph-lbl">${ee(t.name.split(" ")[0])}</span></div>` : ""}<div class="details-card-info"><h3>Trainee Details</h3><p><span class="label">Name:</span> ${ee(t.name)}</p><p><span class="label">Company:</span> ${ee(t.company)}</p><p><span class="label">Batch:</span> ${ee(t.batch)}</p></div>
         <div style="text-align:right"><h3>Overall Performance</h3><div class="score-big ${sc}">${t.overallScore}<span>%</span></div><div class="badge ${t.badgeClass}">${ee(outcomeLabel)}</div></div></div>
         <h3 class="section-title">Overall Assessment</h3><div class="assessment-box"><p>${ee(t.overallAssessment)}</p></div>
         <div class="two-col"><div>
@@ -2414,14 +2427,15 @@ async function dlPDF() {
       txt.textContent = `Rendering page ${i + 1} of ${pages.length}...`;
       bar.style.width = ((i + 1) / pages.length) * 100 + "%";
       const canvas = await html2canvas(pages[i], {
-        scale: 2,
+        scale: 3,
         useCORS: true,
         backgroundColor: "#fff",
         logging: false,
+        imageTimeout: 0,
       });
       if (i > 0) pdf.addPage();
       pdf.addImage(
-        canvas.toDataURL("image/jpeg", 0.95),
+        canvas.toDataURL("image/jpeg", 0.98),
         "JPEG",
         0,
         0,

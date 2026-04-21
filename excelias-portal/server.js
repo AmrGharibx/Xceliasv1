@@ -429,24 +429,31 @@ app.post('/api/gemini', async (req, res) => {
               }
               return { inlineData: { mimeType: mime, data: String(p.inlineData.data || '') } };
             }
-            return { text: String(p && p.text != null ? p.text : '') };
+            return { text: String(p && p.text !== null ? p.text : '') };
           })
         : [{ text: String(m.content || '') }],
     }));
+
+    const maxTokens = (() => {
+      const gc = generationConfig || {};
+      const val = gc.maxOutputTokens;
+      if (typeof val !== 'number' || val < 1 || val > 4096) return 1200;
+      return Math.floor(val);
+    })();
 
     const geminiBody = {
       contents,
       generationConfig: {
         temperature: 0.9,
         topP: 0.95,
-        maxOutputTokens: Math.min(
-          (generationConfig && generationConfig.maxOutputTokens) || 1200,
-          4096
-        ),
+        maxOutputTokens: maxTokens,
       },
     };
     if (systemPrompt) {
-      geminiBody.systemInstruction = { parts: [{ text: String(systemPrompt).slice(0, 8000) }] };
+      if (typeof systemPrompt !== 'string') {
+        return res.status(400).json({ error: 'Invalid systemPrompt' });
+      }
+      geminiBody.systemInstruction = { parts: [{ text: systemPrompt.slice(0, 8000) }] };
     }
 
     // Vision requests require full flash models — lite variants don't support multimodal

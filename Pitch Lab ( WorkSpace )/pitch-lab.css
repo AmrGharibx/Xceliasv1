@@ -1300,6 +1300,9 @@ input:checked ~ .speed-toggle-track .speed-toggle-thumb {
 .call-avatar-wrap {
   position: relative;
   margin-bottom: 0.4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .call-avatar {
@@ -2398,7 +2401,6 @@ input:checked ~ .speed-toggle-track .speed-toggle-thumb {
   color: var(--text);
   white-space: nowrap;
   max-width: 200px;
-  white-space: normal;
   text-align: center;
   opacity: 0;
   pointer-events: none;
@@ -2753,11 +2755,6 @@ body.lang-ar .call-sidebar {
 }
 
 /* ── Avatar waveform animation ── */
-.call-avatar-wrap {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
 
 .avatar-waveform {
   display: none;
@@ -2815,4 +2812,57 @@ body.lang-ar .call-sidebar {
   .avatar-waveform {
     display: none !important;
   }
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   DIFFICULTY FILTER CHIPS
+   ══════════════════════════════════════════════════════════════════════ */
+.difficulty-filter {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  padding: 0 1rem 0.75rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.diff-filter-btn {
+  padding: 0.3rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  letter-spacing: 0.02em;
+}
+
+.diff-filter-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.85);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.diff-filter-btn.active {
+  background: rgba(0, 150, 255, 0.18);
+  color: #60c8ff;
+  border-color: rgba(0, 150, 255, 0.45);
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   MOMENTUM SPARKLINE
+   ══════════════════════════════════════════════════════════════════════ */
+.debrief-sparkline-wrap {
+  margin: 1.5rem 0 0.5rem;
+}
+
+.debrief-sparkline {
+  display: block;
+  width: 100%;
+  height: 90px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }

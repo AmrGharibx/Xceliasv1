@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -25,13 +25,13 @@
     <link rel="manifest" href="/manifest.json" />
     <link rel="apple-touch-icon" href="/icons/icon-192.png" />
 
-    <!-- 🚀 CRITICAL: Preload data.json FIRST (largest resource) -->
+    <!-- ⚡ CRITICAL: Preload data.json FIRST (largest resource) -->
     <link rel="preload" href="/data.json" as="fetch" crossorigin="anonymous" />
 
     <!-- Preload critical JS/CSS -->
-    <link rel="preload" href="/app.js?v=20260325-tourfix8" as="script" />
-    <link rel="preload" href="/styles.css?v=20260325-tourfix8" as="style" />
-    <link rel="stylesheet" href="/styles.css?v=20260325-tourfix8" />
+    <link rel="preload" href="/app.js?v=20260421-arabic" as="script" />
+    <link rel="preload" href="/styles.css?v=20260421-arabic" as="style" />
+    <link rel="stylesheet" href="/styles.css?v=20260421-arabic" />
 
     <!-- Preconnect for Performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -54,7 +54,7 @@
       href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
-    <!-- P5: Font Awesome removed — inline SVG icons used instead (saves ~294KB) -->
+    <!-- P5: Font Awesome removed � inline SVG icons used instead (saves ~294KB) -->
 
     <!-- Leaflet CSS -->
     <link
@@ -99,10 +99,10 @@
     ></script>
     <!-- P5: GSAP loaded only on desktop (noop fallback exists in app.js for mobile) -->
     <script src="website-gsap.js"></script>
-    <!-- P5: ScrollTrigger removed — never used (saves ~42KB) -->
+    <!-- P5: ScrollTrigger removed � never used (saves ~42KB) -->
 
     <!-- Main App - defer to not block -->
-    <script src="app.js?v=20260325-tourfix8" defer></script>
+    <script src="app.js?v=20260421-arabic" defer></script>
 
     <!-- Service Worker Registration -->
     <script src="website-sw.js"></script>
@@ -290,7 +290,7 @@
         }
       }
 
-      /* ── Sidebar logo uses the same full footprint as the other Xcelias pages ── */
+      /* -- Sidebar logo uses the same full footprint as the other Xcelias pages -- */
       .sidebar-header {
         overflow: visible !important;
         padding-top: 14px !important;
@@ -353,7 +353,7 @@
         letter-spacing: 2px;
       }
 
-      /* ── Light Mode Overrides (must be in inline <style> to beat :root specificity) ── */
+      /* -- Light Mode Overrides (must be in inline <style> to beat :root specificity) -- */
       [data-theme*="light"] {
         --avaria-bg: #f8fafc;
         --avaria-gold: #6366f1;
@@ -1126,7 +1126,7 @@
             title="Clear Lifestyle Filter"
             aria-label="Clear Lifestyle Filter"
           >
-            ×
+            �
           </button>
         </div>
       </div>
@@ -1334,7 +1334,7 @@
           onclick="collapseTimeline(event)"
           aria-label="Close Timeline"
         >
-          ×
+          �
         </button>
       </div>
     </div>
@@ -1697,7 +1697,7 @@
                     step="500000"
                     value=""
                   />
-                  <span class="range-separator">—</span>
+                  <span class="range-separator">�</span>
                   <input
                     type="number"
                     id="priceMax"
@@ -1730,7 +1730,7 @@
                       ry="2"
                     ></rect>
                   </svg>
-                  <span data-i18n="areaRange">Area Range (m²)</span>
+                  <span data-i18n="areaRange">Area Range (m�)</span>
                 </label>
                 <div class="adv-filter-range">
                   <input
@@ -1741,7 +1741,7 @@
                     step="10"
                     value=""
                   />
-                  <span class="range-separator">—</span>
+                  <span class="range-separator">�</span>
                   <input
                     type="number"
                     id="areaMax"
@@ -2022,7 +2022,7 @@
               <span class="route-menu-toggle-meta" id="routeMenuToggleMeta"
                 >New</span
               >
-              <span class="route-menu-chevron" aria-hidden="true">▾</span>
+              <span class="route-menu-chevron" aria-hidden="true">▼</span>
             </button>
 
             <div class="route-planner-section" id="routePlannerSection" hidden>
@@ -2100,8 +2100,8 @@
                   <span class="route-input-label">Tour Mode</span>
                   <select id="tourModeSelect" class="route-select">
                     <option value="air">✈️ Air Tour</option>
-                    <option value="drive">🚗 Drive Tour</option>
-                    <option value="smart">🧠 Smart Tour</option>
+                    <option value="drive">🏎️ Drive Tour</option>
+                    <option value="smart">🤖 Smart Tour</option>
                   </select>
                 </label>
               </div>
@@ -2457,6 +2457,196 @@
       </div>
     </div>
 
+    <!-- Road Overlay Panel -->
+    <div
+      id="road-panel"
+      class="road-panel"
+      role="dialog"
+      aria-label="Road Overlay Options"
+      hidden
+    >
+      <div class="road-panel-header">
+        <span class="road-panel-title-text">طبقة الطرق</span>
+        <button
+          class="road-panel-close"
+          onclick="closeRoadPanel()"
+          aria-label="Close roads panel"
+        >
+          ×
+        </button>
+      </div>
+      <!-- Master Toggle -->
+      <label class="road-master-row">
+        <input
+          type="checkbox"
+          id="road-master-toggle"
+          checked
+          onchange="setAllRoadsVisible(this.checked)"
+        />
+        <span>إظهار كل الطرق</span>
+      </label>
+      <!-- Live stats badge -->
+      <div id="road-stats-badge" class="road-stats-badge">
+        لا توجد طرق محملة
+      </div>
+
+      <!-- Road Search -->
+      <div class="road-panel-section">
+        <div class="road-panel-section-title">بحث في الطرق</div>
+        <div class="road-search-row">
+          <input
+            id="road-search-input"
+            class="road-search-input"
+            type="search"
+            placeholder="اسم الطريق أو الرقم…"
+            aria-label="Search road by name or reference"
+            onkeydown="if (event.key === 'Enter') searchRoads(this.value);"
+          />
+          <button
+            class="road-search-btn"
+            id="road-search-go"
+            aria-label="Search roads"
+          >
+            🔍
+          </button>
+        </div>
+      </div>
+
+      <!-- Full Egypt One-Click -->
+      <div class="road-panel-section">
+        <div class="road-panel-section-title">تحميل سريع</div>
+        <button
+          id="road-egypt-full"
+          class="road-egypt-btn"
+          onclick="loadFullEgyptHighways()"
+          aria-label="Load all Egypt major highways instantly"
+        >
+          <div class="road-egypt-top">
+            <span class="road-egypt-icon">🗺</span>
+            <span class="road-egypt-label">طرق مصر السريعة</span>
+          </div>
+          <span class="road-egypt-sub"
+            >كل الطرق السريعة · محفوظة للتحميل الفوري</span
+          >
+        </button>
+      </div>
+      <!-- Zone Loader -->
+      <div class="road-panel-section">
+        <div class="road-panel-section-title">تحميل حسب المنطقة</div>
+        <div class="road-zone-grid">
+          <button
+            class="road-zone-btn"
+            data-zone="north-coast"
+            onclick="loadZoneRoads('north-coast')"
+          >
+            North Coast
+          </button>
+          <button
+            class="road-zone-btn"
+            data-zone="sokhna"
+            onclick="loadZoneRoads('sokhna')"
+          >
+            Ain Sokhna
+          </button>
+          <button
+            class="road-zone-btn"
+            data-zone="gouna"
+            onclick="loadZoneRoads('gouna')"
+          >
+            El Gouna
+          </button>
+          <button
+            class="road-zone-btn"
+            data-zone="new-capital"
+            onclick="loadZoneRoads('new-capital')"
+          >
+            New Capital
+          </button>
+          <button
+            class="road-zone-btn"
+            data-zone="october"
+            onclick="loadZoneRoads('october')"
+          >
+            6th October
+          </button>
+          <button
+            class="road-zone-btn"
+            data-zone="new-cairo"
+            onclick="loadZoneRoads('new-cairo')"
+          >
+            New Cairo
+          </button>
+        </div>
+      </div>
+      <!-- Road Type Filter -->
+      <div class="road-panel-section">
+        <div class="road-panel-section-title">أنواع الطرق</div>
+        <label class="road-type-row">
+          <input
+            type="checkbox"
+            id="road-type-main"
+            checked
+            onchange="setMainRoadsVisible(this.checked)"
+          />
+          <span
+            class="road-type-line"
+            style="
+              background: linear-gradient(
+                90deg,
+                #ff3b3b 0%,
+                #f97316 40%,
+                #667eea 100%
+              );
+            "
+          ></span>
+          <span>طريق سريع · رئيسي · شارع</span>
+        </label>
+        <label class="road-type-row">
+          <input
+            type="checkbox"
+            id="road-type-secondary"
+            checked
+            onchange="setSecondaryRoadsVisible(this.checked)"
+          />
+          <span class="road-type-line road-type-sec-color"></span>
+          <span>شوارع فرعية وسكنية</span>
+        </label>
+      </div>
+
+      <!-- Road Opacity -->
+      <div class="road-panel-section">
+        <div class="road-panel-section-title">
+          الشفافية &nbsp;<span
+            id="road-opacity-value"
+            class="road-opacity-value"
+            >100%</span
+          >
+        </div>
+        <input
+          id="road-opacity-slider"
+          class="road-opacity-slider"
+          type="range"
+          min="0.1"
+          max="1"
+          step="0.05"
+          value="1"
+          aria-label="Road opacity"
+          oninput="setRoadOpacity(this.value)"
+        />
+      </div>
+
+      <button class="road-panel-clear-btn" onclick="clearAllRoads()">
+        مسح كل الطرق
+      </button>
+      <div class="road-panel-footer">
+        <span id="road-cache-size" class="road-cache-size"></span>
+        <span class="road-panel-hint">اضغط <kbd>R</kbd> للتبديل</span>
+      </div>
+    </div>
+
+    <!-- Auto-zone hint toast (positioned fixed, hidden by default) -->
+    <div id="road-zone-hint" class="road-zone-hint" hidden></div>
+
     <div class="map-controls" role="toolbar" aria-label="Map View Controls">
       <div
         class="map-btn active"
@@ -2589,6 +2779,35 @@
           <path
             d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.1.2-2.2.6-3.3.3.9.8 1.8 1.9 2.8z"
           ></path>
+        </svg>
+      </div>
+      <div
+        class="map-btn active"
+        id="btn-roads"
+        title="Road Overlay Options"
+        onclick="toggleRoadPanel()"
+        role="button"
+        tabindex="0"
+        aria-pressed="false"
+        aria-label="Road Overlay Options"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <line x1="8" y1="3" x2="6" y2="21"></line>
+          <line x1="16" y1="3" x2="18" y2="21"></line>
+          <line x1="12" y1="7" x2="12" y2="9"></line>
+          <line x1="12" y1="13" x2="12" y2="15"></line>
+          <line x1="12" y1="19" x2="12" y2="21"></line>
         </svg>
       </div>
       <div
@@ -2801,7 +3020,7 @@
             onclick="closeComparisonModal()"
             aria-label="Close Comparison"
           >
-            ×
+            �
           </button>
         </div>
         <div class="modal-body">
@@ -2970,7 +3189,7 @@
                 <span class="info-label" data-i18n="modalAreas"
                   >Areas / Sizes</span
                 >
-                <div class="info-value" id="modalAreas">70m² - 250m²</div>
+                <div class="info-value" id="modalAreas">70m� - 250m�</div>
               </div>
               <div class="info-section">
                 <span class="info-label" data-i18n="modalPaymentPlan"
@@ -3822,7 +4041,7 @@
             </svg>
           </div>
           <div class="ai-header-info">
-            <h3>RITA ✦ AI Concierge</h3>
+            <h3>RITA ✨ AI Concierge</h3>
             <span class="ai-status"
               ><span class="ai-status-dot"></span>
               <span id="aiStatusText">Ready to help you</span></span
@@ -4074,6 +4293,29 @@
         ><span class="fab-menu-label">Heatmap</span>
       </div>
       <div class="fab-menu-item">
+        <button
+          class="fab-menu-btn active"
+          data-action="roads"
+          aria-label="Road Overlay"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <line x1="8" y1="3" x2="6" y2="21"></line>
+            <line x1="16" y1="3" x2="18" y2="21"></line>
+            <line x1="12" y1="7" x2="12" y2="9"></line>
+            <line x1="12" y1="13" x2="12" y2="15"></line>
+            <line x1="12" y1="19" x2="12" y2="21"></line>
+          </svg></button
+        ><span class="fab-menu-label">Roads</span>
+      </div>
+      <div class="fab-menu-item">
         <button class="fab-menu-btn" data-action="labels" aria-label="Labels">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -4209,7 +4451,7 @@
       </button>
     </nav>
 
-    <!-- ── Firebase (enables online auth) ── -->
+    <!-- -- Firebase (enables online auth) -- -->
     <script
       src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"
       integrity="sha384-AQ3POAMqIhwS81FrUH95ekxqBZHeP5tG2JfEL3+7GuTtfRLWnrRh32UxwzM+//A9"
@@ -4227,7 +4469,7 @@
     ></script>
     <script src="/activities/firebase-config.js"></script>
 
-    <!-- ── Unified Xcelias Auth Module ── -->
+    <!-- -- Unified Xcelias Auth Module -- -->
     <script src="/xcelias-auth.js"></script>
   </body>
 </html>

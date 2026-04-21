@@ -2466,7 +2466,7 @@
       hidden
     >
       <div class="road-panel-header">
-        <span class="road-panel-title-text">طبقة الطرق</span>
+        <span class="road-panel-title-text">🗺 طبقات الخريطة</span>
         <button
           class="road-panel-close"
           onclick="closeRoadPanel()"
@@ -2475,28 +2475,14 @@
           ×
         </button>
       </div>
-      <!-- Master Toggle -->
-      <label class="road-master-row">
-        <input
-          type="checkbox"
-          id="road-master-toggle"
-          checked
-          onchange="setAllRoadsVisible(this.checked)"
-        />
-        <span>إظهار كل الطرق</span>
-      </label>
-      <!-- Live stats badge -->
-      <div id="road-stats-badge" class="road-stats-badge">
-        لا توجد طرق محملة
-      </div>
 
-      <!-- Instant Overlays -->
+      <!-- ── SECTION 1: Instant tile layers (no Overpass) ── -->
       <div class="road-panel-section">
-        <div class="road-panel-section-title">طبقات فورية</div>
+        <div class="road-panel-section-title">⚡ طبقات فورية</div>
         <label class="road-tile-row">
           <span class="road-tile-label">
-            <span class="rtl-icon">⚡</span>
-            <span>طرق فورية <small>(tile)</small></span>
+            <span class="rtl-icon">🛣</span>
+            <span>طرق وأسماء الشوارع <small>tile — فوري</small></span>
           </span>
           <input
             type="checkbox"
@@ -2508,7 +2494,7 @@
         <label class="road-tile-row">
           <span class="road-tile-label">
             <span class="rtl-icon">🏘</span>
-            <span>أحياء ومناطق <small>(OSM)</small></span>
+            <span>أحياء ومناطق <small>OSM — ذكاء المنطقة</small></span>
           </span>
           <input
             type="checkbox"
@@ -2519,9 +2505,28 @@
         </label>
       </div>
 
+      <!-- ── SECTION 2: Vector roads (searchable, coloured) ── -->
+      <div class="road-panel-section">
+        <div class="road-panel-section-title">📍 طرق تفاعلية (قابلة للبحث)</div>
+        <!-- Master Toggle -->
+        <label class="road-master-row">
+          <input
+            type="checkbox"
+            id="road-master-toggle"
+            checked
+            onchange="setAllRoadsVisible(this.checked)"
+          />
+          <span>إظهار الطرق الرئيسية والفرعية</span>
+        </label>
+        <!-- Live stats badge -->
+        <div id="road-stats-badge" class="road-stats-badge">
+          لا توجد طرق محملة
+        </div>
+      </div>
+
       <!-- Road Search -->
       <div class="road-panel-section">
-        <div class="road-panel-section-title">بحث في الطرق</div>
+        <div class="road-panel-section-title">🔍 بحث في الطرق</div>
         <div class="road-search-row">
           <input
             id="road-search-input"
@@ -2543,7 +2548,7 @@
 
       <!-- Full Egypt One-Click -->
       <div class="road-panel-section">
-        <div class="road-panel-section-title">تحميل سريع</div>
+        <div class="road-panel-section-title">📦 تحميل سريع</div>
         <button
           id="road-egypt-full"
           class="road-egypt-btn"
@@ -2561,7 +2566,7 @@
       </div>
       <!-- Zone Loader -->
       <div class="road-panel-section">
-        <div class="road-panel-section-title">تحميل حسب المنطقة</div>
+        <div class="road-panel-section-title">📌 تحميل حسب المنطقة</div>
         <div class="road-zone-grid">
           <button
             class="road-zone-btn"
@@ -2609,7 +2614,7 @@
       </div>
       <!-- Road Type Filter -->
       <div class="road-panel-section">
-        <div class="road-panel-section-title">أنواع الطرق</div>
+        <div class="road-panel-section-title">🔖 تصفية الطرق</div>
         <label class="road-type-row">
           <input
             type="checkbox"
@@ -2638,14 +2643,14 @@
             onchange="setSecondaryRoadsVisible(this.checked)"
           />
           <span class="road-type-line road-type-sec-color"></span>
-          <span>شوارع فرعية وسكنية</span>
+          <span>طرق فرعية ثانوية</span>
         </label>
       </div>
 
       <!-- Road Opacity -->
       <div class="road-panel-section">
         <div class="road-panel-section-title">
-          الشفافية &nbsp;<span
+          🌫 الشفافية &nbsp;<span
             id="road-opacity-value"
             class="road-opacity-value"
             >100%</span

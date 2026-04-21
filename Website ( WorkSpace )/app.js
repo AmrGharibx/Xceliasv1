@@ -2150,8 +2150,7 @@ const SEC_HW = new Set([
   "tertiary",
   "secondary_link",
   "tertiary_link",
-  "residential",
-  "unclassified",
+  // residential & unclassified removed — CartoDB tile overlay covers these
 ]);
 
 // Overpass mirrors — tried in order, first success wins
@@ -2718,8 +2717,7 @@ async function fetchAndDrawRoads(overrideBbox) {
 
   if (overrideBbox) {
     ({ south, west, north, east } = overrideBbox);
-    hwFilter =
-      "motorway|trunk|primary|secondary|tertiary|residential|unclassified";
+    hwFilter = "motorway|trunk|primary|secondary|tertiary";
   } else {
     const zoom = map.getZoom();
     if (zoom < 8) return;
@@ -2730,10 +2728,7 @@ async function fetchAndDrawRoads(overrideBbox) {
     north = Math.min(Math.ceil(b.getNorth() / G) * G, EGYPT_BOUNDS.north);
     east = Math.min(Math.ceil(b.getEast() / G) * G, EGYPT_BOUNDS.east);
     if (south >= north || west >= east) return;
-    hwFilter =
-      zoom >= 11
-        ? "motorway|trunk|primary|secondary|tertiary|residential|unclassified"
-        : "motorway|trunk|primary|secondary|tertiary";
+    hwFilter = "motorway|trunk|primary|secondary|tertiary";
   }
 
   const cacheKey = `${(+south).toFixed(2)},${(+west).toFixed(2)},${(+north).toFixed(2)},${(+east).toFixed(2)}`;
@@ -3098,18 +3093,18 @@ function setRoadTilesVisible(visible) {
 }
 
 // ────────────────────────────────────────────────────────────────────────────
-// PLACES / AREAS OVERLAY — OSM neighborhoods with Xcelias project intelligence
+// PLACES / AREAS OVERLAY — OSM neighborhoods, viewport-based like road system
+// Loads for current viewport on demand, caches by 0.5° bbox cell, no timeout
 // ────────────────────────────────────────────────────────────────────────────
 
 // ── State ──
 let placesLayer = null;
 let _placesVisible = false;
-let _placesLoaded = false;
 let _placesLoading = false;
-const PLACES_CACHE_KEY = "xc_places_v1";
-const PLACES_TTL_MS = 60 * 24 * 60 * 60 * 1000; // 60 days — boundaries rarely change
+const _loadedPlaceBboxes = new Set(); // bbox cells already fetched
+const _addedPlaceIds = new Set();     // feature IDs already in layer (dedup)
 
-/** Flatten polygon/multipolygon geometry to a flat array of [lng,lat] coords */
+/** Flatten any geometry to flat [lng,lat] coordinate array */
 function _flattenCoords(geometry) {
   if (!geometry) return [];
   if (geometry.type === "LineString") return geometry.coordinates;
@@ -3120,7 +3115,7 @@ function _flattenCoords(geometry) {
   return [];
 }
 
-/** Build Arabic-first tooltip for a neighborhood feature */
+/** Arabic-first tooltip — shows project count badge */
 function _buildPlaceTooltip(feature) {
   const p = feature.properties || {};
   const nameAr = p["name:ar"] || "";
@@ -3128,11 +3123,11 @@ function _buildPlaceTooltip(feature) {
   const type = p.place || p.boundary || "منطقة";
   const typeMap = {
     suburb: "حي", neighbourhood: "حي", quarter: "ربع",
-    village: "قرية", town: "مدينة", administrative: "منطقة إدارية",
+    village: "قرية", town: "مدينة", city: "مدينة",
+    administrative: "منطقة إدارية",
   };
   const typeLabel = typeMap[type] || type;
 
-  // Count projects inside this area's bbox (fast approximation)
   let projectCount = 0;
   if (window.projects && feature.geometry) {
     const coords = _flattenCoords(feature.geometry);
@@ -3147,17 +3142,17 @@ function _buildPlaceTooltip(feature) {
     }
   }
   const countBadge = projectCount > 0
-    ? `<div class="place-tt-count">${projectCount} مشروع</div>`
+    ? `<div class="place-tt-count">🏗 ${projectCount} مشروع</div>`
     : "";
   return `<div class="place-tooltip">
     ${nameAr ? `<div class="place-tt-ar">${escHtml(nameAr)}</div>` : ""}
-    ${nameEn ? `<div class="place-tt-en">${escHtml(nameEn)}</div>` : ""}
+    ${nameEn && nameEn !== nameAr ? `<div class="place-tt-en">${escHtml(nameEn)}</div>` : ""}
     <div class="place-tt-type">${escHtml(typeLabel)}</div>
     ${countBadge}
   </div>`;
 }
 
-/** Convert raw Overpass ways to GeoJSON polygon features */
+/** Convert raw Overpass ways → GeoJSON polygon features */
 function overpassPlacesToGeoJson(data) {
   const features = [];
   if (!data || !data.elements) return { type: "FeatureCollection", features };
@@ -3165,7 +3160,7 @@ function overpassPlacesToGeoJson(data) {
     if (el.type !== "way" || !el.geometry || el.geometry.length < 3) continue;
     const coordinates = el.geometry.map((n) => [n.lon, n.lat]);
     if (coordinates[0][0] !== coordinates[coordinates.length - 1][0]) {
-      coordinates.push(coordinates[0]); // close ring
+      coordinates.push(coordinates[0]);
     }
     features.push({
       type: "Feature",
@@ -3176,7 +3171,7 @@ function overpassPlacesToGeoJson(data) {
   return { type: "FeatureCollection", features };
 }
 
-/** Show the Place Intelligence panel for a clicked feature */
+/** Place Intelligence panel — shows projects inside the clicked neighborhood */
 function _showPlacePanel(feature) {
   const p = feature.properties || {};
   const nameAr = p["name:ar"] || p.name || "منطقة";
@@ -3198,13 +3193,17 @@ function _showPlacePanel(feature) {
   const avgPrice = priced.length > 0
     ? priced.reduce((s, proj) => s + parseFloat(proj.minPrice), 0) / priced.length
     : 0;
+  const minP = priced.length > 0 ? Math.min(...priced.map((pr) => parseFloat(pr.minPrice))) : 0;
+  const maxP = priced.length > 0 ? Math.max(...priced.map((pr) => parseFloat(pr.minPrice))) : 0;
 
-  const projectRows = nearProjects.slice(0, 5).map((proj) =>
-    `<div class="place-proj-row">
+  const projectRows = nearProjects.slice(0, 6).map((proj) => {
+    const price = parseFloat(proj.minPrice);
+    const priceStr = price > 0 ? `<span class="place-proj-price">${(price / 1e6).toFixed(1)}M</span>` : "";
+    return `<div class="place-proj-row">
       <span class="place-proj-name">${escHtml(proj.name || "")}</span>
-      <span class="place-proj-dev">${escHtml(proj.dev || "")}</span>
-    </div>`,
-  ).join("");
+      ${priceStr}
+    </div>`;
+  }).join("");
 
   const panel = document.getElementById("place-intel-panel");
   if (!panel) return;
@@ -3212,7 +3211,7 @@ function _showPlacePanel(feature) {
     `<div class="pip-header">
       <div>
         <h3 class="pip-name-ar">${escHtml(nameAr)}</h3>
-        ${nameEn ? `<p class="pip-name-en">${escHtml(nameEn)}</p>` : ""}
+        ${nameEn && nameEn !== nameAr ? `<p class="pip-name-en">${escHtml(nameEn)}</p>` : ""}
       </div>
       <button class="pip-close" onclick="document.getElementById('place-intel-panel').hidden=true">✕</button>
     </div>
@@ -3223,150 +3222,160 @@ function _showPlacePanel(feature) {
       </div>
       ${avgPrice > 0 ? `<div class="pip-stat">
         <span class="pip-stat-num">${(avgPrice / 1e6).toFixed(1)}M</span>
-        <span class="pip-stat-label">متوسط السعر EGP</span>
+        <span class="pip-stat-label">متوسط EGP</span>
+      </div>` : ""}
+      ${minP > 0 && maxP > minP ? `<div class="pip-stat">
+        <span class="pip-stat-num">${(minP / 1e6).toFixed(0)}–${(maxP / 1e6).toFixed(0)}M</span>
+        <span class="pip-stat-label">نطاق الأسعار</span>
       </div>` : ""}
     </div>
     ${nearProjects.length > 0
       ? `<div class="pip-projects">
-          <div class="pip-proj-title">أبرز المشاريع</div>
+          <div class="pip-proj-title">المشاريع في المنطقة</div>
           ${projectRows}
-          ${nearProjects.length > 5 ? `<div class="pip-more">+ ${nearProjects.length - 5} مشاريع أخرى</div>` : ""}
+          ${nearProjects.length > 6 ? `<div class="pip-more">+ ${nearProjects.length - 6} مشاريع أخرى</div>` : ""}
         </div>`
       : `<div class="pip-empty">لا توجد مشاريع مسجلة في هذه المنطقة</div>`
     }`;
   panel.hidden = false;
 }
 
-/** Toggle places layer visibility; respects zoom gate (≥ 9) */
-function setPlacesVisible(visible) {
-  _placesVisible = visible;
-  const cb = document.getElementById("places-toggle");
-  if (cb) cb.checked = visible;
-  if (!placesLayer) return;
-  const zoom = map.getZoom();
-  if (visible && zoom >= 9) {
-    if (!map.hasLayer(placesLayer)) placesLayer.addTo(map);
-  } else {
-    if (map.hasLayer(placesLayer)) map.removeLayer(placesLayer);
-  }
+/** Create the places GeoJSON layer if it doesn't exist yet */
+function _ensurePlacesLayer() {
+  if (placesLayer) return;
+  const renderer = L.canvas({ padding: 0.5, tolerance: 8 });
+  placesLayer = L.geoJSON(null, {
+    renderer,
+    style: {
+      color: "rgba(102, 126, 234, 0.6)",
+      weight: 1.5,
+      fillColor: "rgba(102, 126, 234, 0.06)",
+      fillOpacity: 1,
+      lineCap: "round",
+    },
+    onEachFeature: (feature, layer) => {
+      layer.bindTooltip(_buildPlaceTooltip(feature), {
+        sticky: true,
+        direction: "top",
+        className: "place-name-tooltip",
+        opacity: 0.98,
+      });
+      layer.on("mouseover", function () {
+        this.setStyle({ color: "rgba(102, 126, 234, 1)", fillColor: "rgba(102, 126, 234, 0.18)", weight: 2.5 });
+      });
+      layer.on("mouseout", function () {
+        this.setStyle({ color: "rgba(102, 126, 234, 0.6)", fillColor: "rgba(102, 126, 234, 0.06)", weight: 1.5 });
+      });
+      layer.on("click", (e) => {
+        L.DomEvent.stopPropagation(e);
+        _showPlacePanel(feature);
+      });
+    },
+  });
 }
 
-/** Load OSM neighborhoods + districts for Egypt, with localStorage cache */
-async function loadPlacesLayer() {
-  if (_placesLoaded) { setPlacesVisible(true); return; }
+/** Fetch neighborhood polygons for the current viewport — like fetchAndDrawRoads() */
+async function _fetchAndDrawPlaces() {
+  if (!_placesVisible) return;
+  const zoom = map.getZoom();
+  if (zoom < 9) return;
   if (_placesLoading) return;
+
+  const b = map.getBounds().pad(0.1);
+  const G = 0.5;
+  const s = (Math.max(Math.floor(b.getSouth() / G) * G, 22.0)).toFixed(2);
+  const w = (Math.max(Math.floor(b.getWest() / G) * G, 24.7)).toFixed(2);
+  const n = (Math.min(Math.ceil(b.getNorth() / G) * G, 31.8)).toFixed(2);
+  const e = (Math.min(Math.ceil(b.getEast() / G) * G, 36.9)).toFixed(2);
+  if (parseFloat(s) >= parseFloat(n) || parseFloat(w) >= parseFloat(e)) return;
+
+  const cacheKey = `${s},${w},${n},${e}`;
+  if (_loadedPlaceBboxes.has(cacheKey)) return;
+  _loadedPlaceBboxes.add(cacheKey);
   _placesLoading = true;
 
   const cb = document.getElementById("places-toggle");
-  if (cb) cb.disabled = true;
+  if (cb) cb.indeterminate = true;
 
   try {
-    let features = null;
+    const query = [
+      `[out:json][timeout:25][bbox:${s},${w},${n},${e}];`,
+      `(way["place"~"suburb|neighbourhood|quarter|village|town|city"](${s},${w},${n},${e});`,
+      `way["boundary"="administrative"]["admin_level"~"^(7|8|9|10)$"](${s},${w},${n},${e}););`,
+      `out geom qt;`,
+    ].join("");
 
-    // ── 1. Try localStorage cache ──
-    try {
-      const raw = localStorage.getItem(PLACES_CACHE_KEY);
-      if (raw) {
-        const env = JSON.parse(raw);
-        if (env && env.v === 1 && Date.now() - (env.ts || 0) < PLACES_TTL_MS) {
-          const jsonStr = await _decompressStr(env);
-          const parsed = await _parseJsonWorker(jsonStr);
-          if (Array.isArray(parsed) && parsed.length > 0) features = parsed;
-        }
-      }
-    } catch (_) { features = null; }
+    const response = await _fetchOverpass(query, 25000);
+    const ct = response.headers.get("content-type") || "";
+    if (!ct.includes("json")) throw new Error("Non-JSON from Overpass");
 
-    // ── 2. Fetch from Overpass ──
-    if (!features) {
-      const query = [
-        "[out:json][timeout:30][bbox:22.0,24.7,31.8,36.9];",
-        "(way[\"place\"~\"suburb|neighbourhood|quarter|village|town\"](22.0,24.7,31.8,36.9);",
-        "way[\"boundary\"=\"administrative\"][\"admin_level\"~\"^(8|9|10)$\"](22.0,24.7,31.8,36.9););",
-        "out geom qt;",
-      ].join("");
-      const response = await _fetchOverpass(query, 30000);
-      const ct = response.headers.get("content-type") || "";
-      if (!ct.includes("json")) throw new Error("Overpass returned non-JSON");
-      const data = await _parseJsonWorker(await response.text());
-      const geojson = overpassPlacesToGeoJson(data);
+    const data = await _parseJsonWorker(await response.text());
+    const geojson = overpassPlacesToGeoJson(data);
+    _ensurePlacesLayer();
 
-      // Compact storage — strip all unused tags
-      features = geojson.features.map((f) => ({
-        i: f.properties.id,
-        n: f.properties.name || "",
-        a: f.properties["name:ar"] || "",
-        p: f.properties.place || "",
-        b: f.properties.boundary || "",
-        l: f.properties.admin_level || "",
-        c: f.geometry.coordinates[0],
-      }));
-
-      // Cache with compression
-      try {
-        const compressed = await _compressStr(JSON.stringify(features));
-        localStorage.setItem(PLACES_CACHE_KEY, JSON.stringify({ v: 1, ts: Date.now(), ...compressed }));
-      } catch (_) { /* quota — skip */ }
+    let added = 0;
+    for (const f of geojson.features) {
+      const fid = f.properties.id;
+      if (!fid || _addedPlaceIds.has(fid)) continue;
+      _addedPlaceIds.add(fid);
+      placesLayer.addData(f);
+      added++;
     }
 
-    // ── 3. Build GeoJSON layer ──
-    const renderer = L.canvas({ padding: 0.5, tolerance: 8 });
-    placesLayer = L.geoJSON(null, {
-      renderer,
-      style: {
-        color: "rgba(102, 126, 234, 0.55)",
-        weight: 1.5,
-        fillColor: "rgba(102, 126, 234, 0.04)",
-        fillOpacity: 1,
-        lineCap: "round",
-      },
-      onEachFeature: (feature, layer) => {
-        layer.bindTooltip(_buildPlaceTooltip(feature), {
-          sticky: true,
-          direction: "top",
-          className: "place-name-tooltip",
-          opacity: 0.98,
-        });
-        layer.on("mouseover", function () {
-          this.setStyle({ color: "rgba(102, 126, 234, 0.95)", fillColor: "rgba(102, 126, 234, 0.12)", weight: 2.5 });
-        });
-        layer.on("mouseout", function () {
-          this.setStyle({ color: "rgba(102, 126, 234, 0.55)", fillColor: "rgba(102, 126, 234, 0.04)", weight: 1.5 });
-        });
-        layer.on("click", (e) => {
-          L.DomEvent.stopPropagation(e);
-          _showPlacePanel(feature);
-        });
-      },
-    });
-
-    // Add all features from compact format
-    for (const f of features) {
-      if (!f.c || f.c.length < 3) continue;
-      placesLayer.addData({
-        type: "Feature",
-        properties: { id: f.i, name: f.n, "name:ar": f.a, place: f.p, boundary: f.b, admin_level: f.l },
-        geometry: { type: "Polygon", coordinates: [f.c] },
-      });
+    if (added > 0 && _placesVisible && map.getZoom() >= 9) {
+      if (!map.hasLayer(placesLayer)) placesLayer.addTo(map);
     }
-
-    _placesLoaded = true;
-    _placesLoading = false;
-    if (cb) cb.disabled = false;
-    setPlacesVisible(true);
   } catch (err) {
+    _loadedPlaceBboxes.delete(cacheKey); // allow retry on next pan
+    console.warn("Places fetch failed:", err.message);
+  } finally {
     _placesLoading = false;
-    if (cb) { cb.disabled = false; cb.checked = false; }
-    console.warn("Places layer failed:", err.message);
+    if (cb) cb.indeterminate = false;
   }
 }
 
-// Zoom-gate: auto-show/hide places layer based on zoom level
-map.on("zoomend", () => {
-  if (!_placesVisible || !placesLayer) return;
+let _placesMoveTimer = null;
+function _schedulePlacesRefresh() {
+  if (!_placesVisible) return;
+  clearTimeout(_placesMoveTimer);
+  _placesMoveTimer = setTimeout(_fetchAndDrawPlaces, 500);
+}
+
+/** Toggle places layer on/off and trigger viewport load */
+function setPlacesVisible(visible) {
+  _placesVisible = visible;
+  const cb = document.getElementById("places-toggle");
+  if (cb) { cb.checked = visible; cb.indeterminate = false; }
+  if (!visible) {
+    if (placesLayer && map.hasLayer(placesLayer)) map.removeLayer(placesLayer);
+    return;
+  }
   const zoom = map.getZoom();
-  if (zoom >= 9 && !map.hasLayer(placesLayer)) placesLayer.addTo(map);
-  if (zoom < 9 && map.hasLayer(placesLayer)) map.removeLayer(placesLayer);
+  if (zoom < 9) {
+    notifyRouteMessage("زوم أكثر — الأحياء تظهر من zoom 9", "info");
+    return;
+  }
+  if (placesLayer && !map.hasLayer(placesLayer)) placesLayer.addTo(map);
+  _fetchAndDrawPlaces();
+}
+
+/** Entry point from checkbox: same as setPlacesVisible(true) */
+function loadPlacesLayer() {
+  setPlacesVisible(true);
+}
+
+// Zoom gate + pan trigger
+map.on("zoomend", () => {
+  if (!_placesVisible) return;
+  const zoom = map.getZoom();
+  if (zoom < 9) {
+    if (placesLayer && map.hasLayer(placesLayer)) map.removeLayer(placesLayer);
+  } else {
+    if (placesLayer && !map.hasLayer(placesLayer)) placesLayer.addTo(map);
+    _schedulePlacesRefresh();
+  }
 });
+map.on("moveend", _schedulePlacesRefresh);
 
 // Keyboard shortcut: R toggles road panel
 document.addEventListener(
@@ -6053,13 +6062,12 @@ async function downloadBrochure() {
 
     if (!window.jspdf) {
       try {
+        // No SRI — cdnjs.cloudflare.com is trusted in CSP; SRI hashes would silently block on version changes
         await lazyLoadScript(
           "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js",
-          "sha384-JcnsjUPPylna1s1fvi1u12X5qjY5OL56iySh75FdtrwhO/SWXgMjoVqcKyIIWOLk",
         );
         await lazyLoadScript(
           "https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js",
-          "sha384-fCAW/rDWORTbQxSiB7mOg0QtQ5c+r0f544y6XoKjuVva0nMBlCpNUjiFeG5iMdS3",
         );
       } catch (e) {
         console.error("Failed to load jsPDF:", e);

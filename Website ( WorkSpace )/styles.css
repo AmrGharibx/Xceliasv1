@@ -3490,6 +3490,11 @@ body.modal-open .sidebar-toggle {
   pointer-events: none;
 }
 
+/* Prevent Leaflet canvas from eating clicks when any modal is open */
+body.modal-open #map {
+  pointer-events: none;
+}
+
 .modal-header {
   padding: 1.5rem 2rem;
   background: rgba(0, 0, 0, 0.2); /* Darker header */

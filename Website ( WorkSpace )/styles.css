@@ -7508,7 +7508,7 @@ input:focus-visible {
   background: var(--avaria-gold, #667eea);
 }
 .road-type-sec-color {
-  background: var(--avaria-red, #f093fb);
+  background: #60a5fa;
 }
 
 .road-panel-clear-btn {
@@ -7658,8 +7658,8 @@ input:focus-visible {
   opacity: 0.85;
 }
 .rsb-sec {
-  color: var(--avaria-red, #f093fb);
-  opacity: 0.75;
+  color: #60a5fa;
+  opacity: 0.85;
 }
 
 /* ── Road click popup ── */
@@ -7713,9 +7713,9 @@ input:focus-visible {
   border: 1px solid rgba(102, 126, 234, 0.35);
 }
 .rp-sec {
-  background: rgba(240, 147, 251, 0.15);
-  color: var(--avaria-red, #f093fb);
-  border: 1px solid rgba(240, 147, 251, 0.3);
+  background: rgba(96, 165, 250, 0.15);
+  color: #60a5fa;
+  border: 1px solid rgba(96, 165, 250, 0.3);
 }
 .rp-ref {
   font-size: 0.7rem;

@@ -2087,6 +2087,9 @@ const ROAD_TILE_URL = "https://{s}.basemaps.cartocdn.com/rastertiles/voyager_onl
 let roadTileLayer = null;
 let _roadTilesVisible = false;
 
+// ── Shared Canvas renderer (one renderer for both road layers avoids extra GPU layers) ──
+let _roadCanvasRenderer = null;
+
 // ── Visibility state ──
 let _roadsVisible = true;
 let _showMainRoads = true;
@@ -2124,6 +2127,9 @@ const ZONE_ROAD_BBOXES = {
   "new-capital": { south: 30.0, north: 30.25, west: 31.7, east: 31.95 },
   october: { south: 29.85, north: 30.05, west: 30.85, east: 31.15 },
   "new-cairo": { south: 30.0, north: 30.15, west: 31.35, east: 31.6 },
+  hurghada: { south: 27.1, north: 27.45, west: 33.65, east: 34.1 },
+  "ras-el-hekma": { south: 30.95, north: 31.2, west: 27.4, east: 28.05 },
+  "new-alamein": { south: 30.78, north: 31.02, west: 28.1, east: 28.95 },
 };
 
 // Human-readable zone labels for toast
@@ -2134,6 +2140,9 @@ const ZONE_LABELS = {
   "new-capital": "New Capital",
   october: "6th October",
   "new-cairo": "New Cairo",
+  hurghada: "Hurghada",
+  "ras-el-hekma": "Ras El Hekma",
+  "new-alamein": "New Alamein",
 };
 
 // Highway class sets shared across functions
@@ -2340,17 +2349,20 @@ async function _addFeaturesChunked(features, onProgress, chunkSize = 1500) {
       }
       // ── Populate search index ──
       if (f.n || f.a || f.r) {
-        const lats = f.c.map((pt) => pt[1]);
-        const lngs = f.c.map((pt) => pt[0]);
+        // Use loop instead of spread to avoid stack overflow on long roads
+        let latMin = f.c[0][1], latMax = f.c[0][1];
+        let lngMin = f.c[0][0], lngMax = f.c[0][0];
+        for (let j = 1; j < f.c.length; j++) {
+          const lat = f.c[j][1], lng = f.c[j][0];
+          if (lat < latMin) latMin = lat; else if (lat > latMax) latMax = lat;
+          if (lng < lngMin) lngMin = lng; else if (lng > lngMax) lngMax = lng;
+        }
         _roadSearchIndex.push({
           name: f.n || "",
           nameAr: f.a || "",
           ref: f.r || "",
           highway: f.h,
-          latMin: Math.min(...lats),
-          latMax: Math.max(...lats),
-          lngMin: Math.min(...lngs),
-          lngMax: Math.max(...lngs),
+          latMin, latMax, lngMin, lngMax,
         });
       }
       // ── Populate label store for motorway / trunk ──
@@ -2648,21 +2660,21 @@ function _hwBaseStyle(hw) {
     case "trunk_link":
       return { color: "#f97316", weight: 2.5, opacity: 0.82 };
     case "primary":
-      return { color: "#667eea", weight: 3, opacity: 0.88 };
+      return { color: "#fbbf24", weight: 3, opacity: 0.9 };
     case "primary_link":
-      return { color: "#667eea", weight: 2, opacity: 0.78 };
+      return { color: "#fbbf24", weight: 2, opacity: 0.8 };
     default:
-      return { color: "#667eea", weight: 3, opacity: 0.88 };
+      return { color: "#fbbf24", weight: 3, opacity: 0.9 };
   }
 }
 
 /** Create both GeoJSON layers with Canvas renderer if they don't exist yet */
 function _ensureRoadLayers() {
-  const cs = getComputedStyle(document.documentElement);
-  const redColor = cs.getPropertyValue("--avaria-red").trim() || "#f093fb";
-
-  // ── ONE canvas element replaces thousands of SVG paths ──
-  const renderer = L.canvas({ padding: 0.5, tolerance: 5 });
+  // ── ONE shared canvas element replaces thousands of SVG paths ──
+  if (!_roadCanvasRenderer) {
+    _roadCanvasRenderer = L.canvas({ padding: 0.5, tolerance: 6 });
+  }
+  const renderer = _roadCanvasRenderer;
 
   if (!mainRoadsLayer) {
     mainRoadsLayer = L.geoJSON(null, {
@@ -2702,20 +2714,17 @@ function _ensureRoadLayers() {
   if (!secondaryRoadsLayer) {
     secondaryRoadsLayer = L.geoJSON(null, {
       renderer,
-      style: { color: redColor, weight: 1.5, opacity: 0.7, lineCap: "round" },
+      // Clean slate-blue — distinct from warm main roads, readable on dark basemap
+      style: { color: "#60a5fa", weight: 1.5, opacity: 0.65, lineCap: "round" },
+      // interactive: true but NO mouseover/mouseout — eliminates canvas hit-detection
+      // lag on every mouse move across 400+ secondary features
       interactive: true,
       onEachFeature: (feature, layer) => {
         layer.bindTooltip(buildRoadTooltip(feature), {
           sticky: true,
           direction: "top",
           className: "road-name-tooltip",
-          opacity: 0.95,
-        });
-        layer.on("mouseover", function () {
-          this.setStyle({ weight: 3, opacity: 1 });
-        });
-        layer.on("mouseout", function () {
-          this.setStyle({ weight: 1.5, opacity: 0.7 });
+          opacity: 0.9,
         });
         layer.on("click", (e) => {
           L.DomEvent.stopPropagation(e);
@@ -2793,17 +2802,20 @@ async function fetchAndDrawRoads(overrideBbox) {
       const p = feature.properties;
       if (p.name || p["name:ar"] || p.ref) {
         const coords = feature.geometry.coordinates;
-        const lats = coords.map((c) => c[1]);
-        const lngs = coords.map((c) => c[0]);
+        // Use loop instead of spread to avoid stack overflow on long roads
+        let latMin = coords[0][1], latMax = coords[0][1];
+        let lngMin = coords[0][0], lngMax = coords[0][0];
+        for (let j = 1; j < coords.length; j++) {
+          const lat = coords[j][1], lng = coords[j][0];
+          if (lat < latMin) latMin = lat; else if (lat > latMax) latMax = lat;
+          if (lng < lngMin) lngMin = lng; else if (lng > lngMax) lngMax = lng;
+        }
         _roadSearchIndex.push({
           name: p.name || "",
           nameAr: p["name:ar"] || "",
           ref: p.ref || "",
           highway: hw,
-          latMin: Math.min(...lats),
-          latMax: Math.max(...lats),
-          lngMin: Math.min(...lngs),
-          lngMax: Math.max(...lngs),
+          latMin, latMax, lngMin, lngMax,
         });
       }
       if ((hw === "motorway" || hw === "trunk") && (p.name || p.ref)) {
@@ -3103,10 +3115,10 @@ function setRoadTilesVisible(visible) {
         subdomains: "abcd",
         maxZoom: 22,
         detectRetina: true,
-        opacity: 0.72,
+        opacity: 0.82,
         pane: "overlayPane",
         updateWhenZooming: false,
-        keepBuffer: 3,
+        keepBuffer: 4,
         attribution: "",
       });
     }
@@ -3493,13 +3505,23 @@ function _detectZoneAtView() {
     )
       continue;
     const btn = document.querySelector(`.road-zone-btn[data-zone="${key}"]`);
-    if (
-      btn &&
-      !btn.classList.contains("loaded") &&
-      !btn.classList.contains("loading")
-    ) {
-      _showZoneHint(key, ZONE_LABELS[key] || key);
+    if (!btn || btn.classList.contains("loaded") || btn.classList.contains("loading")) break;
+    // Also skip hint if the viewport bbox was already dispatched to fetchAndDrawRoads.
+    // fetchAndDrawRoads adds its bbox key to _loadedRoadBboxes BEFORE the async fetch,
+    // so checking it here avoids the toast firing on every pan into an already-queued zone.
+    const b = map.getBounds();
+    const G = 0.5;
+    const vs = Math.max(Math.floor(b.getSouth() / G) * G, EGYPT_BOUNDS.south);
+    const vw = Math.max(Math.floor(b.getWest() / G) * G, EGYPT_BOUNDS.west);
+    const vn = Math.min(Math.ceil(b.getNorth() / G) * G, EGYPT_BOUNDS.north);
+    const ve = Math.min(Math.ceil(b.getEast() / G) * G, EGYPT_BOUNDS.east);
+    const ck = `${vs.toFixed(2)},${vw.toFixed(2)},${vn.toFixed(2)},${ve.toFixed(2)}`;
+    if (_loadedRoadBboxes.has(ck)) {
+      // Viewport already loading/loaded — silently mark zone button to suppress future hints
+      btn.classList.add("loaded");
+      break;
     }
+    _showZoneHint(key, ZONE_LABELS[key] || key);
     break;
   }
 }

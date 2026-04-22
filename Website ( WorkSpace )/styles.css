@@ -7896,57 +7896,14 @@ input:focus-visible {
   padding-bottom: 0;
 }
 
-/* ── Road name label divIcon (shown at zoom ≥ 13) ── */
-.road-label-icon {
-  background: none !important;
-  border: none !important;
-  pointer-events: none;
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  gap: 3px;
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6));
+/* ── Color-coded road tooltip borders by highway type ── */
+.rnt-motorway {
+  border-color: rgba(255, 45, 45, 0.55) !important;
+  box-shadow: 0 4px 20px rgba(255, 45, 45, 0.18), 0 8px 24px rgba(0, 0, 0, 0.3) !important;
 }
-.rl-name {
-  font-family: "Montserrat", sans-serif;
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.03em;
-  padding: 2px 6px;
-  border-radius: 10px;
-}
-.road-label-motorway .rl-name {
-  background: rgba(255, 59, 59, 0.82);
-  color: #fff;
-  border: 1px solid rgba(255, 59, 59, 0.4);
-}
-.road-label-trunk .rl-name {
-  background: rgba(249, 115, 22, 0.82);
-  color: #fff;
-  border: 1px solid rgba(249, 115, 22, 0.4);
-}
-.rl-ref {
-  font-size: 0.58rem;
-  font-family: monospace;
-  font-weight: 700;
-  background: rgba(0, 0, 0, 0.45);
-  color: #fff;
-  padding: 1px 4px;
-  border-radius: 4px;
-}
-.rl-speed {
-  font-size: 0.58rem;
-  font-family: monospace;
-  background: rgba(102, 126, 234, 0.6);
-  color: #fff;
-  padding: 1px 4px;
-  border-radius: 4px;
-}
-
-@media (max-width: 768px) {
-  .road-label-icon {
-    display: none;
-  }
+.rnt-trunk {
+  border-color: rgba(249, 115, 22, 0.55) !important;
+  box-shadow: 0 4px 20px rgba(249, 115, 22, 0.18), 0 8px 24px rgba(0, 0, 0, 0.3) !important;
 }
 
 /* ============================================================

@@ -2109,9 +2109,8 @@ let _roadStatsSec = 0;
 let _zoneHintTimer = null;
 const _zoneHintShown = new Set();
 
-// ── Road label layer (DivIcon markers for motorway/trunk at zoom ≥ 13) ──
-let _roadLabelLayer = null;
-const _roadLabelStore = new Map(); // name/ref → { lat, lng, highway, speed }
+// ── Road glow layer (canvas halo painted under motorway/trunk) ──
+let _roadGlowLayer = null;
 
 // ── Road search index ──
 const _roadSearchIndex = []; // { name, nameAr, ref, highway, latMin, latMax, lngMin, lngMax }
@@ -2365,19 +2364,9 @@ async function _addFeaturesChunked(features, onProgress, chunkSize = 1500) {
           latMin, latMax, lngMin, lngMax,
         });
       }
-      // ── Populate label store for motorway / trunk ──
-      if ((f.h === "motorway" || f.h === "trunk") && (f.n || f.r)) {
-        const labelKey = f.n || f.r;
-        if (!_roadLabelStore.has(labelKey)) {
-          const mid = Math.floor(f.c.length / 2);
-          _roadLabelStore.set(labelKey, {
-            lat: f.c[mid][1],
-            lng: f.c[mid][0],
-            highway: f.h,
-            ref: f.r || "",
-            speed: f.s || "",
-          });
-        }
+      // ── Glow halo for motorway / trunk (wide+faint, drawn under main roads) ──
+      if (_roadGlowLayer && (f.h === "motorway" || f.h === "trunk" || f.h === "motorway_link" || f.h === "trunk_link")) {
+        _roadGlowLayer.addData(feature);
       }
     });
     if (onProgress) onProgress(Math.min(i + chunkSize, total), total);
@@ -2407,16 +2396,7 @@ function _updateRoadStats() {
 // ROAD NAME LABELS — DivIcon markers for motorways/trunks at zoom ≥ 13
 // ────────────────────────────────────────────────────────────────────────────
 
-/** Show/hide the road name label layer based on current zoom */
-function _syncRoadLabelVisibility() {
-  const zoom = map.getZoom();
-  if (!_roadLabelLayer) return;
-  if (zoom >= 13 && _roadsVisible && _showMainRoads) {
-    if (!map.hasLayer(_roadLabelLayer)) _roadLabelLayer.addTo(map);
-  } else {
-    if (map.hasLayer(_roadLabelLayer)) map.removeLayer(_roadLabelLayer);
-  }
-}
+
 
 /**
  * Auto show/hide secondaryRoadsLayer at the zoom 14 boundary.
@@ -2431,56 +2411,6 @@ function _syncSecondaryRoadZoom() {
   } else {
     if (map.hasLayer(secondaryRoadsLayer)) map.removeLayer(secondaryRoadsLayer);
   }
-}
-
-/**
- * Build / refresh the road label layer from _roadLabelStore.
- * Safe to call multiple times — uses the store as source of truth.
- */
-// Track last label refresh center to skip trivial pans (< 0.05° ≈ 4 km)
-let _lastLabelRefreshCenter = null;
-
-function _refreshRoadLabels() {
-  if (!_roadLabelStore.size) return;
-  const c = map.getCenter();
-  if (_lastLabelRefreshCenter) {
-    const d = Math.hypot(c.lat - _lastLabelRefreshCenter.lat, c.lng - _lastLabelRefreshCenter.lng);
-    if (d < 0.05) return; // Map barely moved — skip full DOM rebuild
-  }
-  _lastLabelRefreshCenter = { lat: c.lat, lng: c.lng };
-
-  if (!_roadLabelLayer) {
-    _roadLabelLayer = L.layerGroup();
-  }
-  _roadLabelLayer.clearLayers();
-
-  const bounds = map.getBounds().pad(0.15);
-
-  _roadLabelStore.forEach((info, labelName) => {
-    if (!bounds.contains([info.lat, info.lng])) return;
-    const isMotorway = info.highway === "motorway";
-    const displayName =
-      labelName.length > 24 ? labelName.slice(0, 22) + "…" : labelName;
-    const refBadge =
-      info.ref && info.ref !== labelName
-        ? `<span class="rl-ref">${escHtml(info.ref)}</span>`
-        : "";
-    const speedBadge = info.speed
-      ? `<span class="rl-speed">${escHtml(info.speed)}</span>`
-      : "";
-    const icon = L.divIcon({
-      className: isMotorway
-        ? "road-label-icon road-label-motorway"
-        : "road-label-icon road-label-trunk",
-      html: `<span class="rl-name">${escHtml(displayName)}</span>${refBadge}${speedBadge}`,
-      iconAnchor: [0, 0],
-    });
-    L.marker([info.lat, info.lng], { icon, interactive: false }).addTo(
-      _roadLabelLayer,
-    );
-  });
-
-  _syncRoadLabelVisibility();
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -2567,30 +2497,8 @@ function setRoadOpacity(opacity) {
 // DATA PARSING
 // ────────────────────────────────────────────────────────────────────────────
 
-/** "out geom" format — geometry embedded in way elements; single-pass parse */
-function overpassRoadsToGeoJson(data) {
-  const elements = Array.isArray(data && data.elements) ? data.elements : [];
-  const features = [];
-  elements.forEach((element) => {
-    if (element.type !== "way") return;
-    if (!Array.isArray(element.geometry) || element.geometry.length < 2) return;
-    const coordinates = element.geometry
-      .filter((pt) => Number.isFinite(pt.lat) && Number.isFinite(pt.lon))
-      .map((pt) => [pt.lon, pt.lat]);
-    if (coordinates.length < 2) return;
-    features.push({
-      type: "Feature",
-      properties: { ...(element.tags || {}), id: element.id },
-      geometry: { type: "LineString", coordinates },
-    });
-  });
-  return { type: "FeatureCollection", features };
-}
-
-/**
- * Convert OSM highway tag to Egyptian Arabic road type label.
- * Used in both hover tooltip and click popup.
- */
+// ────────────────────────────────────────────────────────────────────────────
+// ROAD OPACITY CONTROL
 function _hwArabicLabel(highway) {
   const map = {
     motorway: "طريق سريع",
@@ -2676,29 +2584,48 @@ function _buildRoadPopup(feature) {
 function _hwBaseStyle(hw) {
   switch (hw) {
     case "motorway":
-      return { color: "#ff3b3b", weight: 5, opacity: 0.92 };
+      return { color: "#ff2d2d", weight: 6, opacity: 0.95 };
     case "motorway_link":
-      return { color: "#ff3b3b", weight: 3.5, opacity: 0.85 };
+      return { color: "#ff2d2d", weight: 4, opacity: 0.88 };
     case "trunk":
-      return { color: "#f97316", weight: 4, opacity: 0.9 };
+      return { color: "#f97316", weight: 5, opacity: 0.92 };
     case "trunk_link":
-      return { color: "#f97316", weight: 2.5, opacity: 0.82 };
+      return { color: "#f97316", weight: 3, opacity: 0.85 };
     case "primary":
-      return { color: "#fbbf24", weight: 3, opacity: 0.9 };
+      return { color: "#fbbf24", weight: 3.5, opacity: 0.9 };
     case "primary_link":
-      return { color: "#fbbf24", weight: 2, opacity: 0.8 };
+      return { color: "#fbbf24", weight: 2.5, opacity: 0.82 };
     default:
-      return { color: "#fbbf24", weight: 3, opacity: 0.9 };
+      return { color: "#fbbf24", weight: 3.5, opacity: 0.9 };
   }
 }
 
-/** Create both GeoJSON layers with Canvas renderer if they don't exist yet */
+/** Create all road GeoJSON layers with shared Canvas renderer if they don't exist */
 function _ensureRoadLayers() {
   // ── ONE shared canvas element replaces thousands of SVG paths ──
   if (!_roadCanvasRenderer) {
     _roadCanvasRenderer = L.canvas({ padding: 0.5, tolerance: 6 });
   }
   const renderer = _roadCanvasRenderer;
+
+  // ── Glow layer — drawn FIRST (underneath) giving motorway/trunk a cartographic halo ──
+  if (!_roadGlowLayer) {
+    _roadGlowLayer = L.geoJSON(null, {
+      renderer,
+      style: (feature) => {
+        const hw = feature?.properties?.highway || "";
+        return {
+          color: hw.startsWith("motorway") ? "#ff2d2d" : "#f97316",
+          weight: hw.startsWith("motorway") ? 20 : 16,
+          opacity: 0.12,
+          lineCap: "round",
+          lineJoin: "round",
+        };
+      },
+      interactive: false, // zero hit-testing overhead on glow layer
+    });
+    if (_roadsVisible && _showMainRoads) _roadGlowLayer.addTo(map);
+  }
 
   if (!mainRoadsLayer) {
     mainRoadsLayer = L.geoJSON(null, {
@@ -2711,12 +2638,19 @@ function _ensureRoadLayers() {
       interactive: true,
       onEachFeature: (feature, layer) => {
         const base = _hwBaseStyle(feature?.properties?.highway || "primary");
+        const hw = feature?.properties?.highway || "";
+        // Color-coded tooltip border by road type
+        const ttClass = hw.startsWith("motorway")
+          ? "road-name-tooltip rnt-motorway"
+          : hw.startsWith("trunk")
+          ? "road-name-tooltip rnt-trunk"
+          : "road-name-tooltip";
         // Lazy tooltip — evaluated only on hover, not at feature-add time.
         // Avoids building 600+ tooltip HTML strings during bulk load.
         layer.bindTooltip(() => buildRoadTooltip(feature), {
           sticky: true,
           direction: "top",
-          className: "road-name-tooltip",
+          className: ttClass,
           opacity: 0.95,
         });
         layer.on("mouseover", function () {
@@ -2795,16 +2729,16 @@ function _markBboxCells(s, w, n, e) {
 async function fetchAndDrawRoads(overrideBbox) {
   if (!_roadsVisible) return;
 
-  let south, west, north, east, hwFilter;
+  let south, west, north, east;
 
   if (overrideBbox) {
     ({ south, west, north, east } = overrideBbox);
-    hwFilter = "motorway|trunk|primary|secondary|tertiary";
   } else {
     const zoom = map.getZoom();
-    // Below zoom 13: CartoDB tile overlay handles road display — no vector load needed.
-    // zoom 8-12 viewport covers huge Egypt areas → Overpass timeouts + retry spam.
-    if (zoom < 13) return;
+    // Below zoom 15: CartoDB tile overlay covers road display — no Overpass needed.
+    // At zoom 15 the viewport is ~7km² → fast Overpass response (< 1 s).
+    // Zone buttons & Egypt highways handle broader area loading.
+    if (zoom < 15) return;
     const b = map.getBounds();
     const G = 0.5;
     south = Math.max(Math.floor(b.getSouth() / G) * G, EGYPT_BOUNDS.south);
@@ -2812,11 +2746,6 @@ async function fetchAndDrawRoads(overrideBbox) {
     north = Math.min(Math.ceil(b.getNorth() / G) * G, EGYPT_BOUNDS.north);
     east = Math.min(Math.ceil(b.getEast() / G) * G, EGYPT_BOUNDS.east);
     if (south >= north || west >= east) return;
-    // Zoom 13-14: major roads only (secondary/tertiary invisible & laggy at city-overview)
-    // Zoom ≥ 15: full detail — secondary/tertiary streets for street-level interaction
-    hwFilter = zoom >= 15
-      ? "motorway|trunk|primary|secondary|tertiary"
-      : "motorway|trunk|primary";
   }
 
   const cacheKey = `${(+south).toFixed(2)},${(+west).toFixed(2)},${(+north).toFixed(2)},${(+east).toFixed(2)}`;
@@ -2827,69 +2756,36 @@ async function fetchAndDrawRoads(overrideBbox) {
     w = (+west).toFixed(2),
     n = (+north).toFixed(2),
     e = (+east).toFixed(2);
-  const query = `[out:json][timeout:20];(way["highway"~"${hwFilter}"](${s},${w},${n},${e}););out geom qt;`;
+  const query = `[out:json][timeout:20];(way["highway"~"motorway|trunk|primary|secondary|tertiary"](${s},${w},${n},${e}););out geom qt;`;
 
   try {
     const response = await _fetchOverpass(query, 20000);
     const ct = response.headers.get("content-type") || "";
     if (!ct.includes("application/json")) throw new Error("Non-JSON response");
     const data = await _parseJsonWorker(await response.text());
-    const geojson = overpassRoadsToGeoJson(data);
+    // Convert Overpass elements → compact format, then use shared chunked renderer.
+    // Eliminates intermediate GeoJSON objects + deduplication + search index all
+    // handled inside _addFeaturesChunked.
+    const features = data.elements
+      .filter((el) => el.type === "way" && el.geometry?.length >= 2)
+      .map((el) => ({
+        i: el.id,
+        h: el.tags?.highway || "",
+        n: el.tags?.name || "",
+        a: el.tags?.["name:ar"] || "",
+        r: el.tags?.ref || "",
+        s: el.tags?.maxspeed || "",
+        c: el.geometry
+          .filter((p) => isFinite(p.lat) && isFinite(p.lon))
+          .map((p) => [p.lon, p.lat]),
+      }))
+      .filter((f) => f.c.length >= 2 && (MAIN_HW.has(f.h) || SEC_HW.has(f.h)));
     _ensureRoadLayers();
-
-    geojson.features.forEach((feature) => {
-      const id = feature.properties.id;
-      if (_addedRoadIds.has(id)) return;
-      _addedRoadIds.add(id);
-      const hw = feature.properties.highway || "";
-      if (MAIN_HW.has(hw)) {
-        mainRoadsLayer.addData(feature);
-        _roadStatsMain++;
-      } else if (SEC_HW.has(hw)) {
-        secondaryRoadsLayer.addData(feature);
-        _roadStatsSec++;
-      }
-      // Search index + label store for direct-add path
-      const p = feature.properties;
-      if (p.name || p["name:ar"] || p.ref) {
-        const coords = feature.geometry.coordinates;
-        // Use loop instead of spread to avoid stack overflow on long roads
-        let latMin = coords[0][1], latMax = coords[0][1];
-        let lngMin = coords[0][0], lngMax = coords[0][0];
-        for (let j = 1; j < coords.length; j++) {
-          const lat = coords[j][1], lng = coords[j][0];
-          if (lat < latMin) latMin = lat; else if (lat > latMax) latMax = lat;
-          if (lng < lngMin) lngMin = lng; else if (lng > lngMax) lngMax = lng;
-        }
-        _roadSearchIndex.push({
-          name: p.name || "",
-          nameAr: p["name:ar"] || "",
-          ref: p.ref || "",
-          highway: hw,
-          latMin, latMax, lngMin, lngMax,
-        });
-      }
-      if ((hw === "motorway" || hw === "trunk") && (p.name || p.ref)) {
-        const labelKey = p.name || p.ref;
-        if (!_roadLabelStore.has(labelKey)) {
-          const coords = feature.geometry.coordinates;
-          const mid = Math.floor(coords.length / 2);
-          _roadLabelStore.set(labelKey, {
-            lat: coords[mid][1],
-            lng: coords[mid][0],
-            highway: hw,
-            ref: p.ref || "",
-            speed: p.maxspeed || "",
-          });
-        }
-      }
-    });
+    await _addFeaturesChunked(features);
     _updateRoadStats();
     // After a zone/area load: mark overlapping 0.5° viewport cells as loaded.
-    // This prevents fetchAndDrawRoads (viewport-triggered) from firing redundant
-    // Overpass re-queries for sub-regions already covered by this zone load.
+    // Prevents redundant Overpass re-queries for sub-regions already covered.
     if (overrideBbox) _markBboxCells(south, west, north, east);
-    if (map.getZoom() >= 13) _refreshRoadLabels();
   } catch (e) {
     _loadedRoadBboxes.delete(cacheKey);
     console.warn("Road overlay unavailable:", e?.message || e);
@@ -2922,6 +2818,8 @@ function setAllRoadsVisible(visible) {
   const masterCb = document.getElementById("road-master-toggle");
   if (masterCb) masterCb.checked = visible;
   if (visible) {
+    if (_roadGlowLayer && _showMainRoads && !map.hasLayer(_roadGlowLayer))
+      _roadGlowLayer.addTo(map);
     if (mainRoadsLayer && _showMainRoads && !map.hasLayer(mainRoadsLayer))
       mainRoadsLayer.addTo(map);
     if (
@@ -2931,8 +2829,9 @@ function setAllRoadsVisible(visible) {
       !map.hasLayer(secondaryRoadsLayer)
     )
       secondaryRoadsLayer.addTo(map);
-    fetchAndDrawRoads();
   } else {
+    if (_roadGlowLayer && map.hasLayer(_roadGlowLayer))
+      map.removeLayer(_roadGlowLayer);
     if (mainRoadsLayer && map.hasLayer(mainRoadsLayer))
       map.removeLayer(mainRoadsLayer);
     if (secondaryRoadsLayer && map.hasLayer(secondaryRoadsLayer))
@@ -2942,11 +2841,12 @@ function setAllRoadsVisible(visible) {
 
 function setMainRoadsVisible(visible) {
   _showMainRoads = visible;
-  if (!mainRoadsLayer) return;
   if (visible && _roadsVisible) {
-    if (!map.hasLayer(mainRoadsLayer)) mainRoadsLayer.addTo(map);
+    if (_roadGlowLayer && !map.hasLayer(_roadGlowLayer)) _roadGlowLayer.addTo(map);
+    if (mainRoadsLayer && !map.hasLayer(mainRoadsLayer)) mainRoadsLayer.addTo(map);
   } else {
-    if (map.hasLayer(mainRoadsLayer)) map.removeLayer(mainRoadsLayer);
+    if (_roadGlowLayer && map.hasLayer(_roadGlowLayer)) map.removeLayer(_roadGlowLayer);
+    if (mainRoadsLayer && map.hasLayer(mainRoadsLayer)) map.removeLayer(mainRoadsLayer);
   }
 }
 
@@ -2963,6 +2863,10 @@ function setSecondaryRoadsVisible(visible) {
 
 /** Remove all road data from map and reset for fresh load */
 function clearAllRoads() {
+  if (_roadGlowLayer) {
+    if (map.hasLayer(_roadGlowLayer)) map.removeLayer(_roadGlowLayer);
+    _roadGlowLayer = null;
+  }
   if (mainRoadsLayer) {
     if (map.hasLayer(mainRoadsLayer)) map.removeLayer(mainRoadsLayer);
     mainRoadsLayer = null;
@@ -2971,14 +2875,9 @@ function clearAllRoads() {
     if (map.hasLayer(secondaryRoadsLayer)) map.removeLayer(secondaryRoadsLayer);
     secondaryRoadsLayer = null;
   }
-  if (_roadLabelLayer) {
-    if (map.hasLayer(_roadLabelLayer)) map.removeLayer(_roadLabelLayer);
-    _roadLabelLayer = null;
-  }
   _loadedRoadBboxes.clear();
   _addedRoadIds.clear();
   _roadSearchIndex.length = 0;
-  _roadLabelStore.clear();
   _roadStatsMain = 0;
   _roadStatsSec = 0;
   _egyptHighwaysLoaded = false;
@@ -3068,18 +2967,21 @@ async function loadFullEgyptHighways() {
 
       if (sub) sub.textContent = "جاري تحليل البيانات…";
       const data = await _parseJsonWorker(await response.text());
-      const geojson = overpassRoadsToGeoJson(data);
-
-      // Compact serialisation — strip unused OSM tags, store only what we display
-      features = (geojson.features || []).map((f) => ({
-        i: f.properties.id,
-        h: f.properties.highway || "",
-        n: f.properties.name || "",
-        a: f.properties["name:ar"] || "",
-        r: f.properties.ref || "",
-        s: f.properties.maxspeed || "",
-        c: f.geometry.coordinates,
-      }));
+      // Direct compact conversion — bypasses intermediate GeoJSON objects entirely
+      features = data.elements
+        .filter((el) => el.type === "way" && el.geometry?.length >= 2)
+        .map((el) => ({
+          i: el.id,
+          h: el.tags?.highway || "",
+          n: el.tags?.name || "",
+          a: el.tags?.["name:ar"] || "",
+          r: el.tags?.ref || "",
+          s: el.tags?.maxspeed || "",
+          c: el.geometry
+            .filter((p) => isFinite(p.lat) && isFinite(p.lon))
+            .map((p) => [p.lon, p.lat]),
+        }))
+        .filter((f) => f.c.length >= 2);
 
       // ── Persist with deflate-raw compression + TTL ──
       try {
@@ -3112,7 +3014,6 @@ async function loadFullEgyptHighways() {
         ? "من الكاش (فوري)"
         : "محفوظ — التحميل الجاي فوري";
     _updateRoadStats();
-    if (map.getZoom() >= 13) _refreshRoadLabels();
   } catch (err) {
     _egyptHighwaysLoading = false;
     if (btn) btn.classList.remove("loading");
@@ -3595,23 +3496,7 @@ const loadRoads = () => {
 };
 
 map.on("moveend", loadRoads);
-map.on("zoomend", loadRoads);
-// Sync label visibility and refresh label positions on zoom/move
-map.on("zoomend", _syncRoadLabelVisibility);
 map.on("zoomend", _syncSecondaryRoadZoom);
-let _labelRefreshTimer = null;
-map.on("moveend", () => {
-  if (map.getZoom() >= 13 && _roadsVisible) {
-    clearTimeout(_labelRefreshTimer);
-    _labelRefreshTimer = setTimeout(() => {
-      if (typeof requestIdleCallback === "function") {
-        requestIdleCallback(() => _refreshRoadLabels(), { timeout: 500 });
-      } else {
-        _refreshRoadLabels();
-      }
-    }, 400);
-  }
-});
 document.addEventListener("touchstart", loadRoads, {
   passive: true,
   once: true,

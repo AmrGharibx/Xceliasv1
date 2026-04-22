@@ -3326,19 +3326,43 @@ async function _fetchAndDrawPlaces() {
   if (cb) cb.indeterminate = true;
 
   try {
-    const query = [
-      `[out:json][timeout:25][bbox:${s},${w},${n},${e}];`,
-      `(way["place"~"suburb|neighbourhood|quarter|village|town|city"](${s},${w},${n},${e});`,
-      `way["boundary"="administrative"]["admin_level"~"^(7|8|9|10)$"](${s},${w},${n},${e}););`,
-      `out geom qt;`,
-    ].join("");
+    let geojson;
 
-    const response = await _fetchOverpass(query, 25000);
-    const ct = response.headers.get("content-type") || "";
-    if (!ct.includes("json")) throw new Error("Non-JSON from Overpass");
+    // Production: load pre-baked static GeoJSON; filter to current viewport
+    const isLocalhost = ["localhost", "127.0.0.1"].includes(window.location.hostname);
+    if (!isLocalhost) {
+      if (!window._placesStaticCache) {
+        const r = await fetch("/website/data/places.geojson");
+        if (!r.ok) throw new Error(`Static places fetch: HTTP ${r.status}`);
+        window._placesStaticCache = await r.json();
+      }
+      const all = window._placesStaticCache.features;
+      const sN = parseFloat(n), sS = parseFloat(s), sE = parseFloat(e), sW = parseFloat(w);
+      const filtered = all.filter((f) => {
+        if (!f.geometry?.coordinates?.[0]) return false;
+        // Quick centroid check — keep if centroid is inside bbox
+        const ring = f.geometry.coordinates[0];
+        let lat = 0, lng = 0;
+        for (const [lo, la] of ring) { lng += lo; lat += la; }
+        lat /= ring.length; lng /= ring.length;
+        return lat >= sS && lat <= sN && lng >= sW && lng <= sE;
+      });
+      geojson = { type: "FeatureCollection", features: filtered };
+    } else {
+      const query = [
+        `[out:json][timeout:25][bbox:${s},${w},${n},${e}];`,
+        `(way["place"~"suburb|neighbourhood|quarter|village|town|city"](${s},${w},${n},${e});`,
+        `way["boundary"="administrative"]["admin_level"~"^(7|8|9|10)$"](${s},${w},${n},${e}););`,
+        `out geom qt;`,
+      ].join("");
 
-    const data = await _parseJsonWorker(await response.text());
-    const geojson = overpassPlacesToGeoJson(data);
+      const response = await _fetchOverpass(query, 25000);
+      const ct = response.headers.get("content-type") || "";
+      if (!ct.includes("json")) throw new Error("Non-JSON from Overpass");
+
+      const data = await _parseJsonWorker(await response.text());
+      geojson = overpassPlacesToGeoJson(data);
+    }
     _ensurePlacesLayer();
 
     let added = 0;
@@ -6681,7 +6705,7 @@ async function openModal(proj) {
           nextEl: ".swiper-button-next",
           prevEl: ".swiper-button-prev",
         },
-        loop: true,
+        loop: images.length > 1,
       });
     } // end of else (window.Swiper loaded)
   } else {

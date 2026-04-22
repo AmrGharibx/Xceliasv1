@@ -361,6 +361,9 @@ for (const f of webFiles) {
 // Copy icons/
 const iconsSrc = path.join(webSrc, "icons");
 if (fs.existsSync(iconsSrc)) copyDir(iconsSrc, path.join(webDest, "icons"));
+// Copy data/ (pre-baked GeoJSON — places.geojson for production Overpass fallback)
+const dataSrc = path.join(webSrc, "data");
+if (fs.existsSync(dataSrc)) copyDir(dataSrc, path.join(webDest, "data"));
 
 // Add <base> tag + rewrite paths for Website
 const webHtml = path.join(webDest, "index.html");

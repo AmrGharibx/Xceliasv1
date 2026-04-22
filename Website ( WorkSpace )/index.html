@@ -2476,6 +2476,48 @@
         </button>
       </div>
 
+      <div class="road-panel-section road-view-section">
+        <div class="road-panel-section-title">🎛 أوضاع العرض</div>
+        <div class="road-view-grid">
+          <button
+            class="road-view-btn active"
+            type="button"
+            data-layer="street"
+            aria-pressed="true"
+          >
+            <strong>Xcelias Dark</strong>
+            <small>الوضع الحالي · داكن + أسماء طرق فورية</small>
+          </button>
+          <button
+            class="road-view-btn"
+            type="button"
+            data-layer="wiki"
+            aria-pressed="false"
+          >
+            <strong>Wiki View</strong>
+            <small>Wikimapia-style · طرق + أسماء + مناطق</small>
+          </button>
+          <button
+            class="road-view-btn"
+            type="button"
+            data-layer="satellite"
+            aria-pressed="false"
+          >
+            <strong>Satellite</strong>
+            <small>صور أرضية واضحة للاستكشاف</small>
+          </button>
+          <button
+            class="road-view-btn"
+            type="button"
+            data-layer="hybrid"
+            aria-pressed="false"
+          >
+            <strong>Hybrid</strong>
+            <small>صورة + تسميات للرجوع السريع</small>
+          </button>
+        </div>
+      </div>
+
       <!-- ── SECTION 1: Instant tile layers (no Overpass) ── -->
       <div class="road-panel-section">
         <div class="road-panel-section-title">⚡ طبقات فورية</div>
@@ -2706,6 +2748,7 @@
       <div
         class="map-btn active"
         id="btn-street"
+        data-layer="street"
         title="Street View"
         onclick="switchMapLayer('street')"
         role="button"
@@ -2733,7 +2776,36 @@
       </div>
       <div
         class="map-btn"
+        id="btn-wiki"
+        data-layer="wiki"
+        title="Wikimapia Style View"
+        onclick="switchMapLayer('wiki')"
+        role="button"
+        tabindex="0"
+        aria-pressed="false"
+        aria-label="Wikimapia Style View"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M3 6l7-3 4 2 7-3v16l-7 3-4-2-7 3z"></path>
+          <circle cx="14" cy="10" r="2.5"></circle>
+          <path d="M14 12.5v3"></path>
+        </svg>
+      </div>
+      <div
+        class="map-btn"
         id="btn-satellite"
+        data-layer="satellite"
         title="Satellite View"
         onclick="switchMapLayer('satellite')"
         role="button"
@@ -2763,6 +2835,7 @@
       <div
         class="map-btn"
         id="btn-hybrid"
+        data-layer="hybrid"
         title="Hybrid View"
         onclick="switchMapLayer('hybrid')"
         role="button"
@@ -4266,6 +4339,27 @@
             <line x1="16" y1="6" x2="16" y2="22"></line>
           </svg></button
         ><span class="fab-menu-label">Street</span>
+      </div>
+      <div class="fab-menu-item">
+        <button
+          class="fab-menu-btn"
+          data-layer="wiki"
+          aria-label="Wikimapia Style View"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M3 6l7-3 4 2 7-3v16l-7 3-4-2-7 3z"></path>
+            <circle cx="14" cy="10" r="2.5"></circle>
+            <path d="M14 12.5v3"></path>
+          </svg></button
+        ><span class="fab-menu-label">Wiki</span>
       </div>
       <div class="fab-menu-item">
         <button

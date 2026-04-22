@@ -1797,6 +1797,17 @@ const darkTiles =
   "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
 const lightTiles =
   "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
+const wikiTiles =
+  "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png";
+
+const MAP_VIEW_STORAGE_KEY = "xc_map_view_mode";
+const MAP_VIEW_DEFAULTS = {
+  street: { roadTiles: true, places: false },
+  wiki: { roadTiles: false, places: true },
+  satellite: { roadTiles: false, places: false },
+  hybrid: { roadTiles: false, places: false },
+};
+let currentMapLayer = _readStoredMapLayer();
 
 // --- 4. MAP LAYERS (Moved up for initialization) ---
 const layers = {
@@ -1820,6 +1831,16 @@ const layers = {
       crossOrigin: "anonymous",
     },
   ),
+  wiki: L.tileLayer.cached(wikiTiles, {
+    subdomains: "abcd",
+    attribution: "Tiles &copy; CARTO",
+    maxZoom: 22,
+    detectRetina: true,
+    className: "high-quality-tiles",
+    keepBuffer: 4,
+    updateWhenZooming: false,
+    crossOrigin: "anonymous",
+  }),
   hybrid: L.layerGroup([
     L.tileLayer.cached(
       "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
@@ -1843,8 +1864,8 @@ const layers = {
   ]),
 };
 
-// Initialize with Street layer
-layers.street.addTo(map);
+// Initialize with the previously selected map mode
+(layers[currentMapLayer] || layers.street).addTo(map);
 
 let hasCompletedInitialLoad = false;
 
@@ -1866,8 +1887,11 @@ function completeInitialLoad() {
 map.whenReady(() => {
   updateLoadingStatus("Map ready. Rendering projects...");
   completeInitialLoad();
-  // Auto-enable instant road tiles on first load — visible within 300ms
-  setTimeout(() => setRoadTilesVisible(true), 600);
+  // Re-apply mode defaults after map boot so overlays match the selected view.
+  setTimeout(
+    () => _applyMapLayerDefaults(currentMapLayer, { skipPersist: true, silentPlaces: true }),
+    600,
+  );
 });
 
 // Hard fallback so the UI never stays trapped behind the loading overlay.
@@ -3364,7 +3388,7 @@ function _schedulePlacesRefresh() {
 }
 
 /** Toggle places layer on/off and trigger viewport load */
-function setPlacesVisible(visible) {
+function setPlacesVisible(visible, options = {}) {
   _placesVisible = visible;
   const cb = document.getElementById("places-toggle");
   if (cb) { cb.checked = visible; cb.indeterminate = false; }
@@ -3374,7 +3398,9 @@ function setPlacesVisible(visible) {
   }
   const zoom = map.getZoom();
   if (zoom < 9) {
-    notifyRouteMessage("زوم أكثر — الأحياء تظهر من zoom 9", "info");
+    if (!options.silent) {
+      notifyRouteMessage("زوم أكثر — الأحياء تظهر من zoom 9", "info");
+    }
     return;
   }
   if (placesLayer && !map.hasLayer(placesLayer)) placesLayer.addTo(map);
@@ -3423,6 +3449,12 @@ document.addEventListener(
 document.addEventListener(
   "click",
   (e) => {
+    const viewBtn = e.target.closest(".road-view-btn[data-layer]");
+    if (viewBtn) {
+      switchMapLayer(viewBtn.dataset.layer);
+      return;
+    }
+
     if (e.target.closest("#road-search-go")) {
       const input = document.getElementById("road-search-input");
       if (input) searchRoads(input.value);
@@ -4093,23 +4125,67 @@ initSearchWorker();
 // --- 4. MAP LAYERS ---
 // layers object is defined above in initialization section
 
+function _readStoredMapLayer() {
+  try {
+    const stored = localStorage.getItem(MAP_VIEW_STORAGE_KEY);
+    return MAP_VIEW_DEFAULTS[stored] ? stored : "street";
+  } catch (_) {
+    return "street";
+  }
+}
+
+function _syncMapLayerButtons(layerName) {
+  document.querySelectorAll(".map-btn[id^='btn-']").forEach((btn) => {
+    const mode = btn.dataset.layer;
+    if (!mode) return;
+    const active = mode === layerName;
+    btn.classList.toggle("active", active);
+    btn.setAttribute("aria-pressed", String(active));
+  });
+
+  document.querySelectorAll(".fab-menu-btn[data-layer]").forEach((btn) => {
+    btn.classList.toggle("active", btn.dataset.layer === layerName);
+  });
+
+  document.querySelectorAll(".road-view-btn[data-layer]").forEach((btn) => {
+    const active = btn.dataset.layer === layerName;
+    btn.classList.toggle("active", active);
+    btn.setAttribute("aria-pressed", String(active));
+  });
+}
+
+function _applyMapLayerDefaults(layerName, options = {}) {
+  const mode = MAP_VIEW_DEFAULTS[layerName] ? layerName : "street";
+  const defaults = MAP_VIEW_DEFAULTS[mode];
+
+  currentMapLayer = mode;
+  _syncMapLayerButtons(mode);
+  setRoadTilesVisible(defaults.roadTiles);
+  setPlacesVisible(defaults.places, { silent: !!options.silentPlaces });
+
+  if (!options.skipPersist) {
+    try {
+      localStorage.setItem(MAP_VIEW_STORAGE_KEY, mode);
+    } catch (_) {
+      /* ignore storage failures */
+    }
+  }
+}
+
 function switchMapLayer(layerName) {
+  const mode = MAP_VIEW_DEFAULTS[layerName] ? layerName : "street";
+
   // Remove all layers
   Object.values(layers).forEach((layer) => {
     if (map && map.hasLayer(layer)) map.removeLayer(layer);
   });
 
   // Add selected layer
-  if (layers[layerName] && map) {
-    layers[layerName].addTo(map);
+  if (layers[mode] && map) {
+    layers[mode].addTo(map);
   }
 
-  // Update buttons
-  document
-    .querySelectorAll(".map-btn")
-    .forEach((btn) => btn.classList.remove("active"));
-  const activeBtn = document.getElementById(`btn-${layerName}`);
-  if (activeBtn) activeBtn.classList.add("active");
+  _applyMapLayerDefaults(mode, { silentPlaces: true });
 }
 
 // --- 5. RENDER & SEARCH LOGIC ---

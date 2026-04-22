@@ -23,7 +23,7 @@ module.exports.config = {
 
 async function tryOverpass(query, mirror) {
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 8000); // 8 s per mirror (stay under Vercel 60s limit)
+  const timer = setTimeout(() => controller.abort(), 5000); // 5 s per mirror — 5 mirrors × 5 s = 25 s max; fits Vercel Pro (60 s) timeout
   try {
     const res = await fetch(mirror, {
       method: "POST",

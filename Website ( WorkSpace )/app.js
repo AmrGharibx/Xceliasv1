@@ -2419,11 +2419,35 @@ function _syncRoadLabelVisibility() {
 }
 
 /**
+ * Auto show/hide secondaryRoadsLayer at the zoom 14 boundary.
+ * Below 14: CartoDB tile overlay covers secondary streets visually.
+ * Keeping 400+ secondary features on canvas at zoom < 14 wastes GPU with zero user benefit.
+ */
+function _syncSecondaryRoadZoom() {
+  if (!secondaryRoadsLayer) return;
+  const shouldShow = map.getZoom() >= 14 && _roadsVisible && _showSecondaryRoads;
+  if (shouldShow) {
+    if (!map.hasLayer(secondaryRoadsLayer)) secondaryRoadsLayer.addTo(map);
+  } else {
+    if (map.hasLayer(secondaryRoadsLayer)) map.removeLayer(secondaryRoadsLayer);
+  }
+}
+
+/**
  * Build / refresh the road label layer from _roadLabelStore.
  * Safe to call multiple times — uses the store as source of truth.
  */
+// Track last label refresh center to skip trivial pans (< 0.05° ≈ 4 km)
+let _lastLabelRefreshCenter = null;
+
 function _refreshRoadLabels() {
   if (!_roadLabelStore.size) return;
+  const c = map.getCenter();
+  if (_lastLabelRefreshCenter) {
+    const d = Math.hypot(c.lat - _lastLabelRefreshCenter.lat, c.lng - _lastLabelRefreshCenter.lng);
+    if (d < 0.05) return; // Map barely moved — skip full DOM rebuild
+  }
+  _lastLabelRefreshCenter = { lat: c.lat, lng: c.lng };
 
   if (!_roadLabelLayer) {
     _roadLabelLayer = L.layerGroup();
@@ -2687,7 +2711,9 @@ function _ensureRoadLayers() {
       interactive: true,
       onEachFeature: (feature, layer) => {
         const base = _hwBaseStyle(feature?.properties?.highway || "primary");
-        layer.bindTooltip(buildRoadTooltip(feature), {
+        // Lazy tooltip — evaluated only on hover, not at feature-add time.
+        // Avoids building 600+ tooltip HTML strings during bulk load.
+        layer.bindTooltip(() => buildRoadTooltip(feature), {
           sticky: true,
           direction: "top",
           className: "road-name-tooltip",
@@ -2720,7 +2746,8 @@ function _ensureRoadLayers() {
       // lag on every mouse move across 400+ secondary features
       interactive: true,
       onEachFeature: (feature, layer) => {
-        layer.bindTooltip(buildRoadTooltip(feature), {
+        // Lazy tooltip — built on hover only, not at load time
+        layer.bindTooltip(() => buildRoadTooltip(feature), {
           sticky: true,
           direction: "top",
           className: "road-name-tooltip",
@@ -2735,13 +2762,31 @@ function _ensureRoadLayers() {
         });
       },
     });
-    if (_roadsVisible && _showSecondaryRoads) secondaryRoadsLayer.addTo(map);
+    // Secondary roads only at zoom ≥ 14 — CartoDB tiles cover them visually below that
+    if (_roadsVisible && _showSecondaryRoads && map.getZoom() >= 14) secondaryRoadsLayer.addTo(map);
   }
 }
 
 // ────────────────────────────────────────────────────────────────────────────
 // ROAD FETCHING & ZONE LOADING
 // ────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Mark all 0.5°×0.5° viewport-grid cells that overlap (s,w,n,e) as loaded.
+ * After a zone button load, this prevents fetchAndDrawRoads (viewport-triggered)
+ * from firing redundant Overpass requests for sub-cells of the already-loaded zone.
+ * Data is already deduped by _addedRoadIds — this eliminates the wasted network calls.
+ */
+function _markBboxCells(s, w, n, e) {
+  const G = 0.5;
+  for (let lat = Math.floor(s / G) * G; lat < n + G * 0.01; lat += G) {
+    for (let lng = Math.floor(w / G) * G; lng < e + G * 0.01; lng += G) {
+      _loadedRoadBboxes.add(
+        `${lat.toFixed(2)},${lng.toFixed(2)},${(lat + G).toFixed(2)},${(lng + G).toFixed(2)}`
+      );
+    }
+  }
+}
 
 /**
  * Fetch and draw roads for a bbox.
@@ -2757,7 +2802,9 @@ async function fetchAndDrawRoads(overrideBbox) {
     hwFilter = "motorway|trunk|primary|secondary|tertiary";
   } else {
     const zoom = map.getZoom();
-    if (zoom < 8) return;
+    // Below zoom 13: CartoDB tile overlay handles road display — no vector load needed.
+    // zoom 8-12 viewport covers huge Egypt areas → Overpass timeouts + retry spam.
+    if (zoom < 13) return;
     const b = map.getBounds();
     const G = 0.5;
     south = Math.max(Math.floor(b.getSouth() / G) * G, EGYPT_BOUNDS.south);
@@ -2765,7 +2812,11 @@ async function fetchAndDrawRoads(overrideBbox) {
     north = Math.min(Math.ceil(b.getNorth() / G) * G, EGYPT_BOUNDS.north);
     east = Math.min(Math.ceil(b.getEast() / G) * G, EGYPT_BOUNDS.east);
     if (south >= north || west >= east) return;
-    hwFilter = "motorway|trunk|primary|secondary|tertiary";
+    // Zoom 13-14: major roads only (secondary/tertiary invisible & laggy at city-overview)
+    // Zoom ≥ 15: full detail — secondary/tertiary streets for street-level interaction
+    hwFilter = zoom >= 15
+      ? "motorway|trunk|primary|secondary|tertiary"
+      : "motorway|trunk|primary";
   }
 
   const cacheKey = `${(+south).toFixed(2)},${(+west).toFixed(2)},${(+north).toFixed(2)},${(+east).toFixed(2)}`;
@@ -2834,6 +2885,10 @@ async function fetchAndDrawRoads(overrideBbox) {
       }
     });
     _updateRoadStats();
+    // After a zone/area load: mark overlapping 0.5° viewport cells as loaded.
+    // This prevents fetchAndDrawRoads (viewport-triggered) from firing redundant
+    // Overpass re-queries for sub-regions already covered by this zone load.
+    if (overrideBbox) _markBboxCells(south, west, north, east);
     if (map.getZoom() >= 13) _refreshRoadLabels();
   } catch (e) {
     _loadedRoadBboxes.delete(cacheKey);
@@ -2872,6 +2927,7 @@ function setAllRoadsVisible(visible) {
     if (
       secondaryRoadsLayer &&
       _showSecondaryRoads &&
+      map.getZoom() >= 14 &&
       !map.hasLayer(secondaryRoadsLayer)
     )
       secondaryRoadsLayer.addTo(map);
@@ -2897,7 +2953,8 @@ function setMainRoadsVisible(visible) {
 function setSecondaryRoadsVisible(visible) {
   _showSecondaryRoads = visible;
   if (!secondaryRoadsLayer) return;
-  if (visible && _roadsVisible) {
+  // Respect zoom gate — secondary only at zoom ≥ 14
+  if (visible && _roadsVisible && map.getZoom() >= 14) {
     if (!map.hasLayer(secondaryRoadsLayer)) secondaryRoadsLayer.addTo(map);
   } else {
     if (map.hasLayer(secondaryRoadsLayer)) map.removeLayer(secondaryRoadsLayer);
@@ -3516,11 +3573,9 @@ function _detectZoneAtView() {
     const vn = Math.min(Math.ceil(b.getNorth() / G) * G, EGYPT_BOUNDS.north);
     const ve = Math.min(Math.ceil(b.getEast() / G) * G, EGYPT_BOUNDS.east);
     const ck = `${vs.toFixed(2)},${vw.toFixed(2)},${vn.toFixed(2)},${ve.toFixed(2)}`;
-    if (_loadedRoadBboxes.has(ck)) {
-      // Viewport already loading/loaded — silently mark zone button to suppress future hints
-      btn.classList.add("loaded");
-      break;
-    }
+    // Do NOT mark zone button as loaded — one viewport cell ≠ full zone coverage.
+    // Only loadZoneRoads() should mark a zone button as loaded.
+    if (_loadedRoadBboxes.has(ck)) break; // Already loading/loaded — suppress hint silently
     _showZoneHint(key, ZONE_LABELS[key] || key);
     break;
   }
@@ -3543,6 +3598,7 @@ map.on("moveend", loadRoads);
 map.on("zoomend", loadRoads);
 // Sync label visibility and refresh label positions on zoom/move
 map.on("zoomend", _syncRoadLabelVisibility);
+map.on("zoomend", _syncSecondaryRoadZoom);
 let _labelRefreshTimer = null;
 map.on("moveend", () => {
   if (map.getZoom() >= 13 && _roadsVisible) {

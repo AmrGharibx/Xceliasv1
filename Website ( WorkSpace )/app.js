@@ -1908,11 +1908,11 @@ L.control.zoom({ position: "bottomright" }).addTo(map);
 const markerClusterGroup =
   typeof L.markerClusterGroup === "function"
     ? L.markerClusterGroup({
-        // Remove off-screen cluster DOM nodes — saves memory for large datasets
-        removeOutsideVisibleBounds: true,
+        // Keep off-screen clusters in DOM so pan/zoom stays smooth
+        removeOutsideVisibleBounds: false,
 
-        // Disable cluster animation for smoothness
-        animate: false,
+        // Enable cluster animation
+        animate: true,
         animateAddingMarkers: false,
 
         // Chunked loading — adds markers in rAF batches so UI stays responsive
@@ -1923,7 +1923,7 @@ const markerClusterGroup =
         // Spiderfy settings for better UX
         spiderfyOnMaxZoom: true,
         showCoverageOnHover: false,
-        zoomToBoundsOnClick: true,
+        zoomToBoundsOnClick: false,
 
         // Maximum cluster radius
         maxClusterRadius: 60,
@@ -1945,6 +1945,37 @@ const markerClusterGroup =
         },
       }).addTo(map)
     : L.layerGroup().addTo(map);
+
+// Custom cluster click — smooth flyTo instead of fitBounds jump
+if (typeof markerClusterGroup.on === "function") {
+  markerClusterGroup.on("clusterclick", (event) => {
+    const cluster = event.layer;
+    const splitZoom = Math.max(
+      0,
+      (markerClusterGroup.options.disableClusteringAtZoom || map.getMaxZoom()) - 1,
+    );
+    const currentZoom = map.getZoom();
+
+    if (currentZoom < splitZoom) {
+      const bounds = cluster.getBounds();
+      if (bounds && bounds.isValid && bounds.isValid()) {
+        const boundsZoom = map.getBoundsZoom(bounds, false, L.point(112, 112));
+        const nextZoom = Math.min(
+          splitZoom,
+          Math.max(currentZoom + 2, boundsZoom + 1),
+        );
+        if (event.originalEvent) L.DomEvent.stop(event.originalEvent);
+        map.flyTo(cluster.getLatLng(), nextZoom, {
+          duration: 0.42,
+          animate: true,
+        });
+        return;
+      }
+    }
+
+    cluster.spiderfy();
+  });
+}
 
 // Initialize Standard Marker Layer (initially not added to map)
 const markerLayer = L.layerGroup();

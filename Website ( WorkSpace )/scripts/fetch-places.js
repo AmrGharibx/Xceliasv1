@@ -137,7 +137,9 @@ async function main() {
   fs.writeFileSync(outPath, JSON.stringify(geojson));
 
   const kb = (fs.statSync(outPath).size / 1024).toFixed(1);
-  console.log(`\nSaved ${allFeatures.length} features to data/places.geojson (${kb} KB)`);
+  console.log(
+    `\nSaved ${allFeatures.length} features to data/places.geojson (${kb} KB)`,
+  );
 }
 
 main().catch((e) => {

@@ -29,8 +29,9 @@ async function tryOverpass(query, mirror) {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
-        "User-Agent": "Excelias-Portal/2.0 (https://excelias.vercel.app; educational real estate map)",
-        "Accept": "application/json",
+        "User-Agent":
+          "Excelias-Portal/2.0 (https://excelias.vercel.app; educational real estate map)",
+        Accept: "application/json",
       },
       body: `data=${encodeURIComponent(query)}`,
       signal: controller.signal,

@@ -1806,7 +1806,12 @@ const MAP_VIEW_STORAGE_KEY = "xc_map_view_mode";
 const MAP_VIEW_DEFAULTS = {
   street: { roadTiles: true, places: false, roadsVisible: false },
   wiki: { roadTiles: false, places: true, roadsVisible: false },
-  atlas: { roadTiles: true, places: true, zoneOverview: false, roadsVisible: true },
+  atlas: {
+    roadTiles: true,
+    places: true,
+    zoneOverview: false,
+    roadsVisible: true,
+  },
   satellite: { roadTiles: false, places: false, roadsVisible: false },
   hybrid: { roadTiles: false, places: false, roadsVisible: false },
 };
@@ -1825,7 +1830,7 @@ function _syncMapModeClass(mode) {
 }
 
 function _roadTileOpacityForMode() {
-  if (_isAtlasMode()) return 0.96;
+  if (_isAtlasMode()) return 0.72;
   if (currentMapLayer === "street") return 0.84;
   return 0.82;
 }
@@ -1920,7 +1925,11 @@ map.whenReady(() => {
   completeInitialLoad();
   // Re-apply mode defaults after map boot so overlays match the selected view.
   setTimeout(
-    () => _applyMapLayerDefaults(currentMapLayer, { skipPersist: true, silentPlaces: true }),
+    () =>
+      _applyMapLayerDefaults(currentMapLayer, {
+        skipPersist: true,
+        silentPlaces: true,
+      }),
     600,
   );
 });
@@ -1983,7 +1992,8 @@ if (typeof markerClusterGroup.on === "function") {
     const cluster = event.layer;
     const splitZoom = Math.max(
       0,
-      (markerClusterGroup.options.disableClusteringAtZoom || map.getMaxZoom()) - 1,
+      (markerClusterGroup.options.disableClusteringAtZoom || map.getMaxZoom()) -
+        1,
     );
     const currentZoom = map.getZoom();
 
@@ -2006,6 +2016,13 @@ if (typeof markerClusterGroup.on === "function") {
 
     cluster.spiderfy();
   });
+
+  markerClusterGroup.on("clustermouseover", (event) => {
+    _showClusterHover(event.layer);
+  });
+
+  markerClusterGroup.on("clustermouseout", _clearClusterHover);
+  markerClusterGroup.on("animationend", _clearClusterHover);
 }
 
 // Initialize Standard Marker Layer (initially not added to map)
@@ -2019,26 +2036,172 @@ let isLabelsAlwaysVisible = false;
 
 // Store all markers for quick label toggle
 let allMarkersWithTooltips = [];
+let _projectsVisible = true;
+let _clusterHoverTooltip = null;
 
-function toggleLabels() {
-  isLabelsAlwaysVisible = !isLabelsAlwaysVisible;
+function _syncProjectLayerControls() {
+  const viewBtn = document.getElementById("view-toggle-btn");
+  if (viewBtn) {
+    viewBtn.innerText = isClusterView ? "Cluster View" : "Normal View";
+    viewBtn.classList.toggle("active", isClusterView);
+  }
+
+  const projectsToggle = document.getElementById("projects-toggle");
+  if (projectsToggle) {
+    projectsToggle.checked = _projectsVisible;
+  }
+
+  const clustersToggle = document.getElementById("project-clusters-toggle");
+  if (clustersToggle) {
+    clustersToggle.checked = isClusterView;
+    clustersToggle.disabled = !_projectsVisible;
+  }
+
+  const labelsToggle = document.getElementById("project-labels-toggle");
+  if (labelsToggle) {
+    labelsToggle.checked = isLabelsAlwaysVisible;
+    labelsToggle.disabled = !_projectsVisible;
+  }
+}
+
+function _clearClusterHover() {
+  if (_clusterHoverTooltip && map && map.hasLayer(_clusterHoverTooltip)) {
+    map.removeLayer(_clusterHoverTooltip);
+  }
+  _clusterHoverTooltip = null;
+
+  document.querySelectorAll(".mcc.cluster-hover").forEach((icon) => {
+    icon.classList.remove("cluster-hover");
+  });
+}
+
+function _buildClusterHoverTooltip(cluster) {
+  const childMarkers =
+    typeof cluster?.getAllChildMarkers === "function"
+      ? cluster.getAllChildMarkers()
+      : [];
+  const names = childMarkers
+    .map((marker) => {
+      if (typeof marker?.getTooltip !== "function") return "";
+      const tooltip = marker.getTooltip();
+      const content =
+        tooltip && typeof tooltip.getContent === "function"
+          ? tooltip.getContent()
+          : "";
+      return typeof content === "string" ? content.trim() : "";
+    })
+    .filter(Boolean);
+  const projectCount = names.length || cluster?.getChildCount?.() || 0;
+  const previewRows = names
+    .slice(0, 3)
+    .map((name) => `<div class="pct-row">${escHtml(name)}</div>`)
+    .join("");
+  const moreRow =
+    projectCount > 3
+      ? `<div class="pct-more">+ ${projectCount - 3} more projects</div>`
+      : "";
+
+  return `<div class="project-cluster-hover">
+    <div class="pct-count">${projectCount} projects</div>
+    ${previewRows || '<div class="pct-row">Zoom in to inspect projects</div>'}
+    ${moreRow}
+  </div>`;
+}
+
+function _showClusterHover(cluster) {
+  if (!map || !_projectsVisible || !isClusterView || !cluster) return;
+
+  _clearClusterHover();
+
+  if (cluster._icon) {
+    cluster._icon.classList.add("cluster-hover");
+  }
+
+  _clusterHoverTooltip = L.tooltip({
+    direction: "top",
+    offset: [0, -14],
+    opacity: 0.98,
+    className: "project-cluster-tooltip",
+  })
+    .setLatLng(cluster.getLatLng())
+    .setContent(_buildClusterHoverTooltip(cluster))
+    .addTo(map);
+}
+
+function _syncProjectLayerVisibility() {
+  if (!map) return;
+
+  _clearClusterHover();
+
+  if (map.hasLayer(markerClusterGroup)) map.removeLayer(markerClusterGroup);
+  if (map.hasLayer(markerLayer)) map.removeLayer(markerLayer);
+
+  if (isHeatmapMode || !_projectsVisible) {
+    return;
+  }
+
+  if (isClusterView) {
+    map.addLayer(markerClusterGroup);
+  } else {
+    map.addLayer(markerLayer);
+  }
+}
+
+function setProjectsVisible(visible) {
+  _projectsVisible = Boolean(visible);
+  _syncProjectLayerControls();
+
+  if (!map) return;
+
+  if (!_projectsVisible) {
+    safeCloseMapPopup();
+    NeuralView.deactivate();
+    map.getContainer().classList.add("labels-hidden");
+    _batchTooltips(false);
+  }
+
+  _syncProjectLayerVisibility();
+
+  if (_projectsVisible && isLabelsAlwaysVisible) {
+    map.getContainer().classList.remove("labels-hidden");
+    _batchTooltips(true);
+  }
+}
+
+function setProjectClusterView(clustered) {
+  isClusterView = Boolean(clustered);
+  _syncProjectLayerControls();
+  _syncProjectLayerVisibility();
+
+  if (map && _projectsVisible && isLabelsAlwaysVisible) {
+    _batchTooltips(true);
+  }
+}
+
+function setProjectLabelsVisible(visible) {
+  isLabelsAlwaysVisible = Boolean(visible);
   const btn = document.getElementById("btn-labels");
   if (btn) {
-    if (isLabelsAlwaysVisible) btn.classList.add("active");
-    else btn.classList.remove("active");
+    btn.classList.toggle("active", isLabelsAlwaysVisible);
   }
+
+  _syncProjectLayerControls();
+
   if (!map) return;
   const mapEl = map.getContainer();
 
-  if (!isLabelsAlwaysVisible) {
-    // OFF: CSS-hide instantly, then close tooltips in background
+  if (!isLabelsAlwaysVisible || !_projectsVisible) {
     mapEl.classList.add("labels-hidden");
     _batchTooltips(false);
-  } else {
-    // ON: remove CSS-hide, then open viewport tooltips in batches
-    mapEl.classList.remove("labels-hidden");
-    _batchTooltips(true);
+    return;
   }
+
+  mapEl.classList.remove("labels-hidden");
+  _batchTooltips(true);
+}
+
+function toggleLabels() {
+  setProjectLabelsVisible(!isLabelsAlwaysVisible);
 }
 
 /** Batch-process tooltip open/close for viewport markers only */
@@ -2087,10 +2250,7 @@ function toggleHeatmap() {
 
   if (isHeatmapMode) {
     if (btn) btn.classList.add("active");
-    // Hide markers
-    if (map && map.hasLayer(markerClusterGroup))
-      map.removeLayer(markerClusterGroup);
-    if (map && map.hasLayer(markerLayer)) map.removeLayer(markerLayer);
+    _syncProjectLayerVisibility();
 
     // Show heatmap (data will be populated in renderProjects or updated here)
     // We need to trigger a re-render or just add the layer if data exists
@@ -2105,14 +2265,7 @@ function toggleHeatmap() {
     if (heatmapLayer && map && map.hasLayer(heatmapLayer))
       map.removeLayer(heatmapLayer);
 
-    // Restore previous view
-    if (map) {
-      if (isClusterView) {
-        map.addLayer(markerClusterGroup);
-      } else {
-        map.addLayer(markerLayer);
-      }
-    }
+    _syncProjectLayerVisibility();
   }
 }
 
@@ -2169,7 +2322,8 @@ let mainRoadsLayer = null;
 let secondaryRoadsLayer = null;
 
 // ── Instant road tile overlay (CartoDB Voyager Labels — zero Overpass delay) ──
-const ROAD_TILE_URL = "https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}{r}.png";
+const ROAD_TILE_URL =
+  "https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}{r}.png";
 let roadTileLayer = null;
 let _roadTilesVisible = false;
 
@@ -2182,6 +2336,9 @@ let _roadOpacityMultiplier = 1;
 let _showMainRoads = true;
 let _showSecondaryRoads = true;
 let _roadPanelOpen = false;
+let _hoveredRoadLayer = null;
+let _roadHoverFrame = null;
+let _lastRoadHoverLatLng = null;
 
 // ── Dedup / bbox tracking ──
 const _loadedRoadBboxes = new Set();
@@ -2286,9 +2443,17 @@ async function _fetchOverpass(query, timeoutMs = 40000) {
       });
       clearTimeout(tid);
       if (r.ok) return r;
-      console.warn("Overpass proxy: HTTP", r.status, "— falling back to direct");
+      console.warn(
+        "Overpass proxy: HTTP",
+        r.status,
+        "— falling back to direct",
+      );
     } catch (e) {
-      console.warn("Overpass proxy failed:", e.message, "— falling back to direct");
+      console.warn(
+        "Overpass proxy failed:",
+        e.message,
+        "— falling back to direct",
+      );
     }
   }
 
@@ -2367,7 +2532,9 @@ let _workerBlobUrl = null;
 function _getWorkerUrl() {
   if (!_workerBlobUrl) {
     const blob = new Blob(
-      ["self.onmessage=function(e){try{postMessage({ok:true,d:JSON.parse(e.data)});}catch(x){postMessage({ok:false,e:x.message});}}" ],
+      [
+        "self.onmessage=function(e){try{postMessage({ok:true,d:JSON.parse(e.data)});}catch(x){postMessage({ok:false,e:x.message});}}",
+      ],
       { type: "application/javascript" },
     );
     _workerBlobUrl = URL.createObjectURL(blob);
@@ -2437,23 +2604,37 @@ async function _addFeaturesChunked(features, onProgress, chunkSize = 1500) {
       // ── Populate search index ──
       if (f.n || f.a || f.r) {
         // Use loop instead of spread to avoid stack overflow on long roads
-        let latMin = f.c[0][1], latMax = f.c[0][1];
-        let lngMin = f.c[0][0], lngMax = f.c[0][0];
+        let latMin = f.c[0][1],
+          latMax = f.c[0][1];
+        let lngMin = f.c[0][0],
+          lngMax = f.c[0][0];
         for (let j = 1; j < f.c.length; j++) {
-          const lat = f.c[j][1], lng = f.c[j][0];
-          if (lat < latMin) latMin = lat; else if (lat > latMax) latMax = lat;
-          if (lng < lngMin) lngMin = lng; else if (lng > lngMax) lngMax = lng;
+          const lat = f.c[j][1],
+            lng = f.c[j][0];
+          if (lat < latMin) latMin = lat;
+          else if (lat > latMax) latMax = lat;
+          if (lng < lngMin) lngMin = lng;
+          else if (lng > lngMax) lngMax = lng;
         }
         _roadSearchIndex.push({
           name: f.n || "",
           nameAr: f.a || "",
           ref: f.r || "",
           highway: f.h,
-          latMin, latMax, lngMin, lngMax,
+          latMin,
+          latMax,
+          lngMin,
+          lngMax,
         });
       }
       // ── Glow halo for motorway / trunk (wide+faint, drawn under main roads) ──
-      if (_roadGlowLayer && (f.h === "motorway" || f.h === "trunk" || f.h === "motorway_link" || f.h === "trunk_link")) {
+      if (
+        _roadGlowLayer &&
+        (f.h === "motorway" ||
+          f.h === "trunk" ||
+          f.h === "motorway_link" ||
+          f.h === "trunk_link")
+      ) {
         _roadGlowLayer.addData(feature);
       }
     });
@@ -2480,20 +2661,43 @@ function _updateRoadStats() {
   badge.className = "road-stats-badge loaded";
 }
 
+function _getViewportRoadBbox() {
+  const bounds = map.getBounds().pad(0.08);
+  const center = map.getCenter();
+  let south = bounds.getSouth();
+  let west = bounds.getWest();
+  let north = bounds.getNorth();
+  let east = bounds.getEast();
+
+  // At lower zoom levels, cap the live fetch area around the center so the
+  // road layer appears without requiring deep zoom while still keeping the
+  // Overpass query bounded.
+  if (map.getZoom() < 11) {
+    const latPad = 0.45;
+    const lngPad = 0.55;
+    south = center.lat - latPad;
+    west = center.lng - lngPad;
+    north = center.lat + latPad;
+    east = center.lng + lngPad;
+  }
+
+  const grid = 0.5;
+  south = Math.max(Math.floor(south / grid) * grid, EGYPT_BOUNDS.south);
+  west = Math.max(Math.floor(west / grid) * grid, EGYPT_BOUNDS.west);
+  north = Math.min(Math.ceil(north / grid) * grid, EGYPT_BOUNDS.north);
+  east = Math.min(Math.ceil(east / grid) * grid, EGYPT_BOUNDS.east);
+
+  if (south >= north || west >= east) return null;
+  return { south, west, north, east };
+}
+
 // ────────────────────────────────────────────────────────────────────────────
 // ROAD NAME LABELS — DivIcon markers for motorways/trunks at zoom ≥ 13
 // ────────────────────────────────────────────────────────────────────────────
 
-
-
-/**
- * Auto show/hide secondaryRoadsLayer at the zoom 14 boundary.
- * Below 14: CartoDB tile overlay covers secondary streets visually.
- * Keeping 400+ secondary features on canvas at zoom < 14 wastes GPU with zero user benefit.
- */
 function _syncSecondaryRoadZoom() {
   if (!secondaryRoadsLayer) return;
-  const shouldShow = map.getZoom() >= 14 && _roadsVisible && _showSecondaryRoads;
+  const shouldShow = _roadsVisible && _showSecondaryRoads;
   if (shouldShow) {
     if (!map.hasLayer(secondaryRoadsLayer)) secondaryRoadsLayer.addTo(map);
   } else {
@@ -2587,19 +2791,19 @@ function _getRoadBaseStyle(hw) {
   if (_isAtlasMode()) {
     switch (hw) {
       case "motorway":
-        return { color: "#ff6b57", weight: 6.8, opacity: 0.98 };
+        return { color: "#ffb25a", weight: 6.8, opacity: 1 };
       case "motorway_link":
-        return { color: "#ff8a5b", weight: 4.6, opacity: 0.92 };
+        return { color: "#ffc470", weight: 4.8, opacity: 0.98 };
       case "trunk":
-        return { color: "#ffb347", weight: 5.6, opacity: 0.96 };
+        return { color: "#ffd78a", weight: 5.8, opacity: 1 };
       case "trunk_link":
-        return { color: "#ffc76a", weight: 3.6, opacity: 0.9 };
+        return { color: "#ffe3a7", weight: 4, opacity: 0.96 };
       case "primary":
-        return { color: "#ffe27a", weight: 4.3, opacity: 0.93 };
+        return { color: "#fff1c7", weight: 4.4, opacity: 0.96 };
       case "primary_link":
-        return { color: "#fff1a8", weight: 3.1, opacity: 0.88 };
+        return { color: "#fff6de", weight: 3.2, opacity: 0.93 };
       default:
-        return { color: "#ffe27a", weight: 4.3, opacity: 0.93 };
+        return { color: "#fff1c7", weight: 4.4, opacity: 0.96 };
     }
   }
 
@@ -2626,15 +2830,15 @@ function _getRoadHoverStyle(hw) {
     switch (hw) {
       case "motorway":
       case "motorway_link":
-        return { color: "#ffd5cc", weight: 9.6, opacity: 1 };
+        return { color: "#fff4da", weight: 9.2, opacity: 1 };
       case "trunk":
       case "trunk_link":
-        return { color: "#ffe0a3", weight: 8.2, opacity: 1 };
+        return { color: "#fff0c8", weight: 8, opacity: 1 };
       case "primary":
       case "primary_link":
-        return { color: "#fff6bf", weight: 6.6, opacity: 1 };
+        return { color: "#fff8e8", weight: 6.4, opacity: 1 };
       default:
-        return { color: "#fff6bf", weight: 6.2, opacity: 1 };
+        return { color: "#fff8e8", weight: 6.2, opacity: 1 };
     }
   }
 
@@ -2646,17 +2850,17 @@ function _getRoadGlowStyle(hw) {
   if (_isAtlasMode()) {
     if (hw.startsWith("motorway")) {
       return {
-        color: "#ff6b57",
-        weight: 26,
-        opacity: 0.22,
+        color: "#71421f",
+        weight: 12.5,
+        opacity: 0.62,
         lineCap: "round",
         lineJoin: "round",
       };
     }
     return {
-      color: "#ffb347",
-      weight: 20,
-      opacity: 0.18,
+      color: "#5d4728",
+      weight: 10.5,
+      opacity: 0.52,
       lineCap: "round",
       lineJoin: "round",
     };
@@ -2698,9 +2902,9 @@ function _getRenderedSecondaryRoadStyle() {
 function _getSecondaryRoadBaseStyle() {
   if (_isAtlasMode()) {
     return {
-      color: "#57d7ff",
-      weight: 2.2,
-      opacity: 0.78,
+      color: "#e7dcc1",
+      weight: 2.4,
+      opacity: 0.9,
       lineCap: "round",
     };
   }
@@ -2715,46 +2919,116 @@ function _getSecondaryRoadBaseStyle() {
 
 function _getSecondaryRoadHoverStyle() {
   return {
-    color: "#dffcff",
-    weight: 3.5,
+    color: "#fffaf0",
+    weight: 3.8,
     opacity: 1,
     lineCap: "round",
   };
 }
 
-function _getPlaceBaseStyle() {
+const PLACE_STYLE_PALETTES = {
+  administrative: {
+    defaultStroke: "rgba(84, 223, 255, 0.74)",
+    defaultFill: "rgba(84, 223, 255, 0.08)",
+    atlasStroke: "rgba(84, 223, 255, 0.9)",
+    atlasFill: "rgba(24, 142, 166, 0.18)",
+    hoverStroke: "rgba(255, 205, 110, 0.98)",
+    hoverFill: "rgba(255, 182, 86, 0.26)",
+  },
+  cityTown: {
+    defaultStroke: "rgba(255, 196, 92, 0.76)",
+    defaultFill: "rgba(255, 196, 92, 0.08)",
+    atlasStroke: "rgba(255, 196, 92, 0.92)",
+    atlasFill: "rgba(255, 172, 52, 0.16)",
+    hoverStroke: "rgba(255, 225, 154, 0.98)",
+    hoverFill: "rgba(255, 196, 92, 0.28)",
+  },
+  neighbourhood: {
+    defaultStroke: "rgba(102, 126, 234, 0.66)",
+    defaultFill: "rgba(102, 126, 234, 0.07)",
+    atlasStroke: "rgba(97, 176, 255, 0.9)",
+    atlasFill: "rgba(35, 122, 255, 0.14)",
+    hoverStroke: "rgba(170, 217, 255, 0.98)",
+    hoverFill: "rgba(97, 176, 255, 0.24)",
+  },
+  suburb: {
+    defaultStroke: "rgba(192, 132, 252, 0.7)",
+    defaultFill: "rgba(192, 132, 252, 0.08)",
+    atlasStroke: "rgba(211, 161, 255, 0.9)",
+    atlasFill: "rgba(128, 90, 213, 0.16)",
+    hoverStroke: "rgba(231, 205, 255, 0.98)",
+    hoverFill: "rgba(192, 132, 252, 0.26)",
+  },
+  village: {
+    defaultStroke: "rgba(74, 222, 128, 0.72)",
+    defaultFill: "rgba(74, 222, 128, 0.08)",
+    atlasStroke: "rgba(95, 235, 171, 0.9)",
+    atlasFill: "rgba(21, 128, 61, 0.16)",
+    hoverStroke: "rgba(188, 255, 214, 0.98)",
+    hoverFill: "rgba(74, 222, 128, 0.24)",
+  },
+  other: {
+    defaultStroke: "rgba(148, 163, 184, 0.62)",
+    defaultFill: "rgba(148, 163, 184, 0.06)",
+    atlasStroke: "rgba(203, 213, 225, 0.82)",
+    atlasFill: "rgba(100, 116, 139, 0.14)",
+    hoverStroke: "rgba(241, 245, 249, 0.96)",
+    hoverFill: "rgba(148, 163, 184, 0.22)",
+  },
+};
+
+function _normalizePlaceValue(value) {
+  return String(value || "").trim().toLowerCase();
+}
+
+function _getPlaceCategory(feature) {
+  const properties = feature?.properties || {};
+  const boundary = _normalizePlaceValue(properties.boundary);
+  const place = _normalizePlaceValue(properties.place);
+
+  if (boundary === "administrative") return "administrative";
+  if (place === "city" || place === "town") return "cityTown";
+  if (place === "suburb") return "suburb";
+  if (place === "village") return "village";
+  if (place === "neighbourhood" || place === "quarter") {
+    return "neighbourhood";
+  }
+
+  return "other";
+}
+
+function _getPlacePalette(feature) {
+  const category = _getPlaceCategory(feature);
+  return PLACE_STYLE_PALETTES[category] || PLACE_STYLE_PALETTES.other;
+}
+
+function _getPlaceBaseStyle(feature) {
+  const palette = _getPlacePalette(feature);
   if (_isAtlasMode()) {
     return {
-      color: "rgba(74, 226, 255, 0.86)",
+      color: palette.atlasStroke,
       weight: 1.9,
-      fillColor: "rgba(19, 129, 255, 0.12)",
+      fillColor: palette.atlasFill,
       fillOpacity: 1,
       lineCap: "round",
     };
   }
 
   return {
-    color: "rgba(102, 126, 234, 0.6)",
+    color: palette.defaultStroke,
     weight: 1.5,
-    fillColor: "rgba(102, 126, 234, 0.06)",
+    fillColor: palette.defaultFill,
     fillOpacity: 1,
     lineCap: "round",
   };
 }
 
-function _getPlaceHoverStyle() {
-  if (_isAtlasMode()) {
-    return {
-      color: "rgba(255, 191, 92, 0.98)",
-      fillColor: "rgba(255, 157, 77, 0.22)",
-      weight: 3,
-    };
-  }
-
+function _getPlaceHoverStyle(feature) {
+  const palette = _getPlacePalette(feature);
   return {
-    color: "rgba(102, 126, 234, 1)",
-    fillColor: "rgba(102, 126, 234, 0.18)",
-    weight: 2.5,
+    color: palette.hoverStroke,
+    fillColor: palette.hoverFill,
+    weight: _isAtlasMode() ? 3 : 2.5,
   };
 }
 
@@ -2782,7 +3056,11 @@ function _refreshMapVisualLanguage(mode = currentMapLayer) {
   }
 
   if (placesLayer) {
-    placesLayer.setStyle(() => _getPlaceBaseStyle());
+    for (const layer of Object.values(_placeCategoryLayers || {})) {
+      if (layer && typeof layer.setStyle === "function") {
+        layer.setStyle((feature) => _getPlaceBaseStyle(feature));
+      }
+    }
   }
 
   if (
@@ -2791,6 +3069,220 @@ function _refreshMapVisualLanguage(mode = currentMapLayer) {
   ) {
     markerClusterGroup.refreshClusters();
   }
+}
+
+function _restoreRoadLayerStyle(layer) {
+  if (!layer) return;
+  const highway = layer.feature?.properties?.highway || "";
+  if (MAIN_HW.has(highway)) {
+    layer.setStyle(_getRenderedRoadBaseStyle(highway));
+  } else {
+    layer.setStyle(_getRenderedSecondaryRoadStyle());
+  }
+}
+
+function _clearRoadHover() {
+  if (_roadHoverFrame) {
+    cancelAnimationFrame(_roadHoverFrame);
+    _roadHoverFrame = null;
+  }
+  _lastRoadHoverLatLng = null;
+  if (!_hoveredRoadLayer) return;
+  if (typeof _hoveredRoadLayer.closeTooltip === "function") {
+    _hoveredRoadLayer.closeTooltip();
+  }
+  _restoreRoadLayerStyle(_hoveredRoadLayer);
+  _hoveredRoadLayer = null;
+}
+
+function _iterVisibleRoadLayers(visitor) {
+  const groups = [];
+  if (mainRoadsLayer && map.hasLayer(mainRoadsLayer))
+    groups.push(mainRoadsLayer);
+  if (secondaryRoadsLayer && map.hasLayer(secondaryRoadsLayer))
+    groups.push(secondaryRoadsLayer);
+
+  for (const group of groups) {
+    for (const layer of Object.values(group._layers || {})) {
+      if (visitor(layer)) return layer;
+    }
+  }
+
+  return null;
+}
+
+function _findRoadLayerAtLatLng(latlng) {
+  const layerPoint = map.latLngToLayerPoint(latlng);
+
+  if (
+    _hoveredRoadLayer &&
+    typeof _hoveredRoadLayer._containsPoint === "function" &&
+    _hoveredRoadLayer._containsPoint(layerPoint)
+  ) {
+    return _hoveredRoadLayer;
+  }
+
+  return _iterVisibleRoadLayers(
+    (layer) =>
+      typeof layer._containsPoint === "function" &&
+      layer._containsPoint(layerPoint),
+  );
+}
+
+function _applyRoadHover(layer, latlng) {
+  if (!layer) {
+    _clearRoadHover();
+    return;
+  }
+
+  if (_hoveredRoadLayer && _hoveredRoadLayer !== layer) {
+    _clearRoadHover();
+  }
+
+  _hoveredRoadLayer = layer;
+  const highway = layer.feature?.properties?.highway || "";
+  if (MAIN_HW.has(highway)) {
+    layer.setStyle(_getRoadHoverStyle(highway));
+  } else {
+    layer.setStyle(_getSecondaryRoadHoverStyle());
+  }
+  if (typeof layer.bringToFront === "function") layer.bringToFront();
+  if (latlng && typeof layer.openTooltip === "function")
+    layer.openTooltip(latlng);
+}
+
+function _scheduleRoadHover(latlng) {
+  _lastRoadHoverLatLng = latlng;
+  if (_roadHoverFrame) return;
+
+  _roadHoverFrame = requestAnimationFrame(() => {
+    _roadHoverFrame = null;
+    if (
+      !_roadsVisible ||
+      currentMapLayer !== "atlas" ||
+      !_lastRoadHoverLatLng
+    ) {
+      _clearRoadHover();
+      return;
+    }
+
+    const layer = _findRoadLayerAtLatLng(_lastRoadHoverLatLng);
+    if (!layer) {
+      _clearRoadHover();
+      return;
+    }
+
+    _applyRoadHover(layer, _lastRoadHoverLatLng);
+  });
+}
+
+let _hoveredPlaceLayer = null;
+let _overlayHoverFrame = null;
+let _lastOverlayHoverLatLng = null;
+
+function _clearPlaceHover() {
+  if (!_hoveredPlaceLayer) return;
+  if (typeof _hoveredPlaceLayer.closeTooltip === "function") {
+    _hoveredPlaceLayer.closeTooltip();
+  }
+  _hoveredPlaceLayer.setStyle(_getPlaceBaseStyle(_hoveredPlaceLayer.feature));
+  _hoveredPlaceLayer = null;
+}
+
+function _iterVisiblePlaceLayers(visitor) {
+  if (!placesLayer || !map.hasLayer(placesLayer)) return null;
+
+  for (const category of PLACE_CATEGORY_ORDER) {
+    const group = _placeCategoryLayers[category];
+    if (!group || !placesLayer.hasLayer(group)) continue;
+
+    for (const layer of Object.values(group._layers || {})) {
+      if (visitor(layer)) return layer;
+    }
+  }
+
+  return null;
+}
+
+function _findPlaceLayerAtLatLng(latlng) {
+  if (!placesLayer || !map.hasLayer(placesLayer)) return null;
+  const layerPoint = map.latLngToLayerPoint(latlng);
+
+  if (
+    _hoveredPlaceLayer &&
+    typeof _hoveredPlaceLayer._containsPoint === "function" &&
+    _hoveredPlaceLayer._containsPoint(layerPoint)
+  ) {
+    return _hoveredPlaceLayer;
+  }
+
+  return _iterVisiblePlaceLayers(
+    (layer) =>
+      typeof layer._containsPoint === "function" &&
+      layer._containsPoint(layerPoint),
+  );
+}
+
+function _applyPlaceHover(layer, latlng) {
+  if (!layer) {
+    _clearPlaceHover();
+    return;
+  }
+
+  if (_hoveredPlaceLayer && _hoveredPlaceLayer !== layer) {
+    _clearPlaceHover();
+  }
+
+  _hoveredPlaceLayer = layer;
+  layer.setStyle(_getPlaceHoverStyle(layer.feature));
+  if (typeof layer.bringToFront === "function") layer.bringToFront();
+  if (latlng && typeof layer.openTooltip === "function")
+    layer.openTooltip(latlng);
+}
+
+function _clearOverlayHover() {
+  if (_overlayHoverFrame) {
+    cancelAnimationFrame(_overlayHoverFrame);
+    _overlayHoverFrame = null;
+  }
+  _lastOverlayHoverLatLng = null;
+  _clearPlaceHover();
+  _clearRoadHover();
+}
+
+function _scheduleOverlayHover(latlng) {
+  _lastOverlayHoverLatLng = latlng;
+  if (_overlayHoverFrame) return;
+
+  _overlayHoverFrame = requestAnimationFrame(() => {
+    _overlayHoverFrame = null;
+
+    if (!_lastOverlayHoverLatLng) {
+      _clearOverlayHover();
+      return;
+    }
+
+    const placeLayer = _placesVisible
+      ? _findPlaceLayerAtLatLng(_lastOverlayHoverLatLng)
+      : null;
+    if (placeLayer) {
+      _applyPlaceHover(placeLayer, _lastOverlayHoverLatLng);
+      _clearRoadHover();
+      return;
+    }
+
+    _clearPlaceHover();
+
+    if (_roadsVisible && currentMapLayer === "atlas") {
+      const roadLayer = _findRoadLayerAtLatLng(_lastOverlayHoverLatLng);
+      if (roadLayer) {
+        _applyRoadHover(roadLayer, _lastOverlayHoverLatLng);
+        return;
+      }
+    }
+
+    _clearRoadHover();
+  });
 }
 
 function _hwArabicLabel(highway) {
@@ -2895,15 +3387,16 @@ function _ensureRoadLayers() {
   if (!mainRoadsLayer) {
     mainRoadsLayer = L.geoJSON(null, {
       renderer,
-      style: (feature) => _getRenderedRoadBaseStyle(feature?.properties?.highway || "primary"),
+      style: (feature) =>
+        _getRenderedRoadBaseStyle(feature?.properties?.highway || "primary"),
       interactive: true,
       onEachFeature: (feature, layer) => {
         const hw = feature?.properties?.highway || "";
         const ttClass = hw.startsWith("motorway")
           ? "road-name-tooltip rnt-motorway"
           : hw.startsWith("trunk")
-          ? "road-name-tooltip rnt-trunk"
-          : "road-name-tooltip";
+            ? "road-name-tooltip rnt-trunk"
+            : "road-name-tooltip";
         layer.bindTooltip(() => buildRoadTooltip(feature), {
           sticky: true,
           direction: "top",
@@ -2959,8 +3452,7 @@ function _ensureRoadLayers() {
         });
       },
     });
-    // Secondary roads only at zoom ≥ 14 — CartoDB tiles cover them visually below that
-    if (_roadsVisible && _showSecondaryRoads && map.getZoom() >= 14) secondaryRoadsLayer.addTo(map);
+    if (_roadsVisible && _showSecondaryRoads) secondaryRoadsLayer.addTo(map);
   }
 }
 
@@ -2979,7 +3471,7 @@ function _markBboxCells(s, w, n, e) {
   for (let lat = Math.floor(s / G) * G; lat < n + G * 0.01; lat += G) {
     for (let lng = Math.floor(w / G) * G; lng < e + G * 0.01; lng += G) {
       _loadedRoadBboxes.add(
-        `${lat.toFixed(2)},${lng.toFixed(2)},${(lat + G).toFixed(2)},${(lng + G).toFixed(2)}`
+        `${lat.toFixed(2)},${lng.toFixed(2)},${(lat + G).toFixed(2)},${(lng + G).toFixed(2)}`,
       );
     }
   }
@@ -2997,18 +3489,9 @@ async function fetchAndDrawRoads(overrideBbox) {
   if (overrideBbox) {
     ({ south, west, north, east } = overrideBbox);
   } else {
-    const zoom = map.getZoom();
-    // Below zoom 15: CartoDB tile overlay covers road display — no Overpass needed.
-    // At zoom 15 the viewport is ~7km² → fast Overpass response (< 1 s).
-    // Zone buttons & Egypt highways handle broader area loading.
-    if (zoom < 15) return;
-    const b = map.getBounds();
-    const G = 0.5;
-    south = Math.max(Math.floor(b.getSouth() / G) * G, EGYPT_BOUNDS.south);
-    west = Math.max(Math.floor(b.getWest() / G) * G, EGYPT_BOUNDS.west);
-    north = Math.min(Math.ceil(b.getNorth() / G) * G, EGYPT_BOUNDS.north);
-    east = Math.min(Math.ceil(b.getEast() / G) * G, EGYPT_BOUNDS.east);
-    if (south >= north || west >= east) return;
+    const bbox = _getViewportRoadBbox();
+    if (!bbox) return;
+    ({ south, west, north, east } = bbox);
   }
 
   const cacheKey = `${(+south).toFixed(2)},${(+west).toFixed(2)},${(+north).toFixed(2)},${(+east).toFixed(2)}`;
@@ -3088,11 +3571,11 @@ function setAllRoadsVisible(visible) {
     if (
       secondaryRoadsLayer &&
       _showSecondaryRoads &&
-      map.getZoom() >= 14 &&
       !map.hasLayer(secondaryRoadsLayer)
     )
       secondaryRoadsLayer.addTo(map);
   } else {
+    _clearRoadHover();
     if (_roadGlowLayer && map.hasLayer(_roadGlowLayer))
       map.removeLayer(_roadGlowLayer);
     if (mainRoadsLayer && map.hasLayer(mainRoadsLayer))
@@ -3104,20 +3587,25 @@ function setAllRoadsVisible(visible) {
 
 function setMainRoadsVisible(visible) {
   _showMainRoads = visible;
+  if (!visible) _clearRoadHover();
   if (visible && _roadsVisible) {
-    if (_roadGlowLayer && !map.hasLayer(_roadGlowLayer)) _roadGlowLayer.addTo(map);
-    if (mainRoadsLayer && !map.hasLayer(mainRoadsLayer)) mainRoadsLayer.addTo(map);
+    if (_roadGlowLayer && !map.hasLayer(_roadGlowLayer))
+      _roadGlowLayer.addTo(map);
+    if (mainRoadsLayer && !map.hasLayer(mainRoadsLayer))
+      mainRoadsLayer.addTo(map);
   } else {
-    if (_roadGlowLayer && map.hasLayer(_roadGlowLayer)) map.removeLayer(_roadGlowLayer);
-    if (mainRoadsLayer && map.hasLayer(mainRoadsLayer)) map.removeLayer(mainRoadsLayer);
+    if (_roadGlowLayer && map.hasLayer(_roadGlowLayer))
+      map.removeLayer(_roadGlowLayer);
+    if (mainRoadsLayer && map.hasLayer(mainRoadsLayer))
+      map.removeLayer(mainRoadsLayer);
   }
 }
 
 function setSecondaryRoadsVisible(visible) {
   _showSecondaryRoads = visible;
+  if (!visible) _clearRoadHover();
   if (!secondaryRoadsLayer) return;
-  // Respect zoom gate — secondary only at zoom ≥ 14
-  if (visible && _roadsVisible && map.getZoom() >= 14) {
+  if (visible && _roadsVisible) {
     if (!map.hasLayer(secondaryRoadsLayer)) secondaryRoadsLayer.addTo(map);
   } else {
     if (map.hasLayer(secondaryRoadsLayer)) map.removeLayer(secondaryRoadsLayer);
@@ -3126,6 +3614,7 @@ function setSecondaryRoadsVisible(visible) {
 
 /** Remove all road data from map and reset for fresh load */
 function clearAllRoads() {
+  _clearRoadHover();
   if (_roadGlowLayer) {
     if (map.hasLayer(_roadGlowLayer)) map.removeLayer(_roadGlowLayer);
     _roadGlowLayer = null;
@@ -3365,7 +3854,84 @@ let placesLayer = null;
 let _placesVisible = false;
 let _placesLoading = false;
 const _loadedPlaceBboxes = new Set(); // bbox cells already fetched
-const _addedPlaceIds = new Set();     // feature IDs already in layer (dedup)
+const _addedPlaceIds = new Set(); // feature IDs already in layer (dedup)
+const PLACE_CATEGORY_ORDER = [
+  "administrative",
+  "cityTown",
+  "neighbourhood",
+  "suburb",
+  "village",
+  "other",
+];
+const PLACE_CATEGORY_TOGGLE_IDS = {
+  administrative: "place-filter-administrative",
+  cityTown: "place-filter-city-town",
+  neighbourhood: "place-filter-neighbourhood",
+  suburb: "place-filter-suburb",
+  village: "place-filter-village",
+  other: "place-filter-other",
+};
+const _placeCategoryVisibility = {
+  administrative: true,
+  cityTown: true,
+  neighbourhood: true,
+  suburb: true,
+  village: true,
+  other: true,
+};
+const _placeCategoryLayers = Object.create(null);
+
+function _isPlaceCategoryVisible(category) {
+  return _placeCategoryVisibility[category] !== false;
+}
+
+function _syncPlaceFilterControls() {
+  for (const [category, elementId] of Object.entries(PLACE_CATEGORY_TOGGLE_IDS)) {
+    const checkbox = document.getElementById(elementId);
+    if (!checkbox) continue;
+    checkbox.checked = _isPlaceCategoryVisible(category);
+  }
+}
+
+function _syncPlaceLayerVisibility() {
+  if (!placesLayer) return;
+
+  for (const category of PLACE_CATEGORY_ORDER) {
+    const layer = _placeCategoryLayers[category];
+    if (!layer) continue;
+    const shouldShow = _placesVisible && _isPlaceCategoryVisible(category);
+    const isShown = placesLayer.hasLayer(layer);
+
+    if (shouldShow && !isShown) {
+      placesLayer.addLayer(layer);
+    } else if (!shouldShow && isShown) {
+      placesLayer.removeLayer(layer);
+    }
+  }
+
+  if (_placesVisible) {
+    if (!map.hasLayer(placesLayer)) placesLayer.addTo(map);
+  } else if (map.hasLayer(placesLayer)) {
+    map.removeLayer(placesLayer);
+  }
+
+  _syncPlaceFilterControls();
+}
+
+function setPlaceCategoryVisible(category, visible) {
+  if (!(category in _placeCategoryVisibility)) return;
+  _placeCategoryVisibility[category] = !!visible;
+
+  if (
+    !visible &&
+    _hoveredPlaceLayer &&
+    _getPlaceCategory(_hoveredPlaceLayer.feature) === category
+  ) {
+    _clearPlaceHover();
+  }
+
+  _syncPlaceLayerVisibility();
+}
 
 /** Flatten any geometry to flat [lng,lat] coordinate array */
 function _flattenCoords(geometry) {
@@ -3385,8 +3951,12 @@ function _buildPlaceTooltip(feature) {
   const nameEn = p.name || p["name:en"] || "";
   const type = p.place || p.boundary || "منطقة";
   const typeMap = {
-    suburb: "حي", neighbourhood: "حي", quarter: "ربع",
-    village: "قرية", town: "مدينة", city: "مدينة",
+    suburb: "ضاحية",
+    neighbourhood: "حي",
+    quarter: "حي",
+    village: "قرية",
+    town: "بلدة",
+    city: "مدينة",
     administrative: "منطقة إدارية",
   };
   const typeLabel = typeMap[type] || type;
@@ -3397,16 +3967,20 @@ function _buildPlaceTooltip(feature) {
     if (coords.length > 0) {
       const lats = coords.map((c) => c[1]);
       const lngs = coords.map((c) => c[0]);
-      const bS = Math.min(...lats), bN = Math.max(...lats);
-      const bW = Math.min(...lngs), bE = Math.max(...lngs);
+      const bS = Math.min(...lats),
+        bN = Math.max(...lats);
+      const bW = Math.min(...lngs),
+        bE = Math.max(...lngs);
       projectCount = window.projects.filter(
-        (proj) => proj.lat >= bS && proj.lat <= bN && proj.lng >= bW && proj.lng <= bE,
+        (proj) =>
+          proj.lat >= bS && proj.lat <= bN && proj.lng >= bW && proj.lng <= bE,
       ).length;
     }
   }
-  const countBadge = projectCount > 0
-    ? `<div class="place-tt-count">🏗 ${projectCount} مشروع</div>`
-    : "";
+  const countBadge =
+    projectCount > 0
+      ? `<div class="place-tt-count">🏗 ${projectCount} مشروع</div>`
+      : "";
   return `<div class="place-tooltip">
     ${nameAr ? `<div class="place-tt-ar">${escHtml(nameAr)}</div>` : ""}
     ${nameEn && nameEn !== nameAr ? `<div class="place-tt-en">${escHtml(nameEn)}</div>` : ""}
@@ -3445,33 +4019,49 @@ function _showPlacePanel(feature) {
   if (coords.length > 0 && window.projects) {
     const lats = coords.map((c) => c[1]);
     const lngs = coords.map((c) => c[0]);
-    const bS = Math.min(...lats), bN = Math.max(...lats);
-    const bW = Math.min(...lngs), bE = Math.max(...lngs);
+    const bS = Math.min(...lats),
+      bN = Math.max(...lats);
+    const bW = Math.min(...lngs),
+      bE = Math.max(...lngs);
     nearProjects = window.projects.filter(
-      (proj) => proj.lat >= bS && proj.lat <= bN && proj.lng >= bW && proj.lng <= bE,
+      (proj) =>
+        proj.lat >= bS && proj.lat <= bN && proj.lng >= bW && proj.lng <= bE,
     );
   }
 
   const priced = nearProjects.filter((proj) => parseFloat(proj.minPrice) > 0);
-  const avgPrice = priced.length > 0
-    ? priced.reduce((s, proj) => s + parseFloat(proj.minPrice), 0) / priced.length
-    : 0;
-  const minP = priced.length > 0 ? Math.min(...priced.map((pr) => parseFloat(pr.minPrice))) : 0;
-  const maxP = priced.length > 0 ? Math.max(...priced.map((pr) => parseFloat(pr.minPrice))) : 0;
+  const avgPrice =
+    priced.length > 0
+      ? priced.reduce((s, proj) => s + parseFloat(proj.minPrice), 0) /
+        priced.length
+      : 0;
+  const minP =
+    priced.length > 0
+      ? Math.min(...priced.map((pr) => parseFloat(pr.minPrice)))
+      : 0;
+  const maxP =
+    priced.length > 0
+      ? Math.max(...priced.map((pr) => parseFloat(pr.minPrice)))
+      : 0;
 
-  const projectRows = nearProjects.slice(0, 6).map((proj) => {
-    const price = parseFloat(proj.minPrice);
-    const priceStr = price > 0 ? `<span class="place-proj-price">${(price / 1e6).toFixed(1)}M</span>` : "";
-    return `<div class="place-proj-row">
+  const projectRows = nearProjects
+    .slice(0, 6)
+    .map((proj) => {
+      const price = parseFloat(proj.minPrice);
+      const priceStr =
+        price > 0
+          ? `<span class="place-proj-price">${(price / 1e6).toFixed(1)}M</span>`
+          : "";
+      return `<div class="place-proj-row">
       <span class="place-proj-name">${escHtml(proj.name || "")}</span>
       ${priceStr}
     </div>`;
-  }).join("");
+    })
+    .join("");
 
   const panel = document.getElementById("place-intel-panel");
   if (!panel) return;
-  panel.innerHTML =
-    `<div class="pip-header">
+  panel.innerHTML = `<div class="pip-header">
       <div>
         <h3 class="pip-name-ar">${escHtml(nameAr)}</h3>
         ${nameEn && nameEn !== nameAr ? `<p class="pip-name-en">${escHtml(nameEn)}</p>` : ""}
@@ -3483,33 +4073,40 @@ function _showPlacePanel(feature) {
         <span class="pip-stat-num">${nearProjects.length}</span>
         <span class="pip-stat-label">مشروع</span>
       </div>
-      ${avgPrice > 0 ? `<div class="pip-stat">
+      ${
+        avgPrice > 0
+          ? `<div class="pip-stat">
         <span class="pip-stat-num">${(avgPrice / 1e6).toFixed(1)}M</span>
         <span class="pip-stat-label">متوسط EGP</span>
-      </div>` : ""}
-      ${minP > 0 && maxP > minP ? `<div class="pip-stat">
+      </div>`
+          : ""
+      }
+      ${
+        minP > 0 && maxP > minP
+          ? `<div class="pip-stat">
         <span class="pip-stat-num">${(minP / 1e6).toFixed(0)}–${(maxP / 1e6).toFixed(0)}M</span>
         <span class="pip-stat-label">نطاق الأسعار</span>
-      </div>` : ""}
+      </div>`
+          : ""
+      }
     </div>
-    ${nearProjects.length > 0
-      ? `<div class="pip-projects">
+    ${
+      nearProjects.length > 0
+        ? `<div class="pip-projects">
           <div class="pip-proj-title">المشاريع في المنطقة</div>
           ${projectRows}
           ${nearProjects.length > 6 ? `<div class="pip-more">+ ${nearProjects.length - 6} مشاريع أخرى</div>` : ""}
         </div>`
-      : `<div class="pip-empty">لا توجد مشاريع مسجلة في هذه المنطقة</div>`
+        : `<div class="pip-empty">لا توجد مشاريع مسجلة في هذه المنطقة</div>`
     }`;
   panel.hidden = false;
 }
 
 /** Create the places GeoJSON layer if it doesn't exist yet */
-function _ensurePlacesLayer() {
-  if (placesLayer) return;
-  const renderer = L.canvas({ padding: 0.5, tolerance: 8 });
-  placesLayer = L.geoJSON(null, {
+function _createPlaceCategoryLayer(renderer) {
+  return L.geoJSON(null, {
     renderer,
-    style: () => _getPlaceBaseStyle(),
+    style: (feature) => _getPlaceBaseStyle(feature),
     onEachFeature: (feature, layer) => {
       layer.bindTooltip(_buildPlaceTooltip(feature), {
         sticky: true,
@@ -3518,11 +4115,11 @@ function _ensurePlacesLayer() {
         opacity: 0.98,
       });
       layer.on("mouseover", function () {
-        this.setStyle(_getPlaceHoverStyle());
+        this.setStyle(_getPlaceHoverStyle(this.feature));
         if (typeof this.bringToFront === "function") this.bringToFront();
       });
       layer.on("mouseout", function () {
-        this.setStyle(_getPlaceBaseStyle());
+        this.setStyle(_getPlaceBaseStyle(this.feature));
       });
       layer.on("click", (e) => {
         L.DomEvent.stopPropagation(e);
@@ -3532,19 +4129,27 @@ function _ensurePlacesLayer() {
   });
 }
 
+function _ensurePlacesLayer() {
+  if (placesLayer) return;
+  const renderer = L.canvas({ padding: 0.5, tolerance: 8 });
+  placesLayer = L.layerGroup();
+  for (const category of PLACE_CATEGORY_ORDER) {
+    _placeCategoryLayers[category] = _createPlaceCategoryLayer(renderer);
+  }
+  _syncPlaceLayerVisibility();
+}
+
 /** Fetch neighborhood polygons for the current viewport — like fetchAndDrawRoads() */
 async function _fetchAndDrawPlaces() {
   if (!_placesVisible) return;
-  const zoom = map.getZoom();
-  if (zoom < 9) return;
   if (_placesLoading) return;
 
   const b = map.getBounds().pad(0.1);
   const G = 0.5;
-  const s = (Math.max(Math.floor(b.getSouth() / G) * G, 22.0)).toFixed(2);
-  const w = (Math.max(Math.floor(b.getWest() / G) * G, 24.7)).toFixed(2);
-  const n = (Math.min(Math.ceil(b.getNorth() / G) * G, 31.8)).toFixed(2);
-  const e = (Math.min(Math.ceil(b.getEast() / G) * G, 36.9)).toFixed(2);
+  const s = Math.max(Math.floor(b.getSouth() / G) * G, 22.0).toFixed(2);
+  const w = Math.max(Math.floor(b.getWest() / G) * G, 24.7).toFixed(2);
+  const n = Math.min(Math.ceil(b.getNorth() / G) * G, 31.8).toFixed(2);
+  const e = Math.min(Math.ceil(b.getEast() / G) * G, 36.9).toFixed(2);
   if (parseFloat(s) >= parseFloat(n) || parseFloat(w) >= parseFloat(e)) return;
 
   const cacheKey = `${s},${w},${n},${e}`;
@@ -3558,23 +4163,36 @@ async function _fetchAndDrawPlaces() {
   try {
     let geojson;
 
-    // Production: load pre-baked static GeoJSON; filter to current viewport
-    const isLocalhost = ["localhost", "127.0.0.1"].includes(window.location.hostname);
-    if (!isLocalhost) {
-      if (!window._placesStaticCache) {
+    // Prefer the pre-baked static GeoJSON in every environment. It makes low-zoom
+    // place visibility instant and avoids repeated Overpass dependency during browse.
+    if (window._placesStaticCache === undefined) {
+      try {
         const r = await fetch("/website/data/places.geojson");
         if (!r.ok) throw new Error(`Static places fetch: HTTP ${r.status}`);
         window._placesStaticCache = await r.json();
+      } catch (_) {
+        window._placesStaticCache = null;
       }
+    }
+
+    if (window._placesStaticCache) {
       const all = window._placesStaticCache.features;
-      const sN = parseFloat(n), sS = parseFloat(s), sE = parseFloat(e), sW = parseFloat(w);
+      const sN = parseFloat(n),
+        sS = parseFloat(s),
+        sE = parseFloat(e),
+        sW = parseFloat(w);
       const filtered = all.filter((f) => {
         if (!f.geometry?.coordinates?.[0]) return false;
         // Quick centroid check — keep if centroid is inside bbox
         const ring = f.geometry.coordinates[0];
-        let lat = 0, lng = 0;
-        for (const [lo, la] of ring) { lng += lo; lat += la; }
-        lat /= ring.length; lng /= ring.length;
+        let lat = 0,
+          lng = 0;
+        for (const [lo, la] of ring) {
+          lng += lo;
+          lat += la;
+        }
+        lat /= ring.length;
+        lng /= ring.length;
         return lat >= sS && lat <= sN && lng >= sW && lng <= sE;
       });
       geojson = { type: "FeatureCollection", features: filtered };
@@ -3600,12 +4218,15 @@ async function _fetchAndDrawPlaces() {
       const fid = f.properties.id;
       if (!fid || _addedPlaceIds.has(fid)) continue;
       _addedPlaceIds.add(fid);
-      placesLayer.addData(f);
+      const category = _getPlaceCategory(f);
+      const targetLayer =
+        _placeCategoryLayers[category] || _placeCategoryLayers.other;
+      targetLayer.addData(f);
       added++;
     }
 
-    if (added > 0 && _placesVisible && map.getZoom() >= 9) {
-      if (!map.hasLayer(placesLayer)) placesLayer.addTo(map);
+    if (added > 0 && _placesVisible) {
+      _syncPlaceLayerVisibility();
     }
   } catch (err) {
     _loadedPlaceBboxes.delete(cacheKey); // allow retry on next pan
@@ -3627,19 +4248,18 @@ function _schedulePlacesRefresh() {
 function setPlacesVisible(visible, options = {}) {
   _placesVisible = visible;
   const cb = document.getElementById("places-toggle");
-  if (cb) { cb.checked = visible; cb.indeterminate = false; }
+  if (cb) {
+    cb.checked = visible;
+    cb.indeterminate = false;
+  }
   if (!visible) {
+    _clearPlaceHover();
     if (placesLayer && map.hasLayer(placesLayer)) map.removeLayer(placesLayer);
+    _syncPlaceFilterControls();
     return;
   }
-  const zoom = map.getZoom();
-  if (zoom < 9) {
-    if (!options.silent) {
-      notifyRouteMessage("زوم أكثر — الأحياء تظهر من zoom 9", "info");
-    }
-    return;
-  }
-  if (placesLayer && !map.hasLayer(placesLayer)) placesLayer.addTo(map);
+  _ensurePlacesLayer();
+  _syncPlaceLayerVisibility();
   _fetchAndDrawPlaces();
 }
 
@@ -3651,13 +4271,8 @@ function loadPlacesLayer() {
 // Zoom gate + pan trigger
 map.on("zoomend", () => {
   if (!_placesVisible) return;
-  const zoom = map.getZoom();
-  if (zoom < 9) {
-    if (placesLayer && map.hasLayer(placesLayer)) map.removeLayer(placesLayer);
-  } else {
-    if (placesLayer && !map.hasLayer(placesLayer)) placesLayer.addTo(map);
-    _schedulePlacesRefresh();
-  }
+  _syncPlaceLayerVisibility();
+  _schedulePlacesRefresh();
 });
 map.on("moveend", _schedulePlacesRefresh);
 
@@ -3698,6 +4313,83 @@ document.addEventListener(
   },
   { passive: true },
 );
+
+function _bindRoadPanelLayerControls() {
+  const roadTilesToggle = document.getElementById("road-tile-toggle");
+  if (roadTilesToggle) {
+    roadTilesToggle.addEventListener("change", (event) => {
+      setRoadTilesVisible(event.target.checked);
+    });
+  }
+
+  const placesToggle = document.getElementById("places-toggle");
+  if (placesToggle) {
+    placesToggle.addEventListener("change", (event) => {
+      if (event.target.checked) {
+        loadPlacesLayer();
+      } else {
+        setPlacesVisible(false);
+      }
+    });
+  }
+
+  for (const [category, elementId] of Object.entries(PLACE_CATEGORY_TOGGLE_IDS)) {
+    const checkbox = document.getElementById(elementId);
+    if (!checkbox) continue;
+    checkbox.addEventListener("change", (event) => {
+      setPlaceCategoryVisible(category, event.target.checked);
+    });
+  }
+
+  const projectsToggle = document.getElementById("projects-toggle");
+  if (projectsToggle) {
+    projectsToggle.addEventListener("change", (event) => {
+      setProjectsVisible(event.target.checked);
+    });
+  }
+
+  const roadMasterToggle = document.getElementById("road-master-toggle");
+  if (roadMasterToggle) {
+    roadMasterToggle.addEventListener("change", (event) => {
+      setAllRoadsVisible(event.target.checked);
+    });
+  }
+
+  const projectClustersToggle = document.getElementById(
+    "project-clusters-toggle",
+  );
+  if (projectClustersToggle) {
+    projectClustersToggle.addEventListener("change", (event) => {
+      setProjectClusterView(event.target.checked);
+    });
+  }
+
+  const projectLabelsToggle = document.getElementById("project-labels-toggle");
+  if (projectLabelsToggle) {
+    projectLabelsToggle.addEventListener("change", (event) => {
+      setProjectLabelsVisible(event.target.checked);
+    });
+  }
+
+  const mainRoadsToggle = document.getElementById("road-type-main");
+  if (mainRoadsToggle) {
+    mainRoadsToggle.addEventListener("change", (event) => {
+      setMainRoadsVisible(event.target.checked);
+    });
+  }
+
+  const secondaryRoadsToggle = document.getElementById("road-type-secondary");
+  if (secondaryRoadsToggle) {
+    secondaryRoadsToggle.addEventListener("change", (event) => {
+      setSecondaryRoadsVisible(event.target.checked);
+    });
+  }
+
+  _syncPlaceFilterControls();
+  _syncProjectLayerControls();
+}
+
+_bindRoadPanelLayerControls();
 
 // ────────────────────────────────────────────────────────────────────────────
 // AUTO-ZONE HINT — toast when panning into an unloaded zone at zoom ≥ 10
@@ -3752,22 +4444,29 @@ function _maybePrimeAtlasRoads() {
     /* ignore localStorage access errors */
   }
 
-  if (map.getZoom() < 10) return;
   const zoneKey = _getZoneKeyAtView();
   if (zoneKey) {
     void loadZoneRoads(zoneKey);
+    return;
   }
+
+  void fetchAndDrawRoads();
 }
 
 function _detectZoneAtView() {
   if (_isAtlasMode()) return;
-  if (!_roadsVisible || map.getZoom() < 10) return;
+  if (!_roadsVisible) return;
   const key = _getZoneKeyAtView();
   if (!key) return;
   for (const [zoneKey, bbox] of Object.entries(ZONE_ROAD_BBOXES)) {
     if (zoneKey !== key) continue;
     const btn = document.querySelector(`.road-zone-btn[data-zone="${key}"]`);
-    if (!btn || btn.classList.contains("loaded") || btn.classList.contains("loading")) break;
+    if (
+      !btn ||
+      btn.classList.contains("loaded") ||
+      btn.classList.contains("loading")
+    )
+      break;
     // Also skip hint if the viewport bbox was already dispatched to fetchAndDrawRoads.
     // fetchAndDrawRoads adds its bbox key to _loadedRoadBboxes BEFORE the async fetch,
     // so checking it here avoids the toast firing on every pan into an already-queued zone.
@@ -3793,10 +4492,10 @@ function _detectZoneAtView() {
 const loadRoads = () => {
   if (_roadLoadTimer) clearTimeout(_roadLoadTimer);
   _roadLoadTimer = setTimeout(() => {
-    fetchAndDrawRoads();
     if (_isAtlasMode()) {
       _maybePrimeAtlasRoads();
     } else {
+      fetchAndDrawRoads();
       _detectZoneAtView();
     }
     _roadLoadTimer = null;
@@ -3806,6 +4505,12 @@ const loadRoads = () => {
 map.on("moveend", loadRoads);
 map.on("zoomend", _syncSecondaryRoadZoom);
 map.on("zoomend", _syncZoneOverview);
+map.on("mousemove", (event) => {
+  _scheduleOverlayHover(event.latlng);
+});
+map.on("mouseout", _clearOverlayHover);
+map.on("movestart", _clearOverlayHover);
+map.on("zoomstart", _clearOverlayHover);
 document.addEventListener("touchstart", loadRoads, {
   passive: true,
   once: true,
@@ -3829,12 +4534,20 @@ let _densityTimer = null;
 
 function showDensityRings(latlng) {
   // Clear previous rings + timer
-  _densityRings.forEach((l) => { try { map.removeLayer(l); } catch (_) {} });
+  _densityRings.forEach((l) => {
+    try {
+      map.removeLayer(l);
+    } catch (_) {}
+  });
   _densityRings = [];
   clearTimeout(_densityTimer);
 
   const radii = [1000, 3000, 5000];
-  const colors = ["rgba(240,147,251,0.65)", "rgba(102,126,234,0.55)", "rgba(100,210,255,0.4)"];
+  const colors = [
+    "rgba(240,147,251,0.65)",
+    "rgba(102,126,234,0.55)",
+    "rgba(100,210,255,0.4)",
+  ];
 
   radii.forEach((r, i) => {
     const circle = L.circle(latlng, {
@@ -3855,7 +4568,8 @@ function showDensityRings(latlng) {
     }).length;
 
     // Label at east edge of ring
-    const eastLng = latlng.lng + (r / (111320 * Math.cos((latlng.lat * Math.PI) / 180)));
+    const eastLng =
+      latlng.lng + r / (111320 * Math.cos((latlng.lat * Math.PI) / 180));
     const label = L.marker(L.latLng(latlng.lat, eastLng), {
       icon: L.divIcon({
         html: `<div class="density-ring-label">${count} مشروع · ${r >= 1000 ? r / 1000 + "km" : r + "m"}</div>`,
@@ -3869,7 +4583,11 @@ function showDensityRings(latlng) {
 
   // Auto-remove after 15 seconds
   _densityTimer = setTimeout(() => {
-    _densityRings.forEach((l) => { try { map.removeLayer(l); } catch (_) {} });
+    _densityRings.forEach((l) => {
+      try {
+        map.removeLayer(l);
+      } catch (_) {}
+    });
     _densityRings = [];
   }, 15000);
 }
@@ -3885,7 +4603,11 @@ let _choroplethLayers = [];
 
 function showZoneChoropleth() {
   // Clear existing
-  _choroplethLayers.forEach((l) => { try { map.removeLayer(l); } catch (_) {} });
+  _choroplethLayers.forEach((l) => {
+    try {
+      map.removeLayer(l);
+    } catch (_) {}
+  });
   _choroplethLayers = [];
 
   const zones = Object.keys(ZONE_ROAD_BBOXES);
@@ -3895,15 +4617,26 @@ function showZoneChoropleth() {
     const bbox = ZONE_ROAD_BBOXES[z];
     if (!bbox) return;
     const zProjects = (window.projects || []).filter(
-      (p) => p.lat >= bbox.south && p.lat <= bbox.north && p.lng >= bbox.west && p.lng <= bbox.east,
+      (p) =>
+        p.lat >= bbox.south &&
+        p.lat <= bbox.north &&
+        p.lng >= bbox.west &&
+        p.lng <= bbox.east,
     );
     if (!zProjects.length) return;
     const pricedProjects = zProjects.filter(
-      (p) => p.lat >= bbox.south && p.lat <= bbox.north && p.lng >= bbox.west && p.lng <= bbox.east && parseFloat(p.minPrice) > 0,
+      (p) =>
+        p.lat >= bbox.south &&
+        p.lat <= bbox.north &&
+        p.lng >= bbox.west &&
+        p.lng <= bbox.east &&
+        parseFloat(p.minPrice) > 0,
     );
     const avg = pricedProjects.length
-      ? pricedProjects.reduce((sum, project) => sum + parseFloat(project.minPrice), 0) /
-        pricedProjects.length
+      ? pricedProjects.reduce(
+          (sum, project) => sum + parseFloat(project.minPrice),
+          0,
+        ) / pricedProjects.length
       : 0;
     zoneData.push({
       z,
@@ -3921,7 +4654,8 @@ function showZoneChoropleth() {
   const maxCount = Math.max(...counts);
 
   zoneData.forEach(({ z, bbox, avg, count, pricedCount }) => {
-    const t = maxCount > minCount ? (count - minCount) / (maxCount - minCount) : 0.5;
+    const t =
+      maxCount > minCount ? (count - minCount) / (maxCount - minCount) : 0.5;
     const r = Math.round(72 + t * 148);
     const g = Math.round(126 + t * 26);
     const b = Math.round(234 - t * 138);
@@ -3929,7 +4663,10 @@ function showZoneChoropleth() {
     const strokeColor = `rgba(${r},${g},${b},${0.58 + t * 0.22})`;
 
     const rect = L.rectangle(
-      [[bbox.south, bbox.west], [bbox.north, bbox.east]],
+      [
+        [bbox.south, bbox.west],
+        [bbox.north, bbox.east],
+      ],
       {
         color: strokeColor,
         weight: 1.8 + t * 1.4,
@@ -3947,9 +4684,10 @@ function showZoneChoropleth() {
       october: "6 أكتوبر / زايد",
       "new-cairo": "القاهرة الجديدة",
     };
-    const priceLine = avg > 0
-      ? `<br>متوسط ${(avg / 1e6).toFixed(1)}M EGP${pricedCount < count ? ` · ${pricedCount}/${count} مسعر` : ""}`
-      : `<br>بيانات سعرية قيد الاستكمال`;
+    const priceLine =
+      avg > 0
+        ? `<br>متوسط ${(avg / 1e6).toFixed(1)}M EGP${pricedCount < count ? ` · ${pricedCount}/${count} مسعر` : ""}`
+        : `<br>بيانات سعرية قيد الاستكمال`;
     rect.bindTooltip(
       `<b>${escHtml(ZONE_LABELS[z] || z)}</b><br>${count} مشروع${priceLine}`,
       { sticky: true, className: "place-name-tooltip", opacity: 0.96 },
@@ -3965,7 +4703,11 @@ function showZoneChoropleth() {
 }
 
 function clearZoneChoropleth() {
-  _choroplethLayers.forEach((l) => { try { map.removeLayer(l); } catch (_) {} });
+  _choroplethLayers.forEach((l) => {
+    try {
+      map.removeLayer(l);
+    } catch (_) {}
+  });
   _choroplethLayers = [];
 }
 
@@ -4473,6 +5215,15 @@ function _syncMapLayerButtons(layerName) {
 function _applyMapLayerDefaults(layerName, options = {}) {
   const mode = MAP_VIEW_DEFAULTS[layerName] ? layerName : "street";
   const defaults = MAP_VIEW_DEFAULTS[mode];
+  const previousMode = currentMapLayer;
+
+  if (
+    previousMode !== mode &&
+    defaults.roadsVisible === false &&
+    (mainRoadsLayer || secondaryRoadsLayer || _roadGlowLayer)
+  ) {
+    clearAllRoads();
+  }
 
   currentMapLayer = mode;
   _syncMapLayerButtons(mode);
@@ -4524,28 +5275,9 @@ let activeFilter = "all";
 let sidebarAutoCollapsed = false;
 
 function toggleMapView() {
-  const btn = document.getElementById("view-toggle-btn");
   if (!map) return;
 
-  if (isClusterView) {
-    // Switch to Normal View
-    if (map.hasLayer(markerClusterGroup)) map.removeLayer(markerClusterGroup);
-    if (!map.hasLayer(markerLayer)) map.addLayer(markerLayer);
-    if (btn) {
-      btn.innerText = "Normal View";
-      btn.classList.remove("active");
-    }
-    isClusterView = false;
-  } else {
-    // Switch to Cluster View
-    if (map.hasLayer(markerLayer)) map.removeLayer(markerLayer);
-    if (!map.hasLayer(markerClusterGroup)) map.addLayer(markerClusterGroup);
-    if (btn) {
-      btn.innerText = "Cluster View";
-      btn.classList.add("active");
-    }
-    isClusterView = true;
-  }
+  setProjectClusterView(!isClusterView);
 }
 
 // --- NEURAL VIEW FEATURE ---
@@ -5207,17 +5939,12 @@ async function renderProjects(projectList) {
   markerClusterGroup.addLayers(allClusterMarkers);
   allStandardMarkers.forEach((m) => m.addTo(markerLayer));
 
-  if (isHeatmapMode) {
-    if (map.hasLayer(markerClusterGroup)) map.removeLayer(markerClusterGroup);
-    if (map.hasLayer(markerLayer)) map.removeLayer(markerLayer);
-  } else {
-    if (isClusterView) {
-      if (!map.hasLayer(markerClusterGroup)) map.addLayer(markerClusterGroup);
-      if (map.hasLayer(markerLayer)) map.removeLayer(markerLayer);
-    } else {
-      if (!map.hasLayer(markerLayer)) map.addLayer(markerLayer);
-      if (map.hasLayer(markerClusterGroup)) map.removeLayer(markerClusterGroup);
-    }
+  _syncProjectLayerControls();
+  _syncProjectLayerVisibility();
+
+  if (map && _projectsVisible && isLabelsAlwaysVisible) {
+    map.getContainer().classList.remove("labels-hidden");
+    _batchTooltips(true);
   }
 }
 
@@ -6192,6 +6919,10 @@ function focusOnProject(p, options = {}) {
     // Update URL Hash for sharing
     if (updateHash) {
       window.location.hash = `project=${encodeURIComponent(p.name)}`;
+    }
+
+    if (!_projectsVisible) {
+      setProjectsVisible(true);
     }
 
     if (map) {

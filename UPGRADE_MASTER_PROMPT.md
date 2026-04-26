@@ -1,4 +1,5 @@
 # XCELIAS PROPERTY EXPLORER — MASTER UPGRADE PROMPT
+
 ## "Beat Wikimapia, Own Egypt's Real Estate Map"
 
 > **To: GitHub Copilot Agent**
@@ -14,6 +15,7 @@
 **Wikimapia's secret**: Roads are NOT rendered client-side. They are pre-baked pixels inside 256×256 PNG tile images served from 16 CDN shards (`i0–i15.wikimapia.org`). This is why roads appear instantly — they are just background images. Their place polygons (neighborhoods, hospitals, malls) are a **separate** lightweight vector overlay that fetches per-viewport bbox via their private API.
 
 **Our current architecture**:
+
 - `CartoDB dark_all` tile layer = our background (already tile-speed, but roads hidden in dark theme)
 - Overpass API → GeoJSON polylines → Canvas layer = optional interactive road overlay (20–40s first load)
 - 1,383 real estate projects = our unique data advantage
@@ -39,10 +41,13 @@
 ## PHASE 1 — INSTANT ROAD TILES (Match Wikimapia Speed, 0ms)
 
 ### Goal
+
 Add a transparent tile overlay layer that renders Egypt's road network **instantly** from pre-baked tiles — same technical approach as Wikimapia. This runs alongside our existing Overpass canvas layer. Users see roads immediately on load; the Overpass layer adds interactivity when it finishes.
 
 ### Why CartoDB Voyager Labels?
+
 `https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}{r}.png`
+
 - Transparent background (alpha PNG) — roads/labels show over our dark tiles
 - Free, no API key, same CDN (`a/b/c/d` subdomains) we already use
 - Loads in 100–300ms (tile-cached globally)
@@ -54,16 +59,19 @@ Add a transparent tile overlay layer that renders Egypt's road network **instant
 #### Step 1.1 — Add road tile layer variable after line 1802 in `app.js`
 
 After this block:
+
 ```js
 const layers = {
   street: L.tileLayer(darkTiles, {
 ```
 
 Add BEFORE the `layers` object declaration:
+
 ```js
 // Road label tile overlay — instant road visibility, zero Overpass delay
 // Transparent PNG tiles from CartoDB Voyager Labels overlay
-const ROAD_TILE_URL = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}{r}.png';
+const ROAD_TILE_URL =
+  "https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}{r}.png";
 let roadTileLayer = null;
 let _roadTilesVisible = false;
 ```
@@ -77,14 +85,14 @@ function setRoadTilesVisible(visible) {
   if (visible) {
     if (!roadTileLayer) {
       roadTileLayer = L.tileLayer(ROAD_TILE_URL, {
-        subdomains: 'abcd',
+        subdomains: "abcd",
         maxZoom: 22,
         detectRetina: true,
         opacity: 0.75,
-        pane: 'overlayPane',
+        pane: "overlayPane",
         updateWhenZooming: false,
         keepBuffer: 3,
-        attribution: '',
+        attribution: "",
       });
     }
     if (!map.hasLayer(roadTileLayer)) roadTileLayer.addTo(map);
@@ -94,7 +102,7 @@ function setRoadTilesVisible(visible) {
     }
   }
   // Sync UI toggle
-  const cb = document.getElementById('road-tile-toggle');
+  const cb = document.getElementById("road-tile-toggle");
   if (cb) cb.checked = visible;
 }
 ```
@@ -154,6 +162,7 @@ setTimeout(() => setRoadTilesVisible(true), 500);
 ```
 
 #### Verification for Phase 1
+
 - Screenshot before enabling tiles vs after → roads should appear within 300ms
 - Toggle off/on should work cleanly
 - Dark tile base should still be clearly visible
@@ -164,11 +173,13 @@ setTimeout(() => setRoadTilesVisible(true), 500);
 ## PHASE 2 — PLACES/AREAS OVERLAY (Beat Wikimapia's Core Feature)
 
 ### Goal
+
 Add Egypt neighborhood/district polygon overlay from OpenStreetMap. On hover: polygon highlights + tooltip with Arabic name + our project count. On click: detailed slide panel with real estate intelligence for that area. This is what Wikimapia does but with **our data on top**.
 
 ### Technical Architecture
 
 **Data source**: Overpass API
+
 ```
 [out:json][timeout:30][bbox:22.0,24.7,31.8,36.9];
 (
@@ -190,7 +201,7 @@ let placesLayer = null;
 let _placesVisible = false;
 let _placesLoaded = false;
 let _placesLoading = false;
-const PLACES_CACHE_KEY = 'xc_places_v1';
+const PLACES_CACHE_KEY = "xc_places_v1";
 const PLACES_TTL_MS = 60 * 24 * 60 * 60 * 1000; // 60 days
 ```
 
@@ -201,35 +212,48 @@ const PLACES_TTL_MS = 60 * 24 * 60 * 60 * 1000; // 60 days
 ```js
 function _buildPlaceTooltip(feature) {
   const p = feature.properties || {};
-  const nameAr = p['name:ar'] || '';
-  const nameEn = p.name || p['name:en'] || '';
-  const type = p.place || p.boundary || 'منطقة';
-  const typeLabel = { suburb: 'حي', neighbourhood: 'حي', quarter: 'ربع',
-    village: 'قرية', town: 'مدينة', administrative: 'منطقة إدارية' }[type] || type;
+  const nameAr = p["name:ar"] || "";
+  const nameEn = p.name || p["name:en"] || "";
+  const type = p.place || p.boundary || "منطقة";
+  const typeLabel =
+    {
+      suburb: "حي",
+      neighbourhood: "حي",
+      quarter: "ربع",
+      village: "قرية",
+      town: "مدينة",
+      administrative: "منطقة إدارية",
+    }[type] || type;
 
   // Count projects in this area using bbox
   let projectCount = 0;
   if (window.projects && feature.geometry) {
     const coords = _flattenCoords(feature.geometry);
     if (coords.length > 0) {
-      const lats = coords.map(c => c[1]);
-      const lngs = coords.map(c => c[0]);
-      const bboxS = Math.min(...lats), bboxN = Math.max(...lats);
-      const bboxW = Math.min(...lngs), bboxE = Math.max(...lngs);
-      projectCount = window.projects.filter(proj =>
-        proj.lat >= bboxS && proj.lat <= bboxN &&
-        proj.lng >= bboxW && proj.lng <= bboxE
+      const lats = coords.map((c) => c[1]);
+      const lngs = coords.map((c) => c[0]);
+      const bboxS = Math.min(...lats),
+        bboxN = Math.max(...lats);
+      const bboxW = Math.min(...lngs),
+        bboxE = Math.max(...lngs);
+      projectCount = window.projects.filter(
+        (proj) =>
+          proj.lat >= bboxS &&
+          proj.lat <= bboxN &&
+          proj.lng >= bboxW &&
+          proj.lng <= bboxE,
       ).length;
     }
   }
 
-  const countBadge = projectCount > 0
-    ? `<div class="place-tt-count">${projectCount} مشروع</div>`
-    : '';
+  const countBadge =
+    projectCount > 0
+      ? `<div class="place-tt-count">${projectCount} مشروع</div>`
+      : "";
 
   return `<div class="place-tooltip">
-    ${nameAr ? `<div class="place-tt-ar">${escHtml(nameAr)}</div>` : ''}
-    ${nameEn ? `<div class="place-tt-en">${escHtml(nameEn)}</div>` : ''}
+    ${nameAr ? `<div class="place-tt-ar">${escHtml(nameAr)}</div>` : ""}
+    ${nameEn ? `<div class="place-tt-en">${escHtml(nameEn)}</div>` : ""}
     <div class="place-tt-type">${escHtml(typeLabel)}</div>
     ${countBadge}
   </div>`;
@@ -241,10 +265,10 @@ function _buildPlaceTooltip(feature) {
 ```js
 function _flattenCoords(geometry) {
   if (!geometry) return [];
-  if (geometry.type === 'LineString') return geometry.coordinates;
-  if (geometry.type === 'Polygon') return geometry.coordinates[0] || [];
-  if (geometry.type === 'MultiPolygon') {
-    return geometry.coordinates.flatMap(p => p[0] || []);
+  if (geometry.type === "LineString") return geometry.coordinates;
+  if (geometry.type === "Polygon") return geometry.coordinates[0] || [];
+  if (geometry.type === "MultiPolygon") {
+    return geometry.coordinates.flatMap((p) => p[0] || []);
   }
   return [];
 }
@@ -255,26 +279,26 @@ function _flattenCoords(geometry) {
 ```js
 function overpassPlacesToGeoJson(data) {
   const features = [];
-  if (!data || !data.elements) return { type: 'FeatureCollection', features };
+  if (!data || !data.elements) return { type: "FeatureCollection", features };
   for (const el of data.elements) {
     if (!el.geometry && !el.members) continue;
     let coordinates;
-    if (el.type === 'way' && el.geometry) {
-      coordinates = el.geometry.map(n => [n.lon, n.lat]);
+    if (el.type === "way" && el.geometry) {
+      coordinates = el.geometry.map((n) => [n.lon, n.lat]);
       if (coordinates.length < 3) continue;
       // Close the ring
-      if (coordinates[0][0] !== coordinates[coordinates.length-1][0]) {
+      if (coordinates[0][0] !== coordinates[coordinates.length - 1][0]) {
         coordinates.push(coordinates[0]);
       }
       features.push({
-        type: 'Feature',
+        type: "Feature",
         properties: { id: el.id, ...el.tags },
-        geometry: { type: 'Polygon', coordinates: [coordinates] }
+        geometry: { type: "Polygon", coordinates: [coordinates] },
       });
     }
     // Relations are complex — skip for MVP, handle in v2
   }
-  return { type: 'FeatureCollection', features };
+  return { type: "FeatureCollection", features };
 }
 ```
 
@@ -302,36 +326,43 @@ async function loadPlacesLayer() {
           if (!Array.isArray(features)) features = null;
         }
       }
-    } catch (_) { features = null; }
+    } catch (_) {
+      features = null;
+    }
 
     // Fetch from Overpass if no cache
     if (!features) {
       const query = [
-        '[out:json][timeout:30][bbox:22.0,24.7,31.8,36.9];',
+        "[out:json][timeout:30][bbox:22.0,24.7,31.8,36.9];",
         '(way["place"~"suburb|neighbourhood|quarter|village|town"](22.0,24.7,31.8,36.9);',
         'way["boundary"="administrative"]["admin_level"~"^(7|8|9|10)$"](22.0,24.7,31.8,36.9););',
-        'out geom qt;'
-      ].join('');
+        "out geom qt;",
+      ].join("");
       const response = await _fetchOverpass(query, 30000);
       const data = await _parseJsonWorker(await response.text());
       const geojson = overpassPlacesToGeoJson(data);
 
       // Compact storage: only keep id + name fields + geometry
-      features = geojson.features.map(f => ({
+      features = geojson.features.map((f) => ({
         i: f.properties.id,
-        n: f.properties.name || '',
-        a: f.properties['name:ar'] || '',
-        p: f.properties.place || '',
-        b: f.properties.boundary || '',
-        l: f.properties.admin_level || '',
+        n: f.properties.name || "",
+        a: f.properties["name:ar"] || "",
+        p: f.properties.place || "",
+        b: f.properties.boundary || "",
+        l: f.properties.admin_level || "",
         c: f.geometry.coordinates[0], // outer ring only
       }));
 
       // Cache compressed
       try {
         const compressed = await _compressStr(JSON.stringify(features));
-        localStorage.setItem(PLACES_CACHE_KEY, JSON.stringify({ v: 1, ts: Date.now(), ...compressed }));
-      } catch (_) { /* quota */ }
+        localStorage.setItem(
+          PLACES_CACHE_KEY,
+          JSON.stringify({ v: 1, ts: Date.now(), ...compressed }),
+        );
+      } catch (_) {
+        /* quota */
+      }
     }
 
     // Build GeoJSON layer
@@ -339,26 +370,34 @@ async function loadPlacesLayer() {
     placesLayer = L.geoJSON(null, {
       renderer,
       style: {
-        color: 'rgba(102, 126, 234, 0.6)',
+        color: "rgba(102, 126, 234, 0.6)",
         weight: 1.5,
-        fillColor: 'rgba(102, 126, 234, 0.04)',
+        fillColor: "rgba(102, 126, 234, 0.04)",
         fillOpacity: 1,
-        lineCap: 'round',
+        lineCap: "round",
       },
       onEachFeature: (feature, layer) => {
         layer.bindTooltip(_buildPlaceTooltip(feature), {
           sticky: true,
-          direction: 'top',
-          className: 'place-name-tooltip',
+          direction: "top",
+          className: "place-name-tooltip",
           opacity: 0.97,
         });
-        layer.on('mouseover', function() {
-          this.setStyle({ color: 'rgba(102, 126, 234, 1)', fillColor: 'rgba(102, 126, 234, 0.12)', weight: 2.5 });
+        layer.on("mouseover", function () {
+          this.setStyle({
+            color: "rgba(102, 126, 234, 1)",
+            fillColor: "rgba(102, 126, 234, 0.12)",
+            weight: 2.5,
+          });
         });
-        layer.on('mouseout', function() {
-          this.setStyle({ color: 'rgba(102, 126, 234, 0.6)', fillColor: 'rgba(102, 126, 234, 0.04)', weight: 1.5 });
+        layer.on("mouseout", function () {
+          this.setStyle({
+            color: "rgba(102, 126, 234, 0.6)",
+            fillColor: "rgba(102, 126, 234, 0.04)",
+            weight: 1.5,
+          });
         });
-        layer.on('click', (e) => {
+        layer.on("click", (e) => {
           L.DomEvent.stopPropagation(e);
           _showPlacePanel(feature);
         });
@@ -369,19 +408,25 @@ async function loadPlacesLayer() {
     for (const f of features) {
       if (!f.c || f.c.length < 3) continue;
       placesLayer.addData({
-        type: 'Feature',
-        properties: { id: f.i, name: f.n, 'name:ar': f.a, place: f.p, boundary: f.b, admin_level: f.l },
-        geometry: { type: 'Polygon', coordinates: [f.c] },
+        type: "Feature",
+        properties: {
+          id: f.i,
+          name: f.n,
+          "name:ar": f.a,
+          place: f.p,
+          boundary: f.b,
+          admin_level: f.l,
+        },
+        geometry: { type: "Polygon", coordinates: [f.c] },
       });
     }
 
     _placesLoaded = true;
     _placesLoading = false;
     setPlacesVisible(true);
-
   } catch (err) {
     _placesLoading = false;
-    console.warn('Places layer load failed:', err.message);
+    console.warn("Places layer load failed:", err.message);
   }
 }
 ```
@@ -398,7 +443,7 @@ function setPlacesVisible(visible) {
   } else {
     if (map.hasLayer(placesLayer)) map.removeLayer(placesLayer);
   }
-  const cb = document.getElementById('places-toggle');
+  const cb = document.getElementById("places-toggle");
   if (cb) cb.checked = visible;
 }
 ```
@@ -408,42 +453,51 @@ function setPlacesVisible(visible) {
 ```js
 function _showPlacePanel(feature) {
   const p = feature.properties || {};
-  const nameAr = p['name:ar'] || p.name || 'منطقة';
-  const nameEn = p.name || '';
-  const type = p.place || p.boundary || 'area';
+  const nameAr = p["name:ar"] || p.name || "منطقة";
+  const nameEn = p.name || "";
+  const type = p.place || p.boundary || "area";
 
   // Find projects in this area bbox
   const coords = _flattenCoords(feature.geometry);
   let nearProjects = [];
   if (coords.length > 0 && window.projects) {
-    const lats = coords.map(c => c[1]);
-    const lngs = coords.map(c => c[0]);
-    const bS = Math.min(...lats), bN = Math.max(...lats);
-    const bW = Math.min(...lngs), bE = Math.max(...lngs);
-    nearProjects = window.projects.filter(proj =>
-      proj.lat >= bS && proj.lat <= bN && proj.lng >= bW && proj.lng <= bE
+    const lats = coords.map((c) => c[1]);
+    const lngs = coords.map((c) => c[0]);
+    const bS = Math.min(...lats),
+      bN = Math.max(...lats);
+    const bW = Math.min(...lngs),
+      bE = Math.max(...lngs);
+    nearProjects = window.projects.filter(
+      (proj) =>
+        proj.lat >= bS && proj.lat <= bN && proj.lng >= bW && proj.lng <= bE,
     );
   }
 
-  const avgPrice = nearProjects.length > 0
-    ? nearProjects.reduce((s, p) => s + (parseFloat(p.minPrice) || 0), 0) / nearProjects.filter(p => p.minPrice).length
-    : 0;
+  const avgPrice =
+    nearProjects.length > 0
+      ? nearProjects.reduce((s, p) => s + (parseFloat(p.minPrice) || 0), 0) /
+        nearProjects.filter((p) => p.minPrice).length
+      : 0;
 
-  const projectRows = nearProjects.slice(0, 5).map(proj =>
-    `<div class="place-proj-row">
-      <span class="place-proj-name">${escHtml(proj.name || '')}</span>
-      <span class="place-proj-dev">${escHtml(proj.dev || '')}</span>
-    </div>`
-  ).join('');
+  const projectRows = nearProjects
+    .slice(0, 5)
+    .map(
+      (proj) =>
+        `<div class="place-proj-row">
+      <span class="place-proj-name">${escHtml(proj.name || "")}</span>
+      <span class="place-proj-dev">${escHtml(proj.dev || "")}</span>
+    </div>`,
+    )
+    .join("");
 
-  const panel = document.getElementById('place-intel-panel');
+  const panel = document.getElementById("place-intel-panel");
   if (!panel) return;
 
   panel.innerHTML = `
     <div class="pip-header">
       <div class="pip-names">
         <h3 class="pip-name-ar">${escHtml(nameAr)}</h3>
-        ${nameEn ? `<p class="pip-name-en">${escHtml(nameEn)}</p>` : ''}
+        ${nameEn ? `<p class="pip-name-en">${escHtml(nameEn)}</p>` : ""}
       </div>
       <button class="pip-close" onclick="document.getElementById('place-intel-panel').hidden=true">✕</button>
     </div>
@@ -452,17 +506,25 @@ function _showPlacePanel(feature) {
         <span class="pip-stat-num">${nearProjects.length}</span>
         <span class="pip-stat-label">مشروع</span>
       </div>
-      ${avgPrice > 0 ? `<div class="pip-stat">
+      ${
+        avgPrice > 0
+          ? `<div class="pip-stat">
         <span class="pip-stat-num">${(avgPrice / 1e6).toFixed(1)}M</span>
         <span class="pip-stat-label">متوسط السعر (EGP)</span>
-      </div>` : ''}
+      </div>`
+          : ""
+      }
     </div>
-    ${nearProjects.length > 0 ? `
+    ${
+      nearProjects.length > 0
+        ? `
     <div class="pip-projects">
       <div class="pip-proj-title">أبرز المشاريع</div>
       ${projectRows}
-      ${nearProjects.length > 5 ? `<div class="pip-more">+ ${nearProjects.length - 5} مشاريع أخرى</div>` : ''}
-    </div>` : '<div class="pip-empty">لا توجد مشاريع مسجلة في هذه المنطقة</div>'}
+      ${nearProjects.length > 5 ? `<div class="pip-more">+ ${nearProjects.length - 5} مشاريع أخرى</div>` : ""}
+    </div>`
+        : '<div class="pip-empty">لا توجد مشاريع مسجلة في هذه المنطقة</div>'
+    }
   `;
   panel.hidden = false;
 }
@@ -480,6 +542,7 @@ function _showPlacePanel(feature) {
 #### Places toggle in road panel HTML (`index.html`)
 
 Add after the road tile toggle row:
+
 ```html
 <!-- OSM Places / Neighborhoods -->
 <div class="road-tile-row">
@@ -507,14 +570,30 @@ Add after the road tile toggle row:
   backdrop-filter: blur(8px);
   font-family: inherit;
 }
-.place-tt-ar { font-size: 14px; font-weight: 700; color: #e2e8f0; direction: rtl; }
-.place-tt-en { font-size: 11px; color: #94a3b8; }
-.place-tt-type { font-size: 10px; color: #667eea; margin-top: 2px; }
+.place-tt-ar {
+  font-size: 14px;
+  font-weight: 700;
+  color: #e2e8f0;
+  direction: rtl;
+}
+.place-tt-en {
+  font-size: 11px;
+  color: #94a3b8;
+}
+.place-tt-type {
+  font-size: 10px;
+  color: #667eea;
+  margin-top: 2px;
+}
 .place-tt-count {
-  font-size: 12px; font-weight: 600;
-  color: #f093fb; margin-top: 3px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #f093fb;
+  margin-top: 3px;
   background: rgba(240, 147, 251, 0.15);
-  padding: 2px 6px; border-radius: 10px; display: inline-block;
+  padding: 2px 6px;
+  border-radius: 10px;
+  display: inline-block;
 }
 
 .place-intel-panel {
@@ -534,29 +613,97 @@ Add after the road tile toggle row:
   direction: rtl;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
-.pip-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
-.pip-name-ar { font-size: 18px; font-weight: 700; color: #f1f5f9; margin: 0; }
-.pip-name-en { font-size: 12px; color: #94a3b8; margin: 2px 0 0; }
-.pip-close { background: none; border: none; color: #94a3b8; font-size: 18px; cursor: pointer; padding: 0 4px; line-height: 1; }
-.pip-close:hover { color: #e2e8f0; }
-.pip-stats { display: flex; gap: 16px; margin-bottom: 12px; }
-.pip-stat { text-align: center; }
-.pip-stat-num { display: block; font-size: 24px; font-weight: 800; color: #667eea; }
-.pip-stat-label { font-size: 11px; color: #94a3b8; }
-.pip-proj-title { font-size: 12px; color: #667eea; font-weight: 600; margin-bottom: 6px; }
-.pip-projects { border-top: 1px solid rgba(102,126,234,0.2); padding-top: 10px; }
-.place-proj-row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-.place-proj-name { font-size: 12px; font-weight: 600; }
-.place-proj-dev { font-size: 11px; color: #94a3b8; }
-.pip-more { font-size: 11px; color: #667eea; text-align: center; padding-top: 6px; }
-.pip-empty { font-size: 12px; color: #94a3b8; text-align: center; padding: 8px 0; }
+.pip-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+.pip-name-ar {
+  font-size: 18px;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin: 0;
+}
+.pip-name-en {
+  font-size: 12px;
+  color: #94a3b8;
+  margin: 2px 0 0;
+}
+.pip-close {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+}
+.pip-close:hover {
+  color: #e2e8f0;
+}
+.pip-stats {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+.pip-stat {
+  text-align: center;
+}
+.pip-stat-num {
+  display: block;
+  font-size: 24px;
+  font-weight: 800;
+  color: #667eea;
+}
+.pip-stat-label {
+  font-size: 11px;
+  color: #94a3b8;
+}
+.pip-proj-title {
+  font-size: 12px;
+  color: #667eea;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.pip-projects {
+  border-top: 1px solid rgba(102, 126, 234, 0.2);
+  padding-top: 10px;
+}
+.place-proj-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+.place-proj-name {
+  font-size: 12px;
+  font-weight: 600;
+}
+.place-proj-dev {
+  font-size: 11px;
+  color: #94a3b8;
+}
+.pip-more {
+  font-size: 11px;
+  color: #667eea;
+  text-align: center;
+  padding-top: 6px;
+}
+.pip-empty {
+  font-size: 12px;
+  color: #94a3b8;
+  text-align: center;
+  padding: 8px 0;
+}
 ```
 
 #### Zoom-gate places visibility in map event listeners (`app.js`)
 
 Add to the `map.on('zoomend')` handler:
+
 ```js
-map.on('zoomend', () => {
+map.on("zoomend", () => {
   if (_placesVisible && placesLayer) {
     const zoom = map.getZoom();
     if (zoom >= 9 && !map.hasLayer(placesLayer)) placesLayer.addTo(map);
@@ -566,6 +713,7 @@ map.on('zoomend', () => {
 ```
 
 #### Verification for Phase 2
+
 - Load places layer → polygons appear over map as thin blue-purple lines
 - Hover a neighborhood → tooltip shows Arabic name + project count
 - Click a neighborhood → slide panel shows project list, average price
@@ -582,10 +730,13 @@ map.on('zoomend', () => {
 #### 3.1 — `_updateCacheSize()` — remove stale v2 key reference (line ~2456)
 
 **Find**:
+
 ```js
 const keys = [EGYPT_HW_CACHE_KEY, "xc_egypt_hw_v2"];
 ```
+
 **Replace with**:
+
 ```js
 const keys = [EGYPT_HW_CACHE_KEY];
 ```
@@ -593,6 +744,7 @@ const keys = [EGYPT_HW_CACHE_KEY];
 #### 3.2 — `loadFullEgyptHighways()` — remove v2 migration block (lines ~2955–2985)
 
 **Find and delete** this entire block (inside `loadFullEgyptHighways`):
+
 ```js
 // ── 1b. Migrate legacy v2 cache → v3 (one-time upgrade for existing users) ──
 if (!features) {
@@ -605,6 +757,7 @@ if (!features) {
   }
 }
 ```
+
 All existing users have been migrated to v3 by now (30+ days since v3 was deployed). The migration block is dead weight that runs on every cold start.
 
 #### 3.3 — `fetchAndDrawRoads()` — remove the complex viewport tiling path
@@ -616,6 +769,7 @@ The viewport-tiling path (grid cells at 0.5° increments) was superseded by `loa
 #### 3.4 — `_refreshRoadLabels` debounce (in `moveend` listener, lines ~3210–3220)
 
 **Find** (in the `moveend` listener):
+
 ```js
 map.on("moveend", () => {
   if (map.getZoom() >= 13 && _roadsVisible) {
@@ -627,7 +781,9 @@ map.on("moveend", () => {
   }
 });
 ```
+
 **Replace with** (proper debounce — avoid calling on every pan):
+
 ```js
 let _labelRefreshTimer = null;
 map.on("moveend", () => {
@@ -649,6 +805,7 @@ map.on("moveend", () => {
 In `_parseJsonWorker()` (around line 2220), the Blob URL is created on every call:
 
 **Find**:
+
 ```js
 async function _parseJsonWorker(str) {
   return new Promise((resolve, reject) => {
@@ -656,7 +813,9 @@ async function _parseJsonWorker(str) {
     const url = URL.createObjectURL(blob);
     const worker = new Worker(url);
 ```
+
 **Replace with** (singleton blob URL):
+
 ```js
 let _workerBlobUrl = null;
 function _getWorkerUrl() {
@@ -671,36 +830,47 @@ async function _parseJsonWorker(str) {
   return new Promise((resolve, reject) => {
     const worker = new Worker(_getWorkerUrl());
 ```
-*(Remove the blob/url creation lines from inside the function)*
+
+_(Remove the blob/url creation lines from inside the function)_
 
 #### 3.6 — `satellite` keepBuffer: 6 → 3
 
 In the `layers` object (line ~1825):
+
 ```js
 keepBuffer: 6, // Extra buffer for satellite (more caching)
 ```
+
 Change to:
+
 ```js
 keepBuffer: 3,
 ```
+
 Rationale: 6 tiles buffer = 28 extra tiles pre-loaded per zoom level. Cuts memory usage ~50% for satellite mode.
 
 #### 3.7 — Remove `updateWhenIdle: true` from map init (conflicts with `updateWhenZooming: false`)
 
 In map initialization (line ~1790):
+
 ```js
 updateWhenIdle: true, // Update tiles when map stops moving
 ```
+
 Remove this line entirely — `updateWhenZooming: false` already handles it, and both together cause duplicate tile requests on pan.
 
 ### Performance Verification
+
 After Phase 3 changes, run:
+
 ```bash
 cd "j:\Excelias V2\excelias-portal" && npm test
 ```
+
 All 33 tests must still pass (they don't test `app.js` directly but build integrity matters).
 
 Open Chrome DevTools → Performance tab → Record 10 seconds of map panning → check for:
+
 - No more than 1 worker blob creation in Memory section
 - `_refreshRoadLabels` not called more than 1×/400ms during panning
 - Satellite mode: tile count in Network tab should be 30–40% lower than before
@@ -718,23 +888,37 @@ Open Chrome DevTools → Performance tab → Record 10 seconds of map panning �
 ```js
 function _buildZoneChoropleth() {
   const zoneStats = {};
-  const zones = ['north-coast', 'sokhna', 'gouna', 'new-capital', 'october', 'new-cairo'];
+  const zones = [
+    "north-coast",
+    "sokhna",
+    "gouna",
+    "new-capital",
+    "october",
+    "new-cairo",
+  ];
 
-  zones.forEach(z => {
+  zones.forEach((z) => {
     const bbox = ZONE_ROAD_BBOXES[z];
     if (!bbox) return;
-    const zProjects = (window.projects || []).filter(p =>
-      p.lat >= bbox.south && p.lat <= bbox.north &&
-      p.lng >= bbox.west && p.lng <= bbox.east &&
-      p.minPrice
+    const zProjects = (window.projects || []).filter(
+      (p) =>
+        p.lat >= bbox.south &&
+        p.lat <= bbox.north &&
+        p.lng >= bbox.west &&
+        p.lng <= bbox.east &&
+        p.minPrice,
     );
     if (!zProjects.length) return;
-    const avgPrice = zProjects.reduce((s, p) => s + parseFloat(p.minPrice || 0), 0) / zProjects.length;
+    const avgPrice =
+      zProjects.reduce((s, p) => s + parseFloat(p.minPrice || 0), 0) /
+      zProjects.length;
     zoneStats[z] = { avgPrice, count: zProjects.length };
   });
 
   // Price range → color gradient (low = cool blue, high = hot red)
-  const prices = Object.values(zoneStats).map(s => s.avgPrice).filter(Boolean);
+  const prices = Object.values(zoneStats)
+    .map((s) => s.avgPrice)
+    .filter(Boolean);
   const minP = Math.min(...prices);
   const maxP = Math.max(...prices);
 
@@ -757,11 +941,15 @@ let _densityRings = [];
 
 function showDensityRings(latlng) {
   // Clear previous rings
-  _densityRings.forEach(l => map.removeLayer(l));
+  _densityRings.forEach((l) => map.removeLayer(l));
   _densityRings = [];
 
   const radii = [1000, 3000, 5000]; // meters
-  const colors = ['rgba(240,147,251,0.6)', 'rgba(102,126,234,0.5)', 'rgba(240,147,251,0.3)'];
+  const colors = [
+    "rgba(240,147,251,0.6)",
+    "rgba(102,126,234,0.5)",
+    "rgba(240,147,251,0.3)",
+  ];
 
   radii.forEach((r, i) => {
     const circle = L.circle(latlng, {
@@ -776,34 +964,38 @@ function showDensityRings(latlng) {
     _densityRings.push(circle);
 
     // Count projects inside this ring
-    const count = (window.projects || []).filter(p => {
+    const count = (window.projects || []).filter((p) => {
       const dist = map.distance(latlng, L.latLng(p.lat, p.lng));
       return dist <= r;
     }).length;
 
-    const label = L.marker(L.latLng(latlng.lat, latlng.lng + (r / 111320) * 0.7), {
-      icon: L.divIcon({
-        html: `<div class="density-ring-label">${count} مشروع · ${r >= 1000 ? r/1000 + 'km' : r + 'm'}</div>`,
-        className: '',
-        iconAnchor: [0, 10],
-      }),
-      interactive: false,
-    }).addTo(map);
+    const label = L.marker(
+      L.latLng(latlng.lat, latlng.lng + (r / 111320) * 0.7),
+      {
+        icon: L.divIcon({
+          html: `<div class="density-ring-label">${count} مشروع · ${r >= 1000 ? r / 1000 + "km" : r + "m"}</div>`,
+          className: "",
+          iconAnchor: [0, 10],
+        }),
+        interactive: false,
+      },
+    ).addTo(map);
     _densityRings.push(label);
   });
 
   // Auto-remove after 15 seconds
   setTimeout(() => {
-    _densityRings.forEach(l => map.removeLayer(l));
+    _densityRings.forEach((l) => map.removeLayer(l));
     _densityRings = [];
   }, 15000);
 }
 
 // Trigger on right-click
-map.on('contextmenu', (e) => showDensityRings(e.latlng));
+map.on("contextmenu", (e) => showDensityRings(e.latlng));
 ```
 
 **CSS for label**:
+
 ```css
 .density-ring-label {
   background: rgba(15, 23, 42, 0.85);
@@ -832,17 +1024,19 @@ async function _buildHighwayProximityIndex() {
 
   // Collect all motorway/trunk coordinates from mainRoadsLayer
   const hwCoords = [];
-  mainRoadsLayer.eachLayer(layer => {
+  mainRoadsLayer.eachLayer((layer) => {
     const latlngs = layer.getLatLngs ? layer.getLatLngs() : [];
-    latlngs.forEach(ll => hwCoords.push(ll));
+    latlngs.forEach((ll) => hwCoords.push(ll));
   });
 
   if (!hwCoords.length) return;
 
   _highwayAdjacentIds = new Set();
-  window.projects.forEach(p => {
+  window.projects.forEach((p) => {
     const projLL = L.latLng(p.lat, p.lng);
-    const isNear = hwCoords.some(hwLL => map.distance(projLL, hwLL) <= HW_THRESHOLD);
+    const isNear = hwCoords.some(
+      (hwLL) => map.distance(projLL, hwLL) <= HW_THRESHOLD,
+    );
     if (isNear) _highwayAdjacentIds.add(p.name);
   });
 }
@@ -857,7 +1051,7 @@ function toggleHighwayFilter(active) {
 
 function _applyHighwayFilter(active) {
   if (!window.markerCluster) return;
-  window.markerCluster.eachLayer(marker => {
+  window.markerCluster.eachLayer((marker) => {
     const p = marker.options._projectData;
     if (!p) return;
     if (active && !_highwayAdjacentIds.has(p.name)) {
@@ -936,12 +1130,12 @@ Build + test + screenshot + commit + push
 
 After all 4 phases:
 
-| Metric | Before | After |
-|--------|--------|-------|
-| Time to see roads on load | 20–40s (Overpass) | **< 300ms** (tiles) |
-| Neighborhood info on hover | Not available | ✅ Arabic + project count |
-| Click area → real estate data | Not available | ✅ Count, avg price, project list |
-| Dead code in app.js | ~180 lines | 0 |
-| Memory (satellite mode) | High (keepBuffer:6) | Reduced ~40% |
-| Map label refresh on pan | Every moveend | Every 400ms max |
-| Unique vs Wikimapia | Property data only | **Property + Places + Intelligence** |
+| Metric                        | Before              | After                                |
+| ----------------------------- | ------------------- | ------------------------------------ |
+| Time to see roads on load     | 20–40s (Overpass)   | **< 300ms** (tiles)                  |
+| Neighborhood info on hover    | Not available       | ✅ Arabic + project count            |
+| Click area → real estate data | Not available       | ✅ Count, avg price, project list    |
+| Dead code in app.js           | ~180 lines          | 0                                    |
+| Memory (satellite mode)       | High (keepBuffer:6) | Reduced ~40%                         |
+| Map label refresh on pan      | Every moveend       | Every 400ms max                      |
+| Unique vs Wikimapia           | Property data only  | **Property + Places + Intelligence** |

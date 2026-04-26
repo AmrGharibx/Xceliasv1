@@ -20,8 +20,13 @@ function perpDist(point, lineStart, lineEnd) {
   if (dx === 0 && dy === 0) {
     return Math.hypot(point[0] - lineStart[0], point[1] - lineStart[1]);
   }
-  const t = ((point[0] - lineStart[0]) * dx + (point[1] - lineStart[1]) * dy) / (dx * dx + dy * dy);
-  return Math.hypot(point[0] - (lineStart[0] + t * dx), point[1] - (lineStart[1] + t * dy));
+  const t =
+    ((point[0] - lineStart[0]) * dx + (point[1] - lineStart[1]) * dy) /
+    (dx * dx + dy * dy);
+  return Math.hypot(
+    point[0] - (lineStart[0] + t * dx),
+    point[1] - (lineStart[1] + t * dy),
+  );
 }
 
 function rdp(points, tolerance) {
@@ -31,7 +36,10 @@ function rdp(points, tolerance) {
   const last = points.length - 1;
   for (let i = 1; i < last; i++) {
     const d = perpDist(points[i], points[0], points[last]);
-    if (d > maxDist) { maxDist = d; maxIdx = i; }
+    if (d > maxDist) {
+      maxDist = d;
+      maxIdx = i;
+    }
   }
   if (maxDist > tolerance) {
     const left = rdp(points.slice(0, maxIdx + 1), tolerance);
@@ -63,7 +71,10 @@ function simplifyFeature(feature, tolerance) {
       .map((poly) => poly.map((r) => simplifyRing(r, tolerance)))
       .filter((poly) => poly[0].length >= MIN_RING_POINTS);
     if (!polys.length) return null;
-    return { ...feature, geometry: { type: "MultiPolygon", coordinates: polys } };
+    return {
+      ...feature,
+      geometry: { type: "MultiPolygon", coordinates: polys },
+    };
   }
   return feature;
 }
@@ -90,4 +101,6 @@ fs.writeFileSync(outPath, outStr);
 
 const afterKb = (outStr.length / 1024).toFixed(1);
 const removed = before - simplified.length;
-console.log(`Output: ${simplified.length} features (removed ${removed}), ${afterKb} KB`);
+console.log(
+  `Output: ${simplified.length} features (removed ${removed}), ${afterKb} KB`,
+);

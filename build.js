@@ -182,7 +182,9 @@ cHtml = cHtml.replace(
 );
 /* Extract inline RITA/API bootstrap script → content-rita.js (CSP compliance) */
 // Match by unique DOM ID "ritaMessages" — handles any IIFE format (!(function(){} or !function(){})
-const cRitaMatch = cHtml.match(/<script>\s*([\s\S]*?"ritaMessages"[\s\S]*?)<\/script>/);
+const cRitaMatch = cHtml.match(
+  /<script>\s*([\s\S]*?"ritaMessages"[\s\S]*?)<\/script>/,
+);
 if (cRitaMatch) {
   let ritaCode = cRitaMatch[1].trim();
   // Fix API_URL: always use relative /api/gemini (works for both localhost and Vercel)

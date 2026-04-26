@@ -1187,6 +1187,56 @@ button,
   border-top-color: var(--glass-border, rgba(102, 126, 234, 0.25)) !important;
 }
 
+body.map-mode-atlas .road-name-tooltip {
+  background: linear-gradient(
+    160deg,
+    rgba(8, 16, 34, 0.96) 0%,
+    rgba(8, 28, 44, 0.94) 55%,
+    rgba(28, 23, 48, 0.92) 100%
+  ) !important;
+  border: 1px solid rgba(110, 227, 255, 0.52) !important;
+  color: #ecfbff !important;
+  box-shadow:
+    0 16px 40px rgba(2, 6, 18, 0.5),
+    0 0 0 1px rgba(255, 190, 92, 0.14),
+    0 0 22px rgba(87, 215, 255, 0.18) !important;
+}
+
+body.map-mode-atlas .road-name-tooltip::before {
+  border-top-color: rgba(110, 227, 255, 0.52) !important;
+}
+
+body.map-mode-atlas .rnt-motorway {
+  border-color: rgba(255, 107, 87, 0.72) !important;
+  box-shadow:
+    0 6px 24px rgba(255, 107, 87, 0.2),
+    0 12px 30px rgba(2, 6, 18, 0.42),
+    0 0 28px rgba(255, 107, 87, 0.14) !important;
+}
+
+body.map-mode-atlas .rnt-trunk {
+  border-color: rgba(255, 179, 71, 0.72) !important;
+  box-shadow:
+    0 6px 24px rgba(255, 179, 71, 0.18),
+    0 12px 30px rgba(2, 6, 18, 0.42),
+    0 0 28px rgba(255, 179, 71, 0.12) !important;
+}
+
+body.map-mode-atlas .place-name-tooltip,
+body.map-mode-atlas .place-name-tooltip .leaflet-tooltip-content {
+  background: linear-gradient(
+    160deg,
+    rgba(6, 18, 33, 0.96) 0%,
+    rgba(12, 33, 56, 0.94) 60%,
+    rgba(16, 24, 46, 0.92) 100%
+  ) !important;
+  border: 1px solid rgba(84, 223, 255, 0.34) !important;
+  color: #effcff !important;
+  box-shadow:
+    0 12px 32px rgba(2, 6, 18, 0.44),
+    0 0 20px rgba(74, 226, 255, 0.1) !important;
+}
+
 .leaflet-interactive.route-line-main {
   stroke: var(--route-primary) !important;
   stroke-dasharray: none;
@@ -8008,6 +8058,88 @@ input:focus-visible {
   width: 46px !important;
   height: 46px !important;
   font-size: 12px;
+}
+
+body.map-mode-atlas .leaflet-marker-icon.mcc {
+  color: #fff7de;
+  border-width: 2px;
+  border-style: solid;
+  background:
+    radial-gradient(
+      circle at 30% 28%,
+      rgba(255, 255, 255, 0.96),
+      rgba(255, 255, 255, 0.12) 22%,
+      transparent 24%
+    ),
+    linear-gradient(
+      150deg,
+      rgba(9, 18, 38, 0.96) 0%,
+      rgba(8, 30, 48, 0.94) 48%,
+      rgba(32, 22, 51, 0.9) 100%
+    );
+  box-shadow:
+    0 14px 30px rgba(1, 6, 18, 0.42),
+    0 0 0 4px rgba(87, 215, 255, 0.12),
+    inset 0 1px 6px rgba(255, 255, 255, 0.16);
+  filter: none;
+}
+
+body.map-mode-atlas .leaflet-marker-icon.mcc:hover {
+  transform: scale(1.08);
+}
+
+body.map-mode-atlas .mcc-sm {
+  border-color: rgba(87, 215, 255, 0.95);
+  color: #dffcff;
+}
+
+body.map-mode-atlas .mcc-md {
+  border-color: rgba(255, 191, 92, 0.95);
+  color: #fff5db;
+}
+
+body.map-mode-atlas .mcc-lg {
+  border-color: rgba(255, 107, 87, 0.95);
+  color: #fff0ea;
+}
+
+body.map-mode-atlas .road-view-btn[data-layer="atlas"] {
+  background: linear-gradient(
+    140deg,
+    rgba(17, 37, 60, 0.44) 0%,
+    rgba(15, 70, 98, 0.32) 50%,
+    rgba(83, 52, 32, 0.22) 100%
+  );
+  border-color: rgba(87, 215, 255, 0.26);
+}
+
+body.map-mode-atlas .road-view-btn[data-layer="atlas"].active {
+  border-color: rgba(87, 215, 255, 0.62);
+  background: linear-gradient(
+    145deg,
+    rgba(13, 35, 62, 0.92) 0%,
+    rgba(12, 68, 98, 0.74) 48%,
+    rgba(73, 46, 27, 0.58) 100%
+  );
+  box-shadow:
+    0 12px 28px rgba(0, 0, 0, 0.28),
+    0 0 0 1px rgba(87, 215, 255, 0.18),
+    0 0 28px rgba(87, 215, 255, 0.14);
+}
+
+body.map-mode-atlas #btn-atlas.map-btn,
+body.map-mode-atlas #btn-atlas.map-btn.active {
+  background: linear-gradient(
+    145deg,
+    rgba(14, 34, 58, 0.96) 0%,
+    rgba(14, 72, 102, 0.92) 55%,
+    rgba(88, 52, 28, 0.76) 100%
+  );
+  color: #fff2d7;
+  box-shadow:
+    0 10px 28px rgba(2, 6, 18, 0.34),
+    0 0 0 1px rgba(87, 215, 255, 0.24),
+    0 0 24px rgba(87, 215, 255, 0.14);
 }
 
 /* Cluster wrapper pane — paint isolation */

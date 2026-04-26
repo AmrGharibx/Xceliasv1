@@ -1804,13 +1804,31 @@ const atlasTiles =
 
 const MAP_VIEW_STORAGE_KEY = "xc_map_view_mode";
 const MAP_VIEW_DEFAULTS = {
-  street: { roadTiles: true, places: false },
-  wiki: { roadTiles: false, places: true },
-  atlas: { roadTiles: true, places: true, zoneOverview: false, forceRoadOverlay: true },
-  satellite: { roadTiles: false, places: false },
-  hybrid: { roadTiles: false, places: false },
+  street: { roadTiles: true, places: false, roadsVisible: false },
+  wiki: { roadTiles: false, places: true, roadsVisible: false },
+  atlas: { roadTiles: true, places: true, zoneOverview: false, roadsVisible: true },
+  satellite: { roadTiles: false, places: false, roadsVisible: false },
+  hybrid: { roadTiles: false, places: false, roadsVisible: false },
 };
 let currentMapLayer = _readStoredMapLayer();
+
+function _isAtlasMode() {
+  return currentMapLayer === "atlas";
+}
+
+function _syncMapModeClass(mode) {
+  const root = document.body;
+  if (!root) return;
+  Object.keys(MAP_VIEW_DEFAULTS).forEach((name) => {
+    root.classList.toggle(`map-mode-${name}`, name === mode);
+  });
+}
+
+function _roadTileOpacityForMode() {
+  if (_isAtlasMode()) return 0.96;
+  if (currentMapLayer === "street") return 0.84;
+  return 0.82;
+}
 
 // --- 4. MAP LAYERS (Moved up for initialization) ---
 const layers = {
@@ -2160,6 +2178,7 @@ let _roadCanvasRenderer = null;
 
 // ── Visibility state ──
 let _roadsVisible = true;
+let _roadOpacityMultiplier = 1;
 let _showMainRoads = true;
 let _showSecondaryRoads = true;
 let _roadPanelOpen = false;
@@ -2552,12 +2571,8 @@ function _updateCacheSize() {
 /** Set opacity for all road layers (0–1). Called by the opacity slider. */
 function setRoadOpacity(opacity) {
   const o = Math.max(0.1, Math.min(1, Number(opacity)));
-  if (mainRoadsLayer) {
-    mainRoadsLayer.setStyle({ opacity: o });
-  }
-  if (secondaryRoadsLayer) {
-    secondaryRoadsLayer.setStyle({ opacity: o * 0.78 });
-  }
+  _roadOpacityMultiplier = o;
+  _refreshMapVisualLanguage();
   const val = document.getElementById("road-opacity-value");
   if (val) val.textContent = Math.round(o * 100) + "%";
 }
@@ -2568,6 +2583,216 @@ function setRoadOpacity(opacity) {
 
 // ────────────────────────────────────────────────────────────────────────────
 // ROAD OPACITY CONTROL
+function _getRoadBaseStyle(hw) {
+  if (_isAtlasMode()) {
+    switch (hw) {
+      case "motorway":
+        return { color: "#ff6b57", weight: 6.8, opacity: 0.98 };
+      case "motorway_link":
+        return { color: "#ff8a5b", weight: 4.6, opacity: 0.92 };
+      case "trunk":
+        return { color: "#ffb347", weight: 5.6, opacity: 0.96 };
+      case "trunk_link":
+        return { color: "#ffc76a", weight: 3.6, opacity: 0.9 };
+      case "primary":
+        return { color: "#ffe27a", weight: 4.3, opacity: 0.93 };
+      case "primary_link":
+        return { color: "#fff1a8", weight: 3.1, opacity: 0.88 };
+      default:
+        return { color: "#ffe27a", weight: 4.3, opacity: 0.93 };
+    }
+  }
+
+  switch (hw) {
+    case "motorway":
+      return { color: "#ff2d2d", weight: 6, opacity: 0.95 };
+    case "motorway_link":
+      return { color: "#ff2d2d", weight: 4, opacity: 0.88 };
+    case "trunk":
+      return { color: "#f97316", weight: 5, opacity: 0.92 };
+    case "trunk_link":
+      return { color: "#f97316", weight: 3, opacity: 0.85 };
+    case "primary":
+      return { color: "#fbbf24", weight: 3.5, opacity: 0.9 };
+    case "primary_link":
+      return { color: "#fbbf24", weight: 2.5, opacity: 0.82 };
+    default:
+      return { color: "#fbbf24", weight: 3.5, opacity: 0.9 };
+  }
+}
+
+function _getRoadHoverStyle(hw) {
+  if (_isAtlasMode()) {
+    switch (hw) {
+      case "motorway":
+      case "motorway_link":
+        return { color: "#ffd5cc", weight: 9.6, opacity: 1 };
+      case "trunk":
+      case "trunk_link":
+        return { color: "#ffe0a3", weight: 8.2, opacity: 1 };
+      case "primary":
+      case "primary_link":
+        return { color: "#fff6bf", weight: 6.6, opacity: 1 };
+      default:
+        return { color: "#fff6bf", weight: 6.2, opacity: 1 };
+    }
+  }
+
+  const base = _getRoadBaseStyle(hw);
+  return { ...base, weight: base.weight + 2, opacity: 1 };
+}
+
+function _getRoadGlowStyle(hw) {
+  if (_isAtlasMode()) {
+    if (hw.startsWith("motorway")) {
+      return {
+        color: "#ff6b57",
+        weight: 26,
+        opacity: 0.22,
+        lineCap: "round",
+        lineJoin: "round",
+      };
+    }
+    return {
+      color: "#ffb347",
+      weight: 20,
+      opacity: 0.18,
+      lineCap: "round",
+      lineJoin: "round",
+    };
+  }
+
+  return {
+    color: hw.startsWith("motorway") ? "#ff2d2d" : "#f97316",
+    weight: hw.startsWith("motorway") ? 20 : 16,
+    opacity: 0.12,
+    lineCap: "round",
+    lineJoin: "round",
+  };
+}
+
+function _withRoadOpacity(style) {
+  const baseOpacity = typeof style.opacity === "number" ? style.opacity : 1;
+  return {
+    ...style,
+    opacity: Math.max(0.1, Math.min(1, baseOpacity * _roadOpacityMultiplier)),
+  };
+}
+
+function _getRenderedRoadGlowStyle(hw) {
+  return _withRoadOpacity(_getRoadGlowStyle(hw));
+}
+
+function _getRenderedRoadBaseStyle(hw) {
+  return _withRoadOpacity({
+    ..._getRoadBaseStyle(hw),
+    lineCap: "round",
+    lineJoin: "round",
+  });
+}
+
+function _getRenderedSecondaryRoadStyle() {
+  return _withRoadOpacity(_getSecondaryRoadBaseStyle());
+}
+
+function _getSecondaryRoadBaseStyle() {
+  if (_isAtlasMode()) {
+    return {
+      color: "#57d7ff",
+      weight: 2.2,
+      opacity: 0.78,
+      lineCap: "round",
+    };
+  }
+
+  return {
+    color: "#60a5fa",
+    weight: 1.5,
+    opacity: 0.65,
+    lineCap: "round",
+  };
+}
+
+function _getSecondaryRoadHoverStyle() {
+  return {
+    color: "#dffcff",
+    weight: 3.5,
+    opacity: 1,
+    lineCap: "round",
+  };
+}
+
+function _getPlaceBaseStyle() {
+  if (_isAtlasMode()) {
+    return {
+      color: "rgba(74, 226, 255, 0.86)",
+      weight: 1.9,
+      fillColor: "rgba(19, 129, 255, 0.12)",
+      fillOpacity: 1,
+      lineCap: "round",
+    };
+  }
+
+  return {
+    color: "rgba(102, 126, 234, 0.6)",
+    weight: 1.5,
+    fillColor: "rgba(102, 126, 234, 0.06)",
+    fillOpacity: 1,
+    lineCap: "round",
+  };
+}
+
+function _getPlaceHoverStyle() {
+  if (_isAtlasMode()) {
+    return {
+      color: "rgba(255, 191, 92, 0.98)",
+      fillColor: "rgba(255, 157, 77, 0.22)",
+      weight: 3,
+    };
+  }
+
+  return {
+    color: "rgba(102, 126, 234, 1)",
+    fillColor: "rgba(102, 126, 234, 0.18)",
+    weight: 2.5,
+  };
+}
+
+function _refreshMapVisualLanguage(mode = currentMapLayer) {
+  _syncMapModeClass(mode);
+
+  if (roadTileLayer) {
+    roadTileLayer.setOpacity(_roadTileOpacityForMode());
+  }
+
+  if (_roadGlowLayer) {
+    _roadGlowLayer.setStyle((feature) =>
+      _getRenderedRoadGlowStyle(feature?.properties?.highway || ""),
+    );
+  }
+
+  if (mainRoadsLayer) {
+    mainRoadsLayer.setStyle((feature) =>
+      _getRenderedRoadBaseStyle(feature?.properties?.highway || "primary"),
+    );
+  }
+
+  if (secondaryRoadsLayer) {
+    secondaryRoadsLayer.setStyle(_getRenderedSecondaryRoadStyle());
+  }
+
+  if (placesLayer) {
+    placesLayer.setStyle(() => _getPlaceBaseStyle());
+  }
+
+  if (
+    markerClusterGroup &&
+    typeof markerClusterGroup.refreshClusters === "function"
+  ) {
+    markerClusterGroup.refreshClusters();
+  }
+}
+
 function _hwArabicLabel(highway) {
   const map = {
     motorway: "طريق سريع",
@@ -2646,34 +2871,11 @@ function _buildRoadPopup(feature) {
 // LAYER CREATION
 // ────────────────────────────────────────────────────────────────────────────
 
-/**
- * Per-highway-type base style — motorway bright red, trunk orange,
- * primary gold, links slightly lighter.  Canvas renders per-feature.
- */
-function _hwBaseStyle(hw) {
-  switch (hw) {
-    case "motorway":
-      return { color: "#ff2d2d", weight: 6, opacity: 0.95 };
-    case "motorway_link":
-      return { color: "#ff2d2d", weight: 4, opacity: 0.88 };
-    case "trunk":
-      return { color: "#f97316", weight: 5, opacity: 0.92 };
-    case "trunk_link":
-      return { color: "#f97316", weight: 3, opacity: 0.85 };
-    case "primary":
-      return { color: "#fbbf24", weight: 3.5, opacity: 0.9 };
-    case "primary_link":
-      return { color: "#fbbf24", weight: 2.5, opacity: 0.82 };
-    default:
-      return { color: "#fbbf24", weight: 3.5, opacity: 0.9 };
-  }
-}
-
 /** Create all road GeoJSON layers with shared Canvas renderer if they don't exist */
 function _ensureRoadLayers() {
   // ── ONE shared canvas element replaces thousands of SVG paths ──
   if (!_roadCanvasRenderer) {
-    _roadCanvasRenderer = L.canvas({ padding: 0.5, tolerance: 6 });
+    _roadCanvasRenderer = L.canvas({ padding: 0.5, tolerance: 14 });
   }
   const renderer = _roadCanvasRenderer;
 
@@ -2683,13 +2885,7 @@ function _ensureRoadLayers() {
       renderer,
       style: (feature) => {
         const hw = feature?.properties?.highway || "";
-        return {
-          color: hw.startsWith("motorway") ? "#ff2d2d" : "#f97316",
-          weight: hw.startsWith("motorway") ? 20 : 16,
-          opacity: 0.12,
-          lineCap: "round",
-          lineJoin: "round",
-        };
+        return _getRenderedRoadGlowStyle(hw);
       },
       interactive: false, // zero hit-testing overhead on glow layer
     });
@@ -2699,23 +2895,15 @@ function _ensureRoadLayers() {
   if (!mainRoadsLayer) {
     mainRoadsLayer = L.geoJSON(null, {
       renderer,
-      // Function style — per highway type (motorway red, trunk orange, primary gold)
-      style: (feature) => {
-        const base = _hwBaseStyle(feature?.properties?.highway || "primary");
-        return { ...base, lineCap: "round", lineJoin: "round" };
-      },
+      style: (feature) => _getRenderedRoadBaseStyle(feature?.properties?.highway || "primary"),
       interactive: true,
       onEachFeature: (feature, layer) => {
-        const base = _hwBaseStyle(feature?.properties?.highway || "primary");
         const hw = feature?.properties?.highway || "";
-        // Color-coded tooltip border by road type
         const ttClass = hw.startsWith("motorway")
           ? "road-name-tooltip rnt-motorway"
           : hw.startsWith("trunk")
           ? "road-name-tooltip rnt-trunk"
           : "road-name-tooltip";
-        // Lazy tooltip — evaluated only on hover, not at feature-add time.
-        // Avoids building 600+ tooltip HTML strings during bulk load.
         layer.bindTooltip(() => buildRoadTooltip(feature), {
           sticky: true,
           direction: "top",
@@ -2723,10 +2911,11 @@ function _ensureRoadLayers() {
           opacity: 0.95,
         });
         layer.on("mouseover", function () {
-          this.setStyle({ weight: base.weight + 2, opacity: 1 });
+          this.setStyle(_getRoadHoverStyle(hw));
+          if (typeof this.bringToFront === "function") this.bringToFront();
         });
         layer.on("mouseout", function () {
-          this.setStyle({ weight: base.weight, opacity: base.opacity });
+          this.setStyle(_getRenderedRoadBaseStyle(hw));
         });
         layer.on("click", (e) => {
           L.DomEvent.stopPropagation(e);
@@ -2743,18 +2932,23 @@ function _ensureRoadLayers() {
   if (!secondaryRoadsLayer) {
     secondaryRoadsLayer = L.geoJSON(null, {
       renderer,
-      // Clean slate-blue — distinct from warm main roads, readable on dark basemap
-      style: { color: "#60a5fa", weight: 1.5, opacity: 0.65, lineCap: "round" },
-      // interactive: true but NO mouseover/mouseout — eliminates canvas hit-detection
-      // lag on every mouse move across 400+ secondary features
+      style: _getRenderedSecondaryRoadStyle(),
       interactive: true,
       onEachFeature: (feature, layer) => {
-        // Lazy tooltip — built on hover only, not at load time
         layer.bindTooltip(() => buildRoadTooltip(feature), {
           sticky: true,
           direction: "top",
           className: "road-name-tooltip",
           opacity: 0.9,
+        });
+        layer.on("mouseover", function () {
+          if (!_isAtlasMode()) return;
+          this.setStyle(_getSecondaryRoadHoverStyle());
+          if (typeof this.bringToFront === "function") this.bringToFront();
+        });
+        layer.on("mouseout", function () {
+          if (!_isAtlasMode()) return;
+          this.setStyle(_getRenderedSecondaryRoadStyle());
         });
         layer.on("click", (e) => {
           L.DomEvent.stopPropagation(e);
@@ -3142,12 +3336,14 @@ function setRoadTilesVisible(visible) {
         subdomains: "abcd",
         maxZoom: 22,
         detectRetina: true,
-        opacity: 0.82,
+        opacity: _roadTileOpacityForMode(),
         pane: "overlayPane",
         updateWhenZooming: false,
         keepBuffer: 4,
         attribution: "",
       });
+    } else {
+      roadTileLayer.setOpacity(_roadTileOpacityForMode());
     }
     if (!map.hasLayer(roadTileLayer)) roadTileLayer.addTo(map);
   } else {
@@ -3313,13 +3509,7 @@ function _ensurePlacesLayer() {
   const renderer = L.canvas({ padding: 0.5, tolerance: 8 });
   placesLayer = L.geoJSON(null, {
     renderer,
-    style: {
-      color: "rgba(102, 126, 234, 0.6)",
-      weight: 1.5,
-      fillColor: "rgba(102, 126, 234, 0.06)",
-      fillOpacity: 1,
-      lineCap: "round",
-    },
+    style: () => _getPlaceBaseStyle(),
     onEachFeature: (feature, layer) => {
       layer.bindTooltip(_buildPlaceTooltip(feature), {
         sticky: true,
@@ -3328,10 +3518,11 @@ function _ensurePlacesLayer() {
         opacity: 0.98,
       });
       layer.on("mouseover", function () {
-        this.setStyle({ color: "rgba(102, 126, 234, 1)", fillColor: "rgba(102, 126, 234, 0.18)", weight: 2.5 });
+        this.setStyle(_getPlaceHoverStyle());
+        if (typeof this.bringToFront === "function") this.bringToFront();
       });
       layer.on("mouseout", function () {
-        this.setStyle({ color: "rgba(102, 126, 234, 0.6)", fillColor: "rgba(102, 126, 234, 0.06)", weight: 1.5 });
+        this.setStyle(_getPlaceBaseStyle());
       });
       layer.on("click", (e) => {
         L.DomEvent.stopPropagation(e);
@@ -3528,17 +3719,53 @@ function _showZoneHint(key, label) {
   }, 6000);
 }
 
-function _detectZoneAtView() {
-  if (!_roadsVisible || map.getZoom() < 10) return;
-  const c = map.getCenter();
+function _getZoneKeyAtView() {
+  const center = map.getCenter();
   for (const [key, bbox] of Object.entries(ZONE_ROAD_BBOXES)) {
     if (
-      c.lat < bbox.south ||
-      c.lat > bbox.north ||
-      c.lng < bbox.west ||
-      c.lng > bbox.east
-    )
-      continue;
+      center.lat >= bbox.south &&
+      center.lat <= bbox.north &&
+      center.lng >= bbox.west &&
+      center.lng <= bbox.east
+    ) {
+      return key;
+    }
+  }
+  return null;
+}
+
+function _maybePrimeAtlasRoads() {
+  if (!_isAtlasMode() || !_roadsVisible) return;
+
+  const hint = document.getElementById("road-zone-hint");
+  if (hint) hint.hidden = true;
+
+  try {
+    if (
+      !_egyptHighwaysLoaded &&
+      !_egyptHighwaysLoading &&
+      localStorage.getItem(EGYPT_HW_CACHE_KEY)
+    ) {
+      void loadFullEgyptHighways();
+    }
+  } catch (_) {
+    /* ignore localStorage access errors */
+  }
+
+  if (map.getZoom() < 10) return;
+  const zoneKey = _getZoneKeyAtView();
+  if (zoneKey) {
+    void loadZoneRoads(zoneKey);
+  }
+}
+
+function _detectZoneAtView() {
+  if (_isAtlasMode()) return;
+  if (!_roadsVisible || map.getZoom() < 10) return;
+  const key = _getZoneKeyAtView();
+  if (!key) return;
+  for (const [zoneKey, bbox] of Object.entries(ZONE_ROAD_BBOXES)) {
+    if (zoneKey !== key) continue;
     const btn = document.querySelector(`.road-zone-btn[data-zone="${key}"]`);
     if (!btn || btn.classList.contains("loaded") || btn.classList.contains("loading")) break;
     // Also skip hint if the viewport bbox was already dispatched to fetchAndDrawRoads.
@@ -3567,7 +3794,11 @@ const loadRoads = () => {
   if (_roadLoadTimer) clearTimeout(_roadLoadTimer);
   _roadLoadTimer = setTimeout(() => {
     fetchAndDrawRoads();
-    _detectZoneAtView();
+    if (_isAtlasMode()) {
+      _maybePrimeAtlasRoads();
+    } else {
+      _detectZoneAtView();
+    }
     _roadLoadTimer = null;
   }, 600);
 };
@@ -4248,8 +4479,15 @@ function _applyMapLayerDefaults(layerName, options = {}) {
   setRoadTilesVisible(defaults.roadTiles);
   setPlacesVisible(defaults.places, { silent: !!options.silentPlaces });
   setZoneOverviewVisible(!!defaults.zoneOverview);
-  if (defaults.forceRoadOverlay) {
-    setAllRoadsVisible(true);
+  if (typeof defaults.roadsVisible === "boolean") {
+    setAllRoadsVisible(defaults.roadsVisible);
+  }
+  _refreshMapVisualLanguage(mode);
+  if (_isAtlasMode()) {
+    loadRoads();
+  } else {
+    const hint = document.getElementById("road-zone-hint");
+    if (hint) hint.hidden = true;
   }
 
   if (!options.skipPersist) {

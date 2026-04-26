@@ -1799,11 +1799,14 @@ const lightTiles =
   "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
 const wikiTiles =
   "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png";
+const atlasTiles =
+  "https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png";
 
 const MAP_VIEW_STORAGE_KEY = "xc_map_view_mode";
 const MAP_VIEW_DEFAULTS = {
   street: { roadTiles: true, places: false },
   wiki: { roadTiles: false, places: true },
+  atlas: { roadTiles: true, places: true, zoneOverview: false, forceRoadOverlay: true },
   satellite: { roadTiles: false, places: false },
   hybrid: { roadTiles: false, places: false },
 };
@@ -1832,6 +1835,16 @@ const layers = {
     },
   ),
   wiki: L.tileLayer.cached(wikiTiles, {
+    subdomains: "abcd",
+    attribution: "Tiles &copy; CARTO",
+    maxZoom: 22,
+    detectRetina: true,
+    className: "high-quality-tiles",
+    keepBuffer: 4,
+    updateWhenZooming: false,
+    crossOrigin: "anonymous",
+  }),
+  atlas: L.tileLayer.cached(atlasTiles, {
     subdomains: "abcd",
     attribution: "Tiles &copy; CARTO",
     maxZoom: 22,
@@ -2163,6 +2176,7 @@ let _roadStatsSec = 0;
 // ── Auto-zone hint state ──
 let _zoneHintTimer = null;
 const _zoneHintShown = new Set();
+let _zoneOverviewVisible = false;
 
 // ── Road glow layer (canvas halo painted under motorway/trunk) ──
 let _roadGlowLayer = null;
@@ -3560,6 +3574,7 @@ const loadRoads = () => {
 
 map.on("moveend", loadRoads);
 map.on("zoomend", _syncSecondaryRoadZoom);
+map.on("zoomend", _syncZoneOverview);
 document.addEventListener("touchstart", loadRoads, {
   passive: true,
   once: true,
@@ -3649,33 +3664,44 @@ function showZoneChoropleth() {
     const bbox = ZONE_ROAD_BBOXES[z];
     if (!bbox) return;
     const zProjects = (window.projects || []).filter(
-      (p) => p.lat >= bbox.south && p.lat <= bbox.north && p.lng >= bbox.west && p.lng <= bbox.east && parseFloat(p.minPrice) > 0,
+      (p) => p.lat >= bbox.south && p.lat <= bbox.north && p.lng >= bbox.west && p.lng <= bbox.east,
     );
     if (!zProjects.length) return;
-    const avg = zProjects.reduce((s, p) => s + parseFloat(p.minPrice), 0) / zProjects.length;
-    zoneData.push({ z, bbox, avg, count: zProjects.length });
+    const pricedProjects = zProjects.filter(
+      (p) => p.lat >= bbox.south && p.lat <= bbox.north && p.lng >= bbox.west && p.lng <= bbox.east && parseFloat(p.minPrice) > 0,
+    );
+    const avg = pricedProjects.length
+      ? pricedProjects.reduce((sum, project) => sum + parseFloat(project.minPrice), 0) /
+        pricedProjects.length
+      : 0;
+    zoneData.push({
+      z,
+      bbox,
+      avg,
+      count: zProjects.length,
+      pricedCount: pricedProjects.length,
+    });
   });
 
   if (!zoneData.length) return;
 
-  const prices = zoneData.map((d) => d.avg);
-  const minP = Math.min(...prices);
-  const maxP = Math.max(...prices);
+  const counts = zoneData.map((d) => d.count);
+  const minCount = Math.min(...counts);
+  const maxCount = Math.max(...counts);
 
-  zoneData.forEach(({ z, bbox, avg, count }) => {
-    // Normalize 0–1 then map to color (low = cool blue, mid = purple, high = hot red)
-    const t = maxP > minP ? (avg - minP) / (maxP - minP) : 0.5;
-    const r = Math.round(102 + t * (220 - 102));
-    const g = Math.round(126 - t * 80);
-    const b = Math.round(234 - t * 180);
-    const fillColor = `rgba(${r},${g},${b},0.22)`;
-    const strokeColor = `rgba(${r},${g},${b},0.7)`;
+  zoneData.forEach(({ z, bbox, avg, count, pricedCount }) => {
+    const t = maxCount > minCount ? (count - minCount) / (maxCount - minCount) : 0.5;
+    const r = Math.round(72 + t * 148);
+    const g = Math.round(126 + t * 26);
+    const b = Math.round(234 - t * 138);
+    const fillColor = `rgba(${r},${g},${b},${0.12 + t * 0.18})`;
+    const strokeColor = `rgba(${r},${g},${b},${0.58 + t * 0.22})`;
 
     const rect = L.rectangle(
       [[bbox.south, bbox.west], [bbox.north, bbox.east]],
       {
         color: strokeColor,
-        weight: 2,
+        weight: 1.8 + t * 1.4,
         fillColor,
         fillOpacity: 1,
         interactive: true,
@@ -3690,10 +3716,19 @@ function showZoneChoropleth() {
       october: "6 أكتوبر / زايد",
       "new-cairo": "القاهرة الجديدة",
     };
+    const priceLine = avg > 0
+      ? `<br>متوسط ${(avg / 1e6).toFixed(1)}M EGP${pricedCount < count ? ` · ${pricedCount}/${count} مسعر` : ""}`
+      : `<br>بيانات سعرية قيد الاستكمال`;
     rect.bindTooltip(
-      `<b>${escHtml(ZONE_LABELS[z] || z)}</b><br>${count} مشروع · متوسط ${(avg / 1e6).toFixed(1)}M EGP`,
+      `<b>${escHtml(ZONE_LABELS[z] || z)}</b><br>${count} مشروع${priceLine}`,
       { sticky: true, className: "place-name-tooltip", opacity: 0.96 },
     );
+    rect.on("mouseover", function () {
+      this.setStyle({ weight: 3.4, color: `rgba(${r},${g},${b},0.95)` });
+    });
+    rect.on("mouseout", function () {
+      this.setStyle({ weight: 1.8 + t * 1.4, color: strokeColor });
+    });
     _choroplethLayers.push(rect);
   });
 }
@@ -3701,6 +3736,25 @@ function showZoneChoropleth() {
 function clearZoneChoropleth() {
   _choroplethLayers.forEach((l) => { try { map.removeLayer(l); } catch (_) {} });
   _choroplethLayers = [];
+}
+
+function _syncZoneOverview() {
+  if (!_zoneOverviewVisible) {
+    clearZoneChoropleth();
+    return;
+  }
+
+  if (map.getZoom() <= 8) {
+    showZoneChoropleth();
+    return;
+  }
+
+  clearZoneChoropleth();
+}
+
+function setZoneOverviewVisible(visible) {
+  _zoneOverviewVisible = !!visible;
+  _syncZoneOverview();
 }
 
 // --- 2. DATASET (North Coast Projects) ---
@@ -4193,6 +4247,10 @@ function _applyMapLayerDefaults(layerName, options = {}) {
   _syncMapLayerButtons(mode);
   setRoadTilesVisible(defaults.roadTiles);
   setPlacesVisible(defaults.places, { silent: !!options.silentPlaces });
+  setZoneOverviewVisible(!!defaults.zoneOverview);
+  if (defaults.forceRoadOverlay) {
+    setAllRoadsVisible(true);
+  }
 
   if (!options.skipPersist) {
     try {

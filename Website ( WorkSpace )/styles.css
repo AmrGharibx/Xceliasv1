@@ -7542,6 +7542,23 @@ input:focus-visible {
   cursor: pointer;
 }
 
+.road-hover-mode-row {
+  align-items: flex-start;
+  padding-top: 8px;
+}
+
+.road-hover-mode-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.road-hover-mode-copy small {
+  font-size: 0.68rem;
+  line-height: 1.45;
+  opacity: 0.66;
+}
+
 .road-panel-section {
   border-top: 1px solid var(--glass-border);
   padding-top: 11px;
@@ -7666,9 +7683,16 @@ input:focus-visible {
 .road-type-row + .road-type-row {
   border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
+.road-type-row-disabled {
+  opacity: 0.48;
+  cursor: not-allowed;
+}
 .road-type-row input[type="checkbox"] {
   cursor: pointer;
   flex-shrink: 0;
+}
+.road-type-row-disabled input[type="checkbox"] {
+  cursor: not-allowed;
 }
 .road-type-line {
   width: 26px;
@@ -7885,6 +7909,9 @@ input:focus-visible {
 .road-stats-badge.loaded {
   opacity: 0.72;
 }
+.road-stats-badge.filtered {
+  opacity: 0.88;
+}
 .rsb-total {
   font-weight: 700;
   color: var(--avaria-gold);
@@ -7896,6 +7923,11 @@ input:focus-visible {
 .rsb-sec {
   color: #60a5fa;
   opacity: 0.85;
+}
+.rsb-loaded-note {
+  margin-top: 4px;
+  font-size: 0.62rem;
+  opacity: 0.55;
 }
 
 /* ── Road click popup ── */

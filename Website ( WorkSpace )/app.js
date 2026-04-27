@@ -2339,6 +2339,7 @@ let _roadPanelOpen = false;
 let _hoveredRoadLayer = null;
 let _roadHoverFrame = null;
 let _lastRoadHoverLatLng = null;
+const ROAD_HOVER_ONLY_STORAGE_KEY = "xc_road_hover_only_v1";
 
 // ── Dedup / bbox tracking ──
 const _loadedRoadBboxes = new Set();
@@ -2393,7 +2394,14 @@ const _roadCategoryStats = {
   secondaryNamed: 0,
   secondaryUnnamed: 0,
 };
+const ROAD_HOVER_ONLY_ALLOWED_CATEGORIES = new Set([
+  "axis",
+  "expressNamed",
+  "mainNamed",
+  "secondaryNamed",
+]);
 let _roadFeatureLayers = Object.create(null);
+let _roadHoverOnlyMode = _readStoredRoadHoverOnlyMode();
 
 // ── Auto-zone hint state ──
 let _zoneHintTimer = null;
@@ -2479,6 +2487,14 @@ const OVERPASS_ENDPOINTS = [
 // ────────────────────────────────────────────────────────────────────────────
 // HELPERS
 // ────────────────────────────────────────────────────────────────────────────
+
+function _readStoredRoadHoverOnlyMode() {
+  try {
+    return localStorage.getItem(ROAD_HOVER_ONLY_STORAGE_KEY) === "true";
+  } catch (_) {
+    return false;
+  }
+}
 
 /**
  * POST a query to the first Overpass mirror that responds OK.
@@ -2708,17 +2724,34 @@ async function _addFeaturesChunked(features, onProgress, chunkSize = 1500) {
 function _updateRoadStats() {
   const badge = document.getElementById("road-stats-badge");
   if (!badge) return;
-  const total = _roadStatsMain + _roadStatsSec;
-  if (total === 0) {
+  const loadedTotal = _roadStatsMain + _roadStatsSec;
+  if (loadedTotal === 0) {
     badge.textContent = "لا توجد طرق محملة";
     badge.className = "road-stats-badge";
     return;
   }
+
+  const visibleStats = ROAD_FILTER_CATEGORY_ORDER.reduce(
+    (acc, category) => {
+      if (!_isRoadCategoryVisible(category)) return acc;
+      const count = _roadCategoryStats[category] || 0;
+      if (_isMainRoadCategory(category)) acc.main += count;
+      else acc.sec += count;
+      return acc;
+    },
+    { main: 0, sec: 0 },
+  );
+  const total = visibleStats.main + visibleStats.sec;
+  const isFiltered = total !== loadedTotal;
+
   badge.innerHTML =
     `<span class="rsb-total">${total.toLocaleString()}</span> طريق &nbsp;·&nbsp; ` +
-    `<span class="rsb-main">${_roadStatsMain.toLocaleString()} رئيسي</span> &nbsp;·&nbsp; ` +
-    `<span class="rsb-sec">${_roadStatsSec.toLocaleString()} فرعي</span>`;
-  badge.className = "road-stats-badge loaded";
+    `<span class="rsb-main">${visibleStats.main.toLocaleString()} رئيسي</span> &nbsp;·&nbsp; ` +
+    `<span class="rsb-sec">${visibleStats.sec.toLocaleString()} فرعي</span>` +
+    (isFiltered
+      ? `<div class="rsb-loaded-note">من أصل ${loadedTotal.toLocaleString()} طريق محمّل</div>`
+      : "");
+  badge.className = `road-stats-badge loaded${isFiltered ? " filtered" : ""}`;
 }
 
 function _createRoadFeatureLayer(renderer, roadFamily) {
@@ -2744,14 +2777,14 @@ function _createRoadFeatureLayer(renderer, roadFamily) {
         opacity: isSecondary ? 0.9 : 0.95,
       });
       layer.on("mouseover", function () {
-        if (isSecondary && !_isAtlasMode()) return;
+        if (!_canHoverRoads()) return;
         this.setStyle(
           isSecondary ? _getSecondaryRoadHoverStyle() : _getRoadHoverStyle(hw),
         );
         if (typeof this.bringToFront === "function") this.bringToFront();
       });
       layer.on("mouseout", function () {
-        if (isSecondary && !_isAtlasMode()) return;
+        if (!_canHoverRoads()) return;
         this.setStyle(
           isSecondary
             ? _getRenderedSecondaryRoadStyle()
@@ -2844,6 +2877,10 @@ function searchRoads(query) {
       [match.latMax, match.lngMax],
     ],
     { padding: [50, 50], maxZoom: 15, duration: 1.2 },
+  );
+  notifyRouteMessage(
+    `تم العثور على ${match.nameAr || match.name || match.ref || _hwArabicLabel(match.highway)}`,
+    "info",
   );
 }
 
@@ -3004,7 +3041,21 @@ function _getRenderedRoadGlowStyle(hw) {
   return _withRoadOpacity(_getRoadGlowStyle(hw));
 }
 
+function _getRoadHoverOnlyBaseStyle(hw, isSecondary = false) {
+  const base = isSecondary ? _getSecondaryRoadBaseStyle() : _getRoadBaseStyle(hw);
+  return {
+    color: _isAtlasMode() ? "#fff8e8" : base.color,
+    weight: Math.max(base.weight + (isSecondary ? 1.7 : 2.2), isSecondary ? 3.2 : 4.4),
+    opacity: 0.035,
+    lineCap: "round",
+    lineJoin: "round",
+  };
+}
+
 function _getRenderedRoadBaseStyle(hw) {
+  if (_roadHoverOnlyMode) {
+    return _getRoadHoverOnlyBaseStyle(hw);
+  }
   return _withRoadOpacity({
     ..._getRoadBaseStyle(hw),
     lineCap: "round",
@@ -3013,6 +3064,9 @@ function _getRenderedRoadBaseStyle(hw) {
 }
 
 function _getRenderedSecondaryRoadStyle() {
+  if (_roadHoverOnlyMode) {
+    return _getRoadHoverOnlyBaseStyle("secondary", true);
+  }
   return _withRoadOpacity(_getSecondaryRoadBaseStyle());
 }
 
@@ -3109,9 +3163,16 @@ function _getRoadCategoryContainer(category) {
   return _isMainRoadCategory(category) ? mainRoadsLayer : secondaryRoadsLayer;
 }
 
+function _isRoadCategoryAllowedInHoverOnlyMode(category) {
+  return ROAD_HOVER_ONLY_ALLOWED_CATEGORIES.has(category);
+}
+
 function _isRoadCategoryVisible(category) {
   if (!_roadsVisible) return false;
   if (!_roadCategoryVisibility[category]) return false;
+  if (_roadHoverOnlyMode && !_isRoadCategoryAllowedInHoverOnlyMode(category)) {
+    return false;
+  }
   if (_isMainRoadCategory(category)) return _showMainRoads;
   if (_isSecondaryRoadCategory(category)) return _showSecondaryRoads;
   return false;
@@ -3131,6 +3192,11 @@ function _syncRoadFilterControls() {
     masterToggle.checked = _roadsVisible;
   }
 
+  const hoverOnlyToggle = document.getElementById("road-hover-only-toggle");
+  if (hoverOnlyToggle) {
+    hoverOnlyToggle.checked = _roadHoverOnlyMode;
+  }
+
   const mainToggle = document.getElementById("road-type-main");
   if (mainToggle) {
     mainToggle.checked = _showMainRoads;
@@ -3145,9 +3211,16 @@ function _syncRoadFilterControls() {
     const checkbox = document.getElementById(elementId);
     if (!checkbox) continue;
     checkbox.checked = _roadCategoryVisibility[category];
+    const disabledByHoverOnly =
+      _roadHoverOnlyMode && !_isRoadCategoryAllowedInHoverOnlyMode(category);
     checkbox.disabled =
       !_roadsVisible ||
-      (_isMainRoadCategory(category) ? !_showMainRoads : !_showSecondaryRoads);
+      (_isMainRoadCategory(category) ? !_showMainRoads : !_showSecondaryRoads) ||
+      disabledByHoverOnly;
+    const row = checkbox.closest(".road-type-row");
+    if (row) {
+      row.classList.toggle("road-type-row-disabled", checkbox.disabled);
+    }
   }
 
   _updateRoadFilterCounts();
@@ -3204,6 +3277,7 @@ function _syncRoadLayerVisibility() {
 
   const showGlow =
     _roadsVisible &&
+    !_roadHoverOnlyMode &&
     _showMainRoads &&
     FAST_ROAD_CATEGORY_ORDER.some(
       (category) =>
@@ -3216,6 +3290,7 @@ function _syncRoadLayerVisibility() {
   }
 
   _syncRoadFilterControls();
+  _updateRoadStats();
 }
 
 function setRoadCategoryVisible(category, visible) {
@@ -3454,6 +3529,14 @@ function _findRoadLayerAtLatLng(latlng) {
   );
 }
 
+function _canHoverRoads() {
+  return Boolean(
+    _roadsVisible &&
+      ((mainRoadsLayer && map.hasLayer(mainRoadsLayer)) ||
+        (secondaryRoadsLayer && map.hasLayer(secondaryRoadsLayer))),
+  );
+}
+
 function _applyRoadHover(layer, latlng) {
   if (!layer) {
     _clearRoadHover();
@@ -3482,11 +3565,7 @@ function _scheduleRoadHover(latlng) {
 
   _roadHoverFrame = requestAnimationFrame(() => {
     _roadHoverFrame = null;
-    if (
-      !_roadsVisible ||
-      currentMapLayer !== "atlas" ||
-      !_lastRoadHoverLatLng
-    ) {
+    if (!_canHoverRoads() || !_lastRoadHoverLatLng) {
       _clearRoadHover();
       return;
     }
@@ -3587,6 +3666,15 @@ function _scheduleOverlayHover(latlng) {
       return;
     }
 
+    const roadLayer = _canHoverRoads()
+      ? _findRoadLayerAtLatLng(_lastOverlayHoverLatLng)
+      : null;
+    if (roadLayer) {
+      _clearPlaceHover();
+      _applyRoadHover(roadLayer, _lastOverlayHoverLatLng);
+      return;
+    }
+
     const placeLayer = _placesVisible
       ? _findPlaceLayerAtLatLng(_lastOverlayHoverLatLng)
       : null;
@@ -3597,14 +3685,6 @@ function _scheduleOverlayHover(latlng) {
     }
 
     _clearPlaceHover();
-
-    if (_roadsVisible && currentMapLayer === "atlas") {
-      const roadLayer = _findRoadLayerAtLatLng(_lastOverlayHoverLatLng);
-      if (roadLayer) {
-        _applyRoadHover(roadLayer, _lastOverlayHoverLatLng);
-        return;
-      }
-    }
 
     _clearRoadHover();
   });
@@ -3845,6 +3925,27 @@ async function loadZoneRoads(key) {
     btn.classList.remove("loading");
     btn.classList.add("loaded");
   }
+}
+
+function setRoadHoverOnlyMode(enabled) {
+  _roadHoverOnlyMode = Boolean(enabled);
+  try {
+    localStorage.setItem(
+      ROAD_HOVER_ONLY_STORAGE_KEY,
+      String(_roadHoverOnlyMode),
+    );
+  } catch (_) {
+    /* ignore storage failures */
+  }
+
+  if (_roadHoverOnlyMode && !_roadsVisible) {
+    setAllRoadsVisible(true);
+  }
+
+  document.body.classList.toggle("road-hover-only-mode", _roadHoverOnlyMode);
+  _clearOverlayHover();
+  _syncRoadLayerVisibility();
+  _refreshMapVisualLanguage();
 }
 
 /** Toggle all road layers on/off (master switch) */
@@ -4619,6 +4720,15 @@ function _bindRoadPanelLayerControls() {
     });
   }
 
+  const roadHoverOnlyToggle = document.getElementById(
+    "road-hover-only-toggle",
+  );
+  if (roadHoverOnlyToggle) {
+    roadHoverOnlyToggle.addEventListener("change", (event) => {
+      setRoadHoverOnlyMode(event.target.checked);
+    });
+  }
+
   for (const [category, elementId] of Object.entries(ROAD_FILTER_TOGGLE_IDS)) {
     const checkbox = document.getElementById(elementId);
     if (!checkbox) continue;
@@ -4676,6 +4786,7 @@ function _bindRoadPanelLayerControls() {
   _syncRoadFilterControls();
   _syncPlaceFilterControls();
   _syncProjectLayerControls();
+  setRoadHoverOnlyMode(_roadHoverOnlyMode);
 }
 
 _bindRoadPanelLayerControls();

@@ -7484,6 +7484,11 @@ input:focus-visible {
   right: 74px; /* beside the map-controls column (44px btn + 10px gap + 20px right) */
   z-index: 1100;
   width: 236px;
+  max-height: min(calc(100vh - 40px), calc(100% - 40px));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  -webkit-overflow-scrolling: touch;
   background: var(--surface-glass);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
@@ -7703,6 +7708,43 @@ input:focus-visible {
 }
 .road-type-place-other-color {
   background: linear-gradient(90deg, #94a3b8 0%, #cbd5e1 100%);
+}
+.road-type-axis-color {
+  background: linear-gradient(90deg, #ff9f43 0%, #f97316 55%, #fbbf24 100%);
+}
+.road-type-express-named-color {
+  background: linear-gradient(90deg, #fb7185 0%, #f97316 100%);
+}
+.road-type-express-unnamed-color {
+  background: linear-gradient(90deg, #7c2d12 0%, #c2410c 100%);
+}
+.road-type-main-named-color {
+  background: linear-gradient(90deg, #f8d66d 0%, #fbbf24 100%);
+}
+.road-type-main-unnamed-color {
+  background: linear-gradient(90deg, #a18a55 0%, #d6b873 100%);
+}
+.road-type-secondary-named-color {
+  background: linear-gradient(90deg, #60a5fa 0%, #38bdf8 100%);
+}
+.road-type-secondary-unnamed-color {
+  background: linear-gradient(90deg, #64748b 0%, #94a3b8 100%);
+}
+
+.road-filter-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.1rem;
+  margin-left: 0.42rem;
+  padding: 0.08rem 0.42rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(226, 232, 240, 0.88);
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 1.2;
 }
 
 .road-panel-clear-btn {
@@ -7997,6 +8039,7 @@ input:focus-visible {
     top: auto;
     bottom: 170px;
     width: auto;
+    max-height: calc(100vh - 190px);
   }
   [dir="rtl"] .road-panel {
     right: 10px;

@@ -2348,6 +2348,52 @@ let _roadLoadTimer = null;
 // ── Live stats counters ──
 let _roadStatsMain = 0;
 let _roadStatsSec = 0;
+const ROAD_FILTER_CATEGORY_ORDER = [
+  "axis",
+  "expressNamed",
+  "expressUnnamed",
+  "mainNamed",
+  "mainUnnamed",
+  "secondaryNamed",
+  "secondaryUnnamed",
+];
+const ROAD_FILTER_TOGGLE_IDS = {
+  axis: "road-filter-axis",
+  expressNamed: "road-filter-express-named",
+  expressUnnamed: "road-filter-express-unnamed",
+  mainNamed: "road-filter-main-named",
+  mainUnnamed: "road-filter-main-unnamed",
+  secondaryNamed: "road-filter-secondary-named",
+  secondaryUnnamed: "road-filter-secondary-unnamed",
+};
+const ROAD_FILTER_COUNT_IDS = {
+  axis: "road-filter-count-axis",
+  expressNamed: "road-filter-count-express-named",
+  expressUnnamed: "road-filter-count-express-unnamed",
+  mainNamed: "road-filter-count-main-named",
+  mainUnnamed: "road-filter-count-main-unnamed",
+  secondaryNamed: "road-filter-count-secondary-named",
+  secondaryUnnamed: "road-filter-count-secondary-unnamed",
+};
+const _roadCategoryVisibility = {
+  axis: true,
+  expressNamed: true,
+  expressUnnamed: true,
+  mainNamed: true,
+  mainUnnamed: true,
+  secondaryNamed: true,
+  secondaryUnnamed: true,
+};
+const _roadCategoryStats = {
+  axis: 0,
+  expressNamed: 0,
+  expressUnnamed: 0,
+  mainNamed: 0,
+  mainUnnamed: 0,
+  secondaryNamed: 0,
+  secondaryUnnamed: 0,
+};
+let _roadFeatureLayers = Object.create(null);
 
 // ── Auto-zone hint state ──
 let _zoneHintTimer = null;
@@ -2405,6 +2451,20 @@ const SEC_HW = new Set([
   "tertiary_link",
   // residential & unclassified removed — CartoDB tile overlay covers these
 ]);
+const EXPRESS_HW = new Set([
+  "motorway",
+  "motorway_link",
+  "trunk",
+  "trunk_link",
+]);
+const CORRIDOR_HW = new Set([...EXPRESS_HW]);
+const FAST_ROAD_CATEGORY_ORDER = ["axis", "expressNamed", "expressUnnamed"];
+const AXIS_NAME_PATTERNS = [
+  /(^|\s|[-_/])axis(\s|$|[-_/])/i,
+  /corridor/i,
+  /محاور/u,
+  /محور/u,
+];
 
 // Overpass mirrors — tried in order, first success wins (used on localhost only;
 // production routes through /api/overpass proxy)
@@ -2594,11 +2654,15 @@ async function _addFeaturesChunked(features, onProgress, chunkSize = 1500) {
         },
         geometry: { type: "LineString", coordinates: f.c },
       };
-      if (MAIN_HW.has(f.h)) {
-        mainRoadsLayer.addData(feature);
+      const category = _getRoadCategory(f);
+      const targetLayer = category ? _roadFeatureLayers[category] : null;
+      if (!category || !targetLayer) return;
+
+      targetLayer.addData(feature);
+      _roadCategoryStats[category]++;
+      if (_isMainRoadCategory(category)) {
         _roadStatsMain++;
       } else {
-        secondaryRoadsLayer.addData(feature);
         _roadStatsSec++;
       }
       // ── Populate search index ──
@@ -2628,19 +2692,15 @@ async function _addFeaturesChunked(features, onProgress, chunkSize = 1500) {
         });
       }
       // ── Glow halo for motorway / trunk (wide+faint, drawn under main roads) ──
-      if (
-        _roadGlowLayer &&
-        (f.h === "motorway" ||
-          f.h === "trunk" ||
-          f.h === "motorway_link" ||
-          f.h === "trunk_link")
-      ) {
+      if (_roadGlowLayer && _isFastRoadCategory(category)) {
         _roadGlowLayer.addData(feature);
       }
     });
+    _updateRoadFilterCounts();
     if (onProgress) onProgress(Math.min(i + chunkSize, total), total);
     await new Promise((r) => requestAnimationFrame(r)); // yield — paint the new chunk
   }
+  _syncRoadLayerVisibility();
   return added;
 }
 
@@ -2659,6 +2719,54 @@ function _updateRoadStats() {
     `<span class="rsb-main">${_roadStatsMain.toLocaleString()} رئيسي</span> &nbsp;·&nbsp; ` +
     `<span class="rsb-sec">${_roadStatsSec.toLocaleString()} فرعي</span>`;
   badge.className = "road-stats-badge loaded";
+}
+
+function _createRoadFeatureLayer(renderer, roadFamily) {
+  const isSecondary = roadFamily === "secondary";
+  return L.geoJSON(null, {
+    renderer,
+    style: (feature) =>
+      isSecondary
+        ? _getRenderedSecondaryRoadStyle()
+        : _getRenderedRoadBaseStyle(feature?.properties?.highway || "primary"),
+    interactive: true,
+    onEachFeature: (feature, layer) => {
+      const hw = feature?.properties?.highway || "";
+      const ttClass = hw.startsWith("motorway")
+        ? "road-name-tooltip rnt-motorway"
+        : hw.startsWith("trunk")
+          ? "road-name-tooltip rnt-trunk"
+          : "road-name-tooltip";
+      layer.bindTooltip(() => buildRoadTooltip(feature), {
+        sticky: true,
+        direction: "top",
+        className: ttClass,
+        opacity: isSecondary ? 0.9 : 0.95,
+      });
+      layer.on("mouseover", function () {
+        if (isSecondary && !_isAtlasMode()) return;
+        this.setStyle(
+          isSecondary ? _getSecondaryRoadHoverStyle() : _getRoadHoverStyle(hw),
+        );
+        if (typeof this.bringToFront === "function") this.bringToFront();
+      });
+      layer.on("mouseout", function () {
+        if (isSecondary && !_isAtlasMode()) return;
+        this.setStyle(
+          isSecondary
+            ? _getRenderedSecondaryRoadStyle()
+            : _getRenderedRoadBaseStyle(hw),
+        );
+      });
+      layer.on("click", (e) => {
+        L.DomEvent.stopPropagation(e);
+        L.popup({ className: "road-info-popup", maxWidth: 260 })
+          .setLatLng(e.latlng)
+          .setContent(_buildRoadPopup(feature))
+          .openOn(map);
+      });
+    },
+  });
 }
 
 function _getViewportRoadBbox() {
@@ -2883,6 +2991,15 @@ function _withRoadOpacity(style) {
   };
 }
 
+function _setStyleOnRoadGroup(group, style) {
+  if (!group) return;
+  for (const layer of Object.values(group._layers || {})) {
+    if (layer && typeof layer.setStyle === "function") {
+      layer.setStyle(style);
+    }
+  }
+}
+
 function _getRenderedRoadGlowStyle(hw) {
   return _withRoadOpacity(_getRoadGlowStyle(hw));
 }
@@ -2924,6 +3041,200 @@ function _getSecondaryRoadHoverStyle() {
     opacity: 1,
     lineCap: "round",
   };
+}
+
+function _hasRoadIdentity(source) {
+  const nameAr = source?.a ?? source?.["name:ar"] ?? "";
+  const nameEn = source?.n ?? source?.name ?? "";
+  const ref = source?.r ?? source?.ref ?? "";
+  return Boolean(String(nameAr || nameEn || ref).trim());
+}
+
+function _getRoadIdentityText(source) {
+  return [
+    source?.a,
+    source?.["name:ar"],
+    source?.n,
+    source?.name,
+    source?.r,
+    source?.ref,
+  ]
+    .filter((value) => typeof value === "string" && value.trim())
+    .join(" | ");
+}
+
+function _isAxisNamedRoad(source) {
+  const identityText = _getRoadIdentityText(source);
+  if (!identityText) return false;
+  return AXIS_NAME_PATTERNS.some((pattern) => pattern.test(identityText));
+}
+
+function _getRoadCategory(source) {
+  const highway = String(source?.h ?? source?.highway ?? "").trim();
+  if (!highway) return null;
+  if (CORRIDOR_HW.has(highway)) {
+    if (_isAxisNamedRoad(source)) return "axis";
+    return _hasRoadIdentity(source) ? "expressNamed" : "expressUnnamed";
+  }
+  if (MAIN_HW.has(highway)) {
+    return _hasRoadIdentity(source) ? "mainNamed" : "mainUnnamed";
+  }
+  if (SEC_HW.has(highway)) {
+    return _hasRoadIdentity(source)
+      ? "secondaryNamed"
+      : "secondaryUnnamed";
+  }
+  return null;
+}
+
+function _isMainRoadCategory(category) {
+  return (
+    category === "axis" ||
+    category === "expressNamed" ||
+    category === "expressUnnamed" ||
+    category === "mainNamed" ||
+    category === "mainUnnamed"
+  );
+}
+
+function _isFastRoadCategory(category) {
+  return FAST_ROAD_CATEGORY_ORDER.includes(category);
+}
+
+function _isSecondaryRoadCategory(category) {
+  return category === "secondaryNamed" || category === "secondaryUnnamed";
+}
+
+function _getRoadCategoryContainer(category) {
+  return _isMainRoadCategory(category) ? mainRoadsLayer : secondaryRoadsLayer;
+}
+
+function _isRoadCategoryVisible(category) {
+  if (!_roadsVisible) return false;
+  if (!_roadCategoryVisibility[category]) return false;
+  if (_isMainRoadCategory(category)) return _showMainRoads;
+  if (_isSecondaryRoadCategory(category)) return _showSecondaryRoads;
+  return false;
+}
+
+function _updateRoadFilterCounts() {
+  for (const [category, elementId] of Object.entries(ROAD_FILTER_COUNT_IDS)) {
+    const countEl = document.getElementById(elementId);
+    if (!countEl) continue;
+    countEl.textContent = _roadCategoryStats[category].toLocaleString();
+  }
+}
+
+function _syncRoadFilterControls() {
+  const masterToggle = document.getElementById("road-master-toggle");
+  if (masterToggle) {
+    masterToggle.checked = _roadsVisible;
+  }
+
+  const mainToggle = document.getElementById("road-type-main");
+  if (mainToggle) {
+    mainToggle.checked = _showMainRoads;
+  }
+
+  const secondaryToggle = document.getElementById("road-type-secondary");
+  if (secondaryToggle) {
+    secondaryToggle.checked = _showSecondaryRoads;
+  }
+
+  for (const [category, elementId] of Object.entries(ROAD_FILTER_TOGGLE_IDS)) {
+    const checkbox = document.getElementById(elementId);
+    if (!checkbox) continue;
+    checkbox.checked = _roadCategoryVisibility[category];
+    checkbox.disabled =
+      !_roadsVisible ||
+      (_isMainRoadCategory(category) ? !_showMainRoads : !_showSecondaryRoads);
+  }
+
+  _updateRoadFilterCounts();
+}
+
+function _syncRoadLayerVisibility() {
+  if (!mainRoadsLayer || !secondaryRoadsLayer) {
+    _syncRoadFilterControls();
+    return;
+  }
+
+  for (const category of ROAD_FILTER_CATEGORY_ORDER) {
+    const container = _getRoadCategoryContainer(category);
+    const layer = _roadFeatureLayers[category];
+    if (!container || !layer) continue;
+
+    const shouldShow = _isRoadCategoryVisible(category);
+    const isShown = container.hasLayer(layer);
+    if (shouldShow && !isShown) {
+      container.addLayer(layer);
+    } else if (!shouldShow && isShown) {
+      container.removeLayer(layer);
+    }
+  }
+
+  const hasVisibleMain = [
+    "axis",
+    "expressNamed",
+    "expressUnnamed",
+    "mainNamed",
+    "mainUnnamed",
+  ].some(
+    (category) =>
+      _roadFeatureLayers[category] &&
+      mainRoadsLayer.hasLayer(_roadFeatureLayers[category]),
+  );
+  const hasVisibleSecondary = ["secondaryNamed", "secondaryUnnamed"].some(
+    (category) =>
+      _roadFeatureLayers[category] &&
+      secondaryRoadsLayer.hasLayer(_roadFeatureLayers[category]),
+  );
+
+  if (_roadsVisible && _showMainRoads && hasVisibleMain) {
+    if (!map.hasLayer(mainRoadsLayer)) mainRoadsLayer.addTo(map);
+  } else if (map.hasLayer(mainRoadsLayer)) {
+    map.removeLayer(mainRoadsLayer);
+  }
+
+  if (_roadsVisible && _showSecondaryRoads && hasVisibleSecondary) {
+    if (!map.hasLayer(secondaryRoadsLayer)) secondaryRoadsLayer.addTo(map);
+  } else if (map.hasLayer(secondaryRoadsLayer)) {
+    map.removeLayer(secondaryRoadsLayer);
+  }
+
+  const showGlow =
+    _roadsVisible &&
+    _showMainRoads &&
+    FAST_ROAD_CATEGORY_ORDER.some(
+      (category) =>
+        _roadCategoryVisibility[category] && _roadCategoryStats[category] > 0,
+    );
+  if (showGlow) {
+    if (_roadGlowLayer && !map.hasLayer(_roadGlowLayer)) _roadGlowLayer.addTo(map);
+  } else if (_roadGlowLayer && map.hasLayer(_roadGlowLayer)) {
+    map.removeLayer(_roadGlowLayer);
+  }
+
+  _syncRoadFilterControls();
+}
+
+function setRoadCategoryVisible(category, visible) {
+  if (!(category in _roadCategoryVisibility)) return;
+  _roadCategoryVisibility[category] = Boolean(visible);
+  if (
+    !visible &&
+    _hoveredRoadLayer &&
+    _getRoadCategory(_hoveredRoadLayer.feature?.properties) === category
+  ) {
+    _clearRoadHover();
+  }
+  _syncRoadLayerVisibility();
+}
+
+async function ensureRoadCategoryLoaded(category) {
+  if (!_isFastRoadCategory(category)) return;
+  if (!_showMainRoads) setMainRoadsVisible(true);
+  await loadFullEgyptHighways();
 }
 
 const PLACE_STYLE_PALETTES = {
@@ -3046,13 +3357,16 @@ function _refreshMapVisualLanguage(mode = currentMapLayer) {
   }
 
   if (mainRoadsLayer) {
-    mainRoadsLayer.setStyle((feature) =>
+    _setStyleOnRoadGroup(mainRoadsLayer, (feature) =>
       _getRenderedRoadBaseStyle(feature?.properties?.highway || "primary"),
     );
   }
 
   if (secondaryRoadsLayer) {
-    secondaryRoadsLayer.setStyle(_getRenderedSecondaryRoadStyle());
+    _setStyleOnRoadGroup(
+      secondaryRoadsLayer,
+      _getRenderedSecondaryRoadStyle(),
+    );
   }
 
   if (placesLayer) {
@@ -3096,16 +3410,27 @@ function _clearRoadHover() {
 }
 
 function _iterVisibleRoadLayers(visitor) {
-  const groups = [];
-  if (mainRoadsLayer && map.hasLayer(mainRoadsLayer))
-    groups.push(mainRoadsLayer);
-  if (secondaryRoadsLayer && map.hasLayer(secondaryRoadsLayer))
-    groups.push(secondaryRoadsLayer);
-
-  for (const group of groups) {
-    for (const layer of Object.values(group._layers || {})) {
-      if (visitor(layer)) return layer;
+  const visitGroup = (group) => {
+    for (const layer of Object.values(group?._layers || {})) {
+      if (!layer) continue;
+      if (typeof layer._containsPoint === "function") {
+        if (visitor(layer)) return layer;
+        continue;
+      }
+      const nestedMatch = visitGroup(layer);
+      if (nestedMatch) return nestedMatch;
     }
+    return null;
+  };
+
+  if (mainRoadsLayer && map.hasLayer(mainRoadsLayer)) {
+    const match = visitGroup(mainRoadsLayer);
+    if (match) return match;
+  }
+
+  if (secondaryRoadsLayer && map.hasLayer(secondaryRoadsLayer)) {
+    const match = visitGroup(secondaryRoadsLayer);
+    if (match) return match;
   }
 
   return null;
@@ -3381,79 +3706,48 @@ function _ensureRoadLayers() {
       },
       interactive: false, // zero hit-testing overhead on glow layer
     });
-    if (_roadsVisible && _showMainRoads) _roadGlowLayer.addTo(map);
   }
 
   if (!mainRoadsLayer) {
-    mainRoadsLayer = L.geoJSON(null, {
-      renderer,
-      style: (feature) =>
-        _getRenderedRoadBaseStyle(feature?.properties?.highway || "primary"),
-      interactive: true,
-      onEachFeature: (feature, layer) => {
-        const hw = feature?.properties?.highway || "";
-        const ttClass = hw.startsWith("motorway")
-          ? "road-name-tooltip rnt-motorway"
-          : hw.startsWith("trunk")
-            ? "road-name-tooltip rnt-trunk"
-            : "road-name-tooltip";
-        layer.bindTooltip(() => buildRoadTooltip(feature), {
-          sticky: true,
-          direction: "top",
-          className: ttClass,
-          opacity: 0.95,
-        });
-        layer.on("mouseover", function () {
-          this.setStyle(_getRoadHoverStyle(hw));
-          if (typeof this.bringToFront === "function") this.bringToFront();
-        });
-        layer.on("mouseout", function () {
-          this.setStyle(_getRenderedRoadBaseStyle(hw));
-        });
-        layer.on("click", (e) => {
-          L.DomEvent.stopPropagation(e);
-          L.popup({ className: "road-info-popup", maxWidth: 260 })
-            .setLatLng(e.latlng)
-            .setContent(_buildRoadPopup(feature))
-            .openOn(map);
-        });
-      },
-    });
-    if (_roadsVisible && _showMainRoads) mainRoadsLayer.addTo(map);
+    mainRoadsLayer = L.layerGroup();
   }
 
   if (!secondaryRoadsLayer) {
-    secondaryRoadsLayer = L.geoJSON(null, {
-      renderer,
-      style: _getRenderedSecondaryRoadStyle(),
-      interactive: true,
-      onEachFeature: (feature, layer) => {
-        layer.bindTooltip(() => buildRoadTooltip(feature), {
-          sticky: true,
-          direction: "top",
-          className: "road-name-tooltip",
-          opacity: 0.9,
-        });
-        layer.on("mouseover", function () {
-          if (!_isAtlasMode()) return;
-          this.setStyle(_getSecondaryRoadHoverStyle());
-          if (typeof this.bringToFront === "function") this.bringToFront();
-        });
-        layer.on("mouseout", function () {
-          if (!_isAtlasMode()) return;
-          this.setStyle(_getRenderedSecondaryRoadStyle());
-        });
-        layer.on("click", (e) => {
-          L.DomEvent.stopPropagation(e);
-          L.popup({ className: "road-info-popup", maxWidth: 260 })
-            .setLatLng(e.latlng)
-            .setContent(_buildRoadPopup(feature))
-            .openOn(map);
-        });
-      },
-    });
-    if (_roadsVisible && _showSecondaryRoads) secondaryRoadsLayer.addTo(map);
+    secondaryRoadsLayer = L.layerGroup();
   }
+
+  if (!_roadFeatureLayers.axis) {
+    _roadFeatureLayers.axis = _createRoadFeatureLayer(renderer, "main");
+  }
+  if (!_roadFeatureLayers.expressNamed) {
+    _roadFeatureLayers.expressNamed = _createRoadFeatureLayer(renderer, "main");
+  }
+  if (!_roadFeatureLayers.expressUnnamed) {
+    _roadFeatureLayers.expressUnnamed = _createRoadFeatureLayer(
+      renderer,
+      "main",
+    );
+  }
+  if (!_roadFeatureLayers.mainNamed) {
+    _roadFeatureLayers.mainNamed = _createRoadFeatureLayer(renderer, "main");
+  }
+  if (!_roadFeatureLayers.mainUnnamed) {
+    _roadFeatureLayers.mainUnnamed = _createRoadFeatureLayer(renderer, "main");
+  }
+  if (!_roadFeatureLayers.secondaryNamed) {
+    _roadFeatureLayers.secondaryNamed = _createRoadFeatureLayer(
+      renderer,
+      "secondary",
+    );
+  }
+  if (!_roadFeatureLayers.secondaryUnnamed) {
+    _roadFeatureLayers.secondaryUnnamed = _createRoadFeatureLayer(
+      renderer,
+      "secondary",
+    );
+  }
+
+  _syncRoadLayerVisibility();
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -3561,55 +3855,20 @@ function setAllRoadsVisible(visible) {
     btn.classList.toggle("active", visible);
     btn.setAttribute("aria-pressed", String(visible));
   }
-  const masterCb = document.getElementById("road-master-toggle");
-  if (masterCb) masterCb.checked = visible;
-  if (visible) {
-    if (_roadGlowLayer && _showMainRoads && !map.hasLayer(_roadGlowLayer))
-      _roadGlowLayer.addTo(map);
-    if (mainRoadsLayer && _showMainRoads && !map.hasLayer(mainRoadsLayer))
-      mainRoadsLayer.addTo(map);
-    if (
-      secondaryRoadsLayer &&
-      _showSecondaryRoads &&
-      !map.hasLayer(secondaryRoadsLayer)
-    )
-      secondaryRoadsLayer.addTo(map);
-  } else {
-    _clearRoadHover();
-    if (_roadGlowLayer && map.hasLayer(_roadGlowLayer))
-      map.removeLayer(_roadGlowLayer);
-    if (mainRoadsLayer && map.hasLayer(mainRoadsLayer))
-      map.removeLayer(mainRoadsLayer);
-    if (secondaryRoadsLayer && map.hasLayer(secondaryRoadsLayer))
-      map.removeLayer(secondaryRoadsLayer);
-  }
+  if (!visible) _clearRoadHover();
+  _syncRoadLayerVisibility();
 }
 
 function setMainRoadsVisible(visible) {
   _showMainRoads = visible;
   if (!visible) _clearRoadHover();
-  if (visible && _roadsVisible) {
-    if (_roadGlowLayer && !map.hasLayer(_roadGlowLayer))
-      _roadGlowLayer.addTo(map);
-    if (mainRoadsLayer && !map.hasLayer(mainRoadsLayer))
-      mainRoadsLayer.addTo(map);
-  } else {
-    if (_roadGlowLayer && map.hasLayer(_roadGlowLayer))
-      map.removeLayer(_roadGlowLayer);
-    if (mainRoadsLayer && map.hasLayer(mainRoadsLayer))
-      map.removeLayer(mainRoadsLayer);
-  }
+  _syncRoadLayerVisibility();
 }
 
 function setSecondaryRoadsVisible(visible) {
   _showSecondaryRoads = visible;
   if (!visible) _clearRoadHover();
-  if (!secondaryRoadsLayer) return;
-  if (visible && _roadsVisible) {
-    if (!map.hasLayer(secondaryRoadsLayer)) secondaryRoadsLayer.addTo(map);
-  } else {
-    if (map.hasLayer(secondaryRoadsLayer)) map.removeLayer(secondaryRoadsLayer);
-  }
+  _syncRoadLayerVisibility();
 }
 
 /** Remove all road data from map and reset for fresh load */
@@ -3632,6 +3891,10 @@ function clearAllRoads() {
   _roadSearchIndex.length = 0;
   _roadStatsMain = 0;
   _roadStatsSec = 0;
+  for (const category of ROAD_FILTER_CATEGORY_ORDER) {
+    _roadCategoryStats[category] = 0;
+  }
+  _roadFeatureLayers = Object.create(null);
   _egyptHighwaysLoaded = false;
   _egyptHighwaysLoading = false;
   const egyptBtn = document.getElementById("road-egypt-full");
@@ -3639,12 +3902,13 @@ function clearAllRoads() {
     egyptBtn.classList.remove("loaded", "loading");
     const lbl = egyptBtn.querySelector(".road-egypt-label");
     const sub = egyptBtn.querySelector(".road-egypt-sub");
-    if (lbl) lbl.textContent = "طرق مصر السريعة";
-    if (sub) sub.textContent = "كل الطرق السريعة · محفوظة للتحميل الفوري";
+    if (lbl) lbl.textContent = "المحاور والطرق السريعة";
+    if (sub) sub.textContent = "كل المحاور والطرق السريعة · محفوظة للتحميل الفوري";
   }
   document
     .querySelectorAll(".road-zone-btn")
     .forEach((b) => b.classList.remove("loaded", "loading"));
+  _syncRoadFilterControls();
   _updateRoadStats();
 }
 
@@ -3658,7 +3922,7 @@ function clearAllRoads() {
 //  Overpass:         3-mirror fallback with AbortSignal.timeout
 //  TTL:              30 days — auto-refetch stale cache transparently
 
-const EGYPT_HW_CACHE_KEY = "xc_egypt_hw_v3";
+const EGYPT_HW_CACHE_KEY = "xc_egypt_hw_v4";
 const EGYPT_HW_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 let _egyptHighwaysLoaded = false;
 let _egyptHighwaysLoading = false;
@@ -3710,7 +3974,7 @@ async function loadFullEgyptHighways() {
       if (sub) sub.textContent = "جاري التحميل من الإنترنت (أول مرة)…";
       const query = [
         "[out:json][timeout:40][bbox:22.0,24.7,31.8,36.9];",
-        '(way["highway"~"motorway|trunk"](22.0,24.7,31.8,36.9););',
+        '(way["highway"~"motorway|motorway_link|trunk|trunk_link"](22.0,24.7,31.8,36.9););',
         "out geom qt;",
       ].join("");
       const response = await _fetchOverpass(query, 40000);
@@ -3769,8 +4033,8 @@ async function loadFullEgyptHighways() {
   } catch (err) {
     _egyptHighwaysLoading = false;
     if (btn) btn.classList.remove("loading");
-    if (lbl) lbl.textContent = "طرق مصر السريعة";
-    if (sub) sub.textContent = "كل الطرق السريعة · محفوظة للتحميل الفوري";
+    if (lbl) lbl.textContent = "المحاور والطرق السريعة";
+    if (sub) sub.textContent = "كل المحاور والطرق السريعة · محفوظة للتحميل الفوري";
     console.warn("Egypt highways load failed:", err.message);
   }
 }
@@ -4355,6 +4619,30 @@ function _bindRoadPanelLayerControls() {
     });
   }
 
+  for (const [category, elementId] of Object.entries(ROAD_FILTER_TOGGLE_IDS)) {
+    const checkbox = document.getElementById(elementId);
+    if (!checkbox) continue;
+    checkbox.addEventListener("change", (event) => {
+      const wantsVisible = Boolean(event.target.checked);
+      if (
+        _isFastRoadCategory(category) &&
+        !wantsVisible &&
+        !_egyptHighwaysLoaded &&
+        _roadCategoryStats[category] === 0
+      ) {
+        event.target.checked = true;
+        _roadCategoryVisibility[category] = true;
+        void ensureRoadCategoryLoaded(category);
+        _syncRoadLayerVisibility();
+        return;
+      }
+      if (_isFastRoadCategory(category) && wantsVisible) {
+        void ensureRoadCategoryLoaded(category);
+      }
+      setRoadCategoryVisible(category, wantsVisible);
+    });
+  }
+
   const projectClustersToggle = document.getElementById(
     "project-clusters-toggle",
   );
@@ -4385,6 +4673,7 @@ function _bindRoadPanelLayerControls() {
     });
   }
 
+  _syncRoadFilterControls();
   _syncPlaceFilterControls();
   _syncProjectLayerControls();
 }
@@ -8026,10 +8315,10 @@ function updateRoadColors() {
     styles.getPropertyValue("--avaria-gold").trim() || "#667eea";
   const redColor = styles.getPropertyValue("--avaria-red").trim() || "#f093fb";
   if (mainRoadsLayer) {
-    mainRoadsLayer.setStyle({ color: goldColor });
+    _setStyleOnRoadGroup(mainRoadsLayer, { color: goldColor });
   }
   if (secondaryRoadsLayer) {
-    secondaryRoadsLayer.setStyle({ color: redColor });
+    _setStyleOnRoadGroup(secondaryRoadsLayer, { color: redColor });
   }
 }
 

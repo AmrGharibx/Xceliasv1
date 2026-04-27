@@ -2339,6 +2339,8 @@ let _roadPanelOpen = false;
 let _hoveredRoadLayer = null;
 let _roadHoverFrame = null;
 let _lastRoadHoverLatLng = null;
+let _hoveredRoadGroupKey = "";
+let _hoveredRoadLayers = [];
 const ROAD_HOVER_ONLY_STORAGE_KEY = "xc_road_hover_only_v1";
 
 // ── Dedup / bbox tracking ──
@@ -2413,6 +2415,10 @@ let _roadGlowLayer = null;
 
 // ── Road search index ──
 const _roadSearchIndex = []; // { name, nameAr, ref, highway, latMin, latMax, lngMin, lngMax }
+const _roadSearchIndexByKey = new Map();
+const _roadIdentityClustersByBaseKey = new Map();
+const _roadIdentityClusterLookup = new Map();
+const ROAD_IDENTITY_CLUSTER_DISTANCE_M = 1400;
 
 // Egypt bounds — no Overpass calls outside this box
 const EGYPT_BOUNDS = { south: 22.0, north: 31.8, west: 24.7, east: 36.9 };
@@ -2670,6 +2676,14 @@ async function _addFeaturesChunked(features, onProgress, chunkSize = 1500) {
         },
         geometry: { type: "LineString", coordinates: f.c },
       };
+      const roadIdentityBaseKey = _getRoadIdentityBaseKey(f);
+      const roadIdentityClusterKey = _registerRoadIdentityCluster(f, f.c);
+      if (roadIdentityBaseKey) {
+        feature.properties.roadIdentityBaseKey = roadIdentityBaseKey;
+      }
+      if (roadIdentityClusterKey) {
+        feature.properties.roadIdentityClusterKey = roadIdentityClusterKey;
+      }
       const category = _getRoadCategory(f);
       const targetLayer = category ? _roadFeatureLayers[category] : null;
       if (!category || !targetLayer) return;
@@ -2683,29 +2697,7 @@ async function _addFeaturesChunked(features, onProgress, chunkSize = 1500) {
       }
       // ── Populate search index ──
       if (f.n || f.a || f.r) {
-        // Use loop instead of spread to avoid stack overflow on long roads
-        let latMin = f.c[0][1],
-          latMax = f.c[0][1];
-        let lngMin = f.c[0][0],
-          lngMax = f.c[0][0];
-        for (let j = 1; j < f.c.length; j++) {
-          const lat = f.c[j][1],
-            lng = f.c[j][0];
-          if (lat < latMin) latMin = lat;
-          else if (lat > latMax) latMax = lat;
-          if (lng < lngMin) lngMin = lng;
-          else if (lng > lngMax) lngMax = lng;
-        }
-        _roadSearchIndex.push({
-          name: f.n || "",
-          nameAr: f.a || "",
-          ref: f.r || "",
-          highway: f.h,
-          latMin,
-          latMax,
-          lngMin,
-          lngMax,
-        });
+        _upsertRoadSearchEntry(f, f.c, roadIdentityBaseKey || roadIdentityClusterKey);
       }
       // ── Glow halo for motorway / trunk (wide+faint, drawn under main roads) ──
       if (_roadGlowLayer && _isFastRoadCategory(category)) {
@@ -2764,6 +2756,7 @@ function _createRoadFeatureLayer(renderer, roadFamily) {
         : _getRenderedRoadBaseStyle(feature?.properties?.highway || "primary"),
     interactive: true,
     onEachFeature: (feature, layer) => {
+      _registerRoadLayerToCluster(layer);
       const hw = feature?.properties?.highway || "";
       const ttClass = hw.startsWith("motorway")
         ? "road-name-tooltip rnt-motorway"
@@ -2861,12 +2854,32 @@ function searchRoads(query) {
     notifyRouteMessage("حمّل الطرق الأول، وبعدين ابحث.", "info");
     return;
   }
-  const match = _roadSearchIndex.find(
-    (r) =>
-      r.name.toLowerCase().includes(q) ||
-      r.nameAr.includes(q) ||
-      r.ref.toLowerCase().includes(q),
-  );
+  const matches = _roadSearchIndex
+    .filter(
+      (r) =>
+        r.name.toLowerCase().includes(q) ||
+        r.nameAr.includes(q) ||
+        r.ref.toLowerCase().includes(q),
+    )
+    .map((entry) => {
+      const exactName =
+        entry.name.toLowerCase() === q ||
+        entry.nameAr.toLowerCase() === q ||
+        entry.ref.toLowerCase() === q;
+      const startsWith =
+        entry.name.toLowerCase().startsWith(q) ||
+        entry.nameAr.toLowerCase().startsWith(q) ||
+        entry.ref.toLowerCase().startsWith(q);
+      const centerLat = (entry.latMin + entry.latMax) / 2;
+      const centerLng = (entry.lngMin + entry.lngMax) / 2;
+      const distance = map.distance([centerLat, centerLng], map.getCenter());
+      return {
+        entry,
+        score: (exactName ? 300 : 0) + (startsWith ? 120 : 0) - distance / 1000,
+      };
+    })
+    .sort((a, b) => b.score - a.score);
+  const match = matches[0]?.entry;
   if (!match) {
     notifyRouteMessage('مفيش طريق اسمه "' + query + '"', "info");
     return;
@@ -2971,24 +2984,24 @@ function _getRoadBaseStyle(hw) {
 }
 
 function _getRoadHoverStyle(hw) {
+  const rendered = _getRenderedRoadBaseStyle(hw);
   if (_isAtlasMode()) {
     switch (hw) {
       case "motorway":
       case "motorway_link":
-        return { color: "#fff4da", weight: 9.2, opacity: 1 };
+        return { ...rendered, color: "#fff4da", opacity: 1 };
       case "trunk":
       case "trunk_link":
-        return { color: "#fff0c8", weight: 8, opacity: 1 };
+        return { ...rendered, color: "#fff0c8", opacity: 1 };
       case "primary":
       case "primary_link":
-        return { color: "#fff8e8", weight: 6.4, opacity: 1 };
+        return { ...rendered, color: "#fff8e8", opacity: 1 };
       default:
-        return { color: "#fff8e8", weight: 6.2, opacity: 1 };
+        return { ...rendered, color: "#fff8e8", opacity: 1 };
     }
   }
 
-  const base = _getRoadBaseStyle(hw);
-  return { ...base, weight: base.weight + 2, opacity: 1 };
+  return { ...rendered, opacity: 1 };
 }
 
 function _getRoadGlowStyle(hw) {
@@ -3089,9 +3102,10 @@ function _getSecondaryRoadBaseStyle() {
 }
 
 function _getSecondaryRoadHoverStyle() {
+  const base = _getRenderedSecondaryRoadStyle();
   return {
+    ...base,
     color: "#fffaf0",
-    weight: 3.8,
     opacity: 1,
     lineCap: "round",
   };
@@ -3115,6 +3129,168 @@ function _getRoadIdentityText(source) {
   ]
     .filter((value) => typeof value === "string" && value.trim())
     .join(" | ");
+}
+
+function _normalizeRoadIdentityValue(value) {
+  return String(value || "")
+    .normalize("NFKC")
+    .replace(/[\u064B-\u065F\u0670\u0640]/gu, "")
+    .replace(/[\s\-_/,.;:()\[\]{}]+/g, " ")
+    .trim()
+    .toLowerCase();
+}
+
+function _getRoadIdentityDisplay(source) {
+  return source?.a || source?.["name:ar"] || source?.n || source?.name || source?.r || source?.ref || "";
+}
+
+function _getRoadIdentityBaseKey(source) {
+  const nameAr = _normalizeRoadIdentityValue(source?.a ?? source?.["name:ar"]);
+  if (nameAr) return `ar:${nameAr}`;
+  const nameEn = _normalizeRoadIdentityValue(source?.n ?? source?.name);
+  if (nameEn) return `en:${nameEn}`;
+  const ref = _normalizeRoadIdentityValue(source?.r ?? source?.ref);
+  if (ref) return `ref:${ref}`;
+  return "";
+}
+
+function _summarizeRoadCoords(coords) {
+  const first = coords?.[0];
+  const last = coords?.[coords.length - 1];
+  let latMin = first?.[1] ?? 0;
+  let latMax = first?.[1] ?? 0;
+  let lngMin = first?.[0] ?? 0;
+  let lngMax = first?.[0] ?? 0;
+  for (let index = 1; index < coords.length; index += 1) {
+    const lat = coords[index][1];
+    const lng = coords[index][0];
+    if (lat < latMin) latMin = lat;
+    if (lat > latMax) latMax = lat;
+    if (lng < lngMin) lngMin = lng;
+    if (lng > lngMax) lngMax = lng;
+  }
+  return {
+    first: first ? { lat: first[1], lng: first[0] } : null,
+    last: last ? { lat: last[1], lng: last[0] } : null,
+    latMin,
+    latMax,
+    lngMin,
+    lngMax,
+  };
+}
+
+function _getRoadEndpointDistanceMeters(a, b) {
+  if (!a || !b) return Number.POSITIVE_INFINITY;
+  const toRad = (value) => (value * Math.PI) / 180;
+  const lat1 = toRad(a.lat);
+  const lat2 = toRad(b.lat);
+  const dLat = toRad(b.lat - a.lat);
+  const dLng = toRad(b.lng - a.lng);
+  const sinLat = Math.sin(dLat / 2);
+  const sinLng = Math.sin(dLng / 2);
+  const arc =
+    sinLat * sinLat +
+    Math.cos(lat1) * Math.cos(lat2) * sinLng * sinLng;
+  return 6371000 * 2 * Math.atan2(Math.sqrt(arc), Math.sqrt(1 - arc));
+}
+
+function _roadClusterCanAcceptSegment(cluster, segmentSummary) {
+  if (!cluster || !segmentSummary?.first || !segmentSummary.last) return false;
+  if (!cluster.endpoints.length) return true;
+  return cluster.endpoints.some(
+    (endpoint) =>
+      _getRoadEndpointDistanceMeters(endpoint, segmentSummary.first) <=
+        ROAD_IDENTITY_CLUSTER_DISTANCE_M ||
+      _getRoadEndpointDistanceMeters(endpoint, segmentSummary.last) <=
+        ROAD_IDENTITY_CLUSTER_DISTANCE_M,
+  );
+}
+
+function _registerRoadIdentityCluster(source, coords) {
+  const baseKey = _getRoadIdentityBaseKey(source);
+  if (!baseKey || !Array.isArray(coords) || coords.length < 2) return "";
+
+  const segmentSummary = _summarizeRoadCoords(coords);
+  const existingClusters = _roadIdentityClustersByBaseKey.get(baseKey) || [];
+  let cluster = existingClusters.find((candidate) =>
+    _roadClusterCanAcceptSegment(candidate, segmentSummary),
+  );
+
+  if (!cluster) {
+    cluster = {
+      key: `${baseKey}::${existingClusters.length + 1}`,
+      baseKey,
+      displayName: _getRoadIdentityDisplay(source),
+      name: source?.n ?? source?.name ?? "",
+      nameAr: source?.a ?? source?.["name:ar"] ?? "",
+      ref: source?.r ?? source?.ref ?? "",
+      highway: source?.h ?? source?.highway ?? "",
+      latMin: segmentSummary.latMin,
+      latMax: segmentSummary.latMax,
+      lngMin: segmentSummary.lngMin,
+      lngMax: segmentSummary.lngMax,
+      endpoints: [],
+      layers: new Set(),
+      segmentCount: 0,
+    };
+    existingClusters.push(cluster);
+    _roadIdentityClustersByBaseKey.set(baseKey, existingClusters);
+    _roadIdentityClusterLookup.set(cluster.key, cluster);
+  }
+
+  cluster.segmentCount += 1;
+  cluster.displayName ||= _getRoadIdentityDisplay(source);
+  cluster.name ||= source?.n ?? source?.name ?? "";
+  cluster.nameAr ||= source?.a ?? source?.["name:ar"] ?? "";
+  cluster.ref ||= source?.r ?? source?.ref ?? "";
+  cluster.highway ||= source?.h ?? source?.highway ?? "";
+  cluster.latMin = Math.min(cluster.latMin, segmentSummary.latMin);
+  cluster.latMax = Math.max(cluster.latMax, segmentSummary.latMax);
+  cluster.lngMin = Math.min(cluster.lngMin, segmentSummary.lngMin);
+  cluster.lngMax = Math.max(cluster.lngMax, segmentSummary.lngMax);
+  if (segmentSummary.first) cluster.endpoints.push(segmentSummary.first);
+  if (segmentSummary.last) cluster.endpoints.push(segmentSummary.last);
+  return cluster.key;
+}
+
+function _upsertRoadSearchEntry(source, coords, identityKey) {
+  const summary = _summarizeRoadCoords(coords);
+  const searchKey = identityKey || `segment:${source?.i ?? source?.id ?? _roadSearchIndex.length}`;
+  let entry = _roadSearchIndexByKey.get(searchKey);
+  if (!entry) {
+    entry = {
+      key: searchKey,
+      groupKey: identityKey || "",
+      name: source?.n ?? source?.name ?? "",
+      nameAr: source?.a ?? source?.["name:ar"] ?? "",
+      ref: source?.r ?? source?.ref ?? "",
+      highway: source?.h ?? source?.highway ?? "",
+      latMin: summary.latMin,
+      latMax: summary.latMax,
+      lngMin: summary.lngMin,
+      lngMax: summary.lngMax,
+    };
+    _roadSearchIndexByKey.set(searchKey, entry);
+    _roadSearchIndex.push(entry);
+    return;
+  }
+
+  entry.name ||= source?.n ?? source?.name ?? "";
+  entry.nameAr ||= source?.a ?? source?.["name:ar"] ?? "";
+  entry.ref ||= source?.r ?? source?.ref ?? "";
+  entry.highway ||= source?.h ?? source?.highway ?? "";
+  entry.latMin = Math.min(entry.latMin, summary.latMin);
+  entry.latMax = Math.max(entry.latMax, summary.latMax);
+  entry.lngMin = Math.min(entry.lngMin, summary.lngMin);
+  entry.lngMax = Math.max(entry.lngMax, summary.lngMax);
+}
+
+function _registerRoadLayerToCluster(layer) {
+  const clusterKey = layer?.feature?.properties?.roadIdentityClusterKey;
+  if (!clusterKey) return;
+  const cluster = _roadIdentityClusterLookup.get(clusterKey);
+  if (!cluster) return;
+  cluster.layers.add(layer);
 }
 
 function _isAxisNamedRoad(source) {
@@ -3470,6 +3646,16 @@ function _restoreRoadLayerStyle(layer) {
   }
 }
 
+function _getVisibleRoadHoverLayers(layer) {
+  const baseKey = layer?.feature?.properties?.roadIdentityBaseKey || "";
+  const clusters = baseKey ? _roadIdentityClustersByBaseKey.get(baseKey) || [] : [];
+  const layers = clusters.flatMap((cluster) => Array.from(cluster.layers)).filter(
+    (candidate, index, allLayers) =>
+      candidate && candidate._map === map && allLayers.indexOf(candidate) === index,
+  );
+  return layers.length > 0 ? layers : [layer];
+}
+
 function _clearRoadHover() {
   if (_roadHoverFrame) {
     cancelAnimationFrame(_roadHoverFrame);
@@ -3480,8 +3666,10 @@ function _clearRoadHover() {
   if (typeof _hoveredRoadLayer.closeTooltip === "function") {
     _hoveredRoadLayer.closeTooltip();
   }
-  _restoreRoadLayerStyle(_hoveredRoadLayer);
+  _hoveredRoadLayers.forEach(_restoreRoadLayerStyle);
   _hoveredRoadLayer = null;
+  _hoveredRoadLayers = [];
+  _hoveredRoadGroupKey = "";
 }
 
 function _iterVisibleRoadLayers(visitor) {
@@ -3543,18 +3731,29 @@ function _applyRoadHover(layer, latlng) {
     return;
   }
 
-  if (_hoveredRoadLayer && _hoveredRoadLayer !== layer) {
+  const groupKey = layer.feature?.properties?.roadIdentityBaseKey || layer.feature?.properties?.roadIdentityClusterKey || "";
+
+  if (
+    _hoveredRoadLayer &&
+    (_hoveredRoadLayer !== layer || _hoveredRoadGroupKey !== groupKey)
+  ) {
     _clearRoadHover();
   }
 
   _hoveredRoadLayer = layer;
-  const highway = layer.feature?.properties?.highway || "";
-  if (MAIN_HW.has(highway)) {
-    layer.setStyle(_getRoadHoverStyle(highway));
-  } else {
-    layer.setStyle(_getSecondaryRoadHoverStyle());
-  }
-  if (typeof layer.bringToFront === "function") layer.bringToFront();
+  _hoveredRoadGroupKey = groupKey;
+  _hoveredRoadLayers = _getVisibleRoadHoverLayers(layer);
+  _hoveredRoadLayers.forEach((targetLayer) => {
+    const highway = targetLayer.feature?.properties?.highway || "";
+    if (MAIN_HW.has(highway)) {
+      targetLayer.setStyle(_getRoadHoverStyle(highway));
+    } else {
+      targetLayer.setStyle(_getSecondaryRoadHoverStyle());
+    }
+    if (typeof targetLayer.bringToFront === "function") {
+      targetLayer.bringToFront();
+    }
+  });
   if (latlng && typeof layer.openTooltip === "function")
     layer.openTooltip(latlng);
 }
@@ -3990,6 +4189,9 @@ function clearAllRoads() {
   _loadedRoadBboxes.clear();
   _addedRoadIds.clear();
   _roadSearchIndex.length = 0;
+  _roadSearchIndexByKey.clear();
+  _roadIdentityClustersByBaseKey.clear();
+  _roadIdentityClusterLookup.clear();
   _roadStatsMain = 0;
   _roadStatsSec = 0;
   for (const category of ROAD_FILTER_CATEGORY_ORDER) {

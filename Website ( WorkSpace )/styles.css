@@ -7489,6 +7489,7 @@ input:focus-visible {
   overscroll-behavior: contain;
   scrollbar-gutter: stable;
   -webkit-overflow-scrolling: touch;
+  touch-action: pan-y; /* prevent map from panning when scrolling the panel on touch */
   background: var(--surface-glass);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
@@ -7649,6 +7650,7 @@ input:focus-visible {
   color: var(--avaria-text);
   font-size: 0.71rem;
   padding: 7px 4px;
+  min-height: 44px; /* WCAG 2.5.5: minimum touch target */
   cursor: pointer;
   text-align: center;
   transition:
@@ -8076,6 +8078,10 @@ input:focus-visible {
   [dir="rtl"] .road-panel {
     right: 10px;
     left: 10px;
+  }
+  /* Prevent iOS from zooming when tapping the search input */
+  .road-search-input {
+    font-size: 16px;
   }
 }
 

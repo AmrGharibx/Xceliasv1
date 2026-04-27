@@ -2420,6 +2420,17 @@ const _roadSearchIndexByKey = new Map();
 const _roadIdentityClustersByBaseKey = new Map();
 const _roadIdentityClusterLookup = new Map();
 const ROAD_IDENTITY_CLUSTER_DISTANCE_M = 1400;
+// Grid step for cluster endpoint bucketing: ~1443m/cell at Egypt latitudes.
+// Using 9-neighbour check guarantees no segment within 1400m is ever missed.
+const CLUSTER_GRID_STEP = 0.013;
+
+// Adaptive render chunk: low-end mobile (< 4 CPU cores or < 2 GB RAM) gets smaller chunks
+// to keep the UI thread responsive while painting road segments
+const DEVICE_CHUNK_SIZE = (() => {
+  const cores = navigator.hardwareConcurrency || 4;
+  const mem = navigator.deviceMemory || 4; // undefined on Firefox → assume normal
+  return cores < 4 || mem < 2 ? 400 : 1500;
+})();
 
 // Egypt bounds — no Overpass calls outside this box
 const EGYPT_BOUNDS = { south: 22.0, north: 31.8, west: 24.7, east: 36.9 };
@@ -2656,7 +2667,7 @@ function _parseJsonWorker(str) {
  * @param {number}   chunkSize  Features per frame (default 500)
  * @returns {Promise<number>}   Number of features actually added (dedup applied)
  */
-async function _addFeaturesChunked(features, onProgress, chunkSize = 1500) {
+async function _addFeaturesChunked(features, onProgress, chunkSize = DEVICE_CHUNK_SIZE) {
   let added = 0;
   const total = features.length;
   for (let i = 0; i < total; i += chunkSize) {
@@ -3176,14 +3187,17 @@ function _getRoadEndpointDistanceMeters(a, b) {
 
 function _roadClusterCanAcceptSegment(cluster, segmentSummary) {
   if (!cluster || !segmentSummary?.first || !segmentSummary.last) return false;
-  if (!cluster.endpoints.length) return true;
-  return cluster.endpoints.some(
-    (endpoint) =>
-      _getRoadEndpointDistanceMeters(endpoint, segmentSummary.first) <=
-        ROAD_IDENTITY_CLUSTER_DISTANCE_M ||
-      _getRoadEndpointDistanceMeters(endpoint, segmentSummary.last) <=
-        ROAD_IDENTITY_CLUSTER_DISTANCE_M,
-  );
+  if (!cluster.endpointGrid || cluster.endpointGrid.size === 0) return true;
+  for (const pt of [segmentSummary.first, segmentSummary.last]) {
+    const gLat = Math.round(pt.lat / CLUSTER_GRID_STEP);
+    const gLng = Math.round(pt.lng / CLUSTER_GRID_STEP);
+    for (let dlat = -1; dlat <= 1; dlat++) {
+      for (let dlng = -1; dlng <= 1; dlng++) {
+        if (cluster.endpointGrid.has(`${gLat + dlat}:${gLng + dlng}`)) return true;
+      }
+    }
+  }
+  return false;
 }
 
 function _registerRoadIdentityCluster(source, coords) {
@@ -3209,7 +3223,7 @@ function _registerRoadIdentityCluster(source, coords) {
       latMax: segmentSummary.latMax,
       lngMin: segmentSummary.lngMin,
       lngMax: segmentSummary.lngMax,
-      endpoints: [],
+      endpointGrid: new Set(),
       layers: new Set(),
       segmentCount: 0,
     };
@@ -3228,8 +3242,8 @@ function _registerRoadIdentityCluster(source, coords) {
   cluster.latMax = Math.max(cluster.latMax, segmentSummary.latMax);
   cluster.lngMin = Math.min(cluster.lngMin, segmentSummary.lngMin);
   cluster.lngMax = Math.max(cluster.lngMax, segmentSummary.lngMax);
-  if (segmentSummary.first) cluster.endpoints.push(segmentSummary.first);
-  if (segmentSummary.last) cluster.endpoints.push(segmentSummary.last);
+  if (segmentSummary.first) cluster.endpointGrid.add(`${Math.round(segmentSummary.first.lat / CLUSTER_GRID_STEP)}:${Math.round(segmentSummary.first.lng / CLUSTER_GRID_STEP)}`);
+  if (segmentSummary.last) cluster.endpointGrid.add(`${Math.round(segmentSummary.last.lat / CLUSTER_GRID_STEP)}:${Math.round(segmentSummary.last.lng / CLUSTER_GRID_STEP)}`);
   return cluster.key;
 }
 
@@ -3629,10 +3643,16 @@ function _restoreRoadLayerStyle(layer) {
 function _getVisibleRoadHoverLayers(layer) {
   const baseKey = layer?.feature?.properties?.roadIdentityBaseKey || "";
   const clusters = baseKey ? _roadIdentityClustersByBaseKey.get(baseKey) || [] : [];
-  const layers = clusters.flatMap((cluster) => Array.from(cluster.layers)).filter(
-    (candidate, index, allLayers) =>
-      candidate && candidate._map === map && allLayers.indexOf(candidate) === index,
-  );
+  const seen = new Set();
+  const layers = [];
+  for (const cluster of clusters) {
+    for (const candidate of cluster.layers) {
+      if (candidate && candidate._map === map && !seen.has(candidate)) {
+        seen.add(candidate);
+        layers.push(candidate);
+      }
+    }
+  }
   return layers.length > 0 ? layers : [layer];
 }
 
@@ -3732,9 +3752,6 @@ function _applyRoadHover(layer, latlng) {
       targetLayer.setStyle(_getRoadHoverStyle(highway));
     } else {
       targetLayer.setStyle(_getSecondaryRoadHoverStyle());
-    }
-    if (typeof targetLayer.bringToFront === "function") {
-      targetLayer.bringToFront();
     }
   });
   if (latlng) {

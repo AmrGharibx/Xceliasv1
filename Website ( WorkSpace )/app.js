@@ -2341,6 +2341,7 @@ let _roadHoverFrame = null;
 let _lastRoadHoverLatLng = null;
 let _hoveredRoadGroupKey = "";
 let _hoveredRoadLayers = [];
+let _roadHoverTooltip = null; // single shared tooltip — avoids per-layer tooltip stacking
 const ROAD_HOVER_ONLY_STORAGE_KEY = "xc_road_hover_only_v1";
 
 // ── Dedup / bbox tracking ──
@@ -2763,27 +2764,6 @@ function _createRoadFeatureLayer(renderer, roadFamily) {
         : hw.startsWith("trunk")
           ? "road-name-tooltip rnt-trunk"
           : "road-name-tooltip";
-      layer.bindTooltip(() => buildRoadTooltip(feature), {
-        sticky: true,
-        direction: "top",
-        className: ttClass,
-        opacity: isSecondary ? 0.9 : 0.95,
-      });
-      layer.on("mouseover", function () {
-        if (!_canHoverRoads()) return;
-        this.setStyle(
-          isSecondary ? _getSecondaryRoadHoverStyle() : _getRoadHoverStyle(hw),
-        );
-        if (typeof this.bringToFront === "function") this.bringToFront();
-      });
-      layer.on("mouseout", function () {
-        if (!_canHoverRoads()) return;
-        this.setStyle(
-          isSecondary
-            ? _getRenderedSecondaryRoadStyle()
-            : _getRenderedRoadBaseStyle(hw),
-        );
-      });
       layer.on("click", (e) => {
         L.DomEvent.stopPropagation(e);
         L.popup({ className: "road-info-popup", maxWidth: 260 })
@@ -3663,8 +3643,11 @@ function _clearRoadHover() {
   }
   _lastRoadHoverLatLng = null;
   if (!_hoveredRoadLayer) return;
-  if (typeof _hoveredRoadLayer.closeTooltip === "function") {
-    _hoveredRoadLayer.closeTooltip();
+  if (_roadHoverTooltip?._container) {
+    const id = L.stamp(_roadHoverTooltip);
+    delete map._layers[id];
+    _roadHoverTooltip._container.remove();
+    _roadHoverTooltip._map = null;
   }
   _hoveredRoadLayers.forEach(_restoreRoadLayerStyle);
   _hoveredRoadLayer = null;
@@ -3754,8 +3737,20 @@ function _applyRoadHover(layer, latlng) {
       targetLayer.bringToFront();
     }
   });
-  if (latlng && typeof layer.openTooltip === "function")
-    layer.openTooltip(latlng);
+  if (latlng) {
+    const hw = layer.feature?.properties?.highway || "";
+    const ttClass = hw.startsWith("motorway")
+      ? "road-name-tooltip rnt-motorway"
+      : hw.startsWith("trunk")
+        ? "road-name-tooltip rnt-trunk"
+        : "road-name-tooltip";
+    if (!_roadHoverTooltip) {
+      _roadHoverTooltip = L.tooltip({ direction: "top", opacity: 0.95, interactive: false });
+    }
+    _roadHoverTooltip.options.className = ttClass;
+    _roadHoverTooltip.setContent(buildRoadTooltip(layer.feature)).setLatLng(latlng);
+    if (!_roadHoverTooltip._map) _roadHoverTooltip.addTo(map);
+  }
 }
 
 function _scheduleRoadHover(latlng) {
@@ -3924,7 +3919,7 @@ function buildRoadTooltip(feature) {
   const speed = props.maxspeed ? String(props.maxspeed) : "";
   const typeLabel = _hwArabicLabel(highway);
   let namePart;
-  if (nameAr && nameEn)
+  if (nameAr && nameEn && nameAr !== nameEn)
     namePart = `<strong>${escHtml(nameAr)}</strong><br><em style="font-size:.78rem;opacity:.85">${escHtml(nameEn)}</em>`;
   else if (nameAr || nameEn)
     namePart = `<strong>${escHtml(nameAr || nameEn)}</strong>`;

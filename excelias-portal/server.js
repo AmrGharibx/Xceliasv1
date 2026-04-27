@@ -256,7 +256,7 @@ app.use((req, res, next) => {
       "script-src 'self' https://www.gstatic.com https://*.firebasedatabase.app https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com https://cdn.jsdelivr.net",
       "font-src 'self' https://fonts.gstatic.com",
-      "connect-src 'self' https://*.googleapis.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://overpass-api.de https://overpass.openstreetmap.ru https://overpass.private.coffee https://overpass.kumi.systems https://maps.mail.ru https://server.arcgisonline.com https://*.basemaps.cartocdn.com https://cdn.jsdelivr.net",
+      "connect-src 'self' https://*.googleapis.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://overpass-api.de https://overpass.openstreetmap.ru https://overpass.private.coffee https://overpass.kumi.systems https://maps.mail.ru https://server.arcgisonline.com https://*.basemaps.cartocdn.com https://cdn.jsdelivr.net https://router.project-osrm.org",
       "img-src 'self' data: blob: https://*.basemaps.cartocdn.com https://server.arcgisonline.com https://prod-images.nawy.com https://old.nawy.com https://*.nawy.com https://nawy.com https://*.googleapis.com",
       "worker-src 'self' blob: https://cdn.jsdelivr.net",
       "frame-src 'self' https://lms.xcelias.com https://*.firebasedatabase.app",

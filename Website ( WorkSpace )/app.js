@@ -5301,6 +5301,7 @@ function setOverlayVisibility(modal, isOpen) {
   if (!modal) return;
 
   if (isOpen) {
+    modal.style.removeProperty("display");
     modal.hidden = false;
     modal.removeAttribute("inert");
     modal.setAttribute("aria-hidden", "false");

@@ -4432,6 +4432,7 @@ function setRoadTilesVisible(visible) {
 let placesLayer = null;
 let _placesVisible = false;
 let _placesLoading = false;
+let _placesFullyLoaded = false; // true once the full static GeoJSON has been rendered — no more fetches ever
 const _loadedPlaceBboxes = new Set(); // bbox cells already fetched
 const _addedPlaceIds = new Set(); // feature IDs already in layer (dedup)
 const PLACE_CATEGORY_ORDER = [
@@ -4721,6 +4722,8 @@ function _ensurePlacesLayer() {
 /** Fetch neighborhood polygons for the current viewport — like fetchAndDrawRoads() */
 async function _fetchAndDrawPlaces() {
   if (!_placesVisible) return;
+  // Once all features from the static GeoJSON are rendered, never fetch/filter again
+  if (_placesFullyLoaded) return;
   if (_placesLoading) return;
 
   const b = map.getBounds().pad(0.1);
@@ -4755,26 +4758,9 @@ async function _fetchAndDrawPlaces() {
     }
 
     if (window._placesStaticCache) {
-      const all = window._placesStaticCache.features;
-      const sN = parseFloat(n),
-        sS = parseFloat(s),
-        sE = parseFloat(e),
-        sW = parseFloat(w);
-      const filtered = all.filter((f) => {
-        if (!f.geometry?.coordinates?.[0]) return false;
-        // Quick centroid check — keep if centroid is inside bbox
-        const ring = f.geometry.coordinates[0];
-        let lat = 0,
-          lng = 0;
-        for (const [lo, la] of ring) {
-          lng += lo;
-          lat += la;
-        }
-        lat /= ring.length;
-        lng /= ring.length;
-        return lat >= sS && lat <= sN && lng >= sW && lng <= sE;
-      });
-      geojson = { type: "FeatureCollection", features: filtered };
+      // Static file is loaded — add ALL features at once, then mark fully loaded
+      // so no future pan/zoom ever enters this function again
+      geojson = window._placesStaticCache;
     } else {
       const query = [
         `[out:json][timeout:25][bbox:${s},${w},${n},${e}];`,
@@ -4806,6 +4792,12 @@ async function _fetchAndDrawPlaces() {
 
     if (added > 0 && _placesVisible) {
       _syncPlaceLayerVisibility();
+    }
+    // If we just consumed the static cache, no future calls are needed — ever
+    if (window._placesStaticCache) {
+      _placesFullyLoaded = true;
+      // Mark all bbox cells to prevent any stale path through the guard above
+      _loadedPlaceBboxes.add("FULL");
     }
   } catch (err) {
     _loadedPlaceBboxes.delete(cacheKey); // allow retry on next pan

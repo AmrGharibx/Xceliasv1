@@ -14708,8 +14708,6 @@ function toggleRouteMenu(forceOpen) {
   [
     "right-dock",
     "timeline-container",
-    "comparison-drawer",
-    "comparisonModal",
   ].forEach(function (id) {
     var el = document.getElementById(id) || document.querySelector("." + id);
     if (el) el.remove();

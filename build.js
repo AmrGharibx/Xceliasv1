@@ -1,6 +1,9 @@
 const fs = require("fs");
 const path = require("path");
 const babel = require("@babel/core");
+const { minify: terserMinify } = require("terser");
+const postcss = require("postcss");
+const cssnano = require("cssnano");
 
 const ROOT = __dirname;
 const DIST = path.join(ROOT, "dist");
@@ -443,3 +446,47 @@ console.log(`   ✓ Study Guide (Batch Library)`);
 console.log(`   ✓ Website (Property Explorer)`);
 console.log(`   ✓ Pitch Lab (AI Call Simulation Studio)`);
 console.log(`   ⊘ Avaria (requires separate server — opens in new tab)`);
+
+/* ════════ Post-build: Minify Website JS + CSS ════════ */
+(async () => {
+  try {
+    console.log("\n[Post-build] Minifying website assets...");
+
+    // Minify app.js (Property Explorer — ~524 KB → ~230 KB)
+    const appJsDist = path.join(DIST, "website", "app.js");
+    const appJsSrc = fs.readFileSync(appJsDist, "utf8");
+    const appJsResult = await terserMinify(appJsSrc, {
+      ecma: 2017,
+      compress: { passes: 2, drop_console: false },
+      mangle: true,
+      format: { comments: false },
+    });
+    if (appJsResult.code) {
+      const before = appJsSrc.length;
+      fs.writeFileSync(appJsDist, appJsResult.code, "utf8");
+      const after = appJsResult.code.length;
+      console.log(
+        `   → app.js: ${(before / 1024).toFixed(0)} KB → ${(after / 1024).toFixed(0)} KB (${Math.round((1 - after / before) * 100)}% smaller)`,
+      );
+    }
+
+    // Minify styles.css (~185 KB → ~110 KB)
+    const cssDist = path.join(DIST, "website", "styles.css");
+    const cssSrc = fs.readFileSync(cssDist, "utf8");
+    const cssResult = await postcss([cssnano({ preset: "default" })]).process(
+      cssSrc,
+      { from: cssDist, to: cssDist },
+    );
+    const cssBefore = cssSrc.length;
+    fs.writeFileSync(cssDist, cssResult.css, "utf8");
+    const cssAfter = cssResult.css.length;
+    console.log(
+      `   → styles.css: ${(cssBefore / 1024).toFixed(0)} KB → ${(cssAfter / 1024).toFixed(0)} KB (${Math.round((1 - cssAfter / cssBefore) * 100)}% smaller)`,
+    );
+
+    console.log("   ✓ Minification complete");
+  } catch (err) {
+    console.error("   ✗ Minification failed:", err.message);
+    process.exit(1);
+  }
+})();

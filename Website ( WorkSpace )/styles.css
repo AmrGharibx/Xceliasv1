@@ -6242,9 +6242,26 @@ input:focus-visible {
   .price-alerts-panel,
   .price-alert-modal,
   .price-alert-modal-content,
-  .price-alert-toast {
+  .price-alert-toast,
+  .road-panel,
+  .road-zone-hint,
+  .road-info-popup .leaflet-popup-content-wrapper,
+  .road-view-btn,
+  .road-zone-btn,
+  .road-panel-clear-btn,
+  .pip-panel,
+  .place-tooltip,
+  .project-tooltip {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
+  }
+
+  /* Replace glass bg with solid equivalent so panels stay readable without blur */
+  .road-panel {
+    background: rgba(13, 13, 26, 0.97) !important;
+  }
+  .sidebar {
+    background: rgba(13, 13, 26, 0.97) !important;
   }
 }
 

@@ -8317,6 +8317,10 @@ body.page-hidden * {
 }
 
 /* Tile rendering hint */
+.leaflet-container img.leaflet-tile {
+  mix-blend-mode: normal !important;
+}
+
 .leaflet-tile {
   image-rendering: auto;
 }

@@ -5130,6 +5130,10 @@ map.on("movestart", _clearOverlayHover);
 map.on("zoomstart", _clearOverlayHover);
 map.on("movestart", _clearRoadHover);
 map.on("zoomstart", _clearRoadHover);
+map.on("mousedown", _releaseSearchFocus);
+map.on("touchstart", _releaseSearchFocus);
+map.on("movestart", _releaseSearchFocus);
+map.on("zoomstart", _releaseSearchFocus);
 document.addEventListener("touchstart", loadRoads, {
   passive: true,
   once: true,
@@ -7237,6 +7241,13 @@ if (searchInputEl) {
     },
     { passive: true },
   );
+}
+
+function _releaseSearchFocus() {
+  if (!searchInputEl) return;
+  if (document.activeElement === searchInputEl) {
+    searchInputEl.blur();
+  }
 }
 
 // --- VOICE COMMAND INTERFACE ---

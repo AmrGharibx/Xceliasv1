@@ -2669,6 +2669,7 @@ function _parseJsonWorker(str) {
  */
 async function _addFeaturesChunked(features, onProgress, chunkSize = DEVICE_CHUNK_SIZE) {
   let added = 0;
+  let chunkIndex = 0;
   const total = features.length;
   for (let i = 0; i < total; i += chunkSize) {
     const slice = features.slice(i, i + chunkSize);
@@ -2716,7 +2717,9 @@ async function _addFeaturesChunked(features, onProgress, chunkSize = DEVICE_CHUN
         _roadGlowLayer.addData(feature);
       }
     });
-    _updateRoadFilterCounts();
+    // Throttle DOM count updates: only every 5 chunks to reduce layout thrash during fast load
+    if (chunkIndex % 5 === 0) _updateRoadFilterCounts();
+    chunkIndex++;
     if (onProgress) onProgress(Math.min(i + chunkSize, total), total);
     await new Promise((r) => requestAnimationFrame(r)); // yield — paint the new chunk
   }
@@ -2827,6 +2830,12 @@ function _syncSecondaryRoadZoom() {
     if (!map.hasLayer(secondaryRoadsLayer)) secondaryRoadsLayer.addTo(map);
   } else {
     if (map.hasLayer(secondaryRoadsLayer)) map.removeLayer(secondaryRoadsLayer);
+  }
+  // Glow layer is invisible at low zoom — skip the extra canvas draw pass
+  if (_roadGlowLayer) {
+    const glowShouldShow = _roadsVisible && map.getZoom() >= 10;
+    if (glowShouldShow && !map.hasLayer(_roadGlowLayer)) _roadGlowLayer.addTo(map);
+    else if (!glowShouldShow && map.hasLayer(_roadGlowLayer)) map.removeLayer(_roadGlowLayer);
   }
 }
 

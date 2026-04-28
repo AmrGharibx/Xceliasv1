@@ -3672,11 +3672,8 @@ function _clearRoadHover() {
   }
   _lastRoadHoverLatLng = null;
   if (!_hoveredRoadLayer) return;
-  if (_roadHoverTooltip?._container) {
-    const id = L.stamp(_roadHoverTooltip);
-    delete map._layers[id];
-    _roadHoverTooltip._container.remove();
-    _roadHoverTooltip._map = null;
+  if (_roadHoverTooltip?._map) {
+    _roadHoverTooltip.removeFrom(map);
   }
   _hoveredRoadLayers.forEach(_restoreRoadLayerStyle);
   _hoveredRoadLayer = null;
@@ -3958,7 +3955,12 @@ function buildRoadTooltip(feature) {
   const speedPart = speed
     ? `<br><span class="rtt-speed">🚗 ${escHtml(speed)} km/h</span>`
     : "";
-  return `${namePart}${refPart}<br><span style="opacity:.65;font-size:.72rem">${escHtml(typeLabel)}</span>${speedPart}`;
+  // Only show type label as subtitle if the road has a real specific name that differs
+  const nameShown = nameAr || nameEn || ref;
+  const typeLabelPart = nameShown && nameShown !== typeLabel
+    ? `<br><span style="opacity:.65;font-size:.72rem">${escHtml(typeLabel)}</span>`
+    : "";
+  return `${namePart}${refPart}${typeLabelPart}${speedPart}`;
 }
 
 /** Click popup — richer: Arabic name, English name, type chip, ref, speed */
@@ -5126,6 +5128,8 @@ map.on("mousemove", (event) => {
 map.on("mouseout", _clearOverlayHover);
 map.on("movestart", _clearOverlayHover);
 map.on("zoomstart", _clearOverlayHover);
+map.on("movestart", _clearRoadHover);
+map.on("zoomstart", _clearRoadHover);
 document.addEventListener("touchstart", loadRoads, {
   passive: true,
   once: true,

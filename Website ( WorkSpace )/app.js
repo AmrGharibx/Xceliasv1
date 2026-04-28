@@ -1733,39 +1733,72 @@ TileCache.init();
 
 // Custom cached tile layer class
 L.TileLayer.Cached = L.TileLayer.extend({
+  initialize: function (url, options) {
+    L.TileLayer.prototype.initialize.call(this, url, options);
+    this.on("tileunload", (event) => {
+      this._releaseTileObjectUrl(event?.tile);
+    });
+  },
+
+  _applyTileCrossOrigin: function (tile) {
+    if (this.options.crossOrigin || this.options.crossOrigin === "") {
+      tile.crossOrigin =
+        this.options.crossOrigin === true ? "" : this.options.crossOrigin;
+    }
+    if (this.options.referrerPolicy) {
+      tile.referrerPolicy = this.options.referrerPolicy;
+    }
+  },
+
+  _releaseTileObjectUrl: function (tile) {
+    if (!tile || !tile._objectUrl) return;
+    URL.revokeObjectURL(tile._objectUrl);
+    tile._objectUrl = null;
+  },
+
+  _setTileSource: function (tile, src) {
+    this._releaseTileObjectUrl(tile);
+    tile._objectUrl = src.startsWith("blob:") ? src : null;
+    tile.src = src;
+  },
+
   createTile: function (coords, done) {
     const tile = document.createElement("img");
     const url = this.getTileUrl(coords);
 
     tile.alt = "";
     tile.setAttribute("role", "presentation");
+    this._applyTileCrossOrigin(tile);
+
+    tile.onload = () => done(null, tile);
+    tile.onerror = () => {
+      if (tile._objectUrl) {
+        this._releaseTileObjectUrl(tile);
+        tile.src = url;
+        return;
+      }
+      done(new Error("Tile load error"), tile);
+    };
 
     // Try to load from cache first
     TileCache.get(url).then((cachedBlob) => {
       if (cachedBlob) {
         // Load from cache
-        tile.src = URL.createObjectURL(cachedBlob);
-        tile.onload = () => {
-          URL.revokeObjectURL(tile.src);
-          done(null, tile);
-        };
+        this._setTileSource(tile, URL.createObjectURL(cachedBlob));
       } else {
         // Fetch and cache
         fetch(url)
-          .then((response) => response.blob())
+          .then((response) => {
+            if (!response.ok) throw new Error("Tile fetch error");
+            return response.blob();
+          })
           .then((blob) => {
             TileCache.set(url, blob);
-            tile.src = URL.createObjectURL(blob);
-            tile.onload = () => {
-              URL.revokeObjectURL(tile.src);
-              done(null, tile);
-            };
+            this._setTileSource(tile, URL.createObjectURL(blob));
           })
           .catch(() => {
             // Fallback to direct loading
-            tile.src = url;
-            tile.onload = () => done(null, tile);
-            tile.onerror = () => done(new Error("Tile load error"), tile);
+            this._setTileSource(tile, url);
           });
       }
     });
@@ -1793,21 +1826,29 @@ const map = L.map("map", {
 GLOBAL_SCOPE.map = map;
 
 // Map Tile Layers
-const darkTiles =
-  "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
+const streetBaseTiles =
+  "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}";
+const streetReferenceTiles =
+  "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}";
 const lightTiles =
   "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
 const wikiTiles =
-  "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png";
+  "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}";
 const atlasTiles =
-  "https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png";
+  "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}";
+const atlasReferenceTiles =
+  "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}";
+const hybridPlaceLabelTiles =
+  "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}";
+const hybridTransportTiles =
+  "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}";
 
 const MAP_VIEW_STORAGE_KEY = "xc_map_view_mode";
 const MAP_VIEW_DEFAULTS = {
-  street: { roadTiles: true, places: false, roadsVisible: false },
+  street: { roadTiles: false, places: false, roadsVisible: false },
   wiki: { roadTiles: false, places: true, roadsVisible: false },
   atlas: {
-    roadTiles: true,
+    roadTiles: false,
     places: true,
     zoneOverview: false,
     roadsVisible: true,
@@ -1837,14 +1878,26 @@ function _roadTileOpacityForMode() {
 
 // --- 4. MAP LAYERS (Moved up for initialization) ---
 const layers = {
-  street: L.tileLayer(darkTiles, {
-    maxZoom: 22,
-    subdomains: "abcd",
-    detectRetina: true,
-    className: "high-quality-tiles",
-    keepBuffer: 4,
-    updateWhenZooming: false,
-  }),
+  street: L.layerGroup([
+    L.tileLayer.cached(streetBaseTiles, {
+      attribution: "Tiles &copy; Esri",
+      maxZoom: 22,
+      detectRetina: true,
+      className: "high-quality-tiles",
+      keepBuffer: 4,
+      updateWhenZooming: false,
+      crossOrigin: "anonymous",
+    }),
+    L.tileLayer.cached(streetReferenceTiles, {
+      attribution: "Reference &copy; Esri",
+      maxZoom: 22,
+      detectRetina: true,
+      className: "high-quality-tiles",
+      keepBuffer: 4,
+      updateWhenZooming: false,
+      crossOrigin: "anonymous",
+    }),
+  ]),
   satellite: L.tileLayer.cached(
     "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
     {
@@ -1858,8 +1911,7 @@ const layers = {
     },
   ),
   wiki: L.tileLayer.cached(wikiTiles, {
-    subdomains: "abcd",
-    attribution: "Tiles &copy; CARTO",
+    attribution: "Tiles &copy; Esri",
     maxZoom: 22,
     detectRetina: true,
     className: "high-quality-tiles",
@@ -1867,16 +1919,26 @@ const layers = {
     updateWhenZooming: false,
     crossOrigin: "anonymous",
   }),
-  atlas: L.tileLayer.cached(atlasTiles, {
-    subdomains: "abcd",
-    attribution: "Tiles &copy; CARTO",
-    maxZoom: 22,
-    detectRetina: true,
-    className: "high-quality-tiles",
-    keepBuffer: 4,
-    updateWhenZooming: false,
-    crossOrigin: "anonymous",
-  }),
+  atlas: L.layerGroup([
+    L.tileLayer.cached(atlasTiles, {
+      attribution: "Tiles &copy; Esri",
+      maxZoom: 22,
+      detectRetina: true,
+      className: "high-quality-tiles",
+      keepBuffer: 4,
+      updateWhenZooming: false,
+      crossOrigin: "anonymous",
+    }),
+    L.tileLayer.cached(atlasReferenceTiles, {
+      attribution: "Reference &copy; Esri",
+      maxZoom: 22,
+      detectRetina: true,
+      className: "high-quality-tiles",
+      keepBuffer: 4,
+      updateWhenZooming: false,
+      crossOrigin: "anonymous",
+    }),
+  ]),
   hybrid: L.layerGroup([
     L.tileLayer.cached(
       "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
@@ -1888,15 +1950,24 @@ const layers = {
         crossOrigin: "anonymous",
       },
     ),
-    L.tileLayer(
-      "https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png",
-      {
-        subdomains: "abcd",
-        maxZoom: 22,
-        detectRetina: true,
-        keepBuffer: 4,
-      },
-    ),
+    L.tileLayer.cached(hybridPlaceLabelTiles, {
+      attribution: "Labels &copy; Esri",
+      maxZoom: 22,
+      detectRetina: true,
+      keepBuffer: 4,
+      updateWhenZooming: false,
+      crossOrigin: "anonymous",
+      className: "high-quality-tiles",
+    }),
+    L.tileLayer.cached(hybridTransportTiles, {
+      attribution: "Transportation &copy; Esri",
+      maxZoom: 22,
+      detectRetina: true,
+      keepBuffer: 4,
+      updateWhenZooming: false,
+      crossOrigin: "anonymous",
+      className: "high-quality-tiles",
+    }),
   ]),
 };
 
@@ -2323,9 +2394,56 @@ let secondaryRoadsLayer = null;
 
 // ── Instant road tile overlay (CartoDB Voyager Labels — zero Overpass delay) ──
 const ROAD_TILE_URL =
-  "https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}{r}.png";
+  "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}";
 let roadTileLayer = null;
 let _roadTilesVisible = false;
+
+function _hasRenderableRoadData() {
+  return (
+    (_roadStatsMain > 0 || _roadStatsSec > 0) &&
+    (mainRoadsLayer || secondaryRoadsLayer || _roadGlowLayer)
+  );
+}
+
+function _shouldDisplayRoadTiles() {
+  if (!_roadTilesVisible) return false;
+
+  // Atlas can show instant road labels immediately, but once vector roads are
+  // present we hide the tile overlay so roads do not appear to load twice.
+  if (_isAtlasMode() && _roadsVisible && _hasRenderableRoadData()) {
+    return false;
+  }
+
+  return true;
+}
+
+function _syncRoadTileOverlayVisibility() {
+  const shouldDisplay = _shouldDisplayRoadTiles();
+
+  if (shouldDisplay) {
+    if (!roadTileLayer) {
+      roadTileLayer = L.tileLayer(ROAD_TILE_URL, {
+        subdomains: "abcd",
+        maxZoom: 22,
+        detectRetina: true,
+        opacity: _roadTileOpacityForMode(),
+        pane: "overlayPane",
+        updateWhenZooming: false,
+        keepBuffer: 4,
+        attribution: "",
+        crossOrigin: "anonymous",
+      });
+    } else {
+      roadTileLayer.setOpacity(_roadTileOpacityForMode());
+    }
+    if (!map.hasLayer(roadTileLayer)) roadTileLayer.addTo(map);
+  } else if (roadTileLayer && map.hasLayer(roadTileLayer)) {
+    map.removeLayer(roadTileLayer);
+  }
+
+  const cb = document.getElementById("road-tile-toggle");
+  if (cb) cb.checked = _roadTilesVisible;
+}
 
 // ── Shared Canvas renderer (one renderer for both road layers avoids extra GPU layers) ──
 let _roadCanvasRenderer = null;
@@ -3468,6 +3586,7 @@ function _syncRoadLayerVisibility() {
     map.removeLayer(_roadGlowLayer);
   }
 
+  _syncRoadTileOverlayVisibility();
   _syncRoadFilterControls();
   _updateRoadStats();
 }
@@ -3600,9 +3719,7 @@ function _getPlaceHoverStyle(feature) {
 function _refreshMapVisualLanguage(mode = currentMapLayer) {
   _syncMapModeClass(mode);
 
-  if (roadTileLayer) {
-    roadTileLayer.setOpacity(_roadTileOpacityForMode());
-  }
+  _syncRoadTileOverlayVisibility();
 
   if (_roadGlowLayer) {
     _roadGlowLayer.setStyle((feature) =>
@@ -4234,6 +4351,7 @@ function clearAllRoads() {
   document
     .querySelectorAll(".road-zone-btn")
     .forEach((b) => b.classList.remove("loaded", "loading"));
+  _syncRoadTileOverlayVisibility();
   _syncRoadFilterControls();
   _updateRoadStats();
 }
@@ -4409,29 +4527,7 @@ document.addEventListener(
 /** Toggle the instant tile-based road overlay — loads in <300ms, no Overpass needed */
 function setRoadTilesVisible(visible) {
   _roadTilesVisible = visible;
-  if (visible) {
-    if (!roadTileLayer) {
-      roadTileLayer = L.tileLayer(ROAD_TILE_URL, {
-        subdomains: "abcd",
-        maxZoom: 22,
-        detectRetina: true,
-        opacity: _roadTileOpacityForMode(),
-        pane: "overlayPane",
-        updateWhenZooming: false,
-        keepBuffer: 4,
-        attribution: "",
-      });
-    } else {
-      roadTileLayer.setOpacity(_roadTileOpacityForMode());
-    }
-    if (!map.hasLayer(roadTileLayer)) roadTileLayer.addTo(map);
-  } else {
-    if (roadTileLayer && map.hasLayer(roadTileLayer)) {
-      map.removeLayer(roadTileLayer);
-    }
-  }
-  const cb = document.getElementById("road-tile-toggle");
-  if (cb) cb.checked = visible;
+  _syncRoadTileOverlayVisibility();
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -8680,9 +8776,18 @@ function applyTheme() {
   document.documentElement.setAttribute("data-theme", themeToApply);
 
   // Update Map Tiles for Street Mode
-  if (layers && layers.street) {
-    const newUrl = isLightMode ? lightTiles : darkTiles;
-    layers.street.setUrl(newUrl);
+  if (layers && layers.street && typeof layers.street.eachLayer === "function") {
+    const streetUrls = isLightMode
+      ? [atlasTiles, atlasReferenceTiles]
+      : [streetBaseTiles, streetReferenceTiles];
+    let streetLayerIndex = 0;
+    layers.street.eachLayer((layer) => {
+      const nextUrl = streetUrls[streetLayerIndex] || streetUrls[streetUrls.length - 1];
+      if (typeof layer.setUrl === "function") {
+        layer.setUrl(nextUrl);
+      }
+      streetLayerIndex += 1;
+    });
   }
 
   // Update Heatmap if active

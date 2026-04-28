@@ -9757,7 +9757,8 @@ async function loadAllData() {
     if (!response.ok)
       throw new Error(`Failed to load data.json: ${response.status}`);
 
-    const data = await response.json();
+    // Parse off the main thread — 1.67 MB JSON.parse blocks ~300ms on low-end mobile
+    const data = await _parseJsonWorker(await response.text());
     updateLoadingStatus("Preparing project intelligence...");
 
     window.projects = data.projects || [];

@@ -3092,15 +3092,15 @@ function _getRoadBaseStyle(hw) {
 
   switch (hw) {
     case "motorway":
-      return { color: "#ff2d2d", weight: 4.0, opacity: 0.95 };
+      return { color: "#d97706", weight: 4.0, opacity: 0.95 }; // deep amber — clearly heavier than primary
     case "motorway_link":
-      return { color: "#ff2d2d", weight: 2.5, opacity: 0.88 };
+      return { color: "#d97706", weight: 2.5, opacity: 0.88 };
     case "trunk":
-      return { color: "#f97316", weight: 3.5, opacity: 0.92 };
+      return { color: "#f59e0b", weight: 3.5, opacity: 0.92 }; // mid amber
     case "trunk_link":
-      return { color: "#f97316", weight: 2.0, opacity: 0.85 };
+      return { color: "#f59e0b", weight: 2.0, opacity: 0.85 };
     case "primary":
-      return { color: "#fbbf24", weight: 2.5, opacity: 0.9 };
+      return { color: "#fbbf24", weight: 2.5, opacity: 0.9 };  // bright yellow-gold (unchanged)
     case "primary_link":
       return { color: "#fbbf24", weight: 1.5, opacity: 0.82 };
     default:
@@ -3151,9 +3151,9 @@ function _getRoadGlowStyle(hw) {
   }
 
   return {
-    color: hw.startsWith("motorway") ? "#ff2d2d" : "#f97316",
+    color: hw.startsWith("motorway") ? "#92400e" : "#b45309",
     weight: hw.startsWith("motorway") ? 13 : 10,
-    opacity: 0.12,
+    opacity: 0.10,
     lineCap: "round",
     lineJoin: "round",
   };

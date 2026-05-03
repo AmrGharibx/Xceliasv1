@@ -1854,7 +1854,7 @@ const MAP_VIEW_DEFAULTS = {
     roadsVisible: true,
   },
   satellite: { roadTiles: false, places: false, roadsVisible: false },
-  hybrid: { roadTiles: false, places: false, roadsVisible: false },
+  hybrid: { roadTiles: true, places: false, roadsVisible: true },
 };
 let currentMapLayer = _readStoredMapLayer();
 
@@ -1871,6 +1871,7 @@ function _syncMapModeClass(mode) {
 }
 
 function _roadTileOpacityForMode() {
+  if (_roadHoverOnlyMode) return 0;
   if (_isAtlasMode()) return 0.72;
   if (currentMapLayer === "street") return 0.84;
   return 0.82;
@@ -2452,7 +2453,7 @@ let _roadCanvasRenderer = null;
 let _roadsVisible = true;
 let _roadOpacityMultiplier = 1;
 let _showMainRoads = true;
-let _showSecondaryRoads = true;
+let _showSecondaryRoads = false;
 let _roadPanelOpen = false;
 let _hoveredRoadLayer = null;
 let _roadHoverFrame = null;
@@ -2500,11 +2501,11 @@ const ROAD_FILTER_COUNT_IDS = {
 const _roadCategoryVisibility = {
   axis: true,
   expressNamed: true,
-  expressUnnamed: true,
+  expressUnnamed: false,
   mainNamed: true,
-  mainUnnamed: true,
-  secondaryNamed: true,
-  secondaryUnnamed: true,
+  mainUnnamed: false,
+  secondaryNamed: false,
+  secondaryUnnamed: false,
 };
 const _roadCategoryStats = {
   axis: 0,
@@ -2626,9 +2627,10 @@ const OVERPASS_ENDPOINTS = [
 
 function _readStoredRoadHoverOnlyMode() {
   try {
-    return localStorage.getItem(ROAD_HOVER_ONLY_STORAGE_KEY) === "true";
+    const stored = localStorage.getItem(ROAD_HOVER_ONLY_STORAGE_KEY);
+    return stored === null ? true : stored === "true";
   } catch (_) {
-    return false;
+    return true;
   }
 }
 
@@ -3103,23 +3105,24 @@ function _getRoadBaseStyle(hw) {
 
 function _getRoadHoverStyle(hw) {
   const rendered = _getRenderedRoadBaseStyle(hw);
+  const hoverOpacity = _roadHoverOnlyMode ? 0.45 : 1;
   if (_isAtlasMode()) {
     switch (hw) {
       case "motorway":
       case "motorway_link":
-        return { ...rendered, color: "#fff4da", opacity: 1 };
+        return { ...rendered, color: "#fff4da", opacity: hoverOpacity };
       case "trunk":
       case "trunk_link":
-        return { ...rendered, color: "#fff0c8", opacity: 1 };
+        return { ...rendered, color: "#fff0c8", opacity: hoverOpacity };
       case "primary":
       case "primary_link":
-        return { ...rendered, color: "#fff8e8", opacity: 1 };
+        return { ...rendered, color: "#fff8e8", opacity: hoverOpacity };
       default:
-        return { ...rendered, color: "#fff8e8", opacity: 1 };
+        return { ...rendered, color: "#fff8e8", opacity: hoverOpacity };
     }
   }
 
-  return { ...rendered, opacity: 1 };
+  return { ...rendered, opacity: hoverOpacity };
 }
 
 function _getRoadGlowStyle(hw) {
@@ -3169,6 +3172,7 @@ function _setStyleOnRoadGroup(group, style) {
 }
 
 function _getRenderedRoadGlowStyle(hw) {
+  if (_roadHoverOnlyMode) return { ..._getRoadGlowStyle(hw), opacity: 0 };
   return _withRoadOpacity(_getRoadGlowStyle(hw));
 }
 
@@ -3177,7 +3181,7 @@ function _getRoadHoverOnlyBaseStyle(hw, isSecondary = false) {
   return {
     color: _isAtlasMode() ? "#fff8e8" : base.color,
     weight: Math.max(base.weight + (isSecondary ? 1.7 : 2.2), isSecondary ? 3.2 : 4.4),
-    opacity: 0.035,
+    opacity: 0,
     lineCap: "round",
     lineJoin: "round",
   };
@@ -3224,7 +3228,7 @@ function _getSecondaryRoadHoverStyle() {
   return {
     ...base,
     color: "#fffaf0",
-    opacity: 1,
+    opacity: _roadHoverOnlyMode ? 0.45 : 1,
     lineCap: "round",
   };
 }
@@ -5906,7 +5910,7 @@ initSearchWorker();
 function _readStoredMapLayer() {
   try {
     const stored = localStorage.getItem(MAP_VIEW_STORAGE_KEY);
-    return MAP_VIEW_DEFAULTS[stored] ? stored : "street";
+    return MAP_VIEW_DEFAULTS[stored] ? stored : "hybrid";
   } catch (_) {
     return "street";
   }
@@ -8371,6 +8375,37 @@ async function downloadBrochure() {
 let swiperInstance = null;
 let currentProject = null;
 
+function _svgEsc(str) {
+  return String(str || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function _projectPlaceholderDataUri(project) {
+  const name = _svgEsc(project.name || "");
+  const dev = _svgEsc(project.dev || "");
+  const zone = _svgEsc(project.zone || "");
+  const svg = [
+    "<svg xmlns='http://www.w3.org/2000/svg' width='800' height='380'>",
+    "<defs>",
+    "<linearGradient id='bg' x1='0%' y1='0%' x2='100%' y2='100%'>",
+    "<stop offset='0%' style='stop-color:#0d1120'/>",
+    "<stop offset='100%' style='stop-color:#1a1040'/>",
+    "</linearGradient>",
+    "</defs>",
+    "<rect width='800' height='380' fill='url(#bg)'/>",
+    "<rect x='30' y='30' width='740' height='320' rx='16' fill='none' stroke='#6c3abe' stroke-width='1.5' stroke-opacity='0.5'/>",
+    "<text x='400' y='148' font-family='Arial,sans-serif' font-size='30' font-weight='bold' fill='#b48ff5' text-anchor='middle'>" + name + "</text>",
+    dev ? "<text x='400' y='194' font-family='Arial,sans-serif' font-size='18' fill='#aaa' text-anchor='middle'>by " + dev + "</text>" : "",
+    zone ? "<text x='400' y='232' font-family='Arial,sans-serif' font-size='15' fill='#6a6a8a' text-anchor='middle'>" + zone + "</text>" : "",
+    "<text x='400' y='332' font-family='Arial,sans-serif' font-size='12' fill='#3a3a5a' text-anchor='middle'>Xcelias Property Explorer</text>",
+    "</svg>",
+  ].join("");
+  return "data:image/svg+xml," + encodeURIComponent(svg);
+}
+
 function getProjectImages(project) {
   // 1. Check for Real Images in projectDetails
   let details = projectDetails[project.name];
@@ -8393,8 +8428,8 @@ function getProjectImages(project) {
     return details.images;
   }
 
-  // No dynamic fallback requested
-  return [];
+  // Fallback: styled placeholder card for this project
+  return [_projectPlaceholderDataUri(project)];
 }
 
 function getWhatsAppLink(project) {

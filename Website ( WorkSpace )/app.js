@@ -2766,7 +2766,12 @@ function _parseJsonWorker(str) {
       };
       worker.onerror = (e) => {
         worker.terminate();
-        reject(new Error(e.message));
+        // CSP may block blob workers in production — fall back to main-thread parse
+        try {
+          resolve(JSON.parse(str));
+        } catch (e2) {
+          reject(e2);
+        }
       };
       worker.postMessage(str);
     } catch (_) {

@@ -1845,7 +1845,7 @@ const hybridTransportTiles =
 
 const MAP_VIEW_STORAGE_KEY = "xc_map_view_mode";
 const MAP_VIEW_DEFAULTS = {
-  street: { roadTiles: false, places: false, roadsVisible: false },
+  street: { roadTiles: false, places: false, roadsVisible: true },
   wiki: { roadTiles: false, places: true, roadsVisible: false },
   atlas: {
     roadTiles: false,
@@ -3110,7 +3110,7 @@ function _getRoadBaseStyle(hw) {
 
 function _getRoadHoverStyle(hw) {
   const rendered = _getRenderedRoadBaseStyle(hw);
-  const hoverOpacity = _roadHoverOnlyMode ? 0.45 : 1;
+  const hoverOpacity = Math.max(0.1, (_roadHoverOnlyMode ? 0.45 : 1) * _roadOpacityMultiplier);
   if (_isAtlasMode()) {
     switch (hw) {
       case "motorway":
@@ -3234,7 +3234,7 @@ function _getSecondaryRoadHoverStyle() {
   return {
     ...base,
     color: "#fffaf0",
-    opacity: _roadHoverOnlyMode ? 0.45 : 1,
+    opacity: Math.max(0.1, (_roadHoverOnlyMode ? 0.45 : 1) * _roadOpacityMultiplier),
     lineCap: "round",
   };
 }
@@ -5138,6 +5138,7 @@ function _bindRoadPanelLayerControls() {
 }
 
 _bindRoadPanelLayerControls();
+_updateCacheSize(); // init cache display so element is never blank on first open
 
 // ────────────────────────────────────────────────────────────────────────────
 // AUTO-ZONE HINT — toast when panning into an unloaded zone at zoom ≥ 10

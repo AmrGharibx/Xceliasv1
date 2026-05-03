@@ -4200,40 +4200,22 @@ function _markBboxCells(s, w, n, e) {
 }
 
 /**
- * Fetch and draw roads for a bbox.
- * Uses multi-mirror Overpass + Web Worker parsing for reliability + responsiveness.
+ * Fetch and draw roads for a single 0.5°×0.5° grid cell.
+ * The cell key must already be added to _loadedRoadBboxes before calling.
+ * On error the key is removed so the cell can be retried.
  */
-async function fetchAndDrawRoads(overrideBbox) {
-  if (!_roadsVisible) return;
-
-  let south, west, north, east;
-
-  if (overrideBbox) {
-    ({ south, west, north, east } = overrideBbox);
-  } else {
-    const bbox = _getViewportRoadBbox();
-    if (!bbox) return;
-    ({ south, west, north, east } = bbox);
-  }
-
+async function _fetchRoadCell(south, west, north, east) {
   const cacheKey = `${(+south).toFixed(2)},${(+west).toFixed(2)},${(+north).toFixed(2)},${(+east).toFixed(2)}`;
-  if (_loadedRoadBboxes.has(cacheKey)) return;
-  _loadedRoadBboxes.add(cacheKey);
-
   const s = (+south).toFixed(2),
     w = (+west).toFixed(2),
     n = (+north).toFixed(2),
     e = (+east).toFixed(2);
   const query = `[out:json][timeout:20];(way["highway"~"motorway|trunk|primary|secondary|tertiary"](${s},${w},${n},${e}););out geom qt;`;
-
   try {
     const response = await _fetchOverpass(query, 20000);
     const ct = response.headers.get("content-type") || "";
     if (!ct.includes("application/json")) throw new Error("Non-JSON response");
     const data = await _parseJsonWorker(await response.text());
-    // Convert Overpass elements → compact format, then use shared chunked renderer.
-    // Eliminates intermediate GeoJSON objects + deduplication + search index all
-    // handled inside _addFeaturesChunked.
     const features = data.elements
       .filter((el) => el.type === "way" && el.geometry?.length >= 2)
       .map((el) => ({
@@ -4251,13 +4233,50 @@ async function fetchAndDrawRoads(overrideBbox) {
     _ensureRoadLayers();
     await _addFeaturesChunked(features);
     _updateRoadStats();
-    // After a zone/area load: mark overlapping 0.5° viewport cells as loaded.
-    // Prevents redundant Overpass re-queries for sub-regions already covered.
-    if (overrideBbox) _markBboxCells(south, west, north, east);
-  } catch (e) {
+  } catch (err) {
     _loadedRoadBboxes.delete(cacheKey);
-    console.warn("Road overlay unavailable:", e?.message || e);
+    console.warn("Road overlay unavailable:", err?.message || err);
   }
+}
+
+/**
+ * Fetch and draw roads for a bbox.
+ * Viewport loads are split into 0.5°×0.5° cells fired in parallel so each
+ * stays within the Vercel serverless function timeout (~8 s per cell).
+ * Zone button loads (overrideBbox) use a single query and mark all covered
+ * cells via _markBboxCells to suppress redundant viewport re-fetches.
+ */
+async function fetchAndDrawRoads(overrideBbox) {
+  if (!_roadsVisible) return;
+
+  if (overrideBbox) {
+    // Zone button loads: one big query for the predefined bbox (small enough).
+    const { south, west, north, east } = overrideBbox;
+    const cacheKey = `${(+south).toFixed(2)},${(+west).toFixed(2)},${(+north).toFixed(2)},${(+east).toFixed(2)}`;
+    if (_loadedRoadBboxes.has(cacheKey)) return;
+    _loadedRoadBboxes.add(cacheKey);
+    await _fetchRoadCell(south, west, north, east);
+    _markBboxCells(south, west, north, east);
+    return;
+  }
+
+  // Viewport loads: enumerate 0.5° cells, skip already-cached, fetch in parallel.
+  const viewport = _getViewportRoadBbox();
+  if (!viewport) return;
+  const { south, west, north, east } = viewport;
+  const G = 0.5;
+  const cells = [];
+  for (let lat = south; lat < north - G * 0.01; lat += G) {
+    for (let lng = west; lng < east - G * 0.01; lng += G) {
+      const key = `${lat.toFixed(2)},${lng.toFixed(2)},${(lat + G).toFixed(2)},${(lng + G).toFixed(2)}`;
+      if (!_loadedRoadBboxes.has(key)) {
+        _loadedRoadBboxes.add(key);
+        cells.push([lat, lng, lat + G, lng + G]);
+      }
+    }
+  }
+  if (cells.length === 0) return;
+  await Promise.allSettled(cells.map(([s, w, n, e]) => _fetchRoadCell(s, w, n, e)));
 }
 
 /** Load roads for a predefined zone — one Overpass call, cached permanently */

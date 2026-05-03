@@ -2453,7 +2453,7 @@ let _roadCanvasRenderer = null;
 let _roadsVisible = true;
 let _roadOpacityMultiplier = 1;
 let _showMainRoads = true;
-let _showSecondaryRoads = false;
+let _showSecondaryRoads = true;
 let _roadPanelOpen = false;
 let _hoveredRoadLayer = null;
 let _roadHoverFrame = null;
@@ -2504,7 +2504,7 @@ const _roadCategoryVisibility = {
   expressUnnamed: false,
   mainNamed: true,
   mainUnnamed: false,
-  secondaryNamed: false,
+  secondaryNamed: true,
   secondaryUnnamed: false,
 };
 const _roadCategoryStats = {
@@ -3220,10 +3220,11 @@ function _getSecondaryRoadBaseStyle() {
     };
   }
 
+  // Pale amber — 4th tier in the amber-gold hierarchy (motorway→trunk→primary→secondary)
   return {
-    color: "#60a5fa",
-    weight: 1.5,
-    opacity: 0.65,
+    color: "#fde68a",
+    weight: 1.8,
+    opacity: 0.6,
     lineCap: "round",
   };
 }

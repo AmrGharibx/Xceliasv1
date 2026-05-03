@@ -4323,7 +4323,13 @@ function setAllRoadsVisible(visible) {
     btn.classList.toggle("active", visible);
     btn.setAttribute("aria-pressed", String(visible));
   }
-  if (!visible) _clearRoadHover();
+  if (!visible) {
+    _clearRoadHover();
+  } else if (!mainRoadsLayer) {
+    // First time roads are enabled — no data yet, trigger fetch immediately
+    // so the user sees roads without needing to pan or zoom.
+    void fetchAndDrawRoads();
+  }
   _syncRoadLayerVisibility();
 }
 

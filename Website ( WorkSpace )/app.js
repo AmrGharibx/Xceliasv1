@@ -3092,19 +3092,19 @@ function _getRoadBaseStyle(hw) {
 
   switch (hw) {
     case "motorway":
-      return { color: "#ff2d2d", weight: 6, opacity: 0.95 };
+      return { color: "#ff2d2d", weight: 4.0, opacity: 0.95 };
     case "motorway_link":
-      return { color: "#ff2d2d", weight: 4, opacity: 0.88 };
+      return { color: "#ff2d2d", weight: 2.5, opacity: 0.88 };
     case "trunk":
-      return { color: "#f97316", weight: 5, opacity: 0.92 };
+      return { color: "#f97316", weight: 3.5, opacity: 0.92 };
     case "trunk_link":
-      return { color: "#f97316", weight: 3, opacity: 0.85 };
+      return { color: "#f97316", weight: 2.0, opacity: 0.85 };
     case "primary":
-      return { color: "#fbbf24", weight: 3.5, opacity: 0.9 };
+      return { color: "#fbbf24", weight: 2.5, opacity: 0.9 };
     case "primary_link":
-      return { color: "#fbbf24", weight: 2.5, opacity: 0.82 };
+      return { color: "#fbbf24", weight: 1.5, opacity: 0.82 };
     default:
-      return { color: "#fbbf24", weight: 3.5, opacity: 0.9 };
+      return { color: "#fbbf24", weight: 2.5, opacity: 0.9 };
   }
 }
 
@@ -3152,7 +3152,7 @@ function _getRoadGlowStyle(hw) {
 
   return {
     color: hw.startsWith("motorway") ? "#ff2d2d" : "#f97316",
-    weight: hw.startsWith("motorway") ? 20 : 16,
+    weight: hw.startsWith("motorway") ? 13 : 10,
     opacity: 0.12,
     lineCap: "round",
     lineJoin: "round",

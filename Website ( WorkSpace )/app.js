@@ -3153,7 +3153,7 @@ function _getRoadGlowStyle(hw) {
   return {
     color: hw.startsWith("motorway") ? "#92400e" : "#b45309",
     weight: hw.startsWith("motorway") ? 13 : 10,
-    opacity: 0.10,
+    opacity: 0.04, // near-invisible in street view — glow only used in atlas mode
     lineCap: "round",
     lineJoin: "round",
   };

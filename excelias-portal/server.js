@@ -278,6 +278,48 @@ app.use('/api/gemini', express.json({ limit: '10mb' }));
 app.use(express.json({ limit: '50kb' }));
 
 /* ═══════════════════════════════════════════════════════════════════
+   OVERPASS PROXY — local dev equivalent of api/overpass.js (Vercel)
+   ═══════════════════════════════════════════════════════════════════ */
+const OVERPASS_MIRRORS = [
+  'https://overpass-api.de/api/interpreter',
+  'https://overpass.openstreetmap.ru/api/interpreter',
+  'https://overpass.private.coffee/api/interpreter',
+  'https://overpass.kumi.systems/api/interpreter',
+  'https://maps.mail.ru/osm/tools/overpass/api/interpreter',
+  'https://overpass.openstreetmap.fr/api/interpreter',
+];
+async function tryOverpassMirror(query, mirror) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 8000);
+  try {
+    const res = await fetch(mirror, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'User-Agent': 'Excelias-Portal/2.0', Accept: 'application/json' },
+      body: `data=${encodeURIComponent(query)}`,
+      signal: controller.signal,
+    });
+    clearTimeout(timer);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    clearTimeout(timer);
+    throw err;
+  }
+}
+app.post('/api/overpass', async (req, res) => {
+  // Global express.json() middleware already parsed the body as { query: "..." }
+  const query = typeof req.body === 'string' ? req.body : (req.body?.query ?? null);
+  if (!query || typeof query !== 'string' || query.length > 8192) return res.status(400).json({ error: 'Invalid query' });
+  try {
+    const data = await Promise.any(OVERPASS_MIRRORS.map(m => tryOverpassMirror(query, m)));
+    res.setHeader('Cache-Control', 'public, max-age=300');
+    return res.status(200).json(data);
+  } catch {
+    return res.status(503).json({ error: 'Overpass API unavailable' });
+  }
+});
+
+/* ═══════════════════════════════════════════════════════════════════
    AUTH API ENDPOINTS
    ═══════════════════════════════════════════════════════════════════ */
 

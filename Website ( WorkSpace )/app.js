@@ -2640,35 +2640,22 @@ function _readStoredRoadHoverOnlyMode() {
  * Falls back to direct mirrors on localhost or if proxy fails.
  */
 async function _fetchOverpass(query, timeoutMs = 40000) {
-  const isLocalhost = ["localhost", "127.0.0.1"].includes(
-    window.location.hostname,
-  );
-
-  // Production: route through Vercel proxy function (/api/overpass)
-  if (!isLocalhost) {
-    try {
-      const ctrl = new AbortController();
-      const tid = setTimeout(() => ctrl.abort(), timeoutMs);
-      const r = await fetch("/api/overpass", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query }),
-        signal: ctrl.signal,
-      });
-      clearTimeout(tid);
-      if (r.ok) return r;
-      console.warn(
-        "Overpass proxy: HTTP",
-        r.status,
-        "— falling back to direct",
-      );
-    } catch (e) {
-      console.warn(
-        "Overpass proxy failed:",
-        e.message,
-        "— falling back to direct",
-      );
-    }
+  // Route through server proxy (/api/overpass) — works on both prod (Vercel) and local (Express).
+  // Falls back to direct mirrors only if the proxy returns an error or is unavailable.
+  try {
+    const ctrl = new AbortController();
+    const tid = setTimeout(() => ctrl.abort(), timeoutMs);
+    const r = await fetch("/api/overpass", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query }),
+      signal: ctrl.signal,
+    });
+    clearTimeout(tid);
+    if (r.ok) return r;
+    console.warn("Overpass proxy: HTTP", r.status, "— falling back to direct");
+  } catch (e) {
+    console.warn("Overpass proxy failed:", e.message, "— falling back to direct");
   }
 
   // localhost or proxy failed: try direct mirrors

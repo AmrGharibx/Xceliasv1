@@ -7723,7 +7723,7 @@ input:focus-visible {
   background: var(--avaria-gold, #667eea);
 }
 .road-type-sec-color {
-  background: #60a5fa;
+  background: linear-gradient(90deg, #fde68a 0%, #fef3c7 100%);
 }
 .road-type-project-color {
   background: linear-gradient(90deg, #22c55e 0%, #34d399 100%);
@@ -7768,7 +7768,7 @@ input:focus-visible {
   background: linear-gradient(90deg, #a18a55 0%, #d6b873 100%);
 }
 .road-type-secondary-named-color {
-  background: linear-gradient(90deg, #60a5fa 0%, #38bdf8 100%);
+  background: linear-gradient(90deg, #fde68a 0%, #fef3c7 100%);
 }
 .road-type-secondary-unnamed-color {
   background: linear-gradient(90deg, #64748b 0%, #94a3b8 100%);

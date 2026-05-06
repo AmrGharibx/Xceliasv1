@@ -1844,6 +1844,7 @@ const hybridTransportTiles =
   "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}";
 
 const MAP_VIEW_STORAGE_KEY = "xc_map_view_mode";
+let mapboxMap = null;
 const MAP_VIEW_DEFAULTS = {
   street: { roadTiles: false, places: false, roadsVisible: true },
   wiki: { roadTiles: false, places: true, roadsVisible: false },
@@ -1862,12 +1863,17 @@ function _isAtlasMode() {
   return currentMapLayer === "atlas";
 }
 
+function _isUcanMode() {
+  return currentMapLayer === "ucan";
+}
+
 function _syncMapModeClass(mode) {
   const root = document.body;
   if (!root) return;
   Object.keys(MAP_VIEW_DEFAULTS).forEach((name) => {
     root.classList.toggle(`map-mode-${name}`, name === mode);
   });
+  root.classList.toggle("map-mode-ucan", mode === "ucan");
 }
 
 function _roadTileOpacityForMode() {
@@ -2217,6 +2223,10 @@ function _syncProjectLayerVisibility() {
   } else {
     map.addLayer(markerLayer);
   }
+
+  if (mapboxMap) {
+    _syncUcanProjectPresentation();
+  }
 }
 
 function setProjectsVisible(visible) {
@@ -2265,11 +2275,18 @@ function setProjectLabelsVisible(visible) {
   if (!isLabelsAlwaysVisible || !_projectsVisible) {
     mapEl.classList.add("labels-hidden");
     _batchTooltips(false);
+    if (mapboxMap) {
+      _syncUcanProjectPresentation();
+    }
     return;
   }
 
   mapEl.classList.remove("labels-hidden");
   _batchTooltips(true);
+
+  if (mapboxMap) {
+    _syncUcanProjectPresentation();
+  }
 }
 
 function toggleLabels() {
@@ -2339,12 +2356,25 @@ function toggleHeatmap() {
 
     _syncProjectLayerVisibility();
   }
+
+  if (_isUcanMode()) {
+    syncDataToMapbox();
+  }
 }
 
 // --- 3D MODE TOGGLE ---
 let is3DMode = false;
 function toggle3DMode() {
   is3DMode = !is3DMode;
+  if (_isUcanMode() && mapboxMap) {
+    const btn = document.getElementById("btn-3d");
+    const vignette = document.getElementById("vignette");
+    if (btn) btn.classList.toggle("active", is3DMode);
+    if (vignette) vignette.classList.toggle("active", is3DMode);
+    _syncUcanSceneTheme();
+    return;
+  }
+
   const mapContainer = document.getElementById("map");
   const btn = document.getElementById("btn-3d");
   const vignette = document.getElementById("vignette");
@@ -2813,6 +2843,7 @@ async function _addFeaturesChunked(features, onProgress, chunkSize = DEVICE_CHUN
       const targetLayer = category ? _roadFeatureLayers[category] : null;
       if (!category || !targetLayer) return;
 
+      _ingestUcanRoadFeature(feature, category);
       targetLayer.addData(feature);
       _roadCategoryStats[category]++;
       if (_isMainRoadCategory(category)) {
@@ -2996,6 +3027,16 @@ function searchRoads(query) {
     notifyRouteMessage('مفيش طريق اسمه "' + query + '"', "info");
     return;
   }
+
+  if (_isUcanMode() && mapboxMap) {
+    _focusUcanRoadSearch(match);
+    notifyRouteMessage(
+      `تم العثور على ${match.nameAr || match.name || match.ref || _hwArabicLabel(match.highway)}`,
+      "info",
+    );
+    return;
+  }
+
   map.flyToBounds(
     [
       [match.latMin, match.lngMin],
@@ -3049,6 +3090,10 @@ function setRoadOpacity(opacity) {
   _refreshMapVisualLanguage();
   const val = document.getElementById("road-opacity-value");
   if (val) val.textContent = Math.round(o * 100) + "%";
+
+  if (mapboxMap) {
+    _syncUcanRoadPresentation();
+  }
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -3523,6 +3568,9 @@ function _syncRoadFilterControls() {
 function _syncRoadLayerVisibility() {
   if (!mainRoadsLayer || !secondaryRoadsLayer) {
     _syncRoadFilterControls();
+    if (mapboxMap) {
+      _syncUcanRoadPresentation();
+    }
     return;
   }
 
@@ -3586,6 +3634,10 @@ function _syncRoadLayerVisibility() {
   _syncRoadTileOverlayVisibility();
   _syncRoadFilterControls();
   _updateRoadStats();
+
+  if (mapboxMap) {
+    _syncUcanRoadPresentation();
+  }
 }
 
 function setRoadCategoryVisible(category, visible) {
@@ -3750,6 +3802,10 @@ function _refreshMapVisualLanguage(mode = currentMapLayer) {
     typeof markerClusterGroup.refreshClusters === "function"
   ) {
     markerClusterGroup.refreshClusters();
+  }
+
+  if (mapboxMap) {
+    _syncUcanSceneTheme();
   }
 }
 
@@ -4376,6 +4432,7 @@ function clearAllRoads() {
   _syncRoadTileOverlayVisibility();
   _syncRoadFilterControls();
   _updateRoadStats();
+  _clearUcanRoadData();
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -4625,6 +4682,10 @@ function _syncPlaceLayerVisibility() {
   }
 
   _syncPlaceFilterControls();
+
+  if (mapboxMap) {
+    _syncUcanPlacePresentation();
+  }
 }
 
 function setPlaceCategoryVisible(category, visible) {
@@ -4913,6 +4974,7 @@ async function _fetchAndDrawPlaces() {
       if (!fid || _addedPlaceIds.has(fid)) continue;
       _addedPlaceIds.add(fid);
       const category = _getPlaceCategory(f);
+      _ingestUcanPlaceFeature(f, category);
       const targetLayer =
         _placeCategoryLayers[category] || _placeCategoryLayers.other;
       targetLayer.addData(f);
@@ -5994,6 +6056,43 @@ function _applyMapLayerDefaults(layerName, options = {}) {
 }
 
 function switchMapLayer(layerName) {
+  // --- UCAN Mapbox Mode ---
+  const mapboxDiv = document.getElementById("mapbox-map");
+  const leafletDiv = document.getElementById("map");
+  if (layerName === "ucan") {
+    if (typeof mapboxgl === "undefined") {
+      notifyRouteMessage(
+        "UCAN could not load. Refresh after restarting the portal server.",
+        "error",
+      );
+      return;
+    }
+    leafletDiv.style.display = "none";
+    mapboxDiv.style.display = "block";
+    currentMapLayer = "ucan";
+    _syncMapLayerButtons("ucan");
+    _syncMapModeClass("ucan");
+    if (!initMapboxUcan()) {
+      mapboxDiv.style.display = "none";
+      leafletDiv.style.display = "block";
+      currentMapLayer = "street";
+      _syncMapLayerButtons("street");
+      _syncMapModeClass("street");
+      return;
+    }
+    if (_roadsVisible && _roadSearchIndex.length === 0) {
+      void fetchAndDrawRoads();
+    }
+    if (_placesVisible) {
+      void _fetchAndDrawPlaces();
+    }
+    return;
+  } else {
+    mapboxDiv.style.display = "none";
+    leafletDiv.style.display = "block";
+  }
+  // --- Normal Leaflet Modes ---
+
   const mode = MAP_VIEW_DEFAULTS[layerName] ? layerName : "street";
 
   // Remove all layers
@@ -9158,18 +9257,36 @@ if (window.matchMedia("(max-width: 768px)").matches) {
 }
 
 function flyToRegion(lat, lng, zoom, zoneName) {
-  if (!map) return;
+  const resolvedZoneName = (() => {
+    if (zoneName) return zoneName;
+    if (lat > 30.5) return "North Coast";
+    if (lat < 29.8) return "Sokhna";
+    if (lng > 31.2) return "New Cairo";
+    return "October";
+  })();
 
-  map.flyTo([lat, lng], zoom, {
-    duration: 2,
-    easeLinearity: 0.25,
-  });
+  if (_isUcanMode() && mapboxMap) {
+    _playUcanZoneMoment(resolvedZoneName, lat, lng, Math.max(zoom, 9.5));
+    if (_roadsVisible && _roadSearchIndex.length === 0) {
+      void fetchAndDrawRoads();
+    }
+    if (_placesVisible) {
+      _schedulePlacesRefresh();
+    }
+  } else {
+    if (!map) return;
+
+    map.flyTo([lat, lng], zoom, {
+      duration: 2,
+      easeLinearity: 0.25,
+    });
+  }
   // Update active button state
   document
     .querySelectorAll(".region-selector .filter-btn")
     .forEach((btn) => btn.classList.remove("active"));
 
-  let targetZone = zoneName;
+  let targetZone = resolvedZoneName;
 
   // Simple logic to highlight button based on lat (approx) if zoneName not provided
   if (!targetZone) {
@@ -12915,6 +13032,9 @@ const RoutePlanner = {
     this.layers.alternatives?.clearLayers();
     this.layers.connectors?.clearLayers();
     this.layers.stops?.clearLayers();
+    if (mapboxMap) {
+      _clearUcanRouteData();
+    }
 
     document.body.classList.remove("has-route");
     // Callers are responsible for renderSummary/syncMenuState/syncProjectListHighlights
@@ -13064,6 +13184,9 @@ const RoutePlanner = {
       map.removeLayer(this.layers.movingMarker);
     }
     this.layers.movingMarker = null;
+    if (mapboxMap) {
+      _clearUcanRouteData();
+    }
 
     this.renderStops();
     this.renderSummary();
@@ -13361,6 +13484,9 @@ const RoutePlanner = {
       this.state.activeAlternatives = data.alternatives || [];
       this.state.routeDirty = false;
       this.renderRoute(data);
+      if (mapboxMap) {
+        _syncUcanRoutePresentation(data);
+      }
       this.renderSummary(data);
       this.syncMenuState();
       this.syncProjectListHighlights();
@@ -13536,6 +13662,10 @@ const RoutePlanner = {
         }
       }
     });
+
+    if (mapboxMap) {
+      _updateUcanRouteSources(routeData);
+    }
   },
 
   switchToAlternative(altIndex) {
@@ -13748,6 +13878,19 @@ const RoutePlanner = {
   },
 
   fitRouteToBounds() {
+    if (_isUcanMode() && mapboxMap) {
+      const geometry = this.state.activeRoute?.primaryRoute?.geometry;
+      const bounds = _getUcanGeometryBounds(geometry);
+      if (bounds) {
+        mapboxMap.fitBounds(bounds, {
+          padding: { top: 110, right: 90, bottom: 120, left: 420 },
+          maxZoom: 14.6,
+          duration: 1500,
+        });
+      }
+      return;
+    }
+
     const bounds = this.layers.primary?.getBounds?.();
     if (bounds && bounds.isValid()) {
       map.flyToBounds(bounds, {
@@ -15194,3 +15337,2020 @@ function toggleRouteMenu(forceOpen) {
     }
   });
 })();
+
+
+// --- MAPBOX UCAN IMPLEMENTATION ---
+const UCAN_MAPBOX_TOKEN_STORAGE_KEY = "xc_ucan_mapbox_token";
+const UCAN_STUDIO_STYLE_STORAGE_KEY = "xc_ucan_studio_style_url";
+const UCAN_SIGNATURE_STYLE_URL = "mapbox://styles/mapbox/standard";
+const UCAN_SIGNATURE_STYLE_CONFIG = {
+  basemap: {
+    lightPreset: "night",
+    showPointOfInterestLabels: false,
+    showTransitLabels: false,
+    showRoadLabels: false,
+    show3dObjects: true,
+  },
+};
+const UCAN_DEFAULT_CAMERA = {
+  center: [30.8025, 26.8206],
+  zoom: 5.9,
+  pitch: 60,
+  bearing: -18,
+};
+const UCAN_FLOW_DASH_SEQUENCE = [
+  [0, 1.8, 2.4, 1.2],
+  [0.35, 1.8, 2.05, 1.55],
+  [0.7, 1.8, 1.7, 1.9],
+  [1.05, 1.8, 1.35, 2.25],
+  [1.4, 1.8, 1, 2.6],
+  [1.75, 1.8, 0.65, 2.95],
+  [2.1, 1.8, 0.3, 3.3],
+  [2.45, 1.8, 0.1, 3.5],
+];
+const UCAN_ZONE_MOMENTS = {
+  "North Coast": {
+    landmark: [28.602, 30.992],
+    approach: [27.88, 31.04],
+    hoverZoom: 8.2,
+    finalZoom: 10.7,
+    pitch: 78,
+    bearing: -28,
+  },
+  Sokhna: {
+    landmark: [32.378, 29.61],
+    approach: [32.86, 29.82],
+    hoverZoom: 8.8,
+    finalZoom: 11,
+    pitch: 80,
+    bearing: 22,
+  },
+  October: {
+    landmark: [30.93, 29.993],
+    approach: [31.19, 30.05],
+    hoverZoom: 9.6,
+    finalZoom: 11.3,
+    pitch: 76,
+    bearing: -32,
+  },
+  "New Cairo": {
+    landmark: [31.488, 30.031],
+    approach: [31.71, 30.06],
+    hoverZoom: 9.8,
+    finalZoom: 11.6,
+    pitch: 74,
+    bearing: -8,
+  },
+  "New Capital": {
+    landmark: [31.79, 29.983],
+    approach: [32.08, 30.05],
+    hoverZoom: 9.4,
+    finalZoom: 11.2,
+    pitch: 74,
+    bearing: 6,
+  },
+  Gouna: {
+    landmark: [33.673, 27.398],
+    approach: [33.88, 27.59],
+    hoverZoom: 9,
+    finalZoom: 11.2,
+    pitch: 74,
+    bearing: 34,
+  },
+};
+const UCAN_SOURCES = {
+  projectsClustered: "ucan-projects-clustered",
+  projectsRaw: "ucan-projects-raw",
+  roads: "ucan-roads",
+  places: "ucan-places",
+  terrain: "ucan-terrain",
+  routePrimary: "ucan-route-primary",
+  routeAlternatives: "ucan-route-alternatives",
+  routeStops: "ucan-route-stops",
+  routeTraveler: "ucan-route-traveler",
+  focusPoint: "ucan-focus-point",
+};
+const UCAN_LAYERS = {
+  projectHeat: "ucan-project-heat",
+  clusterGlow: "ucan-cluster-glow",
+  clusters: "ucan-clusters",
+  clusterCount: "ucan-cluster-count",
+  clusterSinglesGlow: "ucan-cluster-singles-glow",
+  clusterSingles: "ucan-cluster-singles",
+  clusterSinglesTitle: "ucan-cluster-singles-title",
+  rawGlow: "ucan-raw-point-glow",
+  rawPoint: "ucan-raw-point",
+  rawTitle: "ucan-raw-title",
+  roadGlow: "ucan-road-glow",
+  roadStroke: "ucan-road-stroke",
+  roadFlow: "ucan-road-flow",
+  roadLabels: "ucan-road-labels",
+  roadHit: "ucan-road-hit",
+  roadHover: "ucan-road-hover",
+  roadFocus: "ucan-road-focus",
+  placeFill: "ucan-place-fill",
+  placeOutline: "ucan-place-outline",
+  placeLabels: "ucan-place-labels",
+  placeHover: "ucan-place-hover",
+  routeAlt: "ucan-route-alt",
+  routeGlow: "ucan-route-glow",
+  routeMain: "ucan-route-main",
+  routePulse: "ucan-route-pulse",
+  routeStopsHalo: "ucan-route-stops-halo",
+  routeStopsCore: "ucan-route-stops-core",
+  routeStopsLabel: "ucan-route-stops-label",
+  routeTravelerHalo: "ucan-route-traveler-halo",
+  routeTravelerCore: "ucan-route-traveler-core",
+  focusHalo: "ucan-focus-halo",
+  focusCore: "ucan-focus-core",
+  focusLabel: "ucan-focus-label",
+  buildings: "ucan-3d-buildings",
+};
+const UCAN_ROAD_COLORS = {
+  axis: "#90f8ff",
+  expressNamed: "#40d9ff",
+  expressUnnamed: "#2d9bff",
+  mainNamed: "#ff4dd2",
+  mainUnnamed: "#d56bff",
+  secondaryNamed: "#ffe27a",
+  secondaryUnnamed: "#7e61ff",
+};
+const UCAN_PLACE_COLORS = {
+  administrative: "#44e4ff",
+  cityTown: "#ff6ed8",
+  neighbourhood: "#ffd66b",
+  suburb: "#b48eff",
+  village: "#7ee0a5",
+  other: "#8ea3ff",
+};
+
+let _ucanThemePrepared = false;
+let _ucanIntroPlayed = false;
+let _ucanRoadPopup = null;
+let _ucanClusterPopup = null;
+let _ucanHoveredRoadId = null;
+let _ucanHoveredPlaceId = null;
+let _ucanSyncFrame = null;
+let _ucanRoadsDirty = false;
+let _ucanPlacesDirty = false;
+let _ucanProjectsDirty = false;
+let _ucanAnimationFrame = null;
+let _ucanLastAnimationTick = 0;
+let _ucanDashSequenceIndex = 0;
+let _ucanTravelerPath = [];
+let _ucanTravelerDistances = [];
+let _ucanTravelerTotalDistance = 0;
+let _ucanTravelerDistance = 0;
+let _ucanMomentToken = 0;
+let _ucanFocusClearTimer = null;
+let _ucanProjectModalTimer = null;
+let _ucanPendingRouteSync = null;
+const _ucanState = {
+  roads: [],
+  roadIds: new Set(),
+  places: [],
+  placeIds: new Set(),
+};
+
+function _getUcanProjectData() {
+  if (Array.isArray(window.projects) && window.projects.length > 0) {
+    return window.projects;
+  }
+  if (typeof allData !== "undefined" && Array.isArray(allData)) {
+    return allData;
+  }
+  return [];
+}
+
+function _queueUcanSync(kind) {
+  if (kind === "roads") _ucanRoadsDirty = true;
+  if (kind === "places") _ucanPlacesDirty = true;
+  if (kind === "projects") _ucanProjectsDirty = true;
+  if (_ucanSyncFrame) return;
+  _ucanSyncFrame = requestAnimationFrame(() => {
+    _ucanSyncFrame = null;
+    if (!mapboxMap || !mapboxMap.isStyleLoaded()) return;
+    if (_ucanRoadsDirty) {
+      _ucanRoadsDirty = false;
+      _updateUcanRoadSource();
+      _syncUcanRoadPresentation();
+    }
+    if (_ucanPlacesDirty) {
+      _ucanPlacesDirty = false;
+      _updateUcanPlaceSource();
+      _syncUcanPlacePresentation();
+    }
+    if (_ucanProjectsDirty) {
+      _ucanProjectsDirty = false;
+      syncDataToMapbox();
+    }
+  });
+}
+
+function _resolveUcanStyleUrl() {
+  const globalOverride =
+    typeof window !== "undefined" &&
+    typeof window.__UCAN_STUDIO_STYLE_URL__ === "string"
+      ? window.__UCAN_STUDIO_STYLE_URL__.trim()
+      : "";
+  if (globalOverride.startsWith("mapbox://styles/")) {
+    return globalOverride;
+  }
+
+  try {
+    const stored = localStorage.getItem(UCAN_STUDIO_STYLE_STORAGE_KEY) || "";
+    const value = stored.trim();
+    if (value.startsWith("mapbox://styles/")) {
+      return value;
+    }
+  } catch (_) {
+    /* localStorage unavailable */
+  }
+
+  return UCAN_SIGNATURE_STYLE_URL;
+}
+
+function _getUcanMapBootstrapOptions() {
+  const style = _resolveUcanStyleUrl();
+  return {
+    style,
+    config: style === UCAN_SIGNATURE_STYLE_URL ? UCAN_SIGNATURE_STYLE_CONFIG : undefined,
+  };
+}
+
+function _isLikelyUcanMapboxToken(token) {
+  return typeof token === "string" && /^pk\./.test(token.trim());
+}
+
+function _resolveUcanMapboxToken() {
+  const runtimeToken =
+    typeof window !== "undefined" && typeof window.__UCAN_MAPBOX_TOKEN__ === "string"
+      ? window.__UCAN_MAPBOX_TOKEN__.trim()
+      : "";
+  if (_isLikelyUcanMapboxToken(runtimeToken)) {
+    return runtimeToken;
+  }
+
+  try {
+    const stored = localStorage.getItem(UCAN_MAPBOX_TOKEN_STORAGE_KEY) || "";
+    const token = stored.trim();
+    if (_isLikelyUcanMapboxToken(token)) {
+      return token;
+    }
+  } catch (_) {
+    /* localStorage unavailable */
+  }
+
+  return "";
+}
+
+function _promptForUcanMapboxToken() {
+  if (typeof window === "undefined" || typeof window.prompt !== "function") {
+    return "";
+  }
+
+  const enteredToken = window.prompt(
+    "Enter your Mapbox public token to enable UCAN. It will be stored in this browser only.",
+    "",
+  );
+  const token = typeof enteredToken === "string" ? enteredToken.trim() : "";
+  if (!token) {
+    return "";
+  }
+
+  if (!_isLikelyUcanMapboxToken(token)) {
+    notifyRouteMessage("UCAN needs a valid Mapbox public token that starts with pk.", "error");
+    return "";
+  }
+
+  try {
+    localStorage.setItem(UCAN_MAPBOX_TOKEN_STORAGE_KEY, token);
+  } catch (_) {
+    /* localStorage unavailable */
+  }
+
+  notifyRouteMessage("UCAN token saved for this browser.", "success");
+  return token;
+}
+
+function _normalizeUcanZoneName(zoneName) {
+  const value = String(zoneName || "").toLowerCase();
+  if (!value) return "";
+  if (value.includes("north coast") || value.includes("sahel")) return "North Coast";
+  if (value.includes("sokhna") || value.includes("galala")) return "Sokhna";
+  if (value.includes("october") || value.includes("zayed")) return "October";
+  if (value.includes("capital")) return "New Capital";
+  if (value.includes("new cairo") || value.includes("cairo")) return "New Cairo";
+  if (value.includes("gouna")) return "Gouna";
+  return "";
+}
+
+function _getUcanZoneMoment(zoneName) {
+  const normalizedZone = _normalizeUcanZoneName(zoneName);
+  return normalizedZone ? UCAN_ZONE_MOMENTS[normalizedZone] || null : null;
+}
+
+function _getUcanMajorRoadFilter() {
+  return [
+    "any",
+    ["==", ["get", "category"], "axis"],
+    ["==", ["get", "category"], "expressNamed"],
+    ["==", ["get", "category"], "expressUnnamed"],
+  ];
+}
+
+function _getUcanActiveRoute() {
+  return typeof RoutePlanner !== "undefined" ? RoutePlanner.state.activeRoute : null;
+}
+
+function _buildUcanRouteFeatureCollection(routeData) {
+  const activeRoute = routeData || _getUcanActiveRoute();
+  const geometry = activeRoute?.primaryRoute?.geometry;
+  if (!geometry) {
+    return { type: "FeatureCollection", features: [] };
+  }
+
+  return {
+    type: "FeatureCollection",
+    features: [
+      {
+        type: "Feature",
+        properties: {
+          summary: activeRoute?.primaryRoute?.summary || "Primary route",
+          distance: activeRoute?.primaryRoute?.distance || 0,
+          duration: activeRoute?.primaryRoute?.duration || 0,
+        },
+        geometry,
+      },
+    ],
+  };
+}
+
+function _buildUcanAlternativeRouteCollection(routeData) {
+  const activeRoute = routeData || _getUcanActiveRoute();
+  return {
+    type: "FeatureCollection",
+    features: (activeRoute?.alternatives || [])
+      .map((route, index) => {
+        if (!route?.geometry) return null;
+        return {
+          type: "Feature",
+          properties: {
+            altIndex: index,
+            summary: route.summary || `Alternative ${index + 1}`,
+            distance: route.distance || 0,
+            duration: route.duration || 0,
+          },
+          geometry: route.geometry,
+        };
+      })
+      .filter(Boolean),
+  };
+}
+
+function _buildUcanRouteStopsCollection(routeData) {
+  const activeRoute = routeData || _getUcanActiveRoute();
+  const waypoints = activeRoute?.waypoints || [];
+  const requested = activeRoute?.requestedPoints || [];
+  const features = waypoints
+    .map((waypoint, index) => {
+      const lng = Number(waypoint?.snappedLng ?? requested[index]?.lng);
+      const lat = Number(waypoint?.snappedLat ?? requested[index]?.lat);
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+      return {
+        type: "Feature",
+        properties: {
+          index: index + 1,
+          label: `${index + 1}. ${waypoint?.name || requested[index]?.name || `Point ${index + 1}`}`,
+        },
+        geometry: {
+          type: "Point",
+          coordinates: [lng, lat],
+        },
+      };
+    })
+    .filter(Boolean);
+  return { type: "FeatureCollection", features };
+}
+
+function _buildUcanTravelPath(routeData) {
+  const activeRoute = routeData || _getUcanActiveRoute();
+  const coordinates = activeRoute?.primaryRoute?.geometry?.coordinates || [];
+  if (coordinates.length < 2) {
+    return coordinates.map(([lng, lat]) => [lat, lng]);
+  }
+
+  const maxPoints = 2400;
+  if (coordinates.length <= maxPoints) {
+    return coordinates.map(([lng, lat]) => [lat, lng]);
+  }
+
+  const step = Math.max(1, Math.ceil(coordinates.length / maxPoints));
+  const sampled = [];
+  for (let index = 0; index < coordinates.length; index += step) {
+    const [lng, lat] = coordinates[index];
+    sampled.push([lat, lng]);
+  }
+
+  const last = coordinates[coordinates.length - 1];
+  const finalSample = sampled[sampled.length - 1];
+  if (!finalSample || finalSample[0] !== last[1] || finalSample[1] !== last[0]) {
+    sampled.push([last[1], last[0]]);
+  }
+
+  return sampled;
+}
+
+function _clearUcanRouteTraveler() {
+  _ucanTravelerPath = [];
+  _ucanTravelerDistances = [];
+  _ucanTravelerTotalDistance = 0;
+  _ucanTravelerDistance = 0;
+  const source = mapboxMap?.getSource(UCAN_SOURCES.routeTraveler);
+  if (source) {
+    source.setData({ type: "FeatureCollection", features: [] });
+  }
+}
+
+function _updateUcanTravelerSource() {
+  if (!mapboxMap) return;
+  const source = mapboxMap.getSource(UCAN_SOURCES.routeTraveler);
+  if (!source) return;
+  if (_ucanTravelerPath.length === 0) {
+    source.setData({ type: "FeatureCollection", features: [] });
+    return;
+  }
+
+  const lookup =
+    typeof RoutePlanner?._interpolateAtDistance === "function"
+      ? RoutePlanner._interpolateAtDistance(
+          _ucanTravelerPath,
+          _ucanTravelerDistances,
+          _ucanTravelerDistance,
+        )
+      : { pos: _ucanTravelerPath[0] };
+  const position = lookup.pos || _ucanTravelerPath[0];
+  source.setData({
+    type: "FeatureCollection",
+    features: [
+      {
+        type: "Feature",
+        properties: { label: "Traveller" },
+        geometry: {
+          type: "Point",
+          coordinates: [position[1], position[0]],
+        },
+      },
+    ],
+  });
+}
+
+function _setUcanTravelerPath(routeData) {
+  const activeRoute = routeData || _getUcanActiveRoute();
+  _ucanTravelerPath = _buildUcanTravelPath(activeRoute);
+  _ucanTravelerDistances =
+    typeof RoutePlanner?._buildCumulativeDistances === "function"
+      ? RoutePlanner._buildCumulativeDistances(_ucanTravelerPath)
+      : [];
+  _ucanTravelerTotalDistance =
+    _ucanTravelerDistances[_ucanTravelerDistances.length - 1] || 0;
+  _ucanTravelerDistance = 0;
+  _updateUcanTravelerSource();
+}
+
+function _clearUcanFocusPoint() {
+  if (_ucanFocusClearTimer) {
+    clearTimeout(_ucanFocusClearTimer);
+    _ucanFocusClearTimer = null;
+  }
+  const source = mapboxMap?.getSource(UCAN_SOURCES.focusPoint);
+  if (source) {
+    source.setData({ type: "FeatureCollection", features: [] });
+  }
+}
+
+function _setUcanFocusPoint(coordinates, label, zoneName = "") {
+  if (!mapboxMap) return;
+  const source = mapboxMap.getSource(UCAN_SOURCES.focusPoint);
+  if (!source || !Array.isArray(coordinates) || coordinates.length < 2) return;
+
+  source.setData({
+    type: "FeatureCollection",
+    features: [
+      {
+        type: "Feature",
+        properties: {
+          label: String(label || "Focus"),
+          zone: String(zoneName || ""),
+        },
+        geometry: {
+          type: "Point",
+          coordinates,
+        },
+      },
+    ],
+  });
+
+  if (_ucanFocusClearTimer) {
+    clearTimeout(_ucanFocusClearTimer);
+  }
+  _ucanFocusClearTimer = window.setTimeout(() => {
+    _clearUcanFocusPoint();
+  }, 7200);
+}
+
+function _getUcanRouteTravelSpeed() {
+  const distance = _getUcanActiveRoute()?.primaryRoute?.distance || 0;
+  if (distance > 140000) return 340;
+  if (distance > 80000) return 280;
+  if (distance > 35000) return 220;
+  return 170;
+}
+
+function _ensureUcanAnimationLoop() {
+  if (_ucanAnimationFrame || !mapboxMap) return;
+
+  const tick = (timestamp) => {
+    _ucanAnimationFrame = requestAnimationFrame(tick);
+    if (!mapboxMap || !mapboxMap.isStyleLoaded()) return;
+    if (!_isUcanMode() || document.hidden) {
+      _ucanLastAnimationTick = timestamp;
+      return;
+    }
+    if (timestamp - _ucanLastAnimationTick < 90) {
+      return;
+    }
+
+    const deltaSeconds = _ucanLastAnimationTick
+      ? (timestamp - _ucanLastAnimationTick) / 1000
+      : 0.09;
+    _ucanLastAnimationTick = timestamp;
+
+    _ucanDashSequenceIndex = (_ucanDashSequenceIndex + 1) % UCAN_FLOW_DASH_SEQUENCE.length;
+    const dashPattern = UCAN_FLOW_DASH_SEQUENCE[_ucanDashSequenceIndex];
+    _safeSetUcanPaint(UCAN_LAYERS.roadFlow, "line-dasharray", dashPattern);
+    _safeSetUcanPaint(UCAN_LAYERS.routePulse, "line-dasharray", dashPattern);
+
+    const pulse = 0.55 + 0.45 * Math.sin(timestamp / 360);
+    _safeSetUcanPaint(
+      UCAN_LAYERS.routeTravelerHalo,
+      "circle-radius",
+      ["interpolate", ["linear"], ["zoom"], 6, 9 + pulse * 5, 14, 18 + pulse * 9],
+    );
+    _safeSetUcanPaint(UCAN_LAYERS.routeTravelerHalo, "circle-opacity", 0.22 + pulse * 0.16);
+    _safeSetUcanPaint(
+      UCAN_LAYERS.focusHalo,
+      "circle-radius",
+      ["interpolate", ["linear"], ["zoom"], 6, 18 + pulse * 7, 14, 28 + pulse * 12],
+    );
+    _safeSetUcanPaint(UCAN_LAYERS.focusHalo, "circle-opacity", 0.16 + pulse * 0.14);
+
+    if (_ucanTravelerPath.length > 1 && _ucanTravelerTotalDistance > 0) {
+      _ucanTravelerDistance += deltaSeconds * _getUcanRouteTravelSpeed();
+      if (_ucanTravelerDistance >= _ucanTravelerTotalDistance) {
+        _ucanTravelerDistance = 0;
+      }
+      _updateUcanTravelerSource();
+    }
+  };
+
+  _ucanAnimationFrame = requestAnimationFrame(tick);
+}
+
+function _applyUcanSignatureStyleConfig() {
+  if (!mapboxMap || typeof mapboxMap.setConfigProperty !== "function") return;
+  try {
+    mapboxMap.setConfigProperty(
+      "basemap",
+      "lightPreset",
+      is3DMode ? "night" : "dusk",
+    );
+    mapboxMap.setConfigProperty("basemap", "showPointOfInterestLabels", false);
+    mapboxMap.setConfigProperty("basemap", "showTransitLabels", false);
+    mapboxMap.setConfigProperty("basemap", "showRoadLabels", false);
+    mapboxMap.setConfigProperty("basemap", "show3dObjects", true);
+  } catch (_) {
+    /* non-standard style or config unavailable */
+  }
+}
+
+function _syncUcanRoutePresentation(routeData) {
+  if (!mapboxMap) return;
+  if (!_hasUcanRouteInfrastructure()) {
+    _queueUcanRouteSync(routeData);
+    return;
+  }
+  _safeSetUcanLayout(UCAN_LAYERS.routeGlow, "visibility", "visible");
+  _safeSetUcanLayout(UCAN_LAYERS.routeMain, "visibility", "visible");
+  _safeSetUcanLayout(UCAN_LAYERS.routePulse, "visibility", "visible");
+  _safeSetUcanLayout(UCAN_LAYERS.routeAlt, "visibility", "visible");
+  _safeSetUcanLayout(UCAN_LAYERS.routeStopsHalo, "visibility", "visible");
+  _safeSetUcanLayout(UCAN_LAYERS.routeStopsCore, "visibility", "visible");
+  _safeSetUcanLayout(UCAN_LAYERS.routeStopsLabel, "visibility", "visible");
+  _safeSetUcanLayout(UCAN_LAYERS.routeTravelerHalo, "visibility", "visible");
+  _safeSetUcanLayout(UCAN_LAYERS.routeTravelerCore, "visibility", "visible");
+}
+
+function _hasUcanRouteInfrastructure() {
+  if (!mapboxMap) return false;
+  return Boolean(
+    mapboxMap.getSource(UCAN_SOURCES.routePrimary) &&
+      mapboxMap.getSource(UCAN_SOURCES.routeAlternatives) &&
+      mapboxMap.getSource(UCAN_SOURCES.routeStops) &&
+      mapboxMap.getSource(UCAN_SOURCES.routeTraveler) &&
+      mapboxMap.getLayer(UCAN_LAYERS.routeGlow) &&
+      mapboxMap.getLayer(UCAN_LAYERS.routeMain) &&
+      mapboxMap.getLayer(UCAN_LAYERS.routePulse) &&
+      mapboxMap.getLayer(UCAN_LAYERS.routeStopsHalo) &&
+      mapboxMap.getLayer(UCAN_LAYERS.routeStopsCore) &&
+      mapboxMap.getLayer(UCAN_LAYERS.routeStopsLabel) &&
+      mapboxMap.getLayer(UCAN_LAYERS.routeTravelerHalo) &&
+      mapboxMap.getLayer(UCAN_LAYERS.routeTravelerCore)
+  );
+}
+
+function _queueUcanRouteSync(routeData) {
+  _ucanPendingRouteSync = routeData || _getUcanActiveRoute();
+  if (!mapboxMap || mapboxMap.__ucanRouteSyncQueued) return;
+
+  mapboxMap.__ucanRouteSyncQueued = true;
+  window.setTimeout(() => {
+    if (!mapboxMap) return;
+    mapboxMap.__ucanRouteSyncQueued = false;
+    const pendingRoute = _ucanPendingRouteSync;
+    _ucanPendingRouteSync = null;
+    _updateUcanRouteSources(pendingRoute);
+  }, 160);
+}
+
+function _updateUcanRouteSources(routeData) {
+  if (!mapboxMap) return;
+  const activeRoute = routeData || _getUcanActiveRoute();
+  if (!_hasUcanRouteInfrastructure()) {
+    _queueUcanRouteSync(activeRoute);
+    return;
+  }
+
+  const primarySource = mapboxMap.getSource(UCAN_SOURCES.routePrimary);
+  const alternativesSource = mapboxMap.getSource(UCAN_SOURCES.routeAlternatives);
+  const stopsSource = mapboxMap.getSource(UCAN_SOURCES.routeStops);
+  if (primarySource) primarySource.setData(_buildUcanRouteFeatureCollection(activeRoute));
+  if (alternativesSource) {
+    alternativesSource.setData(_buildUcanAlternativeRouteCollection(activeRoute));
+  }
+  if (stopsSource) stopsSource.setData(_buildUcanRouteStopsCollection(activeRoute));
+
+  if (activeRoute?.primaryRoute?.geometry) {
+    _setUcanTravelerPath(activeRoute);
+  } else {
+    _clearUcanRouteTraveler();
+  }
+
+  _syncUcanRoutePresentation(activeRoute);
+}
+
+function _clearUcanRouteData() {
+  _updateUcanRouteSources(null);
+  _clearUcanRouteTraveler();
+}
+
+function _getUcanGeometryBounds(geometry) {
+  const coordinates = geometry?.coordinates || [];
+  if (!Array.isArray(coordinates) || coordinates.length === 0) return null;
+  const bounds = new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]);
+  coordinates.forEach((coordinate) => bounds.extend(coordinate));
+  return bounds;
+}
+
+function _runUcanCameraSequence(frames) {
+  if (!mapboxMap || !Array.isArray(frames) || frames.length === 0) return 0;
+  const token = ++_ucanMomentToken;
+  mapboxMap.stop();
+  let delay = 0;
+  frames.forEach((frame) => {
+    window.setTimeout(() => {
+      if (!mapboxMap || token !== _ucanMomentToken) return;
+      mapboxMap.easeTo({ ...frame, essential: true });
+    }, delay);
+    delay += Math.max(360, Number(frame.duration) || 0);
+  });
+  return token;
+}
+
+function _playUcanZoneMoment(zoneName, lat, lng, zoom) {
+  if (!mapboxMap) return;
+  const moment = _getUcanZoneMoment(zoneName) || null;
+  const landmark = moment?.landmark || [lng, lat];
+  const approach = moment?.approach || [lng + 0.28, lat + 0.14];
+  const normalizedZone = _normalizeUcanZoneName(zoneName) || zoneName || "Region";
+
+  _setUcanFocusPoint(landmark, normalizedZone, normalizedZone);
+  _runUcanCameraSequence([
+    {
+      center: approach,
+      zoom: moment?.hoverZoom || Math.max(zoom - 1.2, 8.6),
+      pitch: 52,
+      bearing: (moment?.bearing || -18) - 18,
+      duration: 1100,
+    },
+    {
+      center: [lng, lat],
+      zoom: moment?.finalZoom || Math.max(zoom, 10.4),
+      pitch: moment?.pitch || (is3DMode ? 80 : 72),
+      bearing: moment?.bearing || -18,
+      duration: 1700,
+    },
+  ]);
+}
+
+function _playUcanProjectMoment(project, coordinates) {
+  if (!mapboxMap || !Array.isArray(coordinates) || coordinates.length < 2) return;
+  const [lng, lat] = coordinates;
+  const zoneMoment = _getUcanZoneMoment(project?.zone);
+  const label = project?.name || project?.title || "Project";
+  const zoneLabel = _normalizeUcanZoneName(project?.zone) || project?.zone || "";
+  const approach = zoneMoment?.landmark || [lng + 0.1, lat + 0.07];
+  _setUcanFocusPoint([lng, lat], label, zoneLabel);
+  const token = _runUcanCameraSequence([
+    {
+      center: approach,
+      zoom: Math.max(mapboxMap.getZoom(), 12.2),
+      pitch: 64,
+      bearing: (zoneMoment?.bearing || mapboxMap.getBearing() || -18) - 12,
+      duration: 650,
+    },
+    {
+      center: [lng, lat],
+      zoom: Math.max(mapboxMap.getZoom(), 15.4),
+      pitch: is3DMode ? 82 : 76,
+      bearing: (zoneMoment?.bearing || mapboxMap.getBearing() || -18) + 10,
+      duration: 1250,
+    },
+  ]);
+
+  if (_ucanProjectModalTimer) {
+    clearTimeout(_ucanProjectModalTimer);
+  }
+  _ucanProjectModalTimer = window.setTimeout(() => {
+    if (token !== _ucanMomentToken) return;
+    if (typeof openModal === "function") {
+      openModal(project);
+    }
+  }, 980);
+}
+
+function _clearUcanRoadData() {
+  _ucanState.roads = [];
+  _ucanState.roadIds.clear();
+  _ucanHoveredRoadId = null;
+  _queueUcanSync("roads");
+}
+
+function _ingestUcanRoadFeature(feature, category) {
+  const featureId = String(feature?.properties?.id || "");
+  if (!featureId || _ucanState.roadIds.has(featureId)) return;
+  _ucanState.roadIds.add(featureId);
+  _ucanState.roads.push({
+    type: "Feature",
+    id: featureId,
+    properties: {
+      ...feature.properties,
+      category,
+      roadFamily: _isSecondaryRoadCategory(category) ? "secondary" : "main",
+      label:
+        feature.properties["name:ar"] ||
+        feature.properties.name ||
+        feature.properties.ref ||
+        _hwArabicLabel(feature.properties.highway || ""),
+    },
+    geometry: feature.geometry,
+  });
+  _queueUcanSync("roads");
+}
+
+function _ingestUcanPlaceFeature(feature, category) {
+  const featureId = String(feature?.properties?.id || "");
+  if (!featureId || _ucanState.placeIds.has(featureId)) return;
+  _ucanState.placeIds.add(featureId);
+  _ucanState.places.push({
+    type: "Feature",
+    id: featureId,
+    properties: {
+      ...feature.properties,
+      category: category || "other",
+      label:
+        feature.properties?.["name:ar"] ||
+        feature.properties?.name ||
+        feature.properties?.["name:en"] ||
+        "Area",
+    },
+    geometry: feature.geometry,
+  });
+  _queueUcanSync("places");
+}
+
+function _getUcanRoadColorExpression() {
+  return [
+    "match",
+    ["get", "category"],
+    "axis",
+    UCAN_ROAD_COLORS.axis,
+    "expressNamed",
+    UCAN_ROAD_COLORS.expressNamed,
+    "expressUnnamed",
+    UCAN_ROAD_COLORS.expressUnnamed,
+    "mainNamed",
+    UCAN_ROAD_COLORS.mainNamed,
+    "mainUnnamed",
+    UCAN_ROAD_COLORS.mainUnnamed,
+    "secondaryNamed",
+    UCAN_ROAD_COLORS.secondaryNamed,
+    "secondaryUnnamed",
+    UCAN_ROAD_COLORS.secondaryUnnamed,
+    UCAN_ROAD_COLORS.mainNamed,
+  ];
+}
+
+function _getUcanRoadWidthExpression(multiplier = 1) {
+  return [
+    "interpolate",
+    ["linear"],
+    ["zoom"],
+    6,
+    [
+      "match",
+      ["get", "category"],
+      "axis",
+      2.5 * multiplier,
+      "expressNamed",
+      2.2 * multiplier,
+      "expressUnnamed",
+      1.9 * multiplier,
+      "mainNamed",
+      1.7 * multiplier,
+      "mainUnnamed",
+      1.45 * multiplier,
+      "secondaryNamed",
+      1.2 * multiplier,
+      "secondaryUnnamed",
+      0.95 * multiplier,
+      1.5 * multiplier,
+    ],
+    13,
+    [
+      "match",
+      ["get", "category"],
+      "axis",
+      10 * multiplier,
+      "expressNamed",
+      8.8 * multiplier,
+      "expressUnnamed",
+      7.6 * multiplier,
+      "mainNamed",
+      6.6 * multiplier,
+      "mainUnnamed",
+      5.8 * multiplier,
+      "secondaryNamed",
+      4.2 * multiplier,
+      "secondaryUnnamed",
+      3.2 * multiplier,
+      5.4 * multiplier,
+    ],
+  ];
+}
+
+function _getUcanPlaceColorExpression() {
+  return [
+    "match",
+    ["get", "category"],
+    "administrative",
+    UCAN_PLACE_COLORS.administrative,
+    "cityTown",
+    UCAN_PLACE_COLORS.cityTown,
+    "neighbourhood",
+    UCAN_PLACE_COLORS.neighbourhood,
+    "suburb",
+    UCAN_PLACE_COLORS.suburb,
+    "village",
+    UCAN_PLACE_COLORS.village,
+    UCAN_PLACE_COLORS.other,
+  ];
+}
+
+function _getUcanRoadFilter() {
+  const visibleCategories = ROAD_FILTER_CATEGORY_ORDER.filter((category) =>
+    _isRoadCategoryVisible(category),
+  );
+  if (visibleCategories.length === 0) {
+    return ["==", ["get", "category"], "__none__"];
+  }
+  return [
+    "any",
+    ...visibleCategories.map((category) => ["==", ["get", "category"], category]),
+  ];
+}
+
+function _getUcanPlaceFilter() {
+  if (!_placesVisible) {
+    return ["==", ["get", "category"], "__none__"];
+  }
+  const visibleCategories = PLACE_CATEGORY_ORDER.filter((category) =>
+    _isPlaceCategoryVisible(category),
+  );
+  if (visibleCategories.length === 0) {
+    return ["==", ["get", "category"], "__none__"];
+  }
+  return [
+    "any",
+    ...visibleCategories.map((category) => ["==", ["get", "category"], category]),
+  ];
+}
+
+function _getUcanProjectFeatureCollection() {
+  const projects = _getUcanProjectData();
+  return {
+    type: "FeatureCollection",
+    features: projects
+      .map((project, index) => {
+        const lat = Number.parseFloat(project.lat);
+        const lng = Number.parseFloat(project.lng);
+        if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+        const title = project.name || project.title || `Project ${index + 1}`;
+        const price = Number.parseFloat(project.minPrice || project.price || 0) || 0;
+        return {
+          type: "Feature",
+          id: `project-${index}`,
+          properties: {
+            sourceIndex: index,
+            title,
+            developer: project.developer || project.dev || "Unknown developer",
+            zone: project.zone || project.area || "",
+            price,
+          },
+          geometry: { type: "Point", coordinates: [lng, lat] },
+        };
+      })
+      .filter(Boolean),
+  };
+}
+
+function _updateUcanRoadSource() {
+  if (!mapboxMap) return;
+  const source = mapboxMap.getSource(UCAN_SOURCES.roads);
+  if (!source) return;
+  source.setData({ type: "FeatureCollection", features: _ucanState.roads });
+}
+
+function _updateUcanPlaceSource() {
+  if (!mapboxMap) return;
+  const source = mapboxMap.getSource(UCAN_SOURCES.places);
+  if (!source) return;
+  source.setData({ type: "FeatureCollection", features: _ucanState.places });
+}
+
+function _findUcanProject(feature) {
+  const projects = _getUcanProjectData();
+  const index = Number.parseInt(feature?.properties?.sourceIndex, 10);
+  if (Number.isInteger(index) && projects[index]) {
+    return projects[index];
+  }
+  const title = feature?.properties?.title || "";
+  return projects.find((project) => (project.name || project.title) === title) || null;
+}
+
+function _safeSetUcanFilter(layerId, filter) {
+  if (!mapboxMap || !mapboxMap.getLayer(layerId)) return;
+  mapboxMap.setFilter(layerId, filter);
+}
+
+function _safeSetUcanLayout(layerId, name, value) {
+  if (!mapboxMap || !mapboxMap.getLayer(layerId)) return;
+  mapboxMap.setLayoutProperty(layerId, name, value);
+}
+
+function _safeSetUcanPaint(layerId, name, value) {
+  if (!mapboxMap || !mapboxMap.getLayer(layerId)) return;
+  mapboxMap.setPaintProperty(layerId, name, value);
+}
+
+function _customizeUcanBaseStyle() {
+  if (!mapboxMap || _ucanThemePrepared) return;
+  _applyUcanSignatureStyleConfig();
+  const styleLayers = mapboxMap.getStyle()?.layers || [];
+  for (const layer of styleLayers) {
+    try {
+      if (layer.type === "line" && layer.id.includes("road")) {
+        _safeSetUcanPaint(layer.id, "line-opacity", 0.05);
+        _safeSetUcanPaint(layer.id, "line-color", "#0b1224");
+      }
+      if (layer.id.includes("water") && layer.type === "fill") {
+        _safeSetUcanPaint(layer.id, "fill-color", "#031321");
+        _safeSetUcanPaint(layer.id, "fill-opacity", 0.88);
+      }
+      if (layer.type === "symbol" && layer.id.includes("settlement")) {
+        _safeSetUcanPaint(layer.id, "text-color", "#80b9ff");
+        _safeSetUcanPaint(layer.id, "text-halo-color", "rgba(3, 6, 16, 0.82)");
+      }
+      if (layer.type === "fill" && layer.id.includes("landuse")) {
+        _safeSetUcanPaint(layer.id, "fill-opacity", 0.08);
+      }
+      if (layer.type === "background") {
+        _safeSetUcanPaint(layer.id, "background-color", "#040812");
+      }
+    } catch (_) {
+      /* style-specific property; ignore */
+    }
+  }
+  _ucanThemePrepared = true;
+}
+
+function _ensureUcanSourcesAndLayers() {
+  if (!mapboxMap) return;
+  const labelLayerId =
+    mapboxMap
+      .getStyle()
+      ?.layers?.find((layer) => layer.type === "symbol" && layer.layout?.["text-field"])
+      ?.id || undefined;
+
+  if (!mapboxMap.getSource(UCAN_SOURCES.terrain)) {
+    mapboxMap.addSource(UCAN_SOURCES.terrain, {
+      type: "raster-dem",
+      url: "mapbox://mapbox.mapbox-terrain-dem-v1",
+      tileSize: 512,
+      maxzoom: 14,
+    });
+  }
+
+  if (!mapboxMap.getSource(UCAN_SOURCES.projectsClustered)) {
+    mapboxMap.addSource(UCAN_SOURCES.projectsClustered, {
+      type: "geojson",
+      data: { type: "FeatureCollection", features: [] },
+      cluster: true,
+      clusterRadius: 54,
+      clusterMaxZoom: 12,
+    });
+  }
+
+  if (!mapboxMap.getSource(UCAN_SOURCES.projectsRaw)) {
+    mapboxMap.addSource(UCAN_SOURCES.projectsRaw, {
+      type: "geojson",
+      data: { type: "FeatureCollection", features: [] },
+    });
+  }
+
+  if (!mapboxMap.getSource(UCAN_SOURCES.roads)) {
+    mapboxMap.addSource(UCAN_SOURCES.roads, {
+      type: "geojson",
+      data: { type: "FeatureCollection", features: [] },
+      lineMetrics: true,
+    });
+  }
+
+  if (!mapboxMap.getSource(UCAN_SOURCES.places)) {
+    mapboxMap.addSource(UCAN_SOURCES.places, {
+      type: "geojson",
+      data: { type: "FeatureCollection", features: [] },
+    });
+  }
+
+  if (!mapboxMap.getSource(UCAN_SOURCES.routePrimary)) {
+    mapboxMap.addSource(UCAN_SOURCES.routePrimary, {
+      type: "geojson",
+      data: { type: "FeatureCollection", features: [] },
+      lineMetrics: true,
+    });
+  }
+
+  if (!mapboxMap.getSource(UCAN_SOURCES.routeAlternatives)) {
+    mapboxMap.addSource(UCAN_SOURCES.routeAlternatives, {
+      type: "geojson",
+      data: { type: "FeatureCollection", features: [] },
+    });
+  }
+
+  if (!mapboxMap.getSource(UCAN_SOURCES.routeStops)) {
+    mapboxMap.addSource(UCAN_SOURCES.routeStops, {
+      type: "geojson",
+      data: { type: "FeatureCollection", features: [] },
+    });
+  }
+
+  if (!mapboxMap.getSource(UCAN_SOURCES.routeTraveler)) {
+    mapboxMap.addSource(UCAN_SOURCES.routeTraveler, {
+      type: "geojson",
+      data: { type: "FeatureCollection", features: [] },
+    });
+  }
+
+  if (!mapboxMap.getSource(UCAN_SOURCES.focusPoint)) {
+    mapboxMap.addSource(UCAN_SOURCES.focusPoint, {
+      type: "geojson",
+      data: { type: "FeatureCollection", features: [] },
+    });
+  }
+
+  if (!mapboxMap.getLayer(UCAN_LAYERS.projectHeat)) {
+    mapboxMap.addLayer(
+      {
+        id: UCAN_LAYERS.projectHeat,
+        type: "heatmap",
+        source: UCAN_SOURCES.projectsRaw,
+        maxzoom: 13,
+        paint: {
+          "heatmap-weight": [
+            "interpolate",
+            ["linear"],
+            ["coalesce", ["get", "price"], 0],
+            0,
+            0.2,
+            10000000,
+            1,
+          ],
+          "heatmap-intensity": ["interpolate", ["linear"], ["zoom"], 5, 0.7, 12, 2.4],
+          "heatmap-radius": ["interpolate", ["linear"], ["zoom"], 5, 18, 12, 48],
+          "heatmap-opacity": 0.95,
+          "heatmap-color": [
+            "interpolate",
+            ["linear"],
+            ["heatmap-density"],
+            0,
+            "rgba(8, 5, 22, 0)",
+            0.2,
+            "rgba(90, 0, 160, 0.4)",
+            0.45,
+            "rgba(255, 0, 200, 0.6)",
+            0.7,
+            "rgba(255, 210, 0, 0.78)",
+            1,
+            "rgba(255, 255, 255, 0.96)",
+          ],
+        },
+      },
+      labelLayerId,
+    );
+  }
+
+  const projectLayerDefs = [
+    {
+      id: UCAN_LAYERS.clusterGlow,
+      type: "circle",
+      source: UCAN_SOURCES.projectsClustered,
+      filter: ["has", "point_count"],
+      paint: {
+        "circle-color": ["step", ["get", "point_count"], "#ff4dd2", 30, "#c05cff", 120, "#4ce8ff"],
+        "circle-radius": ["step", ["get", "point_count"], 22, 30, 34, 120, 48],
+        "circle-opacity": 0.28,
+        "circle-blur": 0.8,
+      },
+    },
+    {
+      id: UCAN_LAYERS.clusters,
+      type: "circle",
+      source: UCAN_SOURCES.projectsClustered,
+      filter: ["has", "point_count"],
+      paint: {
+        "circle-color": ["step", ["get", "point_count"], "#ff4dd2", 30, "#c05cff", 120, "#4ce8ff"],
+        "circle-radius": ["step", ["get", "point_count"], 16, 30, 24, 120, 36],
+        "circle-stroke-color": "rgba(255,255,255,0.88)",
+        "circle-stroke-width": 1.5,
+        "circle-opacity": 0.92,
+      },
+    },
+    {
+      id: UCAN_LAYERS.clusterCount,
+      type: "symbol",
+      source: UCAN_SOURCES.projectsClustered,
+      filter: ["has", "point_count"],
+      layout: {
+        "text-field": "{point_count_abbreviated}",
+        "text-font": ["DIN Offc Pro Bold", "Arial Unicode MS Bold"],
+        "text-size": 14,
+      },
+      paint: {
+        "text-color": "#ffffff",
+        "text-halo-color": "rgba(8, 8, 18, 0.9)",
+        "text-halo-width": 1.4,
+      },
+    },
+    {
+      id: UCAN_LAYERS.clusterSinglesGlow,
+      type: "circle",
+      source: UCAN_SOURCES.projectsClustered,
+      filter: ["!", ["has", "point_count"]],
+      paint: {
+        "circle-color": "#ffd54d",
+        "circle-radius": 14,
+        "circle-opacity": 0.28,
+        "circle-blur": 0.85,
+      },
+    },
+    {
+      id: UCAN_LAYERS.clusterSingles,
+      type: "circle",
+      source: UCAN_SOURCES.projectsClustered,
+      filter: ["!", ["has", "point_count"]],
+      paint: {
+        "circle-color": "#ffd54d",
+        "circle-radius": 6,
+        "circle-stroke-color": "#100916",
+        "circle-stroke-width": 2,
+      },
+    },
+    {
+      id: UCAN_LAYERS.clusterSinglesTitle,
+      type: "symbol",
+      source: UCAN_SOURCES.projectsClustered,
+      filter: ["!", ["has", "point_count"]],
+      layout: {
+        "text-field": ["get", "title"],
+        "text-font": ["DIN Offc Pro Bold", "Arial Unicode MS Bold"],
+        "text-size": 12,
+        "text-offset": [0, 1.15],
+        "text-anchor": "top",
+      },
+      paint: {
+        "text-color": "#ffe89a",
+        "text-halo-color": "rgba(5, 5, 10, 0.95)",
+        "text-halo-width": 1.4,
+      },
+    },
+    {
+      id: UCAN_LAYERS.rawGlow,
+      type: "circle",
+      source: UCAN_SOURCES.projectsRaw,
+      paint: {
+        "circle-color": [
+          "interpolate",
+          ["linear"],
+          ["coalesce", ["get", "price"], 0],
+          0,
+          "#8fd3ff",
+          10000000,
+          "#ffd54d",
+        ],
+        "circle-radius": 12,
+        "circle-opacity": 0.22,
+        "circle-blur": 0.9,
+      },
+    },
+    {
+      id: UCAN_LAYERS.rawPoint,
+      type: "circle",
+      source: UCAN_SOURCES.projectsRaw,
+      paint: {
+        "circle-color": [
+          "interpolate",
+          ["linear"],
+          ["coalesce", ["get", "price"], 0],
+          0,
+          "#8fd3ff",
+          10000000,
+          "#ffd54d",
+        ],
+        "circle-radius": 6.5,
+        "circle-stroke-color": "#110915",
+        "circle-stroke-width": 2,
+      },
+    },
+    {
+      id: UCAN_LAYERS.rawTitle,
+      type: "symbol",
+      source: UCAN_SOURCES.projectsRaw,
+      layout: {
+        "text-field": ["get", "title"],
+        "text-font": ["DIN Offc Pro Bold", "Arial Unicode MS Bold"],
+        "text-size": 12,
+        "text-offset": [0, 1.15],
+        "text-anchor": "top",
+      },
+      paint: {
+        "text-color": "#ffe89a",
+        "text-halo-color": "rgba(5, 5, 10, 0.95)",
+        "text-halo-width": 1.4,
+      },
+    },
+  ];
+
+  for (const definition of projectLayerDefs) {
+    if (!mapboxMap.getLayer(definition.id)) {
+      mapboxMap.addLayer(definition, labelLayerId);
+    }
+  }
+
+  const roadLayerDefs = [
+    {
+      id: UCAN_LAYERS.roadGlow,
+      type: "line",
+      source: UCAN_SOURCES.roads,
+      layout: { "line-cap": "round", "line-join": "round" },
+      paint: {
+        "line-color": _getUcanRoadColorExpression(),
+        "line-width": _getUcanRoadWidthExpression(2.1),
+        "line-opacity": 0.35,
+        "line-blur": 1.2,
+      },
+    },
+    {
+      id: UCAN_LAYERS.roadStroke,
+      type: "line",
+      source: UCAN_SOURCES.roads,
+      layout: { "line-cap": "round", "line-join": "round" },
+      paint: {
+        "line-color": _getUcanRoadColorExpression(),
+        "line-width": _getUcanRoadWidthExpression(1),
+        "line-opacity": 0.95,
+      },
+    },
+    {
+      id: UCAN_LAYERS.roadFlow,
+      type: "line",
+      source: UCAN_SOURCES.roads,
+      filter: _getUcanMajorRoadFilter(),
+      layout: { "line-cap": "round", "line-join": "round" },
+      paint: {
+        "line-color": "rgba(255,255,255,0.95)",
+        "line-width": _getUcanRoadWidthExpression(0.42),
+        "line-opacity": 0.38,
+        "line-dasharray": UCAN_FLOW_DASH_SEQUENCE[0],
+        "line-blur": 0.1,
+      },
+    },
+    {
+      id: UCAN_LAYERS.roadLabels,
+      type: "symbol",
+      source: UCAN_SOURCES.roads,
+      layout: {
+        "symbol-placement": "line",
+        "text-field": ["get", "label"],
+        "text-font": ["DIN Offc Pro Bold", "Arial Unicode MS Bold"],
+        "text-size": ["interpolate", ["linear"], ["zoom"], 10, 10, 14, 14],
+        "text-letter-spacing": 0.04,
+      },
+      paint: {
+        "text-color": "#f6d7ff",
+        "text-halo-color": "rgba(5, 5, 10, 0.9)",
+        "text-halo-width": 1.5,
+        "text-opacity": 0.85,
+      },
+    },
+    {
+      id: UCAN_LAYERS.roadHit,
+      type: "line",
+      source: UCAN_SOURCES.roads,
+      layout: { "line-cap": "round", "line-join": "round" },
+      paint: {
+        "line-color": "rgba(255,255,255,0)",
+        "line-width": _getUcanRoadWidthExpression(3.4),
+      },
+    },
+    {
+      id: UCAN_LAYERS.roadHover,
+      type: "line",
+      source: UCAN_SOURCES.roads,
+      layout: { "line-cap": "round", "line-join": "round" },
+      filter: ["==", ["get", "id"], "__none__"],
+      paint: {
+        "line-color": "#ffffff",
+        "line-width": _getUcanRoadWidthExpression(1.65),
+        "line-opacity": 0.96,
+        "line-blur": 0.25,
+      },
+    },
+    {
+      id: UCAN_LAYERS.roadFocus,
+      type: "line",
+      source: UCAN_SOURCES.roads,
+      layout: { "line-cap": "round", "line-join": "round" },
+      filter: ["==", ["get", "id"], "__none__"],
+      paint: {
+        "line-color": "#fff6bf",
+        "line-width": _getUcanRoadWidthExpression(2.15),
+        "line-opacity": 1,
+        "line-blur": 0.18,
+      },
+    },
+  ];
+
+  for (const definition of roadLayerDefs) {
+    if (!mapboxMap.getLayer(definition.id)) {
+      mapboxMap.addLayer(definition, labelLayerId);
+    }
+  }
+
+  const routeLayerDefs = [
+    {
+      id: UCAN_LAYERS.routeAlt,
+      type: "line",
+      source: UCAN_SOURCES.routeAlternatives,
+      layout: { "line-cap": "round", "line-join": "round", visibility: "none" },
+      paint: {
+        "line-color": "rgba(140, 186, 255, 0.42)",
+        "line-width": ["interpolate", ["linear"], ["zoom"], 5, 3, 14, 5],
+        "line-opacity": 0.75,
+        "line-dasharray": [1, 2.4],
+      },
+    },
+    {
+      id: UCAN_LAYERS.routeGlow,
+      type: "line",
+      source: UCAN_SOURCES.routePrimary,
+      layout: { "line-cap": "round", "line-join": "round", visibility: "none" },
+      paint: {
+        "line-color": "rgba(77, 203, 255, 0.75)",
+        "line-width": ["interpolate", ["linear"], ["zoom"], 5, 9, 14, 18],
+        "line-opacity": 0.34,
+        "line-blur": 1,
+      },
+    },
+    {
+      id: UCAN_LAYERS.routeMain,
+      type: "line",
+      source: UCAN_SOURCES.routePrimary,
+      layout: { "line-cap": "round", "line-join": "round", visibility: "none" },
+      paint: {
+        "line-color": [
+          "interpolate",
+          ["linear"],
+          ["line-progress"],
+          0,
+          "#74d8ff",
+          0.45,
+          "#ffffff",
+          1,
+          "#ffdc7a",
+        ],
+        "line-width": ["interpolate", ["linear"], ["zoom"], 5, 4.2, 14, 8],
+        "line-opacity": 0.96,
+      },
+    },
+    {
+      id: UCAN_LAYERS.routePulse,
+      type: "line",
+      source: UCAN_SOURCES.routePrimary,
+      layout: { "line-cap": "round", "line-join": "round", visibility: "none" },
+      paint: {
+        "line-color": "rgba(255,255,255,0.98)",
+        "line-width": ["interpolate", ["linear"], ["zoom"], 5, 1.8, 14, 3.2],
+        "line-opacity": 0.9,
+        "line-dasharray": UCAN_FLOW_DASH_SEQUENCE[0],
+      },
+    },
+    {
+      id: UCAN_LAYERS.routeStopsHalo,
+      type: "circle",
+      source: UCAN_SOURCES.routeStops,
+      layout: { visibility: "none" },
+      paint: {
+        "circle-color": "rgba(255, 84, 208, 0.22)",
+        "circle-radius": ["interpolate", ["linear"], ["zoom"], 5, 10, 14, 18],
+      },
+    },
+    {
+      id: UCAN_LAYERS.routeStopsCore,
+      type: "circle",
+      source: UCAN_SOURCES.routeStops,
+      layout: { visibility: "none" },
+      paint: {
+        "circle-color": "#ffe27a",
+        "circle-radius": ["interpolate", ["linear"], ["zoom"], 5, 4.5, 14, 7],
+        "circle-stroke-color": "#09101f",
+        "circle-stroke-width": 2,
+      },
+    },
+    {
+      id: UCAN_LAYERS.routeStopsLabel,
+      type: "symbol",
+      source: UCAN_SOURCES.routeStops,
+      layout: {
+        visibility: "none",
+        "text-field": ["get", "label"],
+        "text-font": ["DIN Offc Pro Bold", "Arial Unicode MS Bold"],
+        "text-size": 11,
+        "text-offset": [0, 1.1],
+        "text-anchor": "top",
+      },
+      paint: {
+        "text-color": "#fff8d6",
+        "text-halo-color": "rgba(5, 9, 20, 0.95)",
+        "text-halo-width": 1.2,
+      },
+    },
+    {
+      id: UCAN_LAYERS.routeTravelerHalo,
+      type: "circle",
+      source: UCAN_SOURCES.routeTraveler,
+      layout: { visibility: "none" },
+      paint: {
+        "circle-color": "rgba(94, 240, 255, 0.26)",
+        "circle-radius": ["interpolate", ["linear"], ["zoom"], 6, 10, 14, 18],
+        "circle-opacity": 0.32,
+      },
+    },
+    {
+      id: UCAN_LAYERS.routeTravelerCore,
+      type: "circle",
+      source: UCAN_SOURCES.routeTraveler,
+      layout: { visibility: "none" },
+      paint: {
+        "circle-color": "#ffffff",
+        "circle-radius": ["interpolate", ["linear"], ["zoom"], 6, 3, 14, 6],
+        "circle-stroke-color": "#1cd6ff",
+        "circle-stroke-width": 2,
+      },
+    },
+    {
+      id: UCAN_LAYERS.focusHalo,
+      type: "circle",
+      source: UCAN_SOURCES.focusPoint,
+      layout: { visibility: "visible" },
+      paint: {
+        "circle-color": "rgba(255, 94, 208, 0.18)",
+        "circle-radius": ["interpolate", ["linear"], ["zoom"], 6, 18, 14, 28],
+        "circle-opacity": 0.24,
+      },
+    },
+    {
+      id: UCAN_LAYERS.focusCore,
+      type: "circle",
+      source: UCAN_SOURCES.focusPoint,
+      layout: { visibility: "visible" },
+      paint: {
+        "circle-color": "#ff6fd8",
+        "circle-radius": ["interpolate", ["linear"], ["zoom"], 6, 5.5, 14, 9],
+        "circle-stroke-color": "#ffffff",
+        "circle-stroke-width": 2,
+      },
+    },
+    {
+      id: UCAN_LAYERS.focusLabel,
+      type: "symbol",
+      source: UCAN_SOURCES.focusPoint,
+      layout: {
+        visibility: "visible",
+        "text-field": ["get", "label"],
+        "text-font": ["DIN Offc Pro Bold", "Arial Unicode MS Bold"],
+        "text-size": 12,
+        "text-offset": [0, 1.4],
+        "text-anchor": "top",
+      },
+      paint: {
+        "text-color": "#fff3cc",
+        "text-halo-color": "rgba(4, 8, 18, 0.95)",
+        "text-halo-width": 1.4,
+      },
+    },
+  ];
+
+  for (const definition of routeLayerDefs) {
+    if (!mapboxMap.getLayer(definition.id)) {
+      mapboxMap.addLayer(definition);
+    }
+  }
+
+  const placeLayerDefs = [
+    {
+      id: UCAN_LAYERS.placeFill,
+      type: "fill",
+      source: UCAN_SOURCES.places,
+      paint: {
+        "fill-color": _getUcanPlaceColorExpression(),
+        "fill-opacity": 0.11,
+      },
+    },
+    {
+      id: UCAN_LAYERS.placeOutline,
+      type: "line",
+      source: UCAN_SOURCES.places,
+      paint: {
+        "line-color": _getUcanPlaceColorExpression(),
+        "line-width": ["interpolate", ["linear"], ["zoom"], 6, 0.8, 12, 2.4],
+        "line-opacity": 0.68,
+      },
+    },
+    {
+      id: UCAN_LAYERS.placeLabels,
+      type: "symbol",
+      source: UCAN_SOURCES.places,
+      layout: {
+        "text-field": ["get", "label"],
+        "text-font": ["DIN Offc Pro Bold", "Arial Unicode MS Bold"],
+        "text-size": ["interpolate", ["linear"], ["zoom"], 6, 10, 12, 15],
+      },
+      paint: {
+        "text-color": "#d7ccff",
+        "text-halo-color": "rgba(5, 5, 10, 0.85)",
+        "text-halo-width": 1.2,
+      },
+    },
+    {
+      id: UCAN_LAYERS.placeHover,
+      type: "line",
+      source: UCAN_SOURCES.places,
+      filter: ["==", ["get", "id"], "__none__"],
+      paint: {
+        "line-color": "#ffffff",
+        "line-width": ["interpolate", ["linear"], ["zoom"], 6, 1.2, 12, 3.2],
+        "line-opacity": 0.95,
+      },
+    },
+  ];
+
+  for (const definition of placeLayerDefs) {
+    if (!mapboxMap.getLayer(definition.id)) {
+      mapboxMap.addLayer(definition, labelLayerId);
+    }
+  }
+
+  if (mapboxMap.getSource("composite") && !mapboxMap.getLayer(UCAN_LAYERS.buildings)) {
+    mapboxMap.addLayer(
+      {
+        id: UCAN_LAYERS.buildings,
+        source: "composite",
+        "source-layer": "building",
+        type: "fill-extrusion",
+        minzoom: 13,
+        filter: ["==", ["get", "extrude"], "true"],
+        paint: {
+          "fill-extrusion-color": [
+            "interpolate",
+            ["linear"],
+            ["coalesce", ["get", "height"], 0],
+            0,
+            "#0f1022",
+            120,
+            "#1f1f3f",
+          ],
+          "fill-extrusion-base": ["coalesce", ["get", "min_height"], 0],
+          "fill-extrusion-height": ["*", ["coalesce", ["get", "height"], 12], 1.2],
+          "fill-extrusion-opacity": 0.84,
+          "fill-extrusion-vertical-gradient": true,
+        },
+      },
+      labelLayerId,
+    );
+  }
+
+  _bindUcanInteractions();
+  _updateUcanRoadSource();
+  _updateUcanPlaceSource();
+  _updateUcanRouteSources();
+  syncDataToMapbox();
+  _syncUcanSceneTheme();
+  _ensureUcanAnimationLoop();
+}
+
+function _closeUcanClusterPopup() {
+  if (_ucanClusterPopup) {
+    _ucanClusterPopup.remove();
+    _ucanClusterPopup = null;
+  }
+}
+
+function _showUcanRoadPopup(feature, lngLat) {
+  if (_ucanRoadPopup) {
+    _ucanRoadPopup.remove();
+  }
+  _ucanRoadPopup = new mapboxgl.Popup({
+    closeButton: false,
+    closeOnMove: false,
+    offset: 12,
+    className: "ucan-road-popup",
+  })
+    .setLngLat(lngLat)
+    .setHTML(_buildRoadPopup({ properties: feature.properties }))
+    .addTo(mapboxMap);
+}
+
+function _setUcanHoveredRoad(feature) {
+  const roadId = String(feature?.properties?.id || "__none__");
+  if (roadId === _ucanHoveredRoadId) return;
+  _ucanHoveredRoadId = roadId;
+  _safeSetUcanFilter(UCAN_LAYERS.roadHover, ["==", ["get", "id"], roadId]);
+}
+
+function _clearUcanHoveredRoad() {
+  _ucanHoveredRoadId = null;
+  _safeSetUcanFilter(UCAN_LAYERS.roadHover, ["==", ["get", "id"], "__none__"]);
+  if (_ucanRoadPopup) {
+    _ucanRoadPopup.remove();
+    _ucanRoadPopup = null;
+  }
+}
+
+function _setUcanHoveredPlace(feature) {
+  const placeId = String(feature?.properties?.id || "__none__");
+  if (placeId === _ucanHoveredPlaceId) return;
+  _ucanHoveredPlaceId = placeId;
+  _safeSetUcanFilter(UCAN_LAYERS.placeHover, ["==", ["get", "id"], placeId]);
+}
+
+function _clearUcanHoveredPlace() {
+  _ucanHoveredPlaceId = null;
+  _safeSetUcanFilter(UCAN_LAYERS.placeHover, ["==", ["get", "id"], "__none__"]);
+}
+
+function _focusUcanRoadSearch(entry) {
+  if (!mapboxMap) return;
+  const terms = [entry.key, entry.groupKey].filter(Boolean);
+  const filter =
+    terms.length > 0
+      ? [
+          "any",
+          ...terms.flatMap((value) => [
+            ["==", ["get", "roadIdentityBaseKey"], value],
+            ["==", ["get", "roadIdentityClusterKey"], value],
+            ["==", ["get", "id"], value],
+          ]),
+        ]
+      : ["==", ["get", "id"], "__none__"];
+  _safeSetUcanFilter(UCAN_LAYERS.roadFocus, filter);
+  mapboxMap.fitBounds(
+    [
+      [entry.lngMin, entry.latMin],
+      [entry.lngMax, entry.latMax],
+    ],
+    {
+      padding: { top: 140, right: 80, bottom: 120, left: 420 },
+      maxZoom: 15.5,
+      duration: 1800,
+    },
+  );
+}
+
+function _openUcanProject(feature) {
+  const project = _findUcanProject(feature);
+  if (!project) return;
+  _playUcanProjectMoment(project, feature.geometry.coordinates);
+}
+
+function _bindUcanInteractions() {
+  if (!mapboxMap || mapboxMap.__ucanBound) return;
+  mapboxMap.__ucanBound = true;
+
+  const pointLayers = [UCAN_LAYERS.clusterSingles, UCAN_LAYERS.rawPoint];
+  pointLayers.forEach((layerId) => {
+    mapboxMap.on("mouseenter", layerId, () => {
+      mapboxMap.getCanvas().style.cursor = "pointer";
+    });
+    mapboxMap.on("mouseleave", layerId, () => {
+      mapboxMap.getCanvas().style.cursor = "";
+    });
+    mapboxMap.on("click", layerId, (event) => {
+      const feature = event.features?.[0];
+      if (!feature) return;
+      _openUcanProject(feature);
+    });
+  });
+
+  mapboxMap.on("mouseenter", UCAN_LAYERS.clusters, () => {
+    mapboxMap.getCanvas().style.cursor = "pointer";
+  });
+  mapboxMap.on("mouseleave", UCAN_LAYERS.clusters, () => {
+    mapboxMap.getCanvas().style.cursor = "";
+    _closeUcanClusterPopup();
+  });
+  mapboxMap.on("mousemove", UCAN_LAYERS.clusters, (event) => {
+    const feature = event.features?.[0];
+    if (!feature) return;
+    _closeUcanClusterPopup();
+    _ucanClusterPopup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnMove: false,
+      className: "ucan-cluster-popup",
+      offset: 14,
+    })
+      .setLngLat(event.lngLat)
+      .setHTML(`<div class="pct-count">${feature.properties.point_count_abbreviated} projects</div><div class="pct-row">Click to dive into this cluster</div>`)
+      .addTo(mapboxMap);
+  });
+  mapboxMap.on("click", UCAN_LAYERS.clusters, (event) => {
+    const feature = event.features?.[0];
+    if (!feature) return;
+    const clusterId = feature.properties.cluster_id;
+    mapboxMap
+      .getSource(UCAN_SOURCES.projectsClustered)
+      .getClusterExpansionZoom(clusterId, (error, zoom) => {
+        if (error) return;
+        mapboxMap.easeTo({
+          center: feature.geometry.coordinates,
+          zoom,
+          pitch: is3DMode ? 74 : 64,
+          duration: 1600,
+        });
+      });
+  });
+
+  mapboxMap.on("mouseenter", UCAN_LAYERS.roadHit, () => {
+    mapboxMap.getCanvas().style.cursor = "pointer";
+  });
+  mapboxMap.on("mouseleave", UCAN_LAYERS.roadHit, () => {
+    mapboxMap.getCanvas().style.cursor = "";
+    _clearUcanHoveredRoad();
+  });
+  mapboxMap.on("mousemove", UCAN_LAYERS.roadHit, (event) => {
+    const feature = event.features?.[0];
+    if (!feature) return;
+    _setUcanHoveredRoad(feature);
+    _showUcanRoadPopup(feature, event.lngLat);
+  });
+  mapboxMap.on("click", UCAN_LAYERS.roadHit, (event) => {
+    const feature = event.features?.[0];
+    if (!feature) return;
+    _setUcanHoveredRoad(feature);
+    _showUcanRoadPopup(feature, event.lngLat);
+  });
+
+  mapboxMap.on("mouseenter", UCAN_LAYERS.placeFill, () => {
+    mapboxMap.getCanvas().style.cursor = "pointer";
+  });
+  mapboxMap.on("mouseleave", UCAN_LAYERS.placeFill, () => {
+    mapboxMap.getCanvas().style.cursor = "";
+    _clearUcanHoveredPlace();
+  });
+  mapboxMap.on("mousemove", UCAN_LAYERS.placeFill, (event) => {
+    const feature = event.features?.[0];
+    if (!feature) return;
+    _setUcanHoveredPlace(feature);
+  });
+  mapboxMap.on("click", UCAN_LAYERS.placeFill, (event) => {
+    const feature = event.features?.[0];
+    if (!feature) return;
+    _setUcanHoveredPlace(feature);
+    _showPlacePanel(feature);
+  });
+}
+
+function _syncUcanRoadPresentation() {
+  if (!mapboxMap || !mapboxMap.getSource(UCAN_SOURCES.roads)) return;
+  const filter = _getUcanRoadFilter();
+  const roadsVisible = _roadsVisible && _ucanState.roads.length > 0;
+  const baseOpacity = _roadHoverOnlyMode ? 0 : Math.max(0.16, 0.94 * _roadOpacityMultiplier);
+  const glowOpacity = _roadHoverOnlyMode ? 0 : Math.max(0.12, 0.32 * _roadOpacityMultiplier);
+
+  [UCAN_LAYERS.roadGlow, UCAN_LAYERS.roadStroke, UCAN_LAYERS.roadLabels, UCAN_LAYERS.roadHit].forEach((layerId) => {
+    _safeSetUcanFilter(layerId, filter);
+    _safeSetUcanLayout(layerId, "visibility", roadsVisible ? "visible" : "none");
+  });
+  _safeSetUcanFilter(UCAN_LAYERS.roadFlow, ["all", filter, _getUcanMajorRoadFilter()]);
+  _safeSetUcanLayout(
+    UCAN_LAYERS.roadFlow,
+    "visibility",
+    roadsVisible && !_roadHoverOnlyMode ? "visible" : "none",
+  );
+  _safeSetUcanPaint(UCAN_LAYERS.roadGlow, "line-opacity", glowOpacity);
+  _safeSetUcanPaint(UCAN_LAYERS.roadStroke, "line-opacity", baseOpacity);
+  _safeSetUcanPaint(
+    UCAN_LAYERS.roadFlow,
+    "line-opacity",
+    roadsVisible && !_roadHoverOnlyMode ? Math.max(0.2, 0.34 * _roadOpacityMultiplier) : 0,
+  );
+  _safeSetUcanLayout(
+    UCAN_LAYERS.roadLabels,
+    "visibility",
+    roadsVisible && !_roadHoverOnlyMode ? "visible" : "none",
+  );
+  _safeSetUcanLayout(UCAN_LAYERS.roadHit, "visibility", roadsVisible ? "visible" : "none");
+}
+
+function _syncUcanPlacePresentation() {
+  if (!mapboxMap || !mapboxMap.isStyleLoaded()) return;
+  const filter = _getUcanPlaceFilter();
+  const placesVisible = _placesVisible && _ucanState.places.length > 0;
+  [UCAN_LAYERS.placeFill, UCAN_LAYERS.placeOutline, UCAN_LAYERS.placeLabels].forEach((layerId) => {
+    _safeSetUcanFilter(layerId, filter);
+    _safeSetUcanLayout(layerId, "visibility", placesVisible ? "visible" : "none");
+  });
+}
+
+function _syncUcanProjectPresentation() {
+  if (!mapboxMap || !mapboxMap.isStyleLoaded()) return;
+  const showProjects = _projectsVisible;
+  const showClusterMode = showProjects && !isHeatmapMode && isClusterView;
+  const showRawMode = showProjects && !isHeatmapMode && !isClusterView;
+  const showLabels = showProjects && isLabelsAlwaysVisible;
+
+  _safeSetUcanLayout(UCAN_LAYERS.projectHeat, "visibility", showProjects && isHeatmapMode ? "visible" : "none");
+  [UCAN_LAYERS.clusterGlow, UCAN_LAYERS.clusters, UCAN_LAYERS.clusterCount].forEach((layerId) => {
+    _safeSetUcanLayout(layerId, "visibility", showClusterMode ? "visible" : "none");
+  });
+  [UCAN_LAYERS.clusterSinglesGlow, UCAN_LAYERS.clusterSingles].forEach((layerId) => {
+    _safeSetUcanLayout(layerId, "visibility", showClusterMode ? "visible" : "none");
+  });
+  _safeSetUcanLayout(UCAN_LAYERS.clusterSinglesTitle, "visibility", showClusterMode && showLabels ? "visible" : "none");
+  [UCAN_LAYERS.rawGlow, UCAN_LAYERS.rawPoint].forEach((layerId) => {
+    _safeSetUcanLayout(layerId, "visibility", showRawMode ? "visible" : "none");
+  });
+  _safeSetUcanLayout(UCAN_LAYERS.rawTitle, "visibility", showRawMode && showLabels ? "visible" : "none");
+}
+
+function _syncUcanSceneTheme() {
+  if (!mapboxMap || !mapboxMap.isStyleLoaded()) return;
+  _customizeUcanBaseStyle();
+  _applyUcanSignatureStyleConfig();
+  mapboxMap.setFog({
+    range: [0.45, 10],
+    color: "#040915",
+    "high-color": is3DMode ? "#ff4dd2" : "#4bd6ff",
+    "space-color": "#010207",
+    "horizon-blend": 0.28,
+    "star-intensity": is3DMode ? 0.92 : 0.55,
+  });
+  mapboxMap.setTerrain({
+    source: UCAN_SOURCES.terrain,
+    exaggeration: is3DMode ? 2.45 : 1.75,
+  });
+  if (mapboxMap.getLayer(UCAN_LAYERS.buildings)) {
+    _safeSetUcanPaint(
+      UCAN_LAYERS.buildings,
+      "fill-extrusion-height",
+      ["*", ["coalesce", ["get", "height"], 12], is3DMode ? 1.7 : 1.2],
+    );
+    _safeSetUcanPaint(UCAN_LAYERS.buildings, "fill-extrusion-opacity", is3DMode ? 0.92 : 0.76);
+  }
+  _syncUcanRoadPresentation();
+  _syncUcanPlacePresentation();
+  _syncUcanProjectPresentation();
+  _syncUcanRoutePresentation();
+}
+
+function _playUcanIntro() {
+  if (!mapboxMap || _ucanIntroPlayed) return;
+  _ucanIntroPlayed = true;
+  mapboxMap.jumpTo({
+    center: [12, 20],
+    zoom: 2.8,
+    pitch: 10,
+    bearing: 0,
+  });
+  requestAnimationFrame(() => {
+    mapboxMap.easeTo({
+      ...UCAN_DEFAULT_CAMERA,
+      duration: 3600,
+      essential: true,
+    });
+  });
+}
+
+function initMapboxUcan() {
+  if (mapboxMap) {
+    mapboxMap.resize();
+    _syncUcanSceneTheme();
+    syncDataToMapbox();
+    _updateUcanRouteSources();
+    return true;
+  }
+
+  const accessToken = _resolveUcanMapboxToken() || _promptForUcanMapboxToken();
+  if (!_isLikelyUcanMapboxToken(accessToken)) {
+    notifyRouteMessage(
+      "UCAN needs a Mapbox public token. Set window.__UCAN_MAPBOX_TOKEN__ or paste one when prompted.",
+      "info",
+    );
+    return false;
+  }
+
+  mapboxgl.accessToken = accessToken;
+  const bootstrap = _getUcanMapBootstrapOptions();
+  mapboxMap = new mapboxgl.Map({
+    container: "mapbox-map",
+    style: bootstrap.style,
+    config: bootstrap.config,
+    center: UCAN_DEFAULT_CAMERA.center,
+    zoom: UCAN_DEFAULT_CAMERA.zoom,
+    pitch: UCAN_DEFAULT_CAMERA.pitch,
+    bearing: UCAN_DEFAULT_CAMERA.bearing,
+    antialias: true,
+    projection: "globe",
+    maxZoom: 18,
+  });
+
+  mapboxMap.addControl(
+    new mapboxgl.NavigationControl({ showZoom: true, showCompass: true, visualizePitch: true }),
+    "bottom-right",
+  );
+  mapboxMap.addControl(new mapboxgl.ScaleControl({ unit: "metric", maxWidth: 120 }));
+
+  mapboxMap.on("load", () => {
+    _ensureUcanSourcesAndLayers();
+    _playUcanIntro();
+  });
+
+  return true;
+}
+
+function syncDataToMapbox() {
+  if (!mapboxMap || !mapboxMap.isStyleLoaded()) {
+    _ucanProjectsDirty = true;
+    return;
+  }
+
+  const geojson = _getUcanProjectFeatureCollection();
+  const clusteredSource = mapboxMap.getSource(UCAN_SOURCES.projectsClustered);
+  const rawSource = mapboxMap.getSource(UCAN_SOURCES.projectsRaw);
+  if (clusteredSource) clusteredSource.setData(geojson);
+  if (rawSource) rawSource.setData(geojson);
+  _syncUcanProjectPresentation();
+  _updateUcanRouteSources();
+}
+
+

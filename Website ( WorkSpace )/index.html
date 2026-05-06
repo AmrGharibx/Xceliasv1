@@ -29,9 +29,9 @@
     <link rel="preload" href="/data.json" as="fetch" crossorigin="anonymous" />
 
     <!-- Preload critical JS/CSS -->
-    <link rel="preload" href="/app.js?v=20260421-arabic" as="script" />
-    <link rel="preload" href="/styles.css?v=20260421-arabic" as="style" />
-    <link rel="stylesheet" href="/styles.css?v=20260421-arabic" />
+    <link rel="preload" href="/app.js?v=20260506-ucan-runtime-token" as="script" />
+    <link rel="preload" href="/styles.css?v=20260505-ucan-fix" as="style" />
+    <link rel="stylesheet" href="/styles.css?v=20260505-ucan-fix" />
 
     <!-- Preconnect for Performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -55,6 +55,13 @@
       rel="stylesheet"
     />
     <!-- P5: Font Awesome removed � inline SVG icons used instead (saves ~294KB) -->
+
+    <!-- Mapbox GL JS -->
+    <link
+      href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css"
+      rel="stylesheet"
+    />
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js" defer></script>
 
     <!-- Leaflet CSS -->
     <link
@@ -102,7 +109,7 @@
     <!-- P5: ScrollTrigger removed � never used (saves ~42KB) -->
 
     <!-- Main App - defer to not block -->
-    <script src="app.js?v=20260421-arabic" defer></script>
+    <script src="app.js?v=20260506-ucan-runtime-token" defer></script>
 
     <!-- Service Worker Registration -->
     <script src="website-sw.js"></script>
@@ -2315,6 +2322,14 @@
       </div>
     </div>
 
+    <!-- Mapbox GL Container (for UCAN extreme view) -->
+    <div
+      id="mapbox-map"
+      class="mapbox-map-shell"
+      role="application"
+      aria-label="UCAN Mapbox Scene"
+    ></div>
+
     <!-- Map Controls -->
 
     <div class="top-controls-container">
@@ -3021,6 +3036,35 @@
           <circle cx="12" cy="12" r="3"></circle>
         </svg>
       </div>
+
+      <!-- UCAN Extreme View Button -->
+      <div
+        class="map-btn map-btn-ucan"
+        id="btn-ucan"
+        data-layer="ucan"
+        title="UCAN Extreme View"
+        onclick="switchMapLayer('ucan')"
+        role="button"
+        tabindex="0"
+        aria-pressed="false"
+        aria-label="UCAN Extreme View"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+        </svg>
+      </div>
+
       <div
         class="map-btn"
         title="Reset View"

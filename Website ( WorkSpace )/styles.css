@@ -7544,6 +7544,142 @@ input:focus-visible {
   opacity: 0.5;
   transition: opacity 0.2s;
 }
+
+/* ── UCAN Mapbox Mode ─────────────────────────────────────────────── */
+#mapbox-map.mapbox-map-shell,
+#mapbox-map.mapbox-map-shell.mapboxgl-map {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  width: 100vw;
+  height: 100vh;
+  display: none;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(125, 57, 255, 0.22), transparent 30%),
+    radial-gradient(circle at 80% 18%, rgba(0, 217, 255, 0.18), transparent 28%),
+    linear-gradient(180deg, #06060d 0%, #090815 48%, #040308 100%);
+}
+
+body.map-mode-ucan #mapbox-map.mapbox-map-shell,
+body.map-mode-ucan #mapbox-map.mapbox-map-shell.mapboxgl-map {
+  display: block;
+}
+
+body.map-mode-ucan {
+  --surface-glass: rgba(9, 8, 20, 0.74);
+  --glass-border: rgba(142, 91, 255, 0.28);
+  --glass-shadow:
+    0 16px 40px rgba(0, 0, 0, 0.46),
+    0 0 80px rgba(94, 58, 255, 0.18);
+}
+
+body.map-mode-ucan .sidebar,
+body.map-mode-ucan .road-panel,
+body.map-mode-ucan .mode-switcher,
+body.map-mode-ucan .legend-container,
+body.map-mode-ucan .dock-content,
+body.map-mode-ucan .search-box,
+body.map-mode-ucan .filters-panel {
+  background:
+    linear-gradient(180deg, rgba(12, 10, 28, 0.88) 0%, rgba(8, 7, 19, 0.78) 100%),
+    radial-gradient(circle at top left, rgba(255, 77, 210, 0.12), transparent 34%);
+  border-color: rgba(170, 105, 255, 0.3);
+  box-shadow:
+    0 20px 48px rgba(0, 0, 0, 0.46),
+    0 0 0 1px rgba(255, 255, 255, 0.03),
+    0 0 40px rgba(78, 218, 255, 0.08);
+}
+
+body.map-mode-ucan .top-controls-container > * {
+  backdrop-filter: blur(18px) saturate(145%);
+  -webkit-backdrop-filter: blur(18px) saturate(145%);
+}
+
+.map-btn-ucan {
+  background: linear-gradient(135deg, #15002c 0%, #2d0f6f 52%, #023851 100%);
+  border-color: rgba(255, 77, 210, 0.55);
+  color: #fff;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 0 14px rgba(255, 77, 210, 0.32),
+    0 0 28px rgba(76, 232, 255, 0.18);
+}
+
+.map-btn-ucan:hover,
+.map-btn-ucan.active {
+  background: linear-gradient(135deg, #390062 0%, #7f1dff 55%, #0fb5ff 100%);
+  box-shadow:
+    0 0 16px rgba(255, 77, 210, 0.42),
+    0 0 34px rgba(76, 232, 255, 0.3),
+    0 10px 26px rgba(18, 8, 34, 0.4);
+}
+
+body.map-mode-ucan .map-btn {
+  background: linear-gradient(180deg, rgba(15, 13, 31, 0.88), rgba(8, 8, 18, 0.82));
+  border-color: rgba(126, 97, 255, 0.24);
+  color: #d4c8ff;
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+}
+
+body.map-mode-ucan .map-btn:hover,
+body.map-mode-ucan .map-btn.active {
+  background: linear-gradient(135deg, #6c1dff 0%, #ff4dd2 56%, #3de7ff 100%);
+  color: #fff;
+  box-shadow:
+    0 10px 32px rgba(108, 29, 255, 0.36),
+    0 0 24px rgba(255, 77, 210, 0.28);
+}
+
+body.map-mode-ucan .mode-btn.active {
+  background: linear-gradient(135deg, rgba(112, 42, 255, 0.92), rgba(255, 77, 210, 0.9));
+  color: #fff;
+  box-shadow: 0 10px 28px rgba(255, 77, 210, 0.22);
+}
+
+body.map-mode-ucan .logo-main {
+  background: linear-gradient(135deg, #79f1ff 0%, #ff4dd2 52%, #ffe27a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+body.map-mode-ucan .road-panel-title-text,
+body.map-mode-ucan .legend-title,
+body.map-mode-ucan .dock-title {
+  color: #f2e9ff;
+}
+
+body.map-mode-ucan .mapboxgl-ctrl-group,
+body.map-mode-ucan .mapboxgl-ctrl.mapboxgl-ctrl-scale {
+  background: rgba(10, 9, 20, 0.82);
+  border: 1px solid rgba(126, 97, 255, 0.25);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.36);
+  color: #f4efff;
+}
+
+body.map-mode-ucan .mapboxgl-ctrl button {
+  color: #f4efff;
+}
+
+.ucan-road-popup .mapboxgl-popup-content,
+.ucan-cluster-popup .mapboxgl-popup-content {
+  background:
+    linear-gradient(180deg, rgba(15, 13, 31, 0.94), rgba(8, 8, 18, 0.92)),
+    radial-gradient(circle at top left, rgba(255, 77, 210, 0.14), transparent 38%);
+  color: #f7f3ff;
+  border: 1px solid rgba(168, 108, 255, 0.34);
+  border-radius: 16px;
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.42),
+    0 0 24px rgba(76, 232, 255, 0.14);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+}
+
+.ucan-road-popup .mapboxgl-popup-tip,
+.ucan-cluster-popup .mapboxgl-popup-tip {
+  border-top-color: rgba(15, 13, 31, 0.94);
+}
 .road-panel-close:hover {
   opacity: 1;
 }

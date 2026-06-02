@@ -29,9 +29,9 @@
     <link rel="preload" href="/data.json" as="fetch" crossorigin="anonymous" />
 
     <!-- Preload critical JS/CSS -->
-    <link rel="preload" href="/app.js?v=20260506-ucan-runtime-token" as="script" />
-    <link rel="preload" href="/styles.css?v=20260505-ucan-fix" as="style" />
-    <link rel="stylesheet" href="/styles.css?v=20260505-ucan-fix" />
+    <link rel="preload" href="/app.js?v=20260506-ucan-twin-phase3" as="script" />
+    <link rel="preload" href="/styles.css?v=20260506-ucan-twin-phase3" as="style" />
+    <link rel="stylesheet" href="/styles.css?v=20260506-ucan-twin-phase3" />
 
     <!-- Preconnect for Performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -109,7 +109,7 @@
     <!-- P5: ScrollTrigger removed � never used (saves ~42KB) -->
 
     <!-- Main App - defer to not block -->
-    <script src="app.js?v=20260506-ucan-runtime-token" defer></script>
+    <script src="app.js?v=20260506-ucan-twin-phase3" defer></script>
 
     <!-- Service Worker Registration -->
     <script src="website-sw.js"></script>
@@ -2329,6 +2329,162 @@
       role="application"
       aria-label="UCAN Mapbox Scene"
     ></div>
+
+    <aside
+      id="ucan-twin-panel"
+      class="ucan-twin-panel"
+      aria-label="UCAN digital twin controls"
+    >
+      <div class="ucan-twin-panel-header">
+        <div class="ucan-twin-kicker">UCAN DIGITAL TWIN</div>
+        <h2 class="ucan-twin-title">Phase 1 Scene Core</h2>
+        <p class="ucan-twin-copy">
+          District energy, skyline towers, and cinematic landmark fly-ins for
+          the first digital-twin rollout.
+        </p>
+      </div>
+
+      <p id="ucan-twin-status" class="ucan-twin-status" aria-live="polite">
+        Hyper Night live: district energy · skyline towers · landmark cores.
+      </p>
+
+      <section class="ucan-twin-section" aria-label="Scene preset phase">
+        <div class="ucan-twin-section-head">
+          <span class="ucan-twin-phase-tag">Phase 01</span>
+          <span class="ucan-twin-section-title">Scene Preset</span>
+        </div>
+        <div class="ucan-twin-preset-grid">
+          <button type="button" class="ucan-twin-preset-btn" data-ucan-preset="hypernight">
+            Hyper Night
+          </button>
+          <button type="button" class="ucan-twin-preset-btn" data-ucan-preset="dawn">
+            Dawn Lift
+          </button>
+          <button type="button" class="ucan-twin-preset-btn" data-ucan-preset="analyst">
+            Day Analyst
+          </button>
+          <button type="button" class="ucan-twin-preset-btn" data-ucan-preset="pulsegrid">
+            Pulse Grid
+          </button>
+        </div>
+      </section>
+
+      <section class="ucan-twin-section" aria-label="Scene systems phase">
+        <div class="ucan-twin-section-head">
+          <span class="ucan-twin-phase-tag">Phase 02</span>
+          <span class="ucan-twin-section-title">Scene Systems</span>
+        </div>
+        <label class="ucan-twin-toggle-row" for="ucan-twin-districts">
+          <input type="checkbox" id="ucan-twin-districts" checked />
+          <span>
+            <strong>District Energy</strong>
+            <small>Aggregated zone intensity from live project density and pricing.</small>
+          </span>
+        </label>
+        <label class="ucan-twin-toggle-row" for="ucan-twin-project-towers">
+          <input type="checkbox" id="ucan-twin-project-towers" checked />
+          <span>
+            <strong>Skyline Towers</strong>
+            <small>Project-driven extrusions that turn inventory into a skyline.</small>
+          </span>
+        </label>
+        <label class="ucan-twin-toggle-row" for="ucan-twin-landmarks">
+          <input type="checkbox" id="ucan-twin-landmarks" checked />
+          <span>
+            <strong>Landmark Cores</strong>
+            <small>Signature vertical anchors for the main Egyptian growth zones.</small>
+          </span>
+        </label>
+      </section>
+
+      <section class="ucan-twin-section" aria-label="Twin tour phase">
+        <div class="ucan-twin-section-head">
+          <span class="ucan-twin-phase-tag">Phase 04</span>
+          <span class="ucan-twin-section-title">Twin Tour</span>
+        </div>
+        <div class="ucan-twin-actions">
+          <button type="button" id="ucan-twin-tour" class="ucan-twin-action-btn primary">
+            Start Twin Tour
+          </button>
+          <button type="button" id="ucan-twin-reset" class="ucan-twin-action-btn secondary">
+            Reset Scene
+          </button>
+        </div>
+      </section>
+
+      <section class="ucan-twin-section" aria-label="District intelligence phase">
+        <div class="ucan-twin-section-head">
+          <span class="ucan-twin-phase-tag">Phase 03</span>
+          <span class="ucan-twin-section-title">District Intelligence</span>
+        </div>
+        <div class="ucan-twin-district-card">
+          <div class="ucan-twin-district-head">
+            <div>
+              <div id="ucan-twin-district-title" class="ucan-twin-district-title-text">
+                Waiting for live districts
+              </div>
+              <p id="ucan-twin-district-summary" class="ucan-twin-district-summary">
+                Hover a district core or use the hotspot list once project data is live.
+              </p>
+            </div>
+            <span id="ucan-twin-district-momentum" class="ucan-twin-district-pill">
+              Standby
+            </span>
+          </div>
+
+          <div class="ucan-twin-metric-grid">
+            <div class="ucan-twin-metric-card">
+              <span class="ucan-twin-metric-label">Projects</span>
+              <strong id="ucan-twin-district-project-count" class="ucan-twin-metric-value">
+                0
+              </strong>
+            </div>
+            <div class="ucan-twin-metric-card">
+              <span class="ucan-twin-metric-label">Developers</span>
+              <strong id="ucan-twin-district-developer-count" class="ucan-twin-metric-value">
+                0
+              </strong>
+            </div>
+            <div class="ucan-twin-metric-card">
+              <span class="ucan-twin-metric-label">Avg Price</span>
+              <strong id="ucan-twin-district-avg-price" class="ucan-twin-metric-value">
+                N/A
+              </strong>
+            </div>
+            <div class="ucan-twin-metric-card">
+              <span class="ucan-twin-metric-label">Peak Price</span>
+              <strong id="ucan-twin-district-peak-price" class="ucan-twin-metric-value">
+                N/A
+              </strong>
+            </div>
+          </div>
+
+          <div class="ucan-twin-highlight-card">
+            <span class="ucan-twin-highlight-label">Lead Project</span>
+            <strong id="ucan-twin-district-highlight" class="ucan-twin-highlight-title">
+              No lead project yet.
+            </strong>
+            <span id="ucan-twin-district-highlight-price" class="ucan-twin-highlight-price">
+              Awaiting pricing signal.
+            </span>
+          </div>
+
+          <button
+            type="button"
+            id="ucan-twin-focus-district"
+            class="ucan-twin-action-btn secondary ucan-twin-action-full"
+            disabled
+          >
+            Focus District
+          </button>
+        </div>
+
+        <div class="ucan-twin-hotspots">
+          <div class="ucan-twin-hotspots-head">Top Active Districts</div>
+          <div id="ucan-twin-hotspots-list" class="ucan-twin-hotspots-list"></div>
+        </div>
+      </section>
+    </aside>
 
     <!-- Map Controls -->
 

@@ -1858,6 +1858,7 @@ const MAP_VIEW_DEFAULTS = {
   hybrid: { roadTiles: true, places: false, roadsVisible: true },
 };
 let currentMapLayer = _readStoredMapLayer();
+let _ucanTwinRuntimeReady = false;
 
 function _isAtlasMode() {
   return currentMapLayer === "atlas";
@@ -1874,6 +1875,9 @@ function _syncMapModeClass(mode) {
     root.classList.toggle(`map-mode-${name}`, name === mode);
   });
   root.classList.toggle("map-mode-ucan", mode === "ucan");
+  if (_ucanTwinRuntimeReady && typeof _updateUcanTwinUiState === "function") {
+    _updateUcanTwinUiState();
+  }
 }
 
 function _roadTileOpacityForMode() {
@@ -2685,7 +2689,11 @@ async function _fetchOverpass(query, timeoutMs = 40000) {
     if (r.ok) return r;
     console.warn("Overpass proxy: HTTP", r.status, "— falling back to direct");
   } catch (e) {
-    console.warn("Overpass proxy failed:", e.message, "— falling back to direct");
+    console.warn(
+      "Overpass proxy failed:",
+      e.message,
+      "— falling back to direct",
+    );
   }
 
   // localhost or proxy failed: try direct mirrors
@@ -2809,7 +2817,11 @@ function _parseJsonWorker(str) {
  * @param {number}   chunkSize  Features per frame (default 500)
  * @returns {Promise<number>}   Number of features actually added (dedup applied)
  */
-async function _addFeaturesChunked(features, onProgress, chunkSize = DEVICE_CHUNK_SIZE) {
+async function _addFeaturesChunked(
+  features,
+  onProgress,
+  chunkSize = DEVICE_CHUNK_SIZE,
+) {
   let added = 0;
   let chunkIndex = 0;
   const total = features.length;
@@ -2853,7 +2865,11 @@ async function _addFeaturesChunked(features, onProgress, chunkSize = DEVICE_CHUN
       }
       // ── Populate search index ──
       if (f.n || f.a || f.r) {
-        _upsertRoadSearchEntry(f, f.c, roadIdentityBaseKey || roadIdentityClusterKey);
+        _upsertRoadSearchEntry(
+          f,
+          f.c,
+          roadIdentityBaseKey || roadIdentityClusterKey,
+        );
       }
       // ── Glow halo for motorway / trunk (wide+faint, drawn under main roads) ──
       if (_roadGlowLayer && _isFastRoadCategory(category)) {
@@ -2977,8 +2993,10 @@ function _syncSecondaryRoadZoom() {
   // Glow layer is invisible at low zoom — skip the extra canvas draw pass
   if (_roadGlowLayer) {
     const glowShouldShow = _roadsVisible && map.getZoom() >= 10;
-    if (glowShouldShow && !map.hasLayer(_roadGlowLayer)) _roadGlowLayer.addTo(map);
-    else if (!glowShouldShow && map.hasLayer(_roadGlowLayer)) map.removeLayer(_roadGlowLayer);
+    if (glowShouldShow && !map.hasLayer(_roadGlowLayer))
+      _roadGlowLayer.addTo(map);
+    else if (!glowShouldShow && map.hasLayer(_roadGlowLayer))
+      map.removeLayer(_roadGlowLayer);
   }
 }
 
@@ -3132,7 +3150,7 @@ function _getRoadBaseStyle(hw) {
     case "trunk_link":
       return { color: "#f59e0b", weight: 2.0, opacity: 0.85 };
     case "primary":
-      return { color: "#fbbf24", weight: 2.5, opacity: 0.9 };  // bright yellow-gold (unchanged)
+      return { color: "#fbbf24", weight: 2.5, opacity: 0.9 }; // bright yellow-gold (unchanged)
     case "primary_link":
       return { color: "#fbbf24", weight: 1.5, opacity: 0.82 };
     default:
@@ -3142,7 +3160,10 @@ function _getRoadBaseStyle(hw) {
 
 function _getRoadHoverStyle(hw) {
   const rendered = _getRenderedRoadBaseStyle(hw);
-  const hoverOpacity = Math.max(0.1, (_roadHoverOnlyMode ? 0.45 : 1) * _roadOpacityMultiplier);
+  const hoverOpacity = Math.max(
+    0.1,
+    (_roadHoverOnlyMode ? 0.45 : 1) * _roadOpacityMultiplier,
+  );
   if (_isAtlasMode()) {
     switch (hw) {
       case "motorway":
@@ -3214,10 +3235,15 @@ function _getRenderedRoadGlowStyle(hw) {
 }
 
 function _getRoadHoverOnlyBaseStyle(hw, isSecondary = false) {
-  const base = isSecondary ? _getSecondaryRoadBaseStyle() : _getRoadBaseStyle(hw);
+  const base = isSecondary
+    ? _getSecondaryRoadBaseStyle()
+    : _getRoadBaseStyle(hw);
   return {
     color: _isAtlasMode() ? "#fff8e8" : base.color,
-    weight: Math.max(base.weight + (isSecondary ? 1.7 : 2.2), isSecondary ? 3.2 : 4.4),
+    weight: Math.max(
+      base.weight + (isSecondary ? 1.7 : 2.2),
+      isSecondary ? 3.2 : 4.4,
+    ),
     opacity: 0,
     lineCap: "round",
     lineJoin: "round",
@@ -3266,7 +3292,10 @@ function _getSecondaryRoadHoverStyle() {
   return {
     ...base,
     color: "#fffaf0",
-    opacity: Math.max(0.1, (_roadHoverOnlyMode ? 0.45 : 1) * _roadOpacityMultiplier),
+    opacity: Math.max(
+      0.1,
+      (_roadHoverOnlyMode ? 0.45 : 1) * _roadOpacityMultiplier,
+    ),
     lineCap: "round",
   };
 }
@@ -3301,7 +3330,15 @@ function _normalizeRoadIdentityValue(value) {
 }
 
 function _getRoadIdentityDisplay(source) {
-  return source?.a || source?.["name:ar"] || source?.n || source?.name || source?.r || source?.ref || "";
+  return (
+    source?.a ||
+    source?.["name:ar"] ||
+    source?.n ||
+    source?.name ||
+    source?.r ||
+    source?.ref ||
+    ""
+  );
 }
 
 function _getRoadIdentityBaseKey(source) {
@@ -3349,8 +3386,7 @@ function _getRoadEndpointDistanceMeters(a, b) {
   const sinLat = Math.sin(dLat / 2);
   const sinLng = Math.sin(dLng / 2);
   const arc =
-    sinLat * sinLat +
-    Math.cos(lat1) * Math.cos(lat2) * sinLng * sinLng;
+    sinLat * sinLat + Math.cos(lat1) * Math.cos(lat2) * sinLng * sinLng;
   return 6371000 * 2 * Math.atan2(Math.sqrt(arc), Math.sqrt(1 - arc));
 }
 
@@ -3362,7 +3398,8 @@ function _roadClusterCanAcceptSegment(cluster, segmentSummary) {
     const gLng = Math.round(pt.lng / CLUSTER_GRID_STEP);
     for (let dlat = -1; dlat <= 1; dlat++) {
       for (let dlng = -1; dlng <= 1; dlng++) {
-        if (cluster.endpointGrid.has(`${gLat + dlat}:${gLng + dlng}`)) return true;
+        if (cluster.endpointGrid.has(`${gLat + dlat}:${gLng + dlng}`))
+          return true;
       }
     }
   }
@@ -3411,14 +3448,22 @@ function _registerRoadIdentityCluster(source, coords) {
   cluster.latMax = Math.max(cluster.latMax, segmentSummary.latMax);
   cluster.lngMin = Math.min(cluster.lngMin, segmentSummary.lngMin);
   cluster.lngMax = Math.max(cluster.lngMax, segmentSummary.lngMax);
-  if (segmentSummary.first) cluster.endpointGrid.add(`${Math.round(segmentSummary.first.lat / CLUSTER_GRID_STEP)}:${Math.round(segmentSummary.first.lng / CLUSTER_GRID_STEP)}`);
-  if (segmentSummary.last) cluster.endpointGrid.add(`${Math.round(segmentSummary.last.lat / CLUSTER_GRID_STEP)}:${Math.round(segmentSummary.last.lng / CLUSTER_GRID_STEP)}`);
+  if (segmentSummary.first)
+    cluster.endpointGrid.add(
+      `${Math.round(segmentSummary.first.lat / CLUSTER_GRID_STEP)}:${Math.round(segmentSummary.first.lng / CLUSTER_GRID_STEP)}`,
+    );
+  if (segmentSummary.last)
+    cluster.endpointGrid.add(
+      `${Math.round(segmentSummary.last.lat / CLUSTER_GRID_STEP)}:${Math.round(segmentSummary.last.lng / CLUSTER_GRID_STEP)}`,
+    );
   return cluster.key;
 }
 
 function _upsertRoadSearchEntry(source, coords, identityKey) {
   const summary = _summarizeRoadCoords(coords);
-  const searchKey = identityKey || `segment:${source?.i ?? source?.id ?? _roadSearchIndex.length}`;
+  const searchKey =
+    identityKey ||
+    `segment:${source?.i ?? source?.id ?? _roadSearchIndex.length}`;
   let entry = _roadSearchIndexByKey.get(searchKey);
   if (!entry) {
     entry = {
@@ -3473,9 +3518,7 @@ function _getRoadCategory(source) {
     return _hasRoadIdentity(source) ? "mainNamed" : "mainUnnamed";
   }
   if (SEC_HW.has(highway)) {
-    return _hasRoadIdentity(source)
-      ? "secondaryNamed"
-      : "secondaryUnnamed";
+    return _hasRoadIdentity(source) ? "secondaryNamed" : "secondaryUnnamed";
   }
   return null;
 }
@@ -3554,7 +3597,9 @@ function _syncRoadFilterControls() {
       _roadHoverOnlyMode && !_isRoadCategoryAllowedInHoverOnlyMode(category);
     checkbox.disabled =
       !_roadsVisible ||
-      (_isMainRoadCategory(category) ? !_showMainRoads : !_showSecondaryRoads) ||
+      (_isMainRoadCategory(category)
+        ? !_showMainRoads
+        : !_showSecondaryRoads) ||
       disabledByHoverOnly;
     const row = checkbox.closest(".road-type-row");
     if (row) {
@@ -3626,7 +3671,8 @@ function _syncRoadLayerVisibility() {
         _roadCategoryVisibility[category] && _roadCategoryStats[category] > 0,
     );
   if (showGlow) {
-    if (_roadGlowLayer && !map.hasLayer(_roadGlowLayer)) _roadGlowLayer.addTo(map);
+    if (_roadGlowLayer && !map.hasLayer(_roadGlowLayer))
+      _roadGlowLayer.addTo(map);
   } else if (_roadGlowLayer && map.hasLayer(_roadGlowLayer)) {
     map.removeLayer(_roadGlowLayer);
   }
@@ -3711,7 +3757,9 @@ const PLACE_STYLE_PALETTES = {
 };
 
 function _normalizePlaceValue(value) {
-  return String(value || "").trim().toLowerCase();
+  return String(value || "")
+    .trim()
+    .toLowerCase();
 }
 
 function _getPlaceCategory(feature) {
@@ -3783,10 +3831,7 @@ function _refreshMapVisualLanguage(mode = currentMapLayer) {
   }
 
   if (secondaryRoadsLayer) {
-    _setStyleOnRoadGroup(
-      secondaryRoadsLayer,
-      _getRenderedSecondaryRoadStyle(),
-    );
+    _setStyleOnRoadGroup(secondaryRoadsLayer, _getRenderedSecondaryRoadStyle());
   }
 
   if (placesLayer) {
@@ -3821,7 +3866,9 @@ function _restoreRoadLayerStyle(layer) {
 
 function _getVisibleRoadHoverLayers(layer) {
   const baseKey = layer?.feature?.properties?.roadIdentityBaseKey || "";
-  const clusters = baseKey ? _roadIdentityClustersByBaseKey.get(baseKey) || [] : [];
+  const clusters = baseKey
+    ? _roadIdentityClustersByBaseKey.get(baseKey) || []
+    : [];
   const seen = new Set();
   const layers = [];
   for (const cluster of clusters) {
@@ -3899,8 +3946,8 @@ function _findRoadLayerAtLatLng(latlng) {
 function _canHoverRoads() {
   return Boolean(
     _roadsVisible &&
-      ((mainRoadsLayer && map.hasLayer(mainRoadsLayer)) ||
-        (secondaryRoadsLayer && map.hasLayer(secondaryRoadsLayer))),
+    ((mainRoadsLayer && map.hasLayer(mainRoadsLayer)) ||
+      (secondaryRoadsLayer && map.hasLayer(secondaryRoadsLayer))),
   );
 }
 
@@ -3910,7 +3957,10 @@ function _applyRoadHover(layer, latlng) {
     return;
   }
 
-  const groupKey = layer.feature?.properties?.roadIdentityBaseKey || layer.feature?.properties?.roadIdentityClusterKey || "";
+  const groupKey =
+    layer.feature?.properties?.roadIdentityBaseKey ||
+    layer.feature?.properties?.roadIdentityClusterKey ||
+    "";
 
   if (
     _hoveredRoadLayer &&
@@ -3938,10 +3988,16 @@ function _applyRoadHover(layer, latlng) {
         ? "road-name-tooltip rnt-trunk"
         : "road-name-tooltip";
     if (!_roadHoverTooltip) {
-      _roadHoverTooltip = L.tooltip({ direction: "top", opacity: 0.95, interactive: false });
+      _roadHoverTooltip = L.tooltip({
+        direction: "top",
+        opacity: 0.95,
+        interactive: false,
+      });
     }
     _roadHoverTooltip.options.className = ttClass;
-    _roadHoverTooltip.setContent(buildRoadTooltip(layer.feature)).setLatLng(latlng);
+    _roadHoverTooltip
+      .setContent(buildRoadTooltip(layer.feature))
+      .setLatLng(latlng);
     if (!_roadHoverTooltip._map) _roadHoverTooltip.addTo(map);
   }
 }
@@ -4127,9 +4183,10 @@ function buildRoadTooltip(feature) {
     : "";
   // Only show type label as subtitle if the road has a real specific name that differs
   const nameShown = nameAr || nameEn || ref;
-  const typeLabelPart = nameShown && nameShown !== typeLabel
-    ? `<br><span style="opacity:.65;font-size:.72rem">${escHtml(typeLabel)}</span>`
-    : "";
+  const typeLabelPart =
+    nameShown && nameShown !== typeLabel
+      ? `<br><span style="opacity:.65;font-size:.72rem">${escHtml(typeLabel)}</span>`
+      : "";
   return `${namePart}${refPart}${typeLabelPart}${speedPart}`;
 }
 
@@ -4320,7 +4377,9 @@ async function fetchAndDrawRoads(overrideBbox) {
     }
   }
   if (cells.length === 0) return;
-  await Promise.allSettled(cells.map(([s, w, n, e]) => _fetchRoadCell(s, w, n, e)));
+  await Promise.allSettled(
+    cells.map(([s, w, n, e]) => _fetchRoadCell(s, w, n, e)),
+  );
 }
 
 /** Load roads for a predefined zone — one Overpass call, cached permanently */
@@ -4424,7 +4483,8 @@ function clearAllRoads() {
     const lbl = egyptBtn.querySelector(".road-egypt-label");
     const sub = egyptBtn.querySelector(".road-egypt-sub");
     if (lbl) lbl.textContent = "المحاور والطرق السريعة";
-    if (sub) sub.textContent = "كل المحاور والطرق السريعة · محفوظة للتحميل الفوري";
+    if (sub)
+      sub.textContent = "كل المحاور والطرق السريعة · محفوظة للتحميل الفوري";
   }
   document
     .querySelectorAll(".road-zone-btn")
@@ -4557,7 +4617,8 @@ async function loadFullEgyptHighways() {
     _egyptHighwaysLoading = false;
     if (btn) btn.classList.remove("loading");
     if (lbl) lbl.textContent = "المحاور والطرق السريعة";
-    if (sub) sub.textContent = "كل المحاور والطرق السريعة · محفوظة للتحميل الفوري";
+    if (sub)
+      sub.textContent = "كل المحاور والطرق السريعة · محفوظة للتحميل الفوري";
     console.warn("Egypt highways load failed:", err.message);
   }
 }
@@ -4652,7 +4713,9 @@ function _isPlaceCategoryVisible(category) {
 }
 
 function _syncPlaceFilterControls() {
-  for (const [category, elementId] of Object.entries(PLACE_CATEGORY_TOGGLE_IDS)) {
+  for (const [category, elementId] of Object.entries(
+    PLACE_CATEGORY_TOGGLE_IDS,
+  )) {
     const checkbox = document.getElementById(elementId);
     if (!checkbox) continue;
     checkbox.checked = _isPlaceCategoryVisible(category);
@@ -5095,7 +5158,9 @@ function _bindRoadPanelLayerControls() {
     });
   }
 
-  for (const [category, elementId] of Object.entries(PLACE_CATEGORY_TOGGLE_IDS)) {
+  for (const [category, elementId] of Object.entries(
+    PLACE_CATEGORY_TOGGLE_IDS,
+  )) {
     const checkbox = document.getElementById(elementId);
     if (!checkbox) continue;
     checkbox.addEventListener("change", (event) => {
@@ -5117,9 +5182,7 @@ function _bindRoadPanelLayerControls() {
     });
   }
 
-  const roadHoverOnlyToggle = document.getElementById(
-    "road-hover-only-toggle",
-  );
+  const roadHoverOnlyToggle = document.getElementById("road-hover-only-toggle");
   if (roadHoverOnlyToggle) {
     roadHoverOnlyToggle.addEventListener("change", (event) => {
       setRoadHoverOnlyMode(event.target.checked);
@@ -5300,6 +5363,79 @@ const loadRoads = () => {
   }, 600);
 };
 
+function _bindUcanTwinControls() {
+  const panel = document.getElementById("ucan-twin-panel");
+  if (!panel) return;
+  if (panel.dataset.bound === "true") {
+    if (_ucanTwinRuntimeReady) {
+      _updateUcanTwinUiState();
+    }
+    return;
+  }
+
+  panel.dataset.bound = "true";
+
+  panel
+    .querySelectorAll(".ucan-twin-preset-btn[data-ucan-preset]")
+    .forEach((button) => {
+      button.addEventListener("click", () => {
+        const presetKey = button.dataset.ucanPreset;
+        if (!presetKey) return;
+        setUcanTwinPreset(presetKey);
+      });
+    });
+
+  [
+    ["ucan-twin-districts", "districts"],
+    ["ucan-twin-project-towers", "projectTowers"],
+    ["ucan-twin-landmarks", "landmarks"],
+  ].forEach(([elementId, layerName]) => {
+    const checkbox = document.getElementById(elementId);
+    if (!checkbox) return;
+    checkbox.addEventListener("change", (event) => {
+      setUcanTwinLayerVisibility(layerName, event.target.checked);
+    });
+  });
+
+  const tourButton = document.getElementById("ucan-twin-tour");
+  if (tourButton) {
+    tourButton.addEventListener("click", () => {
+      if (currentMapLayer !== "ucan") {
+        switchMapLayer("ucan");
+      }
+      startUcanTwinTour();
+    });
+  }
+
+  const resetButton = document.getElementById("ucan-twin-reset");
+  if (resetButton) {
+    resetButton.addEventListener("click", () => {
+      resetUcanTwinScene();
+    });
+  }
+
+  const focusButton = document.getElementById("ucan-twin-focus-district");
+  if (focusButton) {
+    focusButton.addEventListener("click", () => {
+      const activeDistrict = _getActiveUcanTwinDistrictAnalytics().active;
+      if (!activeDistrict) return;
+      _focusUcanTwinDistrict(activeDistrict.zone);
+    });
+  }
+
+  panel.addEventListener("click", (event) => {
+    const hotspotButton = event.target.closest(
+      ".ucan-twin-hotspot-btn[data-zone]",
+    );
+    if (!hotspotButton) return;
+    _focusUcanTwinDistrict(hotspotButton.dataset.zone || "");
+  });
+
+  if (_ucanTwinRuntimeReady) {
+    _updateUcanTwinUiState();
+  }
+}
+
 map.on("moveend", loadRoads);
 map.on("zoomend", _syncSecondaryRoadZoom);
 map.on("zoomend", _syncZoneOverview);
@@ -5327,6 +5463,7 @@ document.addEventListener("click", loadRoads, { passive: true, once: true });
 
 // Fallback: load after 5 s if no interaction occurs
 setTimeout(loadRoads, 5000);
+_bindUcanTwinControls();
 
 // ────────────────────────────────────────────────────────────────────────────
 // PHASE 4: XCELIAS INTELLIGENCE LAYER
@@ -5403,11 +5540,15 @@ map.on("contextmenu", (e) => {
 });
 
 // ── 4.1 Zone Price Choropleth — visual price heat per zone ──
-let _choroplethLayers = [];
+var _choroplethLayers = [];
+
+function _getRegisteredChoroplethLayers() {
+  return Array.isArray(_choroplethLayers) ? _choroplethLayers : [];
+}
 
 function showZoneChoropleth() {
   // Clear existing
-  _choroplethLayers.forEach((l) => {
+  _getRegisteredChoroplethLayers().forEach((l) => {
     try {
       map.removeLayer(l);
     } catch (_) {}
@@ -5507,7 +5648,7 @@ function showZoneChoropleth() {
 }
 
 function clearZoneChoropleth() {
-  _choroplethLayers.forEach((l) => {
+  _getRegisteredChoroplethLayers().forEach((l) => {
     try {
       map.removeLayer(l);
     } catch (_) {}
@@ -8515,9 +8656,19 @@ function _projectPlaceholderDataUri(project) {
     "</defs>",
     "<rect width='800' height='380' fill='url(#bg)'/>",
     "<rect x='30' y='30' width='740' height='320' rx='16' fill='none' stroke='#6c3abe' stroke-width='1.5' stroke-opacity='0.5'/>",
-    "<text x='400' y='148' font-family='Arial,sans-serif' font-size='30' font-weight='bold' fill='#b48ff5' text-anchor='middle'>" + name + "</text>",
-    dev ? "<text x='400' y='194' font-family='Arial,sans-serif' font-size='18' fill='#aaa' text-anchor='middle'>by " + dev + "</text>" : "",
-    zone ? "<text x='400' y='232' font-family='Arial,sans-serif' font-size='15' fill='#6a6a8a' text-anchor='middle'>" + zone + "</text>" : "",
+    "<text x='400' y='148' font-family='Arial,sans-serif' font-size='30' font-weight='bold' fill='#b48ff5' text-anchor='middle'>" +
+      name +
+      "</text>",
+    dev
+      ? "<text x='400' y='194' font-family='Arial,sans-serif' font-size='18' fill='#aaa' text-anchor='middle'>by " +
+        dev +
+        "</text>"
+      : "",
+    zone
+      ? "<text x='400' y='232' font-family='Arial,sans-serif' font-size='15' fill='#6a6a8a' text-anchor='middle'>" +
+        zone +
+        "</text>"
+      : "",
     "<text x='400' y='332' font-family='Arial,sans-serif' font-size='12' fill='#3a3a5a' text-anchor='middle'>Xcelias Property Explorer</text>",
     "</svg>",
   ].join("");
@@ -8929,13 +9080,18 @@ function applyTheme() {
   document.documentElement.setAttribute("data-theme", themeToApply);
 
   // Update Map Tiles for Street Mode
-  if (layers && layers.street && typeof layers.street.eachLayer === "function") {
+  if (
+    layers &&
+    layers.street &&
+    typeof layers.street.eachLayer === "function"
+  ) {
     const streetUrls = isLightMode
       ? [atlasTiles, atlasReferenceTiles]
       : [streetBaseTiles, streetReferenceTiles];
     let streetLayerIndex = 0;
     layers.street.eachLayer((layer) => {
-      const nextUrl = streetUrls[streetLayerIndex] || streetUrls[streetUrls.length - 1];
+      const nextUrl =
+        streetUrls[streetLayerIndex] || streetUrls[streetUrls.length - 1];
       if (typeof layer.setUrl === "function") {
         layer.setUrl(nextUrl);
       }
@@ -15007,10 +15163,7 @@ function toggleRouteMenu(forceOpen) {
   if (!MQ.matches) return; // Desktop → skip
 
   // ── P9: Strip desktop-only DOM to save ~94 nodes ──
-  [
-    "right-dock",
-    "timeline-container",
-  ].forEach(function (id) {
+  ["right-dock", "timeline-container"].forEach(function (id) {
     var el = document.getElementById(id) || document.querySelector("." + id);
     if (el) el.remove();
   });
@@ -15338,10 +15491,11 @@ function toggleRouteMenu(forceOpen) {
   });
 })();
 
-
 // --- MAPBOX UCAN IMPLEMENTATION ---
 const UCAN_MAPBOX_TOKEN_STORAGE_KEY = "xc_ucan_mapbox_token";
+const UCAN_TOKEN_MODAL_ID = "ucan-token-modal";
 const UCAN_STUDIO_STYLE_STORAGE_KEY = "xc_ucan_studio_style_url";
+const UCAN_TWIN_PRESET_STORAGE_KEY = "xc_ucan_twin_preset";
 const UCAN_SIGNATURE_STYLE_URL = "mapbox://styles/mapbox/standard";
 const UCAN_SIGNATURE_STYLE_CONFIG = {
   basemap: {
@@ -15418,6 +15572,121 @@ const UCAN_ZONE_MOMENTS = {
     bearing: 34,
   },
 };
+const UCAN_DIGITAL_TWIN_PRESET_DEFAULT = "hypernight";
+const UCAN_DIGITAL_TWIN_PRESETS = {
+  hypernight: {
+    label: "Hyper Night",
+    lightPreset: "night",
+    terrainExaggeration: 2.6,
+    fog: {
+      range: [0.38, 9.4],
+      color: "#040915",
+      "high-color": "#43ddff",
+      "space-color": "#010207",
+      "horizon-blend": 0.28,
+      "star-intensity": 0.95,
+    },
+    roadFlowColor: "rgba(255, 255, 255, 0.95)",
+    routePulseColor: "rgba(255, 255, 255, 0.98)",
+    focusCoreColor: "#ff6fd8",
+    focusHaloColor: "rgba(255, 94, 208, 0.18)",
+    buildingLowColor: "#10142f",
+    buildingHighColor: "#2e4fa3",
+    districtAuraColor: "rgba(76, 232, 255, 0.22)",
+    districtCoreColor: "#ffe27a",
+    districtLabelColor: "#f6f3ff",
+    projectTowerLowColor: "#223778",
+    projectTowerHighColor: "#6ff3ff",
+    landmarkTowerLowColor: "#ff4dd2",
+    landmarkTowerHighColor: "#ffe27a",
+  },
+  dawn: {
+    label: "Dawn Lift",
+    lightPreset: "dawn",
+    terrainExaggeration: 2.15,
+    fog: {
+      range: [0.46, 10.2],
+      color: "#1a1630",
+      "high-color": "#ffb48b",
+      "space-color": "#140f22",
+      "horizon-blend": 0.32,
+      "star-intensity": 0.38,
+    },
+    roadFlowColor: "rgba(255, 250, 236, 0.94)",
+    routePulseColor: "rgba(255, 252, 245, 0.98)",
+    focusCoreColor: "#ff8fd8",
+    focusHaloColor: "rgba(255, 180, 139, 0.2)",
+    buildingLowColor: "#52304f",
+    buildingHighColor: "#ffba93",
+    districtAuraColor: "rgba(255, 164, 112, 0.2)",
+    districtCoreColor: "#fff0c7",
+    districtLabelColor: "#fff5e7",
+    projectTowerLowColor: "#7a4e64",
+    projectTowerHighColor: "#ffd0ab",
+    landmarkTowerLowColor: "#ff6fd8",
+    landmarkTowerHighColor: "#fff0b0",
+  },
+  analyst: {
+    label: "Day Analyst",
+    lightPreset: "day",
+    terrainExaggeration: 1.7,
+    fog: {
+      range: [0.72, 12],
+      color: "#d7e8ff",
+      "high-color": "#7fc8ff",
+      "space-color": "#b8d7ff",
+      "horizon-blend": 0.22,
+      "star-intensity": 0,
+    },
+    roadFlowColor: "rgba(10, 49, 96, 0.92)",
+    routePulseColor: "rgba(255, 255, 255, 0.96)",
+    focusCoreColor: "#ff5da8",
+    focusHaloColor: "rgba(127, 200, 255, 0.22)",
+    buildingLowColor: "#7ab3ff",
+    buildingHighColor: "#dff3ff",
+    districtAuraColor: "rgba(0, 142, 255, 0.16)",
+    districtCoreColor: "#0f4d94",
+    districtLabelColor: "#0a2040",
+    projectTowerLowColor: "#3c78d1",
+    projectTowerHighColor: "#e2f5ff",
+    landmarkTowerLowColor: "#ff5da8",
+    landmarkTowerHighColor: "#ffd779",
+  },
+  pulsegrid: {
+    label: "Pulse Grid",
+    lightPreset: "dusk",
+    terrainExaggeration: 2.3,
+    fog: {
+      range: [0.42, 9.8],
+      color: "#09081a",
+      "high-color": "#ff4dd2",
+      "space-color": "#02020a",
+      "horizon-blend": 0.3,
+      "star-intensity": 0.68,
+    },
+    roadFlowColor: "rgba(255, 228, 122, 0.94)",
+    routePulseColor: "rgba(255, 255, 255, 0.98)",
+    focusCoreColor: "#4ce8ff",
+    focusHaloColor: "rgba(76, 232, 255, 0.22)",
+    buildingLowColor: "#2f124d",
+    buildingHighColor: "#ff4dd2",
+    districtAuraColor: "rgba(255, 77, 210, 0.18)",
+    districtCoreColor: "#4ce8ff",
+    districtLabelColor: "#fff3cc",
+    projectTowerLowColor: "#5d23a0",
+    projectTowerHighColor: "#4ce8ff",
+    landmarkTowerLowColor: "#ffe27a",
+    landmarkTowerHighColor: "#ffffff",
+  },
+};
+const UCAN_TWIN_TOUR_SEQUENCE = [
+  "North Coast",
+  "October",
+  "New Cairo",
+  "New Capital",
+  "Sokhna",
+  "Gouna",
+];
 const UCAN_SOURCES = {
   projectsClustered: "ucan-projects-clustered",
   projectsRaw: "ucan-projects-raw",
@@ -15429,6 +15698,8 @@ const UCAN_SOURCES = {
   routeStops: "ucan-route-stops",
   routeTraveler: "ucan-route-traveler",
   focusPoint: "ucan-focus-point",
+  twinDistricts: "ucan-twin-districts",
+  twinTowers: "ucan-twin-towers",
 };
 const UCAN_LAYERS = {
   projectHeat: "ucan-project-heat",
@@ -15464,6 +15735,11 @@ const UCAN_LAYERS = {
   focusHalo: "ucan-focus-halo",
   focusCore: "ucan-focus-core",
   focusLabel: "ucan-focus-label",
+  twinDistrictAura: "ucan-twin-district-aura",
+  twinDistrictCore: "ucan-twin-district-core",
+  twinDistrictLabel: "ucan-twin-district-label",
+  twinProjectTowers: "ucan-twin-project-towers",
+  twinLandmarkTowers: "ucan-twin-landmark-towers",
   buildings: "ucan-3d-buildings",
 };
 const UCAN_ROAD_COLORS = {
@@ -15488,6 +15764,7 @@ let _ucanThemePrepared = false;
 let _ucanIntroPlayed = false;
 let _ucanRoadPopup = null;
 let _ucanClusterPopup = null;
+let _ucanDistrictPopup = null;
 let _ucanHoveredRoadId = null;
 let _ucanHoveredPlaceId = null;
 let _ucanSyncFrame = null;
@@ -15505,6 +15782,16 @@ let _ucanMomentToken = 0;
 let _ucanFocusClearTimer = null;
 let _ucanProjectModalTimer = null;
 let _ucanPendingRouteSync = null;
+const _ucanTwinState = {
+  presetKey: _resolveInitialUcanTwinPreset(),
+  showDistricts: true,
+  showProjectTowers: true,
+  showLandmarks: true,
+  selectedDistrict: "",
+  hoveredDistrict: "",
+};
+_ucanTwinRuntimeReady = true;
+_bindUcanTwinControls();
 const _ucanState = {
   roads: [],
   roadIds: new Set(),
@@ -15522,6 +15809,779 @@ function _getUcanProjectData() {
   return [];
 }
 
+function _resolveInitialUcanTwinPreset() {
+  try {
+    const stored = localStorage.getItem(UCAN_TWIN_PRESET_STORAGE_KEY) || "";
+    return UCAN_DIGITAL_TWIN_PRESETS[stored]
+      ? stored
+      : UCAN_DIGITAL_TWIN_PRESET_DEFAULT;
+  } catch (_) {
+    return UCAN_DIGITAL_TWIN_PRESET_DEFAULT;
+  }
+}
+
+function _persistUcanTwinPreset(presetKey) {
+  try {
+    localStorage.setItem(UCAN_TWIN_PRESET_STORAGE_KEY, presetKey);
+  } catch (_) {
+    /* localStorage unavailable */
+  }
+}
+
+function _getUcanTwinPreset() {
+  return (
+    UCAN_DIGITAL_TWIN_PRESETS[_ucanTwinState.presetKey] ||
+    UCAN_DIGITAL_TWIN_PRESETS[UCAN_DIGITAL_TWIN_PRESET_DEFAULT]
+  );
+}
+
+function _escUcanTwinHtml(value) {
+  if (typeof escHtml === "function") {
+    return escHtml(value);
+  }
+
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function _formatUcanTwinCompactCurrency(value) {
+  const amount = Number(value) || 0;
+  if (amount <= 0) return "N/A";
+
+  return `${new Intl.NumberFormat("en-EG", {
+    notation: "compact",
+    maximumFractionDigits: amount >= 10000000 ? 1 : 0,
+  }).format(amount)} EGP`;
+}
+
+function _getUcanTwinMomentumLabel(energy) {
+  if (energy >= 0.82) return "Hyper Growth";
+  if (energy >= 0.62) return "Prime Surge";
+  if (energy >= 0.45) return "Expansion";
+  return "Emerging";
+}
+
+function _getUcanZoneDisplayName(zoneName) {
+  const normalized = _normalizeUcanZoneName(zoneName);
+  if (normalized) return normalized;
+  return String(zoneName || "").trim();
+}
+
+function _parseUcanTwinPriceValue(value) {
+  if (typeof value === "number") {
+    return Number.isFinite(value) ? value : 0;
+  }
+
+  if (typeof value === "string") {
+    const normalizedValue = value.replace(/[^0-9.]/g, "");
+    return Number.parseFloat(normalizedValue) || 0;
+  }
+
+  return 0;
+}
+
+function _getUcanProjectTwinPrice(project) {
+  const priceCandidates = [
+    project?.priceMin,
+    project?.minPrice,
+    project?.price,
+    project?.startingPrice,
+    project?.priceMax,
+  ];
+
+  for (const candidate of priceCandidates) {
+    const parsedPrice = _parseUcanTwinPriceValue(candidate);
+    if (parsedPrice > 0) {
+      return parsedPrice;
+    }
+  }
+
+  return 0;
+}
+
+function _getUcanProjectTwinRecord(project, index) {
+  const lat = Number.parseFloat(project?.lat);
+  const lng = Number.parseFloat(project?.lng);
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+
+  return {
+    sourceIndex: index,
+    lat,
+    lng,
+    title: project?.name || project?.title || `Project ${index + 1}`,
+    developer: project?.developer || project?.dev || "Unknown developer",
+    zone: project?.zone || project?.area || "",
+    price: _getUcanProjectTwinPrice(project),
+  };
+}
+
+function _metersToLatDegrees(meters) {
+  return meters / 111320;
+}
+
+function _metersToLngDegrees(meters, latitude) {
+  const cosine = Math.cos((Number(latitude) * Math.PI) / 180);
+  return meters / (111320 * Math.max(0.2, Math.abs(cosine || 0.2)));
+}
+
+function _buildUcanFootprintPolygon(
+  lng,
+  lat,
+  widthMeters,
+  depthMeters = widthMeters,
+) {
+  const halfWidth = _metersToLngDegrees(widthMeters / 2, lat);
+  const halfDepth = _metersToLatDegrees(depthMeters / 2);
+  return {
+    type: "Polygon",
+    coordinates: [
+      [
+        [lng - halfWidth, lat - halfDepth],
+        [lng + halfWidth, lat - halfDepth],
+        [lng + halfWidth, lat + halfDepth],
+        [lng - halfWidth, lat + halfDepth],
+        [lng - halfWidth, lat - halfDepth],
+      ],
+    ],
+  };
+}
+
+function _buildUcanDistrictFeatureCollection() {
+  return {
+    type: "FeatureCollection",
+    features: _getUcanDistrictAnalyticsRecords().map((district) => ({
+      type: "Feature",
+      properties: {
+        zone: district.zone,
+        label: district.zone,
+        projectCount: district.projectCount,
+        developerCount: district.developerCount,
+        avgPrice: district.avgPrice,
+        maxPrice: district.maxPrice,
+        energy: district.energy,
+        momentumLabel: district.momentumLabel,
+        highlightProject: district.highlightProject,
+      },
+      geometry: {
+        type: "Point",
+        coordinates: district.coordinates,
+      },
+    })),
+  };
+}
+
+function _getUcanDistrictAnalyticsRecords() {
+  const buckets = new Map();
+  _getUcanProjectData().forEach((project, index) => {
+    const record = _getUcanProjectTwinRecord(project, index);
+    if (!record) return;
+    const zone = _getUcanZoneDisplayName(record.zone);
+    if (!zone) return;
+
+    const bucket = buckets.get(zone) || {
+      zone,
+      count: 0,
+      totalPrice: 0,
+      maxPrice: 0,
+      latTotal: 0,
+      lngTotal: 0,
+      developers: new Set(),
+      topProjects: [],
+    };
+
+    bucket.count += 1;
+    bucket.totalPrice += record.price;
+    bucket.maxPrice = Math.max(bucket.maxPrice, record.price);
+    bucket.latTotal += record.lat;
+    bucket.lngTotal += record.lng;
+    if (record.developer) {
+      bucket.developers.add(record.developer);
+    }
+    if (record.title) {
+      bucket.topProjects.push({ title: record.title, price: record.price });
+      bucket.topProjects.sort((left, right) => right.price - left.price);
+      bucket.topProjects = bucket.topProjects.slice(0, 3);
+    }
+    buckets.set(zone, bucket);
+  });
+
+  return Array.from(buckets.values())
+    .map((bucket) => {
+      const zoneMoment = _getUcanZoneMoment(bucket.zone);
+      const lng = Number(
+        zoneMoment?.landmark?.[0] ??
+          (bucket.count > 0 ? bucket.lngTotal / bucket.count : Number.NaN),
+      );
+      const lat = Number(
+        zoneMoment?.landmark?.[1] ??
+          (bucket.count > 0 ? bucket.latTotal / bucket.count : Number.NaN),
+      );
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+
+      const avgPrice = bucket.count > 0 ? bucket.totalPrice / bucket.count : 0;
+      const energy = Math.max(
+        0.22,
+        Math.min(
+          1,
+          bucket.count / 42 + avgPrice / 45000000 + bucket.maxPrice / 70000000,
+        ),
+      );
+      const developerCount = bucket.developers.size;
+      const highlightProject =
+        bucket.topProjects[0]?.title || "No lead project yet";
+
+      return {
+        zone: bucket.zone,
+        projectCount: bucket.count,
+        developerCount,
+        avgPrice,
+        maxPrice: bucket.maxPrice,
+        energy,
+        momentumLabel: _getUcanTwinMomentumLabel(energy),
+        coordinates: [lng, lat],
+        topProjects: bucket.topProjects,
+        highlightProject,
+      };
+    })
+    .filter(Boolean)
+    .sort((left, right) => {
+      if (right.energy !== left.energy) return right.energy - left.energy;
+      return right.maxPrice - left.maxPrice;
+    });
+}
+
+function _getUcanDistrictAnalyticsByZone(zoneName) {
+  const normalizedZone = _getUcanZoneDisplayName(zoneName);
+  if (!normalizedZone) return null;
+  return (
+    _getUcanDistrictAnalyticsRecords().find(
+      (district) => district.zone === normalizedZone,
+    ) || null
+  );
+}
+
+function _getActiveUcanTwinDistrictAnalytics() {
+  const records = _getUcanDistrictAnalyticsRecords();
+  const preferredZone =
+    _ucanTwinState.hoveredDistrict || _ucanTwinState.selectedDistrict || "";
+  const active = preferredZone
+    ? records.find((district) => district.zone === preferredZone) || null
+    : null;
+
+  return {
+    active: active || records[0] || null,
+    records,
+  };
+}
+
+function _buildUcanTowerFeatureCollection() {
+  const records = _getUcanProjectData()
+    .map((project, index) => _getUcanProjectTwinRecord(project, index))
+    .filter(Boolean);
+
+  const priced = records.filter((record) => record.price > 0);
+  const maxPrice =
+    priced.length > 0 ? Math.max(...priced.map((record) => record.price)) : 1;
+  const minPrice =
+    priced.length > 0 ? Math.min(...priced.map((record) => record.price)) : 0;
+
+  const projectFeatures = records
+    .slice()
+    .sort((left, right) => right.price - left.price)
+    .slice(0, 180)
+    .map((record) => {
+      const signal =
+        maxPrice > minPrice
+          ? (record.price - minPrice) / (maxPrice - minPrice)
+          : 0.52;
+      const footprintMeters = 88 + signal * 86;
+      const height =
+        64 + signal * 240 + (_getUcanZoneMoment(record.zone) ? 18 : 0);
+      return {
+        type: "Feature",
+        properties: {
+          title: record.title,
+          zone: _getUcanZoneDisplayName(record.zone),
+          sourceIndex: record.sourceIndex,
+          centerLng: record.lng,
+          centerLat: record.lat,
+          towerKind: "project",
+          signal,
+          height,
+        },
+        geometry: _buildUcanFootprintPolygon(
+          record.lng,
+          record.lat,
+          footprintMeters,
+        ),
+      };
+    });
+
+  const landmarkFeatures = Object.entries(UCAN_ZONE_MOMENTS).map(
+    ([zone, moment], index) => {
+      const [lng, lat] = moment.landmark;
+      const signal = 0.84 + (index % 3) * 0.04;
+      return {
+        type: "Feature",
+        properties: {
+          title: `${zone} Twin Core`,
+          zone,
+          sourceIndex: -1,
+          centerLng: lng,
+          centerLat: lat,
+          towerKind: "landmark",
+          signal,
+          height: 280 + index * 24,
+        },
+        geometry: _buildUcanFootprintPolygon(lng, lat, 220 + index * 8),
+      };
+    },
+  );
+
+  return {
+    type: "FeatureCollection",
+    features: [...landmarkFeatures, ...projectFeatures],
+  };
+}
+
+function _updateUcanTwinSources() {
+  if (!mapboxMap) return;
+  const districtSource = mapboxMap.getSource(UCAN_SOURCES.twinDistricts);
+  if (districtSource) {
+    districtSource.setData(_buildUcanDistrictFeatureCollection());
+  }
+  const towerSource = mapboxMap.getSource(UCAN_SOURCES.twinTowers);
+  if (towerSource) {
+    towerSource.setData(_buildUcanTowerFeatureCollection());
+  }
+  _updateUcanTwinUiState();
+}
+
+function _syncUcanTwinPresentation() {
+  if (!mapboxMap) return;
+  const preset = _getUcanTwinPreset();
+  const districtsVisible = _ucanTwinState.showDistricts;
+  const projectTowersVisible =
+    _ucanTwinState.showProjectTowers && _projectsVisible;
+  const landmarksVisible = _ucanTwinState.showLandmarks;
+  const towerHeightMultiplier = is3DMode ? 1 : 0.78;
+
+  _safeSetUcanLayout(
+    UCAN_LAYERS.twinDistrictAura,
+    "visibility",
+    districtsVisible ? "visible" : "none",
+  );
+  _safeSetUcanLayout(
+    UCAN_LAYERS.twinDistrictCore,
+    "visibility",
+    districtsVisible ? "visible" : "none",
+  );
+  _safeSetUcanLayout(
+    UCAN_LAYERS.twinDistrictLabel,
+    "visibility",
+    districtsVisible ? "visible" : "none",
+  );
+  _safeSetUcanLayout(
+    UCAN_LAYERS.twinProjectTowers,
+    "visibility",
+    projectTowersVisible ? "visible" : "none",
+  );
+  _safeSetUcanLayout(
+    UCAN_LAYERS.twinLandmarkTowers,
+    "visibility",
+    landmarksVisible ? "visible" : "none",
+  );
+
+  _safeSetUcanPaint(UCAN_LAYERS.roadFlow, "line-color", preset.roadFlowColor);
+  _safeSetUcanPaint(
+    UCAN_LAYERS.routePulse,
+    "line-color",
+    preset.routePulseColor,
+  );
+  _safeSetUcanPaint(
+    UCAN_LAYERS.focusCore,
+    "circle-color",
+    preset.focusCoreColor,
+  );
+  _safeSetUcanPaint(
+    UCAN_LAYERS.focusHalo,
+    "circle-color",
+    preset.focusHaloColor,
+  );
+  _safeSetUcanPaint(
+    UCAN_LAYERS.twinDistrictAura,
+    "circle-color",
+    preset.districtAuraColor,
+  );
+  _safeSetUcanPaint(
+    UCAN_LAYERS.twinDistrictCore,
+    "circle-color",
+    preset.districtCoreColor,
+  );
+  _safeSetUcanPaint(
+    UCAN_LAYERS.twinDistrictLabel,
+    "text-color",
+    preset.districtLabelColor,
+  );
+  _safeSetUcanPaint(UCAN_LAYERS.twinProjectTowers, "fill-extrusion-color", [
+    "interpolate",
+    ["linear"],
+    ["coalesce", ["get", "signal"], 0],
+    0,
+    preset.projectTowerLowColor,
+    1,
+    preset.projectTowerHighColor,
+  ]);
+  _safeSetUcanPaint(UCAN_LAYERS.twinProjectTowers, "fill-extrusion-height", [
+    "*",
+    ["coalesce", ["get", "height"], 72],
+    towerHeightMultiplier,
+  ]);
+  _safeSetUcanPaint(
+    UCAN_LAYERS.twinProjectTowers,
+    "fill-extrusion-opacity",
+    is3DMode ? 0.82 : 0.68,
+  );
+  _safeSetUcanPaint(UCAN_LAYERS.twinLandmarkTowers, "fill-extrusion-color", [
+    "interpolate",
+    ["linear"],
+    ["coalesce", ["get", "signal"], 0],
+    0,
+    preset.landmarkTowerLowColor,
+    1,
+    preset.landmarkTowerHighColor,
+  ]);
+  _safeSetUcanPaint(UCAN_LAYERS.twinLandmarkTowers, "fill-extrusion-height", [
+    "*",
+    ["coalesce", ["get", "height"], 280],
+    towerHeightMultiplier * 1.08,
+  ]);
+  _safeSetUcanPaint(
+    UCAN_LAYERS.twinLandmarkTowers,
+    "fill-extrusion-opacity",
+    is3DMode ? 0.92 : 0.78,
+  );
+}
+
+function _setUcanTwinSelectedDistrict(zoneName) {
+  const district = _getUcanDistrictAnalyticsByZone(zoneName);
+  if (!district) return null;
+  _ucanTwinState.selectedDistrict = district.zone;
+  _ucanTwinState.hoveredDistrict = "";
+  _updateUcanTwinUiState();
+  return district;
+}
+
+function _setUcanTwinHoveredDistrict(zoneName) {
+  const district = _getUcanDistrictAnalyticsByZone(zoneName);
+  const nextZone = district?.zone || "";
+  if (_ucanTwinState.hoveredDistrict === nextZone) return district;
+  _ucanTwinState.hoveredDistrict = nextZone;
+  _updateUcanTwinUiState();
+  return district;
+}
+
+function _clearUcanTwinHoveredDistrict() {
+  if (!_ucanTwinState.hoveredDistrict) return;
+  _ucanTwinState.hoveredDistrict = "";
+  _updateUcanTwinUiState();
+}
+
+function _focusUcanTwinDistrict(zoneName) {
+  const district = _setUcanTwinSelectedDistrict(zoneName);
+  if (!district || !mapboxMap) return district;
+  _playUcanZoneMoment(
+    district.zone,
+    district.coordinates[1],
+    district.coordinates[0],
+    10.8,
+  );
+  return district;
+}
+
+function _buildUcanTwinDistrictPopup(district) {
+  if (!district) return "";
+  const highlightProject = district.topProjects[0];
+  return `
+    <div class="utdp-title-row">
+      <div class="utdp-title">${_escUcanTwinHtml(district.zone)}</div>
+      <span class="utdp-pill">${_escUcanTwinHtml(district.momentumLabel)}</span>
+    </div>
+    <div class="utdp-grid">
+      <div class="utdp-metric">
+        <span class="utdp-label">Projects</span>
+        <strong>${district.projectCount}</strong>
+      </div>
+      <div class="utdp-metric">
+        <span class="utdp-label">Developers</span>
+        <strong>${district.developerCount}</strong>
+      </div>
+      <div class="utdp-metric">
+        <span class="utdp-label">Avg Price</span>
+        <strong>${_escUcanTwinHtml(_formatUcanTwinCompactCurrency(district.avgPrice))}</strong>
+      </div>
+      <div class="utdp-metric">
+        <span class="utdp-label">Peak Price</span>
+        <strong>${_escUcanTwinHtml(_formatUcanTwinCompactCurrency(district.maxPrice))}</strong>
+      </div>
+    </div>
+    <div class="utdp-highlight">
+      <span class="utdp-label">Lead Project</span>
+      <strong>${_escUcanTwinHtml(highlightProject?.title || district.highlightProject)}</strong>
+    </div>
+  `;
+}
+
+function _showUcanTwinDistrictPopup(district, lngLat) {
+  if (!mapboxMap || !district) return;
+  if (_ucanDistrictPopup) {
+    _ucanDistrictPopup.remove();
+  }
+
+  _ucanDistrictPopup = new mapboxgl.Popup({
+    closeButton: false,
+    closeOnMove: false,
+    offset: 14,
+    className: "ucan-district-popup",
+  })
+    .setLngLat(lngLat)
+    .setHTML(_buildUcanTwinDistrictPopup(district))
+    .addTo(mapboxMap);
+}
+
+function _closeUcanTwinDistrictPopup() {
+  if (_ucanDistrictPopup) {
+    _ucanDistrictPopup.remove();
+    _ucanDistrictPopup = null;
+  }
+}
+
+function _renderUcanTwinDistrictPanel() {
+  const title = document.getElementById("ucan-twin-district-title");
+  const momentum = document.getElementById("ucan-twin-district-momentum");
+  const summary = document.getElementById("ucan-twin-district-summary");
+  const projectCount = document.getElementById(
+    "ucan-twin-district-project-count",
+  );
+  const developerCount = document.getElementById(
+    "ucan-twin-district-developer-count",
+  );
+  const avgPrice = document.getElementById("ucan-twin-district-avg-price");
+  const peakPrice = document.getElementById("ucan-twin-district-peak-price");
+  const highlight = document.getElementById("ucan-twin-district-highlight");
+  const highlightPrice = document.getElementById(
+    "ucan-twin-district-highlight-price",
+  );
+  const focusButton = document.getElementById("ucan-twin-focus-district");
+  const hotspotsList = document.getElementById("ucan-twin-hotspots-list");
+  if (
+    !title ||
+    !momentum ||
+    !summary ||
+    !projectCount ||
+    !developerCount ||
+    !avgPrice ||
+    !peakPrice ||
+    !highlight ||
+    !highlightPrice ||
+    !focusButton ||
+    !hotspotsList
+  ) {
+    return;
+  }
+
+  const { active, records } = _getActiveUcanTwinDistrictAnalytics();
+  hotspotsList.replaceChildren();
+
+  if (!active) {
+    title.textContent = "Waiting for live districts";
+    momentum.textContent = "Standby";
+    summary.textContent =
+      "Hover a district core or use the hotspot list once project data is live.";
+    projectCount.textContent = "0";
+    developerCount.textContent = "0";
+    avgPrice.textContent = "N/A";
+    peakPrice.textContent = "N/A";
+    highlight.textContent = "No lead project yet.";
+    highlightPrice.textContent = "Awaiting pricing signal.";
+    focusButton.disabled = true;
+    focusButton.textContent = "Focus District";
+    return;
+  }
+
+  const leadProject = active.topProjects[0] || null;
+  const hoverLive = active.zone === _ucanTwinState.hoveredDistrict;
+  title.textContent = active.zone;
+  momentum.textContent = hoverLive
+    ? `${active.momentumLabel} · Live Hover`
+    : active.momentumLabel;
+  summary.textContent = `${active.projectCount} projects across ${active.developerCount} developers. Avg ${_formatUcanTwinCompactCurrency(active.avgPrice)} and peak ${_formatUcanTwinCompactCurrency(active.maxPrice)}.`;
+  projectCount.textContent = String(active.projectCount);
+  developerCount.textContent = String(active.developerCount);
+  avgPrice.textContent = _formatUcanTwinCompactCurrency(active.avgPrice);
+  peakPrice.textContent = _formatUcanTwinCompactCurrency(active.maxPrice);
+  highlight.textContent = leadProject?.title || active.highlightProject;
+  highlightPrice.textContent = leadProject
+    ? _formatUcanTwinCompactCurrency(leadProject.price)
+    : "Awaiting pricing signal.";
+  focusButton.disabled = false;
+  focusButton.textContent = `Focus ${active.zone}`;
+
+  records.slice(0, 5).forEach((district, index) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "ucan-twin-hotspot-btn";
+    button.dataset.zone = district.zone;
+    if (district.zone === active.zone) {
+      button.classList.add("active");
+    }
+
+    const rank = document.createElement("span");
+    rank.className = "ucan-twin-hotspot-rank";
+    rank.textContent = String(index + 1).padStart(2, "0");
+
+    const copy = document.createElement("span");
+    copy.className = "ucan-twin-hotspot-copy";
+
+    const hotspotTitle = document.createElement("strong");
+    hotspotTitle.className = "ucan-twin-hotspot-title";
+    hotspotTitle.textContent = district.zone;
+
+    const hotspotMeta = document.createElement("span");
+    hotspotMeta.className = "ucan-twin-hotspot-meta";
+    hotspotMeta.textContent = `${district.projectCount} projects · ${_formatUcanTwinCompactCurrency(district.maxPrice)}`;
+
+    copy.append(hotspotTitle, hotspotMeta);
+
+    const energy = document.createElement("span");
+    energy.className = "ucan-twin-hotspot-energy";
+    energy.textContent = district.momentumLabel;
+
+    button.append(rank, copy, energy);
+    hotspotsList.append(button);
+  });
+}
+
+function _updateUcanTwinUiState() {
+  const preset = _getUcanTwinPreset();
+  document
+    .querySelectorAll(".ucan-twin-preset-btn[data-ucan-preset]")
+    .forEach((button) => {
+      const active = button.dataset.ucanPreset === _ucanTwinState.presetKey;
+      button.classList.toggle("active", active);
+      button.setAttribute("aria-pressed", String(active));
+    });
+
+  const districtToggle = document.getElementById("ucan-twin-districts");
+  if (districtToggle) districtToggle.checked = _ucanTwinState.showDistricts;
+  const projectTowerToggle = document.getElementById(
+    "ucan-twin-project-towers",
+  );
+  if (projectTowerToggle)
+    projectTowerToggle.checked = _ucanTwinState.showProjectTowers;
+  const landmarkToggle = document.getElementById("ucan-twin-landmarks");
+  if (landmarkToggle) landmarkToggle.checked = _ucanTwinState.showLandmarks;
+
+  const status = document.getElementById("ucan-twin-status");
+  if (status) {
+    const activeSystems = [];
+    if (_ucanTwinState.showDistricts) activeSystems.push("district energy");
+    if (_ucanTwinState.showProjectTowers) activeSystems.push("skyline towers");
+    if (_ucanTwinState.showLandmarks) activeSystems.push("landmark cores");
+    status.textContent = `${preset.label} live: ${activeSystems.join(" · ") || "scene core only"}.`;
+  }
+
+  _renderUcanTwinDistrictPanel();
+}
+
+function setUcanTwinPreset(presetKey) {
+  if (!UCAN_DIGITAL_TWIN_PRESETS[presetKey]) return;
+  _ucanTwinState.presetKey = presetKey;
+  _persistUcanTwinPreset(presetKey);
+  _syncUcanSceneTheme();
+  _updateUcanTwinUiState();
+}
+
+function setUcanTwinLayerVisibility(layerName, visible) {
+  if (layerName === "districts") _ucanTwinState.showDistricts = !!visible;
+  if (layerName === "projectTowers")
+    _ucanTwinState.showProjectTowers = !!visible;
+  if (layerName === "landmarks") _ucanTwinState.showLandmarks = !!visible;
+  _syncUcanTwinPresentation();
+  _updateUcanTwinUiState();
+}
+
+function resetUcanTwinScene() {
+  _ucanTwinState.presetKey = UCAN_DIGITAL_TWIN_PRESET_DEFAULT;
+  _ucanTwinState.showDistricts = true;
+  _ucanTwinState.showProjectTowers = true;
+  _ucanTwinState.showLandmarks = true;
+  _ucanTwinState.selectedDistrict = "";
+  _ucanTwinState.hoveredDistrict = "";
+  _persistUcanTwinPreset(_ucanTwinState.presetKey);
+  _clearUcanFocusPoint();
+  _closeUcanTwinDistrictPopup();
+  if (mapboxMap) {
+    mapboxMap.easeTo({
+      ...UCAN_DEFAULT_CAMERA,
+      duration: 1800,
+      essential: true,
+    });
+  }
+  _syncUcanSceneTheme();
+  _updateUcanTwinUiState();
+}
+
+function startUcanTwinTour() {
+  if (!mapboxMap) return;
+  const token = ++_ucanMomentToken;
+  let delay = 0;
+
+  UCAN_TWIN_TOUR_SEQUENCE.forEach((zoneName) => {
+    const moment = _getUcanZoneMoment(zoneName);
+    if (!moment) return;
+
+    const landmark = moment.landmark;
+    const approach = moment.approach || [
+      landmark[0] + 0.22,
+      landmark[1] + 0.14,
+    ];
+
+    window.setTimeout(() => {
+      if (!mapboxMap || token !== _ucanMomentToken) return;
+      _setUcanFocusPoint(landmark, `${zoneName} Twin`, zoneName);
+      mapboxMap.easeTo({
+        center: approach,
+        zoom: Math.max(moment.hoverZoom || 9.4, 8.9),
+        pitch: 54,
+        bearing: (moment.bearing || -18) - 18,
+        duration: 1100,
+        essential: true,
+      });
+    }, delay);
+    delay += 1180;
+
+    window.setTimeout(() => {
+      if (!mapboxMap || token !== _ucanMomentToken) return;
+      mapboxMap.easeTo({
+        center: landmark,
+        zoom: Math.max(moment.finalZoom || 11.2, 11.2),
+        pitch: is3DMode ? 83 : 76,
+        bearing: moment.bearing || -18,
+        duration: 1500,
+        essential: true,
+      });
+    }, delay);
+    delay += 1580;
+  });
+
+  notifyRouteMessage("UCAN Twin tour started.", "info");
+}
+
 function _queueUcanSync(kind) {
   if (kind === "roads") _ucanRoadsDirty = true;
   if (kind === "places") _ucanPlacesDirty = true;
@@ -15529,7 +16589,11 @@ function _queueUcanSync(kind) {
   if (_ucanSyncFrame) return;
   _ucanSyncFrame = requestAnimationFrame(() => {
     _ucanSyncFrame = null;
-    if (!mapboxMap || !mapboxMap.isStyleLoaded()) return;
+    const hasCustomSources =
+      !!mapboxMap?.getSource(UCAN_SOURCES.projectsRaw) ||
+      !!mapboxMap?.getSource(UCAN_SOURCES.roads) ||
+      !!mapboxMap?.getSource(UCAN_SOURCES.places);
+    if (!mapboxMap || (!mapboxMap.isStyleLoaded() && !hasCustomSources)) return;
     if (_ucanRoadsDirty) {
       _ucanRoadsDirty = false;
       _updateUcanRoadSource();
@@ -15574,7 +16638,10 @@ function _getUcanMapBootstrapOptions() {
   const style = _resolveUcanStyleUrl();
   return {
     style,
-    config: style === UCAN_SIGNATURE_STYLE_URL ? UCAN_SIGNATURE_STYLE_CONFIG : undefined,
+    config:
+      style === UCAN_SIGNATURE_STYLE_URL
+        ? UCAN_SIGNATURE_STYLE_CONFIG
+        : undefined,
   };
 }
 
@@ -15584,7 +16651,8 @@ function _isLikelyUcanMapboxToken(token) {
 
 function _resolveUcanMapboxToken() {
   const runtimeToken =
-    typeof window !== "undefined" && typeof window.__UCAN_MAPBOX_TOKEN__ === "string"
+    typeof window !== "undefined" &&
+    typeof window.__UCAN_MAPBOX_TOKEN__ === "string"
       ? window.__UCAN_MAPBOX_TOKEN__.trim()
       : "";
   if (_isLikelyUcanMapboxToken(runtimeToken)) {
@@ -15604,43 +16672,223 @@ function _resolveUcanMapboxToken() {
   return "";
 }
 
-function _promptForUcanMapboxToken() {
-  if (typeof window === "undefined" || typeof window.prompt !== "function") {
+function _persistUcanMapboxToken(token) {
+  const normalizedToken = typeof token === "string" ? token.trim() : "";
+  if (!_isLikelyUcanMapboxToken(normalizedToken)) {
     return "";
   }
 
-  const enteredToken = window.prompt(
-    "Enter your Mapbox public token to enable UCAN. It will be stored in this browser only.",
-    "",
-  );
+  if (typeof window !== "undefined") {
+    window.__UCAN_MAPBOX_TOKEN__ = normalizedToken;
+  }
+
+  try {
+    localStorage.setItem(UCAN_MAPBOX_TOKEN_STORAGE_KEY, normalizedToken);
+  } catch (_) {
+    /* localStorage unavailable */
+  }
+
+  notifyRouteMessage("UCAN token saved for this browser.", "success");
+  return normalizedToken;
+}
+
+function _closeUcanTokenModal() {
+  const modal = document.getElementById(UCAN_TOKEN_MODAL_ID);
+  if (!modal) return;
+  setOverlayVisibility(modal, false);
+  document.body.classList.remove("modal-open");
+}
+
+function _ensureUcanTokenModal() {
+  if (typeof document === "undefined") return null;
+
+  let modal = document.getElementById(UCAN_TOKEN_MODAL_ID);
+  if (!modal) {
+    modal = document.createElement("div");
+    modal.id = UCAN_TOKEN_MODAL_ID;
+    modal.className = "modal-overlay ucan-token-modal";
+    modal.hidden = true;
+    modal.setAttribute("inert", "");
+    modal.setAttribute("aria-hidden", "true");
+    modal.setAttribute("role", "dialog");
+    modal.setAttribute("aria-modal", "true");
+    modal.setAttribute("aria-labelledby", "ucan-token-modal-title");
+    modal.innerHTML = `
+      <div class="modal-content ucan-token-modal-content">
+        <div class="modal-header">
+          <div>
+            <div class="ucan-token-kicker">UCAN ACCESS</div>
+            <h3 id="ucan-token-modal-title" class="modal-title">Mapbox Token</h3>
+            <div class="modal-subtitle">Paste a public Mapbox token that starts with pk. It stays in this browser only.</div>
+          </div>
+          <button type="button" class="modal-close" data-ucan-token-close aria-label="Close UCAN token dialog">×</button>
+        </div>
+        <div class="modal-body ucan-token-modal-body">
+          <label class="ucan-token-field" for="ucan-token-input">Public Token</label>
+          <input
+            id="ucan-token-input"
+            class="ucan-token-input"
+            type="text"
+            inputmode="text"
+            autocomplete="off"
+            autocapitalize="off"
+            spellcheck="false"
+            placeholder="pk.eyJ1IjoiLi4u"
+          />
+          <p class="ucan-token-hint">
+            UCAN never writes this token into source control. Runtime token, local browser only.
+          </p>
+          <div class="ucan-token-actions">
+            <button type="button" class="ucan-twin-action-btn secondary ucan-token-btn" data-ucan-token-close>
+              Cancel
+            </button>
+            <button type="button" class="ucan-twin-action-btn primary ucan-token-btn" data-ucan-token-save>
+              Save Token
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  }
+
+  if (modal.dataset.bound !== "true") {
+    modal.dataset.bound = "true";
+
+    modal.querySelectorAll("[data-ucan-token-close]").forEach((button) => {
+      button.addEventListener("click", _closeUcanTokenModal);
+    });
+
+    const input = modal.querySelector("#ucan-token-input");
+    const saveButton = modal.querySelector("[data-ucan-token-save]");
+
+    const submit = () => {
+      const token = typeof input?.value === "string" ? input.value.trim() : "";
+      if (!token) {
+        notifyRouteMessage("Paste a Mapbox public token to continue.", "info");
+        input?.focus();
+        return;
+      }
+
+      if (!_isLikelyUcanMapboxToken(token)) {
+        notifyRouteMessage(
+          "UCAN needs a valid Mapbox public token that starts with pk.",
+          "error",
+        );
+        input?.select();
+        return;
+      }
+
+      const savedToken = _persistUcanMapboxToken(token);
+      if (!savedToken) return;
+      _closeUcanTokenModal();
+      switchMapLayer("ucan");
+    };
+
+    if (saveButton) {
+      saveButton.addEventListener("click", submit);
+    }
+
+    if (input) {
+      input.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          submit();
+          return;
+        }
+
+        if (event.key === "Escape") {
+          event.preventDefault();
+          _closeUcanTokenModal();
+        }
+      });
+    }
+
+    modal.addEventListener("click", (event) => {
+      if (event.target === modal) {
+        _closeUcanTokenModal();
+      }
+    });
+  }
+
+  return {
+    modal,
+    input: modal.querySelector("#ucan-token-input"),
+  };
+}
+
+function _openUcanTokenModal() {
+  const elements = _ensureUcanTokenModal();
+  if (!elements?.modal) return false;
+
+  if (elements.input) {
+    elements.input.value = _resolveUcanMapboxToken() || "";
+  }
+
+  setOverlayVisibility(elements.modal, true);
+  document.body.classList.add("modal-open");
+  requestAnimationFrame(() => {
+    elements.input?.focus();
+    elements.input?.select();
+  });
+  return true;
+}
+
+function _promptForUcanMapboxToken() {
+  if (typeof window === "undefined") {
+    return "";
+  }
+
+  if (typeof window.prompt !== "function") {
+    _openUcanTokenModal();
+    notifyRouteMessage(
+      "Paste your Mapbox public token in the UCAN dialog to continue.",
+      "info",
+    );
+    return "";
+  }
+
+  let enteredToken = "";
+  try {
+    enteredToken = window.prompt(
+      "Enter your Mapbox public token to enable UCAN. It will be stored in this browser only.",
+      "",
+    );
+  } catch (_) {
+    _openUcanTokenModal();
+    notifyRouteMessage(
+      "Paste your Mapbox public token in the UCAN dialog to continue.",
+      "info",
+    );
+    return "";
+  }
+
   const token = typeof enteredToken === "string" ? enteredToken.trim() : "";
   if (!token) {
     return "";
   }
 
   if (!_isLikelyUcanMapboxToken(token)) {
-    notifyRouteMessage("UCAN needs a valid Mapbox public token that starts with pk.", "error");
+    notifyRouteMessage(
+      "UCAN needs a valid Mapbox public token that starts with pk.",
+      "error",
+    );
     return "";
   }
 
-  try {
-    localStorage.setItem(UCAN_MAPBOX_TOKEN_STORAGE_KEY, token);
-  } catch (_) {
-    /* localStorage unavailable */
-  }
-
-  notifyRouteMessage("UCAN token saved for this browser.", "success");
-  return token;
+  return _persistUcanMapboxToken(token);
 }
 
 function _normalizeUcanZoneName(zoneName) {
   const value = String(zoneName || "").toLowerCase();
   if (!value) return "";
-  if (value.includes("north coast") || value.includes("sahel")) return "North Coast";
+  if (value.includes("north coast") || value.includes("sahel"))
+    return "North Coast";
   if (value.includes("sokhna") || value.includes("galala")) return "Sokhna";
   if (value.includes("october") || value.includes("zayed")) return "October";
   if (value.includes("capital")) return "New Capital";
-  if (value.includes("new cairo") || value.includes("cairo")) return "New Cairo";
+  if (value.includes("new cairo") || value.includes("cairo"))
+    return "New Cairo";
   if (value.includes("gouna")) return "Gouna";
   return "";
 }
@@ -15660,7 +16908,9 @@ function _getUcanMajorRoadFilter() {
 }
 
 function _getUcanActiveRoute() {
-  return typeof RoutePlanner !== "undefined" ? RoutePlanner.state.activeRoute : null;
+  return typeof RoutePlanner !== "undefined"
+    ? RoutePlanner.state.activeRoute
+    : null;
 }
 
 function _buildUcanRouteFeatureCollection(routeData) {
@@ -15754,7 +17004,11 @@ function _buildUcanTravelPath(routeData) {
 
   const last = coordinates[coordinates.length - 1];
   const finalSample = sampled[sampled.length - 1];
-  if (!finalSample || finalSample[0] !== last[1] || finalSample[1] !== last[0]) {
+  if (
+    !finalSample ||
+    finalSample[0] !== last[1] ||
+    finalSample[1] !== last[0]
+  ) {
     sampled.push([last[1], last[0]]);
   }
 
@@ -15886,24 +17140,41 @@ function _ensureUcanAnimationLoop() {
       : 0.09;
     _ucanLastAnimationTick = timestamp;
 
-    _ucanDashSequenceIndex = (_ucanDashSequenceIndex + 1) % UCAN_FLOW_DASH_SEQUENCE.length;
+    _ucanDashSequenceIndex =
+      (_ucanDashSequenceIndex + 1) % UCAN_FLOW_DASH_SEQUENCE.length;
     const dashPattern = UCAN_FLOW_DASH_SEQUENCE[_ucanDashSequenceIndex];
     _safeSetUcanPaint(UCAN_LAYERS.roadFlow, "line-dasharray", dashPattern);
     _safeSetUcanPaint(UCAN_LAYERS.routePulse, "line-dasharray", dashPattern);
 
     const pulse = 0.55 + 0.45 * Math.sin(timestamp / 360);
+    _safeSetUcanPaint(UCAN_LAYERS.routeTravelerHalo, "circle-radius", [
+      "interpolate",
+      ["linear"],
+      ["zoom"],
+      6,
+      9 + pulse * 5,
+      14,
+      18 + pulse * 9,
+    ]);
     _safeSetUcanPaint(
       UCAN_LAYERS.routeTravelerHalo,
-      "circle-radius",
-      ["interpolate", ["linear"], ["zoom"], 6, 9 + pulse * 5, 14, 18 + pulse * 9],
+      "circle-opacity",
+      0.22 + pulse * 0.16,
     );
-    _safeSetUcanPaint(UCAN_LAYERS.routeTravelerHalo, "circle-opacity", 0.22 + pulse * 0.16);
+    _safeSetUcanPaint(UCAN_LAYERS.focusHalo, "circle-radius", [
+      "interpolate",
+      ["linear"],
+      ["zoom"],
+      6,
+      18 + pulse * 7,
+      14,
+      28 + pulse * 12,
+    ]);
     _safeSetUcanPaint(
       UCAN_LAYERS.focusHalo,
-      "circle-radius",
-      ["interpolate", ["linear"], ["zoom"], 6, 18 + pulse * 7, 14, 28 + pulse * 12],
+      "circle-opacity",
+      0.16 + pulse * 0.14,
     );
-    _safeSetUcanPaint(UCAN_LAYERS.focusHalo, "circle-opacity", 0.16 + pulse * 0.14);
 
     if (_ucanTravelerPath.length > 1 && _ucanTravelerTotalDistance > 0) {
       _ucanTravelerDistance += deltaSeconds * _getUcanRouteTravelSpeed();
@@ -15919,11 +17190,12 @@ function _ensureUcanAnimationLoop() {
 
 function _applyUcanSignatureStyleConfig() {
   if (!mapboxMap || typeof mapboxMap.setConfigProperty !== "function") return;
+  const preset = _getUcanTwinPreset();
   try {
     mapboxMap.setConfigProperty(
       "basemap",
       "lightPreset",
-      is3DMode ? "night" : "dusk",
+      preset.lightPreset || (is3DMode ? "night" : "dusk"),
     );
     mapboxMap.setConfigProperty("basemap", "showPointOfInterestLabels", false);
     mapboxMap.setConfigProperty("basemap", "showTransitLabels", false);
@@ -15955,17 +17227,17 @@ function _hasUcanRouteInfrastructure() {
   if (!mapboxMap) return false;
   return Boolean(
     mapboxMap.getSource(UCAN_SOURCES.routePrimary) &&
-      mapboxMap.getSource(UCAN_SOURCES.routeAlternatives) &&
-      mapboxMap.getSource(UCAN_SOURCES.routeStops) &&
-      mapboxMap.getSource(UCAN_SOURCES.routeTraveler) &&
-      mapboxMap.getLayer(UCAN_LAYERS.routeGlow) &&
-      mapboxMap.getLayer(UCAN_LAYERS.routeMain) &&
-      mapboxMap.getLayer(UCAN_LAYERS.routePulse) &&
-      mapboxMap.getLayer(UCAN_LAYERS.routeStopsHalo) &&
-      mapboxMap.getLayer(UCAN_LAYERS.routeStopsCore) &&
-      mapboxMap.getLayer(UCAN_LAYERS.routeStopsLabel) &&
-      mapboxMap.getLayer(UCAN_LAYERS.routeTravelerHalo) &&
-      mapboxMap.getLayer(UCAN_LAYERS.routeTravelerCore)
+    mapboxMap.getSource(UCAN_SOURCES.routeAlternatives) &&
+    mapboxMap.getSource(UCAN_SOURCES.routeStops) &&
+    mapboxMap.getSource(UCAN_SOURCES.routeTraveler) &&
+    mapboxMap.getLayer(UCAN_LAYERS.routeGlow) &&
+    mapboxMap.getLayer(UCAN_LAYERS.routeMain) &&
+    mapboxMap.getLayer(UCAN_LAYERS.routePulse) &&
+    mapboxMap.getLayer(UCAN_LAYERS.routeStopsHalo) &&
+    mapboxMap.getLayer(UCAN_LAYERS.routeStopsCore) &&
+    mapboxMap.getLayer(UCAN_LAYERS.routeStopsLabel) &&
+    mapboxMap.getLayer(UCAN_LAYERS.routeTravelerHalo) &&
+    mapboxMap.getLayer(UCAN_LAYERS.routeTravelerCore),
   );
 }
 
@@ -15992,13 +17264,19 @@ function _updateUcanRouteSources(routeData) {
   }
 
   const primarySource = mapboxMap.getSource(UCAN_SOURCES.routePrimary);
-  const alternativesSource = mapboxMap.getSource(UCAN_SOURCES.routeAlternatives);
+  const alternativesSource = mapboxMap.getSource(
+    UCAN_SOURCES.routeAlternatives,
+  );
   const stopsSource = mapboxMap.getSource(UCAN_SOURCES.routeStops);
-  if (primarySource) primarySource.setData(_buildUcanRouteFeatureCollection(activeRoute));
+  if (primarySource)
+    primarySource.setData(_buildUcanRouteFeatureCollection(activeRoute));
   if (alternativesSource) {
-    alternativesSource.setData(_buildUcanAlternativeRouteCollection(activeRoute));
+    alternativesSource.setData(
+      _buildUcanAlternativeRouteCollection(activeRoute),
+    );
   }
-  if (stopsSource) stopsSource.setData(_buildUcanRouteStopsCollection(activeRoute));
+  if (stopsSource)
+    stopsSource.setData(_buildUcanRouteStopsCollection(activeRoute));
 
   if (activeRoute?.primaryRoute?.geometry) {
     _setUcanTravelerPath(activeRoute);
@@ -16042,7 +17320,8 @@ function _playUcanZoneMoment(zoneName, lat, lng, zoom) {
   const moment = _getUcanZoneMoment(zoneName) || null;
   const landmark = moment?.landmark || [lng, lat];
   const approach = moment?.approach || [lng + 0.28, lat + 0.14];
-  const normalizedZone = _normalizeUcanZoneName(zoneName) || zoneName || "Region";
+  const normalizedZone =
+    _normalizeUcanZoneName(zoneName) || zoneName || "Region";
 
   _setUcanFocusPoint(landmark, normalizedZone, normalizedZone);
   _runUcanCameraSequence([
@@ -16064,11 +17343,13 @@ function _playUcanZoneMoment(zoneName, lat, lng, zoom) {
 }
 
 function _playUcanProjectMoment(project, coordinates) {
-  if (!mapboxMap || !Array.isArray(coordinates) || coordinates.length < 2) return;
+  if (!mapboxMap || !Array.isArray(coordinates) || coordinates.length < 2)
+    return;
   const [lng, lat] = coordinates;
   const zoneMoment = _getUcanZoneMoment(project?.zone);
   const label = project?.name || project?.title || "Project";
-  const zoneLabel = _normalizeUcanZoneName(project?.zone) || project?.zone || "";
+  const zoneLabel =
+    _normalizeUcanZoneName(project?.zone) || project?.zone || "";
   const approach = zoneMoment?.landmark || [lng + 0.1, lat + 0.07];
   _setUcanFocusPoint([lng, lat], label, zoneLabel);
   const token = _runUcanCameraSequence([
@@ -16246,7 +17527,11 @@ function _getUcanRoadFilter() {
   }
   return [
     "any",
-    ...visibleCategories.map((category) => ["==", ["get", "category"], category]),
+    ...visibleCategories.map((category) => [
+      "==",
+      ["get", "category"],
+      category,
+    ]),
   ];
 }
 
@@ -16262,7 +17547,11 @@ function _getUcanPlaceFilter() {
   }
   return [
     "any",
-    ...visibleCategories.map((category) => ["==", ["get", "category"], category]),
+    ...visibleCategories.map((category) => [
+      "==",
+      ["get", "category"],
+      category,
+    ]),
   ];
 }
 
@@ -16272,22 +17561,19 @@ function _getUcanProjectFeatureCollection() {
     type: "FeatureCollection",
     features: projects
       .map((project, index) => {
-        const lat = Number.parseFloat(project.lat);
-        const lng = Number.parseFloat(project.lng);
-        if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
-        const title = project.name || project.title || `Project ${index + 1}`;
-        const price = Number.parseFloat(project.minPrice || project.price || 0) || 0;
+        const record = _getUcanProjectTwinRecord(project, index);
+        if (!record) return null;
         return {
           type: "Feature",
           id: `project-${index}`,
           properties: {
             sourceIndex: index,
-            title,
-            developer: project.developer || project.dev || "Unknown developer",
-            zone: project.zone || project.area || "",
-            price,
+            title: record.title,
+            developer: record.developer,
+            zone: record.zone,
+            price: record.price,
           },
-          geometry: { type: "Point", coordinates: [lng, lat] },
+          geometry: { type: "Point", coordinates: [record.lng, record.lat] },
         };
       })
       .filter(Boolean),
@@ -16308,6 +17594,49 @@ function _updateUcanPlaceSource() {
   source.setData({ type: "FeatureCollection", features: _ucanState.places });
 }
 
+function _getUcanFeatureCenter(feature) {
+  const centerLng = Number.parseFloat(feature?.properties?.centerLng);
+  const centerLat = Number.parseFloat(feature?.properties?.centerLat);
+  if (Number.isFinite(centerLng) && Number.isFinite(centerLat)) {
+    return [centerLng, centerLat];
+  }
+
+  if (
+    feature?.geometry?.type === "Point" &&
+    Array.isArray(feature.geometry.coordinates) &&
+    feature.geometry.coordinates.length >= 2
+  ) {
+    return feature.geometry.coordinates;
+  }
+
+  if (
+    feature?.geometry?.type === "Polygon" &&
+    Array.isArray(feature.geometry.coordinates?.[0])
+  ) {
+    const ring = feature.geometry.coordinates[0].filter(
+      (coordinate) => Array.isArray(coordinate) && coordinate.length >= 2,
+    );
+    const uniqueVertices = ring.length > 1 ? ring.slice(0, -1) : ring;
+    if (uniqueVertices.length === 0) return null;
+
+    const totals = uniqueVertices.reduce(
+      (accumulator, coordinate) => {
+        accumulator.lng += Number(coordinate[0]) || 0;
+        accumulator.lat += Number(coordinate[1]) || 0;
+        return accumulator;
+      },
+      { lng: 0, lat: 0 },
+    );
+
+    return [
+      totals.lng / uniqueVertices.length,
+      totals.lat / uniqueVertices.length,
+    ];
+  }
+
+  return null;
+}
+
 function _findUcanProject(feature) {
   const projects = _getUcanProjectData();
   const index = Number.parseInt(feature?.properties?.sourceIndex, 10);
@@ -16315,7 +17644,10 @@ function _findUcanProject(feature) {
     return projects[index];
   }
   const title = feature?.properties?.title || "";
-  return projects.find((project) => (project.name || project.title) === title) || null;
+  return (
+    projects.find((project) => (project.name || project.title) === title) ||
+    null
+  );
 }
 
 function _safeSetUcanFilter(layerId, filter) {
@@ -16369,8 +17701,9 @@ function _ensureUcanSourcesAndLayers() {
   const labelLayerId =
     mapboxMap
       .getStyle()
-      ?.layers?.find((layer) => layer.type === "symbol" && layer.layout?.["text-field"])
-      ?.id || undefined;
+      ?.layers?.find(
+        (layer) => layer.type === "symbol" && layer.layout?.["text-field"],
+      )?.id || undefined;
 
   if (!mapboxMap.getSource(UCAN_SOURCES.terrain)) {
     mapboxMap.addSource(UCAN_SOURCES.terrain, {
@@ -16449,6 +17782,20 @@ function _ensureUcanSourcesAndLayers() {
     });
   }
 
+  if (!mapboxMap.getSource(UCAN_SOURCES.twinDistricts)) {
+    mapboxMap.addSource(UCAN_SOURCES.twinDistricts, {
+      type: "geojson",
+      data: { type: "FeatureCollection", features: [] },
+    });
+  }
+
+  if (!mapboxMap.getSource(UCAN_SOURCES.twinTowers)) {
+    mapboxMap.addSource(UCAN_SOURCES.twinTowers, {
+      type: "geojson",
+      data: { type: "FeatureCollection", features: [] },
+    });
+  }
+
   if (!mapboxMap.getLayer(UCAN_LAYERS.projectHeat)) {
     mapboxMap.addLayer(
       {
@@ -16466,8 +17813,24 @@ function _ensureUcanSourcesAndLayers() {
             10000000,
             1,
           ],
-          "heatmap-intensity": ["interpolate", ["linear"], ["zoom"], 5, 0.7, 12, 2.4],
-          "heatmap-radius": ["interpolate", ["linear"], ["zoom"], 5, 18, 12, 48],
+          "heatmap-intensity": [
+            "interpolate",
+            ["linear"],
+            ["zoom"],
+            5,
+            0.7,
+            12,
+            2.4,
+          ],
+          "heatmap-radius": [
+            "interpolate",
+            ["linear"],
+            ["zoom"],
+            5,
+            18,
+            12,
+            48,
+          ],
           "heatmap-opacity": 0.95,
           "heatmap-color": [
             "interpolate",
@@ -16497,7 +17860,15 @@ function _ensureUcanSourcesAndLayers() {
       source: UCAN_SOURCES.projectsClustered,
       filter: ["has", "point_count"],
       paint: {
-        "circle-color": ["step", ["get", "point_count"], "#ff4dd2", 30, "#c05cff", 120, "#4ce8ff"],
+        "circle-color": [
+          "step",
+          ["get", "point_count"],
+          "#ff4dd2",
+          30,
+          "#c05cff",
+          120,
+          "#4ce8ff",
+        ],
         "circle-radius": ["step", ["get", "point_count"], 22, 30, 34, 120, 48],
         "circle-opacity": 0.28,
         "circle-blur": 0.8,
@@ -16509,7 +17880,15 @@ function _ensureUcanSourcesAndLayers() {
       source: UCAN_SOURCES.projectsClustered,
       filter: ["has", "point_count"],
       paint: {
-        "circle-color": ["step", ["get", "point_count"], "#ff4dd2", 30, "#c05cff", 120, "#4ce8ff"],
+        "circle-color": [
+          "step",
+          ["get", "point_count"],
+          "#ff4dd2",
+          30,
+          "#c05cff",
+          120,
+          "#4ce8ff",
+        ],
         "circle-radius": ["step", ["get", "point_count"], 16, 30, 24, 120, 36],
         "circle-stroke-color": "rgba(255,255,255,0.88)",
         "circle-stroke-width": 1.5,
@@ -16961,7 +18340,10 @@ function _ensureUcanSourcesAndLayers() {
     }
   }
 
-  if (mapboxMap.getSource("composite") && !mapboxMap.getLayer(UCAN_LAYERS.buildings)) {
+  if (
+    mapboxMap.getSource("composite") &&
+    !mapboxMap.getLayer(UCAN_LAYERS.buildings)
+  ) {
     mapboxMap.addLayer(
       {
         id: UCAN_LAYERS.buildings,
@@ -16981,13 +18363,139 @@ function _ensureUcanSourcesAndLayers() {
             "#1f1f3f",
           ],
           "fill-extrusion-base": ["coalesce", ["get", "min_height"], 0],
-          "fill-extrusion-height": ["*", ["coalesce", ["get", "height"], 12], 1.2],
+          "fill-extrusion-height": [
+            "*",
+            ["coalesce", ["get", "height"], 12],
+            1.2,
+          ],
           "fill-extrusion-opacity": 0.84,
           "fill-extrusion-vertical-gradient": true,
         },
       },
       labelLayerId,
     );
+  }
+
+  const twinDistrictLayerDefs = [
+    {
+      id: UCAN_LAYERS.twinDistrictAura,
+      type: "circle",
+      source: UCAN_SOURCES.twinDistricts,
+      paint: {
+        "circle-color": "rgba(76, 232, 255, 0.22)",
+        "circle-radius": [
+          "interpolate",
+          ["linear"],
+          ["zoom"],
+          4,
+          ["*", ["coalesce", ["get", "energy"], 0.25], 34],
+          8,
+          ["*", ["coalesce", ["get", "energy"], 0.25], 68],
+          12,
+          ["*", ["coalesce", ["get", "energy"], 0.25], 124],
+        ],
+        "circle-opacity": 0.28,
+        "circle-blur": 1.2,
+      },
+    },
+    {
+      id: UCAN_LAYERS.twinDistrictCore,
+      type: "circle",
+      source: UCAN_SOURCES.twinDistricts,
+      paint: {
+        "circle-color": "#ffe27a",
+        "circle-radius": [
+          "interpolate",
+          ["linear"],
+          ["zoom"],
+          4,
+          ["*", ["coalesce", ["get", "energy"], 0.25], 8],
+          8,
+          ["*", ["coalesce", ["get", "energy"], 0.25], 16],
+          12,
+          ["*", ["coalesce", ["get", "energy"], 0.25], 24],
+        ],
+        "circle-stroke-color": "rgba(255,255,255,0.9)",
+        "circle-stroke-width": 1.6,
+        "circle-opacity": 0.9,
+      },
+    },
+    {
+      id: UCAN_LAYERS.twinDistrictLabel,
+      type: "symbol",
+      source: UCAN_SOURCES.twinDistricts,
+      layout: {
+        "text-field": ["get", "label"],
+        "text-font": ["DIN Offc Pro Bold", "Arial Unicode MS Bold"],
+        "text-size": ["interpolate", ["linear"], ["zoom"], 5, 10, 11, 14],
+        "text-offset": [0, 1.25],
+        "text-anchor": "top",
+      },
+      paint: {
+        "text-color": "#f6f3ff",
+        "text-halo-color": "rgba(3, 8, 18, 0.94)",
+        "text-halo-width": 1.4,
+      },
+    },
+  ];
+
+  for (const definition of twinDistrictLayerDefs) {
+    if (!mapboxMap.getLayer(definition.id)) {
+      mapboxMap.addLayer(definition, labelLayerId);
+    }
+  }
+
+  const twinTowerLayerDefs = [
+    {
+      id: UCAN_LAYERS.twinProjectTowers,
+      type: "fill-extrusion",
+      source: UCAN_SOURCES.twinTowers,
+      minzoom: 9,
+      filter: ["==", ["get", "towerKind"], "project"],
+      paint: {
+        "fill-extrusion-color": [
+          "interpolate",
+          ["linear"],
+          ["coalesce", ["get", "signal"], 0],
+          0,
+          "#223778",
+          1,
+          "#6ff3ff",
+        ],
+        "fill-extrusion-base": 0,
+        "fill-extrusion-height": ["coalesce", ["get", "height"], 72],
+        "fill-extrusion-opacity": 0.82,
+        "fill-extrusion-vertical-gradient": true,
+      },
+    },
+    {
+      id: UCAN_LAYERS.twinLandmarkTowers,
+      type: "fill-extrusion",
+      source: UCAN_SOURCES.twinTowers,
+      minzoom: 8,
+      filter: ["==", ["get", "towerKind"], "landmark"],
+      paint: {
+        "fill-extrusion-color": [
+          "interpolate",
+          ["linear"],
+          ["coalesce", ["get", "signal"], 0],
+          0,
+          "#ff4dd2",
+          1,
+          "#ffe27a",
+        ],
+        "fill-extrusion-base": 0,
+        "fill-extrusion-height": ["coalesce", ["get", "height"], 280],
+        "fill-extrusion-opacity": 0.92,
+        "fill-extrusion-vertical-gradient": true,
+      },
+    },
+  ];
+
+  for (const definition of twinTowerLayerDefs) {
+    if (!mapboxMap.getLayer(definition.id)) {
+      mapboxMap.addLayer(definition, labelLayerId);
+    }
   }
 
   _bindUcanInteractions();
@@ -17004,6 +18512,16 @@ function _closeUcanClusterPopup() {
     _ucanClusterPopup.remove();
     _ucanClusterPopup = null;
   }
+}
+
+function _hasRenderedUcanTwinDistrictAtPoint(point) {
+  if (!mapboxMap || !point) return false;
+
+  return (
+    mapboxMap.queryRenderedFeatures(point, {
+      layers: [UCAN_LAYERS.twinDistrictCore, UCAN_LAYERS.twinDistrictLabel],
+    }).length > 0
+  );
 }
 
 function _showUcanRoadPopup(feature, lngLat) {
@@ -17080,7 +18598,9 @@ function _focusUcanRoadSearch(entry) {
 function _openUcanProject(feature) {
   const project = _findUcanProject(feature);
   if (!project) return;
-  _playUcanProjectMoment(project, feature.geometry.coordinates);
+  const center = _getUcanFeatureCenter(feature);
+  if (!center) return;
+  _playUcanProjectMoment(project, center);
 }
 
 function _bindUcanInteractions() {
@@ -17112,6 +18632,10 @@ function _bindUcanInteractions() {
   mapboxMap.on("mousemove", UCAN_LAYERS.clusters, (event) => {
     const feature = event.features?.[0];
     if (!feature) return;
+    if (_hasRenderedUcanTwinDistrictAtPoint(event.point)) {
+      _closeUcanClusterPopup();
+      return;
+    }
     _closeUcanClusterPopup();
     _ucanClusterPopup = new mapboxgl.Popup({
       closeButton: false,
@@ -17120,12 +18644,18 @@ function _bindUcanInteractions() {
       offset: 14,
     })
       .setLngLat(event.lngLat)
-      .setHTML(`<div class="pct-count">${feature.properties.point_count_abbreviated} projects</div><div class="pct-row">Click to dive into this cluster</div>`)
+      .setHTML(
+        `<div class="pct-count">${feature.properties.point_count_abbreviated} projects</div><div class="pct-row">Click to dive into this cluster</div>`,
+      )
       .addTo(mapboxMap);
   });
   mapboxMap.on("click", UCAN_LAYERS.clusters, (event) => {
     const feature = event.features?.[0];
     if (!feature) return;
+    if (_hasRenderedUcanTwinDistrictAtPoint(event.point)) {
+      _closeUcanClusterPopup();
+      return;
+    }
     const clusterId = feature.properties.cluster_id;
     mapboxMap
       .getSource(UCAN_SOURCES.projectsClustered)
@@ -17178,20 +18708,99 @@ function _bindUcanInteractions() {
     _setUcanHoveredPlace(feature);
     _showPlacePanel(feature);
   });
+
+  [UCAN_LAYERS.twinProjectTowers, UCAN_LAYERS.twinLandmarkTowers].forEach(
+    (layerId) => {
+      mapboxMap.on("mouseenter", layerId, () => {
+        mapboxMap.getCanvas().style.cursor = "pointer";
+      });
+      mapboxMap.on("mouseleave", layerId, () => {
+        mapboxMap.getCanvas().style.cursor = "";
+      });
+    },
+  );
+
+  mapboxMap.on("click", UCAN_LAYERS.twinProjectTowers, (event) => {
+    const feature = event.features?.[0];
+    if (!feature) return;
+    if (feature.properties?.zone) {
+      _setUcanTwinSelectedDistrict(feature.properties.zone);
+    }
+    _openUcanProject(feature);
+  });
+
+  mapboxMap.on("click", UCAN_LAYERS.twinLandmarkTowers, (event) => {
+    const feature = event.features?.[0];
+    if (!feature) return;
+    const zoneName =
+      feature.properties?.zone || feature.properties?.label || "";
+    if (!zoneName) return;
+    _focusUcanTwinDistrict(zoneName);
+  });
+
+  [UCAN_LAYERS.twinDistrictCore, UCAN_LAYERS.twinDistrictLabel].forEach(
+    (layerId) => {
+      mapboxMap.on("mouseenter", layerId, () => {
+        mapboxMap.getCanvas().style.cursor = "pointer";
+      });
+      mapboxMap.on("mouseleave", layerId, () => {
+        mapboxMap.getCanvas().style.cursor = "";
+        _closeUcanTwinDistrictPopup();
+        _clearUcanTwinHoveredDistrict();
+      });
+      mapboxMap.on("mousemove", layerId, (event) => {
+        const feature = event.features?.[0];
+        const zoneName =
+          feature?.properties?.zone || feature?.properties?.label || "";
+        if (!zoneName) return;
+        const district =
+          _setUcanTwinHoveredDistrict(zoneName) ||
+          _getUcanDistrictAnalyticsByZone(zoneName);
+        if (!district) return;
+        _showUcanTwinDistrictPopup(district, event.lngLat);
+      });
+      mapboxMap.on("click", layerId, (event) => {
+        const feature = event.features?.[0];
+        const zoneName =
+          feature?.properties?.zone || feature?.properties?.label || "";
+        if (!zoneName) return;
+        const district = _focusUcanTwinDistrict(zoneName);
+        if (!district) return;
+        _showUcanTwinDistrictPopup(district, event.lngLat);
+      });
+    },
+  );
 }
 
 function _syncUcanRoadPresentation() {
   if (!mapboxMap || !mapboxMap.getSource(UCAN_SOURCES.roads)) return;
   const filter = _getUcanRoadFilter();
   const roadsVisible = _roadsVisible && _ucanState.roads.length > 0;
-  const baseOpacity = _roadHoverOnlyMode ? 0 : Math.max(0.16, 0.94 * _roadOpacityMultiplier);
-  const glowOpacity = _roadHoverOnlyMode ? 0 : Math.max(0.12, 0.32 * _roadOpacityMultiplier);
+  const baseOpacity = _roadHoverOnlyMode
+    ? 0
+    : Math.max(0.16, 0.94 * _roadOpacityMultiplier);
+  const glowOpacity = _roadHoverOnlyMode
+    ? 0
+    : Math.max(0.12, 0.32 * _roadOpacityMultiplier);
 
-  [UCAN_LAYERS.roadGlow, UCAN_LAYERS.roadStroke, UCAN_LAYERS.roadLabels, UCAN_LAYERS.roadHit].forEach((layerId) => {
+  [
+    UCAN_LAYERS.roadGlow,
+    UCAN_LAYERS.roadStroke,
+    UCAN_LAYERS.roadLabels,
+    UCAN_LAYERS.roadHit,
+  ].forEach((layerId) => {
     _safeSetUcanFilter(layerId, filter);
-    _safeSetUcanLayout(layerId, "visibility", roadsVisible ? "visible" : "none");
+    _safeSetUcanLayout(
+      layerId,
+      "visibility",
+      roadsVisible ? "visible" : "none",
+    );
   });
-  _safeSetUcanFilter(UCAN_LAYERS.roadFlow, ["all", filter, _getUcanMajorRoadFilter()]);
+  _safeSetUcanFilter(UCAN_LAYERS.roadFlow, [
+    "all",
+    filter,
+    _getUcanMajorRoadFilter(),
+  ]);
   _safeSetUcanLayout(
     UCAN_LAYERS.roadFlow,
     "visibility",
@@ -17202,23 +18811,37 @@ function _syncUcanRoadPresentation() {
   _safeSetUcanPaint(
     UCAN_LAYERS.roadFlow,
     "line-opacity",
-    roadsVisible && !_roadHoverOnlyMode ? Math.max(0.2, 0.34 * _roadOpacityMultiplier) : 0,
+    roadsVisible && !_roadHoverOnlyMode
+      ? Math.max(0.2, 0.34 * _roadOpacityMultiplier)
+      : 0,
   );
   _safeSetUcanLayout(
     UCAN_LAYERS.roadLabels,
     "visibility",
     roadsVisible && !_roadHoverOnlyMode ? "visible" : "none",
   );
-  _safeSetUcanLayout(UCAN_LAYERS.roadHit, "visibility", roadsVisible ? "visible" : "none");
+  _safeSetUcanLayout(
+    UCAN_LAYERS.roadHit,
+    "visibility",
+    roadsVisible ? "visible" : "none",
+  );
 }
 
 function _syncUcanPlacePresentation() {
   if (!mapboxMap || !mapboxMap.isStyleLoaded()) return;
   const filter = _getUcanPlaceFilter();
   const placesVisible = _placesVisible && _ucanState.places.length > 0;
-  [UCAN_LAYERS.placeFill, UCAN_LAYERS.placeOutline, UCAN_LAYERS.placeLabels].forEach((layerId) => {
+  [
+    UCAN_LAYERS.placeFill,
+    UCAN_LAYERS.placeOutline,
+    UCAN_LAYERS.placeLabels,
+  ].forEach((layerId) => {
     _safeSetUcanFilter(layerId, filter);
-    _safeSetUcanLayout(layerId, "visibility", placesVisible ? "visible" : "none");
+    _safeSetUcanLayout(
+      layerId,
+      "visibility",
+      placesVisible ? "visible" : "none",
+    );
   });
 }
 
@@ -17229,44 +18852,81 @@ function _syncUcanProjectPresentation() {
   const showRawMode = showProjects && !isHeatmapMode && !isClusterView;
   const showLabels = showProjects && isLabelsAlwaysVisible;
 
-  _safeSetUcanLayout(UCAN_LAYERS.projectHeat, "visibility", showProjects && isHeatmapMode ? "visible" : "none");
-  [UCAN_LAYERS.clusterGlow, UCAN_LAYERS.clusters, UCAN_LAYERS.clusterCount].forEach((layerId) => {
-    _safeSetUcanLayout(layerId, "visibility", showClusterMode ? "visible" : "none");
+  _safeSetUcanLayout(
+    UCAN_LAYERS.projectHeat,
+    "visibility",
+    showProjects && isHeatmapMode ? "visible" : "none",
+  );
+  [
+    UCAN_LAYERS.clusterGlow,
+    UCAN_LAYERS.clusters,
+    UCAN_LAYERS.clusterCount,
+  ].forEach((layerId) => {
+    _safeSetUcanLayout(
+      layerId,
+      "visibility",
+      showClusterMode ? "visible" : "none",
+    );
   });
-  [UCAN_LAYERS.clusterSinglesGlow, UCAN_LAYERS.clusterSingles].forEach((layerId) => {
-    _safeSetUcanLayout(layerId, "visibility", showClusterMode ? "visible" : "none");
-  });
-  _safeSetUcanLayout(UCAN_LAYERS.clusterSinglesTitle, "visibility", showClusterMode && showLabels ? "visible" : "none");
+  [UCAN_LAYERS.clusterSinglesGlow, UCAN_LAYERS.clusterSingles].forEach(
+    (layerId) => {
+      _safeSetUcanLayout(
+        layerId,
+        "visibility",
+        showClusterMode ? "visible" : "none",
+      );
+    },
+  );
+  _safeSetUcanLayout(
+    UCAN_LAYERS.clusterSinglesTitle,
+    "visibility",
+    showClusterMode && showLabels ? "visible" : "none",
+  );
   [UCAN_LAYERS.rawGlow, UCAN_LAYERS.rawPoint].forEach((layerId) => {
     _safeSetUcanLayout(layerId, "visibility", showRawMode ? "visible" : "none");
   });
-  _safeSetUcanLayout(UCAN_LAYERS.rawTitle, "visibility", showRawMode && showLabels ? "visible" : "none");
+  _safeSetUcanLayout(
+    UCAN_LAYERS.rawTitle,
+    "visibility",
+    showRawMode && showLabels ? "visible" : "none",
+  );
+  _syncUcanTwinPresentation();
 }
 
 function _syncUcanSceneTheme() {
   if (!mapboxMap || !mapboxMap.isStyleLoaded()) return;
+  const preset = _getUcanTwinPreset();
   _customizeUcanBaseStyle();
   _applyUcanSignatureStyleConfig();
-  mapboxMap.setFog({
-    range: [0.45, 10],
-    color: "#040915",
-    "high-color": is3DMode ? "#ff4dd2" : "#4bd6ff",
-    "space-color": "#010207",
-    "horizon-blend": 0.28,
-    "star-intensity": is3DMode ? 0.92 : 0.55,
-  });
+  mapboxMap.setFog(preset.fog);
   mapboxMap.setTerrain({
     source: UCAN_SOURCES.terrain,
-    exaggeration: is3DMode ? 2.45 : 1.75,
+    exaggeration: is3DMode
+      ? preset.terrainExaggeration
+      : preset.terrainExaggeration * 0.76,
   });
   if (mapboxMap.getLayer(UCAN_LAYERS.buildings)) {
+    _safeSetUcanPaint(UCAN_LAYERS.buildings, "fill-extrusion-color", [
+      "interpolate",
+      ["linear"],
+      ["coalesce", ["get", "height"], 0],
+      0,
+      preset.buildingLowColor,
+      220,
+      preset.buildingHighColor,
+    ]);
+    _safeSetUcanPaint(UCAN_LAYERS.buildings, "fill-extrusion-height", [
+      "*",
+      ["coalesce", ["get", "height"], 12],
+      is3DMode ? 1.72 : 1.12,
+    ]);
     _safeSetUcanPaint(
       UCAN_LAYERS.buildings,
-      "fill-extrusion-height",
-      ["*", ["coalesce", ["get", "height"], 12], is3DMode ? 1.7 : 1.2],
+      "fill-extrusion-opacity",
+      is3DMode ? 0.9 : 0.7,
     );
-    _safeSetUcanPaint(UCAN_LAYERS.buildings, "fill-extrusion-opacity", is3DMode ? 0.92 : 0.76);
   }
+  _syncUcanTwinPresentation();
   _syncUcanRoadPresentation();
   _syncUcanPlacePresentation();
   _syncUcanProjectPresentation();
@@ -17325,10 +18985,16 @@ function initMapboxUcan() {
   });
 
   mapboxMap.addControl(
-    new mapboxgl.NavigationControl({ showZoom: true, showCompass: true, visualizePitch: true }),
+    new mapboxgl.NavigationControl({
+      showZoom: true,
+      showCompass: true,
+      visualizePitch: true,
+    }),
     "bottom-right",
   );
-  mapboxMap.addControl(new mapboxgl.ScaleControl({ unit: "metric", maxWidth: 120 }));
+  mapboxMap.addControl(
+    new mapboxgl.ScaleControl({ unit: "metric", maxWidth: 120 }),
+  );
 
   mapboxMap.on("load", () => {
     _ensureUcanSourcesAndLayers();
@@ -17339,18 +19005,22 @@ function initMapboxUcan() {
 }
 
 function syncDataToMapbox() {
-  if (!mapboxMap || !mapboxMap.isStyleLoaded()) {
+  if (!mapboxMap) {
+    _ucanProjectsDirty = true;
+    return;
+  }
+
+  const clusteredSource = mapboxMap.getSource(UCAN_SOURCES.projectsClustered);
+  const rawSource = mapboxMap.getSource(UCAN_SOURCES.projectsRaw);
+  if (!clusteredSource && !rawSource) {
     _ucanProjectsDirty = true;
     return;
   }
 
   const geojson = _getUcanProjectFeatureCollection();
-  const clusteredSource = mapboxMap.getSource(UCAN_SOURCES.projectsClustered);
-  const rawSource = mapboxMap.getSource(UCAN_SOURCES.projectsRaw);
   if (clusteredSource) clusteredSource.setData(geojson);
   if (rawSource) rawSource.setData(geojson);
+  _updateUcanTwinSources();
   _syncUcanProjectPresentation();
   _updateUcanRouteSources();
 }
-
-

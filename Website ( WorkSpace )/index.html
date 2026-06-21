@@ -359,6 +359,42 @@
         opacity: 1;
         letter-spacing: 2px;
       }
+      /* ── Gh Signature ── */
+      @keyframes ws-gh-glow {
+        0%, 100% { text-shadow: 0 0 6px rgba(100,210,255,0.55), 0 0 18px rgba(70,170,255,0.25); }
+        50%       { text-shadow: 0 0 10px rgba(130,225,255,0.9), 0 0 26px rgba(90,185,255,0.5); }
+      }
+      #gh-sig-ws {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.03em;
+        font-family: 'Fira Code', 'JetBrains Mono', 'Cascadia Code', 'Courier New', monospace;
+        font-size: 0.8em;
+        letter-spacing: 0;
+        cursor: default;
+        white-space: nowrap;
+      }
+      #gh-sig-ws .gh-bracket-ws,
+      #gh-sig-ws .gh-slash-ws {
+        color: rgba(50, 200, 175, 0.4);
+        font-weight: 300;
+        font-size: 0.88em;
+        transition: color 0.35s;
+      }
+      #gh-sig-ws .gh-name-ws {
+        color: #edf2ff;
+        font-weight: 900;
+        letter-spacing: 0.05em;
+        text-shadow: 0 0 6px rgba(100,210,255,0.55), 0 0 18px rgba(70,170,255,0.25);
+        animation: ws-gh-glow 3s ease-in-out infinite;
+        transition: letter-spacing 0.3s, text-shadow 0.3s;
+      }
+      #gh-sig-ws:hover .gh-bracket-ws,
+      #gh-sig-ws:hover .gh-slash-ws { color: rgba(50,200,175,0.85); }
+      #gh-sig-ws:hover .gh-name-ws {
+        letter-spacing: 0.1em;
+        text-shadow: 0 0 10px rgba(130,225,255,0.95), 0 0 26px rgba(90,190,255,0.6);
+      }
 
       /* -- Light Mode Overrides (must be in inline <style> to beat :root specificity) -- */
       [data-theme*="light"] {
@@ -1443,7 +1479,7 @@
                 XCELIAS
               </div>
               <div class="logo-sub">
-                <span class="logo-red">by red</span> Training Academy
+                <span class="logo-red">by red</span> &amp; <span id="gh-sig-ws"><span class="gh-bracket-ws">&lt;</span><span class="gh-name-ws">Gh</span><span class="gh-slash-ws">/&gt;</span></span>
               </div>
             </div>
             <div class="logo-actions">
@@ -3019,7 +3055,7 @@
           🌫 الشفافية &nbsp;<span
             id="road-opacity-value"
             class="road-opacity-value"
-            >100%</span
+            >20%</span
           >
         </div>
         <input
@@ -3029,7 +3065,7 @@
           min="0.1"
           max="1"
           step="0.05"
-          value="1"
+          value="0.2"
           aria-label="Road opacity"
           oninput="setRoadOpacity(this.value)"
         />
@@ -5212,5 +5248,34 @@
         pointer-events: none;
       }
     </style>
+    <script>
+    /* Gh Signature — GSAP layer */
+    (function() {
+      function initWsGh() {
+        if (typeof gsap === 'undefined') return;
+        var sig = document.getElementById('gh-sig-ws');
+        var nameEl = sig && sig.querySelector('.gh-name-ws');
+        var bracketEl = sig && sig.querySelector('.gh-bracket-ws');
+        var slashEl = sig && sig.querySelector('.gh-slash-ws');
+        if (!sig || !nameEl) return;
+        gsap.set([bracketEl, nameEl, slashEl], { opacity: 0 });
+        gsap.fromTo(bracketEl, { opacity:0, x:-6 }, { opacity:1, x:0, duration:0.35, ease:'power2.out', delay:0.8 });
+        function scramble(el, txt, ms) {
+          var chars='ABCDEFGHIJKLMNPQRSTXYZabcdefghijklmnpqrstxy0123456789!@#<>/|\\', steps=18, step=0;
+          setTimeout(function(){ el.style.opacity='1'; var iv=setInterval(function(){
+            step++; var s=Math.floor(step/steps*txt.length), o='';
+            for(var i=0;i<txt.length;i++) o+=i<s?txt[i]:chars[Math.floor(Math.random()*chars.length)];
+            el.textContent=o; if(step>=steps){el.textContent=txt;clearInterval(iv);}
+          },48);},ms);
+        }
+        scramble(nameEl,'Gh',1050);
+        gsap.fromTo(slashEl, { opacity:0, x:6 }, { opacity:1, x:0, duration:0.35, ease:'power2.out', delay:2.1 });
+        gsap.to(nameEl, { textShadow:'0 0 12px rgba(130,225,255,0.9), 0 0 28px rgba(90,185,255,0.5)', duration:2.2, ease:'sine.inOut', yoyo:true, repeat:-1, delay:2.5 });
+        sig.addEventListener('mouseenter', function(){ gsap.to(nameEl,{letterSpacing:'0.12em',duration:0.3,ease:'power2.out'}); gsap.to(sig,{scale:1.06,duration:0.28}); });
+        sig.addEventListener('mouseleave', function(){ gsap.to(nameEl,{letterSpacing:'0.05em',duration:0.35}); gsap.to(sig,{scale:1,duration:0.4}); });
+      }
+      if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initWsGh); } else { initWsGh(); }
+    })();
+    </script>
   </body>
 </html>

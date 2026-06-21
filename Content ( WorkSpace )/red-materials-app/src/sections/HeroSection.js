@@ -25,7 +25,7 @@ const HeroSection = ({ onOpenSource, onOpenMap }) => {
                 The Ultimate Real Estate Mastery
               </span>
               <span className="mt-1 block font-sans text-xs font-semibold uppercase tracking-[0.28em] text-white/50">
-                <span className="font-extrabold text-[#e8372a]">by red</span> Training Academy
+                <span className="font-extrabold text-[#e8372a]">by red</span> & <span className="gh-sig-ct">Gh</span>
               </span>
             </h1>
             <p className="mt-8 max-w-3xl text-lg leading-8 text-[var(--text-soft)] md:text-xl">

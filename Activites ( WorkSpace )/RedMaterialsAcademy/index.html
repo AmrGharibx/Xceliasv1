@@ -3747,6 +3747,47 @@
           grid-template-columns: 1fr 1fr !important;
         }
       }
+      /* ── Gh Signature ── */
+      @keyframes act-gh-glow {
+        0%, 100% { text-shadow: 0 0 6px rgba(100,210,255,0.55), 0 0 18px rgba(70,170,255,0.25); }
+        50%       { text-shadow: 0 0 10px rgba(130,225,255,0.9), 0 0 26px rgba(90,185,255,0.5); }
+      }
+      .gh-sig-act {
+        display: inline-flex;
+        align-items: center;
+        font-family: 'Fira Code', 'JetBrains Mono', 'Cascadia Code', 'Courier New', monospace;
+        font-weight: 900;
+        font-size: 1em;
+        color: #edf2ff;
+        letter-spacing: 0.05em;
+        cursor: default;
+        text-shadow: 0 0 6px rgba(100,210,255,0.55), 0 0 18px rgba(70,170,255,0.25);
+        animation: act-gh-glow 3s ease-in-out infinite;
+        transition: letter-spacing 0.3s, text-shadow 0.3s;
+      }
+      .gh-sig-act::before {
+        content: '<';
+        color: rgba(50,200,175,0.4);
+        font-weight: 300;
+        font-size: 0.88em;
+        margin-right: 0.03em;
+        transition: color 0.35s;
+      }
+      .gh-sig-act::after {
+        content: '/>';
+        color: rgba(50,200,175,0.4);
+        font-weight: 300;
+        font-size: 0.88em;
+        margin-left: 0.03em;
+        letter-spacing: -0.04em;
+        transition: color 0.35s;
+      }
+      .gh-sig-act:hover::before,
+      .gh-sig-act:hover::after { color: rgba(50,200,175,0.85); }
+      .gh-sig-act:hover {
+        letter-spacing: 0.1em;
+        text-shadow: 0 0 10px rgba(130,225,255,0.95), 0 0 26px rgba(90,190,255,0.6);
+      }
     </style>
   </head>
   <body>

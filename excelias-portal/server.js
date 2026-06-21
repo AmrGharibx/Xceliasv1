@@ -63,7 +63,7 @@ const KNOWN_USERS = {
     displayName: 'Batch 33',
     username: 'batch33',
   },
-  '1olZC4rnatZlGkYPgIg2lZFjZ782': {
+  'FoLxOJG97Ge4lPreeCXwMI28ssV2': {
     role: 'admin',
     batchId: 'admin',
     displayName: 'Admin',
@@ -253,11 +253,11 @@ app.use((req, res, next) => {
     'Content-Security-Policy',
     [
       "default-src 'self'",
-      "script-src 'self' https://api.mapbox.com https://www.gstatic.com https://*.firebasedatabase.app https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com",
-      "style-src 'self' 'unsafe-inline' https://api.mapbox.com https://fonts.googleapis.com https://unpkg.com https://cdn.jsdelivr.net",
+      "script-src 'self' https://www.gstatic.com https://*.firebasedatabase.app https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com",
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com https://cdn.jsdelivr.net",
       "font-src 'self' https://fonts.gstatic.com",
-      "connect-src 'self' https://events.mapbox.com https://api.mapbox.com https://*.tiles.mapbox.com https://*.mapbox.com https://*.googleapis.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://overpass-api.de https://overpass.openstreetmap.ru https://overpass.private.coffee https://overpass.kumi.systems https://maps.mail.ru https://server.arcgisonline.com https://*.basemaps.cartocdn.com https://cdn.jsdelivr.net https://router.project-osrm.org",
-      "img-src 'self' data: blob: https://api.mapbox.com https://*.tiles.mapbox.com https://*.basemaps.cartocdn.com https://server.arcgisonline.com https://prod-images.nawy.com https://old.nawy.com https://*.nawy.com https://nawy.com https://*.googleapis.com",
+      "connect-src 'self' https://*.googleapis.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://overpass-api.de https://server.arcgisonline.com https://cdn.jsdelivr.net",
+      "img-src 'self' data: blob: https://*.basemaps.cartocdn.com https://server.arcgisonline.com",
       "worker-src 'self' blob: https://cdn.jsdelivr.net",
       "frame-src 'self' https://lms.xcelias.com https://*.firebasedatabase.app",
       "object-src 'none'",
@@ -276,48 +276,6 @@ app.use((req, res, next) => {
 /* Vision requests carry base64 images; allow up to 10MB for /api/gemini only */
 app.use('/api/gemini', express.json({ limit: '10mb' }));
 app.use(express.json({ limit: '50kb' }));
-
-/* ═══════════════════════════════════════════════════════════════════
-   OVERPASS PROXY — local dev equivalent of api/overpass.js (Vercel)
-   ═══════════════════════════════════════════════════════════════════ */
-const OVERPASS_MIRRORS = [
-  'https://overpass-api.de/api/interpreter',
-  'https://overpass.openstreetmap.ru/api/interpreter',
-  'https://overpass.private.coffee/api/interpreter',
-  'https://overpass.kumi.systems/api/interpreter',
-  'https://maps.mail.ru/osm/tools/overpass/api/interpreter',
-  'https://overpass.openstreetmap.fr/api/interpreter',
-];
-async function tryOverpassMirror(query, mirror) {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 8000);
-  try {
-    const res = await fetch(mirror, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'User-Agent': 'Excelias-Portal/2.0', Accept: 'application/json' },
-      body: `data=${encodeURIComponent(query)}`,
-      signal: controller.signal,
-    });
-    clearTimeout(timer);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return await res.json();
-  } catch (err) {
-    clearTimeout(timer);
-    throw err;
-  }
-}
-app.post('/api/overpass', async (req, res) => {
-  // Global express.json() middleware already parsed the body as { query: "..." }
-  const query = typeof req.body === 'string' ? req.body : (req.body?.query ?? null);
-  if (!query || typeof query !== 'string' || query.length > 8192) return res.status(400).json({ error: 'Invalid query' });
-  try {
-    const data = await Promise.any(OVERPASS_MIRRORS.map(m => tryOverpassMirror(query, m)));
-    res.setHeader('Cache-Control', 'public, max-age=300');
-    return res.status(200).json(data);
-  } catch {
-    return res.status(503).json({ error: 'Overpass API unavailable' });
-  }
-});
 
 /* ═══════════════════════════════════════════════════════════════════
    AUTH API ENDPOINTS
@@ -471,35 +429,30 @@ app.post('/api/gemini', async (req, res) => {
               }
               return { inlineData: { mimeType: mime, data: String(p.inlineData.data || '') } };
             }
-            return { text: String(p && p.text !== null ? p.text : '') };
+            return { text: String(p && p.text != null ? p.text : '') };
           })
         : [{ text: String(m.content || '') }],
     }));
-
-    const maxTokens = (() => {
-      const gc = generationConfig || {};
-      const val = gc.maxOutputTokens;
-      if (typeof val !== 'number' || val < 1 || val > 4096) return 1200;
-      return Math.floor(val);
-    })();
 
     const geminiBody = {
       contents,
       generationConfig: {
         temperature: 0.9,
         topP: 0.95,
-        maxOutputTokens: maxTokens,
+        maxOutputTokens: Math.min(
+          (generationConfig && generationConfig.maxOutputTokens) || 1200,
+          4096
+        ),
       },
     };
     if (systemPrompt) {
-      if (typeof systemPrompt !== 'string') {
-        return res.status(400).json({ error: 'Invalid systemPrompt' });
-      }
-      geminiBody.systemInstruction = { parts: [{ text: systemPrompt.slice(0, 8000) }] };
+      geminiBody.systemInstruction = { parts: [{ text: String(systemPrompt).slice(0, 8000) }] };
     }
 
     // Vision requests require full flash models — lite variants don't support multimodal
-    const hasImages = contents.some((c) => c.parts && c.parts.some((p) => p && p.inlineData));
+    const hasImages = contents.some(
+      (c) => c.parts && c.parts.some((p) => p && p.inlineData)
+    );
     const modelsToTry = hasImages
       ? GEMINI_MODELS.filter((m) => !m.includes('lite'))
       : GEMINI_MODELS;

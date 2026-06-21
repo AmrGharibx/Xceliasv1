@@ -54,7 +54,7 @@ export const TopNavigation = ({ activeSection, onOpenMap, onOpenSource, onOpenBr
             <XcAnimatedLogo />
             <div>
               <div className="text-[11px] uppercase tracking-[0.28em] text-[var(--accent-soft)]">Xcelias</div>
-              <div className="text-[9px] uppercase tracking-[0.18em] text-[var(--text-muted)]"><span className="font-extrabold text-[#e8372a]">by red</span> Training Academy</div>
+              <div className="text-[9px] uppercase tracking-[0.18em] text-[var(--text-muted)]"><span className="font-extrabold text-[#e8372a]">by red</span> & <span className="gh-sig-ct">Gh</span></div>
             </div>
           </button>
 

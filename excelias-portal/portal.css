@@ -332,6 +332,68 @@ body {
   letter-spacing: 0.1em;
 }
 
+/* ── Gh Programmer Signature — JSX-tag style ── */
+@keyframes gh-name-glow {
+  0%, 100% {
+    text-shadow:
+      0 0 6px rgba(100, 210, 255, 0.55),
+      0 0 18px rgba(70, 170, 255, 0.25);
+  }
+  50% {
+    text-shadow:
+      0 0 10px rgba(130, 225, 255, 0.9),
+      0 0 26px rgba(90, 185, 255, 0.5),
+      0 0 44px rgba(60, 150, 245, 0.2);
+  }
+}
+#gh-sig {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.03em;
+  font-family: 'Fira Code', 'JetBrains Mono', 'Cascadia Code', 'Courier New', monospace;
+  font-size: 0.8rem;
+  letter-spacing: 0;
+  cursor: default;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+.gh-bracket {
+  color: rgba(50, 200, 175, 0.4);
+  font-weight: 300;
+  font-size: 0.88em;
+  user-select: none;
+  transition: color 0.35s ease;
+}
+.gh-slash {
+  color: rgba(50, 200, 175, 0.4);
+  font-weight: 300;
+  font-size: 0.88em;
+  letter-spacing: -0.04em;
+  user-select: none;
+  transition: color 0.35s ease;
+}
+.gh-name {
+  color: #edf2ff;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-shadow:
+    0 0 6px rgba(100, 210, 255, 0.55),
+    0 0 18px rgba(70, 170, 255, 0.25);
+  animation: gh-name-glow 3s ease-in-out infinite;
+  transition: letter-spacing 0.3s ease, text-shadow 0.3s ease;
+}
+#gh-sig:hover .gh-bracket,
+#gh-sig:hover .gh-slash {
+  color: rgba(50, 200, 175, 0.85);
+}
+#gh-sig:hover .gh-name {
+  letter-spacing: 0.1em;
+  text-shadow:
+    0 0 10px rgba(130, 225, 255, 0.95),
+    0 0 26px rgba(90, 190, 255, 0.6),
+    0 0 50px rgba(60, 155, 245, 0.3);
+}
+
 /* Tagline */
 .header-tagline {
   display: flex;

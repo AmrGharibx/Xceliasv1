@@ -18447,7 +18447,7 @@ const App = () => {
               <div style={{ display: "flex", flexDirection: "column" }}>
                 <span style={styles.logoText}>{s.appTitle}</span>
                 <span style={styles.logoSub}>
-                  <span style={styles.logoRed}>by red</span> Training Academy
+                  <span style={styles.logoRed}>by red</span> & <span className="gh-sig-act">Gh</span>
                 </span>
               </div>
             </div>

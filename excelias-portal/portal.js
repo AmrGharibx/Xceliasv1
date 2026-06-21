@@ -384,11 +384,81 @@ function applyPortalRoles(user) {
       card.style.position = 'relative';
       const badge = document.createElement('div');
       badge.className = 'xcp-lock-badge';
-      badge.textContent = 'ðŸ”’ Agent Only';
+      badge.textContent = '\uD83D\uDD12 Agent Only';
       card.appendChild(badge);
     }
   });
 }
+
+/* ══════════════════════════════════════════════════════════════
+   Gh SIGNATURE — JSX-tag entrance + scramble + hover
+   ══════════════════════════════════════════════════════════════ */
+(function initGhSignature() {
+  if (typeof gsap === 'undefined') return;
+  var sig = document.getElementById('gh-sig');
+  var nameEl = sig && sig.querySelector('.gh-name');
+  var bracketEl = sig && sig.querySelector('.gh-bracket');
+  var slashEl = sig && sig.querySelector('.gh-slash');
+  if (!sig || !nameEl) return;
+
+  /* hide all parts initially */
+  gsap.set([bracketEl, nameEl, slashEl], { opacity: 0 });
+
+  /* ── 1. opening bracket slides in from left ── */
+  gsap.fromTo(bracketEl,
+    { opacity: 0, x: -6 },
+    { opacity: 1, x: 0, duration: 0.35, ease: 'power2.out', delay: 0.8 }
+  );
+
+  /* ── 2. name: character scramble resolves to "Gh" ── */
+  function scrambleIn(el, finalText, startAfterMs) {
+    var charset = 'ABCDEFGHIJKLMNPQRSTXYZabcdefghijklmnpqrstxy0123456789!@#<>/|\\';
+    var totalSteps = 18;
+    var step = 0;
+    setTimeout(function () {
+      el.style.opacity = '1';
+      var iv = setInterval(function () {
+        step++;
+        var settled = Math.floor((step / totalSteps) * finalText.length);
+        var out = '';
+        for (var i = 0; i < finalText.length; i++) {
+          out += i < settled
+            ? finalText[i]
+            : charset[Math.floor(Math.random() * charset.length)];
+        }
+        el.textContent = out;
+        if (step >= totalSteps) { el.textContent = finalText; clearInterval(iv); }
+      }, 48);
+    }, startAfterMs);
+  }
+  scrambleIn(nameEl, 'Gh', 1050);
+
+  /* ── 3. closing slash slides in from right after name settles ── */
+  gsap.fromTo(slashEl,
+    { opacity: 0, x: 6 },
+    { opacity: 1, x: 0, duration: 0.35, ease: 'power2.out', delay: 2.1 }
+  );
+
+  /* ── 4. persistent glow pulse on name ── */
+  gsap.to(nameEl, {
+    textShadow: '0 0 12px rgba(130,225,255,0.9), 0 0 28px rgba(90,185,255,0.5)',
+    duration: 2.2,
+    ease: 'sine.inOut',
+    yoyo: true,
+    repeat: -1,
+    delay: 2.5,
+  });
+
+  /* ── 5. hover (scale + letter-spacing via GSAP, glow via CSS :hover) ── */
+  sig.addEventListener('mouseenter', function () {
+    gsap.to(nameEl, { letterSpacing: '0.12em', duration: 0.3, ease: 'power2.out' });
+    gsap.to(sig, { scale: 1.06, duration: 0.28, ease: 'power2.out' });
+  });
+  sig.addEventListener('mouseleave', function () {
+    gsap.to(nameEl, { letterSpacing: '0.05em', duration: 0.35, ease: 'power2.out' });
+    gsap.to(sig, { scale: 1, duration: 0.4, ease: 'power2.out' });
+  });
+})();
 
 XceliasAuth.guard({
   moduleName: 'Portal',

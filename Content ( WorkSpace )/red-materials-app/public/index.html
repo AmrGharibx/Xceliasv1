@@ -169,6 +169,47 @@
           transform: scale(1.06);
         }
       }
+      /* ── Gh Signature ── */
+      @keyframes ct-gh-glow {
+        0%, 100% { text-shadow: 0 0 6px rgba(100,210,255,0.55), 0 0 18px rgba(70,170,255,0.25); }
+        50%       { text-shadow: 0 0 10px rgba(130,225,255,0.9), 0 0 26px rgba(90,185,255,0.5); }
+      }
+      .gh-sig-ct {
+        display: inline-flex;
+        align-items: center;
+        font-family: 'Fira Code', 'JetBrains Mono', 'Cascadia Code', 'Courier New', monospace;
+        font-weight: 900;
+        font-size: 1em;
+        color: #edf2ff;
+        letter-spacing: 0.05em;
+        cursor: default;
+        text-shadow: 0 0 6px rgba(100,210,255,0.55), 0 0 18px rgba(70,170,255,0.25);
+        animation: ct-gh-glow 3s ease-in-out infinite;
+        transition: letter-spacing 0.3s, text-shadow 0.3s;
+      }
+      .gh-sig-ct::before {
+        content: '<';
+        color: rgba(50,200,175,0.4);
+        font-weight: 300;
+        font-size: 0.88em;
+        margin-right: 0.03em;
+        transition: color 0.35s;
+      }
+      .gh-sig-ct::after {
+        content: '/>';
+        color: rgba(50,200,175,0.4);
+        font-weight: 300;
+        font-size: 0.88em;
+        margin-left: 0.03em;
+        letter-spacing: -0.04em;
+        transition: color 0.35s;
+      }
+      .gh-sig-ct:hover::before,
+      .gh-sig-ct:hover::after { color: rgba(50,200,175,0.85); }
+      .gh-sig-ct:hover {
+        letter-spacing: 0.1em;
+        text-shadow: 0 0 10px rgba(130,225,255,0.95), 0 0 26px rgba(90,190,255,0.6);
+      }
     </style>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

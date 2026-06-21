@@ -2485,7 +2485,7 @@ let _roadCanvasRenderer = null;
 
 // ── Visibility state ──
 let _roadsVisible = true;
-let _roadOpacityMultiplier = 1;
+let _roadOpacityMultiplier = 0.2;
 let _showMainRoads = true;
 let _showSecondaryRoads = true;
 let _roadPanelOpen = false;

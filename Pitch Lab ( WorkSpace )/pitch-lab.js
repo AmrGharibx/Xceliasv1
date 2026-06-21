@@ -1780,7 +1780,7 @@ function startCall() {
   // Client opening line — if scenario has one, client speaks first
   const _openLine = OPENING_LINES[currentScenario.id];
   if (_openLine) {
-    const _line = _openLine.ar || _openLine.en;
+    const _line = lang === 'ar' ? (_openLine.ar || _openLine.en) : (_openLine.en || _openLine.ar);
     setTimeout(() => {
       if (!currentScenario) return; // call was ended
       appendBubble('client', _line);
@@ -1928,8 +1928,10 @@ async function sendMessage() {
     if (avtEl) avtEl.classList.add("is-talking");
     if (wvEl) wvEl.classList.add("visible");
 
+    // Language instruction — driven by the UI toggle
     const EGY_LANG = "Egyptian Arabic (3amiya/colloquial) ALWAYS mixed naturally with English — exactly how educated Cairo professionals speak on the phone. Use Egyptian dialect freely (يعني, طب, بص, ماشي, اصل, خلاص, معلش, بقى, ده, دي, اللي, عايز), mix in English real-estate/business terms naturally without translating them (ROI, compound, unit, payment plan, delivery, sqm, installments, down payment, resale, finishing). NEVER reply in pure English. NEVER use formal fusha/MSA. Every reply must feel like a real Egyptian in Cairo picking up the phone.";
-    const sysPrompt = currentScenario.systemPrompt(EGY_LANG) + "\n\n" + MARKET_KNOWLEDGE;
+    const ENG_LANG = "English — conversational and natural. You are the Egyptian character described above; stay true to your personality completely. Any Arabic phrases or dialect expressions your Personality section specifies (يلا بلا, يعني, طب, etc.) are still part of who you are and may appear when authentically in-character, but your primary language is English. Respond exactly as this person would on a real phone call in English — not robotic, not translated, just natural.";
+    const sysPrompt = currentScenario.systemPrompt(lang === "ar" ? EGY_LANG : ENG_LANG) + "\n\n" + MARKET_KNOWLEDGE;
     const aiText = await callGemini(sysPrompt, callMessages);
 
     if (avtEl) avtEl.classList.remove("is-talking");

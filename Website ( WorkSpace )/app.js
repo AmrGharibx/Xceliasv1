@@ -6134,7 +6134,7 @@ function _readStoredMapLayer() {
     const stored = localStorage.getItem(MAP_VIEW_STORAGE_KEY);
     return MAP_VIEW_DEFAULTS[stored] ? stored : "hybrid";
   } catch (_) {
-    return "street";
+    return "hybrid";
   }
 }
 
@@ -6216,9 +6216,9 @@ function switchMapLayer(layerName) {
     if (!initMapboxUcan()) {
       mapboxDiv.style.display = "none";
       leafletDiv.style.display = "block";
-      currentMapLayer = "street";
-      _syncMapLayerButtons("street");
-      _syncMapModeClass("street");
+      currentMapLayer = "hybrid";
+      _syncMapLayerButtons("hybrid");
+      _syncMapModeClass("hybrid");
       return;
     }
     if (_roadsVisible && _roadSearchIndex.length === 0) {

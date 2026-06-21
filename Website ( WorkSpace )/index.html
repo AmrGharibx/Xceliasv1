@@ -2687,10 +2687,10 @@
         <div class="road-panel-section-title">🎛 أوضاع العرض</div>
         <div class="road-view-grid">
           <button
-            class="road-view-btn active"
+            class="road-view-btn"
             type="button"
             data-layer="street"
-            aria-pressed="true"
+            aria-pressed="false"
           >
             <strong>Xcelias Dark</strong>
             <small>الوضع الحالي · داكن + أسماء طرق فورية</small>
@@ -2723,10 +2723,10 @@
             <small>صور أرضية واضحة للاستكشاف</small>
           </button>
           <button
-            class="road-view-btn"
+            class="road-view-btn active"
             type="button"
             data-layer="hybrid"
-            aria-pressed="false"
+            aria-pressed="true"
           >
             <strong>Hybrid</strong>
             <small>صورة + تسميات للرجوع السريع</small>
@@ -3085,14 +3085,14 @@
 
     <div class="map-controls" role="toolbar" aria-label="Map View Controls">
       <div
-        class="map-btn active"
+        class="map-btn"
         id="btn-street"
         data-layer="street"
         title="Street View"
         onclick="switchMapLayer('street')"
         role="button"
         tabindex="0"
-        aria-pressed="true"
+        aria-pressed="false"
         aria-label="Street View"
       >
         <svg
@@ -3202,14 +3202,14 @@
         </svg>
       </div>
       <div
-        class="map-btn"
+        class="map-btn active"
         id="btn-hybrid"
         data-layer="hybrid"
         title="Hybrid View"
         onclick="switchMapLayer('hybrid')"
         role="button"
         tabindex="0"
-        aria-pressed="false"
+        aria-pressed="true"
         aria-label="Hybrid View"
       >
         <svg

@@ -490,7 +490,12 @@ app.post('/api/gemini', async (req, res) => {
   }
 });
 
-/* Website index.html — inject UCAN token + fix paths (both source and dist modes) */
+/* Serve UCAN token as a JS file (CSP-safe: script-src 'self' allows this) */
+app.get('/website/ucan-config.js', (req, res) => {
+  res.type('application/javascript').send(`window.__UCAN_MAPBOX_TOKEN__="${UCAN_MAPBOX_TOKEN}";`);
+});
+
+/* Website index.html — inject UCAN token script ref + fix paths (both source and dist modes) */
 function _serveWebsiteIndex(req, res) {
   const htmlPath = path.join(WEBSITE_DIR, 'index.html');
   let html = fs.readFileSync(htmlPath, 'utf8');
@@ -498,9 +503,8 @@ function _serveWebsiteIndex(req, res) {
     html = html.replace(/(href|src)="\/(?!\/|xcelias-auth|activities\/)/g, '$1="/website/');
     html = html.replace(/register\('\/sw\.js'\)/g, "register('/website/sw.js')");
   }
-  // Inject UCAN Mapbox token so the modal never appears
-  const tokenScript = `<script>window.__UCAN_MAPBOX_TOKEN__="${UCAN_MAPBOX_TOKEN}";</script>`;
-  html = html.replace('</head>', tokenScript + '</head>');
+  // Inject as external JS file — inline scripts are blocked by CSP script-src 'self'
+  html = html.replace('</head>', '<script src="/website/ucan-config.js"></script></head>');
   res.type('html').send(html);
 }
 app.get(['/website/', '/website/index.html'], studentGuardMiddleware, _serveWebsiteIndex);

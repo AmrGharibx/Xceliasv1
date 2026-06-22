@@ -45,7 +45,7 @@ beforeEach(() => {
 
 /** Known UIDs from server.js KNOWN_USERS map */
 const UID_STUDENT = 'OKZ7mPrvE0cvMH8LPTUY13yXw9d2';
-const UID_ADMIN = '1olZC4rnatZlGkYPgIg2lZFjZ782';
+const UID_ADMIN = 'FoLxOJG97Ge4lPreeCXwMI28ssV2';
 
 function makeSession(payload) {
   return signSession(payload);

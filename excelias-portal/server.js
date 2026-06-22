@@ -350,11 +350,15 @@ app.post('/api/auth/firebase-session', async (req, res) => {
 });
 
 /* GET /api/auth/whoami — lightweight session check for client-side verification.
-   Returns the role from the signed httpOnly cookie. No secrets exposed. */
+   Always resolves the CURRENT role from KNOWN_USERS so role changes take
+   effect on the next page load without requiring re-login. */
 app.get('/api/auth/whoami', (req, res) => {
   const session = verifySession(parseCookies(req).xc_session);
   if (!session) return res.status(401).json({ error: 'No session' });
-  res.json({ uid: session.uid, role: session.role });
+  const profile = KNOWN_USERS[session.uid];
+  if (!profile) return res.status(401).json({ error: 'No session' });
+  const role = BATCH_UIDS.has(session.uid) ? 'student' : profile.role;
+  res.json({ uid: session.uid, role });
 });
 
 /* POST /api/auth/logout — clears the server session cookie */

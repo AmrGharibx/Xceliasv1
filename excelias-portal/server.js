@@ -330,7 +330,11 @@ app.post('/api/auth/firebase-session', async (req, res) => {
     const uid = decoded.uid;
 
     const profile = KNOWN_USERS[uid];
-    if (!profile) return res.status(403).json({ error: 'Unknown user' });
+    if (!profile) {
+      /* Log the actual UID so it can be added to KNOWN_USERS if legitimate */
+      console.warn(`[firebase-session] Unknown UID attempting login: ${uid} (email: ${decoded.email || 'n/a'})`);
+      return res.status(403).json({ error: 'Unknown user' });
+    }
 
     /* CRITICAL: batch UIDs can never be admin */
     const role = BATCH_UIDS.has(uid) ? 'student' : profile.role;

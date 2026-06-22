@@ -157,6 +157,12 @@
                 /* Send Firebase ID token to server so it can verify and set httpOnly cookie.
                  Server response contains the authoritative role from KNOWN_USERS map. */
                 return _syncServerSession(cred.user).then(function (serverResp) {
+                  /* Server explicitly rejected this account — UID not authorized */
+                  if (serverResp && serverResp.status === 403) {
+                    return window.xcAuth.signOut().then(function () {
+                      throw new Error('Account not authorized. Contact your administrator.');
+                    });
+                  }
                   /* Adopt server-determined role — RTDB profile role is untrusted */
                   if (serverResp && serverResp.data && serverResp.data.role) {
                     user.role = serverResp.data.role;
@@ -174,6 +180,7 @@
               throw new Error('Invalid username or password');
             }
             if (e.message && e.message.indexOf('does not have access') !== -1) throw e;
+            if (e.message && e.message.indexOf('not authorized') !== -1) throw e;
             return null; /* Firebase unavailable — fall through to offline */
           });
       })
@@ -269,7 +276,12 @@
                This handles the common case where the 24-hour cookie expired
                but the Firebase session (much longer-lived) is still valid. */
             _syncServerSession(fbUser)
-              .then(function () {
+              .then(function (serverResp) {
+                /* Server explicitly rejected this UID — not an authorized user */
+                if (serverResp && serverResp.status === 403) {
+                  onFailed();
+                  return;
+                }
                 _verifyViaServer(onVerified, function () {
                   /* True fallback: server is genuinely unreachable (static hosting).
                      Accept Firebase identity alone. */

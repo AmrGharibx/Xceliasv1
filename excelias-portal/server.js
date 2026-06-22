@@ -91,6 +91,16 @@ const KNOWN_USERS = {
     username: 'reports',
   },
 };
+/* ── Email → role mapping (fallback when UID is not yet in KNOWN_USERS).
+   Email is extracted from the cryptographically-verified Firebase ID token
+   so it is just as trustworthy as UID matching. ── */
+const KNOWN_EMAILS = {
+  'admin@xcelias.internal':  { role: 'admin',   batchId: 'admin',   displayName: 'Admin',             username: 'admin'   },
+  'sadmin@xcelias.internal': { role: 'admin',   batchId: 'admin',   displayName: 'Admin',             username: 'sadmin'  },
+  'amr@gharib.dev':          { role: 'admin',   batchId: 'creator', displayName: 'Gh \u00b7 Creator', username: 'gh'      },
+  'report@xcelias.internal': { role: 'reports', batchId: 'reports', displayName: 'Reports Assistant', username: 'reports' },
+};
+
 /* ── Batch UIDs that can NEVER be admin (safety net) ── */
 const BATCH_UIDS = new Set(['OKZ7mPrvE0cvMH8LPTUY13yXw9d2']);
 
@@ -335,18 +345,25 @@ app.post('/api/auth/firebase-session', async (req, res) => {
   try {
     const decoded = await admin.auth().verifyIdToken(idToken);
     const uid = decoded.uid;
+    const email = (decoded.email || '').toLowerCase();
 
-    const profile = KNOWN_USERS[uid];
+    /* Lookup by UID first; fall back to email for accounts whose UIDs
+       are not yet registered in KNOWN_USERS. */
+    let profile = KNOWN_USERS[uid];
+    if (!profile && email) {
+      profile = KNOWN_EMAILS[email];
+      if (profile) console.log(`[firebase-session] UID ${uid} matched via email <${email}>`);
+    }
     if (!profile) {
-      /* Log the actual UID so it can be added to KNOWN_USERS if legitimate */
-      console.warn(`[firebase-session] Unknown UID attempting login: ${uid} (email: ${decoded.email || 'n/a'})`);
+      console.warn(`[firebase-session] Unknown user: uid=${uid} email=${email || 'n/a'}`);
       return res.status(403).json({ error: 'Unknown user' });
     }
 
     /* CRITICAL: batch UIDs can never be admin */
     const role = BATCH_UIDS.has(uid) ? 'student' : profile.role;
 
-    setSessionCookie(res, { uid, role });
+    /* Store email in cookie so whoami can also fall back to email lookup */
+    setSessionCookie(res, { uid, email, role });
     return res.json({
       ok: true,
       uid,
@@ -366,7 +383,9 @@ app.post('/api/auth/firebase-session', async (req, res) => {
 app.get('/api/auth/whoami', (req, res) => {
   const session = verifySession(parseCookies(req).xc_session);
   if (!session) return res.status(401).json({ error: 'No session' });
-  const profile = KNOWN_USERS[session.uid];
+  /* Resolve live role: UID lookup first, email fallback second */
+  const profile = KNOWN_USERS[session.uid] ||
+    (session.email ? KNOWN_EMAILS[session.email] : null);
   if (!profile) return res.status(401).json({ error: 'No session' });
   const role = BATCH_UIDS.has(session.uid) ? 'student' : profile.role;
   res.json({ uid: session.uid, role });

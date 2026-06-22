@@ -69,6 +69,20 @@ const KNOWN_USERS = {
     displayName: 'Admin',
     username: 'admin',
   },
+  // Gh · Creator — full platform access
+  'gdYjo6vkVEbNd7nRcmcST7YHnWv2': {
+    role: 'admin',
+    batchId: 'creator',
+    displayName: 'Gh · Creator',
+    username: 'gh',
+  },
+  // Reports-only assistant — access restricted to /reports/
+  'lZHnOXA83MaXE0H8zRnorrYRJMM2': {
+    role: 'reports',
+    batchId: 'reports',
+    displayName: 'Reports Assistant',
+    username: 'reports',
+  },
 };
 /* ── Batch UIDs that can NEVER be admin (safety net) ── */
 const BATCH_UIDS = new Set(['OKZ7mPrvE0cvMH8LPTUY13yXw9d2']);
@@ -210,7 +224,22 @@ function studentGuardMiddleware(req, res, next) {
   if (session && session.role === 'student') {
     return res.redirect(302, '/studyguide/'); // student → study guide only
   }
+  if (session && session.role === 'reports') {
+    return res.redirect(302, '/reports/'); // reports-only → reports generator
+  }
   next();
+}
+
+/* Reports access — allows admin AND reports role; blocks student */
+function reportsAccessMiddleware(req, res, next) {
+  const session = verifySession(parseCookies(req).xc_session);
+  if (!session && _isHtmlReq(req.path)) {
+    return res.redirect(302, '/');
+  }
+  if (session && session.role === 'student') {
+    return res.redirect(302, '/studyguide/');
+  }
+  next(); // admin and reports roles pass through
 }
 
 /* ─── Workspace root (parent of this folder) ─── */
@@ -354,7 +383,7 @@ app.get('/firebase-config.js', (req, res, next) => {
 app.use('/activities', studentGuardMiddleware, express.static(ACTIVITIES_DIR));
 app.use('/content', studentGuardMiddleware, express.static(CONTENT_BUILD));
 app.use('/static', studentGuardMiddleware, express.static(path.join(CONTENT_BUILD, 'static')));
-app.use('/reports', studentGuardMiddleware, express.static(REPORTS_DIR));
+app.use('/reports', reportsAccessMiddleware, express.static(REPORTS_DIR));
 app.use('/pitch-lab', studentGuardMiddleware, express.static(PITCH_LAB_DIR));
 
 /* Portal — guard students away from the home page */
@@ -364,13 +393,20 @@ app.use((req, res, next) => {
     if (session && session.role === 'student') {
       return res.redirect(302, '/studyguide/');
     }
+    if (session && session.role === 'reports') {
+      return res.redirect(302, '/reports/');
+    }
   }
   next();
 });
-/* Study Guide — students ARE allowed here; client-side xcelias-auth.js handles
-   authentication (including Firebase session refresh for expired cookies).
-   No server-side cookie guard here to avoid redirect loops when cookie expires. */
-app.use('/studyguide', express.static(STUDY_GUIDE_DIR));
+/* Study Guide — students ARE allowed; reports-only users are blocked → /reports/ */
+app.use('/studyguide', (req, res, next) => {
+  const session = verifySession(parseCookies(req).xc_session);
+  if (session && session.role === 'reports' && _isHtmlReq(req.path)) {
+    return res.redirect(302, '/reports/');
+  }
+  next();
+}, express.static(STUDY_GUIDE_DIR));
 
 /* ─── Project 4: Avaria Academy (Next.js — runs on port 3005) ─── *
  *  Avaria cannot be iframed because it sets X-Frame-Options: DENY

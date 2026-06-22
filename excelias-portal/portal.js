@@ -362,6 +362,7 @@ function applyPortalRoles(user) {
         agent: '\u{1F3E0} Agent',
         trainee: '\u{1F393} Trainee',
         student: '\u{1F4D6} Student',
+        reports: '\u{1F4CA} Assistant',
       }[user.role] || user.role;
     chip.innerHTML = `<span class="xcp-chip-name">${escHtml(user.displayName || user.username)}</span><span class="xcp-chip-role">${escHtml(roleLabel)}</span><button class="xcp-chip-signout" id="xcp-signout">Sign Out</button>`;
     chip.style.display = 'flex';
@@ -372,6 +373,11 @@ function applyPortalRoles(user) {
   // Student role: redirect directly to Study Guide (no portal access)
   if (user.role === 'student') {
     window.location.replace('/studyguide/');
+    return;
+  }
+  // Reports-only role: redirect directly to Report Generator
+  if (user.role === 'reports') {
+    window.location.replace('/reports/');
     return;
   }
 

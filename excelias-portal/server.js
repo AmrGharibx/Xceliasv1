@@ -69,6 +69,13 @@ const KNOWN_USERS = {
     displayName: 'Admin',
     username: 'admin',
   },
+  // sadmin@xcelias.internal — same full admin access as admin@xcelias.internal
+  'JXL4kmhK3OWbuGFjFztv9i2BubM2': {
+    role: 'admin',
+    batchId: 'admin',
+    displayName: 'Admin',
+    username: 'sadmin',
+  },
   // Gh · Creator — full platform access
   'gdYjo6vkVEbNd7nRcmcST7YHnWv2': {
     role: 'admin',

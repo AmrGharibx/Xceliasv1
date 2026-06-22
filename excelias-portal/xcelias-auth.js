@@ -44,7 +44,9 @@
 
   /* ── Firebase email format ── */
   var _fbEmail = function (u) {
-    return u.toLowerCase().trim() + '@xcelias.internal';
+    var trimmed = u.toLowerCase().trim();
+    // If user typed their real email (contains @), use it directly
+    return trimmed.indexOf('@') !== -1 ? trimmed : trimmed + '@xcelias.internal';
   };
 
   /* ── Role check helper ── */

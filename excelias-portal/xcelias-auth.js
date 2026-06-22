@@ -127,8 +127,10 @@
               .then(function (snap) {
                 var profile = snap.val();
                 if (!profile) {
-                  var isAdmin = u === 'admin';
+                  /* Assign the best initial role we can; server always overrides via KNOWN_EMAILS */
+                  var isAdmin = u === 'admin' || u === 'sadmin' || u === 'gh';
                   var isBatch = u.indexOf('batch') === 0;
+                  var isReports = u === 'report';
                   profile = {
                     username: u,
                     displayName: isAdmin
@@ -136,8 +138,8 @@
                       : isBatch
                         ? 'Batch ' + u.replace('batch', '')
                         : u,
-                    role: isAdmin ? 'admin' : isBatch ? 'student' : 'trainee',
-                    batchId: isAdmin ? 'admin' : isBatch ? u : 'default',
+                    role: isAdmin ? 'admin' : isBatch ? 'student' : isReports ? 'reports' : 'trainee',
+                    batchId: isAdmin ? 'admin' : isBatch ? u : isReports ? 'reports' : 'default',
                     createdAt: Date.now(),
                   };
                   window.xcDB

@@ -53,8 +53,8 @@ mkDir(DIST);
 console.log("Building Excelias portal for deployment...\n");
 
 /* ─── Student guard: external script injected into module HTML files (CSP-safe) ─── */
-/* Server-side studentGuardMiddleware handles redirection; this is defence-in-depth.  */
-const studentGuardSrc = `(function(){try{var u=JSON.parse(localStorage.getItem('xcCurrentUser'));if(u&&u.role==='student'){window.location.replace('/studyguide/');}}catch(e){}})();`;
+/* Server-side guards handle redirection; this is defence-in-depth on the client.  */
+const studentGuardSrc = `(function(){try{var u=JSON.parse(localStorage.getItem('xcCurrentUser'));if(!u)return;if(u.role==='student'){window.location.replace('/studyguide/');}else if(u.role==='reports'&&window.location.pathname.indexOf('/reports')===-1){window.location.replace('/reports/');}}catch(e){}})();`;
 const studentGuardTag = '<script src="/student-guard.js"></script>';
 
 /* ════════ 1. Portal files ════════ */

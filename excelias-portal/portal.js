@@ -67,6 +67,10 @@ const topbarTitle = document.getElementById('topbar-title');
 const topbarNewTab = document.getElementById('topbar-newtab');
 const iframeLoader = document.getElementById('iframe-loading');
 
+/* Hide portal cards until role is server-verified — prevents stale localStorage
+   role from being interactive before applyPortalRoles fires with correct role. */
+if (homeView) homeView.style.visibility = 'hidden';
+
 /* ── Topbar button handlers (no inline onclick for CSP) ── */
 document.getElementById('topbar-back').addEventListener('click', function () {
   goHome();
@@ -353,6 +357,8 @@ document.addEventListener('keydown', (e) => {
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function applyPortalRoles(user) {
   xcPortalUser = user;
+  /* Reveal cards now that role is confirmed by the server */
+  if (homeView) homeView.style.visibility = '';
   // Populate user chip
   const chip = document.getElementById('xcp-user-chip');
   if (chip) {

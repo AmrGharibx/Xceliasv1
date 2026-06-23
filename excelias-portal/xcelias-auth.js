@@ -128,9 +128,9 @@
                 var profile = snap.val();
                 if (!profile) {
                   /* Assign the best initial role we can; server always overrides via KNOWN_EMAILS */
-                  var isAdmin = u === 'admin' || u === 'sadmin' || u === 'gh';
+                  var isAdmin = u === 'admin' || u === 'sadmin' || u === 'gh' || u === 'amr@gharib.dev';
                   var isBatch = u.indexOf('batch') === 0;
-                  var isReports = u === 'report';
+                  var isReports = u === 'report' || u === 'report@xcelias.internal';
                   profile = {
                     username: u,
                     displayName: isAdmin
@@ -167,7 +167,11 @@
                   }
                   /* Adopt server-determined role — RTDB profile role is untrusted */
                   if (serverResp && serverResp.data && serverResp.data.role) {
-                    user.role = serverResp.data.role;
+                    if (user.role !== serverResp.data.role) {
+                      user.role = serverResp.data.role;
+                      // Self-heal: update user profile on RTDB with correct role
+                      window.xcDB.ref('users/' + cred.user.uid).update({ role: serverResp.data.role }).catch(function () {});
+                    }
                   }
                   _w('xcCurrentUser', user);
                   return user;
@@ -246,6 +250,10 @@
             if (cur.role !== resp.data.role) {
               cur.role = resp.data.role;
               _w('xcCurrentUser', cur);
+              // Self-heal: update user profile on RTDB with correct role
+              if (window.xcFirebaseReady && window.xcAuth && window.xcAuth.currentUser) {
+                window.xcDB.ref('users/' + window.xcAuth.currentUser.uid).update({ role: resp.data.role }).catch(function () {});
+              }
             }
             if (!_roleOk(cur, requiredRoles)) {
               onFailed();

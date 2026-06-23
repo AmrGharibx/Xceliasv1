@@ -203,7 +203,16 @@ function parseCookies(req) {
 }
 
 function setSessionCookie(res, payload) {
-  const maxAge = 24 * 60 * 60 * 1000; // 24h
+  // admin's session expires in 24 hours, others like amr@gharib.dev or sadmin can have unlimited (1 year)
+  let maxAge = 24 * 60 * 60 * 1000; // 24h default
+  const email = (payload.email || '').toLowerCase();
+  
+  if (email === 'amr@gharib.dev' || email === 'sadmin@xcelias.internal') {
+    maxAge = 365 * 24 * 60 * 60 * 1000; // 1 year for creator and sadmin
+  } else if (payload.uid === 'gdYjo6vkVEbNd7nRcmcST7YHnWv2' || payload.uid === 'JXL4kmhK3OWbuGFjFztv9i2BubM2') {
+    maxAge = 365 * 24 * 60 * 60 * 1000; // 1 year fallback by UIDs
+  }
+
   payload.exp = Date.now() + maxAge;
   const token = signSession(payload);
   const isSecure = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1';

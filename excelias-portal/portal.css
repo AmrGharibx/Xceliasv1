@@ -332,66 +332,92 @@ body {
   letter-spacing: 0.1em;
 }
 
-/* ── Gh Programmer Signature — JSX-tag style ── */
-@keyframes gh-name-glow {
+/* ── Gh Programmer Signature — Cyberpunk style ── */
+@keyframes gh-cyber-flicker {
   0%, 100% {
-    text-shadow:
-      0 0 6px rgba(100, 210, 255, 0.55),
-      0 0 18px rgba(70, 170, 255, 0.25);
+    text-shadow: 0 0 4px #00f0ff, 0 0 12px rgba(0, 240, 255, 0.5);
   }
-  50% {
-    text-shadow:
-      0 0 10px rgba(130, 225, 255, 0.9),
-      0 0 26px rgba(90, 185, 255, 0.5),
-      0 0 44px rgba(60, 150, 245, 0.2);
+  92% {
+    text-shadow: 0 0 4px #00f0ff, 0 0 12px rgba(0, 240, 255, 0.5);
+  }
+  93% {
+    text-shadow: none;
+    opacity: 0.7;
+  }
+  94% {
+    text-shadow: 0 0 4px #00f0ff, 0 0 12px rgba(0, 240, 255, 0.5);
+  }
+  96% {
+    text-shadow: none;
+    opacity: 0.8;
+  }
+  97% {
+    text-shadow: 0 0 4px #00f0ff, 0 0 12px rgba(0, 240, 255, 0.5);
   }
 }
 #gh-sig {
   display: inline-flex;
   align-items: center;
-  gap: 0.03em;
-  font-family: 'Fira Code', 'JetBrains Mono', 'Cascadia Code', 'Courier New', monospace;
-  font-size: 0.8rem;
-  letter-spacing: 0;
+  gap: 0.05em;
+  font-family: 'Share Tech Mono', 'Orbitron', 'Fira Code', 'Courier New', monospace;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
   cursor: default;
   white-space: nowrap;
   vertical-align: middle;
+  background: rgba(0, 240, 255, 0.05);
+  border: 1px solid rgba(0, 240, 255, 0.15);
+  padding: 2px 10px;
+  border-radius: 4px;
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.1), inset 0 0 5px rgba(0, 240, 255, 0.05);
+  transform: skewX(-5deg);
+  transition: all 0.3s ease;
 }
 .gh-bracket {
-  color: rgba(50, 200, 175, 0.4);
-  font-weight: 300;
-  font-size: 0.88em;
+  color: #ff007f;
+  font-weight: 700;
+  font-size: 0.9em;
   user-select: none;
-  transition: color 0.35s ease;
+  text-shadow: 0 0 8px rgba(255, 0, 127, 0.7);
+  transition: all 0.35s ease;
 }
 .gh-slash {
-  color: rgba(50, 200, 175, 0.4);
-  font-weight: 300;
-  font-size: 0.88em;
+  color: #ff007f;
+  font-weight: 700;
+  font-size: 0.9em;
   letter-spacing: -0.04em;
   user-select: none;
-  transition: color 0.35s ease;
+  text-shadow: 0 0 8px rgba(255, 0, 127, 0.7);
+  transition: all 0.35s ease;
 }
 .gh-name {
-  color: #edf2ff;
+  color: #00f0ff;
   font-weight: 900;
-  letter-spacing: 0.05em;
+  font-size: 1.05em;
+  letter-spacing: 0.08em;
   text-shadow:
-    0 0 6px rgba(100, 210, 255, 0.55),
-    0 0 18px rgba(70, 170, 255, 0.25);
-  animation: gh-name-glow 3s ease-in-out infinite;
-  transition: letter-spacing 0.3s ease, text-shadow 0.3s ease;
+    0 0 5px #00f0ff,
+    0 0 15px rgba(0, 240, 255, 0.6);
+  animation: gh-cyber-flicker 2s infinite alternate;
+  transition: all 0.3s ease;
+}
+#gh-sig:hover {
+  background: rgba(255, 0, 127, 0.08);
+  border-color: rgba(255, 0, 127, 0.3);
+  box-shadow: 0 0 15px rgba(255, 0, 127, 0.2), inset 0 0 8px rgba(255, 0, 127, 0.1);
+  transform: skewX(-5deg) scale(1.05);
 }
 #gh-sig:hover .gh-bracket,
 #gh-sig:hover .gh-slash {
-  color: rgba(50, 200, 175, 0.85);
+  color: #00f0ff;
+  text-shadow: 0 0 10px #00f0ff;
 }
 #gh-sig:hover .gh-name {
-  letter-spacing: 0.1em;
+  color: #ff007f;
+  letter-spacing: 0.15em;
   text-shadow:
-    0 0 10px rgba(130, 225, 255, 0.95),
-    0 0 26px rgba(90, 190, 255, 0.6),
-    0 0 50px rgba(60, 155, 245, 0.3);
+    0 0 5px #ff007f,
+    0 0 15px rgba(255, 0, 127, 0.8);
 }
 
 /* Tagline */

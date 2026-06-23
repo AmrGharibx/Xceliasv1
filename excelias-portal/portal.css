@@ -328,16 +328,18 @@ body {
 }
 .logo-by {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 0.72rem;
-  font-weight: 500;
+  font-size: 0.95rem; /* Noticeably increased font size so it is unmistakable */
+  font-weight: 700;   /* Stronger weight */
   text-transform: lowercase !important;
-  color: #ff007f; /* Cyberpunk soft neon pink */
-  opacity: 0.85;
-  letter-spacing: 0.05em;
-  margin-right: 5px;
+  color: #ff007f;     /* Cyberpunk vibrant neon pink */
+  opacity: 1.0;       /* Full opacity */
+  letter-spacing: 0.1em;
+  margin-right: 8px;   /* More breathing space */
   display: inline-block;
   vertical-align: middle;
-  text-shadow: 0 0 6px rgba(255, 0, 127, 0.4);
+  text-shadow: 
+    0 0 4px #ff007f, 
+    0 0 12px rgba(255, 0, 127, 0.6); /* Vibrant cyber glow */
 }
 .logo-red {
   color: #e8372a;

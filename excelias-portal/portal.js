@@ -426,13 +426,14 @@ function applyPortalRoles(user) {
   /* ── 2. name: character scramble resolves to "Gh" ── */
   function scrambleIn(el, finalText, startAfterMs) {
     var charset = 'ABCDEFGHIJKLMNPQRSTXYZabcdefghijklmnpqrstxy0123456789!@#<>/|\\';
-    var totalSteps = 18;
+    var totalSteps = 40; // Increased steps so the scrambling effect runs longer and is highly noticeable!
     var step = 0;
     setTimeout(function () {
       el.style.opacity = '1';
       var iv = setInterval(function () {
         step++;
-        var settled = Math.floor((step / totalSteps) * finalText.length);
+        // Maintain a prolonged fully scrambled state, and settle character by character at the very end
+        var settled = step > (totalSteps - 8) ? Math.floor(((step - (totalSteps - 8)) / 8) * finalText.length) : 0;
         var out = '';
         for (var i = 0; i < finalText.length; i++) {
           out += i < settled
@@ -441,7 +442,7 @@ function applyPortalRoles(user) {
         }
         el.textContent = out;
         if (step >= totalSteps) { el.textContent = finalText; clearInterval(iv); }
-      }, 48);
+      }, 35); // Slightly faster interval so it flickers fast and beautiful like matrix rain
     }, startAfterMs);
   }
   scrambleIn(nameEl, 'Gh', 1050);

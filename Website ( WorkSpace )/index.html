@@ -366,16 +366,18 @@
       }
       .logo-by-ws {
         font-family: 'Share Tech Mono', monospace;
-        font-size: 0.8em;
-        font-weight: 500;
+        font-size: 0.95em; /* Noticeably increased size to be consistent across views */
+        font-weight: 700;
         text-transform: lowercase !important;
-        color: #ff007f; /* Cyberpunk soft neon pink */
-        opacity: 0.85;
-        letter-spacing: 0.05em;
-        margin-right: 5px;
+        color: #ff007f;    /* Cyberpunk vibrant neon pink */
+        opacity: 1.0;      /* Full opacity */
+        letter-spacing: 0.1em;
+        margin-right: 8px; /* Breathing room */
         display: inline-block;
         vertical-align: middle;
-        text-shadow: 0 0 6px rgba(255, 0, 127, 0.4);
+        text-shadow: 
+          0 0 4px #ff007f, 
+          0 0 12px rgba(255, 0, 127, 0.6); /* Vibrant cyber glow */
       }
       #gh-sig-ws {
         display: inline-flex;
@@ -5275,12 +5277,12 @@
         gsap.set([bracketEl, nameEl, slashEl], { opacity: 0 });
         gsap.fromTo(bracketEl, { opacity:0, x:-6 }, { opacity:1, x:0, duration:0.35, ease:'power2.out', delay:0.8 });
         function scramble(el, txt, ms) {
-          var chars='ABCDEFGHIJKLMNPQRSTXYZabcdefghijklmnpqrstxy0123456789!@#<>/|\\', steps=18, step=0;
+          var chars='ABCDEFGHIJKLMNPQRSTXYZabcdefghijklmnpqrstxy0123456789!@#<>/|\\', steps=40, step=0;
           setTimeout(function(){ el.style.opacity='1'; var iv=setInterval(function(){
-            step++; var s=Math.floor(step/steps*txt.length), o='';
+            step++; var s=step>(steps-8)?Math.floor((step-(steps-8))/8*txt.length):0, o='';
             for(var i=0;i<txt.length;i++) o+=i<s?txt[i]:chars[Math.floor(Math.random()*chars.length)];
             el.textContent=o; if(step>=steps){el.textContent=txt;clearInterval(iv);}
-          },48);},ms);
+          },35);},ms);
         }
         scramble(nameEl,'Gh',1050);
         gsap.fromTo(slashEl, { opacity:0, x:6 }, { opacity:1, x:0, duration:0.35, ease:'power2.out', delay:2.1 });

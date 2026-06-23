@@ -52,11 +52,11 @@ const PROJECTS = {
 let activeProject = null;
 let currentIframeUrl = null;
 
-/* â”€â”€â”€ Auth State â”€â”€â”€ */
+/* ─── Auth State ─── */
 let xcPortalUser = null;
 // Keys not listed = accessible to any logged-in user
 const XCP_ROLE_MAP = {
-  website: ['admin', 'agent'],
+  website: ['admin', 'agent', 'guest'], // Guest user explicitly allowed access to Property Explorer!
 };
 
 /* â”€â”€â”€ DOM refs â”€â”€â”€ */
@@ -388,6 +388,11 @@ function applyPortalRoles(user) {
     return;
   }
 
+  // Create Guest Management Panel for Gh / Creator only
+  if (user.batchId === 'creator' || user.role === 'creator') {
+    initCreatorGuestPanel();
+  }
+
   // Apply locked state to restricted cards
   document.querySelectorAll('.project-card').forEach((card) => {
     const key = card.dataset.project;
@@ -479,6 +484,61 @@ XceliasAuth.guard({
   requiredRoles: null, // any authenticated user can access home
   onReady: applyPortalRoles,
 });
+
+/* ─── Creator Guest Management Panel Helper ─── */
+function initCreatorGuestPanel() {
+  if (document.getElementById('xcp-guest-manager')) return;
+
+  // Insert panel container in body
+  const container = document.createElement('div');
+  container.id = 'xcp-guest-manager';
+  container.className = 'xcp-guest-mgr';
+  container.innerHTML = `
+    <div class="xcp-gm-hdr">
+      <h3>🔑 Guest Active-Session Reset</h3>
+      <span class="xcp-gm-subtitle">Reset target metrics to restore 30-minute guest access duration.</span>
+    </div>
+    <div class="xcp-gm-body">
+      <div id="xcp-gm-status" class="xcp-gm-status-ready">Ready to update guest@xcelias.internal</div>
+      <button class="xcp-gm-btn" id="xcp-gm-reset-btn">⚡ Reset Guest Access Session</button>
+    </div>
+  `;
+  document.body.appendChild(container);
+
+  const resetBtn = document.getElementById('xcp-gm-reset-btn');
+  const statusEl = document.getElementById('xcp-gm-status');
+
+  if (resetBtn && window.xcDB) {
+    resetBtn.addEventListener('click', () => {
+      resetBtn.disabled = true;
+      resetBtn.textContent = 'Updating...';
+      statusEl.className = 'xcp-gm-status-loading';
+      statusEl.textContent = 'Updating Realtime Database profile...';
+
+      // Update Firebase RTDB: wipe firstLogin timestamp or set it to current so the 30-minute window restarts fresh
+      const guestUid = 'GEg5H8mn6KOH160AZzM57CVXPuC2';
+      window.xcDB.ref('users/' + guestUid).update({
+        firstLogin: Date.now(),
+        createdAt: Date.now(),
+        role: 'guest'
+      }).then(() => {
+        statusEl.className = 'xcp-gm-status-success';
+        statusEl.textContent = '✅ Guest session restored successfully!';
+        resetBtn.disabled = false;
+        resetBtn.textContent = '⚡ Reset Guest Access Session';
+        setTimeout(() => {
+          statusEl.className = 'xcp-gm-status-ready';
+          statusEl.textContent = 'Ready to update guest@xcelias.internal';
+        }, 4000);
+      }).catch((e) => {
+        statusEl.className = 'xcp-gm-status-error';
+        statusEl.textContent = '❌ Failed to reset: ' + e.message;
+        resetBtn.disabled = false;
+        resetBtn.textContent = '⚡ Reset Guest Access Session';
+      });
+    });
+  }
+}
 
 /* â”€â”€â”€ Card click / keyboard bindings â”€â”€â”€ */
 document.querySelectorAll('.project-card').forEach((card) => {

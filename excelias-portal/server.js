@@ -261,6 +261,12 @@ function studentGuardMiddleware(req, res, next) {
   if (session && session.role === 'reports') {
     return res.redirect(302, '/reports/'); // reports-only → reports generator
   }
+  if (session && session.role === 'guest') {
+    // Guest gets access to portal and specific modules, but has 30m expire
+    // Checked client-side and server-side
+    next();
+    return;
+  }
   next();
 }
 

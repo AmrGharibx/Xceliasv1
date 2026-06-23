@@ -1051,6 +1051,80 @@ body {
   border-radius: 999px;
 }
 
+/* ─── Creator Guest Management Panel Styling ─── */
+.xcp-guest-mgr {
+  max-width: 1000px;
+  width: calc(100% - 48px);
+  margin: 32px auto 0;
+  padding: 24px;
+  background: rgba(30, 30, 50, 0.4);
+  border: 1px solid rgba(255, 0, 127, 0.25);
+  border-radius: 16px;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 8px 32px rgba(255, 0, 127, 0.08);
+  font-family: 'Montserrat', sans-serif;
+  box-sizing: border-box;
+}
+.xcp-gm-hdr h3 {
+  margin: 0 0 6px;
+  font-size: 1.1rem;
+  color: #fff;
+  text-shadow: 0 0 8px rgba(255, 0, 127, 0.3);
+}
+.xcp-gm-subtitle {
+  font-size: 0.8rem;
+  color: rgba(232, 232, 255, 0.6);
+}
+.xcp-gm-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.xcp-gm-status-ready {
+  font-size: 0.85rem;
+  font-family: 'Share Tech Mono', monospace;
+  color: rgba(50, 200, 175, 0.8);
+}
+.xcp-gm-status-loading {
+  font-size: 0.85rem;
+  font-family: 'Share Tech Mono', monospace;
+  color: #f59e0b;
+}
+.xcp-gm-status-success {
+  font-size: 0.85rem;
+  font-family: 'Share Tech Mono', monospace;
+  color: #10b981;
+  text-shadow: 0 0 8px rgba(16, 185, 129, 0.3);
+}
+.xcp-gm-status-error {
+  font-size: 0.85rem;
+  font-family: 'Share Tech Mono', monospace;
+  color: #ef4444;
+}
+.xcp-gm-btn {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #ff007f, #764ba2);
+  border: none;
+  border-radius: 50px;
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(255, 0, 127, 0.25);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.xcp-gm-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(255, 0, 127, 0.4);
+}
+.xcp-gm-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* ═══════════════════════════════════════════════════
    RESPONSIVE
    ═══════════════════════════════════════════════════ */

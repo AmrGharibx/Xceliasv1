@@ -468,14 +468,33 @@ function applyPortalRoles(user) {
     delay: 2.5,
   });
 
-  /* ── 5. hover (scale + letter-spacing via GSAP, glow via CSS :hover) ── */
+  /* ── 5. high-end interactive cyber-spring hover (utilizes GSAP spring easing) ── */
   sig.addEventListener('mouseenter', function () {
-    gsap.to(nameEl, { letterSpacing: '0.12em', duration: 0.3, ease: 'power2.out' });
-    gsap.to(sig, { scale: 1.06, duration: 0.28, ease: 'power2.out' });
+    gsap.to(bracketEl, { x: -8, rotation: -20, opacity: 0.9, duration: 0.4, ease: 'power2.out' });
+    gsap.to(slashEl, { x: 8, rotation: 20, opacity: 0.9, duration: 0.4, ease: 'power2.out' });
+    gsap.to(nameEl, { 
+      scale: 1.18, 
+      letterSpacing: '0.18em', 
+      textShadow: '0 0 20px #00f0ff, 0 0 40px rgba(0, 240, 255, 0.8), 0 0 70px rgba(0, 240, 255, 0.4)',
+      color: '#fff',
+      duration: 0.45, 
+      ease: 'elastic.out(1.1, 0.4)' 
+    });
+    gsap.to(sig, { scale: 1.05, duration: 0.3, ease: 'power2.out' });
   });
+
   sig.addEventListener('mouseleave', function () {
-    gsap.to(nameEl, { letterSpacing: '0.05em', duration: 0.35, ease: 'power2.out' });
-    gsap.to(sig, { scale: 1, duration: 0.4, ease: 'power2.out' });
+    gsap.to(bracketEl, { x: 0, rotation: 0, opacity: 0.4, duration: 0.5, ease: 'back.out(1.7)' });
+    gsap.to(slashEl, { x: 0, rotation: 0, opacity: 0.4, duration: 0.5, ease: 'back.out(1.7)' });
+    gsap.to(nameEl, { 
+      scale: 1, 
+      letterSpacing: '0.05em', 
+      textShadow: '0 0 12px rgba(130,225,255,0.9), 0 0 28px rgba(90,185,255,0.5)',
+      color: '#edf2ff',
+      duration: 0.5, 
+      ease: 'back.out(1.7)' 
+    });
+    gsap.to(sig, { scale: 1, duration: 0.5, ease: 'back.out(1.7)' });
   });
 })();
 

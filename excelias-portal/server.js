@@ -90,6 +90,13 @@ const KNOWN_USERS = {
     displayName: 'Reports Assistant',
     username: 'reports',
   },
+  // Guest user — access restricted to 30 minutes
+  'GEg5H8mn6KOH160AZzM57CVXPuC2': {
+    role: 'guest',
+    batchId: 'guest',
+    displayName: 'Guest User',
+    username: 'guest',
+  },
 };
 /* ── Email → role mapping (fallback when UID is not yet in KNOWN_USERS).
    Email is extracted from the cryptographically-verified Firebase ID token
@@ -99,6 +106,7 @@ const KNOWN_EMAILS = {
   'sadmin@xcelias.internal': { role: 'admin',   batchId: 'admin',   displayName: 'Admin',             username: 'sadmin'  },
   'amr@gharib.dev':          { role: 'admin',   batchId: 'creator', displayName: 'Gh \u00b7 Creator', username: 'gh'      },
   'report@xcelias.internal': { role: 'reports', batchId: 'reports', displayName: 'Reports Assistant', username: 'reports' },
+  'guest@xcelias.internal':  { role: 'guest',   batchId: 'guest',   displayName: 'Guest User',        username: 'guest'   },
 };
 
 /* ── Batch UIDs that can NEVER be admin (safety net) ── */

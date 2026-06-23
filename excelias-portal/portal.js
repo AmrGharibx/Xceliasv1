@@ -369,6 +369,7 @@ function applyPortalRoles(user) {
         trainee: '\u{1F393} Trainee',
         student: '\u{1F4D6} Student',
         reports: '\u{1F4CA} Assistant',
+        guest: '\u{1F464} Guest',
       }[user.role] || user.role;
     chip.innerHTML = `<span class="xcp-chip-name">${escHtml(user.displayName || user.username)}</span><span class="xcp-chip-role">${escHtml(roleLabel)}</span><button class="xcp-chip-signout" id="xcp-signout">Sign Out</button>`;
     chip.style.display = 'flex';

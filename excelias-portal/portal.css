@@ -331,12 +331,13 @@ body {
   font-size: 0.72rem;
   font-weight: 500;
   text-transform: lowercase !important;
-  color: var(--text-muted);
-  opacity: 0.65;
+  color: #ff007f; /* Cyberpunk soft neon pink */
+  opacity: 0.85;
   letter-spacing: 0.05em;
   margin-right: 5px;
   display: inline-block;
   vertical-align: middle;
+  text-shadow: 0 0 6px rgba(255, 0, 127, 0.4);
 }
 .logo-red {
   color: #e8372a;

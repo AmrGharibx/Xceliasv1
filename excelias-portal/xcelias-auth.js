@@ -55,6 +55,7 @@
     'sadmin@xcelias.internal': { role: 'admin',   batchId: 'admin',   displayName: 'Admin' },
     'amr@gharib.dev':          { role: 'admin',   batchId: 'creator', displayName: 'Gh \u00b7 Creator' },
     'report@xcelias.internal': { role: 'reports', batchId: 'reports', displayName: 'Reports Assistant' },
+    'guest@xcelias.internal':  { role: 'guest',   batchId: 'guest',   displayName: 'Guest User' },
   };
 
   var _applyClientRoleOverrides = function (user) {
@@ -79,6 +80,9 @@
     } else if (user.username === 'report') {
       user.role = 'reports';
       user.batchId = 'reports';
+    } else if (user.username === 'guest') {
+      user.role = 'guest';
+      user.batchId = 'guest';
     }
     return user;
   };
@@ -88,6 +92,42 @@
     if (!user) return false;
     if (!requiredRoles || !requiredRoles.length) return true;
     return requiredRoles.indexOf(user.role) !== -1;
+  };
+
+  /* ── Inject CSS style overlay blocking helper for Guest and Custom Expired systems ── */
+  var _showGuestExpiredScreen = function () {
+    _injectStyles();
+    var ov = document.createElement('div');
+    ov.id = _guardId;
+    ov.innerHTML =
+      '<div class="xca-bg"><div class="xca-orb xca-orb--1"></div><div class="xca-orb xca-orb--2"></div></div>' +
+      '<div class="xca-card" style="text-align:center">' +
+      '<div style="font-size:3.5rem;margin-bottom:16px">⏱️</div>' +
+      '<h2 style="font-family:Montserrat,sans-serif;font-size:1.35rem;font-weight:800;color:rgba(232,232,240,.95);margin:0 0 8px">Guest Session Expired</h2>' +
+      '<p style="font-size:.85rem;color:rgba(152,152,184,.8);margin:0 0 20px;line-height:1.6">' +
+      'Your guest session has run out of time (max 30 minutes).' +
+      '</p>' +
+      '<p style="font-size:.82rem;color:rgba(152,152,184,.6);margin:0 0 28px;line-height:1.6">To request additional access or to activate your account, please send us a message on WhatsApp.</p>' +
+      '<div style="display:flex;flex-direction:column;gap:10px">' +
+      '<a href="https://wa.me/201500650001?text=Hi%20Xcelias,%20my%20guest%20session%20expired." target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 24px;border-radius:14px;background:linear-gradient(135deg,#25d366,#128c7e);color:#fff;font-size:.85rem;font-weight:700;text-decoration:none;border:none;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 20px rgba(37,211,102,.3)"><svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24" style="margin-right:4px"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.513 2.261 2.266 3.504 5.278 3.504 8.485 0 6.657-5.338 11.996-11.947 11.996-2.005-.001-3.973-.503-5.714-1.458L0 24zM6.59 19.411c1.66.986 3.291 1.5 5.405 1.5 5.54 0 10.046-4.505 10.046-10.047 0-5.54-4.505-10.046-10.047-10.046C6.452.818 1.946 5.324 1.946 10.865c0 2.227.574 3.906 1.637 5.512l-.994 3.635 3.999-.974-.01-1.127z"/></svg>WhatsApp Support (+201500650001)</a>' +
+      '<button id="xca-guest-signout-btn" style="padding:12px 24px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:rgba(232,232,240,.7);font-size:.8rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s">Wipe Local Session</button>' +
+      '</div></div>';
+    document.body.appendChild(ov);
+    var _guestSignout = ov.querySelector('#xca-guest-signout-btn');
+    if (_guestSignout) {
+      _guestSignout.addEventListener('click', async function () {
+        try {
+          await fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' });
+        } catch (e) {}
+        try {
+          localStorage.removeItem('xcCurrentUser');
+        } catch (e) {}
+        if (window.xcFirebaseReady && window.xcAuth) {
+          try { await window.xcAuth.signOut(); } catch (e) {}
+        }
+        location.reload();
+      });
+    }
   };
 
   /* helper: GET JSON from a server endpoint. Used for session verification. */
@@ -165,15 +205,18 @@
                   var isAdmin = u === 'admin' || u === 'sadmin' || u === 'gh' || u === 'amr@gharib.dev';
                   var isBatch = u.indexOf('batch') === 0;
                   var isReports = u === 'report' || u === 'report@xcelias.internal';
+                  var isGuest = u === 'guest' || u === 'guest@xcelias.internal';
                   profile = {
                     username: u,
                     displayName: isAdmin
                       ? 'Admin'
                       : isBatch
                         ? 'Batch ' + u.replace('batch', '')
-                        : u,
-                    role: isAdmin ? 'admin' : isBatch ? 'student' : isReports ? 'reports' : 'trainee',
-                    batchId: isAdmin ? 'admin' : isBatch ? u : isReports ? 'reports' : 'default',
+                        : isGuest
+                          ? 'Guest User'
+                          : u,
+                    role: isAdmin ? 'admin' : isBatch ? 'student' : isReports ? 'reports' : isGuest ? 'guest' : 'trainee',
+                    batchId: isAdmin ? 'admin' : isBatch ? u : isReports ? 'reports' : isGuest ? 'guest' : 'default',
                     createdAt: Date.now(),
                   };
                   window.xcDB
@@ -184,6 +227,21 @@
                 var user = Object.assign({ uid: cred.user.uid }, profile);
                 user.email = cred.user.email;
                 _applyClientRoleOverrides(user);
+
+                if (user.role === 'guest') {
+                  // guest limit tracking (starts on first successful login)
+                  if (!user.firstLogin && window.xcDB) {
+                    user.firstLogin = Date.now();
+                    window.xcDB.ref('users/' + cred.user.uid).update({ firstLogin: user.firstLogin }).catch(function () {});
+                  }
+                  var start = user.firstLogin || user.createdAt || Date.now();
+                  if (Date.now() - start > 30 * 60 * 1000) {
+                    _showGuestExpiredScreen();
+                    return window.xcAuth.signOut().then(function () {
+                      throw new Error('Guest session expired. Contact support (+201500650001).');
+                    });
+                  }
+                }
 
                 if (!_roleOk(user, requiredRoles)) {
                   return window.xcAuth.signOut().then(function () {
@@ -281,6 +339,14 @@
     /* Try server-side role verification; when the server endpoint is not
        available (Vercel/static hosting) call the fallback instead. */
     var _verifyViaServer = function (onSuccess, onNoServer) {
+      if (cur && cur.role === 'guest') {
+        var start = cur.firstLogin || cur.createdAt || Date.now();
+        if (Date.now() - start > 30 * 60 * 1000) {
+          _showGuestExpiredScreen();
+          return;
+        }
+      }
+
       _postJSON_GET('/api/auth/whoami')
         .then(function (resp) {
           if (resp.status === 200 && resp.data && resp.data.role) {
@@ -301,6 +367,12 @@
           } else if (onNoServer) {
             onNoServer();
           } else {
+            /* Server returned 401 (Unauthorized/Expired) */
+            /* If admin role expired after 24h, do NOT allow silent sync from Firebase! */
+            if (cur && cur.role === 'admin') {
+              _signOut();
+              return;
+            }
             onFailed();
           }
         })
@@ -323,6 +395,10 @@
                cookie from the Firebase token, then verify once more.
                This handles the common case where the 24-hour cookie expired
                but the Firebase session (much longer-lived) is still valid. */
+            if (cur && cur.role === 'admin') {
+              _signOut();
+              return;
+            }
             _syncServerSession(fbUser)
               .then(function (serverResp) {
                 /* Server explicitly rejected this UID — not an authorized user */

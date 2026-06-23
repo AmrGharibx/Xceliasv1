@@ -49,6 +49,40 @@
     return trimmed.indexOf('@') !== -1 ? trimmed : trimmed + '@xcelias.internal';
   };
 
+  /* ── Statically mapping emails to authoritative roles for front-end-only (Vercel) match ── */
+  var _CLIENT_KNOWN_EMAILS = {
+    'admin@xcelias.internal':  { role: 'admin',   batchId: 'admin',   displayName: 'Admin' },
+    'sadmin@xcelias.internal': { role: 'admin',   batchId: 'admin',   displayName: 'Admin' },
+    'amr@gharib.dev':          { role: 'admin',   batchId: 'creator', displayName: 'Gh \u00b7 Creator' },
+    'report@xcelias.internal': { role: 'reports', batchId: 'reports', displayName: 'Reports Assistant' },
+  };
+
+  var _applyClientRoleOverrides = function (user) {
+    if (!user) return user;
+    var email = (user.email || '').toLowerCase().trim();
+    if (!email && user.username) {
+      if (user.username.indexOf('@') !== -1) {
+        email = user.username.toLowerCase().trim();
+      } else {
+        email = _fbEmail(user.username);
+      }
+    }
+    
+    if (email && _CLIENT_KNOWN_EMAILS[email]) {
+      var ov = _CLIENT_KNOWN_EMAILS[email];
+      user.role = ov.role;
+      user.batchId = ov.batchId;
+      user.displayName = ov.displayName;
+    } else if (user.username === 'admin' || user.username === 'sadmin') {
+      user.role = 'admin';
+      user.batchId = 'admin';
+    } else if (user.username === 'report') {
+      user.role = 'reports';
+      user.batchId = 'reports';
+    }
+    return user;
+  };
+
   /* ── Role check helper ── */
   var _roleOk = function (user, requiredRoles) {
     if (!user) return false;
@@ -148,6 +182,9 @@
                     .catch(function () {});
                 }
                 var user = Object.assign({ uid: cred.user.uid }, profile);
+                user.email = cred.user.email;
+                _applyClientRoleOverrides(user);
+
                 if (!_roleOk(user, requiredRoles)) {
                   return window.xcAuth.signOut().then(function () {
                     throw new Error(
@@ -173,6 +210,7 @@
                       window.xcDB.ref('users/' + cred.user.uid).update({ role: serverResp.data.role }).catch(function () {});
                     }
                   }
+                  _applyClientRoleOverrides(user);
                   _w('xcCurrentUser', user);
                   return user;
                 });
@@ -295,10 +333,14 @@
                 _verifyViaServer(onVerified, function () {
                   /* True fallback: server is genuinely unreachable (static hosting).
                      Accept Firebase identity alone. */
+                  _applyClientRoleOverrides(cur);
+                  _w('xcCurrentUser', cur);
                   onVerified(cur);
                 });
               })
               .catch(function () {
+                _applyClientRoleOverrides(cur);
+                _w('xcCurrentUser', cur);
                 onVerified(cur);
               });
           });
@@ -564,6 +606,10 @@
       window._xcaOnReady = config.onReady || null;
 
       var cur = _r('xcCurrentUser', null);
+      if (cur) {
+        _applyClientRoleOverrides(cur);
+        _w('xcCurrentUser', cur);
+      }
 
       /* Student role is restricted to /studyguide only */
       if (cur && cur.role === 'student' && window.location.pathname.indexOf('/studyguide') === -1) {

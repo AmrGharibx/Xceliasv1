@@ -28,8 +28,8 @@ const PROJECTS = {
   },
   redacademy: {
     name: 'RED Academy Private LMS',
-    url: IS_LOCAL ? 'http://localhost:3000' : 'https://academy.xcelias.com',
-    mode: 'tab',
+    url: 'http://localhost:3000',
+    mode: 'local-only',
   },
   reports: {
     name: 'Report Generator',
@@ -244,7 +244,17 @@ function launchProject(key) {
     return;
   }
 
-  if (proj.mode === 'tab') {
+  if (proj.mode === 'local-only' && !IS_LOCAL) {
+    const el = document.getElementById('xcp-access-denied');
+    if (el) {
+      el.textContent = 'RED Academy Private LMS is not publicly deployed yet. Run the private server locally at http://localhost:3000 or configure an HTTPS host with persistent storage.';
+      el.classList.add('show');
+      setTimeout(() => el.classList.remove('show'), 7000);
+    }
+    return;
+  }
+
+  if (proj.mode === 'tab' || proj.mode === 'local-only') {
     window.open(proj.url, '_blank', 'noopener');
     return;
   }

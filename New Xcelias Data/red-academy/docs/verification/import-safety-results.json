@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "checks": 5,
+  "check_names": [
+    "Same-source repeat import is a successful no-op",
+    "Later operational edit survives repeat import",
+    "Repeat import creates no duplicate batches or archive rows",
+    "Existing unrelated database is refused",
+    "Refused database bytes remain identical"
+  ]
+}

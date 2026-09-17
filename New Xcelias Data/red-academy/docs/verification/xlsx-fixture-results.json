@@ -1,0 +1,29 @@
+{
+  "suite": "XLSX export validation with openpyxl",
+  "passed": 21,
+  "failed": 0,
+  "checks": [
+    "empty has seven named sheets",
+    "empty has no cached spreadsheet errors",
+    "empty freezes and styles headers",
+    "empty marks the private workspace source",
+    "Empty export contains no company, enrollment or result rows",
+    "Empty attendance does not fabricate a rate",
+    "populated has seven named sheets",
+    "populated has no cached spreadsheet errors",
+    "populated freezes and styles headers",
+    "populated marks the private workspace source",
+    "Assessments I2 contains a live formula",
+    "Assessments I2 cache matches independent calculation",
+    "Assessments J2 contains a live formula",
+    "Assessments J2 cache matches independent calculation",
+    "Assessments K2 contains a live formula",
+    "Assessments K2 cache matches independent calculation",
+    "10-day checklists O2 contains a live formula",
+    "10-day checklists O2 cache matches independent calculation",
+    "Formula-like trainee notes remain literal text",
+    "Excel arrival calculates 45 minutes late",
+    "Excel manual and calculated lateness remain independent"
+  ],
+  "formulas_verified": 4
+}

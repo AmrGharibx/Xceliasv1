@@ -1,0 +1,35 @@
+{
+  "ok": true,
+  "mode": "untouched-import-baseline",
+  "checks": 18,
+  "check_names": [
+    "SQLite integrity",
+    "Foreign keys",
+    "Expected schema version",
+    "Every source page retained",
+    "Every academy CSV row reconciled",
+    "All source hashes, dispositions, reasons, archived links and destination types",
+    "Exact delivered entity counts",
+    "No packaged users",
+    "No packaged sessions",
+    "No packaged invitations",
+    "No packaged setup_grants",
+    "Only the 42 real source batches",
+    "Unknown scores excluded from graded averages",
+    "daily_attendance links match the explicit batch",
+    "attendance_10day links match the explicit batch",
+    "assessments links match the explicit batch",
+    "Missing source capacity not invented",
+    "No fabricated contacts"
+  ],
+  "source_pages": 4815,
+  "source_sha256": "27b3a2e579b30a4201bc65fe8c296a16cf5b1aa4a1666907793acefbc5ae6c88",
+  "operational_counts": {
+    "companies": 55,
+    "batches": 42,
+    "trainees": 903,
+    "daily_attendance": 2606,
+    "attendance_10day": 264,
+    "assessments": 847
+  }
+}

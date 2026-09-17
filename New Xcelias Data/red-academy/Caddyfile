@@ -1,0 +1,6 @@
+{$ACADEMY_DOMAIN} {
+    encode zstd gzip
+    reverse_proxy academy:3000 {
+        flush_interval -1
+    }
+}

@@ -1,0 +1,28 @@
+{
+  "ok": true,
+  "checks": 10,
+  "cell_assertions": 71764,
+  "formulas_verified": 2805,
+  "blank_formula_caches_preserved": 77,
+  "sheet_record_counts": {
+    "Overview": 22,
+    "Batches": 42,
+    "Trainees": 903,
+    "Daily attendance": 2606,
+    "10-day checklists": 264,
+    "Assessments": 847,
+    "Companies": 55
+  },
+  "check_names": [
+    "Seven correctly named sheets",
+    "Overview: every cell, row count, literal text, styling and cached value verified",
+    "Batches: every cell, row count, literal text, styling and cached value verified",
+    "Trainees: every cell, row count, literal text, styling and cached value verified",
+    "Daily attendance: every cell, row count, literal text, styling and cached value verified",
+    "10-day checklists: every cell, row count, literal text, styling and cached value verified",
+    "Assessments: every cell, row count, literal text, styling and cached value verified",
+    "Companies: every cell, row count, literal text, styling and cached value verified",
+    "All 847 assessment formulas independently recomputed; NULL never treated as zero",
+    "All 264 checklist formulas independently recomputed"
+  ]
+}

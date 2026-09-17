@@ -26,6 +26,11 @@ const PROJECTS = {
     url: IS_LOCAL ? 'http://localhost:3005' : 'https://lms.xcelias.com',
     mode: 'tab',
   },
+  redacademy: {
+    name: 'RED Academy Private LMS',
+    url: IS_LOCAL ? 'http://localhost:3000' : 'https://academy.xcelias.com',
+    mode: 'tab',
+  },
   reports: {
     name: 'Report Generator',
     url: '/reports/',

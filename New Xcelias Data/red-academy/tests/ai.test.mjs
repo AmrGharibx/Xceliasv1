@@ -1,0 +1,21 @@
+// Provider calls are intentionally mocked: no real credentials or network usage.
+import test,{before,after} from 'node:test';
+import assert from 'node:assert/strict';
+import {fixtures} from './fixtures.mjs';
+import {id} from '../public/modules/core.mjs';
+process.env.DATABASE_MODE='sqlite';process.env.DATABASE_PATH=':memory:';process.env.SEED_SAMPLE_DATA='false';
+process.env.BOOTSTRAP_ADMIN_EMAIL='ai-test@example.test';process.env.BOOTSTRAP_ADMIN_PASSWORD='AI-Test-Password-123!';
+process.env.APP_URL='http://localhost:3000';process.env.AI_REPORTS_ENABLED='true';process.env.OPENAI_API_KEY='test-key-not-a-real-credential';process.env.OPENAI_MODEL='unit-test-model';
+const {handleApi,repository}=await import('../server/service.mjs');
+const f=fixtures();f.trainee.trainee_name='Private Test Name';f.trainee.email='private@example.test';f.assessment.instructor_comment='PRIVATE COMMENT MUST NOT BE SENT';
+let token,user,repo;const realFetch=globalThis.fetch;
+before(async()=>{repo=await repository();await repo.setup({token:repo.setupToken,email:process.env.BOOTSTRAP_ADMIN_EMAIL,full_name:'AI Test Administrator',password:process.env.BOOTSTRAP_ADMIN_PASSWORD});repo.insert('companies',f.company);repo.insert('batches',f.batch);repo.insert('trainees',f.trainee);repo.insert('attendance_10day',f.summary);repo.insert('assessments',f.assessment);({token,user}=await repo.login(process.env.BOOTSTRAP_ADMIN_EMAIL,process.env.BOOTSTRAP_ADMIN_PASSWORD));});
+after(()=>{globalThis.fetch=realFetch;repo.close();});
+async function run(body={traineeId:f.trainee.id,kind:'assessment',consent:true}){const response=await handleApi(new Request('http://localhost:3000/api/ai',{method:'POST',headers:{origin:'http://localhost:3000','x-red-request':'1',cookie:'red_session='+token,'Content-Type':'application/json'},body:JSON.stringify(body)}));return {status:response.status,data:await response.json()};}
+test('AI requires explicit consent and makes no provider call without it',async()=>{let called=false;globalThis.fetch=async()=>{called=true;throw new Error('Unexpected provider call');};assert.equal((await run({traineeId:f.trainee.id,kind:'assessment',consent:false})).status,400);assert.equal(called,false);});
+test('Provider request excludes names, contact details and instructor comments',async()=>{let payload;globalThis.fetch=async(url,options)=>{assert.equal(url,'https://api.openai.com/v1/responses');payload=JSON.parse(options.body);return Response.json({output:[{content:[{type:'output_text',text:'A reviewed training draft.'}]}]});};const r=await run();assert.equal(r.status,200);assert.equal(r.data.source,'ai');assert.equal(r.data.report,'A reviewed training draft.');assert.equal(payload.store,false);assert.equal(payload.model,'unit-test-model');assert.equal(payload.max_output_tokens,650);for(const secret of [f.trainee.trainee_name,f.trainee.email,f.assessment.instructor_comment,f.trainee.id])assert.ok(!JSON.stringify(payload).includes(secret));});
+test('AI generation does not silently save or overwrite an assessment',async()=>{assert.equal((await repo.state(user)).assessments[0].report,'');assert.equal((await repo.state(user)).assessments[0].version,1);});
+test('Provider errors return a clear failure without changing saved data',async()=>{globalThis.fetch=async()=>new Response('{}',{status:500,headers:{'Content-Type':'application/json'}});assert.equal((await run()).status,502);assert.equal((await repo.state(user)).assessments[0].report,'');});
+test('Empty provider output is rejected',async()=>{globalThis.fetch=async()=>Response.json({output:[]});assert.equal((await run()).status,502);});
+test('An unknown trainee cannot trigger a provider call',async()=>{let called=false;globalThis.fetch=async()=>{called=true;throw new Error('Unexpected call');};assert.equal((await run({traineeId:id(),kind:'attendance',consent:true})).status,404);assert.equal(called,false);});
+test('Per-user report budget is enforced before calling the provider',async()=>{for(let i=0;i<10;i++)await repo.rate('ai:'+user.id,10,3600);let called=false;globalThis.fetch=async()=>{called=true;throw new Error('Unexpected call');};assert.equal((await run()).status,429);assert.equal(called,false);});

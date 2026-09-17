@@ -1,0 +1,41 @@
+name: red-academy
+services:
+  academy:
+    build: .
+    restart: unless-stopped
+    environment:
+      APP_ENV: production
+      APP_URL: https://${ACADEMY_DOMAIN:?Set ACADEMY_DOMAIN in .env.deploy}
+      HOST: 0.0.0.0
+      PORT: "3000"
+      DATABASE_MODE: sqlite
+      DATABASE_PATH: /app/data/red-academy.db
+      AI_REPORTS_ENABLED: "false"
+    expose:
+      - "3000"
+    volumes:
+      - ./data:/app/data
+      - ./backups:/app/backups
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    init: true
+  proxy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment:
+      ACADEMY_DOMAIN: ${ACADEMY_DOMAIN:?Set ACADEMY_DOMAIN in .env.deploy}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      academy:
+        condition: service_healthy
+volumes:
+  caddy_data:
+  caddy_config:

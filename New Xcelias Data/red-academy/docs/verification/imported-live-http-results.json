@@ -1,0 +1,43 @@
+{
+  "ok": true,
+  "checks": 34,
+  "check_names": [
+    "Anonymous imported endpoint blocked: state",
+    "Anonymous imported endpoint blocked: import/sources",
+    "Anonymous imported endpoint blocked: import/source/1ed69bf6cd654743a5b11c8c3fd6fff8",
+    "Private import file not statically served: /data/red-academy.db",
+    "Private import file not statically served: /data/notion-reconciliation.json",
+    "Private import file not statically served: /docs/IMPORT_REPORT.md",
+    "Imported account-free database accepts private owner setup",
+    "Owner signs in to populated database",
+    "Full real HTTP snapshot includes companies = 55",
+    "Full real HTTP snapshot includes batches = 42",
+    "Full real HTTP snapshot includes trainees = 903",
+    "Full real HTTP snapshot includes daily_attendance = 2606",
+    "Full real HTTP snapshot includes attendance_10day = 264",
+    "Full real HTTP snapshot includes assessments = 847",
+    "Snapshot includes review and provenance summary, not raw archive or accounts",
+    "Source archive is paginated: 4815 records, 25 per page",
+    "Source page 2 returns distinct records",
+    "Assessment source filter includes all 897 source pages",
+    "Excluded demo records remain archived, not operational",
+    "Malformed import filter rejected: kind=users",
+    "Malformed import filter rejected: page=-1",
+    "Malformed import filter rejected: batch=not-a-uuid",
+    "Private source detail contains original Markdown, relations and digest",
+    "Authorized RED viewer can inspect original source",
+    "Viewer cannot acknowledge source reviews",
+    "Partial imported assessment saves over real HTTP without invented scores",
+    "Real SSE refresh follows historical record update",
+    "Admin acknowledgement succeeds without replacing source facts",
+    "Archived source is unchanged after operational writes",
+    "Full imported database backup succeeds",
+    "Backup includes every original source page and operational batch",
+    "Backup includes new assessment history and valid foreign keys",
+    "Restored imported backup signs in and preserves all six entity totals",
+    "Restored backup retains reviewed status and partial-score edit"
+  ],
+  "limitations": [
+    "Actual HTTP, SSE and SQLite backup tested on an isolated copy, not a hosted TLS origin."
+  ]
+}

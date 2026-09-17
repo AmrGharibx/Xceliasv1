@@ -1,0 +1,35 @@
+{
+  "ok": true,
+  "checks": 20,
+  "field_assertions": 44233,
+  "check_names": [
+    "All imported entity counts",
+    "Every source page has a final disposition",
+    "All source hashes, destination identities and original relation targets",
+    "All 2606 attendance dates, times, statuses, reasons and late flags preserved",
+    "All 847 assessment inputs, comments, reports, outcomes and reported attendance preserved",
+    "All 264 independent checklist periods, checkboxes and source rollups preserved",
+    "All batch statuses, supplied ranges and observed calendars preserved",
+    "Every assigned child record belongs to its explicit batch enrollment",
+    "Batch 25 absent, demo batch numbers 44-57 excluded",
+    "Reconstructed and cross-batch enrollments have explicit source evidence and no fabricated contacts",
+    "872 masters + 13 named record profiles + 18 record-linked enrollments",
+    "Cross-batch links retain 17 Batch 42 and one Batch 38 original masters",
+    "90 real Batch 43 attendance entries, no copied scores/checklists",
+    "26 Batch 30 checklist periods remain separate",
+    "Shared Batch 41 assessment is one row, not 23 invented personal scores",
+    "Unassigned daily and assessment records retained",
+    "Expected reviewed source-link corrections",
+    "Expected original timestamp review notes",
+    "Database is valid and account-free",
+    "Original ZIP bytes match every archived academy page"
+  ],
+  "counts": {
+    "companies": 55,
+    "batches": 42,
+    "trainees": 903,
+    "daily_attendance": 2606,
+    "attendance_10day": 264,
+    "assessments": 847
+  }
+}

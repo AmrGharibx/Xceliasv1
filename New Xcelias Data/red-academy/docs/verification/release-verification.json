@@ -1,0 +1,39 @@
+{
+  "version": "3.0.0",
+  "verification_date": "2026-09-17",
+  "node_runtime": "22.16.0",
+  "counts": {
+    "companies": 55,
+    "batches": 42,
+    "trainees": 903,
+    "daily_attendance": 2606,
+    "attendance_10day": 264,
+    "assessments": 847,
+    "source_records": 4815,
+    "users": 0,
+    "sessions": 0,
+    "invitations": 0,
+    "setup_grants": 0
+  },
+  "tests": {
+    "node": 144,
+    "http_baseline": 49,
+    "http_imported": 34,
+    "browser_dom_baseline": 43,
+    "browser_dom_imported": 47,
+    "source_assertions": 44233,
+    "xlsx_cells": 71764,
+    "xlsx_formulas": 2805,
+    "import_safety_checks": 5,
+    "baseline_checks": 18,
+    "javascript_syntax_files": 31
+  },
+  "original_zip_sha256": "27b3a2e579b30a4201bc65fe8c296a16cf5b1aa4a1666907793acefbc5ae6c88",
+  "release_has_accounts": false,
+  "deployed_to_RED": false,
+  "limits": [
+    "Browser DOM uses an in-memory bridge, not native hosted navigation/cookie/SW testing.",
+    "No deployed TLS/Docker/Caddy acceptance or live AI provider call.",
+    "No formal security/accessibility audit, measured Lighthouse score or load-capacity certification."
+  ]
+}

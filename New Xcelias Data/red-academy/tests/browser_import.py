@@ -3,7 +3,7 @@ The bridge is the same restricted-environment bridge as browser_dom.py. Native b
 navigation/cookie/SSE/TLS acceptance is not claimed. No user data is modified.
 """
 from pathlib import Path
-import argparse,json,os,re,shutil,socket,subprocess,tempfile,time,urllib.request
+import argparse,json,os,re,shutil,socket,sqlite3,subprocess,tempfile,time,urllib.request
 from playwright.sync_api import sync_playwright,expect
 import browser_harness as h
 ROOT=Path(__file__).resolve().parents[1]
@@ -26,8 +26,16 @@ def save_legacy(page):
  page.locator('#legacy-form [type="submit"]').click();expect(page.locator('#legacy-form')).to_have_count(0)
 def record(page,table,id):
  page.evaluate('(v)=>{document.querySelector("#main").insertAdjacentHTML("beforeend",`<button id="qa-open" data-action="record-detail" data-table="${v.table}" data-id="${v.id}">Open test record</button>`);}',{'table':table,'id':id});page.locator('#qa-open').click()
+def mobile_fits(page):
+ metrics=page.evaluate('''()=>{const offenders=[...document.querySelectorAll('body *')].map(el=>{const r=el.getBoundingClientRect();return {tag:el.tagName,cls:String(el.className||'').slice(0,120),id:el.id,scrollWidth:el.scrollWidth,right:Math.round(r.right),width:Math.round(r.width),text:(el.innerText||'').trim().slice(0,80)};}).filter(x=>x.right>innerWidth+1||x.scrollWidth>innerWidth+1).sort((a,b)=>Math.max(b.right,b.scrollWidth)-Math.max(a.right,a.scrollWidth)).slice(0,8);return {innerWidth,scrollWidth:document.documentElement.scrollWidth,offenders};}''')
+ if metrics['scrollWidth']>metrics['innerWidth']:
+  print('MOBILE OVERFLOW:',json.dumps(metrics),flush=True)
+ return metrics['scrollWidth']<=metrics['innerWidth']
 with tempfile.TemporaryDirectory(prefix='red-import-browser-') as tmp:
  db=Path(tmp)/'qa.db';shutil.copy2(ROOT/'data/red-academy.db',db)
+ db_access=sqlite3.connect(db)
+ try:db_access.executescript('DELETE FROM sessions; DELETE FROM invitations; DELETE FROM setup_grants; DELETE FROM users;');db_access.commit()
+ finally:db_access.close()
  with socket.socket() as sock:sock.bind(('127.0.0.1',0));port=sock.getsockname()[1]
  h.BASE=f'http://localhost:{port}';env={**os.environ,'PORT':str(port),'HOST':'127.0.0.1','APP_URL':h.BASE,'DATABASE_PATH':str(db),'APP_ENV':'test'}
  logpath=Path(tmp)/'server.log'
@@ -42,7 +50,9 @@ with tempfile.TemporaryDirectory(prefix='red-import-browser-') as tmp:
   owner=h.Transport();email='qa-owner@example.test';pw='RED-Import-QA-Password-123!'
   res=owner.call('auth/setup','POST',{'token':code,'email':email,'password':pw,'full_name':'RED Administrator'});assert res['status']==201,res
   with sync_playwright() as playwright:
-   browser=playwright.chromium.launch(headless=True,executable_path=os.environ.get('CHROMIUM_PATH','/usr/bin/chromium'),args=['--no-sandbox'])
+   launch_args={'headless':True,'args':['--no-sandbox']}
+   if os.environ.get('CHROMIUM_PATH'): launch_args['executable_path']=os.environ['CHROMIUM_PATH']
+   browser=playwright.chromium.launch(**launch_args)
    context=browser.new_context(viewport={'width':1512,'height':1050},reduced_motion='reduce');page=context.new_page();page.set_default_timeout(20000);page.on('pageerror',lambda err:errors.append(str(err)));h.mount(page,owner)
    expect(page.locator('#auth-form')).to_have_attribute('data-mode','login');check('Imported data is not exposed before authentication')
    page.locator('#auth-form [name="email"]').fill(email);page.locator('#auth-form [name="password"]').fill(pw);page.locator('#auth-form [type="submit"]').click();page.wait_for_function('__redTest?.store.status==="ready"&&__redTest.store.data.batches.length===42')
@@ -56,7 +66,7 @@ with tempfile.TemporaryDirectory(prefix='red-import-browser-') as tmp:
     page.evaluate('(id)=>__redTest.ctx.go("batches",{detailId:id})',b['id']);expect(page.locator('h1')).to_have_text(b['batch_name'])
    check('Every real batch detail page opens, including undated and partially populated batches')
    go(page,'batches');click(page,'batch-view') # First button = board
-   expect(page.locator('.kanban-column')).to_have_count(4);check('Board includes unknown-status batches in a fourth lane')
+   expect(page.locator('.kanban-column')).to_have_count(3);check('Board contains only Planning, Active and Completed lanes after status normalization')
    page.locator('[data-action="batch-view"][data-view="timeline"]').click();check('Timeline identifies undated batches instead of inventing dates','no complete date range' in page.locator('body').inner_text())
    page.locator('[data-action="batch-view"][data-view="calendar"]').click();check('Calendar opens with observed and scheduled dates',page.locator('.calendar-grid').count()==1)
    go(page,'assessments');check('All assessment source records are visible in the register','of 847 records' in page.locator('body').inner_text())
@@ -78,11 +88,13 @@ with tempfile.TemporaryDirectory(prefix='red-import-browser-') as tmp:
     dest=Path(a.screenshots);dest.mkdir(parents=True,exist_ok=True);page.evaluate("document.getElementById('toast-root').replaceChildren()");go(page,'dashboard');page.wait_for_timeout(300);page.screenshot(path=str(dest/'RED-Academy-Imported-Overview.png'),full_page=True);go(page,'migration');page.screenshot(path=str(dest/'RED-Academy-Import-Review.png'),full_page=False)
    page.set_viewport_size({'width':390,'height':844})
    for route in ['dashboard','batches','trainees','attendance','summaries','assessments','companies','analytics','settings','register','migration']:
-    go(page,route);check('Mobile imported '+route+' fits viewport',page.evaluate('document.documentElement.scrollWidth<=innerWidth'))
+    go(page,route);check('Mobile imported '+route+' fits viewport',mobile_fits(page))
    if a.screenshots:go(page,'dashboard');page.screenshot(path=str(dest/'RED-Academy-Imported-Mobile.png'),full_page=False)
    check('No uncaught application JavaScript errors',not errors);browser.close()
  finally:
-  server.terminate();server.wait(timeout=10)
+  server.terminate()
+  try:server.wait(timeout=10)
+  except subprocess.TimeoutExpired:server.kill();server.wait(timeout=10)
 report={'ok':True,'checks':len(checks),'check_names':checks,'errors':errors,'limitations':['In-memory HTTP bridge, not native browser cookie/navigation testing.','Source data tested on an isolated database copy.','Browser EventSource is simulated; real HTTP SSE is tested separately.','No hosted TLS, service-worker or production-scale load acceptance claim.']}
 if a.results:Path(a.results).write_text(json.dumps(report,indent=2))
 print(json.dumps(report,indent=2))

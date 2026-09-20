@@ -10,7 +10,7 @@ const configuredURL=new URL(process.env.APP_URL);
 if(!['http:','https:'].includes(configuredURL.protocol)||configuredURL.username||configuredURL.password||configuredURL.pathname!=='/'||configuredURL.search||configuredURL.hash)throw new Error('APP_URL must be the exact HTTP(S) origin, without a path, credentials, query, or fragment.');
 if(process.env.APP_ENV==='production'&&configuredURL.protocol!=='https:')throw new Error('Production requires an HTTPS APP_URL and a TLS reverse proxy.');
 const [major,minor]=process.versions.node.split('.').map(Number);
-if(major<22||(major===22&&minor<16)){console.error('Red Academy requires Node.js 22.16 or newer.');process.exit(1);}
+if(major<22||(major===22&&minor<16)){console.error('The internal training system requires Node.js 22.16 or newer.');process.exit(1);}
 const{handleApi,repository}=await import('./server/service.mjs');
 const root=path.join(path.dirname(fileURLToPath(import.meta.url)),'public');
 const port=Number(process.env.PORT||3000),host=process.env.HOST||'127.0.0.1';
@@ -35,7 +35,7 @@ const server=http.createServer(async(req,res)=>{
  if(req.method==='HEAD'){res.end();return;}fs.createReadStream(filename).pipe(res);
  }catch(e){console.error(e);if(!res.headersSent)res.writeHead(500);res.end('Server error');}
 });
-const repo=await repository();server.listen(port,host,()=>console.log(`RED Academy is ready at ${process.env.APP_URL}\nPrivate RED workspace. Sign-in required.\n`));
+const repo=await repository();server.listen(port,host,()=>console.log(`Internal training system is ready at ${process.env.APP_URL}\nInternal company workspace. Sign-in required.\n`));
 server.requestTimeout=30000;server.headersTimeout=15000;
 server.on('error',error=>{console.error(error.code==='EADDRINUSE'?'This port is already in use. Close the other server or change PORT and APP_URL.':error.message);process.exit(1);});
 let stopping=false;function shutdown(){if(stopping)return;stopping=true;server.close(()=>{repo.close();process.exit(0);});setTimeout(()=>{server.closeAllConnections();repo.close();process.exit(0);},2500).unref();}process.on('SIGTERM',shutdown);process.on('SIGINT',shutdown);

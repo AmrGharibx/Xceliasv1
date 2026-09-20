@@ -48,7 +48,7 @@ def state(transport):
 with tempfile.TemporaryDirectory(prefix='red-private-browser-') as temporary:
     with socket.socket() as sock:
         sock.bind(('127.0.0.1', 0)); port=sock.getsockname()[1]
-    h.BASE=f'http://localhost:{port}'
+    h.BASE=f'http://127.0.0.1:{port}'
     env={**os.environ,'PORT':str(port),'HOST':'127.0.0.1','APP_URL':h.BASE,
          'DATABASE_PATH':str(Path(temporary)/'qa.db'),'APP_ENV':'test','DATABASE_MODE':'sqlite'}
     log_path=Path(temporary)/'server.log'
@@ -63,7 +63,9 @@ with tempfile.TemporaryDirectory(prefix='red-private-browser-') as temporary:
                 time.sleep(.1)
         code=re.search(r'Setup code: ([A-Za-z0-9_-]{43})',log_path.read_text()).group(1)
         with sync_playwright() as playwright:
-            browser=playwright.chromium.launch(headless=True,executable_path=os.environ.get('CHROMIUM_PATH','/usr/bin/chromium'),args=['--no-sandbox'])
+            launch_args={'headless':True,'args':['--no-sandbox']}
+            if os.environ.get('CHROMIUM_PATH'): launch_args['executable_path']=os.environ['CHROMIUM_PATH']
+            browser=playwright.chromium.launch(**launch_args)
             context=browser.new_context(viewport={'width':1440,'height':1050},reduced_motion='reduce')
             page=context.new_page(); page.set_default_timeout(15000); page.on('pageerror', lambda error: errors.append(str(error)))
             owner=h.Transport(); h.mount(page,owner)
@@ -79,10 +81,18 @@ with tempfile.TemporaryDirectory(prefix='red-private-browser-') as temporary:
             expect(page.locator('#auth-form')).to_have_attribute('data-mode','login')
             check('One-time setup creates chosen owner and returns to sign-in')
             login(page,'owner@example.test',password)
+            go(page,'dashboard')
+            check('Dark mode renders the ambient star field',page.locator('canvas.starfield').count()==1 and page.evaluate('getComputedStyle(document.querySelector("canvas.starfield")).display!="none"'))
+            click(page,'theme')
+            check('Light mode keeps the academy mark legible and uses its own star treatment',page.evaluate('document.body.classList.contains("light") && getComputedStyle(document.querySelector(".brand-mark")).webkitMaskImage.includes("training-academy-logo") && getComputedStyle(document.querySelector("canvas.starfield")).mixBlendMode==="multiply"'))
+            if args.screenshots:
+                dest=Path(args.screenshots); dest.mkdir(parents=True,exist_ok=True)
+                page.screenshot(path=str(dest/'RED-Academy-Light-Mode.png'),full_page=True)
+            click(page,'theme')
             tables=['companies','batches','trainees','daily_attendance','attendance_10day','assessments','assessment_history']
             clean=state(owner)
             check('Every operational table is empty after owner setup', all(not clean[t] for t in tables))
-            expect(page.locator('h1')).to_have_text('Welcome to RED Academy.')
+            expect(page.locator('h1')).to_have_text('Welcome to the internal training system.')
             check('Empty dashboard shows onboarding, not invented results')
             page.wait_for_timeout(6800)
             if args.screenshots:
@@ -130,6 +140,23 @@ with tempfile.TemporaryDirectory(prefix='red-private-browser-') as temporary:
             click(page,'edit-assessment')
             page.locator('[name="instructor_comment"]').fill('Reviewed in isolated QA only.')
             save(page);check('Assessment revision keeps history',len(state(owner)['assessment_history'])==1)
+            page.evaluate('(id)=>__redTest.ctx.go("batches",{detailId:id})',batch['id'])
+            expect(page.locator('[data-action="batch-report"]')).to_have_count(1)
+            check('Batch detail exposes the internal trainee report generator')
+            click(page,'batch-report')
+            expect(page.locator('#academy-report-builder')).to_be_visible()
+            expect(page.locator('body')).not_to_contain_text(re.compile(r'not set',re.I))
+            check('Batch enrollment is shown without a misleading unset denominator')
+            page.locator('[data-academy-build-report]').click()
+            expect(page.locator('#academy-report-preview')).to_be_visible()
+            expect(page.locator('#academy-report-preview')).to_contain_text('Trainee Performance Report')
+            expect(page.locator('#academy-report-preview')).to_contain_text('QA Enrollment')
+            expect(page.locator('#academy-report-preview')).to_contain_text('97.5%')
+            check('Academy report preview connects saved roster, attendance and assessment records')
+            page.locator('[data-academy-back]').click()
+            expect(page.locator('#academy-report-builder')).to_be_visible()
+            click(page,'close-modal')
+            expect(page.locator('#academy-report-builder')).to_have_count(0)
             go(page,'settings');click(page,'users')
             click(page,'invite-team')
             page.locator('#invite-form [name="full_name"]').fill('QA Viewer')

@@ -29,6 +29,9 @@ def bundle():
    keys,dep=m.groups();path=dep_path(dep);load(path)
    return 'const {'+re.sub(r'\s+as\s+',':',keys)+'}=__modules['+json.dumps(path)+'];'
   code=re.sub(r"import\s*\{([^}]+)\}\s*from\s*['\"]([^'\"]+)['\"];?",imported,code)
+  def side_effect_import(m):
+   load(dep_path(m.group(1)));return ''
+  code=re.sub(r"import\s*['\"]([^'\"]+)['\"];?",side_effect_import,code)
   def reexport(m):
    keys,dep=m.groups();path=dep_path(dep);load(path)
    return ';'+''.join('__exports['+json.dumps(k.strip())+']=__modules['+json.dumps(path)+']['+json.dumps(k.strip())+'];' for k in keys.split(','))
@@ -52,7 +55,7 @@ def mount(page,transport,fragment=''):
  const data=new Map();const storage={getItem:k=>data.get(k)??null,setItem:(k,v)=>{data.set(k,String(v));storage[k]=String(v);},removeItem:k=>{data.delete(k);delete storage[k];},clear:()=>{data.clear();},key:i=>[...data.keys()][i],get length(){return data.size;}};
  Object.defineProperty(window,'localStorage',{value:storage});
  window.fetch=async(path,opts={})=>{const r=await window.__redHTTP({path:String(path),method:opts.method||'GET',body:opts.body??null,headers:opts.headers||{}});return new Response(r.text,{status:r.status,headers:r.headers});};
- window.EventSource=class{constructor(){this.timer=setInterval(()=>this.onmessage?.({data:'{}'}),1000);setTimeout(()=>this.onopen?.(),20);}close(){clearInterval(this.timer);}};
+ window.EventSource=class{constructor(){setTimeout(()=>this.onopen?.(),20);}close(){}};
  // No browser network navigation, native cookies, downloads, or SSE are claimed by this harness.
  }''')
  if fragment:page.evaluate('(fragment)=>history.replaceState(null,"",fragment)',fragment)

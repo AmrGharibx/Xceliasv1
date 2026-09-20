@@ -36,6 +36,7 @@ function client(server){let cookie='';return {async call(route,method='GET',body
  },get cookie(){return cookie;}};}
 try{
  const database=path.join(temp,'imported.db');fs.copyFileSync(path.join(root,'data/red-academy.db'),database);
+ const access=new DatabaseSync(database);access.exec('DELETE FROM sessions; DELETE FROM invitations; DELETE FROM setup_grants; DELETE FROM users;');access.close();
  let server=await start(database),admin=client(server),anon=client(server),r;
  let db=new DatabaseSync(database,{readOnly:true});const sourceId=db.prepare('SELECT id FROM source_records WHERE kind=? LIMIT 1').get('assessments').id;db.close();
  for(const route of ['state','import/sources','import/source/'+sourceId]){r=await anon.call(route);check('Anonymous imported endpoint blocked: '+route,r.status===401);}

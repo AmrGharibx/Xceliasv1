@@ -16,7 +16,7 @@ for name in ('empty','populated'):
     check(name+' has seven named sheets',formulas.sheetnames==expected)
     check(name+' has no cached spreadsheet errors',all(cell.data_type!='e' for sheet in cached for row in sheet for cell in row))
     check(name+' freezes and styles headers',all(sheet.freeze_panes=='A2' and sheet['A1'].fill.fgColor.rgb=='FFDC2626' for sheet in formulas))
-    check(name+' marks the private workspace source',cached['Overview']['B3'].value=='RED private workspace')
+    check(name+' marks the private workspace source',cached['Overview']['B3'].value=='Internal company training system')
     if name=='empty':
         check('Empty export contains no company, enrollment or result rows',all(formulas[s].max_row==1 for s in expected[1:]))
         check('Empty attendance does not fabricate a rate',cached['Overview']['B15'].value=='Not available')

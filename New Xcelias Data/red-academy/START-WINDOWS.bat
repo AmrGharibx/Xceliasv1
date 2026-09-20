@@ -6,8 +6,8 @@ if errorlevel 1 (
   pause
   exit /b 1
 )
-echo RED ACADEMY - PRIVATE WORKSPACE
-echo Keep this window open while using the academy.
+echo INTERNAL TRAINING SYSTEM - COMPANY WORKSPACE
+echo Keep this window open while using the internal system.
 echo On first launch, use the setup code below to create your administrator.
 echo.
 node server.mjs

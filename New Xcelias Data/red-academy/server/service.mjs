@@ -15,6 +15,18 @@ function checkOrigin(request){const expected=process.env.APP_URL||new URL(reques
 async function bodyOf(request){const text=await request.text();if(text.length>150000)throw new ApiError(413,'Request is too large.');try{const body=JSON.parse(text);if(!body||typeof body!=='object'||Array.isArray(body))throw new Error('Invalid body');return body;}catch{throw new ApiError(400,'Invalid JSON request.');}}
 function canWrite(user){if(!['admin','instructor'].includes(user.role))throw new ApiError(403,'Your role is read-only.');}
 function admin(user){if(user.role!=='admin')throw new ApiError(403,'Administrator access is required.');}
+function portraitOf(value){
+ if(value===null)return null;
+ if(typeof value!=='string')throw new ApiError(400,'Choose a JPEG, PNG, or WebP portrait.');
+ const match=/^data:(image\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/]+={0,2})$/.exec(value);
+ if(!match||match[2].length%4!==0)throw new ApiError(400,'Choose a JPEG, PNG, or WebP portrait.');
+ const bytes=Buffer.from(match[2],'base64');
+ if(!bytes.length||bytes.length>80*1024)throw new ApiError(413,'Use a portrait smaller than 80 KB.');
+ const valid=match[1]==='image/jpeg'?bytes.length>=3&&bytes[0]===0xff&&bytes[1]===0xd8&&bytes[2]===0xff:match[1]==='image/png'?bytes.length>=8&&bytes.subarray(0,8).equals(Buffer.from([0x89,0x50,0x4e,0x47,0x0d,0x0a,0x1a,0x0a])):bytes.length>=12&&bytes.subarray(0,4).equals(Buffer.from('RIFF'))&&bytes.subarray(8,12).equals(Buffer.from('WEBP'));
+ if(!valid)throw new ApiError(400,'The portrait file does not match its image type.');
+ return {mime_type:match[1],bytes};
+}
+function portraitResponse(photo){return new Response(photo.bytes,{status:200,headers:{'Content-Type':photo.mime_type,'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Content-Disposition':'inline'}});}
 export function prepareOperations(body,state,user){
  const table=body.table;if(!TABLES.includes(table))throw new ApiError(400,'Unknown entity.');canWrite(user);
  const inputs=body.records||[body];if(!Array.isArray(inputs)||!inputs.length||inputs.length>100)throw new ApiError(400,'Choose between 1 and 100 records.');
@@ -76,7 +88,7 @@ export async function handleApi(request){
    if(!await repo.rate('login:global',100,60)||!await repo.rate('login:'+crypto.createHash('sha256').update(body.email.trim().toLowerCase()).digest('hex'),10,60))throw new ApiError(429,'Too many sign-in attempts. Try again in one minute.');
    const result=await repo.login(body.email.trim().toLowerCase(),body.password);outgoing=[cookie('red_session',result.token)];if(result.refresh)outgoing.push(cookie('red_refresh',result.refresh,604800));return json({user:result.user},200,outgoing);
   }
-  if(route==='auth/register')throw new ApiError(403,'RED Academy is private. Ask your administrator for an invitation.');
+  if(route==='auth/register')throw new ApiError(403,'This internal system requires an administrator invitation.');
   if(route==='auth/setup'&&method==='POST'){
    if(!await repo.rate('setup',20,3600))throw new ApiError(429,'Too many setup attempts. Try again later.');
    const body=await bodyOf(request);validateAccount(body);validateSecret(body.token);
@@ -90,7 +102,7 @@ export async function handleApi(request){
   if(route==='auth/logout'&&method==='POST'){await repo.logout(token);return json({ok:true},200,[cookie('red_session','',0),cookie('red_refresh','',0)]);}
   const user=await repo.authenticate(token);
   if(!user&&route==='session'&&method==='GET')return json({user:null,mode:'private',setupRequired:await repo.needsSetup(),aiEnabled:false});
-  if(!user)throw new ApiError(401,'Sign in to access RED Academy.');
+  if(!user)throw new ApiError(401,'Sign in to access the internal training system.');
   if(route==='session'&&method==='GET')return json({user,mode:'private',sync:'events',setupRequired:false,aiEnabled:process.env.AI_REPORTS_ENABLED==='true'&&!!process.env.OPENAI_API_KEY&&!!process.env.OPENAI_MODEL},200,outgoing);
   if(route==='auth/password'&&method==='POST'){
    if(!await repo.rate('password:'+user.id,5,900))throw new ApiError(429,'Too many password attempts. Try again in 15 minutes.');
@@ -122,6 +134,13 @@ export async function handleApi(request){
    const result=await repo.acknowledgeReview(body.id,body.note.trim(),user);events.emit('change');return json(result,200,outgoing);
   }
   if(route==='state'&&method==='GET')return json(await repo.state(user,token),200,outgoing);
+  const portraitRoute=route.match(/^trainees\/([^/]+)\/photo$/);
+  if(portraitRoute){
+   const traineeId=portraitRoute[1];if(!isId(traineeId))throw new ApiError(400,'Choose a valid trainee.');
+   if(method==='GET'){const photo=await repo.traineePhoto(traineeId);if(!photo)throw new ApiError(404,'No trainee portrait was found.');return portraitResponse(photo);}
+   if(method==='PUT'){canWrite(user);const body=await bodyOf(request);const result=await repo.saveTraineePhoto(traineeId,portraitOf(body.photo),user);events.emit('change');return json(result,200,outgoing);}
+   throw new ApiError(404,'Endpoint not found.');
+  }
   if(route==='mutate'&&method==='POST'){const body=await bodyOf(request);const state=await repo.state(user,token);const ops=prepareOperations(body,state,user);const records=await repo.commit(ops,user,token);events.emit('change');return json({records},200,outgoing);}
   if(route==='ai'&&method==='POST')return json(await aiReport(repo,user,token,await bodyOf(request)),200,outgoing);
   if(route==='users'&&method==='GET'){admin(user);return json(await repo.users(token),200,outgoing);}

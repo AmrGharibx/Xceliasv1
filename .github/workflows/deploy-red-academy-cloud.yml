@@ -1,0 +1,58 @@
+name: Deploy internal training workspace
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'New Xcelias Data/red-academy/**'
+      - '.github/workflows/deploy-red-academy-cloud.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: red-academy-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      ready: ${{ steps.cloud.outputs.ready }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24.0.0
+      - id: cloud
+        name: Check cloud configuration
+        shell: bash
+        run: echo "ready=$(node 'New Xcelias Data/red-academy/scripts/build-cloud.mjs' --check)" >> "$GITHUB_OUTPUT"
+      - if: steps.cloud.outputs.ready == 'true'
+        name: Install pinned cloud build dependency
+        working-directory: 'New Xcelias Data/red-academy'
+        run: npm ci --ignore-scripts
+      - if: steps.cloud.outputs.ready == 'true'
+        name: Build cloud workspace
+        run: node 'New Xcelias Data/red-academy/scripts/build-cloud.mjs'
+      - if: steps.cloud.outputs.ready == 'true'
+        uses: actions/configure-pages@v5
+      - if: steps.cloud.outputs.ready == 'true'
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: 'New Xcelias Data/red-academy/cloud-dist'
+
+  deploy:
+    if: needs.build.outputs.ready == 'true'
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy GitHub Pages artifact
+        id: deployment
+        uses: actions/deploy-pages@v4

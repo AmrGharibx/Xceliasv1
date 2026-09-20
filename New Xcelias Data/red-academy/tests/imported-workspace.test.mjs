@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import {DatabaseSync} from 'node:sqlite';
 import {SQLiteRepository} from '../server/sqlite.mjs';
 import {prepareOperations} from '../server/service.mjs';
 import {validate} from '../server/validation.mjs';
@@ -11,7 +12,7 @@ import {scoped,attendance} from '../public/modules/views.mjs';
 import {workbookData,makeXlsx,currentCsv} from '../public/modules/export.mjs';
 import {actor} from './fixtures.mjs';
 const seed=new URL('../data/red-academy.db',import.meta.url);
-async function isolated(fn){const dir=fs.mkdtempSync(path.join(os.tmpdir(),'red-import-test-'));const file=path.join(dir,'test.db');fs.copyFileSync(seed,file);const repo=new SQLiteRepository(file);try{await fn(repo,await repo.state(actor));}finally{repo.db.close();fs.rmSync(dir,{recursive:true,force:true});}}
+async function isolated(fn){const dir=fs.mkdtempSync(path.join(os.tmpdir(),'red-import-test-'));const file=path.join(dir,'test.db');fs.copyFileSync(seed,file);const access=new DatabaseSync(file);access.exec('DELETE FROM sessions; DELETE FROM invitations; DELETE FROM setup_grants; DELETE FROM users;');access.close();const repo=new SQLiteRepository(file);try{await fn(repo,await repo.state(actor));}finally{repo.db.close();fs.rmSync(dir,{recursive:true,force:true});}}
 const batch=(s,n)=>s.batches.find(b=>b.batch_name==='Batch '+n);
 const update=(table,r,data)=>({table,action:'update',id:r.id,expectedVersion:r.version,data:{...r,...data}});
 async function save(repo,s,table,r,data){return repo.commit(prepareOperations(update(table,r,data),s,actor),actor);}

@@ -21,6 +21,13 @@ CREATE TABLE IF NOT EXISTS trainees (
  source_id TEXT, source_meta TEXT NOT NULL DEFAULT '{}' CHECK(json_valid(source_meta)),
  version INTEGER NOT NULL DEFAULT 1, created_at TEXT NOT NULL, updated_at TEXT NOT NULL, UNIQUE(id,batch_id)
 );
+-- Portraits remain private server-side assets and are deliberately excluded from /api/state.
+CREATE TABLE IF NOT EXISTS trainee_photos (
+ trainee_id TEXT PRIMARY KEY REFERENCES trainees(id) ON DELETE CASCADE,
+ mime_type TEXT NOT NULL CHECK(mime_type IN ('image/jpeg','image/png','image/webp')),
+ bytes BLOB NOT NULL,
+ updated_at TEXT NOT NULL
+);
 CREATE TABLE IF NOT EXISTS daily_attendance (
  id TEXT PRIMARY KEY, trainee_id TEXT, batch_id TEXT REFERENCES batches(id) ON DELETE CASCADE, date TEXT,
  arrival_time TEXT, departure_time TEXT,

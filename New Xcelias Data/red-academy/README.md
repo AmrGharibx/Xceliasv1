@@ -34,7 +34,7 @@ Use **Workspace settings -> Manage team -> Invite team member**. Choose the pers
 
 Administrators can manage records, delete, export and manage access. Instructors can read, edit and export but cannot delete or manage accounts. Viewers are read-only. All authorized RED users can read the shared workspace; company filters are not separate security boundaries. Invite only staff authorized to see all its records.
 
-`localhost` works only on the server computer. Colleagues on other computers need a reachable RED-controlled HTTPS server. See `docs/DEPLOYMENT.md`. No live RED server, domain or account has been changed by this ZIP.
+`localhost` works only on the server computer. Colleagues on other computers need a reachable RED-controlled HTTPS server. The existing self-hosted path is in `docs/DEPLOYMENT.md`; the static-shell, protected-database cloud path is in `docs/CLOUD_DEPLOYMENT.md`. No live RED server, domain or account has been changed by this package.
 
 ## Finding the imported data
 
@@ -88,7 +88,7 @@ See `docs/TESTING.md` for the actual results and repeatable commands, and `docs/
 
 The browser environment blocked native URL navigation. Tests used the actual interface in an in-memory Chromium DOM connected to the real HTTP server; native hosted cookies, downloads, service-worker lifecycle and TLS remain host acceptance checks. No policy was changed. No formal security/accessibility certification, measured Lighthouse score or production load capacity is claimed.
 
-The runtime is one persistent Node/SQLite service, not the obsolete Next.js/Supabase adapter or an ephemeral Vercel/serverless database. The Docker/Caddy deployment configuration is supplied but has not been run against a RED-controlled host. Backups, DNS, HTTPS, invitations and host administration still belong to your operator.
+The normal local runtime remains one persistent Node/SQLite service. A separate GitHub Pages + Supabase cloud adapter is included for authorized online deployment and does not alter the local mode; see `docs/CLOUD_DEPLOYMENT.md`. The Docker/Caddy deployment configuration is supplied but has not been run against a RED-controlled host. Backups, DNS, HTTPS, invitations and host administration still belong to your operator.
 
 Optional external AI drafts are off by default and need server-side credentials, consent and review. Existing Notion reports are preserved without calling an external AI service. Built-in written summaries work without an AI account. No live provider call was used in verification.
 
@@ -101,6 +101,8 @@ server.mjs             Persistent HTTP server and security headers
 data/red-academy.db    Populated, account-free RED database
 archive/               Original source ZIP and reconciliation ledgers (private)
 scripts/               Read-only checks, backup, recovery and reproducible importer
+supabase/              Private cloud schema, migrations and authenticated Edge Function
+cloud/                 Non-secret cloud endpoint configuration
 tests/                 Isolated Node, HTTP, DOM, field and workbook verification
 docs/                  Import report, data rules, security, hosting and test evidence
 types/                 Database-aligned TypeScript contracts

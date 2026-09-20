@@ -3,7 +3,7 @@
   "version": "3.0.0",
   "private": true,
   "type": "module",
-  "description": "RED Academy private training operations. Invitation-only, persistent server application.",
+  "description": "Internal company training operations. Invitation-only, persistent server application.",
   "engines": {
     "node": ">=22.16.0"
   },
@@ -15,6 +15,11 @@
     "backup": "node scripts/backup.mjs",
     "reset:password": "node scripts/reset-password.mjs",
     "data:status": "node scripts/data-status.mjs",
-    "verify:import": "node scripts/verify-import.mjs"
+    "verify:import": "node scripts/verify-import.mjs",
+    "cloud:build": "node scripts/build-cloud.mjs",
+    "cloud:migrate": "node scripts/migrate-to-supabase.mjs"
+  },
+  "devDependencies": {
+    "@supabase/supabase-js": "2.116.0"
   }
 }

@@ -4,7 +4,7 @@
 
 For setup on one computer, run `npm start` and keep `HOST=127.0.0.1` and `APP_URL=http://localhost:3000`. Only that computer can connect. This is the working application with a persistent database, not a demo.
 
-For the RED team, use one always-on server with persistent disk and a domain RED controls. Staff browsers must be able to reach its HTTPS address. The host needs Node 22.16+ or Docker Compose. Apply supported runtime/OS updates, restrict host administration, and plan backups and access monitoring. This application is not configured for static hosting, Vercel's ephemeral filesystem, or multiple SQLite replicas.
+For the RED team, use one always-on server with persistent disk and a domain RED controls when using the local SQLite runtime. Staff browsers must be able to reach its HTTPS address. The host needs Node 22.16+ or Docker Compose. Apply supported runtime/OS updates, restrict host administration, and plan backups and access monitoring. The local SQLite runtime is not suitable for static hosting, Vercel's ephemeral filesystem, or multiple SQLite replicas. A separate GitHub Pages + protected Supabase cloud deployment is documented in `CLOUD_DEPLOYMENT.md`.
 
 ## Included Docker + HTTPS template
 

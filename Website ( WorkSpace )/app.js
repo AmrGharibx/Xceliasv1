@@ -3802,8 +3802,8 @@ const PLACE_STYLE_PALETTES = {
     hoverFill: "rgba(255, 196, 92, 0.28)",
   },
   neighbourhood: {
-    defaultStroke: "rgba(102, 126, 234, 0.66)",
-    defaultFill: "rgba(102, 126, 234, 0.07)",
+    defaultStroke: "rgba(181, 35, 50, 0.66)",
+    defaultFill: "rgba(181, 35, 50, 0.07)",
     atlasStroke: "rgba(97, 176, 255, 0.9)",
     atlasFill: "rgba(35, 122, 255, 0.14)",
     hoverStroke: "rgba(170, 217, 255, 0.98)",
@@ -5564,8 +5564,8 @@ function showDensityRings(latlng) {
 
   const radii = [1000, 3000, 5000];
   const colors = [
-    "rgba(240,147,251,0.65)",
-    "rgba(102,126,234,0.55)",
+    "rgba(217,160,165,0.65)",
+    "rgba(181,35,50,0.55)",
     "rgba(100,210,255,0.4)",
   ];
 
@@ -6474,7 +6474,7 @@ const NeuralView = {
     if (!this._cachedThemeColor || this._cachedTheme !== currentTheme) {
       const styles = getComputedStyle(document.documentElement);
       this._cachedThemeColor =
-        styles.getPropertyValue("--avaria-gold").trim() || "#667eea";
+        styles.getPropertyValue("--avaria-gold").trim() || "#b52332";
       this._cachedTheme = currentTheme;
     }
     const themeColor = this._cachedThemeColor;
@@ -6704,8 +6704,8 @@ async function renderProjects(projectList) {
 
   if (isHeatmapMode && map) {
     const styles = getComputedStyle(document.documentElement);
-    const gold = styles.getPropertyValue("--avaria-gold").trim() || "#667eea";
-    const red = styles.getPropertyValue("--avaria-red").trim() || "#f093fb";
+    const gold = styles.getPropertyValue("--avaria-gold").trim() || "#b52332";
+    const red = styles.getPropertyValue("--avaria-red").trim() || "#d9a0a5";
 
     if (!L.heatLayer) {
       try {
@@ -9152,8 +9152,8 @@ function setTheme(themeName) {
 function updateHeatmapColors() {
   if (isHeatmapMode && heatmapLayer) {
     const styles = getComputedStyle(document.documentElement);
-    const gold = styles.getPropertyValue("--avaria-gold").trim() || "#667eea";
-    const red = styles.getPropertyValue("--avaria-red").trim() || "#f093fb";
+    const gold = styles.getPropertyValue("--avaria-gold").trim() || "#b52332";
+    const red = styles.getPropertyValue("--avaria-red").trim() || "#d9a0a5";
 
     map.removeLayer(heatmapLayer);
 
@@ -9170,8 +9170,8 @@ function updateHeatmapColors() {
 function updateRoadColors() {
   const styles = getComputedStyle(document.documentElement);
   const goldColor =
-    styles.getPropertyValue("--avaria-gold").trim() || "#667eea";
-  const redColor = styles.getPropertyValue("--avaria-red").trim() || "#f093fb";
+    styles.getPropertyValue("--avaria-gold").trim() || "#b52332";
+  const redColor = styles.getPropertyValue("--avaria-red").trim() || "#d9a0a5";
   if (mainRoadsLayer) {
     _setStyleOnRoadGroup(mainRoadsLayer, { color: goldColor });
   }

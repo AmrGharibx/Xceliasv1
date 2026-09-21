@@ -1,5 +1,6 @@
 import {assessmentFor,attendanceStats,checklist,checklistFor,scores} from './core.mjs';
 import {btn,closeModal,dateLabel,e,fmt,icon,openModal,toast} from './ui.mjs';
+import {companyReportJobs,downloadCompanyReport} from './reporter-generator.mjs';
 
 const SCORE_FIELDS=[
  ['mapping','Mapping'],
@@ -94,10 +95,32 @@ function rosterRow(ctx,trainee,company,write){
  return `<article class="academy-roster-row"><div class="academy-photo-slot is-loading" data-academy-photo-id="${e(trainee.id)}" data-academy-photo-name="${e(trainee.trainee_name)}">${icon('users',18)}<span>Portrait</span></div><div class="academy-roster-person"><strong>${e(trainee.trainee_name)}</strong><span>${e(label)}${trainee.job_title?` &middot; ${e(trainee.job_title)}`:''}</span></div>${write?`<input id="academy-portrait-${e(trainee.id)}" data-academy-portrait-input="${e(trainee.id)}" type="file" accept="image/jpeg,image/png,image/webp" hidden><button type="button" class="btn small" data-academy-portrait-select="${e(trainee.id)}">${icon('edit',14)}<span>Add / replace photo</span></button>`:'<span class="faint" style="font-size:10px">Portrait managed by instructors</span>'}</article>`;
 }
 
-function builderMarkup(ctx,batch,selectedCompany){
+function legacyBuilderMarkup(ctx,batch,selectedCompany){
  const data=ctx.store.data,companies=companyOptions(data,batch),selected=selectedCompany||'',roster=data.trainees.filter(row=>row.batch_id===batch.id&&(!selected||row.company_id===selected)).sort((a,b)=>a.trainee_name.localeCompare(b.trainee_name));
  const write=ctx.store.canWrite();
  return `<div id="academy-report-builder"><div class="academy-report-intro"><span>${icon('book',18)}</span><div><strong>Internal trainee reports</strong><p>Uses the academy’s recorded attendance and four-skill assessments. The score formula and bands match the standalone Reporter Generator; this workflow does not change that tool.</p></div></div><div class="form-grid"><label class="field full" for="academy-report-company"><span>Company</span><select id="academy-report-company"><option value="" ${selected?'':'selected'}>All companies in this batch</option>${companies.map(company=>`<option value="${e(company.id)}" ${company.id===selected?'selected':''}>${e(company.name)}</option>`).join('')}</select><small>Select Company RED for a Company RED batch report.</small></label></div><div class="academy-roster-head"><div><strong>${roster.length} trainee${roster.length===1?'':'s'} selected</strong><span>Portraits are private server records and never included in AI requests.</span></div></div><div class="academy-roster-list">${roster.map(trainee=>rosterRow(ctx,trainee,data.companies.find(company=>company.id===trainee.company_id),write)).join('')||'<p class="faint" style="padding:16px 0">No trainees match this company selection.</p>'}</div>${write&&ctx.store.aiEnabled?'<label class="checkbox-field academy-ai-consent"><input id="academy-report-ai-consent" type="checkbox">I approve sending anonymized score and attendance totals to the configured AI provider for this report preview. Names, photos, contact details, and instructor comments are excluded.</label>':'<p class="academy-local-note">This report uses the built-in local report engine. AI drafts are unavailable until an authorized administrator configures the provider.</p>'}<div class="modal-actions"><button type="button" class="btn primary" data-academy-build-report ${roster.length?'':'disabled'}>${icon('book',16)}<span>Generate trainee reports</span></button></div></div>`;
+}
+
+// The batch workflow uses the exact standalone PDF exporter while retaining
+// the existing review preview below for quick on-screen checks.
+function builderMarkup(ctx,batch,selectedCompany){
+ const data=ctx.store.data,companies=companyOptions(data,batch),selected=selectedCompany||'',roster=data.trainees.filter(row=>row.batch_id===batch.id&&(!selected||row.company_id===selected)).sort((a,b)=>a.trainee_name.localeCompare(b.trainee_name)),write=ctx.store.canWrite();
+ return `<div id="academy-report-builder"><div class="academy-report-intro"><span>${icon('book',18)}</span><div><strong>Internal trainee reports</strong><p>Creates the same A4 report format as the standalone Reporter Generator. Each company receives its own PDF with that company’s trainees, portraits, scores, attendance, comments, and concluding remarks.</p></div></div><div class="form-grid"><label class="field full" for="academy-report-company"><span>Company</span><select id="academy-report-company"><option value="" ${selected?'':'selected'}>All companies in this batch</option>${companies.map(company=>`<option value="${e(company.id)}" ${company.id===selected?'selected':''}>${e(company.name)}</option>`).join('')}</select><small>Select one company for a single PDF, or leave this on all companies to create one PDF per company.</small></label></div><div class="academy-roster-head"><div><strong>${roster.length} trainee${roster.length===1?'':'s'} selected</strong><span>Portraits are private server records and are never sent to the AI provider.</span></div></div><div class="academy-roster-list">${roster.map(trainee=>rosterRow(ctx,trainee,data.companies.find(company=>company.id===trainee.company_id),write)).join('')||'<p class="faint" style="padding:16px 0">No trainees match this company selection.</p>'}</div>${write&&ctx.store.aiEnabled?'<label class="checkbox-field academy-ai-consent"><input id="academy-report-ai-consent" type="checkbox">I approve sending anonymized score and attendance totals to the configured AI provider for this report preview. Names, photos, contact details, and instructor comments are excluded.</label>':'<p class="academy-local-note">This report uses the built-in local report engine. AI drafts are unavailable until an authorized administrator configures the provider.</p>'}<div class="modal-actions"><button type="button" class="btn primary" data-academy-company-pdf ${roster.length?'':'disabled'}>${icon('download',16)}<span>Generate company PDF</span></button><button type="button" class="btn secondary" data-academy-all-pdfs ${data.trainees.filter(row=>row.batch_id===batch.id).length?'':'disabled'}>${icon('download',16)}<span>Generate all company PDFs</span></button><button type="button" class="btn secondary" data-academy-build-report ${roster.length?'':'disabled'}>${icon('book',16)}<span>Open review preview</span></button></div></div>`;
+}
+
+async function generateCompanyPdfs(ctx,batch,companyId,trigger){
+ const report=buildBatchReport(ctx.store.data,{batchId:batch.id,companyId});
+ const jobs=companyId?[{companyId:companyId,companyName:report.company?.name||'Company not recorded',items:report.items,batch:report.batch}]:companyReportJobs(report);
+ if(!jobs.length){toast('There are no trainees to report in this batch.','error');return;}
+ if(trigger)trigger.disabled=true;
+ try{
+  for(let index=0;index<jobs.length;index++){
+   const job=jobs[index];toast('Generating '+job.companyName+' ('+(index+1)+' of '+jobs.length+')...');
+   await downloadCompanyReport(job,ctx.store,progress=>{if(trigger)trigger.dataset.progress=progress.page+'/'+progress.total;});
+  }
+  toast(jobs.length===1?'Company PDF downloaded.':jobs.length+' company PDFs downloaded.');
+ }catch(error){console.error(error);toast('The company PDF could not be generated. Check the browser download permission and try again.','error');}
+ finally{if(trigger){trigger.disabled=false;delete trigger.dataset.progress;}}
 }
 
 export function academyReportModal(ctx,batch,initialCompanyId=''){
@@ -123,6 +146,8 @@ export function academyReportModal(ctx,batch,initialCompanyId=''){
    const report=buildBatchReport(ctx.store.data,{batchId:batch.id,companyId:selectedCompany});
    openReportPreview(ctx,report,!!root.querySelector('#academy-report-ai-consent')?.checked);
   };
+  root.querySelector('[data-academy-company-pdf]')?.addEventListener('click',event=>generateCompanyPdfs(ctx,batch,selectedCompany,event.currentTarget));
+  root.querySelector('[data-academy-all-pdfs]')?.addEventListener('click',event=>generateCompanyPdfs(ctx,batch,'',event.currentTarget));
  };
  openModal('Generate trainee reports',`${batch.batch_name} · Select a company, add portraits, then create the internal report set.`,builderMarkup(ctx,batch,selectedCompany),{wide:true});
  document.querySelector('[data-action="close-modal"]')?.addEventListener('click',()=>release(portraitUrls),{once:true});

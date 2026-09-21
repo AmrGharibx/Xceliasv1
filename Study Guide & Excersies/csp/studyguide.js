@@ -30,7 +30,7 @@ function launchConfetti(pct){
   const cv=document.getElementById('confetti-cv');if(!cv)return;
   cv.style.display='block';cv.width=innerWidth;cv.height=innerHeight;
   const cx=cv.getContext('2d');
-  const C=['#8b5cf6','#d946ef','#10b981','#f59e0b','#f43f5e','#06b6d4','#fff'];
+  const C=['#b52332','#8f1d27','#10b981','#f59e0b','#f43f5e','#06b6d4','#fff'];
   const pts=[];
   for(let i=0;i<100;i++)pts.push({
     x:innerWidth*(.18+Math.random()*.64),y:-12,
@@ -58,12 +58,12 @@ function launchConfetti(pct){
 const PC={
   cityzen:   {hex:'#f59e0b',rgb:'245,158,11', grad:'linear-gradient(135deg,#f59e0b,#fb923c)'},
   jade:      {hex:'#10b981',rgb:'16,185,129', grad:'linear-gradient(135deg,#10b981,#06b6d4)'},
-  grandlane: {hex:'#06b6d4',rgb:'6,182,212',  grad:'linear-gradient(135deg,#06b6d4,#8b5cf6)'},
-  lushvalley:{hex:'#8b5cf6',rgb:'139,92,246',  grad:'linear-gradient(135deg,#8b5cf6,#d946ef)'},
+  grandlane: {hex:'#06b6d4',rgb:'6,182,212',  grad:'linear-gradient(135deg,#06b6d4,#b52332)'},
+  lushvalley:{hex:'#b52332',rgb:'181,35,50',  grad:'linear-gradient(135deg,#b52332,#8f1d27)'},
   vdlc:      {hex:'#f43f5e',rgb:'244,63,94',   grad:'linear-gradient(135deg,#f43f5e,#f97316)'},
   mayan:     {hex:'#f97316',rgb:'249,115,22',  grad:'linear-gradient(135deg,#f97316,#f59e0b)'}
 };
-function pc(id){return PC[id]||{hex:'#8b5cf6',rgb:'139,92,246',grad:'linear-gradient(135deg,#8b5cf6,#d946ef)'}}
+function pc(id){return PC[id]||{hex:'#b52332',rgb:'181,35,50',grad:'linear-gradient(135deg,#b52332,#8f1d27)'}}
 
 /* ══ DATA ══ */
 const BATCHES=[{

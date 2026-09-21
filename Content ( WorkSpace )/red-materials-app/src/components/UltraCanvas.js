@@ -28,7 +28,7 @@ export class ErrorBoundary extends React.Component {
 }
 
 export const UltraFallbackBg = () => (
-  <div className="fixed inset-0 -z-50 overflow-hidden bg-[#09090b]">
+  <div className="fixed inset-0 -z-50 overflow-hidden bg-[#08090d]">
     <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(173,46,33,0.20),transparent_36%),radial-gradient(circle_at_80%_25%,rgba(120,74,25,0.20),transparent_28%),linear-gradient(180deg,#070709_0%,#0b0b0f_38%,#060608_100%)]" />
     <div className="absolute inset-0 opacity-[0.09] mix-blend-overlay bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%223%22 stitchTiles=%22stitch%22/></filter><rect width=%22200%22 height=%22200%22 filter=%22url(%23n)%22 opacity=%220.45%22/></svg>')]" />
   </div>
@@ -75,8 +75,8 @@ const RibbonField = ({ count = 1200 }) => {
   const { positions, colors } = useMemo(() => {
     const pos = new Float32Array(count * 3);
     const col = new Float32Array(count * 3);
-    const a = new THREE.Color('#667eea');
-    const b = new THREE.Color('#f093fb');
+    const a = new THREE.Color('#b52332');
+    const b = new THREE.Color('#d9a0a5');
 
     for (let index = 0; index < count; index += 1) {
       const t = index / count;
@@ -117,8 +117,8 @@ const RibbonField = ({ count = 1200 }) => {
 const UltraCanvas = ({ reducedMotion = false }) => (
   <div className="fixed inset-0 -z-10">
     <Canvas dpr={reducedMotion ? [1, 1] : [1, 1.5]} camera={{ position: [0, 0.3, 7.5], fov: 50 }} gl={{ antialias: !reducedMotion, alpha: true, powerPreference: 'high-performance' }}>
-      <color attach="background" args={['#09090b']} />
-      <fog attach="fog" args={['#09090b', 4.5, 17]} />
+      <color attach="background" args={['#08090d']} />
+      <fog attach="fog" args={['#08090d', 4.5, 17]} />
 
       <ambientLight intensity={0.45} />
       <directionalLight position={[4, 7, 3]} intensity={1.05} color="#e76f51" />
@@ -133,7 +133,7 @@ const UltraCanvas = ({ reducedMotion = false }) => (
       <Monolith position={[0, -1.2, -2.2]} color="#5d1215" scale={1.25} />
     </Canvas>
 
-    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(102,126,234,0.18),transparent_45%),radial-gradient(ellipse_at_bottom,rgba(193,122,55,0.10),transparent_55%)]" />
+    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(181,35,50,0.18),transparent_45%),radial-gradient(ellipse_at_bottom,rgba(193,122,55,0.10),transparent_55%)]" />
     <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,7,9,0.18),rgba(7,7,9,0.46),rgba(7,7,9,0.88))]" />
   </div>
 );

@@ -47,6 +47,7 @@ document.addEventListener('click',async event=>{const el=event.target.closest('[
  case 'toggle-sidebar':ctx.sidebarOpen=!ctx.sidebarOpen;render();break;
  case 'theme':document.body.classList.toggle('light');try{localStorage.setItem('internal-training-theme',document.body.classList.contains('light')?'light':'dark');}catch{}render();break;
  case 'login':go('login');break;
+ case 'back-portal':window.location.assign(location.hostname==='localhost'||location.hostname==='127.0.0.1'?'http://localhost:4000/':'/');break;
  case 'retry-connection':await store.init();break;
  case 'change-password':passwordModal(ctx);break;
  case 'logout':closeModal();await store.logout();go('login');toast('You are signed out.');break;

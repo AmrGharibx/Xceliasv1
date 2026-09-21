@@ -14,6 +14,7 @@ dist/
 
 # Vercel
 .vercel
+.vercel-deploy-*/
 
 # Environment files
 .env
@@ -39,6 +40,11 @@ Thumbs.db
 .vscode/
 *.swp
 *.swo
+
+# Local agent tooling and QA/release artifacts
+.kilo/
+qa-red-academy-*/
+**/supabase/.temp/
 
 # Logs
 npm-debug.log*

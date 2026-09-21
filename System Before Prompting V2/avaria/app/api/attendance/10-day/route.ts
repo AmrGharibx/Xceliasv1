@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { isAttendanceEligible } from "@/lib/batchRules";
 import { calculate10DayCompletion } from "@/lib/utils/calculations";
-import { requireAuth } from "@/lib/auth";
+import { requireRole } from "@/lib/auth";
 import { createTenDaySchema, parseBody } from "@/lib/validations";
 
 export const dynamic = "force-dynamic";
@@ -81,7 +81,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    await requireAuth();
+    await requireRole("admin", "instructor");
     const body = await request.json();
     const parsed = parseBody(createTenDaySchema, body);
     if ("error" in parsed) {

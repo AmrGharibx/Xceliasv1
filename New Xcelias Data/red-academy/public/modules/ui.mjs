@@ -12,6 +12,7 @@ const paths={
  building:'<rect x="4" y="3" width="12" height="18" rx="1.5"/><path d="M16 9h4v12H8m0-14h4m-4 4h4m-4 4h4m-3 6v-3h3v3"/>',
  award:'<circle cx="12" cy="8" r="5"/><path d="m8.5 12-2 9L12 18l5.5 3-2-9"/>',
  arrow:'<path d="M5 12h14m-5-5 5 5-5 5"/>',
+ back:'<path d="M19 12H5m7-7-7 7 7 7"/>',
  up:'<path d="M7 17 17 7M7 7h10v10"/>',
  chevron:'<path d="m9 5 7 7-7 7"/>',
  down:'<path d="m6 9 6 6 6-6"/>',

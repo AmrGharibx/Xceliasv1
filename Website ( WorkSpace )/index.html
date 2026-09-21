@@ -10,7 +10,7 @@
       name="description"
       content="Real-Time Master Plan for Xcelias Training Academy in Egypt. Explore projects, developers, and amenities."
     />
-    <meta name="theme-color" content="#0f0f1a" />
+    <meta name="theme-color" content="#08090d" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta
       name="apple-mobile-web-app-status-bar-style"
@@ -117,13 +117,13 @@
     <style>
       /* CRITICAL CSS FOR FCP/LCP */
       :root {
-        --avaria-bg: #0f0f1a;
-        --avaria-gold: #667eea;
-        --avaria-text: #e8e8f0;
-        --surface-glass: rgba(15, 15, 30, 0.75);
-        --glass-border: rgba(102, 126, 234, 0.2);
-        --avaria-panel-bg: rgba(15, 15, 30, 0.6);
-        --avaria-border: rgba(102, 126, 234, 0.15);
+        --avaria-bg: #08090d;
+        --avaria-gold: #b52332;
+        --avaria-text: #eef1f5;
+        --surface-glass: rgba(20, 22, 28, 0.78);
+        --glass-border: rgba(186, 195, 209, 0.18);
+        --avaria-panel-bg: rgba(16, 18, 23, 0.64);
+        --avaria-border: rgba(186, 195, 209, 0.14);
         --sidebar-width: 390px;
       }
       body {
@@ -144,8 +144,8 @@
         /* Static Map Placeholder Gradient */
         background-image: radial-gradient(
           circle at 50% 50%,
-          #1a1a2e 0%,
-          #0f0f1a 100%
+          #171015 0%,
+          #08090d 100%
         );
       }
 
@@ -193,7 +193,7 @@
         letter-spacing: 0.15em;
         background: var(
           --gradient-primary,
-          linear-gradient(135deg, #667eea, #764ba2, #f093fb)
+          linear-gradient(135deg, #b52332, #72131d, #d9a0a5)
         );
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
@@ -215,14 +215,14 @@
               var(--sidebar-bg, #0c1622)
             )
             padding-box,
-          linear-gradient(135deg, #667eea, #f093fb, #50fa7b, #667eea) border-box;
+          linear-gradient(135deg, #b52332, #d9a0a5, #50fa7b, #b52332) border-box;
         animation: xcRingSpin 6s linear infinite;
       }
       .xc-logo-ring-pulse {
         position: absolute;
         inset: -14px;
         border-radius: 26px;
-        border: 1px solid rgba(102, 126, 234, 0.25);
+        border: 1px solid rgba(181, 35, 50, 0.25);
         animation: xcRingSpin 10s linear infinite reverse;
       }
       @keyframes xcRingSpin {
@@ -266,12 +266,12 @@
         transform: translate(-50%, -50%);
       }
       .xc-orb--1 {
-        background: #667eea;
-        box-shadow: 0 0 10px 3px rgba(102, 126, 234, 0.8);
+        background: #b52332;
+        box-shadow: 0 0 10px 3px rgba(181, 35, 50, 0.8);
       }
       .xc-orb--2 {
-        background: #f093fb;
-        box-shadow: 0 0 10px 3px rgba(240, 147, 251, 0.8);
+        background: #d9a0a5;
+        box-shadow: 0 0 10px 3px rgba(217, 160, 165, 0.8);
         left: 100%;
         top: 50%;
       }
@@ -287,12 +287,12 @@
       @keyframes xcLogoBreath {
         0%,
         100% {
-          filter: drop-shadow(0 0 8px rgba(102, 126, 234, 0.4));
+          filter: drop-shadow(0 0 8px rgba(181, 35, 50, 0.4));
           transform: scale(1);
         }
         50% {
-          filter: drop-shadow(0 0 22px rgba(240, 147, 251, 0.7))
-            drop-shadow(0 0 40px rgba(102, 126, 234, 0.3));
+          filter: drop-shadow(0 0 22px rgba(217, 160, 165, 0.7))
+            drop-shadow(0 0 40px rgba(181, 35, 50, 0.3));
           transform: scale(1.06);
         }
       }
@@ -330,7 +330,7 @@
         align-items: center;
         justify-content: center;
         flex-shrink: 0;
-        box-shadow: 0 8px 24px rgba(102, 126, 234, 0.35);
+        box-shadow: 0 8px 24px rgba(181, 35, 50, 0.35);
       }
       .logo-area .xc-logo-svg {
         width: 28px;
@@ -419,7 +419,7 @@
       [data-theme*="light"] {
         --avaria-bg: #f8fafc;
         --avaria-gold: #6366f1;
-        --avaria-red: #a855f7;
+        --avaria-red: #b52332;
         --avaria-text: #1e293b;
         --avaria-text-muted: #475569;
         --surface-glass: rgba(255, 255, 255, 0.82);
@@ -427,8 +427,8 @@
         --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
         --avaria-panel-bg: rgba(255, 255, 255, 0.75);
         --avaria-border: rgba(99, 102, 241, 0.12);
-        --gradient-primary: linear-gradient(135deg, #6366f1, #8b5cf6, #a855f7);
-        --gradient-secondary: linear-gradient(135deg, #a855f7, #c084fc);
+        --gradient-primary: linear-gradient(135deg, #6366f1, #b52332, #b52332);
+        --gradient-secondary: linear-gradient(135deg, #b52332, #d9a0a5);
         --item-bg: rgba(99, 102, 241, 0.06);
         --item-bg-hover: rgba(99, 102, 241, 0.12);
         --input-bg: rgba(255, 255, 255, 0.9);
@@ -572,7 +572,7 @@
       [data-theme*="light"] .xc-logo-ring-spin {
         background:
           linear-gradient(#fff, #fff) padding-box,
-          linear-gradient(135deg, #667eea, #f093fb, #50fa7b, #667eea) border-box;
+          linear-gradient(135deg, #b52332, #d9a0a5, #50fa7b, #b52332) border-box;
       }
       [data-theme*="light"] .xc-logo-ring-pulse {
         border-color: rgba(99, 102, 241, 0.18);
@@ -654,9 +654,9 @@
       .spinner {
         width: 50px;
         height: 50px;
-        border: 3px solid rgba(102, 126, 234, 0.2);
+        border: 3px solid rgba(181, 35, 50, 0.2);
         border-radius: 50%;
-        border-top-color: #667eea;
+        border-top-color: #b52332;
         animation: spin 0.8s linear infinite;
         margin-bottom: 20px;
       }
@@ -673,14 +673,14 @@
       .loading-progress {
         width: 200px;
         height: 3px;
-        background: rgba(102, 126, 234, 0.2);
+        background: rgba(181, 35, 50, 0.2);
         border-radius: 3px;
         margin-top: 15px;
         overflow: hidden;
       }
       .loading-progress-bar {
         height: 100%;
-        background: linear-gradient(90deg, #667eea, #f093fb);
+        background: linear-gradient(90deg, #b52332, #d9a0a5);
         border-radius: 3px;
         animation: progress 2s ease-in-out infinite;
       }
@@ -1438,7 +1438,7 @@
               >
                 <div
                   class="xc-logo-icon"
-                  style="background: linear-gradient(135deg, #667eea, #764ba2)"
+                  style="background: linear-gradient(135deg, #b52332, #72131d)"
                 >
                   <div class="xc-logo-ring-spin"></div>
                   <div class="xc-logo-ring-pulse"></div>
@@ -1466,9 +1466,9 @@
                         x2="56"
                         y2="56"
                       >
-                        <stop offset="0%" stop-color="#667eea" />
-                        <stop offset="50%" stop-color="#764ba2" />
-                        <stop offset="100%" stop-color="#f093fb" />
+                        <stop offset="0%" stop-color="#b52332" />
+                        <stop offset="50%" stop-color="#72131d" />
+                        <stop offset="100%" stop-color="#d9a0a5" />
                       </linearGradient>
                     </defs>
                     <rect
@@ -2280,7 +2280,7 @@
             <div
               class="theme-btn active"
               data-theme-name="default"
-              style="background: linear-gradient(135deg, #667eea, #764ba2)"
+              style="background: linear-gradient(135deg, #b52332, #72131d)"
               onclick="setTheme('default')"
               title="Xcelias Purple"
               role="button"
@@ -2365,7 +2365,7 @@
     <div id="map" role="application" aria-label="Interactive Real Estate Map">
       <div class="map-loading-skeleton" id="mapLoader">
         <div class="spinner"></div>
-        <div style="font-size: 18px; font-weight: 500; color: #667eea">
+        <div style="font-size: 18px; font-weight: 500; color: #b52332">
           Xcelias Training Academy
         </div>
         <div class="loading-text" id="loadingStatus">
@@ -5081,10 +5081,10 @@
         align-items: center;
         justify-content: space-between;
         padding: 7px 10px;
-        background: rgba(102, 126, 234, 0.07);
+        background: rgba(181, 35, 50, 0.07);
         border-radius: 8px;
         margin-bottom: 5px;
-        border: 1px solid rgba(102, 126, 234, 0.18);
+        border: 1px solid rgba(181, 35, 50, 0.18);
         cursor: pointer;
         gap: 8px;
       }
@@ -5109,7 +5109,7 @@
       .road-toggle-cb {
         width: 16px;
         height: 16px;
-        accent-color: #667eea;
+        accent-color: #b52332;
         cursor: pointer;
         flex-shrink: 0;
       }
@@ -5118,7 +5118,7 @@
       .place-name-tooltip .leaflet-tooltip-content,
       .place-name-tooltip {
         background: rgba(15, 23, 42, 0.93) !important;
-        border: 1px solid rgba(102, 126, 234, 0.4) !important;
+        border: 1px solid rgba(181, 35, 50, 0.4) !important;
         border-radius: 8px !important;
         padding: 6px 10px !important;
         backdrop-filter: blur(8px);
@@ -5137,15 +5137,15 @@
       }
       .place-tt-type {
         font-size: 10px;
-        color: #667eea;
+        color: #b52332;
         margin-top: 2px;
       }
       .place-tt-count {
         font-size: 12px;
         font-weight: 600;
-        color: #f093fb;
+        color: #d9a0a5;
         margin-top: 3px;
-        background: rgba(240, 147, 251, 0.15);
+        background: rgba(217, 160, 165, 0.15);
         padding: 2px 6px;
         border-radius: 10px;
         display: inline-block;
@@ -5160,7 +5160,7 @@
         z-index: 9000;
         width: min(380px, 92vw);
         background: rgba(15, 23, 42, 0.95);
-        border: 1px solid rgba(102, 126, 234, 0.3);
+        border: 1px solid rgba(181, 35, 50, 0.3);
         border-radius: 16px;
         padding: 16px;
         backdrop-filter: blur(16px);
@@ -5221,7 +5221,7 @@
         display: block;
         font-size: 24px;
         font-weight: 800;
-        color: #667eea;
+        color: #b52332;
       }
       .pip-stat-label {
         font-size: 11px;
@@ -5229,12 +5229,12 @@
       }
       .pip-proj-title {
         font-size: 12px;
-        color: #667eea;
+        color: #b52332;
         font-weight: 600;
         margin-bottom: 6px;
       }
       .pip-projects {
-        border-top: 1px solid rgba(102, 126, 234, 0.2);
+        border-top: 1px solid rgba(181, 35, 50, 0.2);
         padding-top: 10px;
       }
       .place-proj-row {
@@ -5253,7 +5253,7 @@
       }
       .pip-more {
         font-size: 11px;
-        color: #667eea;
+        color: #b52332;
         text-align: center;
         padding-top: 6px;
       }
@@ -5267,7 +5267,7 @@
       /* ── Phase 4: Density ring labels ── */
       .density-ring-label {
         background: rgba(15, 23, 42, 0.88);
-        border: 1px solid rgba(102, 126, 234, 0.4);
+        border: 1px solid rgba(181, 35, 50, 0.4);
         border-radius: 6px;
         padding: 3px 8px;
         font-size: 11px;
@@ -5331,5 +5331,6 @@
       if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initWsGh); } else { initWsGh(); }
     })();
     </script>
+      <script src="portal-stars.js?v=2"></script>
   </body>
 </html>

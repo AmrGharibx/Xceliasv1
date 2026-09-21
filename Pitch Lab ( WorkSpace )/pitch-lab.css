@@ -13,7 +13,7 @@
 }
 
 :root {
-  --bg: #060912;
+  --bg: #08090d;
   --bg-glass: rgba(255, 255, 255, 0.04);
   --bg-glass-2: rgba(255, 255, 255, 0.075);
   --bg-glass-3: rgba(255, 255, 255, 0.11);
@@ -21,9 +21,9 @@
   --border-2: rgba(255, 255, 255, 0.14);
   --text: #e8eaf0;
   --text-muted: #6e7088;
-  --accent: #0096ff;
-  --accent-glow: rgba(0, 150, 255, 0.22);
-  --accent-dim: rgba(0, 150, 255, 0.1);
+  --accent: #b52332;
+  --accent-glow: rgba(181, 35, 50, 0.22);
+  --accent-dim: rgba(181, 35, 50, 0.1);
   --green: #00e87d;
   --red: #ff3358;
   --yellow: #ffcc00;
@@ -35,9 +35,9 @@
   --font: "Inter", "Cairo", system-ui, sans-serif;
   --transition: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
   /* Per-scenario accent — set by JS via style attribute on card */
-  --sa: #0096ff;
-  --sa-dim: rgba(0, 150, 255, 0.1);
-  --sa-glow: rgba(0, 150, 255, 0.28);
+  --sa: #b52332;
+  --sa-dim: rgba(181, 35, 50, 0.1);
+  --sa-glow: rgba(181, 35, 50, 0.28);
 }
 
 html {

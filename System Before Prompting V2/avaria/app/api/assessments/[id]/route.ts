@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { calculateScores, determineOutcome } from "@/lib/utils/calculations";
-import { requireAuth } from "@/lib/auth";
+import { requireRole } from "@/lib/auth";
 import { updateAssessmentSchema, parseBody } from "@/lib/validations";
 
 export const dynamic = "force-dynamic";
@@ -41,7 +41,7 @@ export async function PUT(
 ) {
   const { id } = await params;
   try {
-    await requireAuth();
+    await requireRole("admin", "instructor");
     const body = await request.json();
     
     // Validate input with Zod
@@ -118,7 +118,7 @@ export async function DELETE(
 ) {
   const { id } = await params;
   try {
-    await requireAuth();
+    await requireRole("admin");
     await db.assessment.delete({ where: { id } });
     return NextResponse.json({ success: true });
   } catch (error) {

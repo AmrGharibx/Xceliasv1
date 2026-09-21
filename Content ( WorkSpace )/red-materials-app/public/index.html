@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#0f0f1a" />
+    <meta name="theme-color" content="#08090d" />
     <meta
       name="description"
       content="Xcelias: The Ultimate Real Estate Mastery - An immersive educational experience for real estate professionals"
@@ -26,7 +26,7 @@
       }
 
       body {
-        background-color: #0f0f1a;
+        background-color: #08090d;
         color: #fff;
         font-family:
           "Montserrat",
@@ -40,10 +40,10 @@
         background-image:
           radial-gradient(
             circle at top,
-            rgba(102, 126, 234, 0.18),
+            rgba(181, 35, 50, 0.18),
             transparent 34%
           ),
-          linear-gradient(180deg, #0f0f1a 0%, #0c0c18 42%, #0a0a14 100%);
+          linear-gradient(180deg, #08090d 0%, #0c0c18 42%, #0a0a14 100%);
       }
 
       #root {
@@ -59,20 +59,20 @@
       }
 
       ::-webkit-scrollbar-track {
-        background: #0f0f1a;
+        background: #08090d;
       }
 
       ::-webkit-scrollbar-thumb {
-        background: linear-gradient(180deg, #667eea, #764ba2);
+        background: linear-gradient(180deg, #b52332, #72131d);
         border-radius: 999px;
       }
 
       ::-webkit-scrollbar-thumb:hover {
-        background: linear-gradient(180deg, #f093fb, #667eea);
+        background: linear-gradient(180deg, #d9a0a5, #b52332);
       }
 
       ::selection {
-        background: rgba(102, 126, 234, 0.35);
+        background: rgba(181, 35, 50, 0.35);
         color: #fff;
       }
 
@@ -87,15 +87,15 @@
         border-radius: 20px;
         border: 1.5px solid transparent;
         background:
-          linear-gradient(#0f0f1a, #0f0f1a) padding-box,
-          linear-gradient(135deg, #667eea, #f093fb, #50fa7b, #667eea) border-box;
+          linear-gradient(#08090d, #08090d) padding-box,
+          linear-gradient(135deg, #b52332, #d9a0a5, #50fa7b, #b52332) border-box;
         animation: xcRingSpin 6s linear infinite;
       }
       .xc-logo-ring-pulse {
         position: absolute;
         inset: -14px;
         border-radius: 26px;
-        border: 1px solid rgba(102, 126, 234, 0.25);
+        border: 1px solid rgba(181, 35, 50, 0.25);
         animation: xcRingSpin 10s linear infinite reverse;
       }
       @keyframes xcRingSpin {
@@ -139,12 +139,12 @@
         transform: translate(-50%, -50%);
       }
       .xc-orb--1 {
-        background: #667eea;
-        box-shadow: 0 0 10px 3px rgba(102, 126, 234, 0.8);
+        background: #b52332;
+        box-shadow: 0 0 10px 3px rgba(181, 35, 50, 0.8);
       }
       .xc-orb--2 {
-        background: #f093fb;
-        box-shadow: 0 0 10px 3px rgba(240, 147, 251, 0.8);
+        background: #d9a0a5;
+        box-shadow: 0 0 10px 3px rgba(217, 160, 165, 0.8);
         left: 100%;
         top: 50%;
       }
@@ -160,12 +160,12 @@
       @keyframes xcLogoBreath {
         0%,
         100% {
-          filter: drop-shadow(0 0 8px rgba(102, 126, 234, 0.4));
+          filter: drop-shadow(0 0 8px rgba(181, 35, 50, 0.4));
           transform: scale(1);
         }
         50% {
-          filter: drop-shadow(0 0 22px rgba(240, 147, 251, 0.7))
-            drop-shadow(0 0 40px rgba(102, 126, 234, 0.3));
+          filter: drop-shadow(0 0 22px rgba(217, 160, 165, 0.7))
+            drop-shadow(0 0 40px rgba(181, 35, 50, 0.3));
           transform: scale(1.06);
         }
       }
@@ -235,7 +235,7 @@
         width: 64px;
         height: 64px;
         border-radius: 20px;
-        border: 2px solid rgba(102, 126, 234, 0.35);
+        border: 2px solid rgba(181, 35, 50, 0.35);
         background: linear-gradient(
           135deg,
           rgba(15, 15, 26, 0.95),
@@ -247,7 +247,7 @@
         justify-content: center;
         box-shadow:
           0 8px 28px rgba(0, 0, 0, 0.45),
-          0 0 40px rgba(102, 126, 234, 0.12);
+          0 0 40px rgba(181, 35, 50, 0.12);
         transition:
           transform 0.3s,
           box-shadow 0.3s;
@@ -257,14 +257,14 @@
       }
       .rita-fab-btn:hover {
         transform: translateY(-3px) scale(1.05);
-        box-shadow: 0 12px 36px rgba(102, 126, 234, 0.25);
+        box-shadow: 0 12px 36px rgba(181, 35, 50, 0.25);
       }
       .rita-fab-btn::after {
         content: "";
         position: absolute;
         inset: -3px;
         border-radius: 22px;
-        background: linear-gradient(135deg, #667eea, #764ba2);
+        background: linear-gradient(135deg, #b52332, #72131d);
         z-index: -1;
         opacity: 0.5;
         filter: blur(6px);
@@ -274,7 +274,7 @@
         position: absolute;
         inset: 0;
         border-radius: 20px;
-        background: linear-gradient(135deg, #667eea, #764ba2);
+        background: linear-gradient(135deg, #b52332, #72131d);
         animation: rita-ring 3s ease-out infinite;
         z-index: -2;
       }
@@ -306,7 +306,7 @@
         font-size: 0.78rem;
         font-weight: 600;
         color: rgba(232, 232, 240, 0.9);
-        border: 1px solid rgba(102, 126, 234, 0.2);
+        border: 1px solid rgba(181, 35, 50, 0.2);
         backdrop-filter: blur(16px);
         opacity: 0;
         transform: translateX(12px);
@@ -326,11 +326,11 @@
         height: 540px;
         max-height: calc(100vh - 130px);
         background: rgba(15, 15, 26, 0.96);
-        border: 1px solid rgba(102, 126, 234, 0.18);
+        border: 1px solid rgba(181, 35, 50, 0.18);
         border-radius: 24px;
         box-shadow:
           0 20px 60px rgba(0, 0, 0, 0.5),
-          0 0 80px rgba(102, 126, 234, 0.06);
+          0 0 80px rgba(181, 35, 50, 0.06);
         backdrop-filter: blur(24px);
         display: flex;
         flex-direction: column;
@@ -358,9 +358,9 @@
         padding: 1px;
         background: linear-gradient(
           135deg,
-          rgba(102, 126, 234, 0.3),
+          rgba(181, 35, 50, 0.3),
           transparent 50%,
-          rgba(118, 75, 162, 0.3)
+          rgba(114, 19, 29, 0.3)
         );
         mask:
           linear-gradient(#fff 0 0) content-box,
@@ -378,10 +378,10 @@
         align-items: center;
         gap: 12px;
         padding: 16px 18px;
-        border-bottom: 1px solid rgba(102, 126, 234, 0.12);
+        border-bottom: 1px solid rgba(181, 35, 50, 0.12);
         background: linear-gradient(
           180deg,
-          rgba(102, 126, 234, 0.06),
+          rgba(181, 35, 50, 0.06),
           transparent
         );
       }
@@ -389,12 +389,12 @@
         width: 44px;
         height: 44px;
         border-radius: 14px;
-        background: linear-gradient(135deg, #667eea, #764ba2);
+        background: linear-gradient(135deg, #b52332, #72131d);
         display: flex;
         align-items: center;
         justify-content: center;
         color: #fff;
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.25);
+        box-shadow: 0 6px 20px rgba(181, 35, 50, 0.25);
         font-size: 20px;
       }
       .rita-header-info {
@@ -453,7 +453,7 @@
         width: 4px;
       }
       .rita-messages::-webkit-scrollbar-thumb {
-        background: linear-gradient(#667eea, #764ba2);
+        background: linear-gradient(#b52332, #72131d);
         border-radius: 8px;
       }
       .rita-messages::-webkit-scrollbar-track {
@@ -495,10 +495,10 @@
         color: #fff;
       }
       .rita-msg.bot .rita-msg-icon {
-        background: linear-gradient(135deg, #667eea, #764ba2);
+        background: linear-gradient(135deg, #b52332, #72131d);
       }
       .rita-msg.user .rita-msg-icon {
-        background: linear-gradient(135deg, #f093fb, #667eea);
+        background: linear-gradient(135deg, #d9a0a5, #b52332);
       }
       .rita-msg-body {
         border-radius: 16px;
@@ -510,19 +510,19 @@
       .rita-msg.bot .rita-msg-body {
         background: linear-gradient(
           135deg,
-          rgba(102, 126, 234, 0.1),
-          rgba(118, 75, 162, 0.08)
+          rgba(181, 35, 50, 0.1),
+          rgba(114, 19, 29, 0.08)
         );
-        border: 1px solid rgba(102, 126, 234, 0.12);
+        border: 1px solid rgba(181, 35, 50, 0.12);
         border-radius: 16px 16px 16px 4px;
       }
       .rita-msg.user .rita-msg-body {
         background: linear-gradient(
           135deg,
-          rgba(240, 147, 251, 0.12),
-          rgba(102, 126, 234, 0.08)
+          rgba(217, 160, 165, 0.12),
+          rgba(181, 35, 50, 0.08)
         );
-        border: 1px solid rgba(240, 147, 251, 0.15);
+        border: 1px solid rgba(217, 160, 165, 0.15);
         border-radius: 16px 16px 4px 16px;
       }
       .rita-msg-body p {
@@ -532,7 +532,7 @@
         margin: 0;
       }
       .rita-msg-body strong {
-        color: #f093fb;
+        color: #d9a0a5;
       }
       .rita-msg-body ul,
       .rita-msg-body ol {
@@ -549,7 +549,7 @@
       .rita-pills button {
         padding: 8px 14px;
         border-radius: 20px;
-        border: 1px solid rgba(102, 126, 234, 0.2);
+        border: 1px solid rgba(181, 35, 50, 0.2);
         background: rgba(255, 255, 255, 0.04);
         color: rgba(232, 232, 240, 0.85);
         font-size: 0.75rem;
@@ -560,7 +560,7 @@
         font-family: inherit;
       }
       .rita-pills button:hover {
-        background: linear-gradient(135deg, #667eea, #764ba2);
+        background: linear-gradient(135deg, #b52332, #72131d);
         border-color: transparent;
         color: #fff;
         transform: scale(1.04);
@@ -568,7 +568,7 @@
 
       .rita-input-area {
         padding: 12px 14px;
-        border-top: 1px solid rgba(102, 126, 234, 0.1);
+        border-top: 1px solid rgba(181, 35, 50, 0.1);
         display: flex;
         gap: 8px;
         align-items: flex-end;
@@ -576,7 +576,7 @@
       .rita-input-area textarea {
         flex: 1;
         background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(102, 126, 234, 0.15);
+        border: 1px solid rgba(181, 35, 50, 0.15);
         border-radius: 14px;
         padding: 10px 14px;
         color: rgba(232, 232, 240, 0.92);
@@ -590,7 +590,7 @@
         transition: border-color 0.2s;
       }
       .rita-input-area textarea:focus {
-        border-color: rgba(102, 126, 234, 0.4);
+        border-color: rgba(181, 35, 50, 0.4);
       }
       .rita-input-area textarea::placeholder {
         color: rgba(152, 152, 184, 0.5);
@@ -600,7 +600,7 @@
         height: 40px;
         border-radius: 12px;
         border: none;
-        background: linear-gradient(135deg, #667eea, #764ba2);
+        background: linear-gradient(135deg, #b52332, #72131d);
         color: #fff;
         cursor: pointer;
         display: flex;
@@ -613,7 +613,7 @@
       }
       .rita-send:hover {
         transform: scale(1.08);
-        box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 4px 16px rgba(181, 35, 50, 0.3);
       }
 
       .rita-thinking {
@@ -625,7 +625,7 @@
         width: 6px;
         height: 6px;
         border-radius: 50%;
-        background: linear-gradient(135deg, #667eea, #764ba2);
+        background: linear-gradient(135deg, #b52332, #72131d);
         animation: rita-dot 0.6s infinite alternate;
       }
       .rita-thinking span:nth-child(2) {
@@ -651,11 +651,11 @@
         text-transform: uppercase;
         background: linear-gradient(
           135deg,
-          rgba(102, 126, 234, 0.15),
-          rgba(118, 75, 162, 0.1)
+          rgba(181, 35, 50, 0.15),
+          rgba(114, 19, 29, 0.1)
         );
-        color: #667eea;
-        border: 1px solid rgba(102, 126, 234, 0.2);
+        color: #b52332;
+        border: 1px solid rgba(181, 35, 50, 0.2);
         margin-left: 8px;
       }
 
@@ -964,5 +964,6 @@ Keep responses educational and insightful. Use the training material as your sou
         },
       });
     </script>
+      <script src="portal-stars.js?v=2"></script>
   </body>
 </html>

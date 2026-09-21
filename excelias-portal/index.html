@@ -39,12 +39,12 @@
             style="
               width: 56px;
               height: 56px;
-                  background: linear-gradient(135deg, #667eea, #764ba2);
+                  background: linear-gradient(135deg, #171b23, #8f1d27);
               border-radius: 12px;
               display: flex;
               align-items: center;
               justify-content: center;
-                  box-shadow: 0 8px 28px rgba(102, 126, 234, 0.35);
+                  box-shadow: 0 8px 28px rgba(179, 32, 42, 0.3);
             "
           >
             <div class="xc-logo-ring-spin"></div>
@@ -61,9 +61,9 @@
             >
               <defs>
                 <linearGradient id="xlg-portal" x1="0" y1="0" x2="56" y2="56">
-                  <stop offset="0%" stop-color="#667eea" />
-                  <stop offset="50%" stop-color="#764ba2" />
-                  <stop offset="100%" stop-color="#f093fb" />
+                  <stop offset="0%" stop-color="#72131d" />
+                  <stop offset="50%" stop-color="#b52332" />
+                  <stop offset="100%" stop-color="#4b0b13" />
                 </linearGradient>
               </defs>
               <rect
@@ -105,26 +105,10 @@
 
       <!-- Hero Stats -->
       <section class="hero-section">
-        <div class="hero-stats">
-          <div class="hero-stat">
-            <span class="hero-stat-num" data-count="7">0</span>
-            <span class="hero-stat-label">Modules</span>
-          </div>
-          <div class="hero-stat-divider"></div>
-          <div class="hero-stat">
-            <span class="hero-stat-num" data-count="43">0</span>
-            <span class="hero-stat-label">Activities</span>
-          </div>
-          <div class="hero-stat-divider"></div>
-          <div class="hero-stat">
-            <span class="hero-stat-num" data-count="200">0</span>
-            <span class="hero-stat-label">Properties</span>
-          </div>
-          <div class="hero-stat-divider"></div>
-          <div class="hero-stat">
-            <span class="hero-stat-num" data-count="23">0</span>
-            <span class="hero-stat-label">API Routes</span>
-          </div>
+        <div class="hero-stats hero-branding">
+          <span class="hero-brand-kicker">INTERNAL TRAINING DIVISION</span>
+          <strong class="hero-brand-name">RED TRAINING ACADEMY</strong>
+          <span class="hero-brand-subtitle">Training operations &nbsp;·&nbsp; performance &nbsp;·&nbsp; attendance</span>
         </div>
       </section>
 
@@ -188,8 +172,8 @@
           </div>
         </div>
 
-        <!-- Card 3: Academy Operations (featured) -->
-        <div class="project-card card--featured" data-project="avaria" tabindex="0">
+        <!-- Card 3: Academy Operations (temporarily hidden; kept in source for later return) -->
+        <div class="project-card card--featured" data-project="avaria" tabindex="0" hidden>
           <div class="card-shimmer"></div>
           <div class="card-border-glow"></div>
           <div class="card-inner">
@@ -244,7 +228,7 @@
               <div class="card-featured-right">
                 <p class="card-desc">
                   The populated RED workspace with persistent records, invitations, role-based access,
-                  attendance, assessments, reports, and Notion source review.
+                  attendance, assessments, reports, and shared company records.
                 </p>
                 <div class="card-tags">
                   <span class="tag">42 Batches</span>
@@ -256,7 +240,7 @@
                   <span class="launch-text">Launch in New Tab</span>
                   <span class="launch-arrow">↗</span>
                 </button>
-                <p class="card-note">Live online · GitHub Pages + Supabase</p>
+                <p class="card-note">Internal company access only</p>
               </div>
             </div>
           </div>
@@ -465,5 +449,6 @@
     <div id="xcp-access-denied"></div>
 
     <script src="portal.js"></script>
+    <script src="portal-stars.js?v=2"></script>
   </body>
 </html>

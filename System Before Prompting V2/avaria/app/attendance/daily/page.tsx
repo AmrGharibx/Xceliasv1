@@ -149,10 +149,10 @@ export default function DailyAttendancePage() {
   }, [batchFilter, deferredSearch, page, refreshKey, selectedDate, statusFilter]);
 
   React.useEffect(() => {
-  // Reset page when filters change
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  React.useEffect(() => { setPage(1); }, [selectedDate, statusFilter, batchFilter, deferredSearch]);
+    setPage(1);
+  }, [batchFilter, deferredSearch, selectedDate, statusFilter]);
 
+  React.useEffect(() => {
     if (autoDateResolved) return;
 
     fetch("/api/attendance/daily?pageSize=1")

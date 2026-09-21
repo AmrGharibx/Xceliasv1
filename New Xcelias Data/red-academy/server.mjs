@@ -12,10 +12,30 @@ if(process.env.APP_ENV==='production'&&configuredURL.protocol!=='https:')throw n
 const [major,minor]=process.versions.node.split('.').map(Number);
 if(major<22||(major===22&&minor<16)){console.error('The internal training system requires Node.js 22.16 or newer.');process.exit(1);}
 const{handleApi,repository}=await import('./server/service.mjs');
-const root=path.join(path.dirname(fileURLToPath(import.meta.url)),'public');
+const projectRoot=path.dirname(fileURLToPath(import.meta.url)),root=path.join(projectRoot,'public');
+const localReportAssets=new Map([
+ ['/vendor/html2canvas.min.js',path.join(projectRoot,'node_modules','html2canvas','dist','html2canvas.min.js')],
+ ['/vendor/jspdf.umd.min.js',path.join(projectRoot,'node_modules','jspdf','dist','jspdf.umd.min.js')],
+ ['/vendor/fonts/montserrat-400.woff2',path.join(projectRoot,'node_modules','@fontsource','montserrat','files','montserrat-latin-400-normal.woff2')],
+ ['/vendor/fonts/montserrat-500.woff2',path.join(projectRoot,'node_modules','@fontsource','montserrat','files','montserrat-latin-500-normal.woff2')],
+ ['/vendor/fonts/montserrat-600.woff2',path.join(projectRoot,'node_modules','@fontsource','montserrat','files','montserrat-latin-600-normal.woff2')],
+ ['/vendor/fonts/montserrat-700.woff2',path.join(projectRoot,'node_modules','@fontsource','montserrat','files','montserrat-latin-700-normal.woff2')],
+ ['/vendor/fonts/montserrat-800.woff2',path.join(projectRoot,'node_modules','@fontsource','montserrat','files','montserrat-latin-800-normal.woff2')],
+ ['/vendor/fonts/montserrat-900.woff2',path.join(projectRoot,'node_modules','@fontsource','montserrat','files','montserrat-latin-900-normal.woff2')],
+ ['/vendor/fonts/sora-300.woff2',path.join(projectRoot,'node_modules','@fontsource','sora','files','sora-latin-300-normal.woff2')],
+ ['/vendor/fonts/sora-400.woff2',path.join(projectRoot,'node_modules','@fontsource','sora','files','sora-latin-400-normal.woff2')],
+ ['/vendor/fonts/sora-500.woff2',path.join(projectRoot,'node_modules','@fontsource','sora','files','sora-latin-500-normal.woff2')],
+ ['/vendor/fonts/sora-600.woff2',path.join(projectRoot,'node_modules','@fontsource','sora','files','sora-latin-600-normal.woff2')],
+ ['/vendor/fonts/sora-700.woff2',path.join(projectRoot,'node_modules','@fontsource','sora','files','sora-latin-700-normal.woff2')],
+ ['/vendor/fonts/sora-800.woff2',path.join(projectRoot,'node_modules','@fontsource','sora','files','sora-latin-800-normal.woff2')],
+ ['/vendor/fonts/playfair-500.woff2',path.join(projectRoot,'node_modules','@fontsource','playfair-display','files','playfair-display-latin-500-normal.woff2')],
+ ['/vendor/fonts/playfair-600.woff2',path.join(projectRoot,'node_modules','@fontsource','playfair-display','files','playfair-display-latin-600-normal.woff2')],
+ ['/vendor/fonts/playfair-700.woff2',path.join(projectRoot,'node_modules','@fontsource','playfair-display','files','playfair-display-latin-700-normal.woff2')],
+ ['/vendor/fonts/playfair-800.woff2',path.join(projectRoot,'node_modules','@fontsource','playfair-display','files','playfair-display-latin-800-normal.woff2')]
+]);
 const port=Number(process.env.PORT||3000),host=process.env.HOST||'127.0.0.1';
 process.env.APP_URL??=`http://localhost:${port}`;
-const types={'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.js':'text/javascript; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.webmanifest':'application/manifest+json'};
+const types={'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.js':'text/javascript; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.webmanifest':'application/manifest+json','.woff2':'font/woff2'};
 const server=http.createServer(async(req,res)=>{
  try{
  const url=new URL(req.url,process.env.APP_URL);res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('X-Robots-Tag','noindex, nofollow, noarchive');if(configuredURL.protocol==='https:')res.setHeader('Strict-Transport-Security','max-age=31536000');res.setHeader('Referrer-Policy','same-origin');res.setHeader('X-Frame-Options','DENY');res.setHeader('Permissions-Policy','camera=(), microphone=(), geolocation=()');
@@ -26,9 +46,11 @@ const server=http.createServer(async(req,res)=>{
   if(response.body){for await(const chunk of response.body){if(res.destroyed)break;res.write(chunk);}}res.end();return;
  }
  if(!['GET','HEAD'].includes(req.method)){res.writeHead(405);res.end();return;}
- let pathname=decodeURIComponent(url.pathname);if(pathname.split('/').some(segment=>segment.startsWith('.'))){res.writeHead(404);res.end('Not found');return;}let filename=path.resolve(root,'.'+pathname);
- if(!filename.startsWith(root+path.sep)&&filename!==root){res.writeHead(403);res.end();return;}
- if(pathname==='/'||!path.extname(pathname))filename=path.join(root,'index.html');
+ let pathname=decodeURIComponent(url.pathname);if(pathname.split('/').some(segment=>segment.startsWith('.'))){res.writeHead(404);res.end('Not found');return;}
+ const localReportAsset=localReportAssets.get(pathname);
+ let filename=localReportAsset||path.resolve(root,'.'+pathname);
+ if(!localReportAsset&&!filename.startsWith(root+path.sep)&&filename!==root){res.writeHead(403);res.end();return;}
+ if(!localReportAsset&&(pathname==='/'||!path.extname(pathname)))filename=path.join(root,'index.html');
  if(!fs.existsSync(filename)||!fs.statSync(filename).isFile()){res.writeHead(404);res.end('Not found');return;}
  res.setHeader('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; font-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'");
  res.setHeader('Content-Type',types[path.extname(filename)]||'application/octet-stream');res.setHeader('Cache-Control','no-store');

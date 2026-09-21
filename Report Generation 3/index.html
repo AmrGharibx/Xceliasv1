@@ -207,14 +207,14 @@
         border: 1.5px solid transparent;
         background:
           linear-gradient(#fff, #fff) padding-box,
-          linear-gradient(135deg, #667eea, #f093fb, #50fa7b, #667eea) border-box;
+          linear-gradient(135deg, #b52332, #d9a0a5, #50fa7b, #b52332) border-box;
         animation: xcRingSpin 6s linear infinite;
       }
       .xc-logo-ring-pulse {
         position: absolute;
         inset: -14px;
         border-radius: 26px;
-        border: 1px solid rgba(102, 126, 234, 0.25);
+        border: 1px solid rgba(181, 35, 50, 0.25);
         animation: xcRingSpin 10s linear infinite reverse;
       }
       @keyframes xcRingSpin {
@@ -258,12 +258,12 @@
         transform: translate(-50%, -50%);
       }
       .xc-orb--1 {
-        background: #667eea;
-        box-shadow: 0 0 10px 3px rgba(102, 126, 234, 0.8);
+        background: #b52332;
+        box-shadow: 0 0 10px 3px rgba(181, 35, 50, 0.8);
       }
       .xc-orb--2 {
-        background: #f093fb;
-        box-shadow: 0 0 10px 3px rgba(240, 147, 251, 0.8);
+        background: #d9a0a5;
+        box-shadow: 0 0 10px 3px rgba(217, 160, 165, 0.8);
         left: 100%;
         top: 50%;
       }
@@ -279,12 +279,12 @@
       @keyframes xcLogoBreath {
         0%,
         100% {
-          filter: drop-shadow(0 0 8px rgba(102, 126, 234, 0.4));
+          filter: drop-shadow(0 0 8px rgba(181, 35, 50, 0.4));
           transform: scale(1);
         }
         50% {
-          filter: drop-shadow(0 0 22px rgba(240, 147, 251, 0.7))
-            drop-shadow(0 0 40px rgba(102, 126, 234, 0.3));
+          filter: drop-shadow(0 0 22px rgba(217, 160, 165, 0.7))
+            drop-shadow(0 0 40px rgba(181, 35, 50, 0.3));
           transform: scale(1.06);
         }
       }
@@ -1547,31 +1547,31 @@
            DARK THEME OVERLAY — Property Explorer Design DNA
            ═══════════════════════════════════════════════════ */
       :root {
-        --d-bg: #0f0f1a;
+        --d-bg: #08090d;
         --d-surface: rgba(15, 15, 30, 0.75);
         --d-panel: rgba(255, 255, 255, 0.04);
-        --d-border: rgba(102, 126, 234, 0.15);
-        --d-border-hover: rgba(102, 126, 234, 0.4);
+        --d-border: rgba(181, 35, 50, 0.15);
+        --d-border-hover: rgba(181, 35, 50, 0.4);
         --d-text: #e8e8f0;
         --d-text-muted: #9898b8;
         --d-text-dim: #5a5a7a;
-        --d-accent: #667eea;
-        --d-accent-mid: #764ba2;
-        --d-accent-pink: #f093fb;
+        --d-accent: #b52332;
+        --d-accent-mid: #72131d;
+        --d-accent-pink: #d9a0a5;
         --d-gradient: linear-gradient(
           135deg,
-          #667eea 0%,
-          #764ba2 50%,
-          #f093fb 100%
+          #b52332 0%,
+          #72131d 50%,
+          #d9a0a5 100%
         );
         --d-gradient-subtle: linear-gradient(
           135deg,
-          rgba(102, 126, 234, 0.15) 0%,
-          rgba(240, 147, 251, 0.1) 100%
+          rgba(181, 35, 50, 0.15) 0%,
+          rgba(217, 160, 165, 0.1) 100%
         );
         --d-glass-shadow:
-          0 8px 32px rgba(0, 0, 0, 0.4), 0 0 60px rgba(102, 126, 234, 0.08);
-        --d-btn-glow: 0 8px 25px rgba(102, 126, 234, 0.4);
+          0 8px 32px rgba(0, 0, 0, 0.4), 0 0 60px rgba(181, 35, 50, 0.08);
+        --d-btn-glow: 0 8px 25px rgba(181, 35, 50, 0.4);
         --d-radius: 18px;
         --d-radius-pill: 50px;
       }
@@ -1583,12 +1583,12 @@
         background-image:
           radial-gradient(
             ellipse at 20% 0%,
-            rgba(102, 126, 234, 0.08) 0%,
+            rgba(181, 35, 50, 0.08) 0%,
             transparent 50%
           ),
           radial-gradient(
             ellipse at 80% 100%,
-            rgba(240, 147, 251, 0.06) 0%,
+            rgba(217, 160, 165, 0.06) 0%,
             transparent 50%
           ) !important;
         font-family: "Montserrat", "Sora", sans-serif !important;
@@ -1626,7 +1626,7 @@
         border-color: var(--d-accent) !important;
         color: #fff !important;
         background: var(--d-gradient) !important;
-        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2) !important;
+        box-shadow: 0 0 0 4px rgba(181, 35, 50, 0.2) !important;
       }
       .dot.done {
         border-color: var(--d-accent-pink) !important;
@@ -1700,9 +1700,9 @@
       .fld textarea:focus {
         border-color: var(--d-accent) !important;
         box-shadow:
-          0 0 0 4px rgba(102, 126, 234, 0.15),
-          0 0 30px rgba(102, 126, 234, 0.12) !important;
-        background: rgba(102, 126, 234, 0.08) !important;
+          0 0 0 4px rgba(181, 35, 50, 0.15),
+          0 0 30px rgba(181, 35, 50, 0.12) !important;
+        background: rgba(181, 35, 50, 0.08) !important;
       }
       .fld input::placeholder,
       .fld textarea::placeholder {
@@ -1726,7 +1726,7 @@
       }
       .btn-p:hover {
         transform: translateY(-3px) !important;
-        box-shadow: 0 12px 35px rgba(102, 126, 234, 0.6) !important;
+        box-shadow: 0 12px 35px rgba(181, 35, 50, 0.6) !important;
         filter: brightness(1.1);
       }
       .btn-s {
@@ -1767,7 +1767,7 @@
         color: var(--d-text-dim) !important;
       }
       .btn-icon:hover {
-        background: rgba(102, 126, 234, 0.15) !important;
+        background: rgba(181, 35, 50, 0.15) !important;
         color: var(--d-accent) !important;
       }
 
@@ -1780,7 +1780,7 @@
       .upzone:hover,
       .upzone.over {
         border-color: var(--d-accent) !important;
-        background: rgba(102, 126, 234, 0.05) !important;
+        background: rgba(181, 35, 50, 0.05) !important;
       }
       .upzone h3 {
         color: var(--d-text) !important;
@@ -1800,7 +1800,7 @@
       }
       .thumb:hover {
         border-color: var(--d-accent) !important;
-        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2) !important;
+        box-shadow: 0 8px 25px rgba(181, 35, 50, 0.2) !important;
       }
 
       /* Reference panel */
@@ -1817,7 +1817,7 @@
         border-radius: 10px !important;
       }
       .ref-scroll img:hover {
-        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2) !important;
+        box-shadow: 0 8px 25px rgba(181, 35, 50, 0.2) !important;
       }
 
       /* Trainee cards */
@@ -1840,19 +1840,19 @@
       .tcard:hover {
         box-shadow:
           0 16px 40px rgba(0, 0, 0, 0.25),
-          0 0 30px rgba(102, 126, 234, 0.08) !important;
-        border-color: rgba(102, 126, 234, 0.3) !important;
+          0 0 30px rgba(181, 35, 50, 0.08) !important;
+        border-color: rgba(181, 35, 50, 0.3) !important;
       }
       .tcard-h {
         background: rgba(0, 0, 0, 0.15) !important;
         border-bottom: 1px solid var(--d-border) !important;
       }
       .tcard-h:hover {
-        background: rgba(102, 126, 234, 0.08) !important;
+        background: rgba(181, 35, 50, 0.08) !important;
       }
       .tcard-h .num {
         background: var(--d-gradient) !important;
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 4px 12px rgba(181, 35, 50, 0.3);
       }
       .tcard-h .nm {
         color: var(--d-text) !important;
@@ -1877,16 +1877,16 @@
         color: #50fa7b !important;
       }
       .b-blue {
-        background: rgba(102, 126, 234, 0.15) !important;
-        color: #a5b4fc !important;
+        background: rgba(181, 35, 50, 0.15) !important;
+        color: #d9a0a5 !important;
       }
       .b-yellow {
         background: rgba(245, 158, 11, 0.15) !important;
         color: #fbbf24 !important;
       }
       .b-red {
-        background: rgba(240, 147, 251, 0.15) !important;
-        color: #f093fb !important;
+        background: rgba(217, 160, 165, 0.15) !important;
+        color: #d9a0a5 !important;
       }
       .b-gray {
         background: rgba(255, 255, 255, 0.06) !important;
@@ -1895,8 +1895,8 @@
 
       /* Info box */
       .info-box {
-        background: rgba(102, 126, 234, 0.08) !important;
-        border: 1px solid rgba(102, 126, 234, 0.2) !important;
+        background: rgba(181, 35, 50, 0.08) !important;
+        border: 1px solid rgba(181, 35, 50, 0.2) !important;
         color: var(--d-text-muted) !important;
         border-radius: 14px !important;
       }
@@ -1973,7 +1973,7 @@
         border: 1px solid var(--d-border);
         box-shadow:
           0 25px 80px rgba(0, 0, 0, 0.5),
-          0 0 40px rgba(102, 126, 234, 0.1);
+          0 0 40px rgba(181, 35, 50, 0.1);
       }
       #ocr-overlay .ocr-box h3 {
         color: var(--d-text) !important;
@@ -2004,7 +2004,7 @@
       }
       .ocr-step.active {
         color: var(--d-text) !important;
-        background: rgba(102, 126, 234, 0.08) !important;
+        background: rgba(181, 35, 50, 0.08) !important;
       }
       .ocr-step.done {
         color: #50fa7b !important;
@@ -2073,7 +2073,7 @@
       }
       .tcard .fld input[type="number"]:focus {
         border-color: var(--d-accent) !important;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15) !important;
+        box-shadow: 0 0 0 3px rgba(181, 35, 50, 0.15) !important;
       }
 
       /* NOTE: .page, .cover-*, .report-*, .data-table inside .page are NOT overridden
@@ -2093,7 +2093,7 @@
         border-radius: 10px;
         overflow: hidden;
         background: rgba(0, 0, 0, 0.25);
-        border: 1.5px dashed rgba(102, 126, 234, 0.35);
+        border: 1.5px dashed rgba(181, 35, 50, 0.35);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -2101,7 +2101,7 @@
       }
       .photo-thumb-box.has-photo {
         border-style: solid;
-        border-color: rgba(102, 126, 234, 0.65);
+        border-color: rgba(181, 35, 50, 0.65);
       }
       .photo-thumb-box img {
         width: 100%;
@@ -2155,7 +2155,7 @@
         font-weight: 700;
         border-radius: 50px;
         background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(102, 126, 234, 0.28);
+        border: 1px solid rgba(181, 35, 50, 0.28);
         color: rgba(200, 200, 225, 0.9);
         cursor: pointer;
         font-family: "Montserrat", sans-serif;
@@ -2165,10 +2165,10 @@
         margin-bottom: 6px;
       }
       .photo-upload-lbl:hover {
-        background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+        background: linear-gradient(135deg, #b52332, #72131d, #d9a0a5);
         color: #fff;
         border-color: transparent;
-        box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 8px 24px rgba(181, 35, 50, 0.4);
         transform: translateY(-1px);
       }
       .photo-hint {
@@ -2303,12 +2303,12 @@
             style="
               width: 44px;
               height: 44px;
-              background: linear-gradient(135deg, #667eea, #764ba2);
+              background: linear-gradient(135deg, #b52332, #72131d);
               border-radius: 11px;
               display: flex;
               align-items: center;
               justify-content: center;
-              box-shadow: 0 6px 20px rgba(102, 126, 234, 0.35);
+              box-shadow: 0 6px 20px rgba(181, 35, 50, 0.35);
             "
           >
             <div class="xc-logo-ring-spin"></div>
@@ -2331,9 +2331,9 @@
             >
               <defs>
                 <linearGradient id="xlg-rep" x1="0" y1="0" x2="56" y2="56">
-                  <stop offset="0%" stop-color="#667eea" />
-                  <stop offset="50%" stop-color="#764ba2" />
-                  <stop offset="100%" stop-color="#f093fb" />
+                  <stop offset="0%" stop-color="#b52332" />
+                  <stop offset="50%" stop-color="#72131d" />
+                  <stop offset="100%" stop-color="#d9a0a5" />
                 </linearGradient>
               </defs>
               <rect
@@ -4293,5 +4293,6 @@
           go(1);toast('Ready for new report','info');
       }
     </script>
+      <script src="portal-stars.js?v=2"></script>
   </body>
 </html>

@@ -531,7 +531,7 @@ export default function BatchDetailPage({ params }: { params: Promise<{ id: stri
                       </Button>
                     </div>
                     <div className="grid gap-6 md:grid-cols-2">
-                    {subLoading ? <Card className="p-6 text-[#78716c]">Loading…</Card> : assessmentRows.length === 0 ? <Card className="p-6 text-[#57534e]">No assessments yet. Click "New assessment" above to add one.</Card> : (
+                    {subLoading ? <Card className="p-6 text-[#78716c]">Loading…</Card> : assessmentRows.length === 0 ? <Card className="p-6 text-[#57534e]">No assessments yet. Click &quot;New assessment&quot; above to add one.</Card> : (
                       assessmentRows.map((a) => (
                         <Card key={a.id} className="p-5">
                           <div className="flex items-start justify-between">

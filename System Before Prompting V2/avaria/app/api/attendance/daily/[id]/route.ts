@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { calculateMinutesLate, wasLate } from "@/lib/utils/calculations";
-import { requireAuth } from "@/lib/auth";
-import { updateDailyAttendanceSchema, parseBody } from "@/lib/validations";
+import { requireRole } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -41,7 +40,7 @@ export async function PUT(
 ) {
   const { id } = await params;
   try {
-    await requireAuth();
+    await requireRole("admin", "instructor");
     const body = await request.json();
     const { date, arrivalTime, departureTime, status, absenceReason } = body;
 
@@ -75,7 +74,7 @@ export async function DELETE(
 ) {
   const { id } = await params;
   try {
-    await requireAuth();
+    await requireRole("admin");
     await db.dailyAttendance.delete({ where: { id } });
     return NextResponse.json({ success: true });
   } catch (error) {

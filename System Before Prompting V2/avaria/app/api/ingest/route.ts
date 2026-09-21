@@ -5,7 +5,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { db, parseDate, parseTime, normalizeCompany, normalizeOutcome, normalizeAttendanceStatus, normalizeBatchStatus, normalizeChecklistStatus } from "@/lib/db";
-import { requireAuth } from "@/lib/auth";
+import { requireRole } from "@/lib/auth";
 
 // CSV parsing utility
 function parseCSV(csvText: string): Record<string, string>[] {
@@ -53,7 +53,7 @@ function generateNotionId(row: Record<string, string>, type: string): string {
 
 export async function POST(request: NextRequest) {
   try {
-    await requireAuth();
+    await requireRole("admin");
     const formData = await request.formData();
     const file = formData.get("file") as File;
     const fileType = formData.get("type") as string; // batches | trainees | attendance | assessments | tenday

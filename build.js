@@ -63,6 +63,7 @@ const portalDir = path.join(ROOT, "excelias-portal");
 copyFile(path.join(portalDir, "index.html"), path.join(DIST, "index.html"));
 copyFile(path.join(portalDir, "portal.css"), path.join(DIST, "portal.css"));
 copyFile(path.join(portalDir, "portal.js"), path.join(DIST, "portal.js"));
+copyFile(path.join(portalDir, "portal-stars.js"), path.join(DIST, "portal-stars.js"));
 copyFile(
   path.join(portalDir, "xcelias-auth.js"),
   path.join(DIST, "xcelias-auth.js"),
@@ -346,6 +347,7 @@ const webFiles = [
   "app.js",
   "qrcode.js",
   "styles.css",
+  "portal-stars.js",
   "website-gsap.js",
   "website-sw.js",
   "sw.js",
@@ -417,7 +419,7 @@ const pitchSrc = path.join(ROOT, "Pitch Lab ( WorkSpace )");
 const pitchDest = path.join(DIST, "pitch-lab");
 mkDir(pitchDest);
 // Copy all source files
-for (const f of ["index.html", "pitch-lab.css", "pitch-lab.js"]) {
+for (const f of ["index.html", "pitch-lab.css", "pitch-lab.js", "portal-stars.js"]) {
   const fp = path.join(pitchSrc, f);
   if (fs.existsSync(fp)) copyFile(fp, path.join(pitchDest, f));
 }

@@ -1293,20 +1293,20 @@ const EG_COACH_LINES = {
 };
 
 const RM_THEME = {
-  bg: "#0f0f1a",
+  bg: "#08090d",
   panel: "rgba(255,255,255,0.06)",
   panel2: "rgba(255,255,255,0.09)",
-  border: "rgba(102,126,234,0.15)",
-  border2: "rgba(102,126,234,0.25)",
+  border: "rgba(186,195,209,0.14)",
+  border2: "rgba(181,35,50,0.3)",
   text: "rgba(232,232,240,0.94)",
-  muted: "rgba(152,152,184,0.80)",
-  faint: "rgba(90,90,122,0.55)",
-  red: "#667eea",
-  red2: "#764ba2",
-  cyan: "#f093fb",
-  violet: "#764ba2",
+  muted: "rgba(161,168,181,0.80)",
+  faint: "rgba(104,113,127,0.62)",
+  red: "#b52332",
+  red2: "#72131d",
+  cyan: "#e4e7ed",
+  violet: "#8f1d27",
   amber: "#ffb020",
-  green: "#50fa7b",
+  green: "#4cc39a",
 };
 
 // ============================================
@@ -1348,7 +1348,7 @@ const styles = {
     width: "50px",
     height: "50px",
     position: "relative",
-    background: `linear-gradient(135deg, #667eea, #764ba2)`,
+    background: `linear-gradient(135deg, #220b10, #4c0e16 54%, #831724)`,
     borderRadius: "12px",
     display: "flex",
     alignItems: "center",
@@ -1356,14 +1356,14 @@ const styles = {
     fontSize: "24px",
     fontWeight: "800",
     boxShadow:
-      "0 14px 32px rgba(102,126,234,0.25), inset 0 0 0 1px rgba(255,255,255,0.14)",
+      "0 14px 32px rgba(181,35,50,0.22), inset 0 0 0 1px rgba(255,255,255,0.14)",
   },
   logoRing: {
     position: "absolute",
     inset: "-6px",
     borderRadius: "18px",
     border: "1.5px solid transparent",
-    background: "linear-gradient(135deg, #667eea, #764ba2, #f093fb) border-box",
+    background: "linear-gradient(135deg, #eef1f5, #b52332, #72131d) border-box",
     WebkitMask:
       "linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0)",
     WebkitMaskComposite: "xor",
@@ -1442,9 +1442,9 @@ const styles = {
     position: "relative",
     overflow: "hidden",
     backgroundImage:
-      `radial-gradient(600px 300px at 10% 10%, rgba(102,126,234,0.10), transparent 60%),` +
-      `radial-gradient(600px 300px at 90% 20%, rgba(240,147,251,0.08), transparent 62%),` +
-      `radial-gradient(600px 400px at 60% 92%, rgba(118,75,162,0.10), transparent 62%),` +
+      `radial-gradient(600px 300px at 10% 10%, rgba(181,35,50,0.10), transparent 60%),` +
+      `radial-gradient(600px 300px at 90% 20%, rgba(217,160,165,0.08), transparent 62%),` +
+      `radial-gradient(600px 400px at 60% 92%, rgba(114,19,29,0.10), transparent 62%),` +
       `linear-gradient(180deg, rgba(255,255,255,0.055), rgba(255,255,255,0.025))`,
     transition: "transform 0.3s cubic-bezier(.4,0,.2,1), box-shadow 0.3s ease",
   },
@@ -1464,7 +1464,7 @@ const styles = {
     alignItems: "center",
     gap: "10px",
     boxShadow:
-      "0 12px 32px rgba(102,126,234,0.22), inset 0 0 0 1px rgba(255,255,255,0.14)",
+      "0 12px 32px rgba(181,35,50,0.22), inset 0 0 0 1px rgba(255,255,255,0.14)",
   },
 
   secondaryBtn: {
@@ -1485,7 +1485,7 @@ const styles = {
     background:
       "linear-gradient(145deg, rgba(30,32,60,0.9), rgba(20,22,45,0.95))",
     color: "#e2e8f0",
-    border: "1.5px solid rgba(102,126,234,0.25)",
+    border: "1.5px solid rgba(181,35,50,0.25)",
     padding: "20px 22px",
     borderRadius: "16px",
     fontSize: "16px",
@@ -1506,8 +1506,8 @@ const styles = {
 
   optionBtnHover: {
     background:
-      "linear-gradient(145deg, rgba(102,126,234,0.18), rgba(30,32,60,0.95))",
-    borderColor: "#667eea",
+      "linear-gradient(145deg, rgba(181,35,50,0.18), rgba(30,32,60,0.95))",
+    borderColor: "#b52332",
     transform: "translateY(-2px)",
   },
 
@@ -1666,7 +1666,7 @@ const styles = {
 
   progressFill: {
     height: "100%",
-    background: "linear-gradient(90deg, #667eea, #a78bfa, #f093fb)",
+    background: "linear-gradient(90deg, #b52332, #a78bfa, #d9a0a5)",
     borderRadius: "99px",
     transition: "width 0.5s cubic-bezier(0.16,1,0.3,1)",
     position: "relative",
@@ -1676,7 +1676,7 @@ const styles = {
   timer: {
     fontSize: "48px",
     fontWeight: "700",
-    color: "#667eea",
+    color: "#b52332",
     textAlign: "center",
     marginBottom: "20px",
   },
@@ -1693,8 +1693,8 @@ const styles = {
   },
 
   badgeRed: {
-    background: "rgba(102, 126, 234, 0.2)",
-    color: "#667eea",
+    background: "rgba(181, 35, 50, 0.2)",
+    color: "#b52332",
   },
 
   badgeGreen: {
@@ -1749,12 +1749,12 @@ const fireConfetti = (count = 30) => {
   )
     return;
   const colors = [
-    "#667eea",
-    "#f093fb",
+    "#b52332",
+    "#d9a0a5",
     "#48bb78",
     "#fbbf24",
     "#ff6b6b",
-    "#764ba2",
+    "#72131d",
   ];
   const container = document.createElement("div");
   container.style.cssText =
@@ -2019,7 +2019,7 @@ const BackgroundFX = () => {
             background:
               `radial-gradient(55vmax 38vmax at 12% 14%, rgba(255,59,59,${0.14 * clamp(fxIntensity, 0.7, 1.5)}), transparent 60%),` +
               `radial-gradient(50vmax 40vmax at 88% 18%, rgba(0,212,255,${0.12 * clamp(fxIntensity, 0.7, 1.5)}), transparent 62%),` +
-              `radial-gradient(50vmax 50vmax at 60% 92%, rgba(139,92,246,${0.12 * clamp(fxIntensity, 0.7, 1.5)}), transparent 62%)`,
+              `radial-gradient(50vmax 50vmax at 60% 92%, rgba(181,35,50,${0.12 * clamp(fxIntensity, 0.7, 1.5)}), transparent 62%)`,
             filter: "blur(14px) saturate(110%)",
             opacity: prefersReducedRender ? 0.35 : projectorMode ? 0.45 : 0.55,
             transform: "translate3d(0,0,0)",
@@ -2061,7 +2061,7 @@ const ScorePanel = ({ score, streak, totalQuestions, currentQuestion }) => {
         </svg>
         {React.createElement(ScoreCounter, {
           value: score,
-          style: { color: "#c4b5fd", fontWeight: 700, fontSize: 15 },
+          style: { color: "#d9a0a5", fontWeight: 700, fontSize: 15 },
         })}
       </div>
       {streak > 0 && (
@@ -2087,11 +2087,11 @@ const ScorePanel = ({ score, streak, totalQuestions, currentQuestion }) => {
 
 const RED_RANKS = [
   { minScore: 0, en: "Rookie", eg: "مبتدئ", accent: "#94a3b8" },
-  { minScore: 120, en: "Operator", eg: "أوبريتور", accent: "#f093fb" },
+  { minScore: 120, en: "Operator", eg: "أوبريتور", accent: "#d9a0a5" },
   { minScore: 300, en: "Closer", eg: "كلوزر", accent: "#ffb020" },
-  { minScore: 650, en: "Strategist", eg: "استراتيجي", accent: "#764ba2" },
+  { minScore: 650, en: "Strategist", eg: "استراتيجي", accent: "#72131d" },
   { minScore: 1100, en: "Captain", eg: "كابتن", accent: "#50fa7b" },
-  { minScore: 1700, en: "Legend", eg: "أسطورة", accent: "#667eea" },
+  { minScore: 1700, en: "Legend", eg: "أسطورة", accent: "#b52332" },
 ];
 
 const getRedRank = (score) => {
@@ -2698,7 +2698,7 @@ const Timer = ({ seconds, onTimeUp }) => {
     <div
       style={{
         ...styles.timer,
-        color: danger ? "#ef4444" : timeLeft <= 10 ? "#f97316" : "#667eea",
+        color: danger ? "#ef4444" : timeLeft <= 10 ? "#f97316" : "#b52332",
         transform: danger ? "scale(1.1)" : "scale(1)",
         transition: "color 0.3s ease, transform 0.2s ease",
       }}
@@ -3657,7 +3657,7 @@ const DefinitionMatching = ({ onBack, updateScore }) => {
 
       <div style={styles.grid2}>
         <div>
-          <h4 style={{ marginBottom: "15px", color: "#667eea" }}>
+          <h4 style={{ marginBottom: "15px", color: "#b52332" }}>
             {lang === "eg" ? "مصطلحات" : "Terms"}
           </h4>
           {items.map((item, idx) => (
@@ -3862,7 +3862,7 @@ const OddOneOut = ({ onBack, updateScore }) => {
 
       <h2 style={styles.questionText}>
         Find the ODD ONE OUT from the category:{" "}
-        <span style={{ color: "#667eea" }}>{q.category}</span>
+        <span style={{ color: "#b52332" }}>{q.category}</span>
       </h2>
 
       <div style={styles.grid2}>
@@ -4211,7 +4211,7 @@ const AcronymDecoder = ({ onBack, updateScore }) => {
       <ProgressBar current={currentQ + 1} total={questions.length} />
 
       <div style={{ textAlign: "center", marginBottom: "30px" }}>
-        <span style={{ fontSize: "64px", fontWeight: "800", color: "#667eea" }}>
+        <span style={{ fontSize: "64px", fontWeight: "800", color: "#b52332" }}>
           {q.acronym}
         </span>
         <p style={{ color: "rgba(255,255,255,0.7)", marginTop: "10px" }}>
@@ -4583,7 +4583,7 @@ const AccessoriesInspection = ({ onBack, updateScore }) => {
           marginBottom: "25px",
         }}
       >
-        <h3 style={{ marginBottom: "15px", color: "#667eea" }}>
+        <h3 style={{ marginBottom: "15px", color: "#b52332" }}>
           {lang === "eg" ? "👔 فحص المظهر" : "👔 Agent Appearance Check"}
         </h3>
         <p style={{ lineHeight: "1.8", fontSize: "16px" }}>
@@ -4929,8 +4929,8 @@ const FinishingVisualizer = ({ onBack, updateScore }) => {
           <span
             style={{
               ...styles.badge,
-              background: "rgba(102,126,234,0.2)",
-              color: "#667eea",
+              background: "rgba(181,35,50,0.2)",
+              color: "#b52332",
             }}
           >
             Level {q.level} of 4
@@ -8231,7 +8231,7 @@ const SkillsRadar = ({ onBack, updateScore }) => {
                     cursor: showResult ? "default" : "pointer",
                     background:
                       ratings[skill] >= value
-                        ? "linear-gradient(135deg, #667eea, #764ba2)"
+                        ? "linear-gradient(135deg, #b52332, #72131d)"
                         : "rgba(255,255,255,0.1)",
                     color: "#fff",
                     fontWeight: "600",
@@ -8469,7 +8469,7 @@ const FirstImpressionTrial = ({ onBack, updateScore }) => {
         <div
           style={{
             ...styles.timer,
-            color: timeLeft <= 1 ? "#f093fb" : "#667eea",
+            color: timeLeft <= 1 ? "#d9a0a5" : "#b52332",
           }}
         >
           ⏱️ {timeLeft}
@@ -9054,7 +9054,7 @@ const LeadTriage = ({ onBack, updateScore }) => {
                 width: "40px",
                 height: "40px",
                 borderRadius: "50%",
-                background: "linear-gradient(135deg, #667eea, #764ba2)",
+                background: "linear-gradient(135deg, #b52332, #72131d)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -9759,7 +9759,7 @@ const TwentyOneExperiences = ({ onBack, updateScore }) => {
             ? "بسرعة! اضغط على كل ٢١ زرار تجربة كويسة عشان تصلّح الموقف!"
             : 'Quick! Click all 21 "Good Experience" buttons to redeem yourself!'}
         </p>
-        <p style={{ fontSize: "14px", color: "#667eea", marginTop: "5px" }}>
+        <p style={{ fontSize: "14px", color: "#b52332", marginTop: "5px" }}>
           {lang === "eg"
             ? "(الدراسات بتقول إنك تحتاج ٢١ تجربة كويسة لتعويض انطباع أول وحش)"
             : "(Studies show it takes 21 good experiences to make up for a bad first impression)"}
@@ -9823,7 +9823,7 @@ const TwentyOneExperiences = ({ onBack, updateScore }) => {
               : "You've delivered 21 good experiences and restored the relationship!"}
           </p>
           <p
-            style={{ color: "#667eea", marginTop: "15px", fontStyle: "italic" }}
+            style={{ color: "#b52332", marginTop: "15px", fontStyle: "italic" }}
           >
             “{TD.firstImpression.quote}”
           </p>
@@ -11151,7 +11151,7 @@ const TeamBattleArena = ({ onBack, updateScore }) => {
                 border: `1px solid ${RM_THEME.border}`,
                 background:
                   idx === 0
-                    ? "linear-gradient(135deg, rgba(255,59,59,0.20), rgba(139,92,246,0.12))"
+                    ? "linear-gradient(135deg, rgba(255,59,59,0.20), rgba(181,35,50,0.12))"
                     : "rgba(255,255,255,0.05)",
               }}
             >
@@ -11851,7 +11851,7 @@ const ConsensusClash = ({ onBack, updateScore }) => {
                     ? idx === correctIdx
                       ? `linear-gradient(90deg, ${RM_THEME.green}, rgba(34,197,94,0.5))`
                       : `linear-gradient(90deg, ${RM_THEME.red}, rgba(255,59,59,0.45))`
-                    : `linear-gradient(90deg, rgba(0,212,255,0.65), rgba(139,92,246,0.45))`,
+                    : `linear-gradient(90deg, rgba(0,212,255,0.65), rgba(181,35,50,0.45))`,
                 }}
               />
             </div>
@@ -13600,7 +13600,7 @@ const ClientMatch = ({ onBack, updateScore }) => {
           marginBottom: 22,
           border: `1px solid ${RM_THEME.border}`,
           background:
-            "linear-gradient(135deg, rgba(102,126,234,0.14), rgba(102,126,234,0.04))",
+            "linear-gradient(135deg, rgba(181,35,50,0.14), rgba(181,35,50,0.04))",
           textAlign: "center",
         }}
       >
@@ -13662,7 +13662,7 @@ const ClientMatch = ({ onBack, updateScore }) => {
               border = "#f56565";
             }
           } else if (isSel) {
-            bg = "rgba(102,126,234,0.15)";
+            bg = "rgba(181,35,50,0.15)";
             border = RM_THEME.red;
           }
           return (
@@ -14285,7 +14285,7 @@ const ObjectionBlitz = ({ onBack, updateScore }) => {
               border = "#f56565";
             }
           } else if (isSel) {
-            bg = "rgba(102,126,234,0.15)";
+            bg = "rgba(181,35,50,0.15)";
             border = RM_THEME.red;
           }
           return (
@@ -14892,7 +14892,7 @@ const PropertyQuest = ({ onBack, updateScore }) => {
           marginBottom: 24,
           border: `1px solid ${RM_THEME.border}`,
           background:
-            "linear-gradient(135deg, rgba(102,126,234,0.10), rgba(255,255,255,0.03))",
+            "linear-gradient(135deg, rgba(181,35,50,0.10), rgba(255,255,255,0.03))",
         }}
       >
         <div
@@ -14958,7 +14958,7 @@ const PropertyQuest = ({ onBack, updateScore }) => {
                 width: 28,
                 height: 28,
                 borderRadius: 8,
-                background: "rgba(102,126,234,0.15)",
+                background: "rgba(181,35,50,0.15)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -15518,7 +15518,7 @@ const App = () => {
       id: "knowledge",
       title: s.categories.knowledge,
       icon: "📚",
-      color: "#667eea",
+      color: "#b52332",
       activities: [
         {
           id: "rapidfire",
@@ -15686,7 +15686,7 @@ const App = () => {
       id: "advanced",
       title: s.categories.advanced,
       icon: "🎮",
-      color: "#667eea",
+      color: "#b52332",
       activities: [
         {
           id: "objectionduel",
@@ -15720,7 +15720,7 @@ const App = () => {
       id: "classroom",
       title: s.categories.classroom,
       icon: "🏫",
-      color: "#f093fb",
+      color: "#d9a0a5",
       activities: [
         {
           id: "teambattle",
@@ -16661,14 +16661,14 @@ const App = () => {
         glow: "rgba(80,250,123,0.2)",
       },
       resume: {
-        bg: "rgba(102,126,234,0.12)",
-        icon: "rgba(102,126,234,0.85)",
-        glow: "rgba(102,126,234,0.2)",
+        bg: "rgba(181,35,50,0.12)",
+        icon: "rgba(181,35,50,0.85)",
+        glow: "rgba(181,35,50,0.2)",
       },
       classroom: {
-        bg: "rgba(240,147,251,0.12)",
-        icon: "rgba(240,147,251,0.85)",
-        glow: "rgba(240,147,251,0.2)",
+        bg: "rgba(217,160,165,0.12)",
+        icon: "rgba(217,160,165,0.85)",
+        glow: "rgba(217,160,165,0.2)",
       },
     };
     return (
@@ -16707,7 +16707,7 @@ const App = () => {
               width: 220,
               height: 220,
               background:
-                "radial-gradient(circle, rgba(240,147,251,0.08), transparent 70%)",
+                "radial-gradient(circle, rgba(217,160,165,0.08), transparent 70%)",
               pointerEvents: "none",
             }}
           />
@@ -16983,7 +16983,7 @@ const App = () => {
               <div
                 className="xstat"
                 style={{
-                  "--xstat-accent": `linear-gradient(90deg, #f093fb, #764ba2)`,
+                  "--xstat-accent": `linear-gradient(90deg, #d9a0a5, #72131d)`,
                 }}
               >
                 <span
@@ -17002,7 +17002,7 @@ const App = () => {
                   style={{
                     fontSize: 32,
                     fontWeight: 800,
-                    color: "#f093fb",
+                    color: "#d9a0a5",
                     display: "block",
                   }}
                 >
@@ -17229,7 +17229,7 @@ const App = () => {
                   height="20"
                   viewBox="0 0 24 24"
                   fill="none"
-                  stroke="#f093fb"
+                  stroke="#d9a0a5"
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -17730,7 +17730,7 @@ const App = () => {
                     ? "أفضل نشاط فردي تبدأ بيه دلوقتي."
                     : "The smartest self-study launch.",
                 svgPath: "M12 2a10 10 0 100 20 10 10 0 000-20zm0 6v4l3 3",
-                color: "#667eea",
+                color: "#b52332",
                 action: recommendedActivity
                   ? () => launchActivity(recommendedActivity)
                   : null,
@@ -17782,7 +17782,7 @@ const App = () => {
                     : "Buzzer battles, teams, and projector pacing.",
                 svgPath:
                   "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0h4",
-                color: "#f093fb",
+                color: "#d9a0a5",
                 action: classroomLaunchActivity
                   ? () => launchActivity(classroomLaunchActivity)
                   : null,
@@ -18415,9 +18415,9 @@ const App = () => {
                 >
                   <defs>
                     <linearGradient id="xlg" x1="0" y1="0" x2="56" y2="56">
-                      <stop offset="0%" stopColor="#667eea" />
-                      <stop offset="50%" stopColor="#764ba2" />
-                      <stop offset="100%" stopColor="#f093fb" />
+                      <stop offset="0%" stopColor="#b52332" />
+                      <stop offset="50%" stopColor="#72131d" />
+                      <stop offset="100%" stopColor="#d9a0a5" />
                     </linearGradient>
                   </defs>
                   <rect
@@ -19320,9 +19320,9 @@ const XcLoginScreen = ({ onLogin }) => {
           >
             <defs>
               <linearGradient id="xlg_login" x1="0" y1="0" x2="56" y2="56">
-                <stop offset="0%" stopColor="#667eea" />
-                <stop offset="50%" stopColor="#764ba2" />
-                <stop offset="100%" stopColor="#f093fb" />
+                <stop offset="0%" stopColor="#b52332" />
+                <stop offset="50%" stopColor="#72131d" />
+                <stop offset="100%" stopColor="#d9a0a5" />
               </linearGradient>
             </defs>
             <rect
@@ -19557,8 +19557,8 @@ const XcLeaderboard = ({ currentUser, onClose, embedded = false }) => {
           ? "#ffb020"
           : "rgba(152,152,184,0.6)";
   const getBadge = (score) => {
-    if (score >= 500) return { label: "Legend", color: "#f093fb" };
-    if (score >= 300) return { label: "Elite", color: "#667eea" };
+    if (score >= 500) return { label: "Legend", color: "#d9a0a5" };
+    if (score >= 300) return { label: "Elite", color: "#b52332" };
     if (score >= 150) return { label: "Pro", color: "#50fa7b" };
     if (score >= 60) return { label: "Operator", color: "#ffb020" };
     return { label: "Rookie", color: "rgba(152,152,184,0.8)" };

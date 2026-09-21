@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Xcelias Project Intelligence Maps — Geographic SVG Map Engine
  * maps.js · RED Training Academy · 2025 (FORCE-DIRECTED LABEL LAYOUT)
  *
@@ -520,7 +520,7 @@
     sk1: { name: "Sokhna Coast", color: "#fb923c", km: "km 40–55" },
     sk2: { name: "Galala Mountain", color: "#34d399", km: "km 60–75" },
     sk3: { name: "Porto Zone", color: "#38bdf8", km: "km 76–90" },
-    sk4: { name: "Southern Coast", color: "#c084fc", km: "km 90–120" },
+    sk4: { name: "Southern Coast", color: "#d9a0a5", km: "km 90–120" },
   };
 
   const SK_PROJECTS = [

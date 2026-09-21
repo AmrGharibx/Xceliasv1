@@ -10,10 +10,10 @@ import useDialogAccessibility from './useDialogAccessibility';
 const XcAnimatedLogo = () => (
   <div className="xc-logo-icon" style={{
     width:'44px', height:'44px',
-    background:'linear-gradient(135deg,#667eea,#764ba2)',
+    background:'linear-gradient(135deg,#b52332,#72131d)',
     borderRadius:'12px', display:'flex', alignItems:'center', justifyContent:'center',
     position:'relative', flexShrink:0,
-    boxShadow:'0 8px 24px rgba(102,126,234,0.35)'
+    boxShadow:'0 8px 24px rgba(181,35,50,0.35)'
   }}>
     <div className="xc-logo-ring-spin" />
     <div className="xc-logo-ring-pulse" />
@@ -24,9 +24,9 @@ const XcAnimatedLogo = () => (
          className="xc-logo-svg" style={{width:'22px',height:'22px',position:'relative',zIndex:2}}>
       <defs>
         <linearGradient id="xcnav-lg" x1="0" y1="0" x2="56" y2="56">
-          <stop offset="0%" stopColor="#667eea"/>
-          <stop offset="50%" stopColor="#764ba2"/>
-          <stop offset="100%" stopColor="#f093fb"/>
+          <stop offset="0%" stopColor="#b52332"/>
+          <stop offset="50%" stopColor="#72131d"/>
+          <stop offset="100%" stopColor="#d9a0a5"/>
         </linearGradient>
       </defs>
       <rect x="4" y="4" width="48" height="48" rx="14"
@@ -92,7 +92,7 @@ export const TopNavigation = ({ activeSection, onOpenMap, onOpenSource, onOpenBr
               aria-haspopup="dialog"
               aria-expanded={sourceOpen}
               aria-controls="source-deck-dialog"
-              className="inline-flex items-center gap-2 rounded-full border border-[var(--line)] bg-[var(--panel-strong)] px-4 py-2 text-sm font-medium text-white transition hover:bg-[rgba(102,126,234,0.18)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-soft)] focus:ring-offset-2 focus:ring-offset-[var(--bg)]"
+              className="inline-flex items-center gap-2 rounded-full border border-[var(--line)] bg-[var(--panel-strong)] px-4 py-2 text-sm font-medium text-white transition hover:bg-[rgba(181,35,50,0.18)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-soft)] focus:ring-offset-2 focus:ring-offset-[var(--bg)]"
             >
               <ScrollText className="h-4 w-4" />
               <span className="hidden md:inline">Source deck</span>
@@ -175,7 +175,7 @@ export const ChapterMapDrawer = ({ open, activeSection, onClose }) => {
                     onClose();
                   }}
                   className={`rounded-[24px] border px-5 py-5 text-left transition focus:outline-none focus:ring-2 focus:ring-[var(--accent-soft)] focus:ring-offset-2 focus:ring-offset-[#0a0a0d] ${
-                    isActive ? 'border-[var(--line)] bg-[rgba(102,126,234,0.14)]' : 'border-white/10 bg-white/[0.03] hover:bg-white/[0.05]'
+                    isActive ? 'border-[var(--line)] bg-[rgba(181,35,50,0.14)]' : 'border-white/10 bg-white/[0.03] hover:bg-white/[0.05]'
                   }`}
                 >
                   <div className="text-xs uppercase tracking-[0.28em] text-[var(--accent-soft)]">Chapter {item.chapter}</div>

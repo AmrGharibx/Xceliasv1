@@ -1,6 +1,8 @@
-﻿/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    XCELIAS PORTAL â€” NAVIGATION + PARTICLE SYSTEM + EFFECTS
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+
+/* global gsap */
 
 function escHtml(s) {
   const d = document.createElement('div');
@@ -28,7 +30,7 @@ const PROJECTS = {
   },
   redacademy: {
     name: 'RED Academy Private LMS',
-    url: 'https://amrgharibx.github.io/Xceliasv1/',
+    url: IS_LOCAL ? 'http://127.0.0.1:3000/' : '/red-academy/',
     mode: 'tab',
   },
   reports: {
@@ -88,7 +90,7 @@ topbarNewTab.addEventListener('click', function () {
    PARTICLE SYSTEM (ambient floating particles)
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 (function initParticles() {
-  const canvas = document.getElementById('particle-canvas');
+  const canvas = document.getElementById('legacy-particle-canvas');
   if (!canvas) return;
 
   // Respect reduced motion preference
@@ -152,7 +154,7 @@ topbarNewTab.addEventListener('click', function () {
           ctx.beginPath();
           ctx.moveTo(particles[i].x, particles[i].y);
           ctx.lineTo(particles[j].x, particles[j].y);
-          ctx.strokeStyle = `rgba(102, 126, 234, ${0.06 * (1 - dist / LINE_DISTANCE)})`;
+          ctx.strokeStyle = `rgba(181, 35, 50, ${0.06 * (1 - dist / LINE_DISTANCE)})`;
           ctx.lineWidth = 0.5;
           ctx.stroke();
         }
@@ -332,7 +334,7 @@ function showIframeError(projectName) {
     <h3 style="font-size:1.1rem;font-weight:700;color:#e8e8f0">Failed to Load</h3>
     <p style="font-size:0.82rem;color:#9898b8;max-width:360px;line-height:1.6">${escHtml(projectName || 'This module')} didn't respond. Make sure the server is running and try again.</p>
     <div style="display:flex;gap:12px;margin-top:8px">
-      <button id="iframe-err-retry" style="padding:10px 24px;border-radius:50px;border:1px solid rgba(102,126,234,0.3);background:rgba(102,126,234,0.1);color:#a5b4fc;font-family:inherit;font-size:0.78rem;font-weight:600;cursor:pointer">Retry</button>
+      <button id="iframe-err-retry" style="padding:10px 24px;border-radius:50px;border:1px solid rgba(181,35,50,0.3);background:rgba(181,35,50,0.1);color:#e3a0a6;font-family:inherit;font-size:0.78rem;font-weight:600;cursor:pointer">Retry</button>
       <button id="iframe-err-home" style="padding:10px 24px;border-radius:50px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.05);color:#9898b8;font-family:inherit;font-size:0.78rem;font-weight:600;cursor:pointer">Back to Home</button>
     </div>
   `;

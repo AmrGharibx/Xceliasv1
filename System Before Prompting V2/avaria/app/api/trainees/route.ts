@@ -6,7 +6,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { isAttendanceEligible } from "@/lib/batchRules";
-import { requireAuth } from "@/lib/auth";
+import { requireRole } from "@/lib/auth";
 import { createTraineeSchema, parseBody } from "@/lib/validations";
 
 export const dynamic = "force-dynamic";
@@ -96,7 +96,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    await requireAuth();
+    await requireRole("admin", "instructor");
     const body = await request.json();
     const parsed = parseBody(createTraineeSchema, body);
     if ("error" in parsed) {
@@ -104,14 +104,41 @@ export async function POST(request: NextRequest) {
     }
     const { name, email, phone, company, batchId } = parsed.data;
 
-    const trainee = await db.trainee.create({
-      data: {
-        traineeName: name,
-        email: email || null,
-        phone: phone || null,
-        company,
-        batchId,
-      },
+    const trainee = await db.$transaction(async (tx) => {
+      const batch = await tx.batch.findUnique({
+        where: { id: batchId },
+        select: { batchName: true, startDate: true, endDate: true },
+      });
+
+      if (!batch) {
+        throw new Error("Batch not found");
+      }
+
+      const created = await tx.trainee.create({
+        data: {
+          traineeName: name,
+          email: email || null,
+          phone: phone || null,
+          company,
+          batchId,
+        },
+      });
+
+      if (isAttendanceEligible(batch.batchName)) {
+        const periodStart = new Date(batch.startDate);
+        const periodEnd = new Date(batch.endDate);
+        await tx.tenDayAttendance.create({
+          data: {
+            record: `${created.traineeName} - ${batch.batchName} (${periodStart.toISOString().slice(0, 10)}–${periodEnd.toISOString().slice(0, 10)})`,
+            periodStart,
+            periodEnd,
+            traineeId: created.id,
+            batchId,
+          },
+        });
+      }
+
+      return created;
     });
 
     return NextResponse.json({ trainee }, { status: 201 });

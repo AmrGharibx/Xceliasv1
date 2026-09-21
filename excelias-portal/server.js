@@ -548,7 +548,7 @@ app.post('/api/gemini', async (req, res) => {
               }
               return { inlineData: { mimeType: mime, data: String(p.inlineData.data || '') } };
             }
-            return { text: String(p && p.text != null ? p.text : '') };
+            return { text: String(p && p.text !== null ? p.text : '') };
           })
         : [{ text: String(m.content || '') }],
     }));

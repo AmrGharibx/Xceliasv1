@@ -6,7 +6,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { ATTENDANCE_START_BATCH, isAttendanceEligible } from "@/lib/batchRules";
-import { requireAuth } from "@/lib/auth";
+import { requireRole } from "@/lib/auth";
 import { updateTraineeSchema, parseBody } from "@/lib/validations";
 
 export const dynamic = "force-dynamic";
@@ -137,7 +137,7 @@ export async function PUT(
 ) {
   const { id } = await params;
   try {
-    await requireAuth();
+    await requireRole("admin", "instructor");
     const body = await request.json();
     const parsed = parseBody(updateTraineeSchema, body);
     if ("error" in parsed) {
@@ -174,7 +174,7 @@ export async function DELETE(
 ) {
   const { id } = await params;
   try {
-    await requireAuth();
+    await requireRole("admin");
     // Delete related records first
     await db.dailyAttendance.deleteMany({ where: { traineeId: id } });
     await db.tenDayAttendance.deleteMany({ where: { traineeId: id } });

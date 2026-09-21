@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { createBatchSchema, parseBody } from "@/lib/validations";
-import { requireAuth } from "@/lib/auth";
+import { requireRole } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -103,7 +103,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    await requireAuth();
+    await requireRole("admin", "instructor");
     const body = await request.json();
     const parsed = parseBody(createBatchSchema, body);
     if ("error" in parsed) {

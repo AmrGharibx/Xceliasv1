@@ -1,11 +1,19 @@
 "use client";
 
 import * as React from "react";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Canvas, useFrame } from "@react-three/fiber";
 import { Float, Sparkles } from "@react-three/drei";
 import type { Mesh, Points, BufferGeometry, NormalBufferAttributes } from "three";
 import * as THREE from "three";
 import { useVisualModeStore } from "@/stores";
+
+function createSeededRandom(seed: number) {
+  let state = seed >>> 0;
+  return () => {
+    state = (state * 1664525 + 1013904223) >>> 0;
+    return state / 0x100000000;
+  };
+}
 
 /* ─────────────────────────────────────────────────────────────
    AURORA PARTICLE NEBULA — flowing particle streams that
@@ -21,6 +29,7 @@ function AuroraParticles({ count = 800 }: { count?: number }) {
     const pos = new Float32Array(particleCount * 3);
     const vel = new Float32Array(particleCount * 3);
     const col = new Float32Array(particleCount * 3);
+    const random = createSeededRandom(particleCount);
 
     // Aurora palette: emerald, teal, pink, gold
     const palette = [
@@ -34,21 +43,21 @@ function AuroraParticles({ count = 800 }: { count?: number }) {
     for (let i = 0; i < particleCount; i++) {
       const i3 = i * 3;
       // Spread in a wide torus/ribbon shape
-      const theta = Math.random() * Math.PI * 2;
-      const phi = (Math.random() - 0.5) * 1.2;
-      const radius = 2.5 + Math.random() * 3;
+      const theta = random() * Math.PI * 2;
+      const phi = (random() - 0.5) * 1.2;
+      const radius = 2.5 + random() * 3;
 
       pos[i3] = Math.cos(theta) * radius * Math.cos(phi);
-      pos[i3 + 1] = Math.sin(phi) * 1.5 + (Math.random() - 0.5) * 0.8;
+      pos[i3 + 1] = Math.sin(phi) * 1.5 + (random() - 0.5) * 0.8;
       pos[i3 + 2] = Math.sin(theta) * radius * Math.cos(phi);
 
       // Slow orbital velocity + vertical drift
-      vel[i3] = (Math.random() - 0.5) * 0.003;
-      vel[i3 + 1] = (Math.random() - 0.5) * 0.002;
-      vel[i3 + 2] = (Math.random() - 0.5) * 0.003;
+      vel[i3] = (random() - 0.5) * 0.003;
+      vel[i3 + 1] = (random() - 0.5) * 0.002;
+      vel[i3 + 2] = (random() - 0.5) * 0.003;
 
       // Random color from palette
-      const c = palette[Math.floor(Math.random() * palette.length)];
+      const c = palette[Math.floor(random() * palette.length)];
       col[i3] = c[0];
       col[i3 + 1] = c[1];
       col[i3 + 2] = c[2];

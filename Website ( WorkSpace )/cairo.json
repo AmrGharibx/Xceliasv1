@@ -6156,9 +6156,10 @@
       "zone": "New Cairo",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 5828000,
+      "priceMin": 4290000,
       "unitTypes": [
-        "Apartment"
+        "Apartment",
+        "Studio"
       ],
       "areaMin": 94,
       "areaMax": 469,
@@ -6181,19 +6182,19 @@
         "sourceCount": 2,
         "sources": [
           {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/868-bluetree",
+            "observedPrice": 4290000,
+            "sourceId": "nawy:868"
+          },
+          {
             "name": "RED",
             "url": "https://redww.com/en/projects/19222-bluetree-new-cairo",
             "observedPrice": 5828000,
             "sourceId": "red:19222"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/868-bluetree",
-            "observedPrice": 6042000,
-            "sourceId": "nawy:868"
           }
         ],
-        "updatedAt": "2026-09-21T14:54:37.284Z"
+        "updatedAt": "2026-09-21T18:35:45.164Z"
       }
     },
     {
@@ -8119,11 +8120,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1108-notion",
-            "observedPrice": 2830500,
+            "observedPrice": 2830000,
             "sourceId": "nawy:1108"
           }
         ],
-        "updatedAt": "2026-09-21T14:54:37.284Z"
+        "updatedAt": "2026-09-21T18:35:45.164Z"
       }
     },
     {

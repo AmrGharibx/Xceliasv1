@@ -1604,8 +1604,9 @@
       "zone": "Sokhna",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 6341040,
+      "priceMin": 4800000,
       "unitTypes": [
+        "Studio",
         "Chalet",
         "Villa",
         "Townhouse",
@@ -1634,19 +1635,19 @@
         "sourceCount": 2,
         "sources": [
           {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/87-telal-sokhna",
+            "observedPrice": 4800000,
+            "sourceId": "nawy:87"
+          },
+          {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/roya-for-real-estate-company/telal-sokhna",
             "observedPrice": 6341040,
             "sourceId": "property-finder:3bbb374c-8801-4dbe-90fa-0eb7d6d0efa7"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/87-telal-sokhna",
-            "observedPrice": 10568400,
-            "sourceId": "nawy:87"
           }
         ],
-        "updatedAt": "2026-09-21T14:54:37.284Z"
+        "updatedAt": "2026-09-21T18:35:45.164Z"
       }
     },
     {
@@ -2811,11 +2812,10 @@
       "zone": "Sokhna",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 15572450,
-      "priceMax": 32903411,
+      "priceMin": 4800000,
       "unitTypes": [
-        "Villa",
-        "Apartment"
+        "Studio",
+        "Chalet"
       ],
       "areaMin": 61,
       "areaMax": 253,
@@ -2827,9 +2827,25 @@
         5,
         6
       ],
-      "paymentPlan": "5% Down Payment, 10 Years Installments",
+      "paymentPlan": "5% Down Payment, 14 Years Installments",
       "downPayment": 5,
-      "installmentYears": 10
+      "installmentYears": 14,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "verified",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1856-covaya",
+            "observedPrice": 4800000,
+            "sourceId": "nawy:1856"
+          }
+        ],
+        "updatedAt": "2026-09-21T18:35:45.164Z"
+      }
     },
     {
       "name": "Jura Phase 2",

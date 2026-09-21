@@ -6156,9 +6156,10 @@
       "zone": "New Cairo",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 5828000,
+      "priceMin": 4290000,
       "unitTypes": [
-        "Apartment"
+        "Apartment",
+        "Studio"
       ],
       "areaMin": 94,
       "areaMax": 469,
@@ -6181,19 +6182,19 @@
         "sourceCount": 2,
         "sources": [
           {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/868-bluetree",
+            "observedPrice": 4290000,
+            "sourceId": "nawy:868"
+          },
+          {
             "name": "RED",
             "url": "https://redww.com/en/projects/19222-bluetree-new-cairo",
             "observedPrice": 5828000,
             "sourceId": "red:19222"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/868-bluetree",
-            "observedPrice": 6042000,
-            "sourceId": "nawy:868"
           }
         ],
-        "updatedAt": "2026-09-21T14:54:37.284Z"
+        "updatedAt": "2026-09-21T18:35:45.164Z"
       }
     },
     {
@@ -8119,11 +8120,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1108-notion",
-            "observedPrice": 2830500,
+            "observedPrice": 2830000,
             "sourceId": "nawy:1108"
           }
         ],
-        "updatedAt": "2026-09-21T14:54:37.284Z"
+        "updatedAt": "2026-09-21T18:35:45.164Z"
       }
     },
     {
@@ -26314,6 +26315,7 @@
         "Twinhouse",
         "Apartment",
         "Cabin",
+        "Villa",
         "Penthouse"
       ],
       "areaMin": 87,
@@ -26326,9 +26328,9 @@
         5,
         6
       ],
-      "paymentPlan": "10% Down Payment, 7 Years Installments",
+      "paymentPlan": "10% Down Payment, 8 Years Installments",
       "downPayment": 10,
-      "installmentYears": 7,
+      "installmentYears": 8,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -26345,7 +26347,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/528-bianchi-ilios",
-            "observedPrice": 25000000,
+            "observedPrice": 12190000,
             "sourceId": "nawy:528"
           },
           {
@@ -26355,7 +26357,7 @@
             "sourceId": "property-finder:1cffe0b1-c6b9-4676-84de-cab0af7e01f8"
           }
         ],
-        "updatedAt": "2026-09-21T14:54:37.284Z"
+        "updatedAt": "2026-09-21T18:35:45.164Z"
       }
     },
     {
@@ -27436,8 +27438,9 @@
       "zone": "Sokhna",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 6341040,
+      "priceMin": 4800000,
       "unitTypes": [
+        "Studio",
         "Chalet",
         "Villa",
         "Townhouse",
@@ -27466,19 +27469,19 @@
         "sourceCount": 2,
         "sources": [
           {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/87-telal-sokhna",
+            "observedPrice": 4800000,
+            "sourceId": "nawy:87"
+          },
+          {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/roya-for-real-estate-company/telal-sokhna",
             "observedPrice": 6341040,
             "sourceId": "property-finder:3bbb374c-8801-4dbe-90fa-0eb7d6d0efa7"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/87-telal-sokhna",
-            "observedPrice": 10568400,
-            "sourceId": "nawy:87"
           }
         ],
-        "updatedAt": "2026-09-21T14:54:37.284Z"
+        "updatedAt": "2026-09-21T18:35:45.164Z"
       }
     },
     {
@@ -47080,11 +47083,10 @@
       "zone": "Sokhna",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 15572450,
-      "priceMax": 32903411,
+      "priceMin": 4800000,
       "unitTypes": [
-        "Villa",
-        "Apartment"
+        "Studio",
+        "Chalet"
       ],
       "areaMin": 61,
       "areaMax": 253,
@@ -47096,9 +47098,25 @@
         5,
         6
       ],
-      "paymentPlan": "5% Down Payment, 10 Years Installments",
+      "paymentPlan": "5% Down Payment, 14 Years Installments",
       "downPayment": 5,
-      "installmentYears": 10
+      "installmentYears": 14,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "verified",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1856-covaya",
+            "observedPrice": 4800000,
+            "sourceId": "nawy:1856"
+          }
+        ],
+        "updatedAt": "2026-09-21T18:35:45.164Z"
+      }
     },
     {
       "name": "Skyla",

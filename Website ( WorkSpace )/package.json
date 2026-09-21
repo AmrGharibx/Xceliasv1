@@ -6,6 +6,9 @@
   "scripts": {
     "start": "node server.ultra.js",
     "dev": "nodemon server.ultra.js",
+    "prices:check": "node scraper/price-intelligence/update-prices.js --mode=hourly --dry-run",
+    "prices:daily": "node scraper/price-intelligence/update-prices.js --mode=daily",
+    "test:prices": "node --test scraper/price-intelligence/*.test.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [

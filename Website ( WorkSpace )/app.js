@@ -939,6 +939,34 @@ document.addEventListener("DOMContentLoaded", () => {
 // ═══════════════════════════════════════════════════════════════════════════
 // 🔔 PRICE ALERTS SYSTEM - Track price drops and notify users
 // ═══════════════════════════════════════════════════════════════════════════
+function getVerifiedStartingPrice(project) {
+  const price = Number(project?.priceMin);
+  const meta = project?.priceMeta;
+  if (
+    meta?.status !== "verified" ||
+    meta.kind !== "starting-price" ||
+    !Number.isFinite(price) ||
+    price <= 0
+  ) {
+    return null;
+  }
+  return { price, meta };
+}
+
+function getSafePriceSource(meta) {
+  const source = Array.isArray(meta?.sources)
+    ? meta.sources.find((item) => typeof item?.url === "string")
+    : null;
+  if (!source) return null;
+  try {
+    const url = new URL(source.url);
+    if (url.protocol !== "https:") return null;
+    return { name: String(source.name || "source"), url: url.toString() };
+  } catch {
+    return null;
+  }
+}
+
 const PriceAlerts = {
   storageKey: "priceAlerts",
   notificationPermission: false,
@@ -1205,9 +1233,58 @@ const PriceAlerts = {
     const targetPrice = priceInput.value;
 
     if (projectName && targetPrice) {
-      this.add(projectName, targetPrice);
+      const project = window.projects?.find((item) => item.name === projectName);
+      const verified = getVerifiedStartingPrice(project);
+      this.add(projectName, targetPrice, verified?.price || null);
       this.closeSetAlertModal();
     }
+  },
+
+  // Compare saved alerts with the latest verified project prices loaded from data.json.
+  syncWithProjects(projects) {
+    if (!Array.isArray(projects)) return;
+    const prices = new Map();
+    projects.forEach((project) => {
+      const verified = getVerifiedStartingPrice(project);
+      if (verified) prices.set(project.name, verified.price);
+    });
+
+    let changed = false;
+    const newlyTriggered = [];
+    const alerts = this.get().map((alert) => {
+      const price = prices.get(alert.projectName);
+      if (!Number.isFinite(price)) return alert;
+
+      const triggered = price <= Number(alert.targetPrice);
+      const next = {
+        ...alert,
+        currentPrice: price,
+        triggered: alert.triggered || triggered,
+        notified: alert.notified || triggered,
+        updatedAt: alert.currentPrice === price ? alert.updatedAt : Date.now(),
+      };
+      if (
+        next.currentPrice !== alert.currentPrice ||
+        next.triggered !== alert.triggered ||
+        next.notified !== alert.notified
+      ) {
+        changed = true;
+      }
+      if (triggered && !alert.notified) newlyTriggered.push(next);
+      return next;
+    });
+
+    if (!changed) return;
+    this.save(alerts);
+    this.updateBadge();
+    this.renderAlertsList();
+    newlyTriggered.forEach((alert) => {
+      this.sendNotification(
+        "Price alert reached",
+        `${alert.projectName} is now at ${this.formatPrice(alert.currentPrice)} EGP.`,
+        alert.projectName,
+      );
+    });
   },
 
   // Toggle alerts panel
@@ -1260,7 +1337,11 @@ function savePriceAlert() {
 // Open price alert modal for current project (from modal button)
 function openProjectPriceAlert() {
   if (currentProject && currentProject.name) {
-    PriceAlerts.openSetAlertModal(currentProject.name);
+    const verified = getVerifiedStartingPrice(currentProject);
+    PriceAlerts.openSetAlertModal(
+      currentProject.name,
+      verified?.price || 5000000,
+    );
   }
 }
 
@@ -1485,22 +1566,20 @@ const AdvancedFilters = {
     return projects.filter((p) => {
       // Price filter (using project data)
       if (filters.priceMin !== null || filters.priceMax !== null) {
-        // Check if project has price data
-        const projectPriceMin = p.priceMin;
-        const projectPriceMax = p.priceMax;
-
-        if (projectPriceMin !== undefined) {
-          // If user's min price is higher than project's max price, exclude
-          if (
-            filters.priceMin !== null &&
-            projectPriceMax &&
-            filters.priceMin > projectPriceMax
-          )
-            return false;
-          // If user's max price is lower than project's min price, exclude
-          if (filters.priceMax !== null && filters.priceMax < projectPriceMin)
-            return false;
-        }
+        // A filter must never use legacy/generated ranges. It operates on the
+        // verified public starting price when one is available.
+        const verifiedPrice = getVerifiedStartingPrice(p);
+        if (!verifiedPrice) return false;
+        if (
+          filters.priceMin !== null &&
+          verifiedPrice.price < filters.priceMin
+        )
+          return false;
+        if (
+          filters.priceMax !== null &&
+          verifiedPrice.price > filters.priceMax
+        )
+          return false;
       }
 
       // Area filter (using project data)
@@ -6485,8 +6564,9 @@ function _renderZoneListItems(container, projects) {
     const sizePreview = Number.isFinite(p.areaMin)
       ? `${p.areaMin}${Number.isFinite(p.areaMax) ? `-${p.areaMax}` : "+"} sqm`
       : "";
-    const financeLine = p.priceMin
-      ? `From ${formatPrice(p.priceMin)} EGP`
+    const verifiedPrice = getVerifiedStartingPrice(p);
+    const financeLine = verifiedPrice
+      ? `From ${formatPrice(verifiedPrice.price)} EGP`
       : "Pricing on request";
     const planLine =
       [
@@ -6549,7 +6629,8 @@ function _buildMarkerPopup(p) {
   const isFav = isFavorite(p.name);
   const heartIcon = isFav ? XI.heart : XI.heartEmpty;
   const heartColor = isFav ? "var(--avaria-red)" : "var(--avaria-gold)";
-  const price = p.priceMin;
+  const verifiedPrice = getVerifiedStartingPrice(p);
+  const price = verifiedPrice?.price;
   let priceDisplay = "";
   if (price) {
     const fp =
@@ -8900,6 +8981,9 @@ async function openModal(proj) {
   const modalStatus = document.getElementById("modalStatus");
   const modalPrice = document.getElementById("modalPrice");
   const priceSection = document.getElementById("priceSection");
+  const modalPriceMeta = document.getElementById("modalPriceMeta");
+  const modalPriceMetaText = document.getElementById("modalPriceMetaText");
+  const modalPriceSourceLink = document.getElementById("modalPriceSourceLink");
 
   if (modalDesc) modalDesc.innerText = details.description || "";
   if (modalUnits) {
@@ -8932,25 +9016,57 @@ async function openModal(proj) {
   }
   if (modalStatus) modalStatus.innerText = details.status || proj.status || "";
 
-  // Price display
+  // Replace historic/generated values with the current, source-verified
+  // starting price. A project without verification is intentionally shown as
+  // pricing on request instead of displaying a made-up range.
+  const verifiedPrice = getVerifiedStartingPrice(proj);
   if (modalPrice) {
-    if (proj.priceMin) {
-      const formatFullPrice = (price) => {
-        return new Intl.NumberFormat("en-EG").format(price);
-      };
-
-      if (proj.priceMax && proj.priceMax > proj.priceMin) {
-        modalPrice.innerText = `${formatFullPrice(proj.priceMin)} - ${formatFullPrice(proj.priceMax)} EGP`;
-      } else {
-        modalPrice.innerHTML = `<span>${i18n.currentLang === "ar" ? "يبدأ من" : "Starting from"}</span> ${formatFullPrice(proj.priceMin)} EGP`;
-      }
-      if (priceSection) priceSection.style.display = "block";
+    if (verifiedPrice) {
+      const formattedPrice = new Intl.NumberFormat("en-EG").format(
+        verifiedPrice.price,
+      );
+      const prefix = i18n.currentLang === "ar" ? "يبدأ من" : "Starting from";
+      modalPrice.textContent = `${prefix} ${formattedPrice} EGP`;
     } else {
-      modalPrice.innerText =
+      modalPrice.textContent =
         i18n.currentLang === "ar"
           ? "تواصل معنا للتسعير"
           : "Contact for pricing";
-      if (priceSection) priceSection.style.display = "block";
+    }
+    if (priceSection) priceSection.style.display = "block";
+  }
+
+  if (modalPriceMeta) {
+    modalPriceMeta.hidden = !verifiedPrice;
+    if (verifiedPrice && modalPriceMetaText) {
+      const updatedAt = new Date(verifiedPrice.meta.updatedAt);
+      const hasDate = !Number.isNaN(updatedAt.getTime());
+      const date = hasDate
+        ? new Intl.DateTimeFormat(i18n.currentLang === "ar" ? "ar-EG" : "en-GB", {
+            day: "numeric",
+            month: "short",
+            year: "numeric",
+          }).format(updatedAt)
+        : null;
+      const sourceCount = Math.max(1, Number(verifiedPrice.meta.sourceCount) || 1);
+      modalPriceMetaText.textContent =
+        i18n.currentLang === "ar"
+          ? `سعر ابتدائي موثّق من ${sourceCount} مصدر${date ? ` • ${date}` : ""}`
+          : `Verified starting price from ${sourceCount} source${sourceCount === 1 ? "" : "s"}${date ? ` • ${date}` : ""}`;
+
+      const source = getSafePriceSource(verifiedPrice.meta);
+      if (modalPriceSourceLink) {
+        if (source) {
+          modalPriceSourceLink.href = source.url;
+          modalPriceSourceLink.textContent =
+            i18n.currentLang === "ar" ? `عرض ${source.name}` : `View ${source.name}`;
+          modalPriceSourceLink.hidden = false;
+        } else {
+          modalPriceSourceLink.removeAttribute("href");
+          modalPriceSourceLink.textContent = "";
+          modalPriceSourceLink.hidden = true;
+        }
+      }
     }
   }
 
@@ -10217,6 +10333,8 @@ async function loadAllData() {
       const lng = parseFloat(p.lng);
       return p && p.name && !isNaN(lat) && !isNaN(lng);
     });
+
+    PriceAlerts.syncWithProjects(window.projects);
 
     // Initialize Fuse (Main Thread Fallback)
     if (typeof Fuse !== "undefined") {

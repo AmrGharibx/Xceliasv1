@@ -1,0 +1,97 @@
+name: Refresh verified Property Explorer prices
+
+on:
+  schedule:
+    # Full Nawy + RED inventory refresh. Six hours is fast enough for price
+    # changes while avoiding needless pressure on the public source sites.
+    - cron: '23 */6 * * *'
+    # The wider daily run additionally checks Property Finder's public index.
+    - cron: '47 2 * * *'
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: Refresh scope
+        required: true
+        default: daily
+        type: choice
+        options:
+          - hourly
+          - daily
+      dry_run:
+        description: Validate sources and matches without changing data
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+concurrency:
+  group: property-price-intelligence
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24.0.0
+
+      - name: Select refresh scope
+        id: scope
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          SCHEDULE: ${{ github.event.schedule || '' }}
+          REQUESTED_MODE: ${{ inputs.mode || '' }}
+          REQUESTED_DRY_RUN: ${{ inputs.dry_run || 'false' }}
+        run: |
+          mode=hourly
+          if [ "$EVENT_NAME" = "schedule" ] && [ "$SCHEDULE" = "47 2 * * *" ]; then
+            mode=daily
+          fi
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            mode="$REQUESTED_MODE"
+          fi
+          echo "mode=$mode" >> "$GITHUB_OUTPUT"
+          echo "dry_run=$REQUESTED_DRY_RUN" >> "$GITHUB_OUTPUT"
+
+      - name: Fetch and validate public price inventories
+        shell: bash
+        env:
+          MODE: ${{ steps.scope.outputs.mode }}
+          DRY_RUN: ${{ steps.scope.outputs.dry_run }}
+        run: |
+          args=("--mode=$MODE")
+          if [ "$DRY_RUN" = "true" ]; then
+            args+=("--dry-run")
+          fi
+          node 'Website ( WorkSpace )/scraper/price-intelligence/update-prices.js' "${args[@]}"
+
+      - name: Commit verified changes only
+        if: steps.scope.outputs.dry_run != 'true'
+        shell: bash
+        run: |
+          git add -- \
+            'Website ( WorkSpace )/data.json' \
+            'Website ( WorkSpace )/cairo.json' \
+            'Website ( WorkSpace )/gouna.json' \
+            'Website ( WorkSpace )/north_coast.json' \
+            'Website ( WorkSpace )/sokhna.json' \
+            'Website ( WorkSpace )/others.json' \
+            'Website ( WorkSpace )/price-status.json' \
+            'Website ( WorkSpace )/scraper/price-intelligence/state.json'
+          if git diff --cached --quiet; then
+            echo 'No verified property price change to publish.'
+            exit 0
+          fi
+          git config user.name 'xcelias-price-bot[bot]'
+          git config user.email 'xcelias-price-bot@users.noreply.github.com'
+          git commit -m 'chore(prices): refresh verified property data'
+          git push

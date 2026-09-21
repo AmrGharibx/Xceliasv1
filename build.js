@@ -351,6 +351,7 @@ const webFiles = [
   "sw.js",
   "search.worker.js",
   "data.json",
+  "price-status.json",
   "cairo.json",
   "gouna.json",
   "north_coast.json",

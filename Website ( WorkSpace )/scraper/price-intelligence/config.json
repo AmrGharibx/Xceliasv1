@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "userAgent": "XceliasPriceMonitor/1.0 (+https://xcelias.com)",
+  "timeoutMs": 18000,
+  "retryCount": 2,
+  "maxVerifiedChangeWithoutReview": 0.35,
+  "sources": {
+    "nawy": {
+      "enabled": true,
+      "pageSize": 50,
+      "minimumDelayMs": 650
+    },
+    "red": {
+      "enabled": true,
+      "pageSize": 20,
+      "minimumDelayMs": 400
+    },
+    "propertyFinder": {
+      "enabled": true,
+      "minimumDelayMs": 850
+    }
+  },
+  "approvedOfficialSources": []
+}

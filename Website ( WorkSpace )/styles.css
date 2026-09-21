@@ -3771,6 +3771,27 @@ body.modal-open #map {
   margin-left: 0.5rem;
 }
 
+.price-verification {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.65rem;
+  margin-top: 0.55rem;
+  color: var(--avaria-text-muted);
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+
+.price-verification a {
+  color: var(--avaria-gold);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.price-verification a:hover {
+  text-decoration: underline;
+}
+
 .info-label {
   color: var(--avaria-gold);
   font-size: 0.8rem;

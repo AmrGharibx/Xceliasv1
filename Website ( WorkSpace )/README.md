@@ -55,6 +55,37 @@ npm start
 - **1,383 map markers** with coordinates
 - Project details include: developer, payment plans, amenities, unit types, delivery dates
 
+## Verified price intelligence
+
+Property Explorer now has a source-backed price monitor at
+`scraper/price-intelligence/`. It deliberately replaces neither a missing price
+nor an uncertain match with a guess.
+
+- Every six hours it checks the public Nawy and RED project inventories.
+- Once per day it adds Property Finder's public new-project index as a wider
+  cross-check.
+- A value is shown in the explorer only when it is a verified **starting price**.
+  Older generated ranges are hidden rather than presented as current pricing.
+- A large change seen from only one source is held for the next matching run;
+  two matching sources can confirm it immediately.
+- The project modal shows its verification date and a direct link to the public
+  source. Price alerts refresh from these verified values when the explorer
+  loads.
+
+Useful commands:
+
+```bash
+npm.cmd run test:prices
+npm.cmd run prices:check
+npm.cmd run prices:daily
+```
+
+The GitHub Actions workflow in `.github/workflows/update-property-prices.yml`
+runs the unattended schedule and commits only verified data changes, allowing
+the normal Vercel Git deployment to publish them. Add any future official
+developer source only after it has been reviewed in
+`scraper/price-intelligence/config.json`.
+
 ## 📝 License
 
 MIT License - Built for RED Training Academy

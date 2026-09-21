@@ -84,7 +84,56 @@ function safeState(value) {
 }
 
 function sourceIds(summary) {
-  return summary.sources.map((source) => source.sourceId).sort();
+  return (summary.freshSources || summary.sources)
+    .map((source) => source.sourceId)
+    .sort();
+}
+
+function isRecent(timestamp, now, maximumHours) {
+  const then = new Date(timestamp).getTime();
+  const current = new Date(now).getTime();
+  return (
+    Number.isFinite(then) &&
+    Number.isFinite(current) &&
+    current >= then &&
+    current - then <= maximumHours * 60 * 60 * 1000
+  );
+}
+
+function mergeRetainedSources(project, summary, activeSourceNames, now, maximumHours) {
+  if (!summary || project?.priceMeta?.status !== 'verified') return summary;
+  if (!isRecent(project.priceMeta.updatedAt, now, maximumHours)) return summary;
+
+  const freshSources = summary.sources || [];
+  const freshIds = new Set(freshSources.map((source) => source.sourceId));
+  const retained = (project.priceMeta.sources || []).filter((source) => {
+    const observedPrice = Number(source?.observedPrice);
+    return (
+      source?.name &&
+      source?.sourceId &&
+      !activeSourceNames.has(source.name) &&
+      !freshIds.has(source.sourceId) &&
+      Number.isFinite(observedPrice) &&
+      observedPrice > 0
+    );
+  });
+  if (!retained.length) return summary;
+
+  const sources = [...freshSources, ...retained].sort(
+    (left, right) => Number(left.observedPrice) - Number(right.observedPrice),
+  );
+  return {
+    ...summary,
+    priceMin: Number(sources[0].observedPrice),
+    sourceCount: sources.length,
+    freshSourceCount: freshSources.length,
+    freshSources,
+    confidence:
+      project.priceMeta.confidence === 'high' && summary.confidence === 'high'
+        ? 'high'
+        : 'verified',
+    sources,
+  };
 }
 
 function recordPendingChange(pending, key, summary, now) {
@@ -215,6 +264,7 @@ async function run(options) {
   }
 
   const observationsBySource = createObservationIndex(observations);
+  const activeSourceNames = new Set(observations.map((observation) => observation.source));
   const state = safeState(readJson(STATE_PATH, { schemaVersion: 1, pending: {} }));
   const originalState = JSON.stringify(state);
   const nextProjects = [];
@@ -236,7 +286,17 @@ async function run(options) {
   data.projects.forEach((project, index) => {
     const key = projectKey(project, index);
     const { matches, skippedSources } = findProjectMatches(project, observationsBySource);
-    const summary = summarizeMatches(matches);
+    const freshSummary = summarizeMatches(matches);
+    const summary =
+      options.mode === 'hourly'
+        ? mergeRetainedSources(
+            project,
+            freshSummary,
+            activeSourceNames,
+            now,
+            Number(config.retainDailySourceHours) || 36,
+          )
+        : freshSummary;
     if (!summary) {
       runSummary.unmatchedProjects += 1;
       if (skippedSources.length) runSummary.lowConfidenceProjects += 1;
@@ -315,6 +375,7 @@ if (require.main === module) {
 
 module.exports = {
   createZoneData,
+  mergeRetainedSources,
   parseArgs,
   projectKey,
   run,

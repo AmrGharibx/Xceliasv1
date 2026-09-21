@@ -399,7 +399,8 @@ function shouldQuarantineChange(project, summary, pendingRecord, maxChange) {
   const currentPrice = Number(project.priceMin);
   if (!Number.isFinite(currentPrice) || currentPrice <= 0) return false;
   if (relativeDifference(currentPrice, summary.priceMin) <= maxChange) return false;
-  if (summary.sourceCount >= 2) return false;
+  const freshSourceCount = Number(summary.freshSourceCount) || summary.sourceCount;
+  if (freshSourceCount >= 2) return false;
 
   return !(
     pendingRecord &&

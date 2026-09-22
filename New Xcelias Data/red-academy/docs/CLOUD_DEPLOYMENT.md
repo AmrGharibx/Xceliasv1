@@ -56,6 +56,13 @@ source control.
    use SUPABASE_SERVICE_ROLE_KEY instead; the application supports that older
    JWT key only on the server side.
 
+   The current production workspace is served from
+   `https://xcelias.com/red-academy`. Its function allow-list includes both
+   `https://xcelias.com` and the existing GitHub Pages origin, while
+   `ACADEMY_APP_URL` is `https://xcelias.com/red-academy`. Keep both origins
+   during the transition so existing Pages links continue to work; do not add a
+   path to `ACADEMY_ALLOWED_ORIGINS`.
+
 4. In one temporary shell only, set SUPABASE_URL and SUPABASE_SECRET_KEY, then
    run:
 

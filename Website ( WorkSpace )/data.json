@@ -21495,9 +21495,8 @@
       "type": "residential",
       "priceMin": 28503000,
       "unitTypes": [
-        "Apartment",
-        "Penthouse",
-        "Twinhouse"
+        "Villa",
+        "Apartment"
       ],
       "areaMin": 85,
       "areaMax": 371,
@@ -21510,29 +21509,23 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 8 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/264-the-crown",
             "observedPrice": 28503000,
             "sourceId": "red:264"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1985-the-crown-extension",
-            "observedPrice": 30521000,
-            "sourceId": "nawy:1985"
           }
         ],
-        "updatedAt": "2026-09-21T14:54:37.284Z"
+        "updatedAt": "2026-09-22T12:40:53.110Z"
       }
     },
     {
@@ -38503,7 +38496,7 @@
       "zone": "October",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 16249676,
+      "priceMin": 21771308,
       "unitTypes": [
         "Apartment"
       ],
@@ -38530,11 +38523,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1555-district-1-boulevard",
-            "observedPrice": 16249676,
+            "observedPrice": 21771308,
             "sourceId": "nawy:1555"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-09-22T12:40:53.110Z"
       }
     },
     {

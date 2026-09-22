@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "lastPublishedAt": "2026-09-22T10:42:41.001Z",
+  "inventory": {
+    "source": "public project-asset inventory",
+    "usableRecords": 1751,
+    "sources": [
+      {
+        "source": "red-assets",
+        "ok": true,
+        "observations": 336
+      },
+      {
+        "source": "property-finder-assets",
+        "ok": true,
+        "observations": 1415
+      }
+    ]
+  },
+  "publication": {
+    "matchedProjects": 912,
+    "imagesAdded": 0,
+    "masterplansAdded": 0,
+    "layoutsAdded": 0,
+    "detailsCreated": 0,
+    "aliasImagesInherited": 2,
+    "aliasMasterplansInherited": 1,
+    "missingPhotos": 67,
+    "applied": true
+  },
+  "health": {
+    "totalProjects": 1929,
+    "projectsWithImages": 1862,
+    "projectsWithDirectMasterplans": 281,
+    "projectsWithDirectLayouts": 0
+  },
+  "note": "Only direct image assets from a strongly matched project are displayed. Source pages remain internal references until a specific masterplan or layout file can be verified."
+}

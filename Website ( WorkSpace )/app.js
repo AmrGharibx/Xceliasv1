@@ -300,6 +300,7 @@ const XI = {
 // Initialize global data containers to prevent crashes before data.js loads
 window.projects = window.projects || [];
 window.projectDetails = window.projectDetails || {};
+window.catalogueTotal = window.catalogueTotal || 0;
 
 // Production site base URL for QR codes in PDFs (update when deployed)
 const SITE_BASE_URL =
@@ -1936,6 +1937,30 @@ const MAP_VIEW_DEFAULTS = {
   satellite: { roadTiles: false, places: false, roadsVisible: false },
   hybrid: { roadTiles: true, places: false, roadsVisible: true },
 };
+
+// These map experiments stay implemented for a possible future re-enable, but
+// are intentionally dormant while the main Property Explorer stays focused.
+const HIDDEN_MAP_FEATURES = Object.freeze({
+  wiki: true,
+  atlas: true,
+  ucan: true,
+  roads: true,
+  zoneHints: true,
+  heatmap: true,
+});
+// These interface features remain implemented for a future re-enable, while
+// their legacy entry points stay unavailable in the focused explorer UI.
+const HIDDEN_INTERFACE_FEATURES = Object.freeze({
+  routeTour: false,
+  priceSourceAttribution: true,
+});
+const DISABLED_MAP_LAYERS = new Set(
+  [
+    HIDDEN_MAP_FEATURES.wiki ? "wiki" : null,
+    HIDDEN_MAP_FEATURES.atlas ? "atlas" : null,
+    HIDDEN_MAP_FEATURES.ucan ? "ucan" : null,
+  ].filter(Boolean),
+);
 let currentMapLayer = _readStoredMapLayer();
 let _ucanTwinRuntimeReady = false;
 
@@ -2418,6 +2443,18 @@ function _batchTooltips(open) {
 
 function toggleHeatmap() {
   const btn = document.getElementById("btn-heatmap");
+  if (HIDDEN_MAP_FEATURES.heatmap) {
+    isHeatmapMode = false;
+    if (btn) {
+      btn.classList.remove("active");
+      btn.setAttribute("aria-pressed", "false");
+    }
+    if (heatmapLayer && map && map.hasLayer(heatmapLayer)) {
+      map.removeLayer(heatmapLayer);
+    }
+    _syncProjectLayerVisibility();
+    return;
+  }
   isHeatmapMode = !isHeatmapMode;
 
   if (isHeatmapMode) {
@@ -2520,7 +2557,7 @@ function _hasRenderableRoadData() {
 }
 
 function _shouldDisplayRoadTiles() {
-  if (!_roadTilesVisible) return false;
+  if (HIDDEN_MAP_FEATURES.roads || !_roadTilesVisible) return false;
 
   // Atlas can show instant road labels immediately, but once vector roads are
   // present we hide the tile overlay so roads do not appear to load twice.
@@ -4427,7 +4464,7 @@ async function _fetchRoadCell(south, west, north, east) {
  * cells via _markBboxCells to suppress redundant viewport re-fetches.
  */
 async function fetchAndDrawRoads(overrideBbox) {
-  if (!_roadsVisible) return;
+  if (HIDDEN_MAP_FEATURES.roads || !_roadsVisible) return;
 
   if (overrideBbox) {
     // Zone button loads: one big query for the predefined bbox (small enough).
@@ -4463,6 +4500,7 @@ async function fetchAndDrawRoads(overrideBbox) {
 
 /** Load roads for a predefined zone — one Overpass call, cached permanently */
 async function loadZoneRoads(key) {
+  if (HIDDEN_MAP_FEATURES.roads) return;
   const zone = ZONE_ROAD_BBOXES[key];
   if (!zone) return;
   const btn = document.querySelector(`.road-zone-btn[data-zone="${key}"]`);
@@ -4499,11 +4537,11 @@ function setRoadHoverOnlyMode(enabled) {
 
 /** Toggle all road layers on/off (master switch) */
 function setAllRoadsVisible(visible) {
-  _roadsVisible = visible;
+  _roadsVisible = HIDDEN_MAP_FEATURES.roads ? false : visible;
   const btn = document.getElementById("btn-roads");
   if (btn) {
-    btn.classList.toggle("active", visible);
-    btn.setAttribute("aria-pressed", String(visible));
+    btn.classList.toggle("active", _roadsVisible);
+    btn.setAttribute("aria-pressed", String(_roadsVisible));
   }
   if (!visible) {
     _clearRoadHover();
@@ -4590,6 +4628,7 @@ let _egyptHighwaysLoaded = false;
 let _egyptHighwaysLoading = false;
 
 async function loadFullEgyptHighways() {
+  if (HIDDEN_MAP_FEATURES.roads) return;
   const btn = document.getElementById("road-egypt-full");
   const lbl = btn ? btn.querySelector(".road-egypt-label") : null;
   const sub = btn ? btn.querySelector(".road-egypt-sub") : null;
@@ -4707,6 +4746,10 @@ async function loadFullEgyptHighways() {
 // ────────────────────────────────────────────────────────────────────────────
 
 function toggleRoadPanel() {
+  if (HIDDEN_MAP_FEATURES.roads) {
+    closeRoadPanel();
+    return;
+  }
   _roadPanelOpen = !_roadPanelOpen;
   const panel = document.getElementById("road-panel");
   const btn = document.getElementById("btn-roads");
@@ -4745,7 +4788,7 @@ document.addEventListener(
 
 /** Toggle the instant tile-based road overlay — loads in <300ms, no Overpass needed */
 function setRoadTilesVisible(visible) {
-  _roadTilesVisible = visible;
+  _roadTilesVisible = HIDDEN_MAP_FEATURES.roads ? false : visible;
   _syncRoadTileOverlayVisibility();
 }
 
@@ -5336,6 +5379,7 @@ _updateCacheSize(); // init cache display so element is never blank on first ope
 // ────────────────────────────────────────────────────────────────────────────
 
 function _showZoneHint(key, label) {
+  if (HIDDEN_MAP_FEATURES.zoneHints || HIDDEN_MAP_FEATURES.roads) return;
   if (_zoneHintShown.has(key)) return;
   _zoneHintShown.add(key);
   const hint = document.getElementById("road-zone-hint");
@@ -5394,6 +5438,7 @@ function _maybePrimeAtlasRoads() {
 }
 
 function _detectZoneAtView() {
+  if (HIDDEN_MAP_FEATURES.zoneHints || HIDDEN_MAP_FEATURES.roads) return;
   if (_isAtlasMode()) return;
   if (!_roadsVisible) return;
   const key = _getZoneKeyAtView();
@@ -5430,6 +5475,7 @@ function _detectZoneAtView() {
 // ────────────────────────────────────────────────────────────────────────────
 
 const loadRoads = () => {
+  if (HIDDEN_MAP_FEATURES.roads) return;
   if (_roadLoadTimer) clearTimeout(_roadLoadTimer);
   _roadLoadTimer = setTimeout(() => {
     if (_isAtlasMode()) {
@@ -6211,7 +6257,9 @@ initSearchWorker();
 function _readStoredMapLayer() {
   try {
     const stored = localStorage.getItem(MAP_VIEW_STORAGE_KEY);
-    return MAP_VIEW_DEFAULTS[stored] ? stored : "hybrid";
+    return MAP_VIEW_DEFAULTS[stored] && !DISABLED_MAP_LAYERS.has(stored)
+      ? stored
+      : "hybrid";
   } catch (_) {
     return "hybrid";
   }
@@ -6238,7 +6286,10 @@ function _syncMapLayerButtons(layerName) {
 }
 
 function _applyMapLayerDefaults(layerName, options = {}) {
-  const mode = MAP_VIEW_DEFAULTS[layerName] ? layerName : "street";
+  const mode =
+    MAP_VIEW_DEFAULTS[layerName] && !DISABLED_MAP_LAYERS.has(layerName)
+      ? layerName
+      : "hybrid";
   const defaults = MAP_VIEW_DEFAULTS[mode];
   const previousMode = currentMapLayer;
 
@@ -6276,6 +6327,10 @@ function _applyMapLayerDefaults(layerName, options = {}) {
 }
 
 function switchMapLayer(layerName) {
+  if (DISABLED_MAP_LAYERS.has(layerName)) {
+    if (currentMapLayer !== "hybrid") switchMapLayer("hybrid");
+    return;
+  }
   // --- UCAN Mapbox Mode ---
   const mapboxDiv = document.getElementById("mapbox-map");
   const leafletDiv = document.getElementById("map");
@@ -6508,7 +6563,7 @@ const NeuralView = {
 
 function updateBrowseTelemetry(
   visibleCount,
-  totalCount = (window.projects || []).length,
+  totalCount = window.catalogueTotal || (window.projects || []).length,
 ) {
   if (window.RoutePlanner?.updateBrowseTelemetry) {
     window.RoutePlanner.updateBrowseTelemetry(visibleCount, totalCount);
@@ -6687,9 +6742,8 @@ async function renderProjects(projectList) {
 
   // Batch DOM operations
   listContainerEl.innerHTML = "";
-  const totalProjects = window.projects
-    ? window.projects.length
-    : projectList.length;
+  const totalProjects =
+    window.catalogueTotal || (window.projects ? window.projects.length : projectList.length);
   updateBrowseTelemetry(projectList.length, totalProjects);
 
   // Clear marker layers
@@ -7114,18 +7168,22 @@ async function createQRCodeDataUrl(text) {
 }
 
 function startCinematicTour() {
+  if (HIDDEN_INTERFACE_FEATURES.routeTour) return;
   return RoutePlanner.startTour();
 }
 
 function pauseCinematicTour() {
+  if (HIDDEN_INTERFACE_FEATURES.routeTour) return;
   return RoutePlanner.pauseTour();
 }
 
 function continueCinematicTour() {
+  if (HIDDEN_INTERFACE_FEATURES.routeTour) return;
   return RoutePlanner.resumeTour();
 }
 
 function endCinematicTour() {
+  if (HIDDEN_INTERFACE_FEATURES.routeTour) return;
   return RoutePlanner.endTour();
 }
 
@@ -7637,6 +7695,12 @@ if (searchInputEl) {
       filterProjects();
     }, 250),
   );
+
+  searchInputEl.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter") return;
+    event.preventDefault();
+    submitProjectSearch();
+  });
 }
 
 // Search Focus Animations with null checks
@@ -7688,6 +7752,57 @@ function _releaseSearchFocus() {
   if (document.activeElement === searchInputEl) {
     searchInputEl.blur();
   }
+}
+
+function normalizeProjectSearchValue(value) {
+  return String(value || "")
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim()
+    .replace(/\s+/g, " ");
+}
+
+function findProjectForSearch(query) {
+  const normalizedQuery = normalizeProjectSearchValue(query);
+  if (!normalizedQuery) return null;
+
+  const catalogue = Array.isArray(window.projects) ? window.projects : [];
+  const exact = catalogue.filter(
+    (project) => normalizeProjectSearchValue(project.name) === normalizedQuery,
+  );
+  if (exact.length === 1) return exact[0];
+
+  const startsWith = catalogue.filter((project) =>
+    normalizeProjectSearchValue(project.name).startsWith(normalizedQuery),
+  );
+  if (startsWith.length === 1) return startsWith[0];
+
+  const contains = catalogue.filter((project) =>
+    normalizeProjectSearchValue(project.name).includes(normalizedQuery),
+  );
+  return contains.length === 1 ? contains[0] : null;
+}
+
+function submitProjectSearch() {
+  const query = searchInputEl?.value?.trim() || "";
+  if (!query) {
+    filterProjects();
+    return false;
+  }
+
+  const match = findProjectForSearch(query);
+  if (!match) {
+    filterProjects();
+    return false;
+  }
+
+  if (searchInputEl) searchInputEl.value = match.name;
+  const feedbackContainer = document.getElementById("ai-feedback");
+  if (feedbackContainer) feedbackContainer.replaceChildren();
+  focusOnProject(match, { showModal: true, updateHash: true });
+  return true;
 }
 
 // --- VOICE COMMAND INTERFACE ---
@@ -7963,10 +8078,15 @@ function openProjectHover(p, options = {}) {
     }
   }
 
-  if (isClusterView && markerClusterGroup?.zoomToShowLayer) {
-    markerClusterGroup.zoomToShowLayer(targetMarker, function () {
+  const clusterMapReady = Boolean(markerClusterGroup?._map);
+  if (isClusterView && clusterMapReady && markerClusterGroup?.zoomToShowLayer) {
+    try {
+      markerClusterGroup.zoomToShowLayer(targetMarker, function () {
+        safeOpenMarkerPopup(targetMarker);
+      });
+    } catch {
       safeOpenMarkerPopup(targetMarker);
-    });
+    }
   } else {
     safeOpenMarkerPopup(targetMarker);
   }
@@ -8731,29 +8851,107 @@ function _projectPlaceholderDataUri(project) {
     "<svg xmlns='http://www.w3.org/2000/svg' width='800' height='380'>",
     "<defs>",
     "<linearGradient id='bg' x1='0%' y1='0%' x2='100%' y2='100%'>",
-    "<stop offset='0%' style='stop-color:#0d1120'/>",
-    "<stop offset='100%' style='stop-color:#1a1040'/>",
+    "<stop offset='0%' style='stop-color:#090a0e'/>",
+    "<stop offset='100%' style='stop-color:#231116'/>",
     "</linearGradient>",
     "</defs>",
     "<rect width='800' height='380' fill='url(#bg)'/>",
-    "<rect x='30' y='30' width='740' height='320' rx='16' fill='none' stroke='#6c3abe' stroke-width='1.5' stroke-opacity='0.5'/>",
-    "<text x='400' y='148' font-family='Arial,sans-serif' font-size='30' font-weight='bold' fill='#b48ff5' text-anchor='middle'>" +
+    "<rect x='30' y='30' width='740' height='320' rx='16' fill='none' stroke='#b52332' stroke-width='1.5' stroke-opacity='0.55'/>",
+    "<text x='400' y='148' font-family='Arial,sans-serif' font-size='30' font-weight='bold' fill='#f0d5d8' text-anchor='middle'>" +
       name +
       "</text>",
     dev
-      ? "<text x='400' y='194' font-family='Arial,sans-serif' font-size='18' fill='#aaa' text-anchor='middle'>by " +
+      ? "<text x='400' y='194' font-family='Arial,sans-serif' font-size='18' fill='#cfb9bd' text-anchor='middle'>by " +
         dev +
         "</text>"
       : "",
     zone
-      ? "<text x='400' y='232' font-family='Arial,sans-serif' font-size='15' fill='#6a6a8a' text-anchor='middle'>" +
+      ? "<text x='400' y='232' font-family='Arial,sans-serif' font-size='15' fill='#aa858b' text-anchor='middle'>" +
         zone +
         "</text>"
       : "",
-    "<text x='400' y='332' font-family='Arial,sans-serif' font-size='12' fill='#3a3a5a' text-anchor='middle'>Xcelias Property Explorer</text>",
+    "<text x='400' y='332' font-family='Arial,sans-serif' font-size='12' fill='#70535a' text-anchor='middle'>Xcelias Property Explorer</text>",
     "</svg>",
   ].join("");
   return "data:image/svg+xml," + encodeURIComponent(svg);
+}
+
+function getProjectAsset(value) {
+  const source =
+    value && typeof value === "object" && !Array.isArray(value) ? value : null;
+  const rawUrl = source ? source.url : value;
+  if (typeof rawUrl !== "string" || !rawUrl.trim()) return null;
+
+  const url = rawUrl.trim();
+  if (/^data:image\/(?:avif|gif|jpe?g|png|svg\+xml|webp);/i.test(url)) {
+    return { url, kind: "image" };
+  }
+
+  try {
+    const parsed = new URL(url);
+    if (parsed.protocol !== "https:") return null;
+    const requestedKind = String(source?.kind || source?.type || "").toLowerCase();
+    const path = parsed.pathname.toLowerCase();
+    const kind =
+      requestedKind === "image" ||
+      /\.(?:avif|gif|jpe?g|png|svg|webp)$/i.test(path)
+        ? "image"
+        : requestedKind === "pdf" || /\.pdf$/i.test(path)
+          ? "pdf"
+          : "reference";
+    return { url: parsed.toString(), kind };
+  } catch {
+    return null;
+  }
+}
+
+function createProjectAssetElement(assetValue, label, options = {}) {
+  const asset = getProjectAsset(assetValue);
+  if (!asset) return null;
+
+  if (asset.kind === "image") {
+    const image = document.createElement("img");
+    image.src = asset.url;
+    image.className = options.className || "layout-img";
+    image.alt = label;
+    image.loading = "lazy";
+    image.decoding = "async";
+    if (options.width) image.width = options.width;
+    if (options.height) image.height = options.height;
+    if (options.style) image.style.cssText = options.style;
+    image.addEventListener(
+      "error",
+      () => {
+        if (image.dataset.fallbackApplied === "true") return;
+        image.dataset.fallbackApplied = "true";
+        image.src = _projectPlaceholderDataUri(currentProject || {});
+      },
+      { once: true },
+    );
+    return image;
+  }
+
+  const link = document.createElement("a");
+  link.href = asset.url;
+  link.target = "_blank";
+  link.rel = "noopener noreferrer";
+  link.className = "asset-reference-link";
+  link.textContent = asset.kind === "pdf" ? `Open ${label} PDF` : `Open ${label}`;
+  return link;
+}
+
+function renderProjectAssets(container, values, label, options = {}) {
+  if (!container) return;
+  container.replaceChildren();
+  const assets = (Array.isArray(values) ? values : [values])
+    .map((value) => createProjectAssetElement(value, label, options))
+    .filter(Boolean);
+
+  if (!assets.length) {
+    container.textContent = `No ${label} Available`;
+    return;
+  }
+  assets.forEach((asset) => container.appendChild(asset));
 }
 
 function getProjectImages(project) {
@@ -8769,13 +8967,12 @@ function getProjectImages(project) {
     if (key) details = projectDetails[key];
   }
 
-  if (
-    details &&
-    details.images &&
-    Array.isArray(details.images) &&
-    details.images.length > 0
-  ) {
-    return details.images;
+  if (details && Array.isArray(details.images)) {
+    const images = details.images
+      .map((value) => getProjectAsset(value))
+      .filter((asset) => asset?.kind === "image")
+      .map((asset) => asset.url);
+    if (images.length) return images;
   }
 
   // Fallback: styled placeholder card for this project
@@ -8870,7 +9067,23 @@ async function openModal(proj) {
     images.forEach((url) => {
       const slide = document.createElement("div");
       slide.className = "swiper-slide";
-      slide.innerHTML = `<img src="${escHtml(url)}" loading="lazy" decoding="async" style="width: 100%; height: 100%; object-fit: cover;" alt="${escHtml(proj.name)}">`;
+      const image = document.createElement("img");
+      image.src = url;
+      image.loading = "lazy";
+      image.decoding = "async";
+      image.style.cssText =
+        "display: block; width: 100%; height: 100%; max-width: 100%; max-height: 100%; object-fit: contain; object-position: center; background: var(--avaria-bg);";
+      image.alt = proj.name;
+      image.addEventListener(
+        "error",
+        () => {
+          if (image.dataset.fallbackApplied === "true") return;
+          image.dataset.fallbackApplied = "true";
+          image.src = _projectPlaceholderDataUri(proj);
+        },
+        { once: true },
+      );
+      slide.appendChild(image);
       swiperWrapper.appendChild(slide);
     });
 
@@ -8947,32 +9160,22 @@ async function openModal(proj) {
 
   // Populate Masterplan
   const mpContainer = document.getElementById("masterplanContainer");
-  if (mpContainer) {
-    if (details.masterplan) {
-      mpContainer.innerHTML = `<img src="${escHtml(details.masterplan)}" class="masterplan-img" alt="Masterplan" loading="lazy" width="800" height="450" style="width: 100%; height: auto; aspect-ratio: 16/9; object-fit: contain;">`;
-    } else {
-      mpContainer.innerHTML = "No Masterplan Available";
-    }
-  }
+  renderProjectAssets(mpContainer, details.masterplan, "Masterplan", {
+    className: "masterplan-img",
+    width: 800,
+    height: 450,
+    style: "width: 100%; height: auto; aspect-ratio: 16/9; object-fit: contain;",
+  });
 
   // Populate Layouts
   const layoutContainer = document.getElementById("layoutsContainer");
-  if (layoutContainer) {
-    if (
-      details.layouts &&
-      Array.isArray(details.layouts) &&
-      details.layouts.length > 0
-    ) {
-      layoutContainer.innerHTML = details.layouts
-        .map(
-          (url) =>
-            `<img src="${escHtml(url)}" class="layout-img" alt="Layout" loading="lazy" width="400" height="300" style="width: 100%; height: auto; aspect-ratio: 4/3; object-fit: contain; margin-bottom: 10px;">`,
-        )
-        .join("");
-    } else {
-      layoutContainer.innerHTML = "No Layouts Available";
-    }
-  }
+  renderProjectAssets(layoutContainer, details.layouts, "Layout", {
+    className: "layout-img",
+    width: 400,
+    height: 300,
+    style:
+      "width: 100%; height: auto; aspect-ratio: 4/3; object-fit: contain; margin-bottom: 10px;",
+  });
 
   const modalDesc = document.getElementById("modalDesc");
   const modalUnits = document.getElementById("modalUnits");
@@ -9054,8 +9257,16 @@ async function openModal(proj) {
           ? `سعر ابتدائي موثّق من ${sourceCount} مصدر${date ? ` • ${date}` : ""}`
           : `Verified starting price from ${sourceCount} source${sourceCount === 1 ? "" : "s"}${date ? ` • ${date}` : ""}`;
 
-      const source = getSafePriceSource(verifiedPrice.meta);
+      if (HIDDEN_INTERFACE_FEATURES.priceSourceAttribution) {
+        modalPriceMetaText.textContent = date
+          ? `Latest pricing check - ${date} - refreshes hourly`
+          : "Latest pricing check - refreshes hourly";
+      }
+
       if (modalPriceSourceLink) {
+        const source = HIDDEN_INTERFACE_FEATURES.priceSourceAttribution
+          ? null
+          : getSafePriceSource(verifiedPrice.meta);
         if (source) {
           modalPriceSourceLink.href = source.url;
           modalPriceSourceLink.textContent =
@@ -9220,6 +9431,7 @@ function applyTheme() {
 
   // Update road layer colors to match new theme
   updateRoadColors();
+  window.RoutePlanner?.refreshTheme?.();
 
   // Update active state of buttons
   document.querySelectorAll(".theme-btn").forEach((btn) => {
@@ -10316,7 +10528,19 @@ window.addEventListener(
 async function loadAllData() {
   try {
     updateLoadingStatus("Loading project data...");
-    const response = await fetch("data.json");
+    const [response, priceStatus, catalogStatus] = await Promise.all([
+      fetch("data.json", { cache: "no-store" }),
+      fetch("price-status.json", { cache: "no-store" })
+        .then((statusResponse) =>
+          statusResponse.ok ? statusResponse.json() : null,
+        )
+        .catch(() => null),
+      fetch("catalog-status.json", { cache: "no-store" })
+        .then((statusResponse) =>
+          statusResponse.ok ? statusResponse.json() : null,
+        )
+        .catch(() => null),
+    ]);
     if (!response.ok)
       throw new Error(`Failed to load data.json: ${response.status}`);
 
@@ -10326,6 +10550,9 @@ async function loadAllData() {
 
     window.projects = data.projects || [];
     window.projectDetails = data.projectDetails || {};
+    window.priceStatus = priceStatus;
+    window.catalogueTotal =
+      Number(catalogStatus?.publication?.totalProjects) || window.projects.length;
 
     // Validate project data
     window.projects = window.projects.filter((p) => {
@@ -10403,17 +10630,31 @@ const AIConcierge = {
   geminiEndpoint: "/api/gemini",
 
   // System prompt that gives AI full context
-  getSystemPrompt() {
+  getSystemPrompt(query = "") {
     const knowledge = this.getKnowledge();
-    const projectsSummary = knowledge.projects
-      .slice(0, 50)
+    const projectsSummary = this.getRelevantProjects(query, 50)
       .map((p) => {
-        const details = projectDetails[p.name] || {};
-        return `- ${p.name}: Developer=${p.dev || "N/A"}, Zone=${p.zone || "N/A"}, DownPayment=${p.minDownPayment || "N/A"}%, Installments=${p.maxInstallmentYears || "N/A"}yrs, Delivery=${p.deliveryYear || "TBA"}, Units=${details.unitTypes || "Various"}, Amenities=${details.amenities ? details.amenities.substring(0, 100) : "N/A"}`;
+        const details = window.projectDetails[p.name] || {};
+        const verifiedPrice = getVerifiedStartingPrice(p);
+        const price = verifiedPrice
+          ? `Verified starting price=${verifiedPrice.price.toLocaleString("en-US")} EGP`
+          : "Price=confirmation required";
+        return `- ${p.name}: Developer=${p.dev || "N/A"}, Zone=${p.zone || "N/A"}, ${price}, DownPayment=${p.downPayment ?? "N/A"}%, Installments=${p.installmentYears ?? "N/A"}yrs, Delivery=${p.deliveryYear || "TBA"}, Units=${details.unitTypes || "Various"}, Amenities=${details.amenities ? details.amenities.substring(0, 100) : "N/A"}`;
       })
       .join("\n");
 
+    const priceStatus = window.priceStatus || {};
+    const priceIntelligence = Number.isFinite(Number(priceStatus.verifiedProjects))
+      ? `Verified-price monitor: ${Number(priceStatus.verifiedProjects).toLocaleString("en-US")} projects last refreshed ${priceStatus.lastPublishedAt || "at an unknown time"}.`
+      : "Verified-price monitor status is unavailable; do not quote a current price unless the selected project is marked verified.";
+
     const knowledgeBlock = `
+LIVE PRICE INTEGRITY:
+- ${priceIntelligence}
+- Treat a price as current only when this project line says "Verified starting price".
+- If it says "Price=confirmation required", never quote or estimate a number. Say that pricing needs a live confirmation.
+- Catalog observations, historic values, and payment terms may be useful context but are not a current price quote.
+
 ═══════════════════════════════════════════════
 🧠 بيانات السوق (استخدمها في أي وقت):
 ═══════════════════════════════════════════════
@@ -10856,6 +11097,37 @@ ${knowledgeBlock}
     return this._knowledgeCache;
   },
 
+  // Select information relevant to the active question rather than permanently
+  // supplying the model with an arbitrary first slice of the catalogue.
+  getRelevantProjects(query, limit = 50) {
+    const projectsArray = this.getKnowledge().projects || [];
+    const terms = String(query || "")
+      .toLocaleLowerCase()
+      .match(/[a-z0-9\u0600-\u06ff]+/gi);
+    if (!terms || !terms.length) return projectsArray.slice(0, limit);
+
+    return projectsArray
+      .map((project, index) => {
+        const details = window.projectDetails[project.name] || {};
+        const name = String(project.name || "").toLocaleLowerCase();
+        const developer = String(project.dev || "").toLocaleLowerCase();
+        const zone = String(project.zone || "").toLocaleLowerCase();
+        const detailText = `${details.unitTypes || ""} ${details.amenities || ""}`.toLocaleLowerCase();
+        const score = terms.reduce((total, term) => {
+          if (name === term) return total + 80;
+          if (name.includes(term)) return total + 40;
+          if (developer.includes(term)) return total + 24;
+          if (zone.includes(term)) return total + 18;
+          if (detailText.includes(term)) return total + 6;
+          return total;
+        }, 0);
+        return { project, index, score };
+      })
+      .sort((left, right) => right.score - left.score || left.index - right.index)
+      .slice(0, limit)
+      .map(({ project }) => project);
+  },
+
   // Intent Recognition
   recognizeIntent(message) {
     const lower = message.toLowerCase();
@@ -11063,7 +11335,7 @@ ${knowledgeBlock}
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          systemPrompt: this.getSystemPrompt(),
+          systemPrompt: this.getSystemPrompt(message),
           messages: messages,
           generationConfig: {
             temperature: 0.9,
@@ -11108,7 +11380,7 @@ ${knowledgeBlock}
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          systemPrompt: this.getSystemPrompt(),
+          systemPrompt: this.getSystemPrompt(message),
           messages: messages,
           generationConfig: {
             temperature: 0.85,
@@ -12806,7 +13078,7 @@ const RoutePlanner = {
 
   updateBrowseTelemetry(
     visibleCount,
-    totalCount = (window.projects || []).length,
+    totalCount = window.catalogueTotal || (window.projects || []).length,
   ) {
     const countEl = document.getElementById("browseProjectCount");
     const routeEl = document.getElementById("browseRouteContext");
@@ -12878,6 +13150,37 @@ const RoutePlanner = {
     this.projectHighlightCache.clear();
     this.projectHighlightSignature = "";
     this.browseTelemetrySignature = "";
+  },
+
+  refreshTheme() {
+    if (!this.initialized) return;
+
+    const styles = getComputedStyle(document.documentElement);
+    const read = (name, fallback) =>
+      styles.getPropertyValue(name).trim() || fallback;
+
+    this.layers.primary?.setStyle({
+      color: read("--route-primary", "#ff6571"),
+      weight: 6,
+      opacity: 0.95,
+    });
+    this.layers.glow?.setStyle({
+      color: read("--route-glow", "rgba(255, 70, 82, 0.22)"),
+      weight: 10,
+      opacity: 0.2,
+    });
+    this.layers.alternatives?.setStyle({
+      color: read("--route-alt", "rgba(255, 184, 122, 0.34)"),
+      weight: 3.5,
+      opacity: 0.58,
+    });
+    this.layers.connectors?.eachLayer((layer) => {
+      if (typeof layer.setStyle === "function") {
+        layer.setStyle({
+          color: read("--route-connector", "rgba(255, 196, 140, 0.42)"),
+        });
+      }
+    });
   },
 
   refreshProjectListCache(force = false) {

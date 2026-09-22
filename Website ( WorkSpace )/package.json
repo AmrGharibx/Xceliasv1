@@ -9,6 +9,15 @@
     "prices:check": "node scraper/price-intelligence/update-prices.js --mode=hourly --dry-run",
     "prices:daily": "node scraper/price-intelligence/update-prices.js --mode=daily",
     "test:prices": "node --test scraper/price-intelligence/*.test.js",
+    "catalog:check": "node scraper/catalog-intelligence/refresh-catalog.js --dry-run",
+    "catalog:sync": "node scraper/catalog-intelligence/refresh-catalog.js --apply",
+    "test:catalog": "node --test scraper/catalog-intelligence/*.test.js",
+    "assets:check": "node scraper/asset-intelligence/refresh-assets.js --dry-run",
+    "assets:sync": "node scraper/asset-intelligence/refresh-assets.js --apply",
+    "test:assets": "node --test scraper/asset-intelligence/*.test.js",
+    "references:check": "node scraper/reference-asset-intelligence/refresh-reference-assets.js --dry-run",
+    "references:sync": "node scraper/reference-asset-intelligence/refresh-reference-assets.js --apply",
+    "test:references": "node --test scraper/reference-asset-intelligence/*.test.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [

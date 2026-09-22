@@ -1788,6 +1788,176 @@
         ],
         "updatedAt": "2026-09-21T14:51:00.924Z"
       }
+    },
+    {
+      "name": "Siba El Gouna",
+      "dev": "Orascom Development Egypt",
+      "lat": 27.4147524074409,
+      "lng": 33.65448551018278,
+      "zone": "El Gouna",
+      "status": "Available",
+      "type": "residential",
+      "unitTypes": [
+        "Twinhouse",
+        "Villa"
+      ],
+      "downPayment": 15,
+      "installmentYears": 5,
+      "paymentPlan": "15% Down Payment, 5 Years Installments",
+      "catalogMeta": {
+        "status": "observed",
+        "sourceId": "nawy-inventory:2496",
+        "observedAt": "2026-09-22T10:02:00.468Z"
+      }
+    },
+    {
+      "name": "Nuba",
+      "dev": "Orascom Development Egypt",
+      "lat": 27.38961080692141,
+      "lng": 33.6680946016547,
+      "zone": "El Gouna",
+      "status": "Available",
+      "type": "residential",
+      "unitTypes": [
+        "Apartment"
+      ],
+      "downPayment": 15,
+      "installmentYears": 5,
+      "paymentPlan": "15% Down Payment, 5 Years Installments",
+      "catalogMeta": {
+        "status": "observed",
+        "sourceId": "nawy-inventory:2495",
+        "observedAt": "2026-09-22T10:02:00.468Z"
+      }
+    },
+    {
+      "name": "Ledge-Makadi Heights",
+      "dev": "Orascom Development Egypt",
+      "lat": 26.970191157865784,
+      "lng": 33.902681021831114,
+      "zone": "Hurghada",
+      "status": "Available",
+      "type": "residential",
+      "unitTypes": [
+        "Duplex",
+        "Chalet",
+        "Loft",
+        "Villa"
+      ],
+      "downPayment": 0,
+      "installmentYears": 7,
+      "paymentPlan": "0% Down Payment, 7 Years Installments",
+      "catalogMeta": {
+        "status": "observed",
+        "sourceId": "nawy-inventory:2047",
+        "observedAt": "2026-09-22T10:02:00.468Z"
+      },
+      "priceMin": 13225000
+    },
+    {
+      "name": "Siyal",
+      "dev": "Orascom Development Egypt",
+      "lat": 26.97443581591233,
+      "lng": 33.889450316408045,
+      "zone": "Hurghada",
+      "status": "Available",
+      "type": "residential",
+      "unitTypes": [
+        "Villa",
+        "Twinhouse",
+        "Townhouse"
+      ],
+      "downPayment": 15,
+      "installmentYears": 8,
+      "paymentPlan": "15% Down Payment, 8 Years Installments",
+      "catalogMeta": {
+        "status": "observed",
+        "sourceId": "nawy-inventory:1965",
+        "observedAt": "2026-09-22T10:02:00.468Z"
+      },
+      "priceMin": 23575000
+    },
+    {
+      "name": "Veranda",
+      "dev": "Selena Developments",
+      "lat": 27.03636030702748,
+      "lng": 33.874901256262234,
+      "zone": "Hurghada",
+      "status": "Available",
+      "type": "residential",
+      "unitTypes": [
+        "Studio"
+      ],
+      "downPayment": 0,
+      "installmentYears": 0,
+      "paymentPlan": "0% Down Payment, 0 Years Installments",
+      "catalogMeta": {
+        "status": "observed",
+        "sourceId": "nawy-inventory:2499",
+        "observedAt": "2026-09-22T10:02:00.468Z"
+      }
+    },
+    {
+      "name": "Creek Hotel & Residences",
+      "dev": "Benaa Real Estate Development and Investment",
+      "lat": 27.37723002433431,
+      "lng": 33.659727440061204,
+      "zone": "El Gouna",
+      "status": "Available",
+      "type": "residential",
+      "unitTypes": [
+        "Apartment"
+      ],
+      "downPayment": 0,
+      "installmentYears": 0,
+      "paymentPlan": "0% Down Payment, 0 Years Installments",
+      "catalogMeta": {
+        "status": "observed",
+        "sourceId": "nawy-inventory:2296",
+        "observedAt": "2026-09-22T10:02:00.468Z"
+      }
+    },
+    {
+      "name": "makadina",
+      "dev": "Travco properties",
+      "lat": 26.971938436978675,
+      "lng": 33.867896157496375,
+      "zone": "Hurghada",
+      "status": "Available",
+      "type": "residential",
+      "unitTypes": [
+        "Apartment",
+        "Townhouse",
+        "Twinhouse",
+        "Villa"
+      ],
+      "downPayment": 10,
+      "installmentYears": 8,
+      "paymentPlan": "10% Down Payment, 8 Years Installments",
+      "catalogMeta": {
+        "status": "observed",
+        "sourceId": "nawy-inventory:2025",
+        "observedAt": "2026-09-22T10:02:00.468Z"
+      },
+      "priceMin": 7750000
+    },
+    {
+      "name": "Alcamar  Sahl Hasheesh",
+      "dev": "Core Developments",
+      "lat": 27.062370609895737,
+      "lng": 33.89367302086981,
+      "zone": "Hurghada",
+      "status": "Available",
+      "type": "residential",
+      "unitTypes": [],
+      "downPayment": 0,
+      "installmentYears": 0,
+      "paymentPlan": "0% Down Payment, 0 Years Installments",
+      "catalogMeta": {
+        "status": "observed",
+        "sourceId": "nawy-inventory:265",
+        "observedAt": "2026-09-22T10:02:00.468Z"
+      }
     }
   ],
   "projectDetails": {
@@ -2188,11 +2358,15 @@
       "status": "Under Construction",
       "amenities": "Security, Green Spaces, Parking",
       "description": "A premium residential project by Orascom Development Egypt in Hurghada.",
-      "masterplan": "",
+      "masterplan": "https://red-prod.s3.eu-central-1.amazonaws.com/red/media/unitapp/images/Orascom_Makadi_Heights_Master_Plan.png",
       "layouts": [],
       "images": [
         "https://prod-images.nawy.com/processed/compound_image/image/6941/high.webp"
-      ]
+      ],
+      "assetMeta": {
+        "lastEnrichedAt": "2026-09-22T10:12:21.590Z",
+        "sourceId": "red-asset:52"
+      }
     },
     "Fanadir Lagoons": {
       "unitTypes": "Apartments, Villas",
@@ -2344,11 +2518,15 @@
       "status": "Under Construction",
       "amenities": "Security, Green Spaces, Parking",
       "description": "A premium residential project by The Land Developers (TLD) in Hurghada.",
-      "masterplan": "",
+      "masterplan": "https://red-prod.s3.eu-central-1.amazonaws.com/red/media/projectapp/master_plan/943805b4-b938-45fe-a2f8-210c5c669096.png",
       "layouts": [],
       "images": [
         "https://prod-images.nawy.com/processed/compound_image/image/6199/high.webp"
-      ]
+      ],
+      "assetMeta": {
+        "lastEnrichedAt": "2026-09-22T10:40:57.499Z",
+        "sourceId": "red-asset:42"
+      }
     },
     "Miramar Residence": {
       "unitTypes": "Apartments, Villas",
@@ -2465,6 +2643,118 @@
       "layouts": [],
       "images": [
         "https://prod-images.nawy.com/processed/compound_image/image/9919/high.webp"
+      ]
+    },
+    "Siba El Gouna": {
+      "unitTypes": "Twinhouse, Villa",
+      "areas": "",
+      "paymentPlan": "15% Down Payment, 5 Years Installments",
+      "status": "Available",
+      "amenities": "",
+      "description": "Project information is being verified.",
+      "masterplan": "",
+      "layouts": [],
+      "images": [
+        "https://prod-images.nawy.com/processed/inventory/compounds/2496/cover-images/siba%20el%20gouna/high.webp"
+      ]
+    },
+    "Nuba": {
+      "unitTypes": "Apartment",
+      "areas": "",
+      "paymentPlan": "15% Down Payment, 5 Years Installments",
+      "status": "Available",
+      "amenities": "",
+      "description": "Project information is being verified.",
+      "masterplan": "",
+      "layouts": [],
+      "images": [
+        "https://prod-images.nawy.com/processed/inventory/compounds/2495/cover-images/nuba/high.webp"
+      ]
+    },
+    "Ledge-Makadi Heights": {
+      "unitTypes": "Duplex, Chalet, Loft, Villa",
+      "areas": "",
+      "paymentPlan": "0% Down Payment, 7 Years Installments",
+      "status": "Available",
+      "amenities": "",
+      "description": "Project information is being verified.",
+      "masterplan": "",
+      "layouts": [],
+      "images": [
+        "https://prod-images.nawy.com/processed/inventory/compounds/2047/gallery/Screenshot%202026-07-14%20122328/high.webp"
+      ]
+    },
+    "Siyal": {
+      "unitTypes": "Villa, Twinhouse, Townhouse",
+      "areas": "",
+      "paymentPlan": "15% Down Payment, 8 Years Installments",
+      "status": "Available",
+      "amenities": "",
+      "description": "Project information is being verified.",
+      "masterplan": "https://red-prod.s3.eu-central-1.amazonaws.com/red/media/unitapp/images/Orascom_Development_Siyal_Masterplan.png",
+      "layouts": [],
+      "images": [
+        "https://prod-images.nawy.com/processed/inventory/compounds/1965/gallery/Screenshot%202026-02-15%20153219/high.webp"
+      ],
+      "assetMeta": {
+        "lastEnrichedAt": "2026-09-22T10:12:21.590Z",
+        "sourceId": "red-asset:30949"
+      }
+    },
+    "Veranda": {
+      "unitTypes": "Studio",
+      "areas": "",
+      "paymentPlan": "0% Down Payment, 0 Years Installments",
+      "status": "Available",
+      "amenities": "",
+      "description": "Project information is being verified.",
+      "masterplan": "",
+      "layouts": [],
+      "images": [
+        "https://prod-images.nawy.com/processed/inventory/compounds/2499/cover-images/veranda/high.webp"
+      ]
+    },
+    "Creek Hotel & Residences": {
+      "unitTypes": "Apartment",
+      "areas": "",
+      "paymentPlan": "0% Down Payment, 0 Years Installments",
+      "status": "Available",
+      "amenities": "",
+      "description": "Project information is being verified.",
+      "masterplan": "",
+      "layouts": [],
+      "images": [
+        "https://prod-images.nawy.com/processed/creekhotelresidences/files/cover-images/high.webp"
+      ]
+    },
+    "makadina": {
+      "unitTypes": "Apartment, Townhouse, Twinhouse, Villa",
+      "areas": "",
+      "paymentPlan": "10% Down Payment, 8 Years Installments",
+      "status": "Available",
+      "amenities": "",
+      "description": "Project information is being verified.",
+      "masterplan": "https://red-prod.s3.eu-central-1.amazonaws.com/red/media/unitapp/images/Travco_Makadina_Masterplan_Resized.png",
+      "layouts": [],
+      "images": [
+        "https://prod-images.nawy.com/processed/inventory/compounds/2025/gallery/Screenshot%202026-06-02%20120313/high.webp"
+      ],
+      "assetMeta": {
+        "lastEnrichedAt": "2026-09-22T10:12:21.590Z",
+        "sourceId": "red-asset:30963"
+      }
+    },
+    "Alcamar  Sahl Hasheesh": {
+      "unitTypes": "",
+      "areas": "",
+      "paymentPlan": "0% Down Payment, 0 Years Installments",
+      "status": "Available",
+      "amenities": "",
+      "description": "Project information is being verified.",
+      "masterplan": "",
+      "layouts": [],
+      "images": [
+        "https://prod-images.nawy.com/processed/area/image/265/high.webp"
       ]
     }
   }

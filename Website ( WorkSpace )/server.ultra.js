@@ -357,6 +357,7 @@ if (IS_LOCALHOST) {
             "'self'",
             "data:",
             "blob:",
+            "https:",
             "https://*.basemaps.cartocdn.com",
             "https://server.arcgisonline.com",
             "https://*.tile.openstreetmap.org",

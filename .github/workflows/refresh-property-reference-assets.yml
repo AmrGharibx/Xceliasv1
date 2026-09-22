@@ -1,0 +1,69 @@
+name: Refresh Property Explorer verified reference assets
+
+on:
+  schedule:
+    # Masterplans and floor layouts change infrequently. A weekly, polite scan
+    # avoids unnecessary pressure on developer sites.
+    - cron: '17 4 * * 0'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Validate reference pages without publishing changes
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+concurrency:
+  group: property-reference-asset-intelligence
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24.0.0
+
+      - name: Validate reference-asset rules
+        run: node --test 'Website ( WorkSpace )/scraper/reference-asset-intelligence/core.test.js'
+
+      - name: Refresh explicit plans and project cover images
+        shell: bash
+        env:
+          DRY_RUN: ${{ inputs.dry_run || 'false' }}
+        run: |
+          if [ "$DRY_RUN" = "true" ]; then
+            node 'Website ( WorkSpace )/scraper/reference-asset-intelligence/refresh-reference-assets.js' --dry-run
+          else
+            node 'Website ( WorkSpace )/scraper/reference-asset-intelligence/refresh-reference-assets.js' --apply
+          fi
+
+      - name: Commit verified reference-asset changes only
+        if: inputs.dry_run != true
+        shell: bash
+        run: |
+          git add -- \
+            'Website ( WorkSpace )/data.json' \
+            'Website ( WorkSpace )/cairo.json' \
+            'Website ( WorkSpace )/gouna.json' \
+            'Website ( WorkSpace )/north_coast.json' \
+            'Website ( WorkSpace )/sokhna.json' \
+            'Website ( WorkSpace )/others.json' \
+            'Website ( WorkSpace )/reference-asset-status.json'
+          if git diff --cached --quiet; then
+            echo 'No verified reference asset change to publish.'
+            exit 0
+          fi
+          git config user.name 'xcelias-reference-assets-bot[bot]'
+          git config user.email 'xcelias-reference-assets-bot@users.noreply.github.com'
+          git commit -m 'chore(assets): refresh verified project plans'
+          git push

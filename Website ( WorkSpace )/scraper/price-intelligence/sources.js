@@ -196,6 +196,99 @@ async function collectNawy(requester, sourceConfig) {
   }
 }
 
+function nawyInventoryRecord(project) {
+  const coordinates = Array.isArray(project?.coordinates) ? project.coordinates : [];
+  const plan = project?.developerPlan || {};
+  const downPayment = toFiniteNumber(plan.downPaymentPercentage);
+  const installmentYears = toFiniteNumber(plan.numberOfInstallmentYears);
+  const unitTypes = Array.isArray(project?.propertyTypes)
+    ? project.propertyTypes.map((item) => item?.name).filter(Boolean)
+    : [];
+
+  const id = Number(project?.id);
+  const name = String(project?.name || '').trim();
+  const developer = String(project?.developerName || '').trim();
+  const zone = String(project?.parentAreaName || project?.areaName || '').trim();
+  const imageUrl = httpsUrl(project?.imageUrl);
+  const lat = toFiniteNumber(coordinates[1]);
+  const lng = toFiniteNumber(coordinates[0]);
+
+  if (!Number.isFinite(id) || !name || !developer || lat === null || lng === null) {
+    return null;
+  }
+
+  return {
+    source: 'Nawy inventory',
+    sourceId: `nawy-inventory:${id}`,
+    name,
+    developer,
+    zone,
+    lat,
+    lng,
+    imageUrl,
+    slug: String(project?.slug || '').trim(),
+    priceMin:
+      String(plan.currency || 'EGP').toUpperCase() === 'EGP'
+        ? validEgpPrice(plan.minPrice)
+        : null,
+    currency: 'EGP',
+    unitTypes,
+    downPayment,
+    installmentYears,
+    paymentPlan: paymentPlan(downPayment, installmentYears),
+  };
+}
+
+/**
+ * Fetch the active public compound inventory used for catalogue coverage and
+ * image enrichment. This remains separate from price publication: a source
+ * observation alone never marks a price as verified.
+ */
+async function collectNawyInventory(config) {
+  const requester = createRequester(config || {});
+  const sourceConfig = config?.sources?.nawy || {};
+  const key = 'nawy-inventory';
+  try {
+    const pageSize = Math.min(50, Math.max(12, Number(sourceConfig.pageSize) || 50));
+    const getPage = (page) => {
+      const url = new URL('https://listing-api.nawy.com/v1/search/compounds');
+      url.searchParams.set('page', String(page));
+      url.searchParams.set('pageSize', String(pageSize));
+      return requester.json(key, url.toString(), {
+        minimumDelayMs: Math.max(650, Number(sourceConfig.minimumDelayMs) || 0),
+        headers: {
+          'x-region': 'eg',
+          platform: 'web',
+        },
+      });
+    };
+
+    const firstPage = await getPage(1);
+    const total = Number(firstPage?.total);
+    if (!Array.isArray(firstPage?.results) || !Number.isFinite(total) || total < 0) {
+      throw new Error('Nawy inventory response shape changed');
+    }
+    const pageCount = Math.ceil(total / pageSize);
+    if (pageCount > 100) throw new Error('Nawy inventory pagination is outside safe bounds');
+
+    const rows = [...firstPage.results];
+    for (let page = 2; page <= pageCount; page += 1) {
+      const nextPage = await getPage(page);
+      if (!Array.isArray(nextPage?.results)) {
+        throw new Error('Nawy inventory page shape changed');
+      }
+      rows.push(...nextPage.results);
+    }
+
+    return {
+      ...sourceResult(key, rows.map(nawyInventoryRecord).filter(Boolean)),
+      total,
+    };
+  } catch {
+    return { ...sourceResult(key, [], true), total: 0 };
+  }
+}
+
 function redUnitTypes(typeCounts) {
   if (!typeCounts || typeof typeCounts !== 'object') return [];
   if (Array.isArray(typeCounts)) {
@@ -231,15 +324,65 @@ function redObservation(project) {
   };
 }
 
-async function collectRed(requester, sourceConfig) {
-  const key = 'red';
+function directImageUrl(value) {
+  const safeUrl = httpsUrl(value);
+  if (!safeUrl) return null;
+  return /\.(?:avif|gif|jpe?g|png|svg|webp)$/i.test(new URL(safeUrl).pathname)
+    ? safeUrl
+    : null;
+}
+
+function projectImageUrls(value) {
+  const values = Array.isArray(value) ? value : [value];
+  return values
+    .map((item) => (item && typeof item === 'object' ? item.image || item.url : item))
+    .map(directImageUrl)
+    .filter(Boolean);
+}
+
+function redAssetRecord(project) {
+  const imageUrls = [
+    ...projectImageUrls(project?.cover_image),
+    ...projectImageUrls(project?.images),
+    ...projectImageUrls(project?.project_images),
+  ];
+  const layouts = [
+    ...projectImageUrls(project?.layouts),
+    ...projectImageUrls(project?.floor_plans),
+    ...projectImageUrls(project?.floorPlans),
+  ];
+  const sourceId = Number(project?.id);
+  const name = String(project?.name || '').trim();
+  const developer = String(project?.developer?.name || '').trim();
+  const zone = String(project?.area?.name || '').trim();
+  if (!Number.isFinite(sourceId) || !name || !developer || !zone) return null;
+
+  return {
+    source: 'RED asset',
+    sourceId: `red-asset:${sourceId}`,
+    name,
+    developer,
+    zone,
+    lat: toFiniteNumber(project?.lat),
+    lng: toFiniteNumber(project?.lng),
+    // The matching index uses a finite value. Asset enrichment never publishes
+    // this observation as a verified price.
+    priceMin: validEgpPrice(project?.starts_from) || 0,
+    imageUrls: [...new Set(imageUrls)],
+    masterplan: directImageUrl(project?.master_plan?.image),
+    layouts: [...new Set(layouts)],
+    url: httpsUrl(`https://redww.com/en/projects/${project?.slug || ''}`),
+  };
+}
+
+async function collectRedRows(requester, sourceConfig, key = 'red', options = {}) {
   try {
     const pageSize = Math.min(100, Math.max(12, Number(sourceConfig.pageSize) || 100));
     const getPage = (page) => {
       const url = new URL('https://backend.redww.com/en/api/projects/');
       url.searchParams.set('page', String(page));
       url.searchParams.set('page_size', String(pageSize));
-      url.searchParams.set('show_sold_out', 'false');
+      url.searchParams.set('show_sold_out', options.includeSoldOut ? 'true' : 'false');
       return requester.json(key, url.toString(), {
         minimumDelayMs: sourceConfig.minimumDelayMs,
         headers: {
@@ -264,10 +407,34 @@ async function collectRed(requester, sourceConfig) {
       rows.push(...nextPage.results);
     }
 
-    return sourceResult(key, rows.map(redObservation).filter(Boolean));
+    return sourceResult(key, rows);
   } catch {
     return sourceResult(key, [], true);
   }
+}
+
+async function collectRed(requester, sourceConfig) {
+  const result = await collectRedRows(requester, sourceConfig, 'red');
+  return {
+    ...result,
+    observations: result.observations.map(redObservation).filter(Boolean),
+  };
+}
+
+/**
+ * Retrieve display assets separately from the price monitor so image and plan
+ * enrichment never changes a published price or its verification state.
+ */
+async function collectRedAssetInventory(config) {
+  const requester = createRequester(config || {});
+  const sourceConfig = config?.sources?.red || {};
+  const result = await collectRedRows(requester, sourceConfig, 'red-assets', {
+    includeSoldOut: true,
+  });
+  return {
+    ...result,
+    observations: result.observations.map(redAssetRecord).filter(Boolean),
+  };
 }
 
 function parseNextData(html) {
@@ -314,8 +481,32 @@ function propertyFinderObservation(project) {
   };
 }
 
-async function collectPropertyFinder(requester, sourceConfig) {
-  const key = 'property-finder';
+function propertyFinderAssetRecord(project) {
+  const coordinates = project?.location?.coordinates || {};
+  const sourceId = String(project?.id || '').trim();
+  const name = String(project?.title || '').trim();
+  const developer = String(project?.developer?.name || '').trim();
+  const zone = String(project?.location?.fullName || '').trim();
+  if (!sourceId || !name || !developer || !zone) return null;
+
+  return {
+    source: 'Property Finder asset',
+    sourceId: `property-finder-asset:${sourceId}`,
+    name,
+    developer,
+    zone,
+    lat: toFiniteNumber(coordinates.lat),
+    lng: toFiniteNumber(coordinates.lng ?? coordinates.lon),
+    // Used solely by the safe matcher. This never publishes a price.
+    priceMin: validEgpPrice(project?.startingPrice) || 0,
+    imageUrls: [...new Set(projectImageUrls(project?.images))],
+    masterplan: null,
+    layouts: [],
+    url: httpsUrl(`https://www.propertyfinder.eg${project?.shareUrl || ''}`),
+  };
+}
+
+async function collectPropertyFinderRows(requester, sourceConfig, key = 'property-finder') {
   try {
     const getPage = async (page) => {
       const url = new URL('https://www.propertyfinder.eg/en/new-projects');
@@ -343,10 +534,32 @@ async function collectPropertyFinder(requester, sourceConfig) {
       rows.push(...nextPage.data.projects);
     }
 
-    return sourceResult(key, rows.map(propertyFinderObservation).filter(Boolean));
+    return sourceResult(key, rows);
   } catch {
     return sourceResult(key, [], true);
   }
+}
+
+async function collectPropertyFinder(requester, sourceConfig) {
+  const result = await collectPropertyFinderRows(requester, sourceConfig, 'property-finder');
+  return {
+    ...result,
+    observations: result.observations.map(propertyFinderObservation).filter(Boolean),
+  };
+}
+
+async function collectPropertyFinderAssetInventory(config) {
+  const requester = createRequester(config || {});
+  const sourceConfig = config?.sources?.propertyFinder || {};
+  const result = await collectPropertyFinderRows(
+    requester,
+    sourceConfig,
+    'property-finder-assets',
+  );
+  return {
+    ...result,
+    observations: result.observations.map(propertyFinderAssetRecord).filter(Boolean),
+  };
 }
 
 async function collectSources(config, mode) {
@@ -362,6 +575,9 @@ async function collectSources(config, mode) {
 }
 
 module.exports = {
+  collectPropertyFinderAssetInventory,
+  collectRedAssetInventory,
+  collectNawyInventory,
   collectSources,
   createRequester,
   parseNextData,

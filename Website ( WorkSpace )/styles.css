@@ -35,20 +35,20 @@
     rgba(181, 35, 50, 0.15) 0%,
     rgba(228, 231, 237, 0.06) 100%
   );
-  --route-primary: #78b7ff;
-  --route-accent: #b9ddff;
-  --route-glow: rgba(120, 183, 255, 0.18);
-  --route-alt: rgba(120, 183, 255, 0.18);
-  --route-connector: rgba(120, 183, 255, 0.3);
+  --route-primary: #ff6571;
+  --route-accent: #ffd0a8;
+  --route-glow: rgba(255, 70, 82, 0.22);
+  --route-alt: rgba(255, 184, 122, 0.34);
+  --route-connector: rgba(255, 196, 140, 0.42);
   --route-stop-gradient: linear-gradient(
     145deg,
-    #f3eeff 0%,
-    #b794f6 45%,
-    #4b0b13 100%
+    #fff2df 0%,
+    #f46b77 45%,
+    #5a0d18 100%
   );
-  --route-stop-core: #141925;
+  --route-stop-core: #211820;
   --route-stop-ring: rgba(255, 255, 255, 0.92);
-  --route-stop-shadow: rgba(114, 19, 29, 0.3);
+  --route-stop-shadow: rgba(181, 35, 50, 0.3);
 
   --item-bg: rgba(181, 35, 50, 0.05);
   --item-bg-hover: rgba(181, 35, 50, 0.15);
@@ -1243,8 +1243,8 @@ body.map-mode-atlas .place-name-tooltip .leaflet-tooltip-content {
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-width: 6.5;
-  filter: drop-shadow(0 0 2px rgba(120, 183, 255, 0.2));
-  animation: none;
+  filter: drop-shadow(0 0 5px color-mix(in srgb, var(--route-primary) 58%, transparent));
+  animation: route-line-breathe 3.2s ease-in-out infinite;
 }
 
 .leaflet-interactive.route-line-alt {
@@ -1255,16 +1255,16 @@ body.map-mode-atlas .place-name-tooltip .leaflet-tooltip-content {
 
 body.touring .leaflet-interactive.route-line-main {
   stroke: var(--route-accent) !important;
-  filter: drop-shadow(0 0 3px rgba(185, 221, 255, 0.2));
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--route-accent) 62%, transparent));
   animation: route-touring-glow 2.4s ease-in-out infinite alternate;
 }
 
 @keyframes route-touring-glow {
   0% {
-    filter: drop-shadow(0 0 3px rgba(185, 221, 255, 0.18));
+    filter: drop-shadow(0 0 4px color-mix(in srgb, var(--route-accent) 38%, transparent));
   }
   100% {
-    filter: drop-shadow(0 0 8px rgba(120, 183, 255, 0.4));
+    filter: drop-shadow(0 0 10px color-mix(in srgb, var(--route-primary) 62%, transparent));
   }
 }
 
@@ -1556,6 +1556,28 @@ body {
   border-radius: 8px;
   border: 1px solid var(--avaria-border);
   margin-bottom: 10px;
+}
+
+.asset-reference-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 10px 16px;
+  border: 1px solid var(--avaria-border);
+  border-radius: 8px;
+  color: var(--avaria-gold);
+  background: var(--surface-glass);
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.asset-reference-link:hover,
+.asset-reference-link:focus-visible {
+  color: #fff;
+  border-color: var(--avaria-red);
+  background: var(--gradient-primary);
 }
 
 /* RIGHT DOCK (Consolidated UI) */
@@ -8974,4 +8996,256 @@ body.page-hidden * {
 
 .leaflet-tile {
   image-rendering: auto;
+}
+
+/* Xcelias focused polish: light mode, route intelligence, and media framing */
+[data-theme*="light"] {
+  --route-primary: #a51f36;
+  --route-accent: #c54d5c;
+  --route-glow: rgba(165, 31, 54, 0.2);
+  --route-alt: rgba(190, 91, 83, 0.34);
+  --route-connector: rgba(165, 31, 54, 0.38);
+  --route-stop-gradient: linear-gradient(145deg, #fff9ef 0%, #d96b70 46%, #7d1728 100%);
+  --route-stop-core: #fffdf9;
+  --route-stop-ring: rgba(104, 22, 37, 0.78);
+  --route-stop-shadow: rgba(165, 31, 54, 0.2);
+}
+
+.route-menu-toggle,
+.sidebar .route-menu-toggle {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(181, 35, 50, 0.22), transparent 48%),
+    linear-gradient(135deg, rgba(181, 35, 50, 0.16), rgba(255, 255, 255, 0.035));
+  box-shadow:
+    0 14px 34px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.route-menu-toggle::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: linear-gradient(180deg, var(--route-primary), var(--route-accent));
+  box-shadow: 0 0 22px color-mix(in srgb, var(--route-primary) 70%, transparent);
+  z-index: -1;
+}
+
+.route-menu-toggle:hover,
+.route-menu-toggle:focus-visible,
+.route-menu.open .route-menu-toggle {
+  border-color: color-mix(in srgb, var(--route-primary) 62%, var(--glass-border));
+  box-shadow:
+    0 18px 42px rgba(0, 0, 0, 0.22),
+    0 0 0 1px color-mix(in srgb, var(--route-primary) 18%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  transform: translateY(-1px);
+}
+
+.route-menu-toggle:focus-visible,
+.route-control-btn:focus-visible,
+.route-input:focus-visible,
+.route-select:focus-visible,
+.route-stop-actions button:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--route-accent) 78%, white);
+  outline-offset: 2px;
+}
+
+.route-menu-eyebrow,
+.route-planner-eyebrow {
+  color: color-mix(in srgb, var(--route-accent) 78%, var(--avaria-text-muted));
+}
+
+.route-menu-toggle-meta {
+  padding: 0.3rem 0.55rem;
+  border: 1px solid color-mix(in srgb, var(--route-primary) 28%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--route-primary) 10%, transparent);
+  color: var(--route-accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.route-planner-section {
+  background:
+    radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--route-primary) 13%, transparent), transparent 42%),
+    linear-gradient(180deg, color-mix(in srgb, var(--surface-glass) 88%, var(--route-primary) 12%), color-mix(in srgb, var(--surface-glass) 94%, transparent));
+  border-color: color-mix(in srgb, var(--route-primary) 30%, var(--glass-border));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 18px 45px rgba(0, 0, 0, 0.2),
+    0 0 26px color-mix(in srgb, var(--route-primary) 8%, transparent);
+}
+
+.route-input,
+.route-select {
+  background: color-mix(in srgb, var(--input-bg) 90%, var(--route-primary) 10%);
+  border-color: color-mix(in srgb, var(--route-primary) 24%, var(--input-border));
+}
+
+.route-input:focus,
+.route-select:focus {
+  border-color: var(--route-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--route-primary) 18%, transparent);
+}
+
+.route-control-btn.primary {
+  background: linear-gradient(135deg, #651321, var(--route-primary) 58%, #d65e68);
+  box-shadow: 0 10px 24px color-mix(in srgb, var(--route-primary) 24%, transparent);
+}
+
+.route-control-btn.secondary,
+.route-summary-fit,
+.modal-route-btn,
+.popup-route-btn {
+  background: color-mix(in srgb, var(--surface-glass) 80%, var(--route-primary) 20%);
+  border-color: color-mix(in srgb, var(--route-primary) 25%, var(--glass-border));
+}
+
+.route-summary-card {
+  background:
+    radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--route-accent) 16%, transparent), transparent 48%),
+    linear-gradient(180deg, color-mix(in srgb, var(--route-primary) 14%, transparent), color-mix(in srgb, var(--route-primary) 5%, transparent));
+  border-color: color-mix(in srgb, var(--route-primary) 32%, var(--glass-border));
+}
+
+.route-summary-chip,
+.route-tour-narrative,
+.route-leg-item,
+.route-stop-chip,
+.route-alt-option {
+  border-color: color-mix(in srgb, var(--route-primary) 20%, var(--glass-border));
+  background: color-mix(in srgb, var(--surface-glass) 84%, var(--route-primary) 16%);
+}
+
+.route-line-main {
+  stroke: var(--route-primary);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 5px color-mix(in srgb, var(--route-primary) 58%, transparent));
+}
+
+.route-line-shadow {
+  stroke: var(--route-glow);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--route-primary) 44%, transparent));
+}
+
+.route-line-alt {
+  stroke: var(--route-alt);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+body.has-route .route-line-main {
+  animation: route-line-breathe 3.2s ease-in-out infinite;
+}
+
+@keyframes route-line-breathe {
+  0%,
+  100% { opacity: 0.82; }
+  50% { opacity: 1; }
+}
+
+.route-stop-marker {
+  box-shadow:
+    0 14px 24px rgba(0, 0, 0, 0.28),
+    0 0 0 5px color-mix(in srgb, var(--route-primary) 18%, transparent),
+    0 0 18px color-mix(in srgb, var(--route-primary) 32%, transparent);
+}
+
+.route-tour-indicator {
+  box-shadow:
+    0 18px 34px rgba(0, 0, 0, 0.32),
+    0 0 0 6px color-mix(in srgb, var(--route-primary) 20%, transparent),
+    0 0 30px color-mix(in srgb, var(--route-primary) 42%, transparent);
+}
+
+.route-tour-indicator::after {
+  border-color: color-mix(in srgb, var(--route-accent) 72%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--route-primary) 28%, transparent);
+}
+
+#modalSwiper {
+  width: 100% !important;
+  height: auto !important;
+  aspect-ratio: 16 / 9;
+  min-height: 180px;
+  max-height: min(42vh, 420px);
+  overflow: hidden;
+  background: color-mix(in srgb, var(--avaria-bg) 88%, black 12%);
+}
+
+#modalSwiper .swiper-wrapper,
+#modalSwiper .swiper-slide {
+  height: 100%;
+  min-height: 0;
+}
+
+#modalSwiper .swiper-slide {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+#modalSwiper .swiper-slide img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain !important;
+  object-position: center;
+}
+
+.masterplan-img,
+.layout-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  max-height: min(52vh, 520px);
+  object-fit: contain;
+  object-position: center;
+  background: color-mix(in srgb, var(--avaria-bg) 88%, transparent);
+}
+
+[data-theme*="light"] .modal-content,
+[data-theme*="light"] .route-planner-section,
+[data-theme*="light"] .route-menu-toggle,
+[data-theme*="light"] .sidebar .route-menu-toggle {
+  box-shadow:
+    0 16px 40px rgba(87, 35, 40, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.86);
+}
+
+[data-theme*="light"] .route-menu-toggle {
+  background:
+    radial-gradient(circle at 0% 0%, rgba(165, 31, 54, 0.16), transparent 48%),
+    linear-gradient(135deg, rgba(165, 31, 54, 0.1), rgba(255, 255, 255, 0.8));
+}
+
+[data-theme*="light"] .route-summary-chip,
+[data-theme*="light"] .route-tour-narrative,
+[data-theme*="light"] .route-leg-item {
+  background: rgba(255, 252, 247, 0.78);
+  color: var(--avaria-text);
+}
+
+@media (max-width: 768px) {
+  #modalSwiper {
+    min-height: 150px;
+    max-height: 34vh;
+  }
+
+  .route-planner-grid,
+  .route-tools-row,
+  .route-actions-row {
+    grid-template-columns: 1fr;
+  }
 }

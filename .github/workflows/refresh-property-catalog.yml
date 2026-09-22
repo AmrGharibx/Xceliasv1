@@ -1,0 +1,74 @@
+name: Refresh Property Explorer catalogue and assets
+
+on:
+  schedule:
+    # The active project catalogue changes more slowly than pricing. Run once
+    # daily, after the wider daily price monitor has completed.
+    - cron: '23 3 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Validate public inventories without publishing changes
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+concurrency:
+  group: property-catalog-intelligence
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24.0.0
+
+      - name: Validate catalogue and asset rules
+        run: |
+          node --test 'Website ( WorkSpace )/scraper/catalog-intelligence/core.test.js'
+          node --test 'Website ( WorkSpace )/scraper/asset-intelligence/core.test.js'
+
+      - name: Refresh public catalogue and direct project assets
+        shell: bash
+        env:
+          DRY_RUN: ${{ inputs.dry_run || 'false' }}
+        run: |
+          if [ "$DRY_RUN" = "true" ]; then
+            node 'Website ( WorkSpace )/scraper/catalog-intelligence/refresh-catalog.js' --dry-run
+            node 'Website ( WorkSpace )/scraper/asset-intelligence/refresh-assets.js' --dry-run
+          else
+            node 'Website ( WorkSpace )/scraper/catalog-intelligence/refresh-catalog.js' --apply
+            node 'Website ( WorkSpace )/scraper/asset-intelligence/refresh-assets.js' --apply
+          fi
+
+      - name: Commit catalogue changes only
+        if: inputs.dry_run != true
+        shell: bash
+        run: |
+          git add -- \
+            'Website ( WorkSpace )/data.json' \
+            'Website ( WorkSpace )/cairo.json' \
+            'Website ( WorkSpace )/gouna.json' \
+            'Website ( WorkSpace )/north_coast.json' \
+            'Website ( WorkSpace )/sokhna.json' \
+            'Website ( WorkSpace )/others.json' \
+            'Website ( WorkSpace )/catalog-status.json' \
+            'Website ( WorkSpace )/asset-status.json'
+          if git diff --cached --quiet; then
+            echo 'No catalogue or project-asset change to publish.'
+            exit 0
+          fi
+          git config user.name 'xcelias-catalog-bot[bot]'
+          git config user.email 'xcelias-catalog-bot@users.noreply.github.com'
+          git commit -m 'chore(catalog): refresh project inventory and assets'
+          git push

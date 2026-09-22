@@ -42,6 +42,13 @@
       "headers": [{ "key": "Service-Worker-Allowed", "value": "/website/" }]
     }
   ],
+  "redirects": [
+    {
+      "source": "/red-academy",
+      "destination": "/red-academy/index.html",
+      "permanent": false
+    }
+  ],
   "rewrites": [
     { "source": "/activities", "destination": "/activities/index.html" },
     { "source": "/content", "destination": "/content/index.html" },

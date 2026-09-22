@@ -4637,10 +4637,13 @@
       "layouts": [
         "https://reedygroup.com/azzar-islands/"
       ],
-      "priceMin": 12900000,
+      "priceMin": 6100000,
       "unitTypes": [
-        "townhouse",
-        "villa"
+        "Villa",
+        "Townhouse",
+        "Studio",
+        "Apartment",
+        "Loft"
       ],
       "areaMin": 75,
       "areaMax": 328,
@@ -4652,16 +4655,22 @@
         5,
         6
       ],
-      "paymentPlan": "10% Down Payment",
-      "downPayment": 10,
-      "installmentYears": 0,
+      "paymentPlan": "5% Down Payment, 10 Years Installments",
+      "downPayment": 5,
+      "installmentYears": 10,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/716-azzar--island",
+            "observedPrice": 6100000,
+            "sourceId": "nawy:716"
+          },
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/reedy-group-development/azzar-islands",
@@ -4669,7 +4678,7 @@
             "sourceId": "property-finder:47e13c1b-e53c-418e-81f2-f2986c6d59e6"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-09-22T02:53:41.646Z"
       }
     },
     {
@@ -8480,22 +8489,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1647-waterfall-village",
             "observedPrice": 15171000,
             "sourceId": "nawy:1647"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/people-and-places-developments/waterfall-village-the-med",
-            "observedPrice": 30641000,
-            "sourceId": "property-finder:2ad04ded-ff4d-41fd-a75a-08ee4a28c9dc"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-09-22T02:53:41.646Z"
       }
     },
     {
@@ -8848,13 +8851,8 @@
       "type": "residential",
       "priceMin": 19692000,
       "unitTypes": [
-        "Apartment",
-        "Villa",
-        "Twin House",
-        "Duplex",
-        "Chalet",
-        "Loft",
-        "Town House"
+        "penthouse",
+        "apartment"
       ],
       "areaMin": 74,
       "areaMax": 323,
@@ -8866,24 +8864,30 @@
         5,
         6
       ],
-      "paymentPlan": "5% Down Payment, 9 Years Installments",
-      "downPayment": 0,
+      "paymentPlan": "5% Down Payment",
+      "downPayment": 5,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19027-june",
             "observedPrice": 19692000,
             "sourceId": "red:19027"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/sodic/pearl",
+            "observedPrice": 28217000,
+            "sourceId": "property-finder:d4db78b3-6e1d-42c8-b85e-31fcaceef034"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-09-22T02:53:41.646Z"
       }
     },
     {
@@ -10589,9 +10593,9 @@
       "type": "residential",
       "priceMin": 36823000,
       "unitTypes": [
-        "Twin House",
-        "Villa",
-        "Town House"
+        "apartment",
+        "villa",
+        "townhouse"
       ],
       "areaMin": 84,
       "areaMax": 369,
@@ -10603,24 +10607,30 @@
         5,
         6
       ],
-      "paymentPlan": "5% Down Payment, 9 Years Installments",
-      "downPayment": 0,
+      "paymentPlan": "5% Down Payment",
+      "downPayment": 5,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19200-caesar",
             "observedPrice": 36823000,
             "sourceId": "red:19200"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/sodic/caesar",
+            "observedPrice": 41064690,
+            "sourceId": "property-finder:ee12fcad-9ab7-4fee-b2b8-0f3d9ada6dd9"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-09-22T02:53:41.646Z"
       }
     },
     {

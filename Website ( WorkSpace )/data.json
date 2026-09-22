@@ -27320,11 +27320,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1231-bungalows",
-            "observedPrice": 4280000,
+            "observedPrice": 4279275,
             "sourceId": "nawy:1231"
           }
         ],
-        "updatedAt": "2026-09-21T14:54:37.284Z"
+        "updatedAt": "2026-09-22T01:02:59.647Z"
       }
     },
     {
@@ -43978,11 +43978,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1737-ruby",
-            "observedPrice": 4280000,
+            "observedPrice": 4279275,
             "sourceId": "nawy:1737"
           }
         ],
-        "updatedAt": "2026-09-21T14:54:37.284Z"
+        "updatedAt": "2026-09-22T01:02:59.647Z"
       }
     },
     {
@@ -48235,7 +48235,7 @@
       "zone": "New Capital",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 7205000,
+      "priceMin": 7700000,
       "unitTypes": [
         "Administrative"
       ],
@@ -48262,11 +48262,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1901-kor",
-            "observedPrice": 7205000,
+            "observedPrice": 7700000,
             "sourceId": "nawy:1901"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-09-22T01:02:59.647Z"
       }
     },
     {
@@ -51276,10 +51276,13 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 12900000,
+      "priceMin": 6100000,
       "unitTypes": [
-        "townhouse",
-        "villa"
+        "Villa",
+        "Townhouse",
+        "Studio",
+        "Apartment",
+        "Loft"
       ],
       "areaMin": 81,
       "areaMax": 353,
@@ -51291,16 +51294,22 @@
         5,
         6
       ],
-      "paymentPlan": "10% Down Payment",
-      "downPayment": 10,
-      "installmentYears": 0,
+      "paymentPlan": "5% Down Payment, 10 Years Installments",
+      "downPayment": 5,
+      "installmentYears": 10,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/716-azzar--island",
+            "observedPrice": 6100000,
+            "sourceId": "nawy:716"
+          },
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/reedy-group-development/azzar-islands",
@@ -51308,7 +51317,7 @@
             "sourceId": "property-finder:47e13c1b-e53c-418e-81f2-f2986c6d59e6"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-09-22T01:02:59.647Z"
       }
     },
     {

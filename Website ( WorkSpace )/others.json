@@ -2181,7 +2181,23 @@
         "sourceId": "nawy-inventory:2239",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 18900000
+      "priceMin": 18900000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2239-coral-coves",
+            "observedPrice": 18900000,
+            "sourceId": "nawy:2239"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "Rayhanna Avenue",
@@ -2346,7 +2362,23 @@
         "sourceId": "nawy-inventory:1267",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 14226875
+      "priceMin": 14226875,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1267-reve-du-nil",
+            "observedPrice": 14226875,
+            "sourceId": "nawy:1267"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "Ras Soma-Phase 1",

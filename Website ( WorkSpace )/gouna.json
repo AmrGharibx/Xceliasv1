@@ -1839,20 +1839,38 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
+        "Villa",
+        "Twin House",
         "Duplex",
+        "Penthouse",
         "Chalet",
-        "Loft",
-        "Villa"
+        "Town House"
       ],
       "downPayment": 0,
-      "installmentYears": 7,
+      "installmentYears": 0,
       "paymentPlan": "0% Down Payment, 7 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2047",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 13225000
+      "priceMin": 8020000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/52-makadi-heights",
+            "observedPrice": 8020000,
+            "sourceId": "red:52"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "Siyal",
@@ -1875,7 +1893,29 @@
         "sourceId": "nawy-inventory:1965",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 23575000
+      "priceMin": 22000000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 2,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/30949-siyal",
+            "observedPrice": 22000000,
+            "sourceId": "red:30949"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1965-siyal",
+            "observedPrice": 23575000,
+            "sourceId": "nawy:1965"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "Veranda",
@@ -1939,7 +1979,29 @@
         "sourceId": "nawy-inventory:2025",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 7750000
+      "priceMin": 7400000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 2,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/30963-makadina",
+            "observedPrice": 7400000,
+            "sourceId": "red:30963"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2025-makadina",
+            "observedPrice": 7750000,
+            "sourceId": "nawy:2025"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "Alcamar  Sahl Hasheesh",

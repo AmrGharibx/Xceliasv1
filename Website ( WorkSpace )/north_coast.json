@@ -10268,10 +10268,9 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 55000000,
+      "priceMin": 132090080,
       "unitTypes": [
-        "Villa",
-        "Twinhouse"
+        "Villa"
       ],
       "areaMin": 84,
       "areaMax": 369,
@@ -10296,11 +10295,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1764-airy",
-            "observedPrice": 55000000,
+            "observedPrice": 132090080,
             "sourceId": "nawy:1764"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-09-22T18:36:05.501Z"
       }
     },
     {
@@ -10740,7 +10739,7 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 37600000,
+      "priceMin": 38000000,
       "unitTypes": [
         "Townhouse"
       ],
@@ -10765,19 +10764,19 @@
         "sourceCount": 2,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1821-wadi-west-ras-el-hekma",
-            "observedPrice": 37600000,
-            "sourceId": "nawy:1821"
-          },
-          {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/modon-developments/wadi-west",
             "observedPrice": 38000000,
             "sourceId": "property-finder:b128fb5f-1e1e-45ed-bd88-b1663705a37e"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1821-wadi-west-ras-el-hekma",
+            "observedPrice": 39900000,
+            "sourceId": "nawy:1821"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-09-22T18:36:05.501Z"
       }
     },
     {
@@ -10821,11 +10820,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1822-yemm-boulevard-ras-el-hekma",
-            "observedPrice": 22000000,
+            "observedPrice": 21600000,
             "sourceId": "nawy:1822"
           }
         ],
-        "updatedAt": "2026-09-21T14:54:37.284Z"
+        "updatedAt": "2026-09-22T18:36:05.501Z"
       }
     },
     {
@@ -10934,7 +10933,7 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 37600000,
+      "priceMin": 39900000,
       "unitTypes": [
         "Villa",
         "Townhouse"
@@ -10962,7 +10961,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1868-wadi-east-ras-el-hekma",
-            "observedPrice": 37600000,
+            "observedPrice": 39900000,
             "sourceId": "nawy:1868"
           },
           {
@@ -10972,7 +10971,7 @@
             "sourceId": "property-finder:1c35a55d-da5d-4b76-8085-5c4fcbc2c314"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-09-22T18:36:05.501Z"
       }
     },
     {
@@ -12384,7 +12383,23 @@
         "sourceId": "nawy-inventory:2691",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 165500000
+      "priceMin": 165500000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2691-yemm-views",
+            "observedPrice": 165500000,
+            "sourceId": "nawy:2691"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "Marina waterfront residences",
@@ -12407,7 +12422,23 @@
         "sourceId": "nawy-inventory:2688",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 18500000
+      "priceMin": 18500000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2688-marina-waterfront-residences",
+            "observedPrice": 18500000,
+            "sourceId": "nawy:2688"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "Nobu Residence",
@@ -12437,17 +12468,35 @@
       "type": "residential",
       "unitTypes": [
         "Villa",
-        "Apartment"
+        "Twin House",
+        "Town House",
+        "Chalet"
       ],
-      "downPayment": 5,
-      "installmentYears": 7,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 7 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2504",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 30049000
+      "priceMin": 21465000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/19203-ogami",
+            "observedPrice": 21465000,
+            "sourceId": "red:19203"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "Aqua Lagoons - June",
@@ -12457,14 +12506,47 @@
       "zone": "North Coast-Sahel",
       "status": "Available",
       "type": "residential",
-      "unitTypes": [],
-      "downPayment": 0,
-      "installmentYears": 0,
-      "paymentPlan": "0% Down Payment, 0 Years Installments",
+      "unitTypes": [
+        "Villa",
+        "Loft",
+        "Twinhouse",
+        "Penthouse",
+        "Chalet",
+        "Duplex",
+        "Townhouse",
+        "Apartment",
+        "Family House"
+      ],
+      "downPayment": 3,
+      "installmentYears": 8,
+      "paymentPlan": "3% Down Payment, 8 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2360",
         "observedAt": "2026-09-22T10:02:00.468Z"
+      },
+      "priceMin": 19692000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 2,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/19027-june",
+            "observedPrice": 19692000,
+            "sourceId": "red:19027"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/510-june",
+            "observedPrice": 25204000,
+            "sourceId": "nawy:510"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
       }
     },
     {
@@ -12476,17 +12558,36 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
+        "Villa",
+        "Twin House",
+        "Town House",
         "Chalet"
       ],
-      "downPayment": 5,
-      "installmentYears": 7,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 7 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2176",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 18843300
+      "priceMin": 21465000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/19203-ogami",
+            "observedPrice": 21465000,
+            "sourceId": "red:19203"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "Sealine - Seashore",
@@ -12509,7 +12610,29 @@
         "sourceId": "nawy-inventory:2381",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 44430000
+      "priceMin": 7930000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 2,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/40-seashore",
+            "observedPrice": 7930000,
+            "sourceId": "red:40"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2381-sealine-seashore",
+            "observedPrice": 44430000,
+            "sourceId": "nawy:2381"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "Shore Residence",
@@ -12552,7 +12675,23 @@
         "sourceId": "nawy-inventory:2693",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 15000000
+      "priceMin": 15000000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2693-indigo",
+            "observedPrice": 15000000,
+            "sourceId": "nawy:2693"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "The Beach Top-LVLS",
@@ -12573,7 +12712,29 @@
         "sourceId": "nawy-inventory:2334",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 19692375
+      "priceMin": 19692375,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 2,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2334-the-beach-top-lvls",
+            "observedPrice": 19692375,
+            "sourceId": "nawy:2334"
+          },
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/19044-lvls",
+            "observedPrice": 28936976,
+            "sourceId": "red:19044"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "Blue Island-Crysta",
@@ -12618,7 +12779,29 @@
         "sourceId": "nawy-inventory:2055",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 28892892
+      "priceMin": 28892892,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 2,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2055-sea-mount-lvls",
+            "observedPrice": 28892892,
+            "sourceId": "nawy:2055"
+          },
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/19044-lvls",
+            "observedPrice": 28936976,
+            "sourceId": "red:19044"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "Rhodes Heights",
@@ -12668,7 +12851,11 @@
       "zone": "North Coast-Sahel",
       "status": "Available",
       "type": "residential",
-      "unitTypes": [],
+      "unitTypes": [
+        "Chalet",
+        "Apartment",
+        "Town House"
+      ],
       "downPayment": 0,
       "installmentYears": 0,
       "paymentPlan": "0% Down Payment, 0 Years Installments",
@@ -12676,6 +12863,23 @@
         "status": "observed",
         "sourceId": "nawy-inventory:1224",
         "observedAt": "2026-09-22T10:02:00.468Z"
+      },
+      "priceMin": 11467036,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/19238-plage",
+            "observedPrice": 11467036,
+            "sourceId": "red:19238"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
       }
     },
     {
@@ -12768,7 +12972,15 @@
       "zone": "North Coast-Sahel",
       "status": "Available",
       "type": "residential",
-      "unitTypes": [],
+      "unitTypes": [
+        "Twin House",
+        "Villa",
+        "Town House",
+        "Chalet",
+        "Apartment",
+        "Duplex",
+        "Studio"
+      ],
       "downPayment": 0,
       "installmentYears": 0,
       "paymentPlan": "0% Down Payment, 0 Years Installments",
@@ -12776,6 +12988,23 @@
         "status": "observed",
         "sourceId": "nawy-inventory:1980",
         "observedAt": "2026-09-22T10:02:00.468Z"
+      },
+      "priceMin": 24031000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/11-silversands",
+            "observedPrice": 24031000,
+            "sourceId": "red:11"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
       }
     },
     {
@@ -12786,7 +13015,15 @@
       "zone": "North Coast-Sahel",
       "status": "Available",
       "type": "residential",
-      "unitTypes": [],
+      "unitTypes": [
+        "Twin House",
+        "Villa",
+        "Town House",
+        "Chalet",
+        "Apartment",
+        "Duplex",
+        "Studio"
+      ],
       "downPayment": 0,
       "installmentYears": 0,
       "paymentPlan": "0% Down Payment, 0 Years Installments",
@@ -12794,6 +13031,23 @@
         "status": "observed",
         "sourceId": "nawy-inventory:1967",
         "observedAt": "2026-09-22T10:02:00.468Z"
+      },
+      "priceMin": 24031000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/11-silversands",
+            "observedPrice": 24031000,
+            "sourceId": "red:11"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
       }
     },
     {
@@ -12804,7 +13058,15 @@
       "zone": "North Coast-Sahel",
       "status": "Available",
       "type": "residential",
-      "unitTypes": [],
+      "unitTypes": [
+        "Twin House",
+        "Villa",
+        "Town House",
+        "Chalet",
+        "Apartment",
+        "Duplex",
+        "Studio"
+      ],
       "downPayment": 0,
       "installmentYears": 0,
       "paymentPlan": "0% Down Payment, 0 Years Installments",
@@ -12812,6 +13074,23 @@
         "status": "observed",
         "sourceId": "nawy-inventory:1475",
         "observedAt": "2026-09-22T10:02:00.468Z"
+      },
+      "priceMin": 24031000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/11-silversands",
+            "observedPrice": 24031000,
+            "sourceId": "red:11"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
       }
     },
     {
@@ -12823,9 +13102,13 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
+        "Twin House",
         "Villa",
-        "Townhouse",
-        "Chalet"
+        "Town House",
+        "Chalet",
+        "Apartment",
+        "Duplex",
+        "Studio"
       ],
       "downPayment": 0,
       "installmentYears": 0,
@@ -12834,6 +13117,23 @@
         "status": "observed",
         "sourceId": "nawy-inventory:717",
         "observedAt": "2026-09-22T10:02:00.468Z"
+      },
+      "priceMin": 24031000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/11-silversands",
+            "observedPrice": 24031000,
+            "sourceId": "red:11"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
       }
     },
     {
@@ -12855,7 +13155,23 @@
         "sourceId": "nawy-inventory:2455",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 33900000
+      "priceMin": 33900000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2455-the-lighthouse-village",
+            "observedPrice": 33900000,
+            "sourceId": "nawy:2455"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "Yemm Links Villas",
@@ -12896,7 +13212,23 @@
         "sourceId": "nawy-inventory:2721",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 31300000
+      "priceMin": 31300000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2721-sandside-lagoons",
+            "observedPrice": 31300000,
+            "sourceId": "nawy:2721"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "Sealine Estates",
@@ -12917,7 +13249,23 @@
         "sourceId": "nawy-inventory:2720",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 48000000
+      "priceMin": 48000000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2720-sealine-estates",
+            "observedPrice": 48000000,
+            "sourceId": "nawy:2720"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "O Residence",
@@ -12971,19 +13319,38 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
+        "Villa",
+        "Twin House",
         "Chalet",
-        "Studio",
-        "Townhouse"
+        "Town House",
+        "Apartment",
+        "Loft"
       ],
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2494",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 8190000
+      "priceMin": 8479000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/259-salt",
+            "observedPrice": 8479000,
+            "sourceId": "red:259"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "Amare Sea Front",
@@ -13005,7 +13372,23 @@
         "sourceId": "nawy-inventory:2591",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 31700000
+      "priceMin": 31700000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2591-amare-sea-front",
+            "observedPrice": 31700000,
+            "sourceId": "nawy:2591"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "Club Hill - Solare",
@@ -13017,17 +13400,34 @@
       "type": "residential",
       "unitTypes": [
         "Chalet",
-        "Penthouse"
+        "Twin House",
+        "Villa"
       ],
-      "downPayment": 10,
-      "installmentYears": 6,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "10% Down Payment, 6 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2376",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 8500000
+      "priceMin": 12366703,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/260-solare",
+            "observedPrice": 12366703,
+            "sourceId": "red:260"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "Lumera-Solare",
@@ -13038,17 +13438,35 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Chalet"
+        "Chalet",
+        "Twin House",
+        "Villa"
       ],
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2335",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 13000000
+      "priceMin": 12366703,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/260-solare",
+            "observedPrice": 12366703,
+            "sourceId": "red:260"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "Maison Solare",
@@ -13059,17 +13477,35 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Chalet"
+        "Chalet",
+        "Twin House",
+        "Villa"
       ],
-      "downPayment": 5,
-      "installmentYears": 9,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 9 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2116",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 14700000
+      "priceMin": 12366703,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/260-solare",
+            "observedPrice": 12366703,
+            "sourceId": "red:260"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "Cielo",
@@ -13090,7 +13526,23 @@
         "sourceId": "nawy-inventory:2041",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 25000000
+      "priceMin": 25000000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2041-cielo",
+            "observedPrice": 25000000,
+            "sourceId": "nawy:2041"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "Sachi",
@@ -13112,7 +13564,23 @@
         "sourceId": "nawy-inventory:2656",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 33497000
+      "priceMin": 33497000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2656-sachi",
+            "observedPrice": 33497000,
+            "sourceId": "nawy:2656"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "The Gray Laguna - The Boulevard",
@@ -13134,7 +13602,23 @@
         "sourceId": "nawy-inventory:2503",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 17503000
+      "priceMin": 17503000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2503-the-gray-laguna-the-boulevard",
+            "observedPrice": 17503000,
+            "sourceId": "nawy:2503"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "C-Sail",
@@ -13235,17 +13719,35 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Chalet"
+        "Villa",
+        "Chalet",
+        "Twin House"
       ],
-      "downPayment": 20,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "20% Down Payment, 8 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2180",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 9809000
+      "priceMin": 7405778,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/30917-youd",
+            "observedPrice": 7405778,
+            "sourceId": "red:30917"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "Youd",
@@ -13256,22 +13758,35 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Studio",
-        "Chalet",
-        "Duplex",
         "Villa",
-        "Twinhouse",
-        "Apartment"
+        "Chalet",
+        "Twin House"
       ],
-      "downPayment": 20,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "20% Down Payment, 8 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:1671",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 6612000
+      "priceMin": 7405778,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/30917-youd",
+            "observedPrice": 7405778,
+            "sourceId": "red:30917"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "Surf and Sand - Seazen",
@@ -13282,18 +13797,36 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
+        "Villa",
+        "Town House",
         "Chalet",
-        "Studio"
+        "Twin House"
       ],
-      "downPayment": 5,
-      "installmentYears": 8.6,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 8.6 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2238",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 6894000
+      "priceMin": 12185000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/46-seazen",
+            "observedPrice": 12185000,
+            "sourceId": "red:46"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "Perla North Coast",
@@ -13315,7 +13848,29 @@
         "sourceId": "nawy-inventory:2458",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 13139703
+      "priceMin": 13139703,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 2,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2458-perla",
+            "observedPrice": 13139703,
+            "sourceId": "nawy:2458"
+          },
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/30971-perla",
+            "observedPrice": 16600000,
+            "sourceId": "red:30971"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "Swissotel Residences - Naia Bay",
@@ -13326,17 +13881,36 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Apartment"
+        "Villa",
+        "Twin House",
+        "Town House",
+        "Chalet"
       ],
-      "downPayment": 10,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "10% Down Payment, 8 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2509",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 12750000
+      "priceMin": 26050000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/19023-naia-bay",
+            "observedPrice": 26050000,
+            "sourceId": "red:19023"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "Naia Bay-Phase 2",
@@ -13347,18 +13921,36 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Townhouse",
-        "Twinhouse"
+        "Villa",
+        "Twin House",
+        "Town House",
+        "Chalet"
       ],
-      "downPayment": 10,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "10% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2175",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 27907000
+      "priceMin": 26050000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/19023-naia-bay",
+            "observedPrice": 26050000,
+            "sourceId": "red:19023"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "Naia Bay-Phase 1",
@@ -13369,19 +13961,36 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Twinhouse",
         "Villa",
-        "Townhouse"
+        "Twin House",
+        "Town House",
+        "Chalet"
       ],
-      "downPayment": 20,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "20% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2174",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 38577000
+      "priceMin": 26050000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/19023-naia-bay",
+            "observedPrice": 26050000,
+            "sourceId": "red:19023"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "The Boardwalk Condos - Cali Coast",
@@ -13394,15 +14003,31 @@
       "unitTypes": [
         "Chalet"
       ],
-      "downPayment": 5,
-      "installmentYears": 9,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 9 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2207",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 6590000
+      "priceMin": 15500000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/19035-cali-coast",
+            "observedPrice": 15500000,
+            "sourceId": "red:19035"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "Mazarine Chalet Extension",
@@ -13413,17 +14038,37 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Apartment"
+        "Apartment",
+        "Town House",
+        "Duplex",
+        "Chalet",
+        "Villa"
       ],
-      "downPayment": 5,
-      "installmentYears": 3,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 3 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2068",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 7598000
+      "priceMin": 8472000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/19160-mazarine",
+            "observedPrice": 8472000,
+            "sourceId": "red:19160"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "Downtown Extension",
@@ -13436,15 +14081,31 @@
       "unitTypes": [
         "Apartment"
       ],
-      "downPayment": 5,
-      "installmentYears": 3,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 3 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:1335",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 6297000
+      "priceMin": 7083000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/19158-downtown-new-alamein",
+            "observedPrice": 7083000,
+            "sourceId": "red:19158"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "The Gate - New Alamein",
@@ -13487,7 +14148,23 @@
         "sourceId": "nawy-inventory:2260",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 12915000
+      "priceMin": 12915000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2260-blu-stays---the-island",
+            "observedPrice": 12915000,
+            "sourceId": "nawy:2260"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "Sea Veil",
@@ -13508,7 +14185,23 @@
         "sourceId": "nawy-inventory:2627",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 14207000
+      "priceMin": 14207000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2627-sea-veil",
+            "observedPrice": 14207000,
+            "sourceId": "nawy:2627"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "Elea - Azha North",
@@ -13519,18 +14212,34 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Apartment",
-        "Chalet"
+        "Chalet",
+        "Villa"
       ],
       "downPayment": 0,
-      "installmentYears": 10,
+      "installmentYears": 0,
       "paymentPlan": "0% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2437",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 21697000
+      "priceMin": 17724000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/19032-azha",
+            "observedPrice": 17724000,
+            "sourceId": "red:19032"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "Norma-Azha Ras El Hekma",
@@ -13540,14 +14249,45 @@
       "zone": "North Coast-Sahel",
       "status": "Available",
       "type": "residential",
-      "unitTypes": [],
-      "downPayment": 0,
-      "installmentYears": 0,
-      "paymentPlan": "0% Down Payment, 0 Years Installments",
+      "unitTypes": [
+        "Townhouse",
+        "Chalet",
+        "Twinhouse",
+        "Duplex",
+        "Villa",
+        "Penthouse",
+        "Apartment"
+      ],
+      "downPayment": 5,
+      "installmentYears": 10,
+      "paymentPlan": "5% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2166",
         "observedAt": "2026-09-22T10:02:00.468Z"
+      },
+      "priceMin": 12329000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 2,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/757-azha-north-coast",
+            "observedPrice": 12329000,
+            "sourceId": "nawy:757"
+          },
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/19032-azha",
+            "observedPrice": 17724000,
+            "sourceId": "red:19032"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
       }
     },
     {
@@ -13559,17 +14299,34 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Townhouse"
+        "Chalet",
+        "Villa"
       ],
-      "downPayment": 10,
-      "installmentYears": 6,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "10% Down Payment, 6 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2165",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 27503000
+      "priceMin": 17724000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/19032-azha",
+            "observedPrice": 17724000,
+            "sourceId": "red:19032"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "Diya-Azha Ras El Hekma",
@@ -13580,17 +14337,34 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Chalet"
+        "Chalet",
+        "Villa"
       ],
-      "downPayment": 10,
-      "installmentYears": 6,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "10% Down Payment, 6 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2164",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 18330000
+      "priceMin": 17724000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/19032-azha",
+            "observedPrice": 17724000,
+            "sourceId": "red:19032"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "Ophelia - Azha Ras El Hekma",
@@ -13601,17 +14375,34 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Chalet"
+        "Chalet",
+        "Villa"
       ],
       "downPayment": 0,
-      "installmentYears": 10,
+      "installmentYears": 0,
       "paymentPlan": "0% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2030",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 12329000
+      "priceMin": 17724000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/19032-azha",
+            "observedPrice": 17724000,
+            "sourceId": "red:19032"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "Zahra Down Town",
@@ -13633,7 +14424,29 @@
         "sourceId": "nawy-inventory:2183",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 7109550
+      "priceMin": 7109550,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 2,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2183-zahra-down-town",
+            "observedPrice": 7109550,
+            "sourceId": "nawy:2183"
+          },
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/30816-zahra",
+            "observedPrice": 9414500,
+            "sourceId": "red:30816"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "Ray Chalets - DOSE",
@@ -13674,7 +14487,23 @@
         "sourceId": "nawy-inventory:2217",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 7619150
+      "priceMin": 7619150,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2217-vero",
+            "observedPrice": 7619150,
+            "sourceId": "nawy:2217"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "Sidi Heneish Village",
@@ -13721,19 +14550,34 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Twinhouse",
-        "Villa",
-        "Chalet"
+        "Chalet",
+        "Penthouse"
       ],
-      "downPayment": 10,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "10% Down Payment, 8 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2470",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 8200000
+      "priceMin": 14600000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/19054-direction-white",
+            "observedPrice": 14600000,
+            "sourceId": "red:19054"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "Furl 2",
@@ -13830,7 +14674,23 @@
         "sourceId": "nawy-inventory:2722",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 28155000
+      "priceMin": 28155000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2722-lagoon-chalets",
+            "observedPrice": 28155000,
+            "sourceId": "nawy:2722"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "Mawj Lasirena",
@@ -13861,14 +14721,35 @@
       "zone": "North Coast-Sahel",
       "status": "Available",
       "type": "residential",
-      "unitTypes": [],
-      "downPayment": 0,
-      "installmentYears": 0,
-      "paymentPlan": "0% Down Payment, 0 Years Installments",
+      "unitTypes": [
+        "Chalet",
+        "Studio",
+        "Apartment"
+      ],
+      "downPayment": 50,
+      "installmentYears": 5,
+      "paymentPlan": "50% Down Payment, 5 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2502",
         "observedAt": "2026-09-22T10:02:00.468Z"
+      },
+      "priceMin": 3890000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/734-lasirena-north-coast",
+            "observedPrice": 3890000,
+            "sourceId": "nawy:734"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
       }
     },
     {
@@ -13892,7 +14773,23 @@
         "sourceId": "nawy-inventory:2348",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 3785000
+      "priceMin": 3785000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2348-sadaf",
+            "observedPrice": 3785000,
+            "sourceId": "nawy:2348"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "Dayz",
@@ -13933,7 +14830,29 @@
         "sourceId": "nawy-inventory:2013",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 7200000
+      "priceMin": 5700000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 2,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/30964-q-bay",
+            "observedPrice": 5700000,
+            "sourceId": "red:30964"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2013-q-bay",
+            "observedPrice": 7200000,
+            "sourceId": "nawy:2013"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "London",
@@ -13961,7 +14880,9 @@
       "zone": "North Coast-Sahel",
       "status": "Available",
       "type": "residential",
-      "unitTypes": [],
+      "unitTypes": [
+        "Chalet"
+      ],
       "downPayment": 0,
       "installmentYears": 0,
       "paymentPlan": "0% Down Payment, 0 Years Installments",
@@ -13969,6 +14890,23 @@
         "status": "observed",
         "sourceId": "nawy-inventory:1305",
         "observedAt": "2026-09-22T10:02:00.468Z"
+      },
+      "priceMin": 4134091,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/30919-glee",
+            "observedPrice": 4134091,
+            "sourceId": "red:30919"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
       }
     },
     {
@@ -14033,14 +14971,39 @@
       "zone": "North Coast-Sahel",
       "status": "Available",
       "type": "residential",
-      "unitTypes": [],
-      "downPayment": 0,
-      "installmentYears": 0,
-      "paymentPlan": "0% Down Payment, 0 Years Installments",
+      "unitTypes": [
+        "Chalet",
+        "Townhouse",
+        "Twinhouse",
+        "Apartment",
+        "Cabin",
+        "Villa",
+        "Penthouse"
+      ],
+      "downPayment": 10,
+      "installmentYears": 10,
+      "paymentPlan": "10% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:714",
         "observedAt": "2026-09-22T10:02:00.468Z"
+      },
+      "priceMin": 12190000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/528-bianchi-ilios",
+            "observedPrice": 12190000,
+            "sourceId": "nawy:528"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
       }
     },
     {

@@ -3249,6 +3249,23 @@
         "status": "observed",
         "sourceId": "nawy-inventory:561",
         "observedAt": "2026-09-22T10:02:00.468Z"
+      },
+      "priceMin": 9800000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2182-la-vista-6--phase-1",
+            "observedPrice": 9800000,
+            "sourceId": "nawy:2182"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
       }
     },
     {
@@ -3261,15 +3278,32 @@
       "type": "residential",
       "unitTypes": [
         "Chalet",
-        "Townhouse"
+        "Twinhouse"
       ],
-      "downPayment": 0,
-      "installmentYears": 0,
-      "paymentPlan": "0% Down Payment, 0 Years Installments",
+      "downPayment": 5,
+      "installmentYears": 8,
+      "paymentPlan": "5% Down Payment, 8 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:318",
         "observedAt": "2026-09-22T10:02:00.468Z"
+      },
+      "priceMin": 9300000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2181-la-vista-6--phase-2",
+            "observedPrice": 9300000,
+            "sourceId": "nawy:2181"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
       }
     },
     {
@@ -3281,19 +3315,42 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
+        "Villa",
+        "Twin House",
+        "Town House",
+        "Chalet",
         "Studio",
+        "Cabin",
         "Loft",
-        "Apartment"
+        "Apartment",
+        "Service Apartment",
+        "Duplex"
       ],
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:1984",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 9346000
+      "priceMin": 6642000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/28-il-monte-galala",
+            "observedPrice": 6642000,
+            "sourceId": "red:28"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "Marina Residence Il Monte Galala",
@@ -3303,7 +3360,18 @@
       "zone": "Ain Sokhna",
       "status": "Available",
       "type": "residential",
-      "unitTypes": [],
+      "unitTypes": [
+        "Villa",
+        "Twin House",
+        "Town House",
+        "Chalet",
+        "Studio",
+        "Cabin",
+        "Loft",
+        "Apartment",
+        "Service Apartment",
+        "Duplex"
+      ],
       "downPayment": 0,
       "installmentYears": 0,
       "paymentPlan": "0% Down Payment, 0 Years Installments",
@@ -3311,6 +3379,23 @@
         "status": "observed",
         "sourceId": "nawy-inventory:634",
         "observedAt": "2026-09-22T10:02:00.468Z"
+      },
+      "priceMin": 6642000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/28-il-monte-galala",
+            "observedPrice": 6642000,
+            "sourceId": "red:28"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
       }
     },
     {
@@ -3321,14 +3406,48 @@
       "zone": "Ain Sokhna",
       "status": "Available",
       "type": "residential",
-      "unitTypes": [],
-      "downPayment": 0,
-      "installmentYears": 0,
-      "paymentPlan": "0% Down Payment, 0 Years Installments",
+      "unitTypes": [
+        "Chalet",
+        "Duplex",
+        "Villa",
+        "Twinhouse",
+        "Cabin",
+        "Apartment",
+        "Studio",
+        "Loft",
+        "Townhouse",
+        "Penthouse"
+      ],
+      "downPayment": 5,
+      "installmentYears": 10,
+      "paymentPlan": "5% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:396",
         "observedAt": "2026-09-22T10:02:00.468Z"
+      },
+      "priceMin": 6642000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 2,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/28-il-monte-galala",
+            "observedPrice": 6642000,
+            "sourceId": "red:28"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/90-il-monte-galala",
+            "observedPrice": 7392000,
+            "sourceId": "nawy:90"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
       }
     },
     {
@@ -3340,17 +3459,42 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Studio"
+        "Villa",
+        "Twin House",
+        "Town House",
+        "Chalet",
+        "Studio",
+        "Cabin",
+        "Loft",
+        "Apartment",
+        "Service Apartment",
+        "Duplex"
       ],
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:182",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 7392000
+      "priceMin": 6642000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/28-il-monte-galala",
+            "observedPrice": 6642000,
+            "sourceId": "red:28"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "Can Limon - Kai Sokhna",
@@ -3361,21 +3505,36 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Loft",
         "Chalet",
-        "Villa",
-        "Studio",
-        "Apartment"
+        "Loft",
+        "Penthouse",
+        "Studio"
       ],
-      "downPayment": 5,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 8 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:1968",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 8000000
+      "priceMin": 11265766,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/50-kai-sokhna",
+            "observedPrice": 11265766,
+            "sourceId": "red:50"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "Jebal El Sokhna -Crimson Heights",
@@ -3385,14 +3544,41 @@
       "zone": "Ain Sokhna",
       "status": "Available",
       "type": "residential",
-      "unitTypes": [],
-      "downPayment": 0,
-      "installmentYears": 0,
-      "paymentPlan": "0% Down Payment, 0 Years Installments",
+      "unitTypes": [
+        "Chalet",
+        "Apartment",
+        "Penthouse"
+      ],
+      "downPayment": 10,
+      "installmentYears": 6,
+      "paymentPlan": "10% Down Payment, 6 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2152",
         "observedAt": "2026-09-22T10:02:00.468Z"
+      },
+      "priceMin": 7755000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 2,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/434-jebal-el-sokhna",
+            "observedPrice": 7755000,
+            "sourceId": "nawy:434"
+          },
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/19064-jebal-el-sokhna",
+            "observedPrice": 8980000,
+            "sourceId": "red:19064"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
       }
     },
     {
@@ -3406,15 +3592,31 @@
       "unitTypes": [
         "Chalet"
       ],
-      "downPayment": 10,
-      "installmentYears": 6,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "10% Down Payment, 6 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2151",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 7755000
+      "priceMin": 8980000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/19064-jebal-el-sokhna",
+            "observedPrice": 8980000,
+            "sourceId": "red:19064"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "Ojo Murano",
@@ -3426,18 +3628,34 @@
       "type": "residential",
       "unitTypes": [
         "Chalet",
-        "Villa",
-        "Townhouse"
+        "Duplex",
+        "Apartment"
       ],
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2141",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 6082180
+      "priceMin": 15759090,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/19029-murano",
+            "observedPrice": 15759090,
+            "sourceId": "red:19029"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "Capella-The Groove",
@@ -3447,14 +3665,35 @@
       "zone": "Ain Sokhna",
       "status": "Available",
       "type": "residential",
-      "unitTypes": [],
-      "downPayment": 0,
-      "installmentYears": 0,
-      "paymentPlan": "0% Down Payment, 0 Years Installments",
+      "unitTypes": [
+        "Chalet",
+        "Villa",
+        "Twinhouse"
+      ],
+      "downPayment": 30,
+      "installmentYears": 12,
+      "paymentPlan": "30% Down Payment, 12 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2505",
         "observedAt": "2026-09-22T10:02:00.468Z"
+      },
+      "priceMin": 6935000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/392-the-groove",
+            "observedPrice": 6935000,
+            "sourceId": "nawy:392"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
       }
     },
     {
@@ -3539,7 +3778,23 @@
         "sourceId": "nawy-inventory:2403",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 4000000
+      "priceMin": 4000000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2403-tamera",
+            "observedPrice": 4000000,
+            "sourceId": "nawy:2403"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
+      }
     },
     {
       "name": "Selina Carnelia",
@@ -3549,7 +3804,12 @@
       "zone": "Ain Sokhna",
       "status": "Available",
       "type": "residential",
-      "unitTypes": [],
+      "unitTypes": [
+        "Villa",
+        "Chalet",
+        "Studio",
+        "Loft"
+      ],
       "downPayment": 0,
       "installmentYears": 0,
       "paymentPlan": "0% Down Payment, 0 Years Installments",
@@ -3557,6 +3817,23 @@
         "status": "observed",
         "sourceId": "nawy-inventory:2331",
         "observedAt": "2026-09-22T10:02:00.468Z"
+      },
+      "priceMin": 5841000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/6-carnelia",
+            "observedPrice": 5841000,
+            "sourceId": "red:6"
+          }
+        ],
+        "updatedAt": "2026-09-22T18:36:05.501Z"
       }
     },
     {

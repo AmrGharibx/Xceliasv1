@@ -10,11 +10,19 @@ export async function usersModal(ctx){
   const pending=invitations.filter(i=>!i.used_at&&!i.revoked_at&&i.expires_at>Date.now());
   openModal('Company staff','Only invited team members can access this workspace.',`
    <div class="team-toolbar"><div class="notice subtle">${icon('shield',17)} Assign only the access each team member needs. There is no public registration.</div>${btn('Invite team member','invite-team','primary','plus')}</div>
-   <div class="table-wrap"><table><thead><tr><th>Team member</th><th>Role</th><th>Active</th><th></th></tr></thead><tbody>${users.map(u=>`<tr data-user-row="${u.id}"><td><strong>${e(u.full_name)}</strong><small>${e(u.email)}${u.id===ctx.store.user.id?' &middot; You':''}</small></td><td><select aria-label="Role for ${e(u.full_name)}" data-user-role>${['viewer','instructor','admin'].map(r=>option(r,r[0].toUpperCase()+r.slice(1),u.role)).join('')}</select></td><td><input type="checkbox" data-user-active aria-label="Active access for ${e(u.full_name)}" ${u.active?'checked':''}></td><td>${btn('Save','save-user','small','check',`data-id="${u.id}"`)}</td></tr>`).join('')}</tbody></table></div>
+   <div class="table-wrap"><table><thead><tr><th>Team member</th><th>Role</th><th>Active</th><th></th></tr></thead><tbody>${users.map(u=>`<tr data-user-row="${u.id}" data-original-name="${e(u.full_name)}"><td><input type="text" maxlength="160" value="${e(u.full_name)}" aria-label="Display name for ${e(u.email)}" data-user-name><small>${e(u.email)}${u.id===ctx.store.user.id?' &middot; You':''}</small></td><td><select aria-label="Role for ${e(u.full_name)}" data-user-role>${['viewer','instructor','admin'].map(r=>option(r,r[0].toUpperCase()+r.slice(1),u.role)).join('')}</select></td><td><input type="checkbox" data-user-active aria-label="Active access for ${e(u.full_name)}" ${u.active?'checked':''}></td><td>${btn('Save name','save-user-name','small secondary','edit',`data-id="${u.id}"`)} ${btn('Save access','save-user','small','check',`data-id="${u.id}"`)}</td></tr>`).join('')}</tbody></table></div>
    <h3 style="margin:28px 0 12px">Pending invitations <span class="faint">(${pending.length})</span></h3>
    ${pending.length?`<div class="table-wrap"><table><thead><tr><th>Invitation</th><th>Role</th><th>Expires</th><th></th></tr></thead><tbody>${pending.map(i=>`<tr><td><strong>${e(i.full_name)}</strong><small>${e(i.email)}</small></td><td>${e(i.role)}</td><td>${e(new Date(i.expires_at).toLocaleString('en-GB',{timeZone:'Africa/Cairo',dateStyle:'medium',timeStyle:'short'}))}<small>Cairo time</small></td><td>${btn('Revoke','revoke-invite','small danger','x',`data-id="${i.id}"`)}</td></tr>`).join('')}</tbody></table></div>`:'<p class="faint">No invitations are awaiting activation.</p>'}
    <p class="team-footnote">Permission changes revoke the member\'s current sessions. The final active administrator cannot be removed. Invitations expire after 48 hours and work once.</p>`,{wide:true});
   document.querySelector('[data-action="invite-team"]').onclick=()=>inviteModal(ctx);
+  document.querySelectorAll('[data-action="save-user-name"]').forEach(button=>button.onclick=async()=>{
+   const row=button.closest('tr'),input=row.querySelector('[data-user-name]'),full_name=input.value.trim();
+   if(!full_name||full_name.length>160){toast('Enter a display name between 1 and 160 characters.','error');input.focus();return;}
+   if(full_name===row.dataset.originalName){toast('The display name is unchanged.');return;}
+   button.disabled=true;
+   try{await ctx.store.api('users/profile','PATCH',{id:button.dataset.id,full_name});toast('Display name updated.');await usersModal(ctx);}
+   catch(error){toast(error.message,'error');button.disabled=false;}
+  });
   document.querySelectorAll('[data-action="save-user"]').forEach(button=>button.onclick=async()=>{
    const row=button.closest('tr'),role=row.querySelector('[data-user-role]').value,active=row.querySelector('[data-user-active]').checked;
    button.disabled=true;

@@ -214,6 +214,11 @@ async function handle(request){
   }
   if(route==='mutate'&&method==='POST'){const body=await bodyOf(request),state=await workspaceState(user),operations=prepareCloudOperations(body,state,user),records=await rpc('red_commit',{p_operations:operations,p_actor:user.email});return json(request,{records});}
   if(route==='ai'&&method==='POST')return json(request,await aiReport(user,session.token,await bodyOf(request)));
+  if(route==='users/profile'&&method==='PATCH'){
+   requireAdmin(user);const body=await bodyOf(request),fullName=typeof body.full_name==='string'?body.full_name.trim():'';
+   if(!isId(body.id)||!fullName||fullName.length>160||/[\u0000-\u001f\u007f]/.test(fullName))throw new ApiError(400,'Enter a valid display name.');
+   await rpc('red_rename_user',{p_target:body.id,p_full_name:fullName,p_actor:user.email});return json(request,{ok:true});
+  }
   if(route==='users'&&method==='GET'){requireAdmin(user);return json(request,await rows('users',{select:'id,email,full_name,role,active,created_at',order:'created_at.asc'}));}
   if(route==='users'&&method==='PATCH'){requireAdmin(user);const body=await bodyOf(request);if(!isId(body.id)||!['admin','instructor','viewer'].includes(body.role)||typeof body.active!=='boolean')throw new ApiError(400,'Invalid user permissions.');await rpc('red_update_user_access',{p_target:body.id,p_role:body.role,p_active:body.active,p_actor:user.email});return json(request,{ok:true});}
   throw new ApiError(404,'Endpoint not found.');

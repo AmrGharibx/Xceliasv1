@@ -169,6 +169,7 @@ export async function handleApi(request){
   }
   if(route==='mutate'&&method==='POST'){const body=await bodyOf(request);const state=await repo.state(user,token);const ops=prepareOperations(body,state,user);const records=await repo.commit(ops,user,token);events.emit('change');return json({records},200,outgoing);}
   if(route==='ai'&&method==='POST')return json(await aiReport(repo,user,token,await bodyOf(request)),200,outgoing);
+  if(route==='users/profile'&&method==='PATCH'){admin(user);const body=await bodyOf(request);if(!isId(body.id)||typeof body.full_name!=='string'||!body.full_name.trim()||body.full_name.trim().length>160||/[\u0000-\u001f\u007f]/.test(body.full_name))throw new ApiError(400,'Enter a valid display name.');const result=await repo.updateUserName(body.id,body.full_name.trim(),user);events.emit('change');return json(result,200,outgoing);}
   if(route==='users'&&method==='GET'){admin(user);return json(await repo.users(token),200,outgoing);}
   if(route==='users'&&method==='PATCH'){admin(user);const body=await bodyOf(request);if(!isId(body.id)||!['admin','instructor','viewer'].includes(body.role)||typeof body.active!=='boolean')throw new ApiError(400,'Invalid user permissions.');const result=await repo.updateUser(body.id,{role:body.role,active:body.active},user,token);events.emit('change');return json(result,200,outgoing);}
   if(route==='events'&&method==='GET'){

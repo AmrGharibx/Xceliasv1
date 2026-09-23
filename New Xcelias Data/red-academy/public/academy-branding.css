@@ -34,22 +34,40 @@
 .academy-brand-signature {
   align-self: flex-end;
   margin: -1px 3px 0 0;
-  color: #ffd0c0;
+  position: relative;
+  color: #ffe0d4;
   font-family: 'Segoe Script', 'Bradley Hand', cursive;
-  font-size: 16px;
+  font-size: 18px;
   font-style: italic;
   font-weight: 700;
   letter-spacing: 0.04em;
   line-height: 1;
-  text-shadow: 0 0 12px rgba(240, 68, 68, 0.25);
+  text-shadow: 0 0 10px rgba(240, 68, 68, 0.45);
   transform: rotate(-5deg);
   transform-origin: 70% 50%;
-  animation: academy-signature-live 4.6s ease-in-out infinite;
+  animation: academy-signature-live 2.8s ease-in-out infinite;
+}
+
+.academy-brand-signature::after {
+  position: absolute;
+  top: -4px;
+  right: -10px;
+  color: #ff8585;
+  content: '✦';
+  font-family: sans-serif;
+  font-size: 9px;
+  font-style: normal;
+  animation: academy-signature-spark 2.8s ease-in-out infinite;
 }
 
 @keyframes academy-signature-live {
-  0%, 100% { transform: rotate(-5deg) translateY(0); text-shadow: 0 0 9px rgba(240, 68, 68, 0.2); }
-  50% { transform: rotate(-2deg) translateY(-2px); text-shadow: 0 0 15px rgba(240, 68, 68, 0.48); }
+  0%, 100% { transform: rotate(-6deg) translateY(1px) scale(0.98); text-shadow: 0 0 7px rgba(240, 68, 68, 0.25); }
+  45%, 60% { transform: rotate(-1deg) translateY(-3px) scale(1.04); text-shadow: 0 0 17px rgba(240, 68, 68, 0.72); }
+}
+
+@keyframes academy-signature-spark {
+  0%, 100% { opacity: 0.25; transform: translate(0, 2px) scale(0.72) rotate(-25deg); }
+  50% { opacity: 1; transform: translate(2px, -2px) scale(1.2) rotate(20deg); }
 }
 
 /* Hide the duplicate promo card; Analytics remains available in the main nav. */
@@ -91,12 +109,12 @@ body.light .academy-brand-signature { color: #a51f2a; text-shadow: 0 0 10px rgba
 
 .sidebar {
   overflow-x: hidden;
-  background: linear-gradient(155deg, rgba(25, 27, 35, 0.76), rgba(11, 13, 18, 0.63));
+  background: linear-gradient(155deg, rgba(25, 27, 35, 0.68), rgba(11, 13, 18, 0.54));
   border-right-color: rgba(214, 220, 240, 0.2);
 }
 
 .topbar {
-  background: linear-gradient(95deg, rgba(27, 28, 36, 0.73), rgba(12, 14, 20, 0.58));
+  background: linear-gradient(95deg, rgba(27, 28, 36, 0.67), rgba(12, 14, 20, 0.5));
   border-bottom-color: rgba(214, 220, 240, 0.2);
 }
 
@@ -106,15 +124,16 @@ body.light .academy-brand-signature { color: #a51f2a; text-shadow: 0 0 10px rgba
   z-index: 0;
   inset: 0;
   background-image:
-    radial-gradient(circle at 8% 24%, rgba(255, 154, 154, 0.8) 0 1px, transparent 1.8px),
-    radial-gradient(circle at 28% 72%, rgba(255, 228, 210, 0.7) 0 0.8px, transparent 1.7px),
-    radial-gradient(circle at 56% 31%, rgba(207, 218, 255, 0.75) 0 1px, transparent 1.8px),
-    radial-gradient(circle at 78% 82%, rgba(255, 154, 154, 0.65) 0 0.8px, transparent 1.7px),
-    radial-gradient(circle at 92% 16%, rgba(207, 218, 255, 0.65) 0 0.8px, transparent 1.7px);
+    radial-gradient(circle at 8% 24%, rgba(255, 154, 154, 0.92) 0 1.15px, transparent 2px),
+    radial-gradient(circle at 28% 72%, rgba(255, 228, 210, 0.88) 0 1px, transparent 1.9px),
+    radial-gradient(circle at 48% 15%, rgba(255, 202, 180, 0.78) 0 0.9px, transparent 1.8px),
+    radial-gradient(circle at 56% 31%, rgba(207, 218, 255, 0.9) 0 1.15px, transparent 2px),
+    radial-gradient(circle at 78% 82%, rgba(255, 154, 154, 0.82) 0 1px, transparent 1.9px),
+    radial-gradient(circle at 92% 16%, rgba(207, 218, 255, 0.86) 0 1px, transparent 1.9px);
   content: '';
-  opacity: 0.3;
+  opacity: 0.52;
   pointer-events: none;
-  animation: academy-glass-stars 34s ease-in-out infinite alternate;
+  animation: academy-glass-stars 22s ease-in-out infinite alternate;
 }
 
 .sidebar > *,
@@ -125,36 +144,45 @@ body.light .academy-brand-signature { color: #a51f2a; text-shadow: 0 0 10px rgba
 
 @keyframes academy-glass-stars {
   to {
-    opacity: 0.55;
-    transform: translate3d(3px, -2px, 0);
+    opacity: 0.78;
+    transform: translate3d(6px, -3px, 0);
   }
 }
 
 body.light .sidebar {
-  background: linear-gradient(155deg, rgba(250, 251, 255, 0.8), rgba(229, 234, 244, 0.68));
+  background: linear-gradient(155deg, rgba(250, 251, 255, 0.69), rgba(229, 234, 244, 0.55));
   border-right-color: rgba(28, 34, 49, 0.17);
 }
 
 body.light .topbar {
-  background: linear-gradient(95deg, rgba(250, 251, 255, 0.8), rgba(232, 237, 246, 0.65));
+  background: linear-gradient(95deg, rgba(250, 251, 255, 0.67), rgba(232, 237, 246, 0.5));
   border-bottom-color: rgba(28, 34, 49, 0.16);
 }
 
 body.light .sidebar::before,
 body.light .topbar::before {
   background-image:
-    radial-gradient(circle at 8% 24%, rgba(163, 49, 63, 0.62) 0 1px, transparent 1.8px),
-    radial-gradient(circle at 28% 72%, rgba(129, 105, 157, 0.58) 0 0.8px, transparent 1.7px),
-    radial-gradient(circle at 56% 31%, rgba(75, 96, 145, 0.62) 0 1px, transparent 1.8px),
-    radial-gradient(circle at 78% 82%, rgba(163, 49, 63, 0.52) 0 0.8px, transparent 1.7px),
-    radial-gradient(circle at 92% 16%, rgba(75, 96, 145, 0.52) 0 0.8px, transparent 1.7px);
-  opacity: 0.2;
+    radial-gradient(circle at 8% 24%, rgba(163, 49, 63, 0.86) 0 1.2px, transparent 2px),
+    radial-gradient(circle at 28% 72%, rgba(129, 105, 157, 0.82) 0 1px, transparent 1.9px),
+    radial-gradient(circle at 48% 15%, rgba(191, 135, 133, 0.78) 0 0.9px, transparent 1.8px),
+    radial-gradient(circle at 56% 31%, rgba(75, 96, 145, 0.86) 0 1.2px, transparent 2px),
+    radial-gradient(circle at 78% 82%, rgba(163, 49, 63, 0.78) 0 1px, transparent 1.9px),
+    radial-gradient(circle at 92% 16%, rgba(75, 96, 145, 0.78) 0 1px, transparent 1.9px);
+  opacity: 0.38;
 }
+
+body.light .academy-brand-signature {
+  color: #a51f2a;
+  text-shadow: 0 0 10px rgba(165, 31, 42, 0.35);
+}
+
+body.light .academy-brand-signature::after { color: #bd3540; }
 
 @media (prefers-reduced-motion: reduce) {
   .sidebar::before,
   .topbar::before,
-  .academy-brand-signature {
+  .academy-brand-signature,
+  .academy-brand-signature::after {
     animation: none;
   }
 }

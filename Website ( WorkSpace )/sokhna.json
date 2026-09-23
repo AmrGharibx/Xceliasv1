@@ -3178,18 +3178,34 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Chalet",
-        "Twinhouse"
+        "apartment",
+        "villa"
       ],
       "downPayment": 5,
-      "installmentYears": 8,
-      "paymentPlan": "5% Down Payment, 8 Years Installments",
+      "installmentYears": 0,
+      "paymentPlan": "5% Down Payment",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2181",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 9300000
+      "priceMin": 21690000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/la-vista-developments/la-vista-6",
+            "observedPrice": 21690000,
+            "sourceId": "property-finder:c01ccd91-6140-4733-8c46-253cfb115a2a"
+          }
+        ],
+        "updatedAt": "2026-09-23T02:53:48.002Z"
+      }
     },
     {
       "name": "LA Vista 5",
@@ -3318,20 +3334,12 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Villa",
-        "Twin House",
-        "Town House",
-        "Chalet",
-        "Studio",
-        "Cabin",
-        "Loft",
-        "Apartment",
-        "Service Apartment",
-        "Duplex"
+        "apartment",
+        "penthouse"
       ],
-      "downPayment": 0,
+      "downPayment": 10,
       "installmentYears": 0,
-      "paymentPlan": "5% Down Payment, 10 Years Installments",
+      "paymentPlan": "10% Down Payment",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:1984",
@@ -3343,16 +3351,22 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/28-il-monte-galala",
             "observedPrice": 6642000,
             "sourceId": "red:28"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/tatweer-misr/marina-towers",
+            "observedPrice": 10970700,
+            "sourceId": "property-finder:d2483468-f1c9-4bbb-937b-132ed4db9e2e"
           }
         ],
-        "updatedAt": "2026-09-22T18:36:05.501Z"
+        "updatedAt": "2026-09-23T02:53:48.002Z"
       }
     },
     {
@@ -3364,20 +3378,12 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Villa",
-        "Twin House",
-        "Town House",
-        "Chalet",
-        "Studio",
-        "Cabin",
-        "Loft",
-        "Apartment",
-        "Service Apartment",
-        "Duplex"
+        "apartment",
+        "penthouse"
       ],
-      "downPayment": 0,
+      "downPayment": 10,
       "installmentYears": 0,
-      "paymentPlan": "0% Down Payment, 0 Years Installments",
+      "paymentPlan": "10% Down Payment",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:634",
@@ -3389,16 +3395,22 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/28-il-monte-galala",
             "observedPrice": 6642000,
             "sourceId": "red:28"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/tatweer-misr/marina-towers",
+            "observedPrice": 10970700,
+            "sourceId": "property-finder:d2483468-f1c9-4bbb-937b-132ed4db9e2e"
           }
         ],
-        "updatedAt": "2026-09-22T18:36:05.501Z"
+        "updatedAt": "2026-09-23T02:53:48.002Z"
       }
     },
     {
@@ -3781,14 +3793,20 @@
         "sourceId": "nawy-inventory:2403",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 4000000,
+      "priceMin": 3200000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/lasirena-group/tamera",
+            "observedPrice": 3200000,
+            "sourceId": "property-finder:7ab4ed16-a3cd-4441-9607-4fd615432543"
+          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/2403-tamera",
@@ -3796,7 +3814,7 @@
             "sourceId": "nawy:2403"
           }
         ],
-        "updatedAt": "2026-09-22T18:36:05.501Z"
+        "updatedAt": "2026-09-23T02:53:48.002Z"
       }
     },
     {
@@ -3847,14 +3865,34 @@
       "zone": "Ain Sokhna",
       "status": "Available",
       "type": "residential",
-      "unitTypes": [],
-      "downPayment": 0,
+      "unitTypes": [
+        "apartment",
+        "duplex"
+      ],
+      "downPayment": 10,
       "installmentYears": 0,
-      "paymentPlan": "0% Down Payment, 0 Years Installments",
+      "paymentPlan": "10% Down Payment",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:1235",
         "observedAt": "2026-09-22T10:02:00.468Z"
+      },
+      "priceMin": 2640000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/el-manara-developments/bella-vento-galala-ain-sokhna",
+            "observedPrice": 2640000,
+            "sourceId": "property-finder:7f3dcd5d-2d5b-40e1-987f-b77be37d3d0e"
+          }
+        ],
+        "updatedAt": "2026-09-23T02:53:48.002Z"
       }
     },
     {
@@ -3865,14 +3903,33 @@
       "zone": "Ain Sokhna",
       "status": "Available",
       "type": "residential",
-      "unitTypes": [],
-      "downPayment": 0,
+      "unitTypes": [
+        "apartment"
+      ],
+      "downPayment": 10,
       "installmentYears": 0,
-      "paymentPlan": "0% Down Payment, 0 Years Installments",
+      "paymentPlan": "10% Down Payment",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:1234",
         "observedAt": "2026-09-22T10:02:00.468Z"
+      },
+      "priceMin": 6597000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/manara-developments/bella-romance",
+            "observedPrice": 6597000,
+            "sourceId": "property-finder:c53ad267-b7ff-4b6f-949d-ac5ea2b68f53"
+          }
+        ],
+        "updatedAt": "2026-09-23T02:53:48.002Z"
       }
     },
     {

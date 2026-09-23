@@ -2150,14 +2150,34 @@
       "zone": "New Mansoura",
       "status": "Available",
       "type": "residential",
-      "unitTypes": [],
-      "downPayment": 0,
+      "unitTypes": [
+        "townhouse",
+        "villa"
+      ],
+      "downPayment": 5,
       "installmentYears": 0,
-      "paymentPlan": "0% Down Payment, 0 Years Installments",
+      "paymentPlan": "5% Down Payment",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:1137",
         "observedAt": "2026-09-22T10:02:00.468Z"
+      },
+      "priceMin": 5400000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "verified",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/city-edge/zahya",
+            "observedPrice": 5400000,
+            "sourceId": "property-finder:970001e6-8922-4a1f-8308-31e57d401fd8"
+          }
+        ],
+        "updatedAt": "2026-09-23T02:53:48.002Z"
       }
     },
     {
@@ -2187,16 +2207,22 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/2239-coral-coves",
             "observedPrice": 18900000,
             "sourceId": "nawy:2239"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/somabay-realestate/soma-coves",
+            "observedPrice": 22100000,
+            "sourceId": "property-finder:9e4e375f-5822-47f1-9cee-4fc1d43d23b2"
           }
         ],
-        "updatedAt": "2026-09-22T18:36:05.501Z"
+        "updatedAt": "2026-09-23T02:53:48.002Z"
       }
     },
     {
@@ -2262,13 +2288,30 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [],
-      "downPayment": 0,
+      "downPayment": 5,
       "installmentYears": 0,
-      "paymentPlan": "0% Down Payment, 0 Years Installments",
+      "paymentPlan": "5% Down Payment",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2006",
         "observedAt": "2026-09-22T10:02:00.468Z"
+      },
+      "priceMin": 7535270,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/wadi-degla/club-town",
+            "observedPrice": 7535270,
+            "sourceId": "property-finder:d8512688-b770-49e6-8c0c-2cb681cc0691"
+          }
+        ],
+        "updatedAt": "2026-09-23T02:53:48.002Z"
       }
     },
     {
@@ -2333,14 +2376,34 @@
       "zone": "Others",
       "status": "Available",
       "type": "residential",
-      "unitTypes": [],
-      "downPayment": 0,
+      "unitTypes": [
+        "apartment",
+        "villa"
+      ],
+      "downPayment": 10,
       "installmentYears": 0,
-      "paymentPlan": "0% Down Payment, 0 Years Installments",
+      "paymentPlan": "10% Down Payment",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:1614",
         "observedAt": "2026-09-22T10:02:00.468Z"
+      },
+      "priceMin": 15000000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/mbg-developments/doray-bay",
+            "observedPrice": 15000000,
+            "sourceId": "property-finder:204492c5-c7a3-4481-91e1-306742deaa20"
+          }
+        ],
+        "updatedAt": "2026-09-23T02:53:48.002Z"
       }
     },
     {
@@ -2389,17 +2452,34 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Villa"
+        "apartment",
+        "villa"
       ],
-      "downPayment": 5,
-      "installmentYears": 7,
-      "paymentPlan": "5% Down Payment, 7 Years Installments",
+      "downPayment": 10,
+      "installmentYears": 0,
+      "paymentPlan": "10% Down Payment",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2257",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 44000000
+      "priceMin": 12700000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/travco-properties/ras-soma",
+            "observedPrice": 12700000,
+            "sourceId": "property-finder:c129378a-e139-48a4-a3c5-8bbaec67e41e"
+          }
+        ],
+        "updatedAt": "2026-09-23T02:53:48.002Z"
+      }
     },
     {
       "name": "Ras Soma-Phase 2",
@@ -2410,17 +2490,34 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Apartment"
+        "apartment",
+        "villa"
       ],
-      "downPayment": 5,
-      "installmentYears": 7,
-      "paymentPlan": "5% Down Payment, 7 Years Installments",
+      "downPayment": 10,
+      "installmentYears": 0,
+      "paymentPlan": "10% Down Payment",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2256",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 12700000
+      "priceMin": 12700000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/travco-properties/ras-soma",
+            "observedPrice": 12700000,
+            "sourceId": "property-finder:c129378a-e139-48a4-a3c5-8bbaec67e41e"
+          }
+        ],
+        "updatedAt": "2026-09-23T02:53:48.002Z"
+      }
     },
     {
       "name": "Almaza Ras Soma - Marina Gate",
@@ -2431,21 +2528,34 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Villa",
-        "Twinhouse",
-        "Townhouse",
-        "Duplex",
-        "Penthouse"
+        "apartment",
+        "villa"
       ],
-      "downPayment": 5,
-      "installmentYears": 7,
-      "paymentPlan": "5% Down Payment, 7 Years Installments",
+      "downPayment": 10,
+      "installmentYears": 0,
+      "paymentPlan": "10% Down Payment",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2251",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 18590000
+      "priceMin": 12700000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/travco-properties/ras-soma",
+            "observedPrice": 12700000,
+            "sourceId": "property-finder:c129378a-e139-48a4-a3c5-8bbaec67e41e"
+          }
+        ],
+        "updatedAt": "2026-09-23T02:53:48.002Z"
+      }
     },
     {
       "name": "Green Waves",
@@ -2473,14 +2583,33 @@
       "zone": "Ras Sudr",
       "status": "Available",
       "type": "residential",
-      "unitTypes": [],
-      "downPayment": 0,
+      "unitTypes": [
+        "apartment"
+      ],
+      "downPayment": 20,
       "installmentYears": 0,
-      "paymentPlan": "0% Down Payment, 0 Years Installments",
+      "paymentPlan": "20% Down Payment",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:1110",
         "observedAt": "2026-09-22T10:02:00.468Z"
+      },
+      "priceMin": 3821000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/lasirena-group/la-vento-oyoun-mousa",
+            "observedPrice": 3821000,
+            "sourceId": "property-finder:6d9bd991-1f34-4cf2-b4f8-a023457a9825"
+          }
+        ],
+        "updatedAt": "2026-09-23T02:53:48.002Z"
       }
     },
     {

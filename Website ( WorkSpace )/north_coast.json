@@ -4518,22 +4518,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/716-azzar--island",
             "observedPrice": 6100000,
             "sourceId": "nawy:716"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/reedy-group-development/azzar-islands",
-            "observedPrice": 12900000,
-            "sourceId": "property-finder:47e13c1b-e53c-418e-81f2-f2986c6d59e6"
           }
         ],
-        "updatedAt": "2026-09-22T02:53:41.646Z"
+        "updatedAt": "2026-09-23T18:35:34.352Z"
       }
     },
     {
@@ -5240,7 +5234,7 @@
       "layouts": [
         "https://cityedgedevelopments.com/project/north-edge-towers"
       ],
-      "priceMin": 16832000,
+      "priceMin": 29513000,
       "unitTypes": [
         "Apartment",
         "Chalet"
@@ -5268,11 +5262,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1228-beach-front-towers",
-            "observedPrice": 16832000,
+            "observedPrice": 29513000,
             "sourceId": "nawy:1228"
           }
         ],
-        "updatedAt": "2026-09-23T06:46:41.327Z"
+        "updatedAt": "2026-09-23T18:35:34.352Z"
       }
     },
     {
@@ -5289,7 +5283,7 @@
       "layouts": [
         "https://arabia-holding.com/project/bungalows/"
       ],
-      "priceMin": 2304806,
+      "priceMin": 3299670,
       "unitTypes": [
         "Chalet",
         "Studio"
@@ -5312,14 +5306,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/arabia-developments/bungalows",
-            "observedPrice": 2304806,
-            "sourceId": "property-finder:6ff7f232-f3db-4523-b799-0608a813bdbf"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30958-bungalows",
@@ -5333,7 +5321,7 @@
             "sourceId": "nawy:1231"
           }
         ],
-        "updatedAt": "2026-09-22T01:02:59.647Z"
+        "updatedAt": "2026-09-23T18:35:34.352Z"
       }
     },
     {
@@ -8560,8 +8548,13 @@
       "type": "residential",
       "priceMin": 19692000,
       "unitTypes": [
-        "penthouse",
-        "apartment"
+        "Apartment",
+        "Villa",
+        "Twin House",
+        "Duplex",
+        "Chalet",
+        "Loft",
+        "Town House"
       ],
       "areaMin": 74,
       "areaMax": 323,
@@ -8574,29 +8567,23 @@
         6
       ],
       "paymentPlan": "5% Down Payment",
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19027-june",
             "observedPrice": 19692000,
             "sourceId": "red:19027"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/sodic/pearl",
-            "observedPrice": 28217000,
-            "sourceId": "property-finder:d4db78b3-6e1d-42c8-b85e-31fcaceef034"
           }
         ],
-        "updatedAt": "2026-09-22T02:53:41.646Z"
+        "updatedAt": "2026-09-23T18:35:34.352Z"
       }
     },
     {
@@ -10992,22 +10979,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/716-azzar--island",
             "observedPrice": 6100000,
             "sourceId": "nawy:716"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/reedy-group-development/azzar-islands",
-            "observedPrice": 12900000,
-            "sourceId": "property-finder:47e13c1b-e53c-418e-81f2-f2986c6d59e6"
           }
         ],
-        "updatedAt": "2026-09-22T01:02:59.647Z"
+        "updatedAt": "2026-09-23T18:35:34.352Z"
       }
     },
     {

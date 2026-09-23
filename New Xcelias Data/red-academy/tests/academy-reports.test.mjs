@@ -43,13 +43,13 @@ test('incomplete or unrecorded assessments remain pending instead of becoming a 
  assert.match(item.narrative,/does not assign a score band/i);
 });
 
-test('unrecorded attendance is not transformed into absences in a batch report',()=>{
+test('tour attendance counts as present in a batch report',()=>{
  const {state,company,batch,trainee}=fixtureState();
  state.daily_attendance=[attendance('tour',trainee.id,batch.id,'Tour Day')];
  const report=buildBatchReport(state,{batchId:batch.id,companyId:company.id});
- assert.equal(report.items[0].attendance.present,0);
+ assert.equal(report.items[0].attendance.present,1);
  assert.equal(report.items[0].attendance.absent,0);
- assert.equal(report.items[0].attendance.rate,null);
+ assert.equal(report.items[0].attendance.rate,100);
 });
 
 test('batch PDF jobs create one standalone report per company without cross-company trainees',()=>{

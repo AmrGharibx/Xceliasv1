@@ -12,7 +12,7 @@ Original Notion pages, properties, relationship IDs, raw text and hashes are sto
 
 ## Attendance and missing values
 
-Only an explicit Present status counts present; only Absent counts absent. Tour Day and Off Day are distinct. An unknown/unrecorded day is not absence. Classroom attendance rate is Present / (Present + Absent), or not available if the denominator is zero. Unassigned blank-status records do not mark a named trainee as recorded.
+An explicit Present or Tour Day status counts as present; Tour Day remains separately identifiable as a subset of present. Mark a trainee who misses the tour as Absent. Off Day is excluded from the attendance rate. An unknown/unrecorded day remains unknown, not absence. The attendance rate is (Present + Tour Day) / (Present + Tour Day + Absent), or not available if the denominator is zero. Unassigned blank-status records do not mark a named trainee as recorded.
 
 Daily rollups count the canonical daily rows directly, not once for every overlapping checklist period. Archived source rollup strings remain available even when they contain entry titles instead of numeric counts.
 

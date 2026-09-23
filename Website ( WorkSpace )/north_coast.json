@@ -15411,6 +15411,32 @@
         ],
         "updatedAt": "2026-09-23T02:53:48.002Z"
       }
+    },
+    {
+      "name": "Youd",
+      "dev": "Al Ahly Sabbour Developments",
+      "lat": 31.090141,
+      "lng": 28.161711,
+      "zone": "North Coast-Sahel",
+      "status": "Available",
+      "type": "residential",
+      "unitTypes": [
+        "Studio",
+        "Chalet",
+        "Duplex",
+        "Villa",
+        "Twinhouse",
+        "Apartment"
+      ],
+      "downPayment": 20,
+      "installmentYears": 8,
+      "paymentPlan": "20% Down Payment, 8 Years Installments",
+      "catalogMeta": {
+        "status": "observed",
+        "sourceId": "nawy-inventory:1671",
+        "observedAt": "2026-09-23T03:36:30.920Z"
+      },
+      "priceMin": 6612000
     }
   ],
   "projectDetails": {
@@ -16544,15 +16570,12 @@
       "amenities": "",
       "description": "Project information is being verified.",
       "masterplan": "https://red-prod.s3.eu-central-1.amazonaws.com/red/media/unitapp/images/Al_Ahly_Sabbour_YOUD_Masterplan.png",
-      "layouts": [
-        "https://www.enjazproperty.com/en/project/youd-north-coast/"
-      ],
+      "layouts": [],
       "images": [
-        "https://prod-images.nawy.com/processed/compound/cover_image/1671/high.webp",
         "https://prod-images.nawy.com/processed/compound_image/image/12647/high.webp"
       ],
       "assetMeta": {
-        "lastEnrichedAt": "2026-09-22T10:12:21.590Z",
+        "lastEnrichedAt": "2026-09-23T03:36:58.810Z",
         "sourceId": "red-asset:30917"
       }
     },

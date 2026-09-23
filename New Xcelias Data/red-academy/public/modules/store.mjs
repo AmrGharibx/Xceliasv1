@@ -183,6 +183,19 @@ export class AcademyStore extends EventTarget {
  }
  canWrite(){return this.status==='ready'&&['admin','instructor'].includes(this.user?.role);}
  canDelete(table=''){return this.canWrite()&&(this.user?.role==='admin'||['batches','trainees'].includes(table));}
+ canArchiveBatches(){return this.status==='ready'&&this.user?.role==='admin';}
+ async setBatchArchived(batch,archived){
+  if(!this.canArchiveBatches())throw new Error('Administrator access is required to archive or restore batches.');
+  if(this.busy)throw new Error('A save is already in progress.');
+  if(!batch?.id||!Number.isInteger(batch.version)||typeof archived!=='boolean')throw new Error('Choose a batch and archive or restore action.');
+  const generation=this.generation;this.busy=true;
+  try{
+   const result=await this.api('batches/archive','POST',{id:batch.id,expectedVersion:batch.version,archived});
+   if(generation!==this.generation)throw new Error('Your session changed. Sign in to verify the saved batch.');
+   try{await this.refresh();}catch{const error=new Error('The server saved the batch state, but the refreshed view could not be loaded. Reconnect before making further changes.');error.saved=true;throw error;}
+   return result.record;
+  }finally{this.busy=false;}
+ }
  async mutate(table,action,record,data){return this.write({table,action,...(record?{id:record.id,expectedVersion:record.version}:{}),data});}
  async write(payload) {
   if(this.busy)throw new Error('A save is already in progress.');

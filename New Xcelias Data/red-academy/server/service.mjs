@@ -34,9 +34,11 @@ export function prepareOperations(body,state,user){
  for(const input of inputs){const action=input.action||body.action;if(!['create','update','delete'].includes(action))throw new ApiError(400,'Invalid action.');
   const old=action==='create'?null:state[table].find(r=>r.id===input.id);if(action!=='create'&&(!isId(input.id)||!old))throw new ApiError(404,'Record not found.');
   if(old&&(!Number.isInteger(input.expectedVersion)||input.expectedVersion!==old.version))throw new ApiError(409,'This record changed in another session. Refresh and try again.');
+  const priorBatch=table==='batches'?old:old?.batch_id?state.batches.find(batch=>batch.id===old.batch_id):null;if(priorBatch?.archived_at)throw new ApiError(409,'Restore the archived batch before changing or deleting its records.');
   if(targets.has(input.id)&&input.id)throw new ApiError(400,'A record may only occur once in a request.');if(input.id)targets.add(input.id);
   if(action==='delete'){if(old.source_id&&user.role!=='admin')throw new ApiError(403,'Imported source records cannot be deleted by operational staff.');if(user.role!=='admin'&&!['batches','trainees'].includes(table))throw new ApiError(403,'Administrator access is required for this record type.');ops.push({table,action,id:old.id,expectedVersion:old.version});continue;}
   const data=validate(table,input.data,{old});
+  const targetBatch=table==='batches'?null:state.batches.find(batch=>batch.id===data.batch_id);if(targetBatch?.archived_at)throw new ApiError(409,'Restore the archived batch before changing or adding its records.');
   if(old&&'trainee_id' in old&&(old.trainee_id!==data.trainee_id||old.batch_id!==data.batch_id))throw new ApiError(400,'Existing source enrollment links cannot be reassigned by a record edit.');
   if(data.trainee_id){const t=state.trainees.find(t=>t.id===data.trainee_id);if(!t||t.batch_id!==data.batch_id)throw new ApiError(400,'The trainee must belong to this batch.');if(old&&(old.trainee_id!==data.trainee_id||old.batch_id!==data.batch_id))throw new ApiError(400,'An existing record cannot be assigned to a different trainee.');}
   if(table==='trainees'){
@@ -153,6 +155,11 @@ export async function handleApi(request){
    const result=await repo.acknowledgeReview(body.id,body.note.trim(),user);events.emit('change');return json(result,200,outgoing);
   }
   if(route==='state'&&method==='GET')return json(await repo.state(user,token),200,outgoing);
+  if(route==='batches/archive'&&method==='POST'){
+   admin(user);const body=await bodyOf(request);
+   if(!isId(body.id)||!Number.isInteger(body.expectedVersion)||body.expectedVersion<1||typeof body.archived!=='boolean')throw new ApiError(400,'Choose a batch and archive or restore action.');
+   const record=await repo.setBatchArchived(body.id,body.expectedVersion,body.archived,user);events.emit('change');return json({record},200,outgoing);
+  }
   const portraitRoute=route.match(/^trainees\/([^/]+)\/photo$/);
   if(portraitRoute){
    const traineeId=portraitRoute[1];if(!isId(traineeId))throw new ApiError(400,'Choose a valid trainee.');

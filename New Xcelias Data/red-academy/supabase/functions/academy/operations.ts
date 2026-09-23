@@ -14,9 +14,11 @@ export function prepareCloudOperations(body,state,user){
  for(const input of inputs){const action=input.action||body.action;if(!['create','update','delete'].includes(action))throw new ApiError(400,'Invalid action.');if(action==='delete'&&user.role!=='admin'&&!['batches','trainees'].includes(table))throw new ApiError(403,'Administrator access is required for this record type.');
   const old=action==='create'?null:asArray(state[table]).find(record=>record.id===input.id);if(action!=='create'&&(!isId(input.id)||!old))throw new ApiError(404,'Record not found.');
   if(old&&(!Number.isInteger(input.expectedVersion)||input.expectedVersion!==old.version))throw new ApiError(409,'This record changed in another session. Refresh and try again.');
+  const priorBatch=table==='batches'?old:old?.batch_id?asArray(state.batches).find(batch=>batch.id===old.batch_id):null;if(priorBatch?.archived_at)throw new ApiError(409,'Restore the archived batch before changing or deleting its records.');
   if(targets.has(input.id)&&input.id)throw new ApiError(400,'A record may only occur once in a request.');if(input.id)targets.add(input.id);
   if(action==='delete'){if(old.source_id&&user.role!=='admin')throw new ApiError(403,'Imported source records cannot be deleted by operational staff.');ops.push({table,action,id:old.id,expectedVersion:old.version});continue;}
   const data=validate(table,input.data,{old});
+  const targetBatch=table==='batches'?null:asArray(state.batches).find(batch=>batch.id===data.batch_id);if(targetBatch?.archived_at)throw new ApiError(409,'Restore the archived batch before changing or adding its records.');
   // Source provenance is server-owned. Native cloud records begin with the
   // same empty immutable metadata the local SQLite repository assigns.
   if(!old){data.source_id=null;data.source_meta={};}

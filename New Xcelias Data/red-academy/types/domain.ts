@@ -17,7 +17,7 @@ export interface Imported {
 export interface Company extends Versioned,Imported {name:string;}
 export interface Batch extends Versioned,Imported {
  batch_name:string;status:BatchStatus|null;start_date:ISODate|null;end_date:ISODate|null;
- session_dates:ISODate[];capacity:number|null;description:string;
+ session_dates:ISODate[];capacity:number|null;description:string;archived_at:Timestamp|null;archived_by:string|null;
 }
 /** One batch enrollment, not a claim that every row is a distinct person. */
 export interface Trainee extends Versioned,Imported {

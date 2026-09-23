@@ -192,6 +192,12 @@ async function handle(request){
   if(route.startsWith('import/source/')&&method==='GET'){const sourceId=route.slice('import/source/'.length);if(!/^[a-f0-9]{32}$/.test(sourceId))throw new ApiError(400,'Invalid source identifier.');const source=await row('source_records',{select:'*',id:`eq.${sourceId}`});if(!source)throw new ApiError(404,'Original Notion record not found.');return json(request,source);}
   if(route==='import/review'&&method==='PATCH'){requireAdmin(user);const body=await bodyOf(request);if(!isId(body.id)||typeof body.note!=='string'||body.note.length>3000)throw new ApiError(400,'Enter a valid review note.');await rpc('red_acknowledge_review',{p_id:body.id,p_note:body.note.trim(),p_actor:user.email});return json(request,{ok:true});}
   if(route==='state'&&method==='GET')return json(request,await workspaceState(user));
+  if(route==='batches/archive'&&method==='POST'){
+   requireAdmin(user);const body=await bodyOf(request);
+   if(!isId(body.id)||!Number.isInteger(body.expectedVersion)||body.expectedVersion<1||typeof body.archived!=='boolean')throw new ApiError(400,'Choose a batch and archive or restore action.');
+   const record=await rpc('red_archive_batch',{p_id:body.id,p_expected_version:body.expectedVersion,p_archived:body.archived,p_actor:user.email});
+   return json(request,{record});
+  }
   const portraitRoute=/^trainees\/([^/]+)\/photo$/.exec(route);
   if(portraitRoute){
    const traineeId=portraitRoute[1];if(!isId(traineeId))throw new ApiError(400,'Choose a valid trainee.');

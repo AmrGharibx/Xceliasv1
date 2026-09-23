@@ -14,7 +14,7 @@ function serialize(key,value){return ['days','session_dates','snapshot','source_
 function decode(row){if(!row)return null;row={...row};for(const key of ['days','session_dates','snapshot','source_meta','summary','properties','relations','app_records','source_ids'])if(typeof row[key]==='string')row[key]=JSON.parse(row[key]);for(const key of ['is_late','active','analytics_included','assessment_day'])if(key in row)row[key]=!!row[key];return row;}
 function ensureColumn(db,table,column,definition){if(!db.prepare(`PRAGMA table_info(${table})`).all().some(row=>row.name===column))db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${definition}`);}
 export class SQLiteRepository {
- constructor(filename){if(filename!==':memory:')fs.mkdirSync(path.dirname(path.resolve(filename)),{recursive:true,mode:0o700});this.db=new DatabaseSync(filename);const version=this.db.prepare('PRAGMA user_version').get().user_version;if(version&&version<3){this.db.close();throw new Error('This is an older RED database. Use the imported v3 database in a fresh folder; do not copy a v2 database over it. Keep a backup of your older workspace.');}if(filename!==':memory:'){try{fs.chmodSync(filename,0o600);}catch{}}this.db.exec(fs.readFileSync(new URL('./schema.sql',import.meta.url),'utf8'));ensureColumn(this.db,'trainees','enrollment_status',"TEXT NOT NULL DEFAULT 'Active' CHECK(enrollment_status IN ('Active','Stopped Attending'))");ensureColumn(this.db,'daily_attendance','assessment_day','INTEGER NOT NULL DEFAULT 0 CHECK(assessment_day IN (0,1))');this.db.exec('PRAGMA user_version = 4');}
+ constructor(filename){if(filename!==':memory:')fs.mkdirSync(path.dirname(path.resolve(filename)),{recursive:true,mode:0o700});this.db=new DatabaseSync(filename);const version=this.db.prepare('PRAGMA user_version').get().user_version;if(version&&version<3){this.db.close();throw new Error('This is an older RED database. Use the imported v3 database in a fresh folder; do not copy a v2 database over it. Keep a backup of your older workspace.');}if(filename!==':memory:'){try{fs.chmodSync(filename,0o600);}catch{}}this.db.exec(fs.readFileSync(new URL('./schema.sql',import.meta.url),'utf8'));ensureColumn(this.db,'trainees','enrollment_status',"TEXT NOT NULL DEFAULT 'Active' CHECK(enrollment_status IN ('Active','Stopped Attending'))");ensureColumn(this.db,'daily_attendance','assessment_day','INTEGER NOT NULL DEFAULT 0 CHECK(assessment_day IN (0,1))');ensureColumn(this.db,'batches','archived_at','TEXT');ensureColumn(this.db,'batches','archived_by','TEXT');this.db.exec('PRAGMA user_version = 5');}
 
  async init() {
   // Business data is NEVER seeded, even when an old environment requests it.
@@ -110,6 +110,20 @@ export class SQLiteRepository {
    else this.db.prepare('DELETE FROM trainee_photos WHERE trainee_id=?').run(traineeId);
    this.audit(actor,photo?'upload-photo':'remove-photo','trainees',traineeId,photo?'Updated a private trainee portrait.':'Removed a private trainee portrait.');
    this.db.exec('COMMIT');return {ok:true,updated_at:now};
+  }catch(error){this.db.exec('ROLLBACK');throw error;}
+ }
+ async setBatchArchived(batchId,expectedVersion,archived,user){
+  this.db.exec('BEGIN IMMEDIATE');
+  try{
+   const old=decode(this.db.prepare('SELECT * FROM batches WHERE id=?').get(batchId));
+   if(!old)throw new ApiError(404,'Batch not found.');
+   if(old.version!==expectedVersion)throw new ApiError(409,'This batch changed in another session. Refresh and try again.');
+   if(Boolean(old.archived_at)===archived)throw new ApiError(409,archived?'This batch is already archived.':'This batch is not archived.');
+   const now=new Date().toISOString(),archivedAt=archived?now:null,archivedBy=archived?user.email:null;
+   this.db.prepare('UPDATE batches SET archived_at=?,archived_by=?,version=version+1,updated_at=? WHERE id=?').run(archivedAt,archivedBy,now,batchId);
+   const saved=decode(this.db.prepare('SELECT * FROM batches WHERE id=?').get(batchId));
+   this.audit(user,archived?'archive-batch':'restore-batch','batches',batchId,archived?`Archived ${old.batch_name}; records preserved.`:`Restored ${old.batch_name}; records preserved.`);
+   this.db.exec('COMMIT');return saved;
   }catch(error){this.db.exec('ROLLBACK');throw error;}
  }
  async sourceRecord(sourceId){const row=this.db.prepare('SELECT * FROM source_records WHERE id=?').get(sourceId);if(!row)throw new ApiError(404,'Original Notion record not found.');return decode(row);}

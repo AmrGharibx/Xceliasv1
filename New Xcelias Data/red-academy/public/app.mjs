@@ -9,7 +9,7 @@ import {exportModal} from './modules/export.mjs';
 import {academyReportModal} from './modules/academy-reports.mjs';
 const store=new AcademyStore();
 try{if(localStorage.getItem('internal-training-theme')==='light')document.body.classList.add('light');}catch{}
-const ctx={store,route:'dashboard',batchId:'',companyId:'',detailId:'',search:'',sort:'name',traineeStatus:'',page:1,chartDays:14,batchView:'list',summaryView:'table',companySort:'headcount',calendarMonth:today().slice(0,7),date:today(),attendanceStatus:'',outcomeFilter:'',reviewStatus:'',bulkStatus:'Present',selection:new Set(),sidebarOpen:false,invitationToken:'',loginEmail:'',render,go};
+const ctx={store,route:'dashboard',batchId:'',companyId:'',detailId:'',showArchivedBatches:false,search:'',sort:'name',traineeStatus:'',page:1,chartDays:14,batchView:'list',summaryView:'table',companySort:'headcount',calendarMonth:today().slice(0,7),date:today(),attendanceStatus:'',outcomeFilter:'',reviewStatus:'',bulkStatus:'Present',selection:new Set(),sidebarOpen:false,invitationToken:'',loginEmail:'',render,go};
 const routes=new Set([...NAV.map(n=>n[0]),'settings','login','join']);
 let firstPaint=true;
 function ensureContext(){if(ctx.batchId&&!store.data.batches.some(b=>b.id===ctx.batchId))ctx.batchId='';if(ctx.companyId&&!store.data.companies.some(c=>c.id===ctx.companyId))ctx.companyId='';if(ctx.route==='attendance'&&!ctx.batchId)ctx.batchId=store.data.batches.find(b=>b.status==='Active')?.id||store.data.batches[0]?.id||'';}
@@ -24,7 +24,7 @@ function render(){
  if(auth)bindAuth();if(firstPaint&&!auth){firstPaint=false;animateCounts();}
 }
 function parseRoute(){const parts=(location.hash.slice(1)||location.pathname).split('/').filter(Boolean);let route=parts[0]||'dashboard';if(route==='index.html'||route.endsWith('.html'))route='dashboard';if(route==='attendance'&&parts[1]==='10-day')route='summaries';if(route==='join'&&parts[1]){ctx.invitationToken=parts[1];history.replaceState(null,'','#/join');}return {route:routes.has(route)?route:'dashboard',detailId:route==='batches'?parts[1]||'':''};}
-function go(route,options={}){const reset=ctx.route!==route;ctx.route=routes.has(route)?route:'dashboard';ctx.detailId=options.detailId||'';ctx.sidebarOpen=false;if(reset){ctx.search='';ctx.page=1;ctx.attendanceStatus='';ctx.traineeStatus='';ctx.outcomeFilter='';ctx.selection.clear();}ensureContext();if(options.history!==false){const fragment='#/'+ctx.route+(ctx.detailId?'/'+ctx.detailId:'');if(location.hash!==fragment)history.pushState(null,'',fragment);}render();document.querySelector('#main')?.focus({preventScroll:true});if(reset)window.scrollTo({top:0,behavior:'instant'});}
+function go(route,options={}){const reset=ctx.route!==route;ctx.route=routes.has(route)?route:'dashboard';ctx.detailId=options.detailId||'';ctx.sidebarOpen=false;if(reset){ctx.search='';ctx.page=1;ctx.attendanceStatus='';ctx.traineeStatus='';ctx.outcomeFilter='';ctx.selection.clear();ctx.showArchivedBatches=false;}ensureContext();if(options.history!==false){const fragment='#/'+ctx.route+(ctx.detailId?'/'+ctx.detailId:'');if(location.hash!==fragment)history.pushState(null,'',fragment);}render();document.querySelector('#main')?.focus({preventScroll:true});if(reset)window.scrollTo({top:0,behavior:'instant'});}
 function animateCounts(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const nodes=[...document.querySelectorAll('[data-count]')].filter(n=>n.dataset.count!==''),start=performance.now();const step=now=>{const p=Math.min(1,(now-start)/650),ease=1-Math.pow(1-p,3);for(const el of nodes){if(el.isConnected)el.textContent=Math.round(Number(el.dataset.count)*ease).toLocaleString('en-US');}if(p<1)requestAnimationFrame(step);};requestAnimationFrame(step);}
 function bindAuth(){
  const form=document.getElementById('auth-form');if(!form)return;
@@ -68,6 +68,9 @@ document.addEventListener('click',async event=>{const el=event.target.closest('[
  case 'new-batch':batchForm(ctx,null,el.dataset.status||'Planning');break;
  case 'edit-batch':batchForm(ctx,store.data.batches.find(b=>b.id===id));break;
  case 'delete-batch':deleteOperationalRecord('batches',store.data.batches.find(b=>b.id===id));break;
+ case 'batch-archive-view':ctx.showArchivedBatches=el.dataset.archived==='true';ctx.detailId='';ctx.batchId='';ctx.companyId='';ctx.search='';ctx.page=1;render();break;
+ case 'archive-batch':{const batch=store.data.batches.find(b=>b.id===id);if(!store.canArchiveBatches()||!batch)throw new Error('Administrator access is required to archive batches.');confirmDialog(`Archive ${batch.batch_name}?`,'The batch and all linked records will be preserved and hidden from the regular batch list. You can restore it later from Archived batches.',async()=>{ctx.showArchivedBatches=true;ctx.detailId='';ctx.batchId='';ctx.companyId='';await store.setBatchArchived(batch,true);render();toast(`${batch.batch_name} archived. Its records were preserved.`);},{label:'Archive batch',danger:false});break;}
+ case 'restore-batch':{const batch=store.data.batches.find(b=>b.id===id);if(!batch)throw new Error('Batch not found. Refresh and try again.');await store.setBatchArchived(batch,false);render();toast(`${batch.batch_name} restored to the regular batch list.`);break;}
  case 'batch-report':academyReportModal(ctx,store.data.batches.find(b=>b.id===id),el.dataset.company||'');break;
  case 'batch-detail':go('batches',{detailId:id});break;
  case 'back-batches':go('batches');break;

@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS batches (
  start_date TEXT, end_date TEXT CHECK(end_date>=start_date),
  session_dates TEXT NOT NULL CHECK(json_valid(session_dates) AND json_array_length(session_dates)<=366),
  capacity INTEGER CHECK(capacity BETWEEN 1 AND 1000), description TEXT NOT NULL DEFAULT '',
+ archived_at TEXT, archived_by TEXT,
  source_id TEXT, source_meta TEXT NOT NULL DEFAULT '{}' CHECK(json_valid(source_meta)),
  version INTEGER NOT NULL DEFAULT 1, created_at TEXT NOT NULL, updated_at TEXT NOT NULL
 );

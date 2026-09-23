@@ -225,6 +225,9 @@ function prepareCloudOperations(body, state, user) {
       data.source_id = null;
       data.source_meta = {};
     }
+    // red_commit materializes every table column from JSON, so PostgreSQL
+    // defaults do not apply to omitted fields. Match the table default here.
+    if (table === "daily_attendance" && !old) data.analytics_included = true;
     if (old && "trainee_id" in old && (old.trainee_id !== data.trainee_id || old.batch_id !== data.batch_id)) throw new ApiError(400, "Existing source enrollment links cannot be reassigned by a record edit.");
     if (data.trainee_id) {
       const trainee = asArray(state.trainees).find((record) => record.id === data.trainee_id);

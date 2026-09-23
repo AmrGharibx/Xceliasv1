@@ -39,15 +39,20 @@
 .academy-brand-signature {
   align-self: flex-end;
   margin: -1px 3px 0 0;
-  color: #f2b0b1;
+  color: #ffd0c0;
   font-family: 'Segoe Script', 'Bradley Hand', cursive;
-  font-size: 13px;
+  font-size: 16px;
   font-style: italic;
-  font-weight: 650;
+  font-weight: 700;
   letter-spacing: 0.04em;
   line-height: 1;
   text-shadow: 0 0 12px rgba(240, 68, 68, 0.25);
   transform: rotate(-5deg);
+}
+
+/* Hide the duplicate promo card; Analytics remains available in the main nav. */
+.sidebar-note {
+  display: none;
 }
 
 .sidebar,

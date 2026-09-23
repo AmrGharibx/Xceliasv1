@@ -68,7 +68,7 @@ document.addEventListener('click',async event=>{const el=event.target.closest('[
  case 'new-batch':batchForm(ctx,null,el.dataset.status||'Planning');break;
  case 'edit-batch':batchForm(ctx,store.data.batches.find(b=>b.id===id));break;
  case 'delete-batch':deleteOperationalRecord('batches',store.data.batches.find(b=>b.id===id));break;
- case 'batch-report':academyReportModal(ctx,store.data.batches.find(b=>b.id===id));break;
+ case 'batch-report':academyReportModal(ctx,store.data.batches.find(b=>b.id===id),el.dataset.company||'');break;
  case 'batch-detail':go('batches',{detailId:id});break;
  case 'back-batches':go('batches');break;
  case 'batch-view':ctx.batchView=el.dataset.view;render();break;

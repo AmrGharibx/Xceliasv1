@@ -4,23 +4,18 @@
   flex-direction: column;
   align-items: stretch;
   gap: 3px;
-  width: calc(100% - 6px);
-  margin: 0 3px 26px;
-  padding: 8px 9px 7px;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.13);
-  border-radius: 12px;
-  background: linear-gradient(145deg, #25262d, #101116 76%);
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  width: 100%;
+  margin: 0 0 22px;
+  padding: 0;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .academy-brand::before {
-  position: absolute;
-  z-index: 0;
-  inset: 0;
-  background: radial-gradient(ellipse at 18% 0%, rgba(220, 38, 38, 0.18), transparent 62%);
-  content: '';
-  pointer-events: none;
+  display: none;
 }
 
 .academy-brand-logo,
@@ -48,12 +43,44 @@
   line-height: 1;
   text-shadow: 0 0 12px rgba(240, 68, 68, 0.25);
   transform: rotate(-5deg);
+  transform-origin: 70% 50%;
+  animation: academy-signature-live 4.6s ease-in-out infinite;
+}
+
+@keyframes academy-signature-live {
+  0%, 100% { transform: rotate(-5deg) translateY(0); text-shadow: 0 0 9px rgba(240, 68, 68, 0.2); }
+  50% { transform: rotate(-2deg) translateY(-2px); text-shadow: 0 0 15px rgba(240, 68, 68, 0.48); }
 }
 
 /* Hide the duplicate promo card; Analytics remains available in the main nav. */
 .sidebar-note {
   display: none;
 }
+
+/* Keep the workspace controls and import code available; hide only their sidebar shortcuts. */
+.workspace-switch,
+.sidebar .nav-link[href="#/migration"] {
+  display: none !important;
+}
+
+.reports-scope-panel { margin-bottom: 18px; }
+.reports-scope-fields { display: grid; grid-template-columns: minmax(190px, 1fr) minmax(190px, 1fr) auto; align-items: end; gap: 12px; }
+.reports-scope-fields .field { margin: 0; }
+.reports-scope-fields .field select { width: 100%; }
+.reports-scope-action { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.reports-scope-note { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line-soft); color: var(--muted); font-size: 10px; line-height: 1.6; }
+.reports-stats { margin-bottom: 17px; }
+.reports-toolbar { margin: 0 0 11px; }
+.reports-table { min-width: 760px; }
+.reports-table td small { display: block; margin-top: 4px; color: var(--faint); font-size: 9px; }
+.reports-table .report-batch-name { display: grid; gap: 4px; }
+.reports-table .report-batch-name strong { color: var(--text); }
+.reports-table .report-pending { color: var(--muted); }
+.reports-table td:last-child { text-align: right; }
+.reports-table .btn { white-space: nowrap; }
+
+body.light .academy-brand-logo { filter: brightness(.28) saturate(1.2); }
+body.light .academy-brand-signature { color: #a51f2a; text-shadow: 0 0 10px rgba(165, 31, 42, 0.16); }
 
 .sidebar,
 .topbar {
@@ -126,9 +153,17 @@ body.light .topbar::before {
 
 @media (prefers-reduced-motion: reduce) {
   .sidebar::before,
-  .topbar::before {
+  .topbar::before,
+  .academy-brand-signature {
     animation: none;
   }
+}
+
+@media (max-width: 720px) {
+  .mobile-nav { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .reports-scope-fields { grid-template-columns: 1fr; }
+  .reports-scope-action { align-items: stretch; }
+  .reports-scope-action .btn { flex: 1; }
 }
 
 @media (max-width: 1020px) {

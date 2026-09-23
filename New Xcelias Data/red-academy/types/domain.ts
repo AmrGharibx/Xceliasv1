@@ -6,6 +6,7 @@ export type Timestamp=string;
 export type UserRole='admin'|'instructor'|'viewer';
 export type BatchStatus='Planning'|'Active'|'Completed';
 export type AttendanceStatus='Present'|'Absent'|'Tour Day'|'Off Day';
+export type EnrollmentStatus='Active'|'Stopped Attending';
 export type AssessmentOutcome='Failed'|'Needs Improvement'|'Good'|'Very Good'|'Excellent'|'Aced';
 export type ReportKind='template'|'ai'|'notion';
 export interface Versioned {id:UUID;version:number;created_at:Timestamp;updated_at:Timestamp;}
@@ -20,11 +21,11 @@ export interface Batch extends Versioned,Imported {
 }
 /** One batch enrollment, not a claim that every row is a distinct person. */
 export interface Trainee extends Versioned,Imported {
- trainee_name:string;company_id:UUID|null;batch_id:UUID|null;email:string;phone:string;job_title:string;notes:string;
+ trainee_name:string;company_id:UUID|null;batch_id:UUID|null;email:string;phone:string;job_title:string;notes:string;enrollment_status:EnrollmentStatus;
 }
 export interface DailyAttendance extends Versioned,Imported {
  trainee_id:UUID|null;batch_id:UUID|null;date:ISODate|null;arrival_time:Timestamp|null;departure_time:Timestamp|null;
- status:AttendanceStatus|null;is_late:boolean;absence_reason:string;analytics_included:boolean;
+ status:AttendanceStatus|null;is_late:boolean;assessment_day:boolean;absence_reason:string;analytics_included:boolean;
 }
 export type TenDays=[boolean,boolean,boolean,boolean,boolean,boolean,boolean,boolean,boolean,boolean];
 export interface Attendance10Day extends Versioned,Imported {

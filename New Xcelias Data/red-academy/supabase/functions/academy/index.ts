@@ -113,7 +113,15 @@ function portraitOf(value){
 function storagePath(path){return String(path).split('/').map(encodeURIComponent).join('/');}
 async function aiReport(user,token,body){
  canWrite(user);if(!aiEnabled())throw new ApiError(503,'AI reports are not configured. The built-in summary is available without an API key.');
- if(body.consent!==true)throw new ApiError(400,'Confirm that anonymized metrics may be sent to the AI provider.');if(!['attendance','assessment'].includes(body.kind)||!isId(body.traineeId))throw new ApiError(400,'Choose a trainee and report type.');
+ if(body.consent!==true)throw new ApiError(400,'Confirm that the selected text or anonymized metrics may be sent to the AI provider.');
+ if(body.kind==='polish-comment'){
+  if(typeof body.comment!=='string'||!body.comment.trim()||body.comment.length>5000)throw new ApiError(400,'Enter an instructor comment of 1 to 5000 characters.');
+  if(!await rate('ai-comment:'+user.id,10,3600))throw new ApiError(429,'AI comment-polish limit reached (10 per user per hour).');
+  const response=await fetch('https://api.openai.com/v1/responses',{method:'POST',headers:{Authorization:`Bearer ${Deno.env.get('OPENAI_API_KEY')}`,'Content-Type':'application/json'},body:JSON.stringify({model:Deno.env.get('OPENAI_MODEL'),store:false,max_output_tokens:500,instructions:'Carefully polish the instructor-written training comment for clarity, grammar, and constructive professional tone. Preserve the instructor\'s meaning and every factual claim. Do not add a score, diagnosis, personality judgment, motivation claim, employment recommendation, or any fact not present in the draft. Do not address the trainee by name. Return only the revised comment as plain text; an instructor will review and decide whether to use it.',input:JSON.stringify({draft:body.comment.trim()})}),signal:AbortSignal.timeout(45000)});
+  if(!response.ok)throw new ApiError(502,'The AI provider could not polish the comment. Your saved data has not been changed.');
+  const result=await response.json(),comment=(result.output||[]).flatMap(output=>output.content||[]).filter(content=>content.type==='output_text').map(content=>content.text).join('\n').trim();if(!comment)throw new ApiError(502,'The AI provider returned an empty comment.');return {comment,source:'ai'};
+ }
+ if(!['attendance','assessment'].includes(body.kind)||!isId(body.traineeId))throw new ApiError(400,'Choose a trainee and report type.');
  if(!await rate('ai:'+user.id,10,3600))throw new ApiError(429,'AI report limit reached (10 per user per hour).');
  const state=await workspaceState(user),trainee=state.trainees.find(record=>record.id===body.traineeId);if(!trainee)throw new ApiError(404,'Trainee not found.');
  const assessment=assessmentFor(state,trainee.id),attendance=checklistFor(state,trainee.id);if(body.kind==='assessment'&&!assessment)throw new ApiError(400,'Save an assessment first.');

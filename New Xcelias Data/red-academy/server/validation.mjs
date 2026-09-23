@@ -1,4 +1,4 @@
-import {STATUSES,BATCH_STATUSES,OUTCOMES,validDate,scores,cairoDate} from '../public/modules/core.mjs';
+import {STATUSES,ENROLLMENT_STATUSES,BATCH_STATUSES,OUTCOMES,validDate,scores,cairoDate} from '../public/modules/core.mjs';
 export class ApiError extends Error {constructor(status,message){super(message);this.status=status;}}
 const fail=message=>{throw new ApiError(400,message);};
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -22,11 +22,13 @@ export function validate(table,input,{old=null}={}) {
   if(!legacy&&(result.session_dates[0]<result.start_date||result.session_dates.at(-1)>result.end_date))fail('Session dates must be inside the batch date range.');
  }
  else if(table==='trainees'){
-  text('trainee_name',160,true);ref('company_id',legacy);ref('batch_id',legacy);text('email',254);text('phone',40);text('job_title',100);text('notes',3000);
+  text('trainee_name',160,true);ref('company_id',legacy);ref('batch_id',legacy);if(input.enrollment_status==null)result.enrollment_status='Active';else choice('enrollment_status',ENROLLMENT_STATUSES);text('email',254);text('phone',40);text('job_title',100);text('notes',3000);
   if(result.email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(result.email))fail('Enter a valid email address.');
  }
  else if(table==='daily_attendance'){
   ref('trainee_id',legacy);ref('batch_id',legacy);date('date',legacy);choice('status',STATUSES,legacy);text('absence_reason',5000);
+  if(input.assessment_day!==undefined&&typeof input.assessment_day!=='boolean')fail('Assessment day must be true or false.');result.assessment_day=input.assessment_day===true;
+  if(result.assessment_day&&result.status!=='Present')fail('An assessment day must count as a present day.');
   if(typeof input.is_late!=='boolean')fail('The manual late flag must be true or false.');result.is_late=input.is_late;
   for(const key of ['arrival_time','departure_time']){const v=input[key];if(v!==null&&(typeof v!=='string'||!/^\d{4}-\d{2}-\d{2}T.*(?:Z|[+-]\d{2}:\d{2})$/.test(v)||Number.isNaN(Date.parse(v))))fail('A time must include its timezone.');result[key]=v?new Date(v).toISOString():null;}
   // A note/report edit must not require inventing corrections to old source timestamps.

@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS batches (
 CREATE TABLE IF NOT EXISTS trainees (
  id TEXT PRIMARY KEY, trainee_name TEXT NOT NULL, company_id TEXT REFERENCES companies(id) ON DELETE RESTRICT,
  batch_id TEXT REFERENCES batches(id) ON DELETE CASCADE, email TEXT NOT NULL DEFAULT '',phone TEXT NOT NULL DEFAULT '',
- job_title TEXT NOT NULL DEFAULT '', notes TEXT NOT NULL DEFAULT '',
+ job_title TEXT NOT NULL DEFAULT '', notes TEXT NOT NULL DEFAULT '', enrollment_status TEXT NOT NULL DEFAULT 'Active' CHECK(enrollment_status IN ('Active','Stopped Attending')),
  source_id TEXT, source_meta TEXT NOT NULL DEFAULT '{}' CHECK(json_valid(source_meta)),
  version INTEGER NOT NULL DEFAULT 1, created_at TEXT NOT NULL, updated_at TEXT NOT NULL, UNIQUE(id,batch_id)
 );
@@ -32,13 +32,14 @@ CREATE TABLE IF NOT EXISTS daily_attendance (
  id TEXT PRIMARY KEY, trainee_id TEXT, batch_id TEXT REFERENCES batches(id) ON DELETE CASCADE, date TEXT,
  arrival_time TEXT, departure_time TEXT,
  status TEXT CHECK(status IN ('Present','Absent','Tour Day','Off Day')),
- is_late INTEGER NOT NULL DEFAULT 0 CHECK(is_late IN (0,1)),
+ is_late INTEGER NOT NULL DEFAULT 0 CHECK(is_late IN (0,1)), assessment_day INTEGER NOT NULL DEFAULT 0 CHECK(assessment_day IN (0,1)),
  absence_reason TEXT NOT NULL DEFAULT '', analytics_included INTEGER NOT NULL DEFAULT 1 CHECK(analytics_included IN (0,1)),
  source_id TEXT, source_meta TEXT NOT NULL DEFAULT '{}' CHECK(json_valid(source_meta)),
  version INTEGER NOT NULL DEFAULT 1, created_at TEXT NOT NULL, updated_at TEXT NOT NULL,
  FOREIGN KEY(trainee_id,batch_id) REFERENCES trainees(id,batch_id) ON DELETE CASCADE,
  CHECK(source_id IS NOT NULL OR departure_time IS NULL OR (arrival_time IS NOT NULL AND departure_time>=arrival_time)),
- CHECK(source_id IS NOT NULL OR status NOT IN ('Absent','Off Day') OR (arrival_time IS NULL AND departure_time IS NULL AND is_late=0))
+ CHECK(source_id IS NOT NULL OR status NOT IN ('Absent','Off Day') OR (arrival_time IS NULL AND departure_time IS NULL AND is_late=0)),
+ CHECK(assessment_day=0 OR status='Present')
 );
 CREATE TABLE IF NOT EXISTS attendance_10day (
  id TEXT PRIMARY KEY, trainee_id TEXT,batch_id TEXT REFERENCES batches(id) ON DELETE CASCADE,
@@ -173,4 +174,4 @@ CREATE INDEX IF NOT EXISTS ix_review_batch ON import_reviews(batch_id,status);
 CREATE UNIQUE INDEX IF NOT EXISTS ix_daily_native_unique ON daily_attendance(trainee_id,date) WHERE source_id IS NULL;
 CREATE UNIQUE INDEX IF NOT EXISTS ix_assessment_native_unique ON assessments(trainee_id,batch_id) WHERE source_id IS NULL;
 CREATE UNIQUE INDEX IF NOT EXISTS ix_checklist_native_unique ON attendance_10day(trainee_id,batch_id,period_start,period_end) WHERE source_id IS NULL;
-PRAGMA user_version = 3;
+PRAGMA user_version = 4;

@@ -1,0 +1,12 @@
+.assessment-cascade{grid-template-columns:repeat(3,minmax(0,1fr));gap:0 14px}
+.score-slider-top{align-items:center}
+.score-entry{display:flex;align-items:center;gap:7px}
+.score-entry input[type=number]{width:76px;padding:7px 9px;border:1px solid var(--line);border-radius:7px;background:var(--bg);color:var(--text);font:inherit;font-size:13px;font-variant-numeric:tabular-nums}
+.score-entry input[type=number]:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+.score-entry>span{color:var(--muted);font-size:11px}
+.comment-ai-tools{display:flex;flex-direction:column;align-items:flex-start;gap:10px;padding:12px 14px;border:1px solid var(--line);border-radius:9px;background:var(--panel-2)}
+.comment-ai-tools .checkbox-field{margin:0;line-height:1.6}
+.comment-ai-tools>small{line-height:1.6}
+.assessment-day-toggle{display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid var(--line);border-radius:9px;background:var(--panel-2)}
+.assessment-day-toggle small{display:block;margin:3px 0 0;color:var(--muted);font-size:10px;font-weight:400}
+@media(max-width:760px){.assessment-cascade{grid-template-columns:1fr;gap:0}.score-entry input[type=number]{width:70px}}

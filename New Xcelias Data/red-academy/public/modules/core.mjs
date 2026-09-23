@@ -1,6 +1,7 @@
 /** Shared, side-effect-free business rules used by the browser and the API. */
 export const ZONE = 'Africa/Cairo';
 export const STATUSES = ['Present', 'Absent', 'Tour Day', 'Off Day'];
+export const ENROLLMENT_STATUSES = ['Active', 'Stopped Attending'];
 export const OUTCOMES = ['Failed', 'Needs Improvement', 'Good', 'Very Good', 'Excellent', 'Aced'];
 export const BATCH_STATUSES = ['Planning', 'Active', 'Completed'];
 export const TABLES = ['companies','batches','trainees','daily_attendance','attendance_10day','assessments'];

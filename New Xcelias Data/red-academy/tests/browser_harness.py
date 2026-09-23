@@ -50,7 +50,7 @@ def bundle():
  return '(async()=>{const __modules={};'+''.join(mods[m] for m in order)+'})().catch(e=>{console.error(e);globalThis.__redBootError=e.message});'
 def mount(page,transport,fragment=''):
  page.expose_function('__redHTTP',transport.send)
- page.set_content('<!doctype html><html><head><style>'+ (ROOT/'public/styles.css').read_text() +'</style></head><body><div id="app"></div><div id="modal-root"></div><div id="toast-root" aria-live="polite"></div></body></html>')
+ page.set_content('<!doctype html><html><head><style>'+ (ROOT/'public/styles.css').read_text() + (ROOT/'public/academy-branding.css').read_text() +'</style></head><body><div id="app"></div><div id="modal-root"></div><div id="toast-root" aria-live="polite"></div></body></html>')
  page.evaluate('''() => {
  const data=new Map();const storage={getItem:k=>data.get(k)??null,setItem:(k,v)=>{data.set(k,String(v));storage[k]=String(v);},removeItem:k=>{data.delete(k);delete storage[k];},clear:()=>{data.clear();},key:i=>[...data.keys()][i],get length(){return data.size;}};
  Object.defineProperty(window,'localStorage',{value:storage});

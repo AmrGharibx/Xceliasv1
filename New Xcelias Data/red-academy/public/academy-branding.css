@@ -1,0 +1,134 @@
+.academy-brand {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 3px;
+  width: calc(100% - 6px);
+  margin: 0 3px 26px;
+  padding: 8px 9px 7px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 12px;
+  background: linear-gradient(145deg, #25262d, #101116 76%);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.academy-brand::before {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  background: radial-gradient(ellipse at 18% 0%, rgba(220, 38, 38, 0.18), transparent 62%);
+  content: '';
+  pointer-events: none;
+}
+
+.academy-brand-logo,
+.academy-brand-signature {
+  position: relative;
+  z-index: 1;
+}
+
+.academy-brand-logo {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.academy-brand-signature {
+  align-self: flex-end;
+  margin: -1px 3px 0 0;
+  color: #f2b0b1;
+  font-family: 'Segoe Script', 'Bradley Hand', cursive;
+  font-size: 13px;
+  font-style: italic;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  text-shadow: 0 0 12px rgba(240, 68, 68, 0.25);
+  transform: rotate(-5deg);
+}
+
+.sidebar,
+.topbar {
+  isolation: isolate;
+  -webkit-backdrop-filter: blur(13px) saturate(138%);
+  backdrop-filter: blur(13px) saturate(138%);
+}
+
+.sidebar {
+  overflow-x: hidden;
+  background: linear-gradient(155deg, rgba(25, 27, 35, 0.76), rgba(11, 13, 18, 0.63));
+  border-right-color: rgba(214, 220, 240, 0.2);
+}
+
+.topbar {
+  background: linear-gradient(95deg, rgba(27, 28, 36, 0.73), rgba(12, 14, 20, 0.58));
+  border-bottom-color: rgba(214, 220, 240, 0.2);
+}
+
+.sidebar::before,
+.topbar::before {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 8% 24%, rgba(255, 154, 154, 0.8) 0 1px, transparent 1.8px),
+    radial-gradient(circle at 28% 72%, rgba(255, 228, 210, 0.7) 0 0.8px, transparent 1.7px),
+    radial-gradient(circle at 56% 31%, rgba(207, 218, 255, 0.75) 0 1px, transparent 1.8px),
+    radial-gradient(circle at 78% 82%, rgba(255, 154, 154, 0.65) 0 0.8px, transparent 1.7px),
+    radial-gradient(circle at 92% 16%, rgba(207, 218, 255, 0.65) 0 0.8px, transparent 1.7px);
+  content: '';
+  opacity: 0.3;
+  pointer-events: none;
+  animation: academy-glass-stars 34s ease-in-out infinite alternate;
+}
+
+.sidebar > *,
+.topbar > * {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes academy-glass-stars {
+  to {
+    opacity: 0.55;
+    transform: translate3d(3px, -2px, 0);
+  }
+}
+
+body.light .sidebar {
+  background: linear-gradient(155deg, rgba(250, 251, 255, 0.8), rgba(229, 234, 244, 0.68));
+  border-right-color: rgba(28, 34, 49, 0.17);
+}
+
+body.light .topbar {
+  background: linear-gradient(95deg, rgba(250, 251, 255, 0.8), rgba(232, 237, 246, 0.65));
+  border-bottom-color: rgba(28, 34, 49, 0.16);
+}
+
+body.light .sidebar::before,
+body.light .topbar::before {
+  background-image:
+    radial-gradient(circle at 8% 24%, rgba(163, 49, 63, 0.62) 0 1px, transparent 1.8px),
+    radial-gradient(circle at 28% 72%, rgba(129, 105, 157, 0.58) 0 0.8px, transparent 1.7px),
+    radial-gradient(circle at 56% 31%, rgba(75, 96, 145, 0.62) 0 1px, transparent 1.8px),
+    radial-gradient(circle at 78% 82%, rgba(163, 49, 63, 0.52) 0 0.8px, transparent 1.7px),
+    radial-gradient(circle at 92% 16%, rgba(75, 96, 145, 0.52) 0 0.8px, transparent 1.7px);
+  opacity: 0.2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar::before,
+  .topbar::before {
+    animation: none;
+  }
+}
+
+@media (max-width: 1020px) {
+  .academy-brand {
+    padding-right: 7px;
+    padding-left: 7px;
+  }
+}

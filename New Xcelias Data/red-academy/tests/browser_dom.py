@@ -84,7 +84,7 @@ with tempfile.TemporaryDirectory(prefix='red-private-browser-') as temporary:
             go(page,'dashboard')
             check('Dark mode renders the ambient star field',page.locator('canvas.starfield').count()==1 and page.evaluate('getComputedStyle(document.querySelector("canvas.starfield")).display!="none"'))
             click(page,'theme')
-            check('Light mode keeps the academy mark legible and uses its own star treatment',page.evaluate('document.body.classList.contains("light") && getComputedStyle(document.querySelector(".brand-mark")).webkitMaskImage.includes("training-academy-logo") && getComputedStyle(document.querySelector("canvas.starfield")).mixBlendMode==="multiply"'))
+            check('Light mode keeps the academy logo and signature legible with its own star treatment',page.evaluate('document.body.classList.contains("light") && document.querySelector(".academy-brand-logo")?.alt==="Red Training Academy" && document.querySelector(".academy-brand-signature")?.textContent.trim()==="X Gh" && getComputedStyle(document.querySelector("canvas.starfield")).mixBlendMode==="multiply" && getComputedStyle(document.querySelector(".sidebar")).backdropFilter.includes("blur")'))
             if args.screenshots:
                 dest=Path(args.screenshots); dest.mkdir(parents=True,exist_ok=True)
                 page.screenshot(path=str(dest/'RED-Academy-Light-Mode.png'),full_page=True)

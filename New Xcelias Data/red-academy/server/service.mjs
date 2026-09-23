@@ -1,6 +1,6 @@
 import {EventEmitter} from 'node:events';
 import crypto from 'node:crypto';
-import {TABLES,id,emptyState,attendanceStats,checklist,scores,assessedRows,assessmentFor,checklistFor} from '../public/modules/core.mjs';
+import {TABLES,id,emptyState,attendanceStats,scores,assessedRows,assessmentFor,sessionChecklistFor} from '../public/modules/core.mjs';
 import {validate,ApiError,isId} from './validation.mjs';
 export const events=new EventEmitter();events.setMaxListeners(200);
 let repositoryPromise;
@@ -48,7 +48,7 @@ export function prepareOperations(body,state,user){
   if(table==='daily_attendance'){
    const b=state.batches.find(b=>b.id===data.batch_id);
    if(b?.source_id&&data.date&&!b.session_dates.includes(data.date)&&!ops.some(o=>o.table==='batches'&&o.id===b.id)){const additions=inputs.map(x=>x.data).filter(x=>x?.batch_id===b.id&&x.date).map(x=>x.date);ops.push({table:'batches',action:'update',id:b.id,expectedVersion:b.version,data:{...b,session_dates:[...new Set([...b.session_dates,...additions])].sort()}});}
-   if((!b&&!old?.source_id)||(!old?.source_id&&!b?.source_id&&!b?.session_dates.includes(data.date)))throw new ApiError(400,'Attendance must be recorded on one of the 10 scheduled session dates. Edit an empty batch schedule before enrolling trainees.');
+   if((!b&&!old?.source_id)||(!old?.source_id&&!b?.source_id&&!b?.session_dates.includes(data.date)))throw new ApiError(400,'Attendance must be recorded on a scheduled session date. Add the date to the batch schedule before taking attendance.');
    if(data.trainee_id&&state.daily_attendance.some(r=>r.id!==old?.id&&r.trainee_id===data.trainee_id&&r.date===data.date)&&!(old?.source_id&&old.trainee_id===data.trainee_id&&old.date===data.date))throw new ApiError(409,'Attendance already exists for this trainee and date.');
   }
   if(['assessments','attendance_10day'].includes(table)&&data.trainee_id&&!old?.source_id&&state[table].some(r=>r.id!==old?.id&&r.trainee_id===data.trainee_id&&r.batch_id===data.batch_id&&(table!=='attendance_10day'||(r.period_start===data.period_start&&r.period_end===data.period_end))))throw new ApiError(409,'This trainee already has a record in this batch.');
@@ -76,10 +76,10 @@ async function aiReport(repo,user,token,body){
  if(!['attendance','assessment'].includes(body.kind)||!isId(body.traineeId))throw new ApiError(400,'Choose a trainee and report type.');
  if(!await repo.rate('ai:'+user.id,10,3600,token))throw new ApiError(429,'AI report limit reached (10 per user per hour).');
  const state=await repo.state(user,token);const trainee=state.trainees.find(t=>t.id===body.traineeId);if(!trainee)throw new ApiError(404,'Trainee not found.');
- const a=assessmentFor(state,trainee.id),r=checklistFor(state,trainee.id);
+ const a=assessmentFor(state,trainee.id),r=sessionChecklistFor(state,trainee.id);
  if(body.kind==='assessment'&&!a)throw new ApiError(400,'Save an assessment first.');
- const metrics={type:body.kind,attendance:attendanceStats(state.daily_attendance.filter(r=>r.trainee_id===trainee.id)),checklist:r?checklist(r.days):null,assessment:a?{mapping:a.mapping,productKnowledge:a.product_knowledge,presentability:a.presentability,softSkills:a.soft_skills,...scores(a),outcome:a.assessment_outcome}:null};
- const response=await fetch('https://api.openai.com/v1/responses',{method:'POST',headers:{Authorization:`Bearer ${process.env.OPENAI_API_KEY}`,'Content-Type':'application/json'},body:JSON.stringify({model:process.env.OPENAI_MODEL,store:false,max_output_tokens:650,instructions:'Write a clear, constructive training report of 130-180 words. Use only the supplied metrics. Never infer personality, motivation, employment suitability, or missing attendance. Distinguish manual late flags from calculated late arrivals. Checklist completion is not attendance. Mention practical next steps. Plain text only. Do not include names or contact details. An instructor will review the report.',input:JSON.stringify(metrics)}),signal:AbortSignal.timeout(45000)});
+ const metrics={type:body.kind,attendance:attendanceStats(state.daily_attendance.filter(r=>r.trainee_id===trainee.id)),checklist:r?{count:r.count,total:r.total,percent:r.percent,status:r.status,tour:r.tour}:null,assessment:a?{mapping:a.mapping,productKnowledge:a.product_knowledge,presentability:a.presentability,softSkills:a.soft_skills,...scores(a),outcome:a.assessment_outcome}:null};
+ const response=await fetch('https://api.openai.com/v1/responses',{method:'POST',headers:{Authorization:`Bearer ${process.env.OPENAI_API_KEY}`,'Content-Type':'application/json'},body:JSON.stringify({model:process.env.OPENAI_MODEL,store:false,max_output_tokens:650,instructions:'Write a clear, constructive training report of 130-180 words. Use only the supplied metrics. Never infer personality, motivation, employment suitability, or missing attendance. Distinguish manual late flags from calculated late arrivals. The session checklist is derived from Daily Attendance: Present and Tour Day count as attended, Off Day is excluded, and unrecorded is not absence. Mention practical next steps. Plain text only. Do not include names or contact details. An instructor will review the report.',input:JSON.stringify(metrics)}),signal:AbortSignal.timeout(45000)});
  if(!response.ok){console.error('AI provider response',response.status);throw new ApiError(502,'The AI provider could not complete the report. Your data has not been changed.');}
  const result=await response.json();const report=(result.output||[]).flatMap(o=>o.content||[]).filter(c=>c.type==='output_text').map(c=>c.text).join('\n').trim();if(!report)throw new ApiError(502,'The provider returned an empty report.');return {report,source:'ai'};
 }

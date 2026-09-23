@@ -1,5 +1,5 @@
 import './starfield.mjs';
-import {sourceModal,sourceBrowser,recordModal,legacyEdit,reviewNote} from './modules/records.mjs';
+import {sourceModal,sourceBrowser,recordModal,legacyEdit,reviewNote,explainArchivedChecklist} from './modules/records.mjs';
 import {AcademyStore} from './modules/store.mjs';
 import {today,STATUSES,BATCH_STATUSES,wasLate,cairoDate,escapeHtml} from './modules/core.mjs';
 import {shell,authView,NAV,scoped} from './modules/views.mjs';
@@ -59,10 +59,11 @@ document.addEventListener('click',async event=>{const el=event.target.closest('[
  case 'command-select':closeModal();if(el.dataset.kind==='page')go(id);if(el.dataset.kind==='trainee')traineeProfile(ctx,store.data.trainees.find(t=>t.id===id));if(el.dataset.kind==='batch')go('batches',{detailId:id});if(el.dataset.kind==='company'){ctx.companyId=id;go('trainees');}break;
  case 'source-record':await sourceModal(ctx,id);break;
  case 'source-browser':await sourceBrowser(ctx);break;
- case 'record-detail':recordModal(ctx,el.dataset.table,id);break;
- case 'legacy-edit':legacyEdit(ctx,el.dataset.table,store.data[el.dataset.table]?.find(r=>r.id===id));break;
+ case 'record-detail':recordModal(ctx,el.dataset.table,id);explainArchivedChecklist(el.dataset.table);break;
+ case 'legacy-edit':legacyEdit(ctx,el.dataset.table,store.data[el.dataset.table]?.find(r=>r.id===id));explainArchivedChecklist(el.dataset.table,{editable:true});break;
  case 'review-note':reviewNote(ctx,id);break;
  case 'batch-records':ctx.batchId=id;go(el.dataset.kind);break;
+ case 'batch-checklist':ctx.batchId=id;ctx.companyId='';go('summaries');break;
  case 'new-batch':batchForm(ctx,null,el.dataset.status||'Planning');break;
  case 'edit-batch':batchForm(ctx,store.data.batches.find(b=>b.id===id));break;
  case 'delete-batch':deleteOperationalRecord('batches',store.data.batches.find(b=>b.id===id));break;
@@ -110,7 +111,6 @@ document.addEventListener('change',async event=>{const el=event.target;try{
  if(el.hasAttribute('data-select-all')){document.querySelectorAll('[data-select]').forEach(input=>{if(el.checked)ctx.selection.add(input.dataset.select);else ctx.selection.delete(input.dataset.select);});render();return;}
  if(el.dataset.select){if(el.checked)ctx.selection.add(el.dataset.select);else ctx.selection.delete(el.dataset.select);render();return;}
  if(el.dataset.late){const r=store.data.daily_attendance.find(r=>r.trainee_id===el.dataset.late&&r.date===ctx.date);if(r)await store.mutate('daily_attendance','update',r,{...r,is_late:el.checked});toast('Manual late flag updated.');return;}
- if(el.dataset.checklist){const r=store.data.attendance_10day.find(r=>r.id===el.dataset.checklist),days=[...r.days];days[Number(el.dataset.day)]=el.checked;await store.mutate('attendance_10day','update',r,{...r,days});toast('Checklist progress saved.');}
  }catch(err){toast(err.message,'error');render();}});
 document.addEventListener('dragstart',event=>{const card=event.target.closest('[data-batch-drag]');if(!card||!store.canWrite())return;event.dataTransfer.setData('text/plain',card.dataset.batchDrag);event.dataTransfer.effectAllowed='move';});
 document.addEventListener('dragover',event=>{const column=event.target.closest('[data-drop-status]');if(!column||!store.canWrite())return;event.preventDefault();column.classList.add('drag-over');});

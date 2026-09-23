@@ -17,7 +17,7 @@ export function validate(table,input,{old=null}={}) {
   text('batch_name',120,true);text('description',3000);choice('status',BATCH_STATUSES,legacy);date('start_date',legacy);date('end_date',legacy);
   if(result.end_date&&result.start_date&&result.end_date<result.start_date)fail('The end date cannot be before the start.');
   if(!(legacy&&input.capacity===null)&&(!Number.isInteger(input.capacity)||input.capacity<1||input.capacity>1000))fail('Capacity must be between 1 and 1000.');result.capacity=input.capacity;
-  if(!Array.isArray(input.session_dates)||(!legacy&&input.session_dates.length!==10)||input.session_dates.length>366||input.session_dates.some(d=>!validDate(d))||new Set(input.session_dates).size!==input.session_dates.length)fail(legacy?'Use distinct valid recorded dates.':'Exactly 10 distinct session dates are required.');
+  if(!Array.isArray(input.session_dates)||(!legacy&&(input.session_dates.length<1||input.session_dates.length>366))||input.session_dates.length>366||input.session_dates.some(d=>!validDate(d))||new Set(input.session_dates).size!==input.session_dates.length)fail(legacy?'Use distinct valid recorded dates.':'Choose between 1 and 366 distinct session dates.');
   result.session_dates=[...input.session_dates].sort();
   if(!legacy&&(result.session_dates[0]<result.start_date||result.session_dates.at(-1)>result.end_date))fail('Session dates must be inside the batch date range.');
  }

@@ -37,22 +37,38 @@ export function scores(a) {
 export function assessedRows(rows){return rows.filter(a=>a.analytics_included!==false&&a.analytics_included!==0&&scores(a).overall!==null);}
 export function averageScore(rows){const a=assessedRows(rows);return a.length?a.reduce((sum,r)=>sum+scores(r).overall,0)/a.length:null;}
 export function assessmentFor(state,traineeId){const rows=state.assessments.filter(a=>a.trainee_id===traineeId);return assessedRows(rows)[0]||rows.find(a=>a.source_meta?.assessment_state!=='not_assessed')||rows[0]||null;}
-export function checklistFor(state,traineeId){return state.attendance_10day.filter(r=>r.trainee_id===traineeId).sort((a,b)=>(b.period_end||'').localeCompare(a.period_end||''))[0]||null;}
+export function storedChecklistFor(state,traineeId){return state.attendance_10day.filter(r=>r.trainee_id===traineeId).sort((a,b)=>(b.period_end||'').localeCompare(a.period_end||''))[0]||null;}
 export function canonicalAttendance(rows){return rows.filter(r=>r.analytics_included!==false&&r.analytics_included!==0);}
 export function outcome(percent) {if(percent===null)return null;return percent>=95?'Aced':percent>=85?'Excellent':percent>=75?'Very Good':percent>=65?'Good':percent>=50?'Needs Improvement':'Failed';}
-export function checklist(days) {const count=(days||[]).filter(Boolean).length;return {count,percent:count*10,status:count===10?'Complete':count?'In Progress':'Not Started'};}
+export function checklist(days) {const total=Array.isArray(days)?days.length:0,count=(days||[]).filter(Boolean).length;return {count,total,percent:total?count/total*100:0,status:total>0&&count===total?'Complete':count?'In Progress':'Not Started'};}
 export function addDays(date,n) {const d=new Date(date+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10);}
-export function sessionDates(start) {const out=[];let d=start;for(let i=0;i<30&&out.length<10;i++){const day=new Date(d+'T12:00:00Z').getUTCDay();if(day!==5&&day!==6)out.push(d);d=addDays(d,1);}return out;}
+export function sessionDates(start,count=10) {const out=[];let d=start;for(let i=0;i<1100&&out.length<count;i++){const day=new Date(d+'T12:00:00Z').getUTCDay();if(day!==5&&day!==6)out.push(d);d=addDays(d,1);}return out;}
 export function attendanceStats(entries) {const rows=canonicalAttendance([...new Map(entries.map(r=>[r.id,r])).values()]);const tour=rows.filter(r=>r.status==='Tour Day').length,present=rows.filter(r=>r.status==='Present'||r.status==='Tour Day').length;const absent=rows.filter(r=>r.status==='Absent').length;return {present,absent,tour,off:rows.filter(r=>r.status==='Off Day').length,late:rows.filter(r=>r.is_late).length,calculatedLate:rows.filter(r=>wasLate(r.arrival_time)).length,rate:present+absent?present/(present+absent)*100:null};}
+/** A live, read-only session checklist derived from the batch calendar and canonical daily attendance. */
+export function sessionChecklistFor(state,traineeId,asOf=today()) {
+ const trainee=state.trainees.find(row=>row.id===traineeId);if(!trainee)return null;
+ const batch=state.batches.find(row=>row.id===trainee.batch_id),attendance=canonicalAttendance(state.daily_attendance.filter(row=>row.trainee_id===traineeId&&row.batch_id===trainee.batch_id&&validDate(row.date)));
+ const sessionDates=[...new Set([...(batch?.session_dates||[]).filter(validDate),...attendance.map(row=>row.date)])].sort();
+ if(!sessionDates.length)return null;
+ const sessions=sessionDates.map((date,index)=>{
+  const records=attendance.filter(row=>row.date===date),record=records.length===1?records[0]:null;
+  const status=records.length>1?'Review':record?.status||'Unrecorded';
+  return {index:index+1,date,status,record,attended:status==='Present'||status==='Tour Day',due:date<=asOf&&status!=='Off Day'};
+ });
+ const due=sessions.filter(session=>session.due),attended=due.filter(session=>session.attended).length,recorded=due.some(session=>session.status!=='Unrecorded');
+ const stats=attendanceStats(attendance);
+ return {trainee_id:trainee.id,batch_id:trainee.batch_id,period_start:sessionDates[0],period_end:sessionDates.at(-1),session_dates:sessionDates,sessions,days:due.map(session=>session.attended),count:attended,total:due.length,percent:due.length?attended/due.length*100:null,status:!due.length?'Not Started':attended===due.length?'Complete':recorded?'In Progress':'Not Started',present:stats.present,absent:stats.absent,tour:stats.tour,off:stats.off};
+}
+export function checklistFor(state,traineeId){return sessionChecklistFor(state,traineeId);}
 export function summary(state,record) {return {...checklist(record.days),...attendanceStats(state.daily_attendance.filter(a=>a.trainee_id===record.trainee_id&&a.batch_id===record.batch_id&&(!record.period_start||a.date>=record.period_start)&&(!record.period_end||a.date<=record.period_end)))};}
 export function batchStats(state,batchId) {
- const trainees=state.trainees.filter(t=>t.batch_id===batchId),logs=state.attendance_10day.filter(r=>r.batch_id===batchId);
+ const trainees=state.trainees.filter(t=>t.batch_id===batchId),checklists=trainees.map(t=>sessionChecklistFor(state,t.id)).filter(r=>r&&r.percent!==null);
  const a=assessedRows(state.assessments.filter(a=>a.batch_id===batchId)),at=attendanceStats(state.daily_attendance.filter(r=>r.batch_id===batchId));
- return {trainees:trainees.length,present:at.present,absent:at.absent,late:at.late,completion:logs.length?logs.reduce((sum,r)=>sum+checklist(r.days).percent,0)/logs.length:null,score:averageScore(a),assessed:a.length};
+ return {trainees:trainees.length,present:at.present,absent:at.absent,late:at.late,completion:checklists.length?checklists.reduce((sum,r)=>sum+r.percent,0)/checklists.length:null,score:averageScore(a),assessed:a.length};
 }
 export function reportFor(state,traineeId,kind='assessment') {
- const t=state.trainees.find(t=>t.id===traineeId); if(!t)throw new Error('Trainee not found.');const b=state.batches.find(b=>b.id===t.batch_id);const a=assessmentFor(state,t.id);const r=checklistFor(state,t.id);const stats=attendanceStats(state.daily_attendance.filter(r=>r.trainee_id===t.id));
- if(kind==='attendance') return `${t.trainee_name} | ${b?.batch_name||'Unassigned'}\n\n${stats.present} present (including ${stats.tour} tour days), ${stats.absent} absent, and ${stats.off} off-day records. Tour attendees count as present; mark tour no-shows Absent. ${stats.late} entries are manually flagged late; ${stats.calculatedLate} arrivals are after 11:00 AM Cairo time. Recorded attendance: ${stats.rate===null?'not yet available':stats.rate.toFixed(1)+'%'}. ${r?`Checklist completion: ${checklist(r.days).percent}% (${checklist(r.days).count}/10).`:'No checklist has been started.'}\n\n${stats.absent?'Review the missed sessions with the trainee and agree on a catch-up plan.':'Continue recording attendance for the remaining scheduled sessions.'} Unrecorded days are not counted as absences.`;
+ const t=state.trainees.find(t=>t.id===traineeId); if(!t)throw new Error('Trainee not found.');const b=state.batches.find(b=>b.id===t.batch_id);const a=assessmentFor(state,t.id);const r=sessionChecklistFor(state,t.id);const stats=attendanceStats(state.daily_attendance.filter(r=>r.trainee_id===t.id));
+ if(kind==='attendance') return `${t.trainee_name} | ${b?.batch_name||'Unassigned'}\n\n${stats.present} present (including ${stats.tour} tour days), ${stats.absent} absent, and ${stats.off} off-day records. Tour attendees count as present; mark tour no-shows Absent. ${stats.late} entries are manually flagged late; ${stats.calculatedLate} arrivals are after 11:00 AM Cairo time. Recorded attendance: ${stats.rate===null?'not yet available':stats.rate.toFixed(1)+'%'}. ${r?`Session checklist: ${r.count} of ${r.total} due sessions attended${r.tour?`, including ${r.tour} tour day${r.tour===1?'':'s'}`:''}.`:'No session dates are available for this batch yet.'}\n\n${stats.absent?'Review the missed sessions with the trainee and agree on a catch-up plan.':'Continue recording attendance for the remaining scheduled sessions.'} Unrecorded days are not counted as absences.`;
  if(!a)return 'No assessment has been saved for this trainee. Save an assessment before preparing the performance report.';
  if(a.source_meta?.assessment_state==='not_assessed'&&a.analytics_included===false)return `${t.trainee_name} | ${b?.batch_name||'Batch not recorded'}\n\nThe original record states that this trainee was not assessed. Its saved numbers and outcome remain available as original source values, but are excluded from graded averages. No grade has been inferred.\n\nInstructor comment: ${a.instructor_comment||'Not recorded'}.`;
  const sc=scores(a);if(sc.overall===null)return `${t.trainee_name} | ${b?.batch_name||'Batch not recorded'}\n\nThis source assessment is incomplete. Missing scores have not been converted to zero or treated as a failure.\n\nRecorded outcome: ${a.assessment_outcome||'Not recorded'}.\nInstructor comment: ${a.instructor_comment||'Not recorded'}.`;const fields=[['Mapping',a.mapping],['Product knowledge',a.product_knowledge],['Presentability',a.presentability],['Soft skills',a.soft_skills]].sort((a,b)=>a[1]-b[1]);

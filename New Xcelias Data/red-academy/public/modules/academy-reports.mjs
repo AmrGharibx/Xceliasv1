@@ -35,8 +35,8 @@ export function reportNarrative(item){
   ? 'Attendance is still being recorded; unrecorded sessions are not treated as absences.'
   : `Recorded classroom attendance is ${fmt(attendance.rate,1)}% (${attendance.present} present and ${attendance.absent} absent).`;
  const checklistLine=check
-  ? `The separate 10-session checklist is ${check.percent}% complete (${check.count}/10).`
-  : 'No 10-session checklist has been saved.';
+  ? `The attendance checklist shows ${check.count} of ${check.total} due scheduled sessions attended${check.tour?`, including ${check.tour} tour day${check.tour===1?'':'s'}`:''}. It reflects Daily Attendance; future and off days are not counted as due sessions.`
+  : 'No scheduled sessions are available for the attendance checklist yet.';
  if(!item.profile.complete)return `A complete four-skill assessment has not been saved, so this report does not assign a score band or infer a result. ${attendanceLine} ${checklistLine} Complete the measured assessment when evidence is available, then review practical next steps with the trainee.`;
  const ranked=strengths(item.assessment),strongest=ranked[0],focus=ranked.at(-1);
  const scoreLine=`The measured profile is ${item.profile.tier}: ${fmt(item.profile.overall,1)}% overall, with ${fmt(item.profile.tech,1)}% technical and ${fmt(item.profile.soft,1)}% people skills.`;
@@ -54,7 +54,7 @@ export function buildBatchReport(data,{batchId,companyId=''}){
  const items=trainees.map(trainee=>{
   const assessment=assessmentFor(data,trainee.id),profile=reporterAssessment(assessment);
   const attendance=attendanceStats(data.daily_attendance.filter(row=>row.trainee_id===trainee.id&&row.batch_id===batch.id));
-  const summary=checklistFor(data,trainee.id),check=summary?checklist(summary.days):null;
+  const summary=checklistFor(data,trainee.id),check=summary?{count:summary.count,total:summary.total,percent:summary.percent,tour:summary.tour}:null;
   const item={trainee,batch,company:companyById.get(trainee.company_id)||null,assessment,profile,attendance,checklist:check};
   return {...item,narrative:reportNarrative(item)};
  });
@@ -191,6 +191,13 @@ function openReportPreview(ctx,report,allowAi){
  openModal('Trainee report preview',`${report.batch.batch_name} · Review all content before printing or saving a PDF.`,previewMarkup(report,ctx.store.canWrite(),allowAi),{wide:true});
  const modal=document.querySelector('.modal');modal?.classList.add('academy-report-modal');
  const root=document.getElementById('academy-report-preview');
+ const reportSheets=root?.querySelectorAll('.academy-report-sheet')||[];
+ report.items.forEach((item,index)=>{
+  const sheet=reportSheets[index],values=sheet?.querySelectorAll('.academy-attendance dd'),check=item.checklist;
+  if(values?.[5])values[5].textContent=check?`${check.count} of ${check.total} due sessions attended (${fmt(check.percent,1)}%)`:'No scheduled sessions';
+  const note=sheet?.querySelector('.academy-attendance')?.nextElementSibling;
+  if(note)note.textContent='This checklist is derived from scheduled batch dates and Daily Attendance. Present and Tour Day count as attended; Off Day is excluded, and an unrecorded date is not an absence.';
+ });
  hydratePortraits(root,ctx.store,portraitUrls).then(()=>root.querySelector('[data-academy-print]')?.removeAttribute('disabled'));
  root.querySelector('[data-academy-back]').onclick=()=>{release(portraitUrls);academyReportModal(ctx,report.batch,report.companyId);};
  root.querySelector('[data-academy-print]').onclick=()=>{

@@ -102,13 +102,15 @@ CREATE TRIGGER IF NOT EXISTS batch_guard BEFORE UPDATE ON batches BEGIN
  (NEW.start_date<>OLD.start_date OR NEW.end_date<>OLD.end_date OR NEW.session_dates<>OLD.session_dates)
  THEN RAISE(ABORT,'Enrolled batch dates are locked.') END;
 END;
-CREATE TRIGGER IF NOT EXISTS batch_sessions_insert BEFORE INSERT ON batches BEGIN
- SELECT CASE WHEN (NEW.source_id IS NULL AND json_array_length(NEW.session_dates)<>10) OR (SELECT COUNT(DISTINCT value) FROM json_each(NEW.session_dates))<>json_array_length(NEW.session_dates) OR
+DROP TRIGGER IF EXISTS batch_sessions_insert;
+DROP TRIGGER IF EXISTS batch_sessions_update;
+CREATE TRIGGER batch_sessions_insert BEFORE INSERT ON batches BEGIN
+ SELECT CASE WHEN (NEW.source_id IS NULL AND (json_array_length(NEW.session_dates)<1 OR json_array_length(NEW.session_dates)>366)) OR (SELECT COUNT(DISTINCT value) FROM json_each(NEW.session_dates))<>json_array_length(NEW.session_dates) OR
  EXISTS(SELECT 1 FROM json_each(NEW.session_dates) WHERE type<>'text' OR (NEW.source_id IS NULL AND (value<NEW.start_date OR value>NEW.end_date)))
  THEN RAISE(ABORT,'Invalid batch session dates.') END;
 END;
-CREATE TRIGGER IF NOT EXISTS batch_sessions_update BEFORE UPDATE ON batches BEGIN
- SELECT CASE WHEN (NEW.source_id IS NULL AND json_array_length(NEW.session_dates)<>10) OR (SELECT COUNT(DISTINCT value) FROM json_each(NEW.session_dates))<>json_array_length(NEW.session_dates) OR
+CREATE TRIGGER batch_sessions_update BEFORE UPDATE ON batches BEGIN
+ SELECT CASE WHEN (NEW.source_id IS NULL AND (json_array_length(NEW.session_dates)<1 OR json_array_length(NEW.session_dates)>366)) OR (SELECT COUNT(DISTINCT value) FROM json_each(NEW.session_dates))<>json_array_length(NEW.session_dates) OR
  EXISTS(SELECT 1 FROM json_each(NEW.session_dates) WHERE type<>'text' OR (NEW.source_id IS NULL AND (value<NEW.start_date OR value>NEW.end_date)))
  THEN RAISE(ABORT,'Invalid batch session dates.') END;
 END;

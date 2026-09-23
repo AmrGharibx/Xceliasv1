@@ -9,11 +9,11 @@ root=Path(sys.argv[1]); checks=[]
 def check(name, value):
     if not value:raise AssertionError(name)
     checks.append(name)
-expected=['Overview','Batches','Trainees','Daily attendance','10-day checklists','Assessments','Companies']
+expected=['Overview','Batches','Trainees','Daily attendance','10-day checklists','Session checklist','Assessments','Companies']
 for name in ('empty','populated'):
     formulas=load_workbook(root/(name+'.xlsx'),data_only=False)
     cached=load_workbook(root/(name+'.xlsx'),data_only=True)
-    check(name+' has seven named sheets',formulas.sheetnames==expected)
+    check(name+' has eight named sheets',formulas.sheetnames==expected)
     check(name+' has no cached spreadsheet errors',all(cell.data_type!='e' for sheet in cached for row in sheet for cell in row))
     check(name+' freezes and styles headers',all(sheet.freeze_panes=='A2' and sheet['A1'].fill.fgColor.rgb=='FFDC2626' for sheet in formulas))
     check(name+' marks the private workspace source',cached['Overview']['B3'].value=='Internal company training system')

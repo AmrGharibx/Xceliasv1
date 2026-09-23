@@ -1,0 +1,20 @@
+.session-checklist-scroller{display:flex;gap:7px;max-width:min(760px,54vw);overflow-x:auto;padding:4px 2px 7px;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+.session-check-cell{flex:0 0 54px;display:flex;flex-direction:column;align-items:center;gap:5px;border:0;background:transparent;padding:2px;color:var(--muted);font-size:9px}
+.session-check-cell small{font-size:8px;white-space:nowrap;color:var(--faint)}
+.session-check-mark{width:24px;height:24px;display:grid;place-items:center;border-radius:50%;border:1px solid var(--line);background:var(--panel-2);color:var(--faint);font-size:14px;font-weight:700;transition:transform .15s,border-color .15s,background .15s}
+.session-check-cell:hover .session-check-mark{transform:scale(1.08);border-color:var(--muted)}
+.session-check-cell.present .session-check-mark{color:#071a13;background:#41c995;border-color:#41c995;box-shadow:0 0 12px #41c99533}
+.session-check-cell.tour .session-check-mark{color:#2a1b04;background:#edb765;border-color:#edb765;box-shadow:0 0 12px #edb76533}
+.session-check-cell.absent .session-check-mark{color:#fff;background:#dc2626;border-color:#f04444}
+.session-check-cell.off .session-check-mark{color:#a5abb9;background:#303440;border-color:#4b5261}
+.session-check-cell.review .session-check-mark{color:#fff;background:#7c4dff;border-color:#9f7bff}
+.session-check-cell.unrecorded .session-check-mark{border-style:dashed;background:transparent;color:#7d8493}
+.session-date-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
+.session-date-row{display:flex;align-items:flex-end;gap:8px;min-width:0}
+.session-date-row .field{flex:1;min-width:0;margin:0}
+.session-date-row>[data-action="remove-session"]{flex:0 0 auto;margin-bottom:1px}
+.schedule-details>.toolbar>div{display:flex;flex-direction:column;gap:4px}
+.schedule-details>.toolbar small{font-size:9px;color:var(--faint)}
+.schedule-details>p{font-size:10px;line-height:1.55;margin:5px 0 12px}
+.summary-meta{gap:9px}
+@media(max-width:760px){.session-checklist-scroller{max-width:72vw}.session-date-fields{grid-template-columns:1fr}.session-date-row .field input{min-width:0}}

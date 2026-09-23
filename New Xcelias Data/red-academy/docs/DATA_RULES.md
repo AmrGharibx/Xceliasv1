@@ -6,7 +6,7 @@ A trainee row is one enrollment/profile, not a universal unique person identity.
 
 Companies contain the 55 real names found in the supplied data. Blank company values remain NULL. Assessment company and reported attendance/absence are source snapshots and remain separate from current trainee company and computed daily totals.
 
-New batches use ten operator-selected session dates and a capacity; enrolled native schedules are protected. Imported batches may retain NULL dates, status or capacity, observed dates, multiple periods, or an incomplete calendar. Old dates are not used to guess that a batch is Completed. Recording a new actual attendance date on an imported batch adds only that chosen date.
+New batches default to ten operator-selected weekdays, but may use any schedule of 1-366 distinct session dates; enrolled native schedules are protected. Imported batches may retain NULL dates, status or capacity, observed dates, multiple periods, or an incomplete calendar. Old dates are not used to guess that a batch is Completed. Recording a new actual attendance date on an imported batch adds only that chosen date.
 
 Original Notion pages, properties, relationship IDs, raw text and hashes are stored in `source_records`. `import_runs` records the import digest/reconciliation, and `import_reviews` records decisions/discrepancies. These are private APIs, not static web files. They do not cascade away when operational records are deleted. Working edits do not rewrite the original archive.
 
@@ -20,11 +20,11 @@ Timestamps use UTC storage and Africa/Cairo display/calculation. Explicit source
 
 Calculated lateness starts strictly after 11:00:00 Cairo time. `minutesLate` is the number of whole minutes after 11:00; 11:00:30 is late but zero complete minutes. No arrival gives zero minutes and false calculated lateness. The manual late flag is independent. This follows the requested strictly-after threshold rather than dropping the timestamp's seconds.
 
-## Independent checklist periods
+## Live session checklist and archived source checklists
 
-Each ten-day record keeps its own ten booleans, source period, report and original source status. True flags / 10 gives completion. Not Started means zero true flags, Complete means ten, and otherwise In Progress. This is not an attendance record and does not create one.
+The operational session checklist is a read-only projection of each trainee's batch session dates and canonical daily attendance. Present and Tour Day are checked, but use different visual states. Absent is shown distinctly; Off Day and future sessions do not count toward due-session progress. Unrecorded sessions remain neutral and never become absences. Progress is attended due sessions divided by due scheduled sessions; duplicate/conflicting source rows are marked for review rather than guessed.
 
-Multiple real source periods are retained, including both Batch 30 periods. A trainee profile uses the latest period end for its compact checklist summary; all periods remain available in the register and profile detail. Batch completion is the average of retained checklist records, clearly distinct from daily attendance. A batch with no checklist has unavailable completion, not a fabricated zero-progress record.
+Legacy `attendance_10day` records, including their ten stored booleans, reports and source status, remain untouched as historical snapshots and are not used to calculate current session attendance. Multiple real source periods are retained, including both Batch 30 periods. New daily attendance updates the operational checklist immediately without a second write or separate checkbox state.
 
 ## Assessments and analytical eligibility
 

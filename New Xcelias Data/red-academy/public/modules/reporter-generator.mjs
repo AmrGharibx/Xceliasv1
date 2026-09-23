@@ -80,6 +80,7 @@ const REPORT_STYLE=[
   '#reporter-render-root .text-na{color:var(--na);font-weight:600}',
   '#reporter-render-root .text-aok{color:var(--green);font-weight:700}',
   '#reporter-render-root .text-aw{color:var(--orange);font-weight:700}',
+  '#reporter-render-root .data-table td.text-alert{color:#dc2626;font-weight:650}',
   '#reporter-render-root .comments-box{background:var(--g50);border-left:4px solid var(--g300);border-radius:8px;padding:12px 16px;margin-bottom:20px}',
   '#reporter-render-root .comments-box p{font-size:.85rem;color:var(--g700);font-style:italic}',
   '#reporter-render-root .report-footer{text-align:center;padding:14px 28px;border-top:1px solid var(--g200);font-size:.68rem;color:var(--g400)}',
@@ -191,7 +192,12 @@ function generatedAssessment(item){
   return text;
 }
 
-function standaloneItem(item,fallbackBatch){
+export function roundToTwo(value){
+  if(typeof value!=='number'||!Number.isFinite(value))return value;
+  return Math.round((value+Number.EPSILON)*100)/100;
+}
+
+export function standaloneReportItem(item,fallbackBatch){
   const assessment=item.assessment||{},profile=item.profile||{},attendance=item.attendance||{};
   const complete=profile.complete===true,overall=complete?profile.overall:null,present=Number(attendance.present||0),absent=Number(attendance.absent||0),hasAttendance=present+absent>0,rawOutcome=complete?String(assessment.assessment_outcome||''):'';
   const score=value=>complete?Number(value):'N/A';
@@ -202,7 +208,7 @@ function standaloneItem(item,fallbackBatch){
     batch:item.batch?.batch_name||fallbackBatch?.batch_name||'Batch not recorded',
     photo:item.photo||'',
     rawAssessmentOutcome:rawOutcome,
-    overallScore:complete?overall:'N/A',
+    overallScore:complete?roundToTwo(overall):'N/A',
     assessmentResult:result,
     badgeClass:badgeClass(result),
     scores:{
@@ -210,16 +216,16 @@ function standaloneItem(item,fallbackBatch){
       mapping:{score:score(assessment.mapping),max:5},
       softSkills:{score:score(assessment.soft_skills),max:5},
       presentability:{score:score(assessment.presentability),max:5},
-      techScorePercent:complete?profile.tech:'N/A',
-      softScorePercent:complete?profile.soft:'N/A',
-      totalCore:complete?Number(assessment.product_knowledge)+Number(assessment.mapping):'N/A',
-      professionalConductRating:{score:complete?Number(assessment.presentability)+Number(assessment.soft_skills):'N/A',max:10}
+      techScorePercent:complete?roundToTwo(profile.tech):'N/A',
+      softScorePercent:complete?roundToTwo(profile.soft):'N/A',
+      totalCore:complete?roundToTwo(Number(assessment.product_knowledge)+Number(assessment.mapping)):'N/A',
+      professionalConductRating:{score:complete?roundToTwo(Number(assessment.presentability)+Number(assessment.soft_skills)):'N/A',max:10}
     },
     attendance:{
       attendanceDays:hasAttendance?present:'N/A',
       late:hasAttendance?Number(attendance.late||0):'N/A',
       absent,
-      missedContent:hasAttendance?Number(((absent/(present+absent))*100).toFixed(1)):'N/A'
+      missedContent:hasAttendance?roundToTwo((absent/(present+absent))*100):'N/A'
     },
     overallAssessment:'',
     comments:assessment.instructor_comment||''
@@ -233,7 +239,7 @@ function reportLogo(){return standaloneLogo||'<img src="./report-logo.svg" alt="
 function cover(report){
   return '<div class="page"><div class="cover-layout"><div class="cover-sidebar"><h2>RED</h2></div><div class="cover-content"><div class="cover-logo">'+reportLogo()+'</div><div class="cover-title"><h1 class="text-dark">Trainee Performance</h1><h1 class="text-red">Report</h1></div><div class="cover-info"><div class="cover-info-row"><span class="cover-info-label">Company Name</span><span class="cover-info-value">'+esc(report.companyName)+'</span></div><div class="cover-info-row"><span class="cover-info-label">Batch Number</span><span class="cover-info-value">'+esc(report.batch.batch_name)+'</span></div><div class="cover-info-row"><span class="cover-info-label">Number of Trainees</span><span class="cover-info-value">'+report.items.length+'</span></div></div><div class="cover-footer"><p>Report Generated on: '+dateLabel()+'</p><p>'+copyright()+'</p></div></div></div></div>';
 }
-function detailPage(item){
+export function renderDetailPage(item){
   const outcomeLabel=displayAssessmentOutcome(item)||item.assessmentResult;
   const lateDays=item.attendance.late==='N/A'||item.attendance.late==null?'N/A':item.attendance.late+' Days';
   const attendanceDays=item.attendance.attendanceDays==='N/A'||item.attendance.attendanceDays==null?'N/A':item.attendance.attendanceDays+' Day'+(item.attendance.attendanceDays!==1?'s':'');
@@ -241,11 +247,11 @@ function detailPage(item){
   const technicalMaximum=item.scores.mapping.max+item.scores.productKnowledge.max,conductMaximum=item.scores.presentability.max+item.scores.softSkills.max;
   const scoreClass=item.assessmentResult==='Failed'?'score-red':item.assessmentResult==='Assessment pending'?'score-neutral':'score-green';
   const attendanceClass=item.attendance.attendanceDays==='N/A'||item.attendance.attendanceDays==null?'text-na':'text-aok';
-  const lateClass=item.attendance.late==='N/A'||item.attendance.late==null?'text-na':item.attendance.late==0?'text-aok':'text-aw';
-  const absenceClass=item.attendance.absent===0?'text-aok':'text-aw';
-  const missedClass=item.attendance.missedContent==='N/A'||item.attendance.missedContent==null?'text-na':item.attendance.missedContent==0?'text-aok':'text-aw';
+  const lateClass='text-alert';
+  const absenceClass='text-alert';
+  const missedClass='text-alert';
   const photo=item.photo?'<div class="report-photo-col"><img src="'+esc(item.photo)+'" alt="'+esc(item.name)+'"><span class="rph-lbl">'+esc(item.name.split(' ')[0])+'</span></div>':'';
-  return '<div class="page"><div class="report-header"><div class="report-header-logo">'+reportLogo()+'</div><div class="report-header-right"><h1>Trainee Performance Report</h1><p>'+esc(item.batch)+'</p></div></div><div class="report-body"><div class="details-card">'+photo+'<div class="details-card-info"><h3>Trainee Details</h3><p><span class="label">Name:</span> '+esc(item.name)+'</p><p><span class="label">Company:</span> '+esc(item.company)+'</p><p><span class="label">Batch:</span> '+esc(item.batch)+'</p></div><div style="text-align:right"><h3>Overall Performance</h3><div class="score-big '+scoreClass+'">'+item.overallScore+'<span>%</span></div><div class="badge '+item.badgeClass+'">'+esc(outcomeLabel)+'</div></div></div><h3 class="section-title">Overall Assessment</h3><div class="assessment-box"><p>'+esc(item.overallAssessment)+'</p></div><div class="two-col"><div><h3 class="section-title">Detailed Score Breakdown</h3><table class="data-table"><thead><tr><th>Performance Area</th><th>Score</th></tr></thead><tbody><tr><td>Product Knowledge</td><td>'+item.scores.productKnowledge.score+' out of '+item.scores.productKnowledge.max+'</td></tr><tr><td>Mapping</td><td>'+item.scores.mapping.score+' out of '+item.scores.mapping.max+'</td></tr><tr class="row-total"><td>Total (Core Skills)</td><td>'+item.scores.totalCore+' out of '+technicalMaximum+'</td></tr><tr class="row-pct row-pct-b"><td>Tech Score %</td><td>'+item.scores.techScorePercent+'%</td></tr><tr><td>Soft Skills</td><td>'+item.scores.softSkills.score+' out of '+item.scores.softSkills.max+'</td></tr><tr><td>Presentability</td><td>'+item.scores.presentability.score+' out of '+item.scores.presentability.max+'</td></tr><tr class="row-total"><td>Professional Conduct Rating</td><td>'+item.scores.professionalConductRating.score+' out of '+conductMaximum+'</td></tr><tr class="row-pct"><td>Professionalism Score %</td><td>'+item.scores.softScorePercent+'%</td></tr></tbody></table></div><div><h3 class="section-title">Attendance & Professionalism</h3><table class="data-table"><thead><tr><th>Metric</th><th>Record</th></tr></thead><tbody><tr><td>Attendance Days</td><td class="'+attendanceClass+'">'+attendanceDays+'</td></tr><tr><td>Punctuality (Late Arrivals)</td><td class="'+lateClass+'">'+lateDays+'</td></tr><tr><td>Attendance (Absent Days)</td><td class="'+absenceClass+'">'+item.attendance.absent+' Day'+(item.attendance.absent!==1?'s':'')+'</td></tr><tr><td>Missed Content Percentage</td><td class="'+missedClass+'">'+missedContent+'</td></tr></tbody></table></div></div><h3 class="section-title">Trainer\'s Comments</h3><div class="comments-box"><p>"'+esc(item.comments)+'"</p></div></div><div class="report-footer"><p>Report Generated on: '+dateLabel()+'</p><p>'+copyright()+'</p></div></div>';
+  return `<div class="page"><div class="report-header"><div class="report-header-logo">${reportLogo()}</div><div class="report-header-right"><h1>Trainee Performance Report</h1><p>${esc(item.batch)}</p></div></div><div class="report-body"><div class="details-card">${photo}<div class="details-card-info"><h3>Trainee Details</h3><p><span class="label">Name:</span> ${esc(item.name)}</p><p><span class="label">Company:</span> ${esc(item.company)}</p><p><span class="label">Batch:</span> ${esc(item.batch)}</p></div><div style="text-align:right"><h3>Overall Performance</h3><div class="score-big ${scoreClass}">${item.overallScore}<span>%</span></div><div class="badge ${item.badgeClass}">${esc(outcomeLabel)}</div></div></div><h3 class="section-title">Overall Assessment</h3><div class="assessment-box"><p>${esc(item.overallAssessment)}</p></div><div class="two-col"><div><h3 class="section-title">Detailed Score Breakdown</h3><table class="data-table"><thead><tr><th>Performance Area</th><th>Score</th></tr></thead><tbody><tr><td>Product Knowledge</td><td>${item.scores.productKnowledge.score} out of ${item.scores.productKnowledge.max}</td></tr><tr><td>Mapping</td><td>${item.scores.mapping.score} out of ${item.scores.mapping.max}</td></tr><tr class="row-total"><td>Total (Core Skills)</td><td>${item.scores.totalCore} out of ${technicalMaximum}</td></tr><tr class="row-pct row-pct-b"><td>Tech Score %</td><td>${item.scores.techScorePercent}%</td></tr><tr><td>Soft Skills</td><td>${item.scores.softSkills.score} out of ${item.scores.softSkills.max}</td></tr><tr><td>Presentability</td><td>${item.scores.presentability.score} out of ${item.scores.presentability.max}</td></tr><tr class="row-total"><td>Professional Conduct Rating</td><td>${item.scores.professionalConductRating.score} out of ${conductMaximum}</td></tr><tr class="row-pct"><td>Professionalism Score %</td><td>${item.scores.softScorePercent}%</td></tr></tbody></table></div><div><h3 class="section-title">Attendance &amp; Professionalism</h3><table class="data-table"><thead><tr><th>Metric</th><th>Record</th></tr></thead><tbody><tr><td>Attendance Days</td><td class="${attendanceClass}">${attendanceDays}</td></tr><tr><td>Late Arrivals</td><td class="${lateClass}">${lateDays}</td></tr><tr><td>Absent Days</td><td class="${absenceClass}">${item.attendance.absent} Day${item.attendance.absent!==1?'s':''}</td></tr><tr><td>Missed Content</td><td class="${missedClass}">${missedContent}</td></tr></tbody></table></div></div><h3 class="section-title">Trainer's Comments</h3><div class="comments-box"><p>"${esc(item.comments)}"</p></div></div><div class="report-footer"><p>Report Generated on: ${dateLabel()}</p><p>${copyright()}</p></div></div>`;
 }
 function conclusion(report,items){
   const names=items.map(item=>item.name),nameList=listify(names),firstParagraph='This report concludes the performance evaluation for the '+(items.length>1?items.length+' trainees':'trainee')+': '+nameList+'.';
@@ -319,11 +325,11 @@ export async function downloadCompanyReport(report,store,onProgress=()=>{}){
   const items=await Promise.all(report.items.map(async item=>{
     let photo='';
     try{photo=await store.traineePhoto(item.trainee.id)||'';}catch{}
-    return standaloneItem({...item,photo},report.batch);
+    return standaloneReportItem({...item,photo},report.batch);
   }));
   const render=document.createElement('div');
   render.id='reporter-render-root';
-  render.innerHTML='<style>'+REPORT_STYLE+'</style>'+cover({...report,items})+items.map(detailPage).join('')+conclusion(report,items);
+  render.innerHTML='<style>'+REPORT_STYLE+'</style>'+cover({...report,items})+items.map(renderDetailPage).join('')+conclusion(report,items);
   document.body.appendChild(render);
   try{
     await Promise.all([waitFonts(),waitImages(render)]);

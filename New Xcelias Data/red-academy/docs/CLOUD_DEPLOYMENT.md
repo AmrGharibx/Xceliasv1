@@ -21,8 +21,8 @@ an online deployment path for the same RED Academy interface:
 
 The browser configuration contains the Supabase project URL and a publishable
 key only. Those values are designed to be public. Do not put a service-role
-key, OpenAI key, password, database file, or source archive in Git, Pages, or
-cloud/production.json.
+key, OpenAI or Gemini key, password, database file, or source archive in Git,
+Pages, or cloud/production.json.
 
 ## One-time production setup
 
@@ -51,6 +51,9 @@ source control.
    ACADEMY_APP_URL is the full GitHub Pages address and is used only when
    creating invitation links. Optional AI reports additionally require the
    existing server-side AI settings; they remain off unless explicitly set.
+   Instructor-comment polishing uses the same Gemini key as Report Generation
+   3: set `AI_REPORTS_ENABLED=true` and `GEMINI_API_KEY` as Supabase Function
+   secrets. Never put the Gemini key in the browser, cloud configuration, or Git.
    Current Supabase Functions also expose their default secret key automatically;
    ACADEMY_SUPABASE_SECRET_KEY is an explicit fallback. A legacy project can
    use SUPABASE_SERVICE_ROLE_KEY instead; the application supports that older

@@ -20,7 +20,7 @@ export class AcademyStore extends EventTarget {
   super();
   this.cloud=cloudConfig();this.sessionToken=null;this.revision=null;this.syncing=false;this.lastCloudCheck=0;
   this.data=emptyState();this.mode='private';this.user=null;this.status='loading';
-  this.aiEnabled=false;this.sync=this.cloud?'poll':'events';this.busy=false;this.generation=0;
+  this.aiEnabled=false;this.aiPolishEnabled=false;this.sync=this.cloud?'poll':'events';this.busy=false;this.generation=0;
   this.source=null;this.poll=null;this.realtime=null;this.realtimeChannel=null;this.realtimeAvailable=false;this.connectionLost=false;this.setupRequired=false;
   this.error='';this.suspended=false;this.endingSession=false;
   this.channel=typeof BroadcastChannel!=='undefined'?new BroadcastChannel('internal-training-private-auth'):null;
@@ -50,7 +50,7 @@ export class AcademyStore extends EventTarget {
  lock(status='signed-out') {
   this.generation++;this.source?.close();this.source=null;clearInterval(this.poll);this.poll=null;this.closeRealtime();
   if(this.cloud&&['signed-out','setup'].includes(status))this.clearCloudSession();
-  this.user=null;this.data=emptyState();this.aiEnabled=false;this.revision=null;this.status=status;this.busy=false;this.syncing=false;this.notify();
+  this.user=null;this.data=emptyState();this.aiEnabled=false;this.aiPolishEnabled=false;this.revision=null;this.status=status;this.busy=false;this.syncing=false;this.notify();
  }
  expire(){this.lock();this.dispatchEvent(new Event('expired'));}
  async init() {
@@ -62,7 +62,7 @@ export class AcademyStore extends EventTarget {
    const session=await this.api('session');if(generation!==this.generation)return;
    this.setupRequired=!!session.setupRequired;
    if(!session.user){this.lock(this.setupRequired?'setup':'signed-out');return;}
-   this.user=session.user;this.aiEnabled=session.aiEnabled;this.sync=session.sync||this.sync;this.revision=Number.isInteger(session.revision)?session.revision:null;this.status='ready';
+   this.user=session.user;this.aiEnabled=!!session.aiEnabled;this.aiPolishEnabled=!!session.aiPolishEnabled;this.sync=session.sync||this.sync;this.revision=Number.isInteger(session.revision)?session.revision:null;this.status='ready';
    await this.refresh();if(generation===this.generation)this.connectSync();
   } catch(error) {
    if(generation===this.generation){this.lock('unavailable');this.error=error.message;this.notify();}
@@ -146,7 +146,7 @@ export class AcademyStore extends EventTarget {
   }catch{this.connectionLost=true;this.notify();}
   finally{this.syncing=false;}
  }
- async checkSession(){if(!this.user||this.endingSession)return;const generation=this.generation;try{const s=await this.api('session');if(generation!==this.generation)return;if(!s.user)this.expire();else{this.user=s.user;this.sync=s.sync||this.sync;this.revision=Number.isInteger(s.revision)?s.revision:this.revision;this.notify();}}catch{this.connectionLost=true;this.notify();}}
+ async checkSession(){if(!this.user||this.endingSession)return;const generation=this.generation;try{const s=await this.api('session');if(generation!==this.generation)return;if(!s.user)this.expire();else{this.user=s.user;this.aiEnabled=!!s.aiEnabled;this.aiPolishEnabled=!!s.aiPolishEnabled;this.sync=s.sync||this.sync;this.revision=Number.isInteger(s.revision)?s.revision:this.revision;this.notify();}}catch{this.connectionLost=true;this.notify();}}
  async login(email,password) {
   this.endingSession=false;
   if(this.pendingLogout()){await this.api('auth/logout','POST',{});this.clearCloudSession();this.setPendingLogout(false);}
@@ -155,7 +155,7 @@ export class AcademyStore extends EventTarget {
   const generation=++this.generation;
   try {
    const session=await this.api('session');if(!session.user)throw new Error('Your session could not be verified. Please sign in again.');
-   this.user=session.user;this.aiEnabled=session.aiEnabled;this.sync=session.sync||this.sync;this.revision=Number.isInteger(session.revision)?session.revision:null;this.status='ready';this.setupRequired=false;
+   this.user=session.user;this.aiEnabled=!!session.aiEnabled;this.aiPolishEnabled=!!session.aiPolishEnabled;this.sync=session.sync||this.sync;this.revision=Number.isInteger(session.revision)?session.revision:null;this.status='ready';this.setupRequired=false;
    await this.refresh();if(generation===this.generation)this.connectSync();
   }catch(error){this.clearCloudSession();this.lock();throw error;}
  }
@@ -182,12 +182,12 @@ export class AcademyStore extends EventTarget {
   return this.api('trainees/'+encodeURIComponent(traineeId)+'/photo','PUT',{photo});
  }
  canWrite(){return this.status==='ready'&&['admin','instructor'].includes(this.user?.role);}
- canDelete(){return this.status==='ready'&&this.user?.role==='admin';}
+ canDelete(table=''){return this.canWrite()&&(this.user?.role==='admin'||['batches','trainees'].includes(table));}
  async mutate(table,action,record,data){return this.write({table,action,...(record?{id:record.id,expectedVersion:record.version}:{}),data});}
  async write(payload) {
   if(this.busy)throw new Error('A save is already in progress.');
   if(!this.canWrite())throw new Error('Your company account does not have permission to edit this workspace.');
-  if(payload.action==='delete'&&!this.canDelete())throw new Error('Only administrators can delete records.');
+  if(payload.action==='delete'&&!this.canDelete(payload.table))throw new Error('Your role cannot delete this record.');
   const generation=this.generation;this.busy=true;
   try{
    const result=await this.api('mutate','POST',payload);

@@ -94,6 +94,7 @@ async function sessionStatus(token){
 async function requireUser(request){const token=tokenOf(request);if(!token)throw new ApiError(401,'Sign in to access the internal training system.');const status=await sessionStatus(token);if(!status.user)throw new ApiError(401,'Sign in to access the internal training system.');return {...status,token};}
 async function needsSetup(){return !(await rows('users',{select:'id'})).length;}
 function aiEnabled(){return Deno.env.get('AI_REPORTS_ENABLED')==='true'&&!!Deno.env.get('OPENAI_API_KEY')&&!!Deno.env.get('OPENAI_MODEL');}
+function aiPolishEnabled(){return Deno.env.get('AI_REPORTS_ENABLED')==='true'&&!!Deno.env.get('GEMINI_API_KEY');}
 async function workspaceState(user){
  const state=await rpc('red_workspace_state',{p_is_admin:user.role==='admin'});if(!state||typeof state!=='object')throw new BackendError('',500);
  state.batches?.sort((a,b)=>String(a.batch_name).localeCompare(String(b.batch_name),undefined,{numeric:true}));
@@ -112,15 +113,21 @@ function portraitOf(value){
 }
 function storagePath(path){return String(path).split('/').map(encodeURIComponent).join('/');}
 async function aiReport(user,token,body){
- canWrite(user);if(!aiEnabled())throw new ApiError(503,'AI reports are not configured. The built-in summary is available without an API key.');
+ canWrite(user);
  if(body.consent!==true)throw new ApiError(400,'Confirm that the selected text or anonymized metrics may be sent to the AI provider.');
  if(body.kind==='polish-comment'){
+  if(!aiPolishEnabled())throw new ApiError(503,'AI comment polishing is not configured. Contact your administrator.');
   if(typeof body.comment!=='string'||!body.comment.trim()||body.comment.length>5000)throw new ApiError(400,'Enter an instructor comment of 1 to 5000 characters.');
   if(!await rate('ai-comment:'+user.id,10,3600))throw new ApiError(429,'AI comment-polish limit reached (10 per user per hour).');
-  const response=await fetch('https://api.openai.com/v1/responses',{method:'POST',headers:{Authorization:`Bearer ${Deno.env.get('OPENAI_API_KEY')}`,'Content-Type':'application/json'},body:JSON.stringify({model:Deno.env.get('OPENAI_MODEL'),store:false,max_output_tokens:500,instructions:'Carefully polish the instructor-written training comment for clarity, grammar, and constructive professional tone. Preserve the instructor\'s meaning and every factual claim. Do not add a score, diagnosis, personality judgment, motivation claim, employment recommendation, or any fact not present in the draft. Do not address the trainee by name. Return only the revised comment as plain text; an instructor will review and decide whether to use it.',input:JSON.stringify({draft:body.comment.trim()})}),signal:AbortSignal.timeout(45000)});
-  if(!response.ok)throw new ApiError(502,'The AI provider could not polish the comment. Your saved data has not been changed.');
-  const result=await response.json(),comment=(result.output||[]).flatMap(output=>output.content||[]).filter(content=>content.type==='output_text').map(content=>content.text).join('\n').trim();if(!comment)throw new ApiError(502,'The AI provider returned an empty comment.');return {comment,source:'ai'};
+  const key=Deno.env.get('GEMINI_API_KEY'),primary=Deno.env.get('GEMINI_MODEL')||'gemini-2.5-flash-lite',models=[...new Set([primary,'gemini-2.0-flash-lite','gemini-2.5-flash'])];let comment='';
+  for(const model of models){
+   const response=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(key)}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({systemInstruction:{parts:[{text:'Carefully polish the instructor-written training comment for clarity, grammar, and constructive professional tone. Preserve its meaning and every factual claim. Do not add a score, diagnosis, personality judgment, motivation claim, employment recommendation, or any fact not present in the draft. Do not address the trainee by name. Return only the revised comment as plain text; an instructor will review and decide whether to use it.'}]},contents:[{role:'user',parts:[{text:JSON.stringify({draft:body.comment.trim()})}]}],generationConfig:{temperature:.2,maxOutputTokens:500}}),signal:AbortSignal.timeout(45000)});
+   if(response.ok){const result=await response.json();comment=(result.candidates||[]).flatMap(candidate=>candidate.content?.parts||[]).map(part=>part.text||'').join('\n').trim();if(!comment)throw new ApiError(502,'The AI provider returned an empty comment.');break;}
+   if(![404,429,503].includes(response.status))break;
+  }
+  if(!comment)throw new ApiError(502,'The AI provider could not polish the comment. Your saved data has not been changed.');return {comment,source:'ai'};
  }
+ if(!aiEnabled())throw new ApiError(503,'AI reports are not configured. The built-in summary is available without an API key.');
  if(!['attendance','assessment'].includes(body.kind)||!isId(body.traineeId))throw new ApiError(400,'Choose a trainee and report type.');
  if(!await rate('ai:'+user.id,10,3600))throw new ApiError(429,'AI report limit reached (10 per user per hour).');
  const state=await workspaceState(user),trainee=state.trainees.find(record=>record.id===body.traineeId);if(!trainee)throw new ApiError(404,'Trainee not found.');
@@ -160,8 +167,8 @@ async function handle(request){
   if(route==='auth/logout'&&method==='POST'){const token=tokenOf(request);if(token)await remove('sessions',{token_hash:`eq.${tokenHash(token)}`});return json(request,{ok:true});}
 
   if(route==='session'&&method==='GET'){
-   const status=await sessionStatus(tokenOf(request));if(!status.user)return json(request,{user:null,mode:'private',sync:'poll',revision:status.revision,setupRequired:await needsSetup(),aiEnabled:false});
-   return json(request,{user:status.user,mode:'private',sync:'poll',revision:status.revision,setupRequired:false,aiEnabled:aiEnabled()});
+   const status=await sessionStatus(tokenOf(request));if(!status.user)return json(request,{user:null,mode:'private',sync:'poll',revision:status.revision,setupRequired:await needsSetup(),aiEnabled:false,aiPolishEnabled:false});
+   return json(request,{user:status.user,mode:'private',sync:'poll',revision:status.revision,setupRequired:false,aiEnabled:aiEnabled(),aiPolishEnabled:aiPolishEnabled()});
   }
   const session=await requireUser(request),user=session.user;
   if(route==='sync'&&method==='GET')return json(request,{user,revision:session.revision});

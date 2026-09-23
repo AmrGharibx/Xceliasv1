@@ -11,11 +11,11 @@ export function prepareCloudOperations(body,state,user){
  const table=body.table;if(!TABLES.includes(table))throw new ApiError(400,'Unknown entity.');canWrite(user);
  const inputs=body.records||[body];if(!Array.isArray(inputs)||!inputs.length||inputs.length>100)throw new ApiError(400,'Choose between 1 and 100 records.');
  if(body.records&&table!=='daily_attendance')throw new ApiError(400,'Bulk editing is supported for daily attendance.');const ops=[],targets=new Set();
- for(const input of inputs){const action=input.action||body.action;if(!['create','update','delete'].includes(action))throw new ApiError(400,'Invalid action.');if(action==='delete'&&user.role!=='admin')throw new ApiError(403,'Administrator access is required.');
+ for(const input of inputs){const action=input.action||body.action;if(!['create','update','delete'].includes(action))throw new ApiError(400,'Invalid action.');if(action==='delete'&&user.role!=='admin'&&!['batches','trainees'].includes(table))throw new ApiError(403,'Administrator access is required for this record type.');
   const old=action==='create'?null:asArray(state[table]).find(record=>record.id===input.id);if(action!=='create'&&(!isId(input.id)||!old))throw new ApiError(404,'Record not found.');
   if(old&&(!Number.isInteger(input.expectedVersion)||input.expectedVersion!==old.version))throw new ApiError(409,'This record changed in another session. Refresh and try again.');
   if(targets.has(input.id)&&input.id)throw new ApiError(400,'A record may only occur once in a request.');if(input.id)targets.add(input.id);
-  if(action==='delete'){ops.push({table,action,id:old.id,expectedVersion:old.version});continue;}
+  if(action==='delete'){if(old.source_id&&user.role!=='admin')throw new ApiError(403,'Imported source records cannot be deleted by operational staff.');ops.push({table,action,id:old.id,expectedVersion:old.version});continue;}
   const data=validate(table,input.data,{old});
   // Source provenance is server-owned. Native cloud records begin with the
   // same empty immutable metadata the local SQLite repository assigns.

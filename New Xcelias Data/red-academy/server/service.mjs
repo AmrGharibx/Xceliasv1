@@ -31,11 +31,11 @@ export function prepareOperations(body,state,user){
  const table=body.table;if(!TABLES.includes(table))throw new ApiError(400,'Unknown entity.');canWrite(user);
  const inputs=body.records||[body];if(!Array.isArray(inputs)||!inputs.length||inputs.length>100)throw new ApiError(400,'Choose between 1 and 100 records.');
  if(body.records&&table!=='daily_attendance')throw new ApiError(400,'Bulk editing is supported for daily attendance.');const ops=[],targets=new Set();
- for(const input of inputs){const action=input.action||body.action;if(!['create','update','delete'].includes(action))throw new ApiError(400,'Invalid action.');if(action==='delete')admin(user);
+ for(const input of inputs){const action=input.action||body.action;if(!['create','update','delete'].includes(action))throw new ApiError(400,'Invalid action.');
   const old=action==='create'?null:state[table].find(r=>r.id===input.id);if(action!=='create'&&(!isId(input.id)||!old))throw new ApiError(404,'Record not found.');
   if(old&&(!Number.isInteger(input.expectedVersion)||input.expectedVersion!==old.version))throw new ApiError(409,'This record changed in another session. Refresh and try again.');
   if(targets.has(input.id)&&input.id)throw new ApiError(400,'A record may only occur once in a request.');if(input.id)targets.add(input.id);
-  if(action==='delete'){ops.push({table,action,id:old.id,expectedVersion:old.version});continue;}
+  if(action==='delete'){if(old.source_id&&user.role!=='admin')throw new ApiError(403,'Imported source records cannot be deleted by operational staff.');if(user.role!=='admin'&&!['batches','trainees'].includes(table))throw new ApiError(403,'Administrator access is required for this record type.');ops.push({table,action,id:old.id,expectedVersion:old.version});continue;}
   const data=validate(table,input.data,{old});
   if(old&&'trainee_id' in old&&(old.trainee_id!==data.trainee_id||old.batch_id!==data.batch_id))throw new ApiError(400,'Existing source enrollment links cannot be reassigned by a record edit.');
   if(data.trainee_id){const t=state.trainees.find(t=>t.id===data.trainee_id);if(!t||t.batch_id!==data.batch_id)throw new ApiError(400,'The trainee must belong to this batch.');if(old&&(old.trainee_id!==data.trainee_id||old.batch_id!==data.batch_id))throw new ApiError(400,'An existing record cannot be assigned to a different trainee.');}
@@ -63,16 +63,27 @@ export function prepareOperations(body,state,user){
  }
  return ops;
 }
+function aiReportsEnabled(){return process.env.AI_REPORTS_ENABLED==='true'&&!!process.env.OPENAI_API_KEY&&!!process.env.OPENAI_MODEL;}
+function aiPolishEnabled(){return process.env.AI_REPORTS_ENABLED==='true'&&!!process.env.GEMINI_API_KEY;}
+async function polishWithGemini(draft){
+ const key=process.env.GEMINI_API_KEY,primary=process.env.GEMINI_MODEL||'gemini-2.5-flash-lite',models=[...new Set([primary,'gemini-2.0-flash-lite','gemini-2.5-flash'])];
+ for(const model of models){
+  const response=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(key)}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({systemInstruction:{parts:[{text:'Carefully polish the instructor-written training comment for clarity, grammar, and constructive professional tone. Preserve its meaning and every factual claim. Do not add a score, diagnosis, personality judgment, motivation claim, employment recommendation, or any fact not present in the draft. Do not address the trainee by name. Return only the revised comment as plain text; an instructor will review and decide whether to use it.'}]},contents:[{role:'user',parts:[{text:JSON.stringify({draft})}]}],generationConfig:{temperature:.2,maxOutputTokens:500}}),signal:AbortSignal.timeout(45000)});
+  if(response.ok){const result=await response.json(),comment=(result.candidates||[]).flatMap(candidate=>candidate.content?.parts||[]).map(part=>part.text||'').join('\n').trim();if(comment)return comment;throw new ApiError(502,'The AI provider returned an empty comment.');}
+  if(![404,429,503].includes(response.status))break;
+ }
+ throw new ApiError(502,'The AI provider could not polish the comment. Your saved data has not been changed.');
+}
 async function aiReport(repo,user,token,body){
- canWrite(user);if(process.env.AI_REPORTS_ENABLED!=='true'||!process.env.OPENAI_API_KEY||!process.env.OPENAI_MODEL)throw new ApiError(503,'AI reports are not configured. The built-in summary is available without an API key.');
+ canWrite(user);
  if(body.consent!==true)throw new ApiError(400,'Confirm that the selected text or anonymized metrics may be sent to the AI provider.');
  if(body.kind==='polish-comment'){
+  if(!aiPolishEnabled())throw new ApiError(503,'AI comment polishing is not configured. Contact your administrator.');
   if(typeof body.comment!=='string'||!body.comment.trim()||body.comment.length>5000)throw new ApiError(400,'Enter an instructor comment of 1 to 5000 characters.');
   if(!await repo.rate('ai-comment:'+user.id,10,3600,token))throw new ApiError(429,'AI comment-polish limit reached (10 per user per hour).');
-  const response=await fetch('https://api.openai.com/v1/responses',{method:'POST',headers:{Authorization:`Bearer ${process.env.OPENAI_API_KEY}`,'Content-Type':'application/json'},body:JSON.stringify({model:process.env.OPENAI_MODEL,store:false,max_output_tokens:500,instructions:'Carefully polish the instructor-written training comment for clarity, grammar, and constructive professional tone. Preserve the instructor\'s meaning and every factual claim. Do not add a score, diagnosis, personality judgment, motivation claim, employment recommendation, or any fact not present in the draft. Do not address the trainee by name. Return only the revised comment as plain text; an instructor will review and decide whether to use it.',input:JSON.stringify({draft:body.comment.trim()})}),signal:AbortSignal.timeout(45000)});
-  if(!response.ok){console.error('AI provider response',response.status);throw new ApiError(502,'The AI provider could not polish the comment. Your saved data has not been changed.');}
-  const result=await response.json(),comment=(result.output||[]).flatMap(o=>o.content||[]).filter(c=>c.type==='output_text').map(c=>c.text).join('\n').trim();if(!comment)throw new ApiError(502,'The AI provider returned an empty comment.');return {comment,source:'ai'};
+  return {comment:await polishWithGemini(body.comment.trim()),source:'ai'};
  }
+ if(!aiReportsEnabled())throw new ApiError(503,'AI reports are not configured. The built-in summary is available without an API key.');
  if(!['attendance','assessment'].includes(body.kind)||!isId(body.traineeId))throw new ApiError(400,'Choose a trainee and report type.');
  if(!await repo.rate('ai:'+user.id,10,3600,token))throw new ApiError(429,'AI report limit reached (10 per user per hour).');
  const state=await repo.state(user,token);const trainee=state.trainees.find(t=>t.id===body.traineeId);if(!trainee)throw new ApiError(404,'Trainee not found.');
@@ -109,9 +120,9 @@ export async function handleApi(request){
   }
   if(route==='auth/logout'&&method==='POST'){await repo.logout(token);return json({ok:true},200,[cookie('red_session','',0),cookie('red_refresh','',0)]);}
   const user=await repo.authenticate(token);
-  if(!user&&route==='session'&&method==='GET')return json({user:null,mode:'private',setupRequired:await repo.needsSetup(),aiEnabled:false});
+  if(!user&&route==='session'&&method==='GET')return json({user:null,mode:'private',setupRequired:await repo.needsSetup(),aiEnabled:false,aiPolishEnabled:false});
   if(!user)throw new ApiError(401,'Sign in to access the internal training system.');
-  if(route==='session'&&method==='GET')return json({user,mode:'private',sync:'events',setupRequired:false,aiEnabled:process.env.AI_REPORTS_ENABLED==='true'&&!!process.env.OPENAI_API_KEY&&!!process.env.OPENAI_MODEL},200,outgoing);
+  if(route==='session'&&method==='GET')return json({user,mode:'private',sync:'events',setupRequired:false,aiEnabled:aiReportsEnabled(),aiPolishEnabled:aiPolishEnabled()},200,outgoing);
   if(route==='auth/password'&&method==='POST'){
    if(!await repo.rate('password:'+user.id,5,900))throw new ApiError(429,'Too many password attempts. Try again in 15 minutes.');
    const body=await bodyOf(request);validatePassword(body.password);if(typeof body.currentPassword!=='string'||body.currentPassword.length>256)throw new ApiError(400,'Enter your current password.');

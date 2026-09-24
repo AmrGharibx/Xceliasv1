@@ -2164,13 +2164,13 @@
       "type": "residential",
       "priceMin": 13900000,
       "unitTypes": [
+        "Administrative",
         "Townhouse",
+        "Medical",
         "Villa",
         "Apartment",
         "Twinhouse",
-        "Duplex",
-        "Administrative",
-        "Medical"
+        "Duplex"
       ],
       "areaMin": 99,
       "areaMax": 493,
@@ -2190,7 +2190,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
@@ -2203,15 +2203,9 @@
             "url": "https://redww.com/en/projects/30830-solana-east",
             "observedPrice": 13955000,
             "sourceId": "red:30830"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/ora-developers/solana-east",
-            "observedPrice": 13955000,
-            "sourceId": "property-finder:da916149-f97e-4b7c-a3b5-b1900cfbb3fb"
           }
         ],
-        "updatedAt": "2026-09-22T18:36:05.501Z"
+        "updatedAt": "2026-09-24T06:46:51.341Z"
       }
     },
     {
@@ -9240,7 +9234,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
@@ -9253,15 +9247,9 @@
             "url": "https://redww.com/en/projects/30819-the-butterfly",
             "observedPrice": 5574537,
             "sourceId": "red:30819"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/madinet-masr/the-butterfly",
-            "observedPrice": 8777582,
-            "sourceId": "property-finder:165f714b-e618-4794-a1da-260561e08bc9"
           }
         ],
-        "updatedAt": "2026-09-22T18:36:05.501Z"
+        "updatedAt": "2026-09-24T06:46:51.341Z"
       }
     },
     {
@@ -31729,13 +31717,13 @@
       "type": "commercial",
       "priceMin": 13900000,
       "unitTypes": [
+        "Administrative",
         "Townhouse",
+        "Medical",
         "Villa",
         "Apartment",
         "Twinhouse",
-        "Duplex",
-        "Administrative",
-        "Medical"
+        "Duplex"
       ],
       "areaMin": 86,
       "areaMax": 429,
@@ -31748,7 +31736,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
@@ -31761,15 +31749,9 @@
             "url": "https://redww.com/en/projects/30830-solana-east",
             "observedPrice": 13955000,
             "sourceId": "red:30830"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/ora-developers/solana-east",
-            "observedPrice": 13955000,
-            "sourceId": "property-finder:da916149-f97e-4b7c-a3b5-b1900cfbb3fb"
           }
         ],
-        "updatedAt": "2026-09-22T18:36:05.501Z"
+        "updatedAt": "2026-09-24T06:46:51.341Z"
       }
     },
     {
@@ -39430,13 +39412,13 @@
       "zone": "New Heliopolis",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 1695613,
+      "priceMin": 3112354,
       "unitTypes": [
         "Apartment",
-        "Townhouse",
-        "Villa",
+        "Duplex",
         "Studio",
-        "Duplex"
+        "Townhouse",
+        "Villa"
       ],
       "areaMin": 80,
       "areaMax": 351,
@@ -39456,14 +39438,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/madinet-masr/talala",
-            "observedPrice": 1695613,
-            "sourceId": "property-finder:347e9f45-9d1f-432a-b497-9bb91bb3852f"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30926-talala",
@@ -39477,7 +39453,7 @@
             "sourceId": "nawy:1588"
           }
         ],
-        "updatedAt": "2026-09-22T18:36:05.501Z"
+        "updatedAt": "2026-09-24T06:46:51.341Z"
       }
     },
     {
@@ -46387,7 +46363,7 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 38000000,
+      "priceMin": 39900000,
       "unitTypes": [
         "Townhouse"
       ],
@@ -46409,14 +46385,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/modon-developments/wadi-west",
-            "observedPrice": 38000000,
-            "sourceId": "property-finder:b128fb5f-1e1e-45ed-bd88-b1663705a37e"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1821-wadi-west-ras-el-hekma",
@@ -46424,7 +46394,7 @@
             "sourceId": "nawy:1821"
           }
         ],
-        "updatedAt": "2026-09-22T18:36:05.501Z"
+        "updatedAt": "2026-09-24T06:46:51.341Z"
       }
     },
     {
@@ -47510,22 +47480,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1868-wadi-east-ras-el-hekma",
             "observedPrice": 39900000,
             "sourceId": "nawy:1868"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/modon-developments/wadi-east",
-            "observedPrice": 45000000,
-            "sourceId": "property-finder:1c35a55d-da5d-4b76-8085-5c4fcbc2c314"
           }
         ],
-        "updatedAt": "2026-09-22T18:36:05.501Z"
+        "updatedAt": "2026-09-24T06:46:51.341Z"
       }
     },
     {
@@ -74055,22 +74019,36 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Apartment",
-        "Duplex",
-        "Twinhouse",
-        "Penthouse",
         "Villa",
-        "Townhouse"
+        "Twin House",
+        "Apartment",
+        "Town House"
       ],
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:664",
         "observedAt": "2026-09-24T03:35:38.922Z"
       },
-      "priceMin": 19135000
+      "priceMin": 22679000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/20-the-estates",
+            "observedPrice": 22679000,
+            "sourceId": "red:20"
+          }
+        ],
+        "updatedAt": "2026-09-24T06:46:51.341Z"
+      }
     },
     {
       "name": "The Estates",
@@ -74082,19 +74060,35 @@
       "type": "residential",
       "unitTypes": [
         "Villa",
-        "Twinhouse",
-        "Townhouse",
-        "Apartment"
+        "Twin House",
+        "Apartment",
+        "Town House"
       ],
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:310",
         "observedAt": "2026-09-24T03:35:38.922Z"
       },
-      "priceMin": 71116000
+      "priceMin": 22679000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/20-the-estates",
+            "observedPrice": 22679000,
+            "sourceId": "red:20"
+          }
+        ],
+        "updatedAt": "2026-09-24T06:46:51.341Z"
+      }
     },
     {
       "name": "Mountain View Executive Residence Katameya",
@@ -74146,16 +74140,37 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
+        "Villa",
         "Apartment",
-        "Villa"
+        "Office",
+        "Retail",
+        "Townhouse",
+        "Twinhouse"
       ],
-      "downPayment": 0,
-      "installmentYears": 0,
-      "paymentPlan": "0% Down Payment, 0 Years Installments",
+      "downPayment": 5,
+      "installmentYears": 3,
+      "paymentPlan": "5% Down Payment, 3 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:372",
         "observedAt": "2026-09-24T03:35:38.922Z"
+      },
+      "priceMin": 9414000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/271-al-maqsad",
+            "observedPrice": 9414000,
+            "sourceId": "nawy:271"
+          }
+        ],
+        "updatedAt": "2026-09-24T06:46:51.341Z"
       }
     },
     {
@@ -74182,7 +74197,23 @@
         "sourceId": "nawy-inventory:271",
         "observedAt": "2026-09-24T03:35:38.922Z"
       },
-      "priceMin": 9414000
+      "priceMin": 9414000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/271-al-maqsad",
+            "observedPrice": 9414000,
+            "sourceId": "nawy:271"
+          }
+        ],
+        "updatedAt": "2026-09-24T06:46:51.341Z"
+      }
     },
     {
       "name": "De Joya 3 strip mall",

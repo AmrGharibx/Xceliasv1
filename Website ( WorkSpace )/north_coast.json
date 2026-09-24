@@ -10736,7 +10736,7 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 38000000,
+      "priceMin": 39900000,
       "unitTypes": [
         "Townhouse"
       ],
@@ -10758,14 +10758,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/modon-developments/wadi-west",
-            "observedPrice": 38000000,
-            "sourceId": "property-finder:b128fb5f-1e1e-45ed-bd88-b1663705a37e"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1821-wadi-west-ras-el-hekma",
@@ -10773,7 +10767,7 @@
             "sourceId": "nawy:1821"
           }
         ],
-        "updatedAt": "2026-09-22T18:36:05.501Z"
+        "updatedAt": "2026-09-24T06:46:51.341Z"
       }
     },
     {
@@ -10953,22 +10947,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1868-wadi-east-ras-el-hekma",
             "observedPrice": 39900000,
             "sourceId": "nawy:1868"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/modon-developments/wadi-east",
-            "observedPrice": 45000000,
-            "sourceId": "property-finder:1c35a55d-da5d-4b76-8085-5c4fcbc2c314"
           }
         ],
-        "updatedAt": "2026-09-22T18:36:05.501Z"
+        "updatedAt": "2026-09-24T06:46:51.341Z"
       }
     },
     {

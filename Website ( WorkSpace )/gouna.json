@@ -1899,7 +1899,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 3,
         "sources": [
           {
             "name": "RED",
@@ -1908,13 +1908,19 @@
             "sourceId": "red:30949"
           },
           {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/orascom-development/siyal-makadi-heights",
+            "observedPrice": 22695000,
+            "sourceId": "property-finder:e5e8e6a6-eb17-4a83-a28d-8ad5ea97f773"
+          },
+          {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1965-siyal",
             "observedPrice": 23575000,
             "sourceId": "nawy:1965"
           }
         ],
-        "updatedAt": "2026-09-24T18:36:03.188Z"
+        "updatedAt": "2026-09-25T02:53:27.980Z"
       }
     },
     {
@@ -1985,7 +1991,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 3,
         "sources": [
           {
             "name": "RED",
@@ -1994,13 +2000,19 @@
             "sourceId": "red:30963"
           },
           {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/travco-properties/makadina",
+            "observedPrice": 7400000,
+            "sourceId": "property-finder:6f94f94b-9809-4220-9620-aa5688b81f76"
+          },
+          {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/2025-makadina",
             "observedPrice": 7750000,
             "sourceId": "nawy:2025"
           }
         ],
-        "updatedAt": "2026-09-24T18:36:03.188Z"
+        "updatedAt": "2026-09-25T02:53:27.980Z"
       }
     },
     {

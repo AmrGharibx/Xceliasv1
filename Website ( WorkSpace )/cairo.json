@@ -20376,9 +20376,10 @@
       "zone": "Zayed",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 21843000,
+      "priceMin": 15800000,
       "unitTypes": [
-        "Apartment"
+        "Apartment",
+        "Penthouse"
       ],
       "areaMin": 104,
       "areaMax": 417,
@@ -20390,9 +20391,9 @@
         5,
         6
       ],
-      "paymentPlan": "5% Down Payment, 11 Years Installments",
+      "paymentPlan": "5% Down Payment, 8 Years Installments",
       "downPayment": 5,
-      "installmentYears": 11,
+      "installmentYears": 8,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -20403,11 +20404,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1643-hyatt-centric",
-            "observedPrice": 21843000,
+            "observedPrice": 15800000,
             "sourceId": "nawy:1643"
           }
         ],
-        "updatedAt": "2026-09-24T18:36:03.188Z"
+        "updatedAt": "2026-09-25T12:42:17.238Z"
       }
     },
     {
@@ -42097,20 +42098,14 @@
         "sourceId": "nawy-inventory:1992",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 9045000,
+      "priceMin": 21931000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/orascom/club-residence-o-west",
-            "observedPrice": 9045000,
-            "sourceId": "property-finder:077a3275-9b21-4b1c-8a2d-b7f6459fede4"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1992-club-yard-o-west",
@@ -42118,7 +42113,7 @@
             "sourceId": "nawy:1992"
           }
         ],
-        "updatedAt": "2026-09-23T12:41:27.373Z"
+        "updatedAt": "2026-09-25T12:42:17.238Z"
       }
     },
     {

@@ -20020,22 +20020,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1467-de-joya-4",
             "observedPrice": 3213600,
             "sourceId": "nawy:1467"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/taj-misr-development/de-joya",
-            "observedPrice": 3962000,
-            "sourceId": "property-finder:0bfe8624-0bb6-48aa-a8d3-ddd22d657c44"
           }
         ],
-        "updatedAt": "2026-09-24T18:36:03.188Z"
+        "updatedAt": "2026-09-26T06:43:43.573Z"
       }
     },
     {
@@ -46800,22 +46794,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1840-dejoya-4-strip-mall",
             "observedPrice": 3213600,
             "sourceId": "nawy:1840"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/taj-misr-development/de-joya-4",
-            "observedPrice": 4511894,
-            "sourceId": "property-finder:52832183-7cdf-4186-8749-2a16ba499fc5"
           }
         ],
-        "updatedAt": "2026-09-24T18:36:03.188Z"
+        "updatedAt": "2026-09-26T06:43:43.573Z"
       }
     },
     {
@@ -74751,22 +74739,36 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Apartment",
-        "Duplex",
-        "Twinhouse",
-        "Penthouse",
         "Villa",
-        "Townhouse"
+        "Twin House",
+        "Apartment",
+        "Town House"
       ],
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:664",
         "observedAt": "2026-09-26T03:34:47.614Z"
       },
-      "priceMin": 19135000
+      "priceMin": 22679000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/20-the-estates",
+            "observedPrice": 22679000,
+            "sourceId": "red:20"
+          }
+        ],
+        "updatedAt": "2026-09-26T06:43:43.573Z"
+      }
     },
     {
       "name": "The Estates",
@@ -74778,19 +74780,35 @@
       "type": "residential",
       "unitTypes": [
         "Villa",
-        "Twinhouse",
-        "Townhouse",
-        "Apartment"
+        "Twin House",
+        "Apartment",
+        "Town House"
       ],
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:310",
         "observedAt": "2026-09-26T03:34:47.614Z"
       },
-      "priceMin": 71116000
+      "priceMin": 22679000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/20-the-estates",
+            "observedPrice": 22679000,
+            "sourceId": "red:20"
+          }
+        ],
+        "updatedAt": "2026-09-26T06:43:43.573Z"
+      }
     },
     {
       "name": "Mountain View Executive Residence Katameya",
@@ -74842,16 +74860,37 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
+        "Villa",
         "Apartment",
-        "Villa"
+        "Office",
+        "Retail",
+        "Townhouse",
+        "Twinhouse"
       ],
-      "downPayment": 0,
-      "installmentYears": 0,
-      "paymentPlan": "0% Down Payment, 0 Years Installments",
+      "downPayment": 5,
+      "installmentYears": 3,
+      "paymentPlan": "5% Down Payment, 3 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:372",
         "observedAt": "2026-09-26T03:34:47.614Z"
+      },
+      "priceMin": 9414000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/271-al-maqsad",
+            "observedPrice": 9414000,
+            "sourceId": "nawy:271"
+          }
+        ],
+        "updatedAt": "2026-09-26T06:43:43.573Z"
       }
     },
     {
@@ -74878,7 +74917,23 @@
         "sourceId": "nawy-inventory:271",
         "observedAt": "2026-09-26T03:34:47.614Z"
       },
-      "priceMin": 9414000
+      "priceMin": 9414000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/271-al-maqsad",
+            "observedPrice": 9414000,
+            "sourceId": "nawy:271"
+          }
+        ],
+        "updatedAt": "2026-09-26T06:43:43.573Z"
+      }
     },
     {
       "name": "De Joya 3 strip mall",

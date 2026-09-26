@@ -703,7 +703,7 @@
       "zone": "Alexandria",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 4000000,
+      "priceMin": 8421000,
       "unitTypes": [
         "Duplex",
         "Apartment",
@@ -727,14 +727,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/saudi-egyptian-developers-sed/sawary",
-            "observedPrice": 4000000,
-            "sourceId": "property-finder:37f1f18d-928d-474f-8032-42d4bc7c9792"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/325-sawary",
@@ -742,7 +736,7 @@
             "sourceId": "nawy:325"
           }
         ],
-        "updatedAt": "2026-09-24T02:54:29.356Z"
+        "updatedAt": "2026-09-26T01:02:15.198Z"
       }
     },
     {

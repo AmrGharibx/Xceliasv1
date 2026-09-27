@@ -4,5 +4,6 @@
 window.RED_ACADEMY_CLOUD = Object.freeze({
   apiUrl: null,
   supabaseUrl: null,
-  publishableKey: null
+  publishableKey: null,
+  participantOrigin: null
 });

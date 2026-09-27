@@ -166,9 +166,12 @@ const cleanChallengeText=(value,max,label,{required=true,min=1}={})=>{
   if((required&&text.length<min)||text.length>max||/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/.test(text))throw new ApiError(400,`Enter ${label} using ${min} to ${max} characters.`);
   return text;
 };
+const optionalArabicText=(value,max,label)=>value===undefined?'':cleanChallengeText(value,max,label,{required:false});
 
 export function validateStudioDraftRequest(input){
   if(!input||typeof input!=='object'||Array.isArray(input))throw new ApiError(400,'Enter a valid challenge brief.');
+  const language=input.language===undefined?'en':input.language;
+  if(!['en','ar-EG'].includes(language))throw new ApiError(400,'Choose English or Egyptian Arabic for the challenge draft.');
   const title=cleanChallengeText(input.title,80,'a challenge title',{min:3});
   const category=cleanChallengeText(input.category,60,'a learning focus',{min:2});
   const description=cleanChallengeText(input.description??'',280,'a challenge briefing',{required:false});
@@ -178,7 +181,7 @@ export function validateStudioDraftRequest(input){
   if(!Number.isInteger(input.round_count)||input.round_count<3||input.round_count>12)throw new ApiError(400,'Choose between 3 and 12 challenge rounds.');
   const aiText=[title,category,description,lessonNotes].join('\n');
   if(/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i.test(aiText)||/(?:\+?\d[\d\s().-]{7,}\d)/.test(aiText))throw new ApiError(400,'Remove personal contact details from the challenge brief and lesson notes before using the AI draft assistant.');
-  return {title,category,description,lesson_notes:lessonNotes,level:input.level,duration_minutes:input.duration_minutes,round_count:input.round_count};
+  return {title,category,description,lesson_notes:lessonNotes,level:input.level,duration_minutes:input.duration_minutes,round_count:input.round_count,language};
 }
 
 // Custom challenges are immutable once saved. Their private key is stored only
@@ -188,6 +191,8 @@ export function validateStudioChallenge(input){
   const title=cleanChallengeText(input.title,80,'a challenge title',{min:3});
   const category=cleanChallengeText(input.category,60,'a learning focus',{min:2});
   const description=cleanChallengeText(input.description??'',280,'a challenge briefing',{required:false});
+  const arabicInput=input.arabic??{};
+  if(!arabicInput||typeof arabicInput!=='object'||Array.isArray(arabicInput))throw new ApiError(400,'Enter a valid Egyptian Arabic challenge edition.');
   if(!['Warm-up','Core','Challenge'].includes(input.level))throw new ApiError(400,'Choose a valid challenge level.');
   if(!Number.isInteger(input.duration_minutes)||input.duration_minutes<2||input.duration_minutes>45)throw new ApiError(400,'Set an estimated duration between 2 and 45 minutes.');
   if(!Array.isArray(input.questions)||input.questions.length<3||input.questions.length>12)throw new ApiError(400,'Add between 3 and 12 question rounds.');
@@ -200,19 +205,50 @@ export function validateStudioChallenge(input){
     if(!Number.isInteger(question.answer)||question.answer<0||question.answer>3)throw new ApiError(400,`Choose the correct answer for round ${index+1}.`);
     const skill=typeof question.skill==='string'?question.skill:'';
     if(!Object.hasOwn(SKILL_LABELS,skill))throw new ApiError(400,`Choose a learning skill for round ${index+1}.`);
-    return {id:`c${index+1}`,prompt,options,answer:question.answer,skill,hint:cleanChallengeText(question.hint??'',280,`the round ${index+1} coaching nudge`,{required:false}),explanation:cleanChallengeText(question.explanation,700,`the round ${index+1} coaching takeaway`,{min:12})};
+    const arabic=question.arabic??{};
+    if(!arabic||typeof arabic!=='object'||Array.isArray(arabic))throw new ApiError(400,`Enter a valid Egyptian Arabic edition for round ${index+1}.`);
+    if(arabic.options!==undefined&&(!Array.isArray(arabic.options)||arabic.options.length!==4))throw new ApiError(400,`The Egyptian Arabic edition for round ${index+1} needs four answer choices.`);
+    const translated={prompt:optionalArabicText(arabic.prompt,500,`the Egyptian Arabic prompt for round ${index+1}`),options:(arabic.options||[]).map((option,optionIndex)=>optionalArabicText(option,180,`Egyptian Arabic choice ${String.fromCharCode(65+optionIndex)} in round ${index+1}`)),hint:optionalArabicText(arabic.hint,280,`the Egyptian Arabic coaching nudge for round ${index+1}`),explanation:optionalArabicText(arabic.explanation,700,`the Egyptian Arabic coaching takeaway for round ${index+1}`)};
+    const result={id:`c${index+1}`,prompt,options,answer:question.answer,skill,hint:cleanChallengeText(question.hint??'',280,`the round ${index+1} coaching nudge`,{required:false}),explanation:cleanChallengeText(question.explanation,700,`the round ${index+1} coaching takeaway`,{min:12})};
+    if(translated.prompt||translated.options.some(Boolean)||translated.hint||translated.explanation)result.arabic=translated;
+    return result;
   });
   if(!Array.isArray(input.study_cards)||input.study_cards.length>8)throw new ApiError(400,'Add no more than eight optional recall cards.');
   const study_cards=input.study_cards.map((card,index)=>{
     if(!card||typeof card!=='object'||Array.isArray(card))throw new ApiError(400,`Complete recall card ${index+1}.`);
-    return {front:cleanChallengeText(card.front,140,`recall card ${index+1} prompt`,{min:3}),back:cleanChallengeText(card.back,500,`recall card ${index+1} takeaway`,{min:8})};
+    const arabic=card.arabic??{};
+    if(!arabic||typeof arabic!=='object'||Array.isArray(arabic))throw new ApiError(400,`Enter a valid Egyptian Arabic edition for recall card ${index+1}.`);
+    const translated={front:optionalArabicText(arabic.front,140,`Egyptian Arabic recall card ${index+1} prompt`),back:optionalArabicText(arabic.back,500,`Egyptian Arabic recall card ${index+1} takeaway`)};
+    const result={front:cleanChallengeText(card.front,140,`recall card ${index+1} prompt`,{min:3}),back:cleanChallengeText(card.back,500,`recall card ${index+1} takeaway`,{min:8})};
+    if(translated.front||translated.back)result.arabic=translated;
+    return result;
   });
-  return {title,category,level:input.level,duration_minutes:input.duration_minutes,description,study_cards,questions};
+  const arabic={title:optionalArabicText(arabicInput.title,80,'the Egyptian Arabic challenge title'),category:optionalArabicText(arabicInput.category,60,'the Egyptian Arabic learning focus'),description:optionalArabicText(arabicInput.description,280,'the Egyptian Arabic challenge briefing')};
+  const result={title,category,level:input.level,duration_minutes:input.duration_minutes,description,study_cards,questions};
+  if(Object.values(arabic).some(Boolean))result.arabic=arabic;
+  return result;
+}
+
+// AI-created challenges always carry both editions. Manual authoring remains
+// optional, but the AI route must not publish an empty or English-only Arabic
+// side and call it bilingual.
+export function validateStudioArabicChallenge(challenge){
+  const hasArabic=value=>typeof value==='string'&&/[\u0600-\u06ff]/.test(value);
+  const contact=/(?:\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b)|(?:\+?\d[\d\s().-]{7,}\d)/i;
+  const pairs=[[challenge?.title,challenge?.arabic?.title],[challenge?.category,challenge?.arabic?.category],[challenge?.description,challenge?.arabic?.description]];
+  for(const question of challenge?.questions||[]){
+    pairs.push([question.prompt,question.arabic?.prompt],[question.hint,question.arabic?.hint],[question.explanation,question.arabic?.explanation]);
+    question.options.forEach((option,index)=>pairs.push([option,question.arabic?.options?.[index]]));
+  }
+  for(const card of challenge?.study_cards||[])pairs.push([card.front,card.arabic?.front],[card.back,card.arabic?.back]);
+  if(pairs.some(([english,arabic])=>(english||'').trim()&&!hasArabic(arabic)))throw new ApiError(502,'The AI provider did not provide a complete Egyptian Arabic edition. No challenge draft was saved.');
+  if(pairs.some(([english,arabic])=>contact.test(`${english||''}\n${arabic||''}`)))throw new ApiError(502,'The AI provider returned contact details. No challenge draft was saved.');
+  return challenge;
 }
 
 export function studioLibrary(customActivities=[]) {
   const builtIn=QUIZZES.map(({id,title,category,level,duration_minutes,description,questions}) => ({id,title,category,level,duration_minutes,description,question_count:questions.length,xp_per_correct:100}));
-  const custom=customActivities.filter(activity=>!activity.archived_at).map(({id,title,category,level,duration_minutes,description,questions,created_by})=>({id,title,category,level,duration_minutes,description,question_count:questions.length,xp_per_correct:100,is_custom:true,created_by}));
+  const custom=customActivities.filter(activity=>!activity.archived_at).map(({id,title,category,level,duration_minutes,description,arabic,questions,created_by})=>({id,title,category,level,duration_minutes,description,...(arabic?{arabic}:{}),question_count:questions.length,xp_per_correct:100,is_custom:true,created_by}));
   return [...builtIn,...custom];
 }
 
@@ -227,7 +263,7 @@ export function studioFacilitatorDeck(customActivities=[]) {
     id,title,category,level,duration_minutes,
     questions:questions.map(({id:questionId,prompt,options,answer,explanation}) => ({id:questionId,prompt,options,answer,explanation}))
   }));
-  const custom=customActivities.filter(activity=>!activity.archived_at).map(({id,title,category,level,duration_minutes,questions})=>({id,title,category,level,duration_minutes,questions:questions.map(({id:questionId,prompt,options,answer,explanation})=>({id:questionId,prompt,options,answer,explanation}))}));
+  const custom=customActivities.filter(activity=>!activity.archived_at).map(({id,title,category,level,duration_minutes,arabic,questions})=>({id,title,category,level,duration_minutes,...(arabic?{arabic}:{}),questions:questions.map(({id:questionId,prompt,options,answer,explanation,arabic:arabicQuestion})=>({id:questionId,prompt,options,answer,explanation,...(arabicQuestion?{arabic:arabicQuestion}:{})}))}));
   return [...builtIn,...custom,SEQUENCE_SPRINT_ACTIVITY];
 }
 
@@ -237,13 +273,14 @@ export function liveRoomQuestionView(question,revealed=false) {
   const view={id:question.id,prompt:question.prompt};
   if(question.type==='sequence')Object.assign(view,{type:'sequence',steps:[...question.steps]});
   else view.options=question.options;
-  if(revealed)Object.assign(view,{answer:question.answer,explanation:question.explanation});
+  if(question.arabic)Object.assign(view,{arabic:{prompt:question.arabic.prompt,options:question.arabic.options,hint:question.arabic.hint}});
+  if(revealed){Object.assign(view,{answer:question.answer,explanation:question.explanation});if(question.arabic?.explanation)view.arabic={...(view.arabic||{}),explanation:question.arabic.explanation};}
   return view;
 }
 
 export function publicQuiz(activity) {
   if (!activity) return null;
-  return {id:activity.id,title:activity.title,category:activity.category,level:activity.level,duration_minutes:activity.duration_minutes,study_cards:(activity.study_cards||[]).map(({front,back})=>({front,back})),questions:activity.questions.map(({id,prompt,options,hint}) => ({id,prompt,options,hint}))};
+  return {id:activity.id,title:activity.title,category:activity.category,level:activity.level,duration_minutes:activity.duration_minutes,...(activity.arabic?{arabic:activity.arabic}:{}),study_cards:(activity.study_cards||[]).map(({front,back,arabic})=>({front,back,...(arabic?{arabic}:{})})),questions:activity.questions.map(({id,prompt,options,hint,arabic}) => ({id,prompt,options,hint,...(arabic?{arabic:{prompt:arabic.prompt,options:arabic.options,hint:arabic.hint}}:{})}))};
 }
 
 // Derived only for writable staff views. Raw learner answers stay private; the
@@ -371,7 +408,9 @@ export function gradeStudioQuiz(activity,answers) {
     if (!Number.isInteger(choice) || choice < 0 || choice >= question.options.length) throw new ApiError(400,'The submitted quiz answers are invalid.');
     const correct=choice===question.answer,used_hint=submitted.used_hint;
     const skill=question.skill||QUESTION_SKILLS[activity.id]?.[question.id]||'discovery';
-    return {question_id:question.id,prompt:question.prompt,choice,correct,used_hint,xp:correct?(used_hint?70:100):0,skill,skill_label:SKILL_LABELS[skill]||'Practice skills',correct_answer:question.options[question.answer],explanation:question.explanation};
+    const result={question_id:question.id,prompt:question.prompt,choice,correct,used_hint,xp:correct?(used_hint?70:100):0,skill,skill_label:SKILL_LABELS[skill]||'Practice skills',correct_answer:question.options[question.answer],explanation:question.explanation};
+    if(question.arabic?.explanation||question.arabic?.options?.[question.answer])result.arabic={...(question.arabic?.explanation?{explanation:question.arabic.explanation}:{}),...(question.arabic?.options?.[question.answer]?{correct_answer:question.arabic.options[question.answer]}:{})};
+    return result;
   });
   if (byId.size !== activity.questions.length) throw new ApiError(400,'The submitted quiz answers are invalid.');
   const correct = results.filter(result => result.correct).length;

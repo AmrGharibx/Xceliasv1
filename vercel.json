@@ -1,5 +1,5 @@
 {
-  "buildCommand": "node build.js",
+  "buildCommand": "npm ci --prefix \"New Xcelias Data/red-academy\" --ignore-scripts && node build.js",
   "outputDirectory": "dist",
   "cleanUrls": false,
   "trailingSlash": false,
@@ -53,6 +53,30 @@
   ],
   "redirects": [
     {
+      "source": "/",
+      "destination": "/red-academy/trainer-activities/",
+      "permanent": false,
+      "has": [{ "type": "host", "value": "join.xcelias.com" }]
+    },
+    {
+      "source": "/:path((?!red-academy/).+)",
+      "destination": "/red-academy/trainer-activities/",
+      "permanent": false,
+      "has": [{ "type": "host", "value": "join.xcelias.com" }]
+    },
+    {
+      "source": "/red-academy/",
+      "destination": "/red-academy/trainer-activities/",
+      "permanent": false,
+      "has": [{ "type": "host", "value": "join.xcelias.com" }]
+    },
+    {
+      "source": "/red-academy/:path((?!trainer-activities/|modules/|vendor/|cloud-config\\.js$|training-academy-logo\\.svg$).*)",
+      "destination": "/red-academy/trainer-activities/",
+      "permanent": false,
+      "has": [{ "type": "host", "value": "join.xcelias.com" }]
+    },
+    {
       "source": "/red-academy",
       "destination": "/red-academy/index.html",
       "permanent": false
@@ -64,8 +88,6 @@
     { "source": "/reports", "destination": "/reports/index.html" },
     { "source": "/studyguide", "destination": "/studyguide/index.html" },
     { "source": "/website", "destination": "/website/index.html" },
-    { "source": "/pitch-lab", "destination": "/pitch-lab/index.html" },
-    { "source": "/red-academy", "destination": "https://amrgharibx.github.io/Xceliasv1/" },
-    { "source": "/red-academy/(.*)", "destination": "https://amrgharibx.github.io/Xceliasv1/$1" }
+    { "source": "/pitch-lab", "destination": "/pitch-lab/index.html" }
   ]
 }

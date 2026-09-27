@@ -5,12 +5,18 @@ import { today } from '../modules/core.mjs';
 import { ROLEPLAY_SCENARIOS, validateRoleplayLibrary } from './roleplay-library.mjs';
 import { sequenceChoiceForOrder, sequenceOrderForChoice } from './live-sequence.mjs';
 import { liveDebriefModel } from './live-debrief.mjs';
+import { egyptianArabicFor } from '../modules/egyptian-arabic.mjs';
+import { isParticipantHost, participantLink } from './participant-links.mjs';
+import qrcode from '../vendor/qrcode-generator.mjs';
+import { createQrDataUrl } from '../modules/qr-code.mjs';
 validateRoleplayLibrary();
 
 const store = new AcademyStore();
 const app = document.getElementById('app');
 const dialog = document.getElementById('trainer-dialog');
 const toastRoot = document.getElementById('toast-root');
+const participantHost = isParticipantHost(location.hostname);
+const participantOrigin = globalThis.RED_ACADEMY_CLOUD?.participantOrigin || '';
 const state = { assignments: [], library: [], facilitatorDeck: [], liveRooms: [], sessionPlans: [], sessionSkills: [], sessionPlanError: '', cohortPulse: null, pulseLoading: true, pulseError: '', pulseRequest: 0, loading: false, error: '', batchId: '', companyId: '', status: '', query: '' };
 let refreshTimer = null;
 let liveRoom = null;
@@ -21,6 +27,145 @@ let sessionRunTimer = null;
 let sessionPulseSetupOpen = false;
 let roleplayState = null;
 let roleplayTimer = null;
+const LOCALE_STORAGE_KEY = 'red-academy-studio-locale';
+const originalTextValues = new WeakMap();
+const originalAttributeValues = new WeakMap();
+const activityArabicPhrases = new Map();
+const qrImageCache = new Map();
+let interfaceLanguage = (() => {
+  try { return localStorage.getItem(LOCALE_STORAGE_KEY) === 'ar-EG' ? 'ar-EG' : 'en'; }
+  catch { return 'en'; }
+})();
+
+function localizedCopy(value) {
+  if (interfaceLanguage !== 'ar-EG') return value;
+  if (value === 'English') return value;
+  const exact = activityArabicPhrases.get(value) || egyptianArabicFor(value);
+  if (exact !== value) return exact;
+  const insightScope = value.match(/^(.+?) · (.+?) · Learn from completed quizzes, then carry the best-fit mission into the next session\.$/);
+  if (insightScope) {
+    const scopePart = part => part === 'All batches' ? 'كل الدفعات' : part === 'All companies' ? 'كل الشركات' : part;
+    return `${scopePart(insightScope[1])} · ${scopePart(insightScope[2])} · راجع نتائج التحدّيات المكتملة، وخلي الجلسة الجاية تركز على أهم احتياج للمجموعة.`;
+  }
+  const dynamicPatterns = [
+    [/^ROUND (\d+) OF (\d+)$/i, 'الجولة $1 من $2'],
+    [/^QUESTION (\d+)$/i, 'سؤال $1'],
+    [/^CONTINUE ROUND (\d+)$/i, 'كمّل الجولة $1'],
+    [/^WARM-UP · CARD (\d+) OF (\d+)$/i, 'تمهيد · كارت $1 من $2'],
+    [/^ROUND (\d+)$/i, 'الجولة $1'],
+    [/^RECALL CARD (\d+)$/i, 'كارت مراجعة $1'],
+  ];
+  for (const [pattern, replacement] of dynamicPatterns) {
+    if (pattern.test(value)) return value.replace(pattern, replacement);
+  }
+  return value;
+}
+
+function registerActivityArabic(activity) {
+  if (!activity || typeof activity !== 'object') return;
+  const add = (english, arabic) => {
+    if (typeof english === 'string' && english.trim() && typeof arabic === 'string' && arabic.trim()) {
+      activityArabicPhrases.set(english, arabic);
+    }
+  };
+  const metadata = activity.arabic || {};
+  for (const key of ['title', 'category', 'description', 'instructions']) add(activity[key], metadata[key]);
+  for (const [index, question] of (activity.questions || []).entries()) {
+    const translation = question.arabic || metadata.questions?.[index] || {};
+    for (const key of ['prompt', 'hint', 'explanation']) add(question[key], translation[key]);
+    (question.options || []).forEach((option, optionIndex) => add(option, translation.options?.[optionIndex]));
+  }
+  for (const [index, card] of (activity.study_cards || []).entries()) {
+    const translation = card.arabic || metadata.study_cards?.[index] || {};
+    for (const key of ['front', 'back']) add(card[key], translation[key]);
+  }
+}
+
+function localizeElement(element) {
+  if (!(element instanceof Element) || element.closest('.locale-switch')) return;
+  let originalAttributes = originalAttributeValues.get(element);
+  if (!originalAttributes) {
+    originalAttributes = new Map();
+    originalAttributeValues.set(element, originalAttributes);
+  }
+  for (const name of ['placeholder', 'aria-label', 'title', 'alt']) {
+    if (!element.hasAttribute(name)) continue;
+    if (!originalAttributes.has(name)) originalAttributes.set(name, element.getAttribute(name));
+    const original = originalAttributes.get(name);
+    const translated = localizedCopy(original);
+    if (element.getAttribute(name) !== translated) element.setAttribute(name, translated);
+  }
+}
+
+function localizeTree(root = document.body) {
+  if (!root) return;
+  if (root instanceof Element) localizeElement(root);
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  let node;
+  while ((node = walker.nextNode())) {
+    if (node.parentElement?.closest('.locale-switch')) continue;
+    if (['SCRIPT', 'STYLE', 'TEXTAREA', 'CODE', 'PRE'].includes(node.parentElement?.tagName)) continue;
+    if (!originalTextValues.has(node)) originalTextValues.set(node, node.nodeValue || '');
+    const original = originalTextValues.get(node);
+    const trimmed = original.trim();
+    if (!trimmed) continue;
+    const translated = localizedCopy(trimmed);
+    if (translated !== trimmed) {
+      const start = original.indexOf(trimmed);
+      node.nodeValue = `${original.slice(0, start)}${translated}${original.slice(start + trimmed.length)}`;
+    } else if (interfaceLanguage === 'en' && node.nodeValue !== original) {
+      node.nodeValue = original;
+    }
+  }
+}
+
+function setInterfaceLanguage(language) {
+  interfaceLanguage = language === 'ar-EG' ? 'ar-EG' : 'en';
+  try { localStorage.setItem(LOCALE_STORAGE_KEY, interfaceLanguage); } catch { /* keep this choice for the current page */ }
+  document.documentElement.lang = interfaceLanguage;
+  document.documentElement.dir = interfaceLanguage === 'ar-EG' ? 'rtl' : 'ltr';
+  document.body.classList.toggle('locale-ar-eg', interfaceLanguage === 'ar-EG');
+  localizeTree();
+  document.querySelectorAll('[data-set-locale]').forEach(button => {
+    button.setAttribute('aria-pressed', String(button.dataset.setLocale === interfaceLanguage));
+  });
+  document.querySelectorAll('[data-draft-language]').forEach(label => { label.textContent = interfaceLanguage === 'ar-EG' ? 'المصري' : 'English'; });
+}
+
+function localeSwitch() {
+  return `<div class="locale-switch" role="group" aria-label="Interface language"><button type="button" data-set-locale="en" aria-pressed="${interfaceLanguage === 'en'}">English</button><button type="button" data-set-locale="ar-EG" aria-pressed="${interfaceLanguage === 'ar-EG'}">مصري</button></div>`;
+}
+
+function ensureDialogLocaleSwitch() {
+  if (!dialog?.open || dialog.querySelector('.locale-switch--dialog')) return;
+  const group = document.createElement('div');
+  group.className = 'locale-switch locale-switch--dialog';
+  group.setAttribute('role', 'group');
+  group.setAttribute('aria-label', interfaceLanguage === 'ar-EG' ? 'لغة الواجهة' : 'Interface language');
+  for (const [language, label] of [['en', 'English'], ['ar-EG', 'مصري']]) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.dataset.setLocale = language;
+    button.setAttribute('aria-pressed', String(language === interfaceLanguage));
+    button.textContent = label;
+    group.append(button);
+  }
+  const header = dialog.querySelector('.dialog-head,.roleplay-header,.room-header,.session-run-top');
+  (header || dialog).append(group);
+}
+
+const localeObserver = new MutationObserver(records => {
+  for (const record of records) {
+    for (const added of record.addedNodes) {
+      if (added.nodeType === Node.ELEMENT_NODE) localizeTree(added);
+      else if (added.nodeType === Node.TEXT_NODE) localizeTree(added.parentElement || document.body);
+    }
+    if (record.type === 'attributes') localizeElement(record.target);
+  }
+  ensureDialogLocaleSwitch();
+});
+localeObserver.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['placeholder', 'aria-label', 'title', 'alt'] });
+setInterfaceLanguage(interfaceLanguage);
 
 function academyUrl(hash = '') {
   const url = new URL('../', location.href);
@@ -35,7 +180,9 @@ function portalUrl(path = '') {
 }
 
 function button(label, action, primary = false, attrs = '') {
-  return `<button class="button button-flat ${primary ? 'button-primary' : ''}" data-action="${e(action)}" ${attrs}>${e(label)}</button>`;
+  const keepHidden = action === 'academy-fallback' || action === 'legacy-library';
+  const extraAttrs = [attrs, keepHidden ? 'hidden' : ''].filter(Boolean).join(' ');
+  return `<button class="button button-flat ${primary ? 'button-primary' : ''}" data-action="${e(action)}" ${extraAttrs}>${e(label)}</button>`;
 }
 
 function showToast(message, isError = false) {
@@ -46,7 +193,7 @@ function showToast(message, isError = false) {
 function topbar() {
   const user = store.user;
   const account = user ? `<span class="sync-chip"><i class="sync-dot"></i>${store.connectionLost ? 'Reconnecting' : 'Shared workspace'}</span><span class="role-chip">${e(user.display_name || user.name || user.email || 'Staff')}</span><button class="quiet-link" data-action="logout" type="button">Sign out</button>` : `<a class="quiet-link" href="${e(academyUrl(''))}">Academy Operations</a>`;
-  return `<header class="topbar"><a class="brand" href="${e(portalUrl())}" aria-label="Return to Xcelias portal"><img src="../training-academy-logo.svg" alt="Red Training Academy"><span class="brand-copy"><span>Trainer Activities Studio</span></span></a><div class="topbar-right">${account}</div></header>`;
+  return `<header class="topbar"><a class="brand" href="${e(portalUrl())}" aria-label="Return to Xcelias portal"><img src="../training-academy-logo.svg" alt="Red Training Academy"><span class="brand-copy"><span>Trainer Activities Studio</span></span></a><div class="topbar-right">${account}${localeSwitch()}</div></header>`;
 }
 
 function loginScreen() {
@@ -65,6 +212,9 @@ function companyName(companyId) {
 function classroomPulse() {
   const pulse=state.cohortPulse;
   const scope=[state.batchId?store.data.batches.find(batch=>batch.id===state.batchId)?.batch_name:'All batches',state.companyId?companyName(state.companyId):'All companies'].filter(Boolean).join(' · ');
+  if(state.pulseLoading)return '';
+  if(state.pulseError)return '<aside class="pulse-load-error" role="status"><span>Class insights are temporarily unavailable.</span><button class="micro-button" data-action="pulse-retry" type="button">Try again</button></aside>';
+  if(!pulse||!pulse.submission_count)return '';
   let body='';
   if(state.pulseLoading)body='<div class="pulse-empty" role="status">Reading completed challenges for this class…</div>';
   else if(state.pulseError)body=`<div class="pulse-empty pulse-error" role="status"><span>${e(state.pulseError)}</span><button class="micro-button" data-action="pulse-retry" type="button">Try again</button></div>`;
@@ -92,7 +242,12 @@ async function refreshClassroomPulse() {
   if(!store.user||store.status!=='ready'||!store.canWrite())return;
   const requestId=++state.pulseRequest;
   state.pulseLoading=true;state.pulseError='';
-  const replace=()=>{const panel=document.getElementById('classroom-pulse');if(panel)panel.outerHTML=classroomPulse();};
+  const replace=()=>{
+    const markup=classroomPulse();
+    const panel=document.getElementById('classroom-pulse')||app.querySelector('.pulse-load-error');
+    if(panel){panel.outerHTML=markup;return;}
+    if(markup)app.querySelector('.metrics')?.insertAdjacentHTML('afterend',markup);
+  };
   replace();
   try {
     const result=await store.api(classroomPulsePath());
@@ -119,6 +274,7 @@ function sessionPlanCard(plan) {
 }
 
 function sessionBoard() {
+  if(!state.sessionPlanError&&!state.sessionPlans.length)return '';
   const query=state.query.trim().toLocaleLowerCase();
   const plans=state.sessionPlans.filter(plan=>{
     if(state.batchId&&plan.batch_id!==state.batchId)return false;
@@ -250,7 +406,7 @@ function roleplayAIDraftForm(){
   const fallback=[['discovery','Client discovery'],['qualification','Client qualification'],['accuracy','Product accuracy'],['objections','Objection handling'],['ethics','Ethical judgment'],['followthrough','Follow-through'],['viewing','Viewing conversations'],['teamwork','Team handoffs']];
   const skills=state.sessionSkills.length?state.sessionSkills:fallback;
   const selectedSkill=roleplayState?.aiDraftSkill||skills[0]?.id;
-  return `<details class="roleplay-ai-planner" ${roleplayState?.customScenario?'open':''}><summary>✦ Draft a lesson-specific role-play <span>Optional AI co-planner</span></summary><div class="roleplay-ai-planner-body"><p>Only the selected skill and your lesson notes are sent. Keep trainee names, client details, scores, and confidential records out of the notes. This spoken practice is temporary and never records trainee performance.</p><label class="field"><span>Learning focus</span><select id="roleplay-ai-focus">${skills.map(item=>`<option value="${e(item.id)}" ${item.id===selectedSkill?'selected':''}>${e(item.label)}</option>`).join('')}</select></label><label class="field"><span>Lesson brief <small>(optional · max 1,600 characters)</small></span><textarea id="roleplay-ai-notes" maxlength="1600" rows="3" placeholder="What client-care move or conversation would be useful to practise today?">${e(roleplayState?.aiDraftNotes||'')}</textarea></label><label class="roleplay-ai-consent"><input id="roleplay-ai-consent" type="checkbox"><span>I consent to send these notes to the configured AI provider for a temporary, unsaved practice draft.</span></label><div class="roleplay-ai-action-row"><button class="micro-button" type="button" data-action="roleplay-ai-draft" ${store.aiPolishEnabled?'':'disabled'}>${roleplayState?.customScenario?'Draft another scene':'Draft practice scene'}</button><span id="roleplay-ai-status" role="status">${e(roleplayState?.aiDraftStatus|| (store.aiPolishEnabled?'Review the scenario and coaching lens before using it. Nothing is saved.':'AI is not configured; the ready-made role-plays remain available.'))}</span></div></div></details>`;
+  return `<details class="roleplay-ai-planner" ${roleplayState?.customScenario?'open':''}><summary>✦ Draft a lesson-specific role-play <span>AI co-planner · <b data-draft-language>${interfaceLanguage==='ar-EG'?'المصري':'English'}</b></span></summary><div class="roleplay-ai-planner-body"><p>Only the selected skill and your lesson notes are sent. Keep trainee names, client details, scores, and confidential records out of the notes. This spoken practice is temporary and never records trainee performance.</p><label class="field"><span>Learning focus</span><select id="roleplay-ai-focus">${skills.map(item=>`<option value="${e(item.id)}" ${item.id===selectedSkill?'selected':''}>${e(item.label)}</option>`).join('')}</select></label><label class="field"><span>Lesson brief <small>(optional · max 1,600 characters)</small></span><textarea id="roleplay-ai-notes" maxlength="1600" rows="3" placeholder="What client-care move or conversation would be useful to practise today?">${e(roleplayState?.aiDraftNotes||'')}</textarea></label><label class="roleplay-ai-consent"><input id="roleplay-ai-consent" type="checkbox"><span>I consent to send these notes to the configured AI provider for a temporary, unsaved practice draft.</span></label><div class="roleplay-ai-action-row"><button class="micro-button" type="button" data-action="roleplay-ai-draft" ${store.aiPolishEnabled?'':'disabled'}>${roleplayState?.customScenario?'Draft another scene':'Draft practice scene'}</button><span id="roleplay-ai-status" role="status">${e(roleplayState?.aiDraftStatus|| (store.aiPolishEnabled?'Review the scenario and coaching lens before using it. Nothing is saved.':'AI is not configured; the ready-made role-plays remain available.'))}</span></div></div></details>`;
 }
 
 function openRoleplayLab() {
@@ -294,7 +450,7 @@ function renderRoleplayLab(){
   }
   dialog.classList.remove('live-room-dialog','session-run-dialog');dialog.classList.add('roleplay-dialog');dialog.removeAttribute('aria-labelledby');dialog.setAttribute('aria-label','Trainer Activities Studio role-play lab');
   dialog.innerHTML=`<section class="roleplay-shell">${header}${body}</section>`;
-  if(role.stage==='setup'&&role.customScenario&&role.scenarioId==='ai-draft'){const marker=document.createElement('p');marker.className='roleplay-temporary-draft';marker.textContent='AI CO-DRAFT · TEMPORARY AND UNSAVED · Review every detail before using this scene.';dialog.querySelector('.roleplay-selected-preview')?.prepend(marker);}
+  if(role.stage==='setup'&&role.customScenario&&role.scenarioId==='ai-draft'){const marker=document.createElement('p');marker.className='roleplay-temporary-draft';marker.textContent=`AI CO-DRAFT · ${role.customScenario.content_language==='ar-EG'?'EGYPTIAN ARABIC':'ENGLISH'} · TEMPORARY AND UNSAVED · Review every detail before using this scene.`;dialog.querySelector('.roleplay-selected-preview')?.prepend(marker);}
   if(!dialog.open)dialog.showModal();
   if(role.stage==='play'&&role.running)updateRoleplayClock();
 }
@@ -306,7 +462,7 @@ async function draftRoleplayScenarioWithAI(buttonEl){
   roleplayState.aiDraftSkill=focus.value;roleplayState.aiDraftNotes=notes.value;
   const label=buttonEl.textContent;buttonEl.disabled=true;status.textContent='Drafting three client turns and a private coaching lens. No trainee data is sent or saved.';
   try{
-    const result=await store.api('ai','POST',{kind:'draft-roleplay-scenario',consent:true,focus_skill:focus.value,lesson_notes:notes.value});
+    const result=await store.api('ai','POST',{kind:'draft-roleplay-scenario',consent:true,focus_skill:focus.value,lesson_notes:notes.value,language:interfaceLanguage});
     const scenario=result.scenario;
     if(!scenario||scenario.id!=='ai-draft'||!Array.isArray(scenario.turns)||scenario.turns.length!==3||!Array.isArray(scenario.lookFors)||scenario.lookFors.length!==3)throw new Error('The role-play draft could not be loaded safely. Your ready-made scenes are unchanged.');
     roleplayState.customScenario=scenario;roleplayState.scenarioId=scenario.id;roleplayState.stage='setup';roleplayState.turnIndex=0;roleplayState.revealed=false;roleplayState.rep=1;roleplayState.observed=new Set();roleplayState.aiDraftStatus='Draft ready. Review the client brief, all three turns, coaching moves, example, and watch-out. It is temporary until you close the lab.';
@@ -492,7 +648,7 @@ function xpLadder() {
   }
   const leaders=[...totals.values()].sort((a,b)=>b.xp-a.xp||b.completed-a.completed||a.name.localeCompare(b.name)).slice(0,5);
   const scope=state.batchId?store.data.batches.find(batch=>batch.id===state.batchId)?.batch_name:'All batches';
-  if(!leaders.length)return `<section class="xp-ladder"><div class="xp-ladder-heading"><div><span class="eyebrow">THE CLASSROOM XP LADDER</span><h2>${e(scope||'Class standings')}</h2></div><span>Results build up across challenges</span></div><p class="xp-ladder-empty">The first XP is waiting to be earned. Assign a challenge and share the private links to start the class race.</p></section>`;
+  if(!leaders.length)return '';
   const levels=[{name:'First Step',min:0},{name:'Explorer',min:500},{name:'Navigator',min:1500},{name:'Mentor',min:3000},{name:'Legend',min:5000}];
   const rows=leaders.map((leader,index)=>{let levelIndex=levels.reduce((found,level,i)=>leader.xp>=level.min?i:found,0);const level=levels[levelIndex],next=levels[levelIndex+1],progress=next?Math.max(0,Math.min(100,Math.round((leader.xp-level.min)/(next.min-level.min)*100))):100,width=progress===0?0:Math.ceil(progress/10)*10;return `<div class="xp-ladder-row"><span class="xp-rank rank-${index+1}">${String(index+1).padStart(2,'0')}</span><div class="xp-person"><strong>${e(leader.name)}</strong><span>${e(leader.company)} · ${leader.completed} ${leader.completed===1?'challenge':'challenges'} complete</span><div class="xp-level-line"><span>LEVEL ${levelIndex+1} · ${e(level.name)}</span><span>${next?`${leader.xp-level.min} / ${next.min-level.min} XP to ${e(next.name)}`:'MAX LEVEL'}</span></div><div class="xp-meter xp-width-${width}" role="progressbar" aria-label="${e(level.name)} level progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${progress}"><i></i></div></div><strong class="xp-total">${leader.xp.toLocaleString()} <small>XP</small></strong></div>`;}).join('');
   return `<section class="xp-ladder"><div class="xp-ladder-heading"><div><span class="eyebrow">THE CLASSROOM XP LADDER</span><h2>${e(scope||'Class standings')}</h2></div><span>Top five · ${state.companyId?e(companyName(state.companyId)):'all companies'} · levels reward steady practice</span></div><div class="xp-ladder-list">${rows}</div></section>`;
@@ -585,15 +741,60 @@ function assignSessionQuiz(planId) {
   });
 }
 
+function organizeDashboardExtras() {
+  const privacyNote=app.querySelector('.workspace-note');
+  if(privacyNote){
+    const disclosure=document.createElement('details');
+    disclosure.className='workspace-note-disclosure';
+    const summary=document.createElement('summary');
+    const icon=document.createElement('span');
+    icon.className='note-icon';icon.setAttribute('aria-hidden','true');icon.textContent='i';
+    const title=document.createElement('strong');title.textContent='Privacy & results';
+    const hint=document.createElement('span');hint.textContent='Private links · answer keys stay on the server';
+    summary.append(icon,title,hint);
+    privacyNote.before(disclosure);
+    disclosure.append(summary,privacyNote);
+  }
+  const xpLadder=app.querySelector('.xp-ladder');
+  if(xpLadder){
+    const disclosure=document.createElement('details');
+    disclosure.className='xp-ladder-disclosure';
+    const summary=document.createElement('summary');summary.textContent='Optional class XP standings';
+    xpLadder.before(disclosure);
+    disclosure.append(summary,xpLadder);
+  }
+}
+
+function collapseOccasionalActions(actions) {
+  const secondary=['roleplay-open','custom-new']
+    .map(action=>actions.querySelector(`[data-action="${action}"]`))
+    .filter(Boolean);
+  if(!secondary.length)return;
+  const disclosure=document.createElement('details');
+  disclosure.className='hero-more-tools';
+  const summary=document.createElement('summary');
+  summary.className='button hero-more-tools-toggle';
+  summary.textContent='More tools';
+  const menu=document.createElement('div');
+  menu.className='hero-more-tools-menu';
+  menu.append(...secondary);
+  disclosure.append(summary,menu);
+  actions.append(disclosure);
+}
+
 function render() {
   if (!store.user || store.status !== 'ready') {
     app.innerHTML = `<main class="shell">${loginScreen()}</main>`;
     return;
   }
   app.innerHTML = dashboard();
+  organizeDashboardExtras();
   addQuizTileActions();
-  if(store.canWrite())app.querySelector('.classroom-pulse')?.insertAdjacentHTML('afterend',sessionBoard());
-  if(store.canWrite())addSessionRunLaunchers();
+  if(store.canWrite()){
+    const anchor=app.querySelector('.classroom-pulse')||app.querySelector('.metrics');
+    anchor?.insertAdjacentHTML('afterend',sessionBoard());
+    addSessionRunLaunchers();
+  }
   if (store.canWrite()) {
     const actions = app.querySelector('.hero-actions');
     if (actions) {
@@ -617,6 +818,7 @@ function render() {
         resume.textContent = `Resume live room${state.liveRooms.length > 1 ? ` · ${state.liveRooms.length}` : ''}`;
         actions.insertBefore(resume, host);
       }
+      collapseOccasionalActions(actions);
     }
   }
   const heroCopy=app.querySelector('.hero p');if(heroCopy)heroCopy.textContent='Pick a ready-made challenge or build a lesson-specific one, then assign it privately or host it live.';
@@ -637,6 +839,7 @@ async function refreshAssignments() {
     ]);
     state.assignments = result.assignments || [];
     state.library = library.activities || [];
+    state.library.forEach(registerActivityArabic);
     // The facilitator deck includes answer keys and is cached separately from
     // the public library. Invalidate it whenever shared library data refreshes
     // so newly created/archived challenges stay in sync for live-room setup.
@@ -676,10 +879,11 @@ function openDialog(title, description, content) {
 const challengeSkills=[['discovery','Client discovery'],['qualification','Client qualification'],['accuracy','Product accuracy'],['objections','Objection handling'],['ethics','Ethical judgment'],['followthrough','Follow-through'],['viewing','Viewing conversations'],['teamwork','Team handoffs']];
 function customQuestionMarkup(index){
  const choices=Array.from({length:4},(_,choice)=>`<label class="field"><span>Choice ${String.fromCharCode(65+choice)}</span><input name="option_${choice}" required maxlength="180" placeholder="Write a plausible response"></label>`).join('');
+ const arabicChoices=Array.from({length:4},(_,choice)=>`<label class="field" dir="rtl"><span>الاختيار ${String.fromCharCode(65+choice)} بالمصري</span><input name="option_${choice}_ar" maxlength="180" dir="rtl" placeholder="اكتب اختيار مناسب بالمصري"></label>`).join('');
  const skills=challengeSkills.map(([id,label])=>`<option value="${id}" ${id==='discovery'?'selected':''}>${label}</option>`).join('');
- return `<fieldset class="custom-question-editor" data-custom-question><legend>ROUND ${index+1}</legend><div class="custom-question-head"><span>One decision, one clear best answer</span><button class="micro-button" type="button" data-action="custom-remove-question">Remove round</button></div><label class="field field-full"><span>Scenario or question</span><textarea name="prompt" required minlength="8" maxlength="500" rows="3" placeholder="Give the trainee a realistic moment to think through…"></textarea></label><div class="custom-choice-grid">${choices}</div><div class="custom-question-meta"><label class="field"><span>Best answer</span><select name="answer"><option value="0">A</option><option value="1" selected>B</option><option value="2">C</option><option value="3">D</option></select></label><label class="field"><span>Skill practiced</span><select name="skill">${skills}</select></label></div><label class="field field-full"><span>Optional coaching nudge</span><input name="hint" maxlength="280" placeholder="A small clue, not the answer"></label><label class="field field-full"><span>Coaching takeaway after reveal</span><textarea name="explanation" required minlength="12" maxlength="700" rows="2" placeholder="Explain why the best answer works, and what skill it demonstrates."></textarea></label></fieldset>`;
+ return `<fieldset class="custom-question-editor" data-custom-question><legend>ROUND ${index+1}</legend><div class="custom-question-head"><span>One decision, one clear best answer</span><button class="micro-button" type="button" data-action="custom-remove-question">Remove round</button></div><label class="field field-full"><span>Scenario or question</span><textarea name="prompt" required minlength="8" maxlength="500" rows="3" placeholder="Give the trainee a realistic moment to think through…"></textarea></label><div class="custom-choice-grid">${choices}</div><div class="custom-question-meta"><label class="field"><span>Best answer</span><select name="answer"><option value="0">A</option><option value="1" selected>B</option><option value="2">C</option><option value="3">D</option></select></label><label class="field"><span>Skill practiced</span><select name="skill">${skills}</select></label></div><label class="field field-full"><span>Optional coaching nudge</span><input name="hint" maxlength="280" placeholder="A small clue, not the answer"></label><label class="field field-full"><span>Coaching takeaway after reveal</span><textarea name="explanation" required minlength="12" maxlength="700" rows="2" placeholder="Explain why the best answer works, and what skill it demonstrates."></textarea></label><details class="arabic-edition field-full"><summary><strong>Egyptian Arabic edition</strong><span>النسخة بالمصري · optional</span></summary><div class="arabic-edition-grid"><label class="field field-full" dir="rtl"><span>السؤال أو الموقف</span><textarea name="prompt_ar" maxlength="500" rows="3" dir="rtl" placeholder="اكتب السؤال أو الموقف بالمصري"></textarea></label>${arabicChoices}<label class="field field-full" dir="rtl"><span>تلميح تدريبي (اختياري)</span><input name="hint_ar" maxlength="280" dir="rtl" placeholder="تلميح بسيط من غير ما يكشف الإجابة"></label><label class="field field-full" dir="rtl"><span>الخلاصة التدريبية بعد ظهور الإجابة</span><textarea name="explanation_ar" maxlength="700" rows="2" dir="rtl" placeholder="اشرح بالمصري ليه الاختيار الأنسب مفيد"></textarea></label></div><small>لو سيبت ترجمة فاضية، الجزء ده هيظهر للمتدرّب باللغة الأصلية المكتوبة فوق.</small></details></fieldset>`;
 }
-function customStudyCardMarkup(index){return `<fieldset class="custom-study-editor" data-custom-study><legend>RECALL CARD ${index+1}</legend><button class="micro-button" type="button" data-action="custom-remove-study">Remove card</button><label class="field field-full"><span>Think of the answer to this prompt</span><input name="front" required minlength="3" maxlength="140" placeholder="What should a strong handoff include?"></label><label class="field field-full"><span>Then reveal this takeaway</span><textarea name="back" required minlength="8" maxlength="500" rows="2" placeholder="The client's goal, verified details, open questions, and a named next step."></textarea></label></fieldset>`;}
+function customStudyCardMarkup(index){return `<fieldset class="custom-study-editor" data-custom-study><legend>RECALL CARD ${index+1}</legend><button class="micro-button" type="button" data-action="custom-remove-study">Remove card</button><label class="field field-full"><span>Think of the answer to this prompt</span><input name="front" required minlength="3" maxlength="140" placeholder="What should a strong handoff include?"></label><label class="field field-full"><span>Then reveal this takeaway</span><textarea name="back" required minlength="8" maxlength="500" rows="2" placeholder="The client's goal, verified details, open questions, and a named next step."></textarea></label><details class="arabic-edition field-full"><summary><strong>Egyptian Arabic edition</strong><span>النسخة بالمصري · optional</span></summary><div class="arabic-edition-grid"><label class="field field-full" dir="rtl"><span>سؤال المراجعة</span><input name="front_ar" maxlength="140" dir="rtl" placeholder="اكتب سؤال المراجعة بالمصري"></label><label class="field field-full" dir="rtl"><span>الخلاصة التدريبية</span><textarea name="back_ar" maxlength="500" rows="2" dir="rtl" placeholder="اكتب الخلاصة بالمصري"></textarea></label></div><small>لو سيبت ترجمة فاضية، الكارت هيظهر باللغة الأصلية المكتوبة فوق.</small></details></fieldset>`;}
 function customAiPanel(){
  if(!store.aiPolishEnabled)return '<aside class="custom-ai-unavailable"><strong>AI draft assistant is not configured for this workspace.</strong><span>You can still build every round and recall card manually. Ask your administrator to configure the existing Gemini integration to enable AI drafts.</span></aside>';
  return `<section class="custom-ai-panel" aria-labelledby="custom-ai-title"><div class="custom-ai-heading"><div><span class="eyebrow">OPTIONAL · AI CO-DESIGNER</span><h3 id="custom-ai-title">Turn your lesson into a first draft</h3><p>Gemini uses the challenge title, focus, briefing and notes to draft scenario rounds and recall cards. Nothing is saved or assigned until you review and publish it.</p></div><span class="custom-ai-spark" aria-hidden="true">✦</span></div><label class="field field-full"><span>Lesson notes <small>(optional · no trainee names, emails, grades or contact details in any field)</small></span><textarea id="custom-ai-notes" maxlength="2400" rows="3" placeholder="Paste a short, non-sensitive lesson outline or key concepts."></textarea></label><div class="custom-ai-controls"><label class="field"><span>Number of rounds</span><select id="custom-ai-round-count"><option value="3">3 · quick pulse</option><option value="5" selected>5 · class challenge</option><option value="8">8 · deep practice</option></select></label><label class="custom-ai-consent"><input id="custom-ai-consent" type="checkbox"><span>I approve sending the challenge title, focus, briefing and notes to Gemini for an unsaved draft.</span></label><button class="micro-button custom-ai-button" type="button" data-action="custom-ai-draft">Draft with AI</button></div><p id="custom-ai-status" class="custom-ai-status" role="status" aria-live="polite"></p></section>`;
@@ -687,7 +891,7 @@ function customAiPanel(){
 function openCustomChallengeForm(){
  if(!store.canWrite())return;
  const firstQuestions=Array.from({length:3},(_,index)=>customQuestionMarkup(index)).join('');
- openDialog('Create a custom challenge','Build once from a real lesson, then assign it to trainees or host it live with the class.',`<form id="custom-challenge-form"><div class="custom-builder-intro"><strong>Your lesson, turned into play.</strong><span>Write realistic scenarios with one defensible best answer. The Academy grades responses on the server; trainees never receive the answer key before submission.</span></div><div class="form-grid custom-challenge-basics"><label class="field"><span>Challenge title</span><input name="title" required minlength="3" maxlength="80" placeholder="e.g. Batch 43 · First-call practice"></label><label class="field"><span>Learning focus</span><input name="category" required minlength="2" maxlength="60" placeholder="e.g. Discovery calls"></label><label class="field"><span>Level</span><select name="level"><option>Warm-up</option><option selected>Core</option><option>Challenge</option></select></label><label class="field"><span>Estimated minutes</span><input name="duration_minutes" type="number" min="2" max="45" value="5" required></label><label class="field field-full"><span>Briefing <small>(optional)</small></span><textarea name="description" maxlength="280" rows="2" placeholder="What will the trainee practice or be able to do?"></textarea></label></div><section class="custom-builder-section"><div class="custom-builder-section-head"><div><span class="eyebrow">THE ROUNDS</span><h3>Make the choices worth discussing</h3><p>At least 3 rounds. Add up to 12. Every round needs four distinct choices and a coaching takeaway.</p></div><strong id="custom-question-count">3 / 12</strong></div><div id="custom-question-list">${firstQuestions}</div><button class="micro-button" type="button" data-action="custom-add-question">＋ Add a round</button></section><section class="custom-builder-section"><div class="custom-builder-section-head"><div><span class="eyebrow">OPTIONAL ACTIVE-RECALL WARM-UP</span><h3>Give them something to remember</h3><p>These private study cards come before the scored challenge and never affect XP.</p></div><strong id="custom-study-count">0 / 8</strong></div><div id="custom-study-list"><p class="custom-study-empty">No warm-up cards yet. The challenge will start directly.</p></div><button class="micro-button" type="button" data-action="custom-add-study">＋ Add a recall card</button></section><div class="custom-integrity-note"><strong>Published challenges are intentionally immutable.</strong><span>This protects the answer key and makes every saved score reproducible. To revise one, create a new version; archiving a challenge hides it from new assignments but preserves existing learner links and results.</span></div><div class="form-error" id="custom-challenge-error" role="alert" hidden></div><div class="dialog-actions"><button class="button" type="button" data-action="dialog-close">Cancel</button><button class="button button-flat button-primary" type="submit">Save to shared challenge library</button></div></form>`);
+ openDialog('Create a custom challenge','Build once from a real lesson, then assign it to trainees or host it live with the class.',`<form id="custom-challenge-form"><div class="custom-builder-intro"><strong>Your lesson, turned into play.</strong><span>Write realistic scenarios with one defensible best answer. The Academy grades responses on the server; trainees never receive the answer key before submission.</span></div><div class="form-grid custom-challenge-basics"><label class="field"><span>Challenge title</span><input name="title" required minlength="3" maxlength="80" placeholder="e.g. Batch 43 · First-call practice"></label><label class="field"><span>Learning focus</span><input name="category" required minlength="2" maxlength="60" placeholder="e.g. Discovery calls"></label><label class="field"><span>Level</span><select name="level"><option>Warm-up</option><option selected>Core</option><option>Challenge</option></select></label><label class="field"><span>Estimated minutes</span><input name="duration_minutes" type="number" min="2" max="45" value="5" required></label><label class="field field-full"><span>Briefing <small>(optional)</small></span><textarea name="description" maxlength="280" rows="2" placeholder="What will the trainee practice or be able to do?"></textarea></label></div><details class="arabic-edition arabic-challenge-meta"><summary><strong>Egyptian Arabic edition</strong><span>النسخة بالمصري · optional</span></summary><div class="arabic-edition-grid"><label class="field" dir="rtl"><span>عنوان التحدّي</span><input name="title_ar" maxlength="80" dir="rtl" placeholder="اسم التحدّي بالمصري"></label><label class="field" dir="rtl"><span>محور التعلّم</span><input name="category_ar" maxlength="60" dir="rtl" placeholder="محور التعلّم بالمصري"></label><label class="field field-full" dir="rtl"><span>مقدمة التحدّي</span><textarea name="description_ar" maxlength="280" rows="2" dir="rtl" placeholder="اكتب للمتدرّب هيتدرّب على إيه"></textarea></label></div><small>لو سبت نسخة عربية فاضية، النص ده هيفضل بالإنجليزي حتى لو الواجهة بالمصري.</small></details><section class="custom-builder-section"><div class="custom-builder-section-head"><div><span class="eyebrow">THE ROUNDS</span><h3>Make the choices worth discussing</h3><p>At least 3 rounds. Add up to 12. Every round needs four distinct choices and a coaching takeaway.</p></div><strong id="custom-question-count">3 / 12</strong></div><div id="custom-question-list">${firstQuestions}</div><button class="micro-button" type="button" data-action="custom-add-question">＋ Add a round</button></section><section class="custom-builder-section"><div class="custom-builder-section-head"><div><span class="eyebrow">OPTIONAL ACTIVE-RECALL WARM-UP</span><h3>Give them something to remember</h3><p>These private study cards come before the scored challenge and never affect XP.</p></div><strong id="custom-study-count">0 / 8</strong></div><div id="custom-study-list"><p class="custom-study-empty">No warm-up cards yet. The challenge will start directly.</p></div><button class="micro-button" type="button" data-action="custom-add-study">＋ Add a recall card</button></section><div class="custom-integrity-note"><strong>Published challenges are intentionally immutable.</strong><span>This protects the answer key and makes every saved score reproducible. To revise one, create a new version; archiving a challenge hides it from new assignments but preserves existing learner links and results.</span></div><div class="form-error" id="custom-challenge-error" role="alert" hidden></div><div class="dialog-actions"><button class="button" type="button" data-action="dialog-close">Cancel</button><button class="button button-flat button-primary" type="submit">Save to shared challenge library</button></div></form>`);
  const basics=dialog.querySelector('.custom-challenge-basics');if(basics)basics.insertAdjacentHTML('afterend',customAiPanel());
 }
 function customQuestionCount(){const list=document.getElementById('custom-question-list');const count=document.getElementById('custom-question-count');if(list&&count)count.textContent=`${list.children.length} / 12`;}
@@ -695,15 +899,20 @@ function customStudyCount(){const list=document.getElementById('custom-study-lis
 function populateAiDraft(draft){
  const questionList=document.getElementById('custom-question-list'),studyList=document.getElementById('custom-study-list');
  if(!questionList||!studyList||!Array.isArray(draft.questions)||draft.questions.length<3)throw new Error('The AI draft could not be loaded into the challenge builder.');
+ const form=document.getElementById('custom-challenge-form');
+ for(const [name,value] of Object.entries({title_ar:draft.arabic?.title,category_ar:draft.arabic?.category,description_ar:draft.arabic?.description})){const field=form?.elements.namedItem(name);if(field&&value)field.value=value;}
  questionList.innerHTML=draft.questions.map((_,index)=>customQuestionMarkup(index)).join('');
  for(const [index,question] of draft.questions.entries()){
   const card=questionList.querySelectorAll('[data-custom-question]')[index];
   for(const [name,value] of Object.entries({prompt:question.prompt,answer:String(question.answer),skill:question.skill,hint:question.hint,explanation:question.explanation}))card.querySelector(`[name="${name}"]`).value=value;
   question.options.forEach((option,optionIndex)=>{card.querySelector(`[name="option_${optionIndex}"]`).value=option;});
+  for(const [name,value] of Object.entries({prompt_ar:question.arabic?.prompt,hint_ar:question.arabic?.hint,explanation_ar:question.arabic?.explanation})){const field=card.querySelector(`[name="${name}"]`);if(field&&value)field.value=value;}
+  question.arabic?.options?.forEach((option,optionIndex)=>{const field=card.querySelector(`[name="option_${optionIndex}_ar"]`);if(field)field.value=option;});
  }
  studyList.innerHTML=draft.study_cards.length?draft.study_cards.map((_,index)=>customStudyCardMarkup(index)).join(''):'<p class="custom-study-empty">No warm-up cards in this draft. Add your own or start directly.</p>';
  for(const [index,study] of draft.study_cards.entries()){
   const card=studyList.querySelectorAll('[data-custom-study]')[index];card.querySelector('[name="front"]').value=study.front;card.querySelector('[name="back"]').value=study.back;
+  for(const [name,value] of Object.entries({front_ar:study.arabic?.front,back_ar:study.arabic?.back})){const field=card.querySelector(`[name="${name}"]`);if(field&&value)field.value=value;}
  }
  customQuestionCount();customStudyCount();
 }
@@ -715,7 +924,7 @@ async function draftCustomChallengeWithAi(buttonEl){
  if(title.length<3||category.length<2){status.textContent='Enter the challenge title and learning focus first.';return;}
  const buttonLabel=buttonEl.textContent;buttonEl.disabled=true;buttonEl.textContent='Drafting your lesson…';status.textContent='Creating practical scenarios and recall prompts. Your current draft remains unsaved.';
  try{
-  const draft=await store.api('ai','POST',{kind:'draft-studio-challenge',consent:true,title,category,level:form.elements.level.value,duration_minutes:Number(form.elements.duration_minutes.value),description:form.elements.description.value,lesson_notes:document.getElementById('custom-ai-notes').value,round_count:Number(document.getElementById('custom-ai-round-count').value)});
+  const draft=await store.api('ai','POST',{kind:'draft-studio-challenge',consent:true,language:interfaceLanguage,title,category,level:form.elements.level.value,duration_minutes:Number(form.elements.duration_minutes.value),description:form.elements.description.value,lesson_notes:document.getElementById('custom-ai-notes').value,round_count:Number(document.getElementById('custom-ai-round-count').value)});
   populateAiDraft(draft);status.textContent=`AI drafted ${draft.questions.length} rounds and ${draft.study_cards.length} recall cards. Review every answer, explanation, and factual claim before saving.`;
  }catch(error){status.textContent=error.message||'Could not create a draft. Your existing work is still here.';}
  finally{if(buttonEl.isConnected){buttonEl.disabled=false;buttonEl.textContent=buttonLabel;}}
@@ -799,6 +1008,16 @@ function renderSessionPulseSetup(error = '') {
   dialog.innerHTML=`<div class="dialog-head"><div><span class="eyebrow">STEP CHECK-IN | ${e(step.kind)}</span><h2 id="dialog-title">Create a class pulse</h2><p>A quick anonymous signal from everyone in the room: no names, teams, grades, or learner records.</p></div><button class="dialog-close" data-action="session-pulse-cancel" aria-label="Return to session" type="button">&times;</button></div><div class="dialog-body session-pulse-setup"><div class="room-privacy-note"><strong>One question. No pressure.</strong><span>Responses are temporary, hidden from classmates until reveal, and never written to attendance, assessments, XP, or trainee profiles. Group results stay hidden until at least three responses.</span></div><form id="session-pulse-form"><div class="form-grid"><div class="field field-full"><label for="pulse-title">Pulse name</label><input id="pulse-title" name="title" value="${e(title)}" maxlength="90" required></div><div class="field field-full"><label for="pulse-prompt">Question for the class</label><textarea id="pulse-prompt" name="prompt" rows="3" maxlength="240" required>${e(step.prompt)}</textarea></div><fieldset class="field field-full pulse-choice-field"><legend>Answer choices <small>2-5 choices</small></legend><div id="pulse-choice-list" class="pulse-choice-list"><label class="pulse-choice-row"><span>A</span><input name="pulse_choice" maxlength="80" value="Ready to explain it" required aria-label="Choice A"><button type="button" data-action="pulse-choice-remove" aria-label="Remove choice A">&times;</button></label><label class="pulse-choice-row"><span>B</span><input name="pulse_choice" maxlength="80" value="I want one more example" required aria-label="Choice B"><button type="button" data-action="pulse-choice-remove" aria-label="Remove choice B">&times;</button></label><label class="pulse-choice-row"><span>C</span><input name="pulse_choice" maxlength="80" value="I want to practise it" required aria-label="Choice C"><button type="button" data-action="pulse-choice-remove" aria-label="Remove choice C">&times;</button></label></div><button class="micro-button" type="button" data-action="pulse-choice-add">+ Add a choice</button></fieldset><div class="field field-full"><label for="pulse-timer">Optional answer timer</label><select id="pulse-timer" name="timer_duration"><option value="0">No timer</option><option value="20">20 seconds</option><option value="30" selected>30 seconds</option><option value="45">45 seconds</option></select></div></div>${error?`<div class="form-error" role="alert">${e(error)}</div>`:'<div class="form-error" id="pulse-form-error" role="alert" hidden></div>'}<div class="dialog-actions"><button class="button" type="button" data-action="session-pulse-cancel">Back to session</button><button class="button button-flat button-primary" type="submit">Open class pulse <span aria-hidden="true">&#8599;</span></button></div></form></div>`;
   sessionPulseSetupOpen=true;
   const form=document.getElementById('session-pulse-form');
+  const arabicEdition=document.createElement('details');arabicEdition.className='arabic-edition arabic-challenge-meta';
+  arabicEdition.innerHTML='<summary><strong>Egyptian Arabic edition</strong><span>النسخة بالمصري · optional</span></summary><div class="arabic-edition-grid"></div><small>Write one Arabic choice per line, in the same order as the English choices. Blank translations stay in their original language.</small>';
+  const arabicGrid=arabicEdition.querySelector('.arabic-edition-grid');
+  for(const [name,label,placeholder,multiline] of [['title_ar','اسم النبضة','اسم قصير بالمصري',false],['prompt_ar','سؤال المجموعة','اكتب السؤال بالمصري',true],['options_ar','الاختيارات · اختيار في كل سطر','اكتب اختيار A ثم B ثم C بنفس ترتيب الإنجليزي',true]]){
+    const field=document.createElement('label');field.className=`field${multiline?' field-full':''}`;field.dir='rtl';
+    const caption=document.createElement('span');caption.textContent=label;field.append(caption);
+    const control=document.createElement(multiline?'textarea':'input');control.name=name;control.dir='rtl';control.placeholder=placeholder;if(multiline)control.rows=name==='prompt_ar'?2:3;else control.maxLength=90;
+    field.append(control);arabicGrid.append(field);
+  }
+  form.querySelector('.form-grid').append(arabicEdition);
   form.addEventListener('click',event=>{
     const button=event.target.closest('[data-action^="pulse-choice-"]');if(!button)return;
     const list=form.querySelector('#pulse-choice-list'),rows=list.querySelectorAll('.pulse-choice-row');
@@ -818,11 +1037,15 @@ function renderSessionPulseSetup(error = '') {
     event.preventDefault();const submit=form.querySelector('[type="submit"]'),errorBox=document.getElementById('pulse-form-error');
     const options=[...form.querySelectorAll('[name="pulse_choice"]')].map(input=>input.value.trim());
     if(options.length<2||options.length>5||options.some(option=>!option)||new Set(options.map(option=>option.toLocaleLowerCase())).size!==options.length){errorBox.hidden=false;errorBox.textContent='Use two to five different choices, with a short label for each.';return;}
+    const arabicOptionsText=form.elements.options_ar.value.trim();
+    const arabicOptions=arabicOptionsText?arabicOptionsText.split(/\r?\n/).map(value=>value.trim()):options.map(()=> '');
+    if(arabicOptions.length!==options.length){errorBox.hidden=false;errorBox.textContent='Add one Egyptian Arabic choice per line, in the same order as the English choices.';return;}
     submit.disabled=true;errorBox.hidden=true;
-    const pulse={mode:'pulse',title:form.elements.title.value.trim(),prompt:form.elements.prompt.value.trim(),options,timer_duration:Number(form.elements.timer_duration.value)};
+    const arabic={title:form.elements.title_ar.value.trim(),prompt:form.elements.prompt_ar.value.trim(),options:arabicOptions};
+    const pulse={mode:'pulse',title:form.elements.title.value.trim(),prompt:form.elements.prompt.value.trim(),options,timer_duration:Number(form.elements.timer_duration.value),arabic};
     try{
-      const created=await store.api('activities/live/create','POST',pulse),question={id:'pulse-1',prompt:pulse.prompt,options,answer:null,explanation:''};
-      liveRoom={mode:'pulse',activity:{id:'session-pulse',title:pulse.title,category:'Class pulse',level:'Whole class',questions:[question]},teams:[{id:'team-1',team_no:1,name:'Whole class',points:0,players:[],playerCount:0}],roundIndex:0,revealed:false,pointAwarded:false,history:[],timerDuration:pulse.timer_duration,timeLeft:pulse.timer_duration,timerEndsAt:0,finished:false,phoneMode:true,roomId:created.room_id,joinCode:created.join_code,sessionPulseReturn:true,syncError:''};
+      const created=await store.api('activities/live/create','POST',pulse),question={id:'pulse-1',prompt:pulse.prompt,options,answer:null,explanation:'',arabic:{prompt:arabic.prompt,options:arabic.options}};
+      liveRoom={mode:'pulse',activity:{id:'session-pulse',title:pulse.title,category:'Class pulse',level:'Whole class',arabic:{title:arabic.title},questions:[question]},teams:[{id:'team-1',team_no:1,name:'Whole class',points:0,players:[],playerCount:0}],roundIndex:0,revealed:false,pointAwarded:false,history:[],timerDuration:pulse.timer_duration,timeLeft:pulse.timer_duration,timerEndsAt:0,finished:false,phoneMode:true,roomId:created.room_id,joinCode:created.join_code,sessionPulseReturn:true,syncError:''};
       sessionPulseSetupOpen=false;renderLiveRoom();
       try{await syncLiveRoom();startLiveRoomSync();}
       catch(syncError){liveRoom.syncError=syncError.message||'The pulse opened, but its latest state could not be loaded yet.';renderLiveRoom();startLiveRoomSync();}
@@ -893,9 +1116,45 @@ function renderLiveRoomSetup(error = '', selectedActivityId = '') {
 }
 
 function liveRoomHref(code) {
-  const url = new URL(location.href);
-  url.hash = `/room/${code}`;
-  return url.href;
+  return participantLink(location.href, `/room/${code}`, participantOrigin);
+}
+
+function qrImageFor(value) {
+  if (qrImageCache.has(value)) return qrImageCache.get(value);
+  const image = createQrDataUrl(value, qrcode);
+  qrImageCache.set(value, image);
+  if (qrImageCache.size > 16) qrImageCache.delete(qrImageCache.keys().next().value);
+  return image;
+}
+
+function mountQrCode(frame) {
+  const value = frame?.dataset.qrUrl;
+  if (!value) return false;
+  try {
+    const image = document.createElement('img');
+    image.src = qrImageFor(value);
+    image.alt = frame.dataset.qrAlt || 'QR code for this private activity';
+    image.width = 240;
+    image.height = 240;
+    image.decoding = 'async';
+    frame.replaceChildren(image);
+    return true;
+  } catch {
+    const fallback = document.createElement('span');
+    fallback.className = 'qr-code-error';
+    fallback.setAttribute('role', 'status');
+    fallback.textContent = 'QR is unavailable in this browser. Use the private link instead.';
+    frame.replaceChildren(fallback);
+    return false;
+  }
+}
+
+function mountLiveRoomQrCodes(root = dialog) {
+  root.querySelectorAll('.qr-code-frame[data-qr-url]').forEach(mountQrCode);
+}
+
+function liveRoomQrMarkup(code) {
+  return `<figure class="room-qr-card"><div class="qr-code-frame" data-qr-url="${e(liveRoomHref(code))}" data-qr-alt="QR code for this live classroom"><span>Preparing QR code…</span></div><figcaption>Scan with your phone camera to join this room.</figcaption></figure>`;
 }
 
 function renderLivePulseRoom() {
@@ -906,9 +1165,10 @@ function renderLivePulseRoom() {
   const timer=room.timerDuration?`<div class="room-clock-wrap"><div id="room-clock" class="room-clock ${room.timeLeft<=5?'is-urgent':''}">${roomTimeLabel(room.timerEndsAt?Math.ceil((room.timerEndsAt-Date.now())/1000):room.timeLeft)}</div><span id="room-clock-status">${room.timerEndsAt?'Pulse timer is running.':room.timeLeft===0?'Time. Invite one last thought.':'A gentle timebox; no answer is graded.'}</span><button class="micro-button" type="button" data-action="room-timer">${room.timerEndsAt?'Pause timer':room.timeLeft<room.timerDuration?'Resume timer':`Start ${room.timerDuration}-second timer`}</button></div>`:'<span class="room-untimed">No timer - take the time the class needs</span>';
   const finishLabel=room.sessionPulseReturn?'Finish pulse & return to session':'End pulse';
   const action=remote.room.revealed?`<button class="button button-flat button-primary" type="button" data-action="room-end">${e(finishLabel)} <span aria-hidden="true">&rarr;</span></button>`:'<button class="button button-flat button-primary" type="button" data-action="room-reveal">Reveal class pattern</button>';
-  const invite=`<section class="room-join-panel pulse-invite"><div><span class="eyebrow">JOIN ANONYMOUSLY</span><strong class="room-join-code">${e(room.joinCode||'')}</strong><span>${joined} ${joined===1?'person':'people'} joined - no account, name, or team required</span><code>${e(liveRoomHref(room.joinCode||''))}</code></div><button class="button" type="button" data-action="room-copy-invite">Copy join link</button></section>`;
+  const invite=`<section class="room-join-panel pulse-invite"><div class="room-join-copy"><span class="eyebrow">JOIN ANONYMOUSLY</span><strong class="room-join-code">${e(room.joinCode||'')}</strong><span>${joined} ${joined===1?'person':'people'} joined - no account, name, or team required</span><code>${e(liveRoomHref(room.joinCode||''))}</code></div>${room.joinCode?liveRoomQrMarkup(room.joinCode):''}<div class="room-join-actions"><button class="button" type="button" data-action="room-copy-invite">Copy join link</button></div></section>`;
   dialog.innerHTML=`<main class="live-room-shell live-pulse-shell"><header class="room-header"><div class="room-brand"><img src="../training-academy-logo.svg" alt=""><span><b>ACADEMY STUDIO</b><small>ANONYMOUS CLASS PULSE - LIVE</small></span></div><div class="room-header-actions"><button class="micro-button" type="button" data-action="room-fullscreen">Fullscreen</button><button class="micro-button pulse-end-button" type="button" data-action="room-end">${e(finishLabel)}</button></div></header><div class="room-content"><div class="room-title-line pulse-title-line"><div><span class="eyebrow">${remote.room.revealed?'CLASS PATTERN REVEALED':'ONE QUESTION - WHOLE CLASS'}</span><h1>${e(room.activity.title)}</h1><p>Take the room's temperature. This is a learning signal, not a score.</p></div><div class="pulse-response-orbit"><strong>${count}</strong><span>responses</span><small>${joined} joined</small></div></div>${invite}<div id="room-sync-warning" class="room-sync-warning" role="status">${e(room.syncError||'')}</div><section class="pulse-host-question"><span class="eyebrow">ASK THE CLASS</span><h2>${e(question.prompt)}</h2><div class="pulse-host-options">${question.options.map((option,index)=>`<div><span>${String.fromCharCode(65+index)}</span><strong>${e(option)}</strong></div>`).join('')}</div></section><section class="pulse-host-results"><div class="pulse-results-heading"><div><span class="eyebrow">${remote.room.revealed?'THE CLASS SIGNAL':'LIVE RESPONSE SIGNAL'}</span><h2>${remote.room.revealed?'What the room is telling us':'Listen for the pattern'}</h2></div><span class="pulse-anonymous-tag"><i aria-hidden="true"></i> Anonymous - ungraded</span></div>${results}<div class="pulse-reveal-note">${remote.room.revealed?'Use this as a conversation starter. No response is right or wrong.':'Only you can see eligible aggregate counts before reveal; learners see the group pattern after you reveal.'}</div></section><div class="pulse-host-actions">${timer}${action}</div><footer class="room-footer"><span>No roster, attendance, assessment, or XP changes. Responses expire with this room.</span></footer></div></main>`;
   dialog.classList.add('live-room-dialog');dialog.classList.remove('session-run-dialog');
+  mountLiveRoomQrCodes(dialog);
   if(!dialog.open)dialog.showModal();
 }
 
@@ -967,11 +1227,12 @@ function renderLiveSequenceRoom(room, activity, remote, question, onlineTotal) {
   const roundContent = room.finished
     ? `<section class="room-finish"><span class="eyebrow">ROOM COMPLETE · ${e(activity.title)}</span><h2>${tied ? 'What a match!' : `${e(winner.name)} takes the round!`}</h2><p>${room.phoneMode ? roomCompleteCopy : tied ? 'The teams finished level. Run it back and see what happens.' : roomCompleteCopy}</p><div class="room-finish-actions"><button class="button button-flat button-primary" type="button" data-action="room-again">Play another set</button></div></section>`
     : `<section class="room-question sequence-room-question"><div class="room-round-meta"><span>ROUND ${room.roundIndex + 1} / ${room.phoneMode ? onlineTotal : activity.questions.length}</span><span>${e(activity.category)} · ${e(activity.level)}</span></div><h2>${e(question.prompt)}</h2><p class="sequence-instruction">${room.revealed ? 'Here is the coaching order. Talk through why each move belongs there.' : 'Agree on the order as a team. The numbered coaching sequence appears when you reveal.'}</p>${sequenceStepList(question.steps, answerOrder, { revealed: room.revealed })}${room.phoneMode ? `<div class="room-response-pulse sequence-response-count"><strong>${remote?.response_count || 0}</strong> <span>of ${room.teams.reduce((sum, team) => sum + (team.playerCount || 0), 0)} players submitted an order${room.revealed ? '' : ' · choices stay hidden until reveal'}</span></div>` : ''}${room.revealed ? `<div class="room-coaching"><span>COACHING TAKEAWAY</span><p>${e(question.explanation)}</p></div>` : ''}${room.phoneMode && room.revealed && remote?.responses?.length ? `<div class="room-reveal-feed"><strong>Round recap</strong>${remote.responses.map(person => `<span>${e(person.nickname)} · ${e(remote.teams.find(team => team.team_no === person.team_no)?.name || 'Team')} · ${person.correct ? '+' + person.awarded_points + ' pts' : 'review the takeaway'}</span>`).join('')}</div>` : ''}<div class="room-round-actions"><div class="room-clock-wrap">${room.timerDuration ? `<div id="room-clock" class="room-clock ${room.timeLeft <= 5 ? 'is-urgent' : ''}">${roomTimeLabel(room.timerEndsAt ? Math.ceil((room.timerEndsAt - Date.now()) / 1000) : room.timeLeft)}</div><span id="room-clock-status">${room.timerEndsAt ? 'Round timer is running across the room.' : room.timeLeft === 0 ? 'Time. Bring the room to a decision.' : 'Use the timer for energy, not pressure.'}</span><button class="micro-button" type="button" data-action="room-timer">${room.timerEndsAt ? 'Pause timer' : room.timeLeft < room.timerDuration ? 'Resume timer' : `Start ${room.timerDuration}-second timer`}</button>` : '<span class="room-untimed">Untimed discussion · no rush</span>'}</div><div class="room-round-buttons">${room.revealed ? `<button class="button button-flat button-primary" type="button" data-action="${room.roundIndex === (room.phoneMode ? onlineTotal : activity.questions.length) - 1 ? 'room-finish' : 'room-next'}">${room.roundIndex === (room.phoneMode ? onlineTotal : activity.questions.length) - 1 ? 'Finish room' : 'Next round'} <span aria-hidden="true">→</span></button>` : '<button class="button button-flat button-primary" type="button" data-action="room-reveal">Reveal coaching order</button>'}</div></div></section>`;
-  const joinPanel = room.phoneMode ? `<section class="room-join-panel"><div><span class="eyebrow">JOIN THE CLASSROOM</span><strong class="room-join-code">${e(room.joinCode)}</strong><span>Open the link on each phone, or enter this code at the classroom join screen.</span><code>${e(liveRoomHref(room.joinCode))}</code></div><button class="button" type="button" data-action="room-copy-invite">Copy invite link</button></section>` : '';
+  const joinPanel = room.phoneMode && !room.finished && room.joinCode ? `<section class="room-join-panel"><div class="room-join-copy"><span class="eyebrow">JOIN THE CLASSROOM</span><strong class="room-join-code">${e(room.joinCode)}</strong><span>Scan this QR code with a phone camera, or use the link below as a fallback.</span><code>${e(liveRoomHref(room.joinCode))}</code></div>${liveRoomQrMarkup(room.joinCode)}<div class="room-join-actions"><button class="button" type="button" data-action="room-copy-invite">Copy invite link</button></div></section>` : '';
   const undo = !room.phoneMode && room.history.length ? '<button class="micro-button" type="button" data-action="room-undo">Undo last point</button>' : '';
   const endRoom = room.phoneMode ? '<button class="micro-button" type="button" data-action="room-end">End phone room</button>' : '<button class="micro-button" type="button" data-action="room-exit">Exit room</button>';
   dialog.innerHTML = `<main class="live-room-shell live-sequence-room"><header class="room-header"><div class="room-brand"><img src="../training-academy-logo.svg" alt=""><span><b>ACADEMY STUDIO</b><small>${room.phoneMode ? 'PHONE TEAM ROOM · LIVE SYNC' : 'LIVE TEAM ROOM · SESSION ONLY'}</small></span></div><div class="room-header-actions"><button class="micro-button" type="button" data-action="room-fullscreen">Fullscreen</button>${endRoom}</div></header><div class="room-content"><div class="room-title-line"><div><span class="eyebrow">${room.finished ? 'FINAL SCORE' : 'SEQUENCE SPRINT · LIVE CLASSROOM'}</span><h1>${e(activity.title)}</h1><p>${room.phoneMode ? 'Sort the moves together from your phone. Think clearly, then lock your order.' : 'Debate the sequence together, then reveal the coaching logic.'}</p></div><div class="room-round-badge">${room.finished ? 'DONE' : `ROUND ${room.roundIndex + 1}`}<span>${room.finished ? '' : `OF ${room.phoneMode ? onlineTotal : activity.questions.length}`}</span></div></div>${joinPanel}<div id="room-sync-warning" class="room-sync-warning" role="status">${e(room.syncError || '')}</div><section class="room-scoreboard" aria-label="Team score">${teams}</section>${roundContent}<footer class="room-footer"><span>Temporary points only · no roster, attendance, assessment, assignment, or XP changes.</span>${undo}</footer></div></main>`;
   dialog.classList.add('live-room-dialog');
+  mountLiveRoomQrCodes(dialog);
   if (!room.finished && room.phoneMode && room.revealed) dialog.querySelector('.room-coaching')?.insertAdjacentHTML('afterend', liveClassroomDebrief(remote));
   if (room.finished) dialog.querySelectorAll('.room-team-label').forEach((label, index) => { label.textContent = `PLACE ${String(index + 1).padStart(2, '0')}${room.phoneMode ? ` · ${room.teams[index].playerCount} PLAYERS` : ''}`; });
   if (!dialog.open) dialog.showModal();
@@ -979,8 +1240,10 @@ function renderLiveSequenceRoom(room, activity, remote, question, onlineTotal) {
 
 function renderLiveRoom() {
   if (!liveRoom) return;
+  registerActivityArabic(liveRoom.activity);
   if(liveRoom.mode==='pulse'){renderLivePulseRoom();return;}
   const room = liveRoom.finished ? {...liveRoom,teams:[...liveRoom.teams].sort((a,b)=>b.points-a.points)} : liveRoom, activity = room.activity;
+  registerActivityArabic(activity);
   const remote = room.remote;
   const onlineTotal = remote?.room.total_rounds || activity.questions.length;
   const question = room.phoneMode ? (remote?.question || activity.questions[room.roundIndex]) : activity.questions[room.roundIndex];
@@ -996,11 +1259,12 @@ function renderLiveRoom() {
   const roundContent = room.finished
     ? `<section class="room-finish"><span class="eyebrow">ROOM COMPLETE · ${e(activity.title)}</span><h2>${room.teams[0].points === room.teams[1].points ? 'What a match!' : `${e(winner.name)} takes the round!`}</h2><p>${room.phoneMode ? roomCompleteCopy : room.teams[0].points === room.teams[1].points ? 'The teams finished level. Run it back and see what happens.' : roomCompleteCopy}</p><div class="room-finish-actions"><button class="button button-flat button-primary" type="button" data-action="room-again">Play another set</button></div></section>`
     : `<section class="room-question"><div class="room-round-meta"><span>ROUND ${room.roundIndex + 1} / ${room.phoneMode ? onlineTotal : activity.questions.length}</span><span>${e(activity.category)} · ${e(activity.level)}</span></div><h2>${e(question.prompt)}</h2><ol class="room-options">${question.options.map((option, index) => `<li class="room-option ${room.revealed && index === question.answer ? 'room-option-correct' : ''}"><span>${String.fromCharCode(65 + index)}</span><strong>${e(option)}</strong>${room.revealed && index === question.answer ? '<b>STRONGEST MOVE</b>' : ''}</li>`).join('')}</ol>${room.phoneMode ? `<div class="room-response-pulse"><strong>${remote?.response_count||0}</strong> <span>of ${room.teams.reduce((sum,team)=>sum+(team.playerCount||0),0)} players answered${room.revealed ? ' this round' : ' · hidden until reveal'}</span>${remote?.response_count ? `<div class="room-distribution" aria-label="Anonymous answer distribution"><span class="room-distribution-label">${room.revealed?'CLASS PICKS':'LIVE PICKS · TRAINER ONLY'}</span>${remote.answer_counts.map((count,index)=>`<span>${String.fromCharCode(65+index)} <b>${count}</b></span>`).join('')}</div>` : ''}</div>` : ''}${room.revealed ? `<div class="room-coaching"><span>COACHING TAKEAWAY</span><p>${e(question.explanation)}</p></div>` : ''}${room.phoneMode && room.revealed && remote.responses.length ? `<div class="room-reveal-feed"><strong>Round recap</strong>${remote.responses.map(person=>`<span>${e(person.nickname)} · ${e(remote.teams.find(team=>team.team_no===person.team_no)?.name||'Team')} · ${person.correct?'+'+person.awarded_points+' pts':'review the takeaway'}</span>`).join('')}</div>` : ''}<div class="room-round-actions"><div class="room-clock-wrap">${room.timerDuration ? `<div id="room-clock" class="room-clock ${room.timeLeft <= 5 ? 'is-urgent' : ''}">${roomTimeLabel(room.timerEndsAt ? Math.ceil((room.timerEndsAt-Date.now())/1000) : room.timeLeft)}</div><span id="room-clock-status">${room.timerEndsAt ? 'Round timer is running across the room.':room.timeLeft===0?'Time. Bring the room to a decision.':'Use the timer for energy, not pressure.'}</span><button class="micro-button" type="button" data-action="room-timer">${room.timerEndsAt?'Pause timer':room.timeLeft<room.timerDuration?'Resume timer':`Start ${room.timerDuration}-second timer`}</button>` : '<span class="room-untimed">Untimed discussion · no rush</span>'}</div><div class="room-round-buttons">${room.revealed ? `<button class="button button-flat button-primary" type="button" data-action="${room.roundIndex === (room.phoneMode?onlineTotal:activity.questions.length)-1?'room-finish':'room-next'}">${room.roundIndex === (room.phoneMode?onlineTotal:activity.questions.length)-1?'Finish room':'Next round'} <span aria-hidden="true">→</span></button>` : '<button class="button button-flat button-primary" type="button" data-action="room-reveal">Reveal coaching answer</button>'}</div></div></section>`;
-  const joinPanel = room.phoneMode ? `<section class="room-join-panel"><div><span class="eyebrow">JOIN THE CLASSROOM</span><strong class="room-join-code">${e(room.joinCode)}</strong><span>Open the link on each phone, or enter this code at the classroom join screen.</span><code>${e(liveRoomHref(room.joinCode))}</code></div><button class="button" type="button" data-action="room-copy-invite">Copy invite link</button></section>` : '';
+  const joinPanel = room.phoneMode && !room.finished && room.joinCode ? `<section class="room-join-panel"><div class="room-join-copy"><span class="eyebrow">JOIN THE CLASSROOM</span><strong class="room-join-code">${e(room.joinCode)}</strong><span>Scan this QR code with a phone camera, or use the link below as a fallback.</span><code>${e(liveRoomHref(room.joinCode))}</code></div>${liveRoomQrMarkup(room.joinCode)}<div class="room-join-actions"><button class="button" type="button" data-action="room-copy-invite">Copy invite link</button></div></section>` : '';
   const undo = !room.phoneMode && room.history.length ? '<button class="micro-button" type="button" data-action="room-undo">Undo last point</button>' : '';
   const endRoom = room.phoneMode ? '<button class="micro-button" type="button" data-action="room-end">End phone room</button>' : '<button class="micro-button" type="button" data-action="room-exit">Exit room</button>';
   dialog.innerHTML = `<main class="live-room-shell"><header class="room-header"><div class="room-brand"><img src="../training-academy-logo.svg" alt=""><span><b>ACADEMY STUDIO</b><small>${room.phoneMode?'PHONE TEAM ROOM · LIVE SYNC':'LIVE TEAM ROOM · SESSION ONLY'}</small></span></div><div class="room-header-actions"><button class="micro-button" type="button" data-action="room-fullscreen">Fullscreen</button>${endRoom}</div></header><div class="room-content"><div class="room-title-line"><div><span class="eyebrow">${room.finished?'FINAL SCORE':'LIVE CLASSROOM ROUND'}</span><h1>${e(activity.title)}</h1><p>${room.phoneMode?'Every learner plays from their own phone. Think fast, learn together.':'Debate together. Think clearly. Learn the coaching move.'}</p></div><div class="room-round-badge">${room.finished?'DONE':`ROUND ${room.roundIndex+1}`}<span>${room.finished?'':`OF ${room.phoneMode?remote?.room.total_rounds:activity.questions.length}`}</span></div></div>${joinPanel}<div id="room-sync-warning" class="room-sync-warning" role="status">${e(room.syncError||'')}</div><section class="room-scoreboard" aria-label="Team score">${teams}</section>${roundContent}<footer class="room-footer"><span>${room.phoneMode?'Temporary scores · no roster, attendance, assessment, or XP changes.':'Room points are temporary and never change learner records.'}</span>${undo}</footer></div></main>`;
   dialog.classList.add('live-room-dialog');
+  mountLiveRoomQrCodes(dialog);
   if (!room.finished && room.phoneMode && room.revealed) dialog.querySelector('.room-coaching')?.insertAdjacentHTML('afterend', liveClassroomDebrief(remote));
   if(room.finished)dialog.querySelectorAll('.room-team-label').forEach((label,index)=>{label.textContent=`PLACE ${String(index+1).padStart(2,'0')}${room.phoneMode?` · ${room.teams[index].playerCount} PLAYERS`:''}`;});
   if (!dialog.open) dialog.showModal();
@@ -1011,7 +1275,7 @@ async function showLiveRoomSetup(selectedActivityId = '') {
   openDialog('Loading live room','Loading the private facilitator deck from RED Academy.','<div class="status-state"><p>Preparing your trainer-led room…</p></div>');
   dialog.classList.add('live-room-dialog');
   try {
-    if(!state.facilitatorDeck.length){const result=await store.api('activities/facilitator-deck');state.facilitatorDeck=result.activities||[];}
+    if(!state.facilitatorDeck.length){const result=await store.api('activities/facilitator-deck');state.facilitatorDeck=result.activities||[];state.facilitatorDeck.forEach(registerActivityArabic);}
     if(!state.facilitatorDeck.length)throw new Error('No live challenges are available yet.');
     renderLiveRoomSetup('', selectedActivityId);
   } catch(error) {
@@ -1036,6 +1300,7 @@ async function resumeLiveRoom(roomId, button) {
     if (!state.facilitatorDeck.length) {
       const deck = await store.api('activities/facilitator-deck');
       state.facilitatorDeck = deck.activities || [];
+      state.facilitatorDeck.forEach(registerActivityArabic);
     }
     const result = await store.api('activities/live/resume', 'POST', { room_id: roomId });
     const savedDeck=result.room?.activity;
@@ -1091,16 +1356,14 @@ document.addEventListener('fullscreenchange',()=>{
 });
 
 function learnerHref(code) {
-  const url = new URL(location.href);
-  url.hash = `/learner/${code}`;
-  return url.href;
+  return participantLink(location.href, `/learner/${code}`, participantOrigin);
 }
 
 async function showLearnerLinks(assignmentId) {
   if (!store.canWrite()) return;
   const assignment = state.assignments.find(row => row.id === assignmentId);
   if (assignment && assignment.status !== 'Open') { showToast('This challenge is no longer open.', true); return; }
-  openDialog('Private trainee links', 'Each link is a private, one-use entry for one trainee. Creating new links replaces any earlier unsubmitted links.', '<div id="links-progress" class="status-state"><p>Creating secure links for the current roster…</p></div>');
+  openDialog('Private trainee links', 'Each trainee gets a private, one-use link and matching QR code. Share each code only with its named trainee.', '<div id="links-progress" class="status-state"><p>Creating secure links for the current roster…</p></div>');
   try {
     const result = await store.api('activities/links', 'POST', { assignment_id: assignmentId });
     const links = result.links || [];
@@ -1108,7 +1371,37 @@ async function showLearnerLinks(assignmentId) {
     const allText = list.map(item => `${item.name}\t${item.href}`).join('\n');
     const linksHtml = list.length ? `<div class="link-toolbar"><p>${list.length} active private link${list.length === 1 ? '' : 's'} · ${Number(result.already_submitted)||0} already completed</p><button class="micro-button" type="button" data-action="copy-all-links">Copy all links</button></div><div class="private-link-list">${list.map(item => `<article class="private-link-row"><div><strong>${e(item.name)}</strong><span>Unique quiz entry · share privately</span></div><a class="micro-button" href="${e(item.href)}" target="_blank" rel="noopener noreferrer">Open</a><button class="micro-button" type="button" data-action="copy-link" data-link="${e(item.href)}">Copy</button></article>`).join('')}</div><p class="link-security-note">The raw links are shown only now. The server stores a one-way hash; if you create them again, unsubmitted old links stop working.</p>` : `<div class="empty-state"><span class="empty-symbol" aria-hidden="true">✓</span><h3>No links left to issue</h3><p>Every assigned trainee has already submitted. Completed results remain available in the assignment table.</p></div>`;
     const target = document.getElementById('links-progress');
-    if (target) target.outerHTML = `<div id="links-content" data-copy-all="${e(allText)}">${linksHtml}</div>`;
+    if (target) {
+      target.outerHTML = `<div id="links-content" data-copy-all="${e(allText)}">${linksHtml}</div>`;
+      const content = document.getElementById('links-content');
+      content?.querySelectorAll('.private-link-row').forEach(row => {
+        const person = row.querySelector('div');
+        const openLink = row.querySelector('a');
+        const copyButton = row.querySelector('[data-action="copy-link"]');
+        if (!person || !openLink || !copyButton || !copyButton.dataset.link) return;
+
+        const actions = document.createElement('div');
+        actions.className = 'private-link-actions';
+        const qrButton = document.createElement('button');
+        qrButton.className = 'micro-button';
+        qrButton.type = 'button';
+        qrButton.dataset.action = 'show-link-qr';
+        qrButton.dataset.link = copyButton.dataset.link;
+        qrButton.setAttribute('aria-expanded', 'false');
+        qrButton.textContent = 'Show QR';
+        actions.append(qrButton, openLink, copyButton);
+
+        const panel = document.createElement('div');
+        panel.className = 'private-link-qr';
+        panel.hidden = true;
+        const frame = document.createElement('div');
+        frame.className = 'qr-code-frame';
+        const note = document.createElement('p');
+        note.textContent = 'This QR code is private to this trainee. Share it only with them.';
+        panel.append(frame, note);
+        row.replaceChildren(person, actions, panel);
+      });
+    }
   } catch (error) {
     const target = document.getElementById('links-progress');
     if (target) target.innerHTML = `<p>${e(error.message || 'Could not create the learner links.')}</p><button class="micro-button" type="button" data-action="retry-links" data-assignment="${e(assignmentId)}">Try again</button>`;
@@ -1131,7 +1424,7 @@ function showAssignmentForm(selectedActivityId = '', selectedTraineeId = '', pre
   const defaultBatch = targetBatch?.id || prefilledBatch?.id || (state.batchId && batches.some(batch => batch.id === state.batchId) ? state.batchId : batches.find(batch => batch.status === 'Active')?.id || batches[0].id);
   const companies = store.data.companies.slice().sort((a, b) => a.name.localeCompare(b.name));
   const preselected = new Set(targetTrainee ? [targetTrainee.id] : currentRoster(defaultBatch).map(person => person.id));
-  const html = `<form id="assignment-form"><div class="form-grid"><div class="field"><label for="assignment-batch">Batch</label><select id="assignment-batch" name="batch_id" required>${options(batches, defaultBatch, row => row.id, row => row.batch_name)}</select></div><div class="field"><label for="assignment-activity">Academy Studio challenge</label><select id="assignment-activity" name="activity_id" required>${state.library.map(activity => `<option value="${e(activity.id)}">${e(activity.title)} · ${e(activity.duration_minutes)} min</option>`).join('')}</select></div><div class="field"><label for="assignment-company">Target company</label><select id="assignment-company" name="company_id"><option value="">All companies in batch</option>${options(companies, '', row => row.id, row => row.name)}</select></div><div class="field"><label for="assignment-due">Due date <span class="subtle">(optional)</span></label><input id="assignment-due" name="due_date" type="date"></div><div class="field field-full"><label for="assignment-instructions">Trainer mission briefing</label><textarea id="assignment-instructions" name="instructions" maxlength="2000" placeholder="Set the scene, team focus, or any context to read before starting."></textarea></div></div><div class="studio-assignment-note"><strong>One private link per trainee</strong><span>After assigning, create learner links and share each one directly. Scores are calculated on the server and appear here live.</span></div><div class="roster-toolbar"><div><strong id="roster-count"></strong><span> Active, non-stopped trainees from this batch</span></div><button class="micro-button" type="button" data-action="select-visible">Select visible</button></div><div class="roster-list" id="roster-list">${currentTargetList(defaultBatch, '', preselected)}</div><div class="form-error" id="assignment-error" hidden></div><div class="dialog-actions"><button class="button" type="button" data-action="dialog-close">Cancel</button><button class="button button-flat button-primary" type="submit">Assign challenge</button></div></form>`;
+  const html = `<form id="assignment-form"><div class="form-grid"><div class="field"><label for="assignment-batch">Batch</label><select id="assignment-batch" name="batch_id" required>${options(batches, defaultBatch, row => row.id, row => row.batch_name)}</select></div><div class="field"><label for="assignment-activity">Academy Studio challenge</label><select id="assignment-activity" name="activity_id" required>${state.library.map(activity => `<option value="${e(activity.id)}">${e(activity.title)} · ${e(activity.duration_minutes)} min</option>`).join('')}</select></div><div class="field"><label for="assignment-company">Target company</label><select id="assignment-company" name="company_id"><option value="">All companies in batch</option>${options(companies, '', row => row.id, row => row.name)}</select></div><div class="field"><label for="assignment-due">Due date <span class="subtle">(optional)</span></label><input id="assignment-due" name="due_date" type="date"></div><div class="field field-full"><label for="assignment-instructions">Trainer mission briefing</label><textarea id="assignment-instructions" name="instructions" maxlength="2000" placeholder="Set the scene, team focus, or any context to read before starting."></textarea></div></div><div class="studio-assignment-note"><strong>One private link and QR per trainee</strong><span>After assigning, create learner links. Each trainee gets a matching one-use QR; show it only to its named trainee. Scores are calculated on the server and appear here live.</span></div><div class="roster-toolbar"><div><strong id="roster-count"></strong><span> Active, non-stopped trainees from this batch</span></div><button class="micro-button" type="button" data-action="select-visible">Select visible</button></div><div class="roster-list" id="roster-list">${currentTargetList(defaultBatch, '', preselected)}</div><div class="form-error" id="assignment-error" hidden></div><div class="dialog-actions"><button class="button" type="button" data-action="dialog-close">Cancel</button><button class="button button-flat button-primary" type="submit">Assign challenge</button></div></form>`;
   openDialog('Build a classroom challenge', 'Choose a short quiz, select a real batch roster, then share each trainee’s private entry link.', html);
   const form = document.getElementById('assignment-form');
   if (state.library.some(activity => activity.id === selectedActivityId)) form.elements.activity_id.value = selectedActivityId;
@@ -1245,7 +1538,7 @@ function showSessionPlanForm(selectedActivityId='',prefill={}) {
     if(!document.getElementById('session-ai-consent').checked){status.textContent='Check the consent box before sending the lesson brief to AI.';return;}
     button.disabled=true;status.textContent='Drafting four prompts. Your session plan remains unsaved.';
     try{
-      const draft=await store.api('ai','POST',{kind:'draft-session-prompts',consent:true,activity_id:activityField.value,focus_skill:focusField.value,lesson_notes:document.getElementById('session-ai-notes').value});
+      const draft=await store.api('ai','POST',{kind:'draft-session-prompts',consent:true,language:interfaceLanguage,activity_id:activityField.value,focus_skill:focusField.value,lesson_notes:document.getElementById('session-ai-notes').value});
       for(const [stepId,prompt] of Object.entries(draft.step_prompts||{})){const field=form.querySelector(`[data-step-prompt="${stepId}"]`);if(field){field.value=prompt;field.dataset.edited='true';}}
       status.textContent='AI draft ready. Review and edit all four prompts, then save the shared session when you are happy with it.';
     }catch(error){status.textContent=error.message||'Could not draft prompts. Your current session edits are still here.';}
@@ -1438,8 +1731,26 @@ function mountLearnerSkillSignals(result) {
 }
 
 function learnerShell(content) {
-  app.innerHTML = `<main class="learner-shell"><header class="learner-header"><a class="brand" href="${e(portalUrl())}" aria-label="Return to Xcelias portal"><img src="../training-academy-logo.svg" alt="Red Training Academy"><span class="brand-copy"><span>Academy Studio</span></span></a><span class="private-label"><i></i> PRIVATE TRAINEE SESSION</span></header>${content}</main>`;
+  const brand = participantHost
+    ? '<span class="brand" aria-label="Red Training Academy"><img src="../training-academy-logo.svg" alt="Red Training Academy"><span class="brand-copy"><span>Academy Studio</span></span></span>'
+    : `<a class="brand" href="${e(portalUrl())}" aria-label="Return to Xcelias portal"><img src="../training-academy-logo.svg" alt="Red Training Academy"><span class="brand-copy"><span>Academy Studio</span></span></a>`;
+  app.innerHTML = `<main class="learner-shell"><header class="learner-header">${brand}<span class="private-label"><i></i> PRIVATE TRAINEE SESSION</span>${localeSwitch()}</header>${content}</main>`;
+  if (participantHost) removeParticipantExitLinks();
   if (app.querySelector('.result-screen')) mountLearnerSkillSignals(learnerState.result);
+}
+
+function removeParticipantExitLinks() {
+  const root = new URL(portalUrl());
+  app.querySelectorAll('a[href]').forEach(link => {
+    try {
+      const target = new URL(link.href);
+      if (target.origin !== root.origin || target.pathname !== root.pathname || target.search || target.hash) return;
+      const replacement = document.createElement('span');
+      replacement.className = link.className;
+      replacement.textContent = 'You can close this page.';
+      link.replaceWith(replacement);
+    } catch {}
+  });
 }
 
 function learnerNotice(title, message, isError = false) {
@@ -1584,6 +1895,10 @@ function rateMissedPractice(understood) {
 }
 
 function learnerResults(result, title, name) {
+  for (const item of result?.results || []) {
+    if (item.arabic?.explanation) activityArabicPhrases.set(item.explanation, item.arabic.explanation);
+    if (item.arabic?.correct_answer) activityArabicPhrases.set(item.correct_answer, item.arabic.correct_answer);
+  }
   learnerState.result = result;
   const percent = Number(result.score) || 0;
   const rank = percent >= 90 ? {name:'Precision player',copy:'Outstanding accuracy. Keep sharing that calm, evidence-led approach.'} : percent >= 70 ? {name:'Momentum builder',copy:'Solid progress. Review the coaching notes and bring one idea into your next session.'} : {name:'Practice unlocked',copy:'Every round is practice. Pick one coaching note and try it in the next role-play.'};
@@ -1611,6 +1926,7 @@ async function launchLearner() {
   try {
     const data = await learnerRequest('activities/learner/open', { code: learnerState.code });
     learnerState.data = data;
+    registerActivityArabic(data.quiz);
     if (data.completed) learnerResults(data.result,data.title,data.trainee_name);
     else {
       if(data.draft&&Array.isArray(data.draft.answers)){
@@ -1642,11 +1958,16 @@ function livePlayerShell(content) {
     const questionHeading = `<h2>${e(data.question.prompt)}</h2>`;
     if (content.includes(questionHeading)) content = content.replace(questionHeading, `${questionHeading}${liveConfidencePicker(data)}`);
   }
-  app.innerHTML = `<main class="learner-shell live-player-shell"><header class="learner-header"><a class="brand" href="${e(portalUrl())}" aria-label="Return to Xcelias portal"><img src="../training-academy-logo.svg" alt="Red Training Academy"><span class="brand-copy"><span>Academy Studio</span></span></a><span class="live-player-status ${livePlayer.error?'is-reconnecting':''}"><i></i>${livePlayer.error?'RECONNECTING':'LIVE CLASSROOM'}</span></header>${content}</main>`;
+  const brand = participantHost
+    ? '<span class="brand" aria-label="Red Training Academy"><img src="../training-academy-logo.svg" alt="Red Training Academy"><span class="brand-copy"><span>Academy Studio</span></span></span>'
+    : `<a class="brand" href="${e(portalUrl())}" aria-label="Return to Xcelias portal"><img src="../training-academy-logo.svg" alt="Red Training Academy"><span class="brand-copy"><span>Academy Studio</span></span></a>`;
+  app.innerHTML = `<main class="learner-shell live-player-shell"><header class="learner-header">${brand}<span class="live-player-status ${livePlayer.error?'is-reconnecting':''}"><i></i>${livePlayer.error?'RECONNECTING':'LIVE CLASSROOM'}</span>${localeSwitch()}</header>${content}</main>`;
+  if (participantHost) removeParticipantExitLinks();
 }
 
 function renderLivePlayerJoin(error = '') {
   const info = livePlayer.info;
+  if (info) registerActivityArabic({title:info.title,category:info.category,arabic:info.arabic});
   if (!info) { learnerNotice('Room link not recognized','Ask your trainer for a fresh classroom link or the current room code.',true);return; }
   if(info.mode==='pulse'){
     livePlayerShell(`<section class="learner-card live-join-card pulse-join-card"><span class="eyebrow">A QUICK CLASS CHECK-IN</span><h1>${e(info.title)}</h1><p class="intro-welcome">One short question. Your response is anonymous and ungraded.</p><div class="pulse-anon-promise"><span aria-hidden="true">◉</span><div><strong>No name. No team. No login.</strong><span>Your answer is stored only in this temporary class pulse. The group pattern appears after the trainer reveals it, and only when at least three responses are in.</span></div></div><form id="live-phone-join" class="live-phone-join pulse-phone-join">${error?`<div class="error-box" role="alert">${e(error)}</div>`:''}<button class="button button-flat button-primary" type="submit" ${livePlayer.busy?'disabled':''}>${livePlayer.busy?'Joining...':'Join anonymously'}</button></form><p class="quiz-private-foot">You can change your choice until the facilitator reveals the class pattern.</p></section>`);
@@ -1695,6 +2016,7 @@ function renderLiveSequencePlayer(data) {
 
 function renderLivePlayer() {
   const data=livePlayer.data;if(!data)return;
+  registerActivityArabic({title:data.activity?.title,category:data.activity?.category,arabic:data.activity?.arabic,questions:data.question?[data.question]:[]});
   if(data.mode==='pulse'){renderLivePulsePlayer(data);return;}
   const person=data.player,question=data.question,teams=data.team_scores||[];
   if(data.room_closed){
@@ -1751,6 +2073,11 @@ async function launchLivePlayer() {
     renderLivePlayerJoin();
   } catch(error){learnerNotice('We could not join this room',error.message||'Ask your trainer for the current live room code.',true);}
 }
+
+document.addEventListener('click', event => {
+  const languageButton = event.target.closest('[data-set-locale]');
+  if (languageButton) setInterfaceLanguage(languageButton.dataset.setLocale);
+});
 
 document.addEventListener('click', async event => {
   const buttonEl=event.target.closest('[data-action]');
@@ -2029,6 +2356,23 @@ document.addEventListener('click', async event => {
     if (action === 'edit-progress') showProgressForm(buttonEl.dataset.assignment, buttonEl.dataset.trainee);
     if (action === 'share-links') await showLearnerLinks(buttonEl.dataset.assignment);
     if (action === 'retry-links') await showLearnerLinks(buttonEl.dataset.assignment);
+    if (action === 'show-link-qr') {
+      const row = buttonEl.closest('.private-link-row');
+      const panel = row?.querySelector('.private-link-qr');
+      const frame = panel?.querySelector('.qr-code-frame');
+      if (!row || !panel || !frame || !buttonEl.dataset.link) return;
+      const visible = panel.hidden;
+      panel.hidden = !visible;
+      buttonEl.textContent = visible ? 'Hide QR' : 'Show QR';
+      buttonEl.setAttribute('aria-expanded', String(visible));
+      if (visible) {
+        const traineeName = row.querySelector('strong')?.textContent?.trim() || 'this trainee';
+        frame.dataset.qrUrl = buttonEl.dataset.link;
+        frame.dataset.qrAlt = `QR code for ${traineeName}'s private challenge link`;
+        if (!mountQrCode(frame)) showToast('QR is unavailable in this browser. Use the private link instead.', true);
+      }
+      return;
+    }
     if (action === 'copy-link' || action === 'copy-all-links') {
       const value = action === 'copy-link' ? buttonEl.dataset.link : document.getElementById('links-content')?.dataset.copyAll;
       if (!value) throw new Error('There are no links available to copy.');
@@ -2090,11 +2434,13 @@ document.addEventListener('submit',async event=>{
  event.preventDefault();if(!store.canWrite())return;
  const submit=form.querySelector('[type="submit"]'),errorBox=document.getElementById('custom-challenge-error');
  const questionText=(card,name)=>card.querySelector(`[name="${name}"]`).value;
+ const optionalText=(card,name)=>card.querySelector(`[name="${name}"]`)?.value||'';
  const challenge={
   title:form.elements.title.value,category:form.elements.category.value,level:form.elements.level.value,
   duration_minutes:Number(form.elements.duration_minutes.value),description:form.elements.description.value,
-  questions:[...form.querySelectorAll('[data-custom-question]')].map(card=>({prompt:questionText(card,'prompt'),options:[0,1,2,3].map(index=>questionText(card,`option_${index}`)),answer:Number(questionText(card,'answer')),skill:questionText(card,'skill'),hint:questionText(card,'hint'),explanation:questionText(card,'explanation')})),
-  study_cards:[...form.querySelectorAll('[data-custom-study]')].map(card=>({front:questionText(card,'front'),back:questionText(card,'back')})),
+  arabic:{title:optionalText(form,'title_ar'),category:optionalText(form,'category_ar'),description:optionalText(form,'description_ar')},
+  questions:[...form.querySelectorAll('[data-custom-question]')].map(card=>({prompt:questionText(card,'prompt'),options:[0,1,2,3].map(index=>questionText(card,`option_${index}`)),answer:Number(questionText(card,'answer')),skill:questionText(card,'skill'),hint:questionText(card,'hint'),explanation:questionText(card,'explanation'),arabic:{prompt:optionalText(card,'prompt_ar'),options:[0,1,2,3].map(index=>optionalText(card,`option_${index}_ar`)),hint:optionalText(card,'hint_ar'),explanation:optionalText(card,'explanation_ar')}})),
+  study_cards:[...form.querySelectorAll('[data-custom-study]')].map(card=>({front:questionText(card,'front'),back:questionText(card,'back'),arabic:{front:optionalText(card,'front_ar'),back:optionalText(card,'back_ar')}})),
  };
  submit.disabled=true;errorBox.hidden=true;
  try{await store.api('activities/custom','POST',challenge);dialog.close();await refreshAssignments();showToast('Custom challenge saved to the shared library. Assign it or host it live when your class is ready.');}
@@ -2110,6 +2456,7 @@ store.addEventListener('expired', () => { state.assignments = [];state.sessionPl
 
 if (liveRoomMatch) await launchLivePlayer();
 else if (learnerRoute) await launchLearner();
+else if (participantHost) learnerNotice('Private participant link required', 'Open the activity or classroom link shared by your trainer. This address does not open the trainer workspace.', true);
 else {
   render();
   await store.init();

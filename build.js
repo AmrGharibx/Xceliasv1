@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const { execFileSync } = require("child_process");
 const babel = require("@babel/core");
 const { minify: terserMinify } = require("terser");
 const postcss = require("postcss");
@@ -434,6 +435,21 @@ pHtml = pHtml.replace(
   '<head>\n  <base href="/pitch-lab/" />\n  ' + studentGuardTag,
 );
 fs.writeFileSync(pitchHtml, pHtml);
+
+/* RED Academy cloud app — bundle it on this domain instead of proxying to GitHub Pages. */
+console.log("[8/8] RED Academy cloud app...");
+const academyRoot = path.join(ROOT, "New Xcelias Data", "red-academy");
+execFileSync(
+  process.execPath,
+  [path.join(academyRoot, "scripts", "build-cloud.mjs")],
+  { cwd: academyRoot, stdio: "inherit" },
+);
+copyDir(
+  path.join(academyRoot, "cloud-dist"),
+  path.join(DIST, "red-academy"),
+);
+console.log("    → Academy is hosted at /red-academy/ on the Excelias domain");
+
 console.log(
   '    → Added <base href="/pitch-lab/"> + student-guard.js external script',
 );

@@ -1,8 +1,25 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {activityCohortPulse,activityPracticeInsights,gradeStudioQuiz,publicQuiz,STUDIO_SKILLS,studioFacilitatorDeck,studioLibrary,studioQuiz,validateStudioChallenge,validateStudioQuizDraft} from '../server/activity-studio.mjs';
+import {activityCohortPulse,activityPracticeInsights,gradeStudioQuiz,liveRoomQuestionView,publicQuiz,STUDIO_SKILLS,studioFacilitatorDeck,studioLibrary,studioQuiz,validateStudioArabicChallenge,validateStudioChallenge,validateStudioDraftRequest,validateStudioQuizDraft} from '../server/activity-studio.mjs';
 
 function customChallengeInput(){return {title:'Call Discovery Lab',category:'First conversations',level:'Core',duration_minutes:7,description:'Practice a curious, pressure-free opening.',study_cards:[{front:'Before recommending, what do you learn?',back:'Understand the client goal, timing, and priorities before suggesting a property.'}],questions:Array.from({length:3},(_,index)=>({prompt:`A client gives a broad opening request. What is your best next move in scenario ${index+1}?`,options:['Send every available option.','Ask a focused, open question and listen.','Promise the outcome they hope for.','Choose the priority for them.'],answer:1,skill:'discovery',hint:'Clarify the client’s goal first.',explanation:'An open question reveals the client’s own needs before you make a recommendation.'}))};}
+
+test('AI challenge brief accepts English or Egyptian Arabic and defaults safely to English',()=>{
+ const brief={title:'Discovery Practice',category:'Client discovery',level:'Core',duration_minutes:8,description:'Ask purposeful questions before recommending.',lesson_notes:'Practice open questions and listening.',round_count:3};
+ assert.equal(validateStudioDraftRequest(brief).language,'en');
+ assert.equal(validateStudioDraftRequest({...brief,language:'ar-EG'}).language,'ar-EG');
+ assert.throws(()=>validateStudioDraftRequest({...brief,language:'fr'}),{status:400});
+});
+
+test('AI challenge bilingual validation rejects an empty Egyptian Arabic field',()=>{
+ const input=customChallengeInput();
+ input.arabic={title:'تدريب اكتشاف احتياجات العميل',category:'فهم احتياج العميل',description:'اتدرّب على الأسئلة المناسبة.'};
+ input.questions=input.questions.map(question=>({...question,arabic:{prompt:'العميل محتاج اختيار مناسب. تسأله إيه الأول؟',options:['تبعتله كل الاختيارات.','تسأله سؤال مفتوح وتسمعله.','توعده بحاجة من غير ما تتأكد.','تختارله إنت.'],hint:'اسمع منه الأول.',explanation:'السؤال المفتوح بيوضح احتياج العميل قبل الترشيح.'}}));
+ input.study_cards=input.study_cards.map(card=>({...card,arabic:{front:'إيه اللي تعرفه قبل ما ترشّح؟',back:'افهم هدف العميل والوقت والأولويات الأول.'}}));
+ const complete=validateStudioChallenge(input);assert.equal(validateStudioArabicChallenge(complete),complete);
+ const incomplete={...complete,questions:complete.questions.map((question,index)=>index?question:{...question,arabic:{...question.arabic,prompt:''}})};
+ assert.throws(()=>validateStudioArabicChallenge(incomplete),{status:502});
+});
 
 test('Academy Studio contains a broad, complete learning pack without leaking facilitator keys',()=>{
  const library=studioLibrary();
@@ -136,6 +153,26 @@ test('Custom Studio challenges validate, grade by declared skill, and keep their
  const insight=activityPracticeInsights([{trainee_id:'custom-learner',activity_id:challenge.id,answers}], [challenge]).get('custom-learner');
  assert.equal(insight.focus[0].skill,'discovery');assert.equal(insight.focus[0].accuracy,67);
  assert.ok(STUDIO_SKILLS.some(skill=>skill.id==='discovery'));
+});
+
+test('Custom Egyptian Arabic editions persist across learner and live views without exposing answer keys early',()=>{
+ const input=customChallengeInput();
+ input.arabic={title:'تدريب مكالمة العميل',category:'أول محادثة',description:'اتدرّب على بداية هادية ومن غير ضغط.'};
+ input.questions[0].arabic={prompt:'عميل بدأ بطلب عام. إيه أحسن خطوة؟',options:['ابعتله كل الاختيارات.','اسأله سؤال مفتوح واسمعه.','اوعده بالنتيجة اللي عايزها.','اختار الأولوية مكانه.'],hint:'افهم هدف العميل الأول.',explanation:'السؤال المفتوح يوضّح احتياج العميل قبل الترشيح.'};
+ input.study_cards[0].arabic={front:'إيه اللي تعرفه قبل ما ترشّح؟',back:'افهم هدف العميل والميعاد والأولويات الأول.'};
+ const validated=validateStudioChallenge(input),challenge={id:'studio-arabic-test',...validated};
+ const learner=publicQuiz(challenge),learnerQuestion=learner.questions[0];
+ assert.equal(learner.arabic.title,input.arabic.title);
+ assert.equal(learnerQuestion.arabic.prompt,input.questions[0].arabic.prompt);
+ assert.equal(learnerQuestion.arabic.options[1],input.questions[0].arabic.options[1]);
+ assert.equal(learnerQuestion.arabic.hint,input.questions[0].arabic.hint);
+ assert.ok(!('explanation'in learnerQuestion.arabic));
+ assert.ok(!('answer'in learnerQuestion));
+ const hostQuestion=studioFacilitatorDeck([challenge]).find(item=>item.id===challenge.id).questions[0];
+ assert.equal(hostQuestion.answer,input.questions[0].answer);
+ assert.equal(liveRoomQuestionView(hostQuestion).arabic.explanation,undefined);
+ assert.equal(liveRoomQuestionView(hostQuestion,true).arabic.explanation,input.questions[0].arabic.explanation);
+ assert.equal(liveRoomQuestionView(hostQuestion,true).answer,input.questions[0].answer);
 });
 
 test('Custom challenge validation rejects malformed rounds, duplicate options, invalid skills and unsafe field lengths',()=>{

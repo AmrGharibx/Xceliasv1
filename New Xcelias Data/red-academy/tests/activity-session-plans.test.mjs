@@ -48,8 +48,10 @@ test('custom facilitator prompts are validated and saved into the same four-step
 });
 
 test('AI session brief accepts only a valid skill, active challenge and contact-free optional notes',()=>{
- const brief={focus_skill:'discovery',activity_id:activity.id,lesson_notes:'Practise an open question, then reflect the client priority.'};
+ const brief={focus_skill:'discovery',activity_id:activity.id,lesson_notes:'Practise an open question, then reflect the client priority.',language:'en'};
  assert.deepEqual(validateActivitySessionPromptDraftRequest(brief,activity),brief);
+ assert.equal(validateActivitySessionPromptDraftRequest({...brief,language:'ar-EG'},activity).language,'ar-EG');
+ badRequest(()=>validateActivitySessionPromptDraftRequest({...brief,language:'fr'},activity));
  badRequest(()=>validateActivitySessionPromptDraftRequest({...brief,focus_skill:'private'},activity));
  badRequest(()=>validateActivitySessionPromptDraftRequest({...brief,lesson_notes:'Write to coach@example.test'},activity));
  badRequest(()=>validateActivitySessionPromptDraftRequest({...brief,lesson_notes:'Call +20 (123) 456-7890'},activity));
@@ -61,6 +63,9 @@ test('AI session prompts must be all four bounded facilitator cues and cannot co
  assert.deepEqual(validateActivitySessionPromptDraft(prompts),prompts);
  assert.throws(()=>validateActivitySessionPromptDraft({...prompts,exit:''}),error=>error instanceof ApiError&&error.status===400);
  assert.throws(()=>validateActivitySessionPromptDraft({spark:prompts.spark}),error=>error instanceof ApiError&&error.status===502);
+ const arabic={spark:'افتكروا سؤال مفتوح ساعدكم تفهموا احتياج عميل.',quest:'اختاروا إجابتكم الأول قبل ما نعرض الملاحظة التدريبية.',huddle:'إيه الاختيار اللي راعى مصلحة العميل؟ وليه؟',exit:'قول خطوة واحدة هتستخدمها في محادثتك الجاية.'};
+ assert.deepEqual(validateActivitySessionPromptDraft(arabic,'ar-EG'),arabic);
+ assert.throws(()=>validateActivitySessionPromptDraft(prompts,'ar-EG'),error=>error instanceof ApiError&&error.status===502);
 });
 
 test('plan validation rejects invalid dates, unsafe text, unknown skills, archived challenges and insufficient class time',()=>{

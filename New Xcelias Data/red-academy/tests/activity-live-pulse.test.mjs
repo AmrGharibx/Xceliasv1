@@ -15,6 +15,15 @@ test('Class pulse validation builds a single anonymous, ungraded live question',
  assert.equal(JSON.stringify(pulse).includes('correct_answer'),false);
 });
 
+test('Class pulse keeps optional Egyptian Arabic copy aligned with choices',()=>{
+ const pulse=validateActivityLivePulse({...valid,arabic:{title:'نبضة سريعة',prompt:'قد إيه حاسس إنك جاهز تشرح خطوات فهم احتياج العميل؟',options:['جاهز أشرحها','محتاج مثال كمان','عايز أتدرّب عليها']}});
+ assert.equal(pulse.arabic.title,'نبضة سريعة');
+ assert.equal(pulse.questions[0].arabic.prompt,'قد إيه حاسس إنك جاهز تشرح خطوات فهم احتياج العميل؟');
+ assert.equal(pulse.questions[0].arabic.options.length,pulse.questions[0].options.length);
+ assert.equal(pulse.questions[0].arabic.options[1],'محتاج مثال كمان');
+ assert.throws(()=>validateActivityLivePulse({...valid,arabic:{options:['اختيار واحد بس']}}),{status:400});
+});
+
 test('Class pulse validation rejects incomplete, unsafe, oversized, duplicate, and invalid-timer input',()=>{
  for(const value of [
   {...valid,title:'x'},

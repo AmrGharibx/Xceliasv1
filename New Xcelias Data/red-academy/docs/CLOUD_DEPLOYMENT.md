@@ -5,8 +5,9 @@
 The cloud path keeps the existing local Node/SQLite application intact and adds
 an online deployment path for the same RED Academy interface:
 
-- GitHub Pages hosts only the static application shell. It never receives the
-  SQLite database, backups, source archive, portraits, or a data snapshot.
+- The Excelias domain hosts the static application shell. A legacy GitHub Pages
+  mirror may remain available, but neither host receives the SQLite database,
+  backups, source archive, portraits, or a data snapshot.
 - A Supabase Edge Function performs all authenticated reads and writes using a
   server-side service key. The browser receives only a short-lived opaque
   session token and keeps it in session storage.
@@ -44,12 +45,12 @@ source control.
 
        SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
        ACADEMY_SUPABASE_SECRET_KEY=<secret key>
-       ACADEMY_ALLOWED_ORIGINS=https://YOUR_GITHUB_OWNER.github.io
-       ACADEMY_APP_URL=https://YOUR_GITHUB_OWNER.github.io/Xceliasv1
+       ACADEMY_ALLOWED_ORIGINS=https://xcelias.com,https://amrgharibx.github.io
+       ACADEMY_APP_URL=https://xcelias.com/red-academy
 
    ACADEMY_ALLOWED_ORIGINS is the origin only; it has no repository path.
-   ACADEMY_APP_URL is the full GitHub Pages address and is used only when
-   creating invitation links. Optional AI reports additionally require the
+   ACADEMY_APP_URL is the full application URL and is used when creating
+   invitation links. Optional AI reports additionally require the
    existing server-side AI settings; they remain off unless explicitly set.
    Instructor-comment polishing uses the same Gemini key as Report Generation
    3: set `AI_REPORTS_ENABLED=true` and `GEMINI_API_KEY` as Supabase Function
@@ -58,6 +59,18 @@ source control.
    ACADEMY_SUPABASE_SECRET_KEY is an explicit fallback. A legacy project can
    use SUPABASE_SERVICE_ROLE_KEY instead; the application supports that older
    JWT key only on the server side.
+
+   Academy Studio participant-only quiz and live-room links can use
+   `https://join.xcelias.com` without moving staff or Academy Operations. For
+   now, `participantOriginEnabled` is absent/false in `cloud/production.json`,
+   so QR codes and learner links stay on the trainer's current (main-site) host;
+   this also overrides any stale `RED_ACADEMY_PARTICIPANT_ORIGIN` build variable.
+   After the Vercel domain, DNS record, and sign-in access are ready, explicitly
+   set `participantOriginEnabled` to `true` in that config and set
+   `RED_ACADEMY_PARTICIPANT_ORIGIN=https://join.xcelias.com` in Vercel's
+   Production build environment. Add the exact origin to
+   `ACADEMY_ALLOWED_ORIGINS`; keep `ACADEMY_APP_URL` on `xcelias.com` because
+   it controls the separate Academy invitation flow.
 
    The current production workspace is served from
    `https://xcelias.com/red-academy`. Its function allow-list includes both
@@ -85,18 +98,20 @@ source control.
          "publishableKey": "YOUR_SUPABASE_PUBLISHABLE_KEY"
        }
 
-6. Push the repository's main branch. The included GitHub Actions workflow
-   validates the configuration, builds a static-only cloud-dist folder, and
-   deploys it to GitHub Pages. Until all three values are valid, the workflow
-   deliberately completes without publishing a broken login page.
+6. Deploy the repository through Vercel. Its build installs the Academy's
+   frontend dependencies, packages the static-only cloud app into
+   `/red-academy/`, and serves it on `https://xcelias.com`. The included GitHub
+   Actions workflow can still publish the legacy GitHub Pages mirror. Until all
+   three cloud values are valid, that workflow deliberately completes without
+   publishing a broken login page.
 
 ## Operational checks
 
 After the first deployment, sign in as two separate users in two browser
 profiles. Change a trainee assessment in one profile and confirm the other
 refreshes promptly. Confirm an unauthenticated request to the Edge Function
-cannot fetch /state, and confirm GitHub Pages contains no data, archive, or
-backup files.
+cannot fetch /state, and confirm the static deployment contains no data,
+archive, or backup files.
 
 Use the Supabase dashboard to monitor database size, storage, function errors,
 and project status. The supplied data fits the current free database allowance,

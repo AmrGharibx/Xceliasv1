@@ -238,6 +238,9 @@ topbarNewTab.addEventListener('click', function () {
 function launchProject(key) {
   const proj = PROJECTS[key];
   if (!proj) return;
+  // Ignore stale deep links to the hidden legacy card; unhide the card to restore it.
+  const legacyActivitiesCard = document.querySelector('.project-card[data-project="activities"]');
+  if (key === 'activities' && legacyActivitiesCard?.hidden) return;
 
   // Role check
   const allowedRoles = XCP_ROLE_MAP[key];

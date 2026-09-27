@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
+import {participantOriginForBuild} from './participant-origin.mjs';
 
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const configPath=path.join(root,'cloud','production.json');
@@ -18,6 +19,7 @@ function validPublishableKey(value){return typeof value==='string'&&/^[A-Za-z0-9
 const apiUrl=validApiUrl(configured('RED_ACADEMY_CLOUD_API_URL','apiUrl'));
 const supabaseUrl=validSupabaseUrl(configured('RED_ACADEMY_SUPABASE_URL','supabaseUrl'));
 const publishableKey=validPublishableKey(configured('RED_ACADEMY_SUPABASE_PUBLISHABLE_KEY','publishableKey'));
+const participantOrigin=participantOriginForBuild(configured('RED_ACADEMY_PARTICIPANT_ORIGIN','participantOrigin'),config.participantOriginEnabled===true);
 const ready=!!apiUrl&&!!supabaseUrl&&!!publishableKey&&new URL(apiUrl).host===new URL(supabaseUrl).host;
 if(checkOnly){console.log(ready?'true':'false');process.exit(0);}
 if(!ready)throw new Error('Set cloud/production.json to the matching HTTPS Supabase project URL, academy Edge Function URL, and publishable key before publishing the cloud build.');
@@ -28,6 +30,7 @@ await fs.cp(path.join(root,'public'),output,{recursive:true,filter:source=>!sour
 await fs.copyFile(path.join(root,'node_modules','@supabase','supabase-js','dist','umd','supabase.js'),path.join(output,'vendor','supabase.js'));
 await fs.copyFile(path.join(root,'node_modules','html2canvas','dist','html2canvas.min.js'),path.join(output,'vendor','html2canvas.min.js'));
 await fs.copyFile(path.join(root,'node_modules','jspdf','dist','jspdf.umd.min.js'),path.join(output,'vendor','jspdf.umd.min.js'));
+await fs.copyFile(path.join(root,'node_modules','qrcode-generator','dist','qrcode.mjs'),path.join(output,'vendor','qrcode-generator.mjs'));
 const fontDir=path.join(output,'vendor','fonts');
 await fs.mkdir(fontDir,{recursive:true});
 for(const [packageName,fileName] of [
@@ -46,13 +49,18 @@ for(const [packageName,fileName] of [
  ['@fontsource/playfair-display/files/playfair-display-latin-500-normal.woff2','playfair-500.woff2'],
  ['@fontsource/playfair-display/files/playfair-display-latin-600-normal.woff2','playfair-600.woff2'],
  ['@fontsource/playfair-display/files/playfair-display-latin-700-normal.woff2','playfair-700.woff2'],
- ['@fontsource/playfair-display/files/playfair-display-latin-800-normal.woff2','playfair-800.woff2']
+ ['@fontsource/playfair-display/files/playfair-display-latin-800-normal.woff2','playfair-800.woff2'],
+ ['@fontsource/noto-sans-arabic/files/noto-sans-arabic-arabic-400-normal.woff2','noto-sans-arabic-400.woff2'],
+ ['@fontsource/noto-sans-arabic/files/noto-sans-arabic-arabic-500-normal.woff2','noto-sans-arabic-500.woff2'],
+ ['@fontsource/noto-sans-arabic/files/noto-sans-arabic-arabic-600-normal.woff2','noto-sans-arabic-600.woff2'],
+ ['@fontsource/noto-sans-arabic/files/noto-sans-arabic-arabic-700-normal.woff2','noto-sans-arabic-700.woff2']
 ])await fs.copyFile(path.join(root,'node_modules',packageName),path.join(fontDir,fileName));
+await fs.copyFile(path.join(root,'node_modules','@fontsource','noto-sans-arabic','LICENSE'),path.join(fontDir,'OFL-Noto-Sans-Arabic.txt'));
 const sourceReporter=path.resolve(root,'..','..','Report Generation 3','csp','reports-app.js');
 const reporterSource=await fs.readFile(sourceReporter,'utf8');
 const logoMatch=reporterSource.match(/const LOGO = `([\s\S]*?)`;/);
 if(!logoMatch)throw new Error('The standalone Reporter Generator logo could not be found.');
 await fs.writeFile(path.join(output,'report-logo.svg'),logoMatch[1]);
-await fs.writeFile(path.join(output,'cloud-config.js'),`window.RED_ACADEMY_CLOUD=Object.freeze({apiUrl:${JSON.stringify(apiUrl)},supabaseUrl:${JSON.stringify(supabaseUrl)},publishableKey:${JSON.stringify(publishableKey)}});\n`,{mode:0o600});
+await fs.writeFile(path.join(output,'cloud-config.js'),`window.RED_ACADEMY_CLOUD=Object.freeze({apiUrl:${JSON.stringify(apiUrl)},supabaseUrl:${JSON.stringify(supabaseUrl)},publishableKey:${JSON.stringify(publishableKey)},participantOrigin:${JSON.stringify(participantOrigin)}});\n`,{mode:0o600});
 await fs.writeFile(path.join(output,'.nojekyll'),'');
 console.log(`Cloud build ready in ${output}`);

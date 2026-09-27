@@ -17,6 +17,7 @@ const projectRoot=path.dirname(fileURLToPath(import.meta.url)),root=path.join(pr
 const localReportAssets=new Map([
  ['/vendor/html2canvas.min.js',path.join(projectRoot,'node_modules','html2canvas','dist','html2canvas.min.js')],
  ['/vendor/jspdf.umd.min.js',path.join(projectRoot,'node_modules','jspdf','dist','jspdf.umd.min.js')],
+ ['/vendor/qrcode-generator.mjs',path.join(projectRoot,'node_modules','qrcode-generator','dist','qrcode.mjs')],
  ['/vendor/fonts/montserrat-400.woff2',path.join(projectRoot,'node_modules','@fontsource','montserrat','files','montserrat-latin-400-normal.woff2')],
  ['/vendor/fonts/montserrat-500.woff2',path.join(projectRoot,'node_modules','@fontsource','montserrat','files','montserrat-latin-500-normal.woff2')],
  ['/vendor/fonts/montserrat-600.woff2',path.join(projectRoot,'node_modules','@fontsource','montserrat','files','montserrat-latin-600-normal.woff2')],

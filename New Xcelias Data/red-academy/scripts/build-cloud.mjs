@@ -2,6 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {participantOriginForBuild} from './participant-origin.mjs';
+import {withTrainerBaseHref} from './trainer-html.mjs';
 
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const configPath=path.join(root,'cloud','production.json');
@@ -27,6 +28,9 @@ const output=path.resolve(root,'cloud-dist');
 if(path.relative(root,output).startsWith('..')||path.relative(root,output)==='')throw new Error('Cloud output path is invalid.');
 await fs.rm(output,{recursive:true,force:true});
 await fs.cp(path.join(root,'public'),output,{recursive:true,filter:source=>!source.endsWith('.DS_Store')});
+const trainerIndex=path.join(output,'trainer-activities','index.html');
+const trainerHtml=await fs.readFile(trainerIndex,'utf8');
+await fs.writeFile(trainerIndex,withTrainerBaseHref(trainerHtml,'/red-academy/trainer-activities/'));
 await fs.copyFile(path.join(root,'node_modules','@supabase','supabase-js','dist','umd','supabase.js'),path.join(output,'vendor','supabase.js'));
 await fs.copyFile(path.join(root,'node_modules','html2canvas','dist','html2canvas.min.js'),path.join(output,'vendor','html2canvas.min.js'));
 await fs.copyFile(path.join(root,'node_modules','jspdf','dist','jspdf.umd.min.js'),path.join(output,'vendor','jspdf.umd.min.js'));

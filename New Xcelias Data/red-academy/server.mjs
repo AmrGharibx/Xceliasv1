@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {loadEnv} from './server/env.mjs';
+import {resolvePublicPath} from './server/static-path.mjs';
 loadEnv();
 process.umask(0o077);
 process.env.APP_URL??=`http://localhost:${process.env.PORT||3000}`;
@@ -48,9 +49,9 @@ const server=http.createServer(async(req,res)=>{
  if(!['GET','HEAD'].includes(req.method)){res.writeHead(405);res.end();return;}
  let pathname=decodeURIComponent(url.pathname);if(pathname.split('/').some(segment=>segment.startsWith('.'))){res.writeHead(404);res.end('Not found');return;}
  const localReportAsset=localReportAssets.get(pathname);
- let filename=localReportAsset||path.resolve(root,'.'+pathname);
- if(!localReportAsset&&!filename.startsWith(root+path.sep)&&filename!==root){res.writeHead(403);res.end();return;}
- if(!localReportAsset&&(pathname==='/'||!path.extname(pathname)))filename=path.join(root,'index.html');
+ const resolved=resolvePublicPath(root,pathname,localReportAsset,fs.existsSync);
+ if(resolved.status===403){res.writeHead(403);res.end();return;}
+ const filename=resolved.file;
  if(!fs.existsSync(filename)||!fs.statSync(filename).isFile()){res.writeHead(404);res.end('Not found');return;}
  res.setHeader('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; font-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'");
  res.setHeader('Content-Type',types[path.extname(filename)]||'application/octet-stream');res.setHeader('Cache-Control','no-store');

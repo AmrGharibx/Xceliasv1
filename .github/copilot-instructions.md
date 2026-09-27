@@ -32,6 +32,7 @@ j:\Excelias V2\
 ├── Content ( WorkSpace )/    ← Content module (Create React App build)
 ├── Report Generation 3/      ← Reports module (vanilla HTML/JS)
 ├── Study Guide & Excersies/  ← Study guide module (vanilla HTML/JS)
+├── New Xcelias Data/red-academy/ ← Private Academy Operations (invitation-only, persistent data)
 ├── Website ( WorkSpace )/    ← Property Explorer (vanilla JS + Leaflet maps)
 │
 ├── build.js                  ← Build script: copies all modules to dist/, Babel-compiles JSX
@@ -149,15 +150,31 @@ app.use("/mymodule", studentGuardMiddleware, express.static(MY_MODULE_DIR));
 
 ---
 
+## RED Academy and trainer activities
+
+- The private Academy Operations app lives in `New Xcelias Data/red-academy/` and has its own invitation-only `admin` / `instructor` / `viewer` roles; its authenticated API uses `red_session` in self-hosted mode or a short-lived bearer token in cloud mode.
+- `/red-academy/trainer-activities/` is the standalone Academy Studio. It shares RED Academy's authenticated session, canonical roster, and server-side `activity_assignments` / `activity_assignment_participants` records. Native quiz answer keys stay server-side; learner entry links are random bearer tokens stored only as SHA-256 hashes, and quiz scores/XP are graded by the server.
+- `/red-academy/#/activities` remains the earlier trainer-workspace fallback. Do not remove it or the separate `/activities/` legacy game library as the Studio grows; preserving both is intentional.
+- Academy Studio supports shared immutable trainer-authored challenges, optional active-recall cards, and an optional Gemini challenge-draft assistant. AI drafts require explicit consent, may include only the learning brief and non-sensitive lesson notes (never roster data), are validated server-side, and must remain unsaved until a trainer reviews and publishes. Custom answer keys are private data; local and cloud APIs must continue stripping keys until server-side grading/reveal. Cloud deployments additionally require `20260924200000_studio_custom_challenges.sql`; do not apply it from tests/builds.
+- Academy Studio's shared classroom run-of-show is stored in `activity_session_plans`: batch/date and optional-company scoped, four-step (warm-up, live challenge, coaching huddle, exit ticket), audited, version-checked, and visible only to writable staff. The linked challenge must be selected from the active server-side Studio library; session dates suggested by the planner must not silently alter attendance. Cloud deployments additionally require `20260924220000_activity_session_plans.sql` after the custom-challenge migration; do not apply it from tests/builds.
+- Academy Studio's learner quiz loop is covered against an isolated SQLite server and Chromium. Cloud support additionally depends on applying `20260924120000_trainer_activities.sql` and `20260924140000_activity_studio_learner_loop.sql`, then redeploying the Edge Function/static build; local test/build tasks must never apply cloud migrations.
+- Academy Studio's optional session co-planner requires explicit trainer consent and sends only the selected learning focus, safe challenge metadata, and lesson notes to Gemini. Never include the roster, trainee identifiers, scores, attendance, or answer keys. AI cue drafts remain unsaved until a trainer reviews and submits the session plan; shared cue text is validated through `activity-session-plans.mjs` and persisted in the existing four-step outline. Local and Edge Function AI paths must stay behaviorally aligned.
+- The optional Role-play Lab AI co-planner requires its own explicit consent and sends only the selected skill and trainer-entered lesson notes. Validate contact details and all generated scene fields on the server, keep the draft in ephemeral trainer UI state only, and never record performance, send roster/assessment/attendance data, award XP, or alter curated role-play scenes. Local API and Academy Edge Function implementations must stay aligned.
+- The standalone `/activities/` React/Firebase library is legacy game content and has a separate authentication system. Do not treat its local accounts, user profiles, or Firebase roles as the Academy roster or authorization source.
+- For cloud releases, apply the matching `New Xcelias Data/red-academy/supabase/migrations/` migration before publishing frontend/API changes. Never run a cloud migration from an ordinary local build/test task.
+
 ## Modules Overview
 
 | Module        | Path                    | Auth                       |
 | ------------- | ----------------------- | -------------------------- |
 | Portal (home) | `/`                     | Admin only                 |
-| Activities    | `/activities/`          | Admin only (student guard) |
+| Trainer Activities | `/red-academy/trainer-activities/` | RED Academy invitation-only session; admin/instructor can manage |
+| Trainer Activities fallback | `/red-academy/#/activities` | RED Academy invitation-only session; admin/instructor can manage |
+| Legacy game library | `/activities/` | Portal staff guard plus legacy Firebase/local sign-in |
 | Content       | `/content/`             | Admin only (student guard) |
 | Reports       | `/reports/`             | Admin only (student guard) |
 | Study Guide   | `/studyguide/`          | All authenticated users    |
+| Academy Operations | `/red-academy/` | RED Academy invitation-only session |
 | Website       | `/website/`             | Student guard              |
 | Avaria        | `http://localhost:3005` | Runs separately (Next.js)  |
 

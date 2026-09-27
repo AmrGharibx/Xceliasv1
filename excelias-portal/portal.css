@@ -628,6 +628,10 @@ body {
   background: rgba(179, 52, 32, 0.12);
   border-color: rgba(179, 52, 32, 0.2);
 }
+.card-icon--trainerstudio {
+  background: linear-gradient(135deg, rgba(181, 35, 50, 0.2), rgba(214, 166, 72, 0.11));
+  border-color: rgba(181, 35, 50, 0.34);
+}
 .card-icon--content {
   background: rgba(198, 147, 84, 0.12);
   border-color: rgba(198, 147, 84, 0.2);
@@ -671,6 +675,11 @@ body {
 .badge--activities {
   background: rgba(179, 52, 32, 0.15);
   color: #f87171;
+}
+.badge--trainerstudio {
+  background: linear-gradient(110deg, rgba(181, 35, 50, 0.2), rgba(214, 166, 72, 0.12));
+  color: #efb9a0;
+  border: 1px solid rgba(181, 35, 50, 0.26);
 }
 .badge--content {
   background: rgba(198, 147, 84, 0.15);

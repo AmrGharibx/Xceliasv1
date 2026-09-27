@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0c1014">
+  <meta name="description" content="Private trainer workspace for planning practice and coaching trainees.">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'">
+  <title>Trainer Activities | RED Training Academy</title>
+  <link rel="icon" href="../training-academy-logo.svg">
+  <link rel="stylesheet" href="./trainer-activities.css">
+  <link rel="stylesheet" href="./trainer-activities-overrides.css">
+</head>
+<body>
+  <div id="app" aria-live="polite"><main class="boot"><span class="brand-mark">R</span><p>Opening your private trainer workspace…</p></main></div>
+  <div id="toast-root" aria-live="assertive" aria-atomic="true"></div>
+  <dialog id="trainer-dialog" aria-labelledby="dialog-title"></dialog>
+  <script src="../cloud-config.js"></script>
+  <script src="../vendor/supabase.js"></script>
+  <script type="module" src="./trainer-activities.mjs"></script>
+</body>
+</html>

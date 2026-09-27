@@ -174,7 +174,125 @@ CREATE TABLE IF NOT EXISTS import_reviews (
  resolution TEXT NOT NULL DEFAULT '', updated_at TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS ix_review_batch ON import_reviews(batch_id,status);
+CREATE TABLE IF NOT EXISTS activity_assignments (
+ id TEXT PRIMARY KEY,
+ batch_id TEXT NOT NULL REFERENCES batches(id) ON DELETE CASCADE,
+ activity_id TEXT NOT NULL,
+ title TEXT NOT NULL,
+ instructions TEXT NOT NULL DEFAULT '',
+ due_date TEXT,
+ status TEXT NOT NULL DEFAULT 'Open' CHECK(status IN ('Open','Closed')),
+ version INTEGER NOT NULL DEFAULT 1,
+ created_by TEXT NOT NULL,
+ created_at TEXT NOT NULL,
+ updated_at TEXT NOT NULL,
+ UNIQUE(id,batch_id)
+);
+CREATE INDEX IF NOT EXISTS ix_activity_assignments_batch ON activity_assignments(batch_id,created_at DESC);
+CREATE TABLE IF NOT EXISTS activity_custom_challenges (
+ id TEXT PRIMARY KEY CHECK(id GLOB 'studio-*' AND length(id) BETWEEN 10 AND 40),
+ title TEXT NOT NULL CHECK(length(title) BETWEEN 3 AND 80),
+ category TEXT NOT NULL CHECK(length(category) BETWEEN 2 AND 60),
+ level TEXT NOT NULL CHECK(level IN ('Warm-up','Core','Challenge')),
+ duration_minutes INTEGER NOT NULL CHECK(duration_minutes BETWEEN 2 AND 45),
+ description TEXT NOT NULL DEFAULT '' CHECK(length(description)<=280),
+ content_json TEXT NOT NULL CHECK(json_valid(content_json) AND json_type(content_json)='object'),
+ created_by TEXT NOT NULL,
+ created_at TEXT NOT NULL,
+ archived_at TEXT
+);
+CREATE INDEX IF NOT EXISTS ix_activity_custom_challenges_active ON activity_custom_challenges(archived_at,created_at DESC);
+CREATE TABLE IF NOT EXISTS activity_assignment_participants (
+ id TEXT PRIMARY KEY,
+ assignment_id TEXT NOT NULL,
+ trainee_id TEXT NOT NULL,
+ batch_id TEXT NOT NULL,
+ status TEXT NOT NULL DEFAULT 'Assigned' CHECK(status IN ('Assigned','In Progress','Completed')),
+ score REAL CHECK(score IS NULL OR (score>=0 AND score<=100)),
+ trainer_feedback TEXT NOT NULL DEFAULT '',
+ completed_at TEXT,
+ learner_code_hash TEXT,
+ learner_answers TEXT NOT NULL DEFAULT '[]' CHECK(json_valid(learner_answers)),
+ learner_draft_answers TEXT NOT NULL DEFAULT '[]' CHECK(json_valid(learner_draft_answers)),
+ learner_draft_index INTEGER NOT NULL DEFAULT 0 CHECK(learner_draft_index>=0),
+ learner_draft_updated_at TEXT,
+ learner_draft_version INTEGER NOT NULL DEFAULT 0 CHECK(learner_draft_version>=0),
+ learner_submitted_at TEXT,
+ correct_count INTEGER CHECK(correct_count IS NULL OR correct_count>=0),
+ earned_xp INTEGER NOT NULL DEFAULT 0 CHECK(earned_xp>=0),
+ version INTEGER NOT NULL DEFAULT 1,
+ created_at TEXT NOT NULL,
+ updated_at TEXT NOT NULL,
+ UNIQUE(assignment_id,trainee_id),
+ FOREIGN KEY(assignment_id,batch_id) REFERENCES activity_assignments(id,batch_id) ON DELETE CASCADE,
+ FOREIGN KEY(trainee_id,batch_id) REFERENCES trainees(id,batch_id) ON DELETE CASCADE
+);
+CREATE INDEX IF NOT EXISTS ix_activity_participants_trainee ON activity_assignment_participants(trainee_id,created_at DESC);
+CREATE TABLE IF NOT EXISTS activity_live_rooms (
+ id TEXT PRIMARY KEY,
+ code_hash TEXT NOT NULL UNIQUE CHECK(length(code_hash)=64),
+ owner_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+ activity_id TEXT NOT NULL,
+ deck_snapshot TEXT NOT NULL CHECK(json_valid(deck_snapshot)),
+ team_one TEXT NOT NULL CHECK(length(team_one) BETWEEN 1 AND 28),
+ team_two TEXT NOT NULL CHECK(length(team_two) BETWEEN 1 AND 28),
+ status TEXT NOT NULL DEFAULT 'Open' CHECK(status IN ('Open','Complete','Closed')),
+ round_index INTEGER NOT NULL DEFAULT 0 CHECK(round_index>=0),
+ revealed INTEGER NOT NULL DEFAULT 0 CHECK(revealed IN (0,1)),
+ correct_choice INTEGER CHECK(correct_choice IS NULL OR correct_choice BETWEEN 0 AND 7),
+ timer_duration INTEGER NOT NULL DEFAULT 0 CHECK(timer_duration IN (0,20,30,45)),
+ timer_ends_at TEXT,
+ created_at TEXT NOT NULL,
+ updated_at TEXT NOT NULL,
+ expires_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS ix_activity_live_rooms_expiry ON activity_live_rooms(expires_at);
+CREATE TABLE IF NOT EXISTS activity_live_players (
+ id TEXT PRIMARY KEY,
+ room_id TEXT NOT NULL REFERENCES activity_live_rooms(id) ON DELETE CASCADE,
+ token_hash TEXT NOT NULL UNIQUE CHECK(length(token_hash)=64),
+ nickname TEXT NOT NULL CHECK(length(nickname) BETWEEN 1 AND 24),
+ team_no INTEGER NOT NULL CHECK(team_no BETWEEN 1 AND 4),
+ points INTEGER NOT NULL DEFAULT 0 CHECK(points>=0),
+ streak INTEGER NOT NULL DEFAULT 0 CHECK(streak>=0),
+ joined_at TEXT NOT NULL,
+ last_seen_at TEXT NOT NULL,
+ UNIQUE(room_id,id)
+);
+CREATE INDEX IF NOT EXISTS ix_activity_live_players_room ON activity_live_players(room_id,team_no,points DESC);
+CREATE TABLE IF NOT EXISTS activity_live_answers (
+ room_id TEXT NOT NULL REFERENCES activity_live_rooms(id) ON DELETE CASCADE,
+ player_id TEXT NOT NULL REFERENCES activity_live_players(id) ON DELETE CASCADE,
+ round_index INTEGER NOT NULL CHECK(round_index>=0),
+ choice INTEGER NOT NULL CHECK(choice BETWEEN 0 AND 7),
+ confidence TEXT CHECK(confidence IS NULL OR confidence IN ('tentative','confident')),
+ correct INTEGER CHECK(correct IS NULL OR correct IN (0,1)),
+ awarded_points INTEGER NOT NULL DEFAULT 0 CHECK(awarded_points>=0),
+ updated_at TEXT NOT NULL,
+ PRIMARY KEY(room_id,player_id,round_index)
+);
+CREATE INDEX IF NOT EXISTS ix_activity_live_answers_round ON activity_live_answers(room_id,round_index,choice);
+CREATE TABLE IF NOT EXISTS activity_session_plans (
+ id TEXT PRIMARY KEY,
+ batch_id TEXT NOT NULL REFERENCES batches(id) ON DELETE CASCADE,
+ company_id TEXT REFERENCES companies(id) ON DELETE SET NULL,
+ session_date TEXT NOT NULL CHECK(length(session_date)=10 AND session_date GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'),
+ title TEXT NOT NULL CHECK(length(title) BETWEEN 3 AND 120),
+ focus_skill TEXT NOT NULL CHECK(focus_skill IN ('discovery','qualification','accuracy','objections','ethics','followthrough','viewing','teamwork')),
+ duration_minutes INTEGER NOT NULL CHECK(duration_minutes BETWEEN 15 AND 120),
+ activity_id TEXT NOT NULL,
+ outline_json TEXT NOT NULL CHECK(json_valid(outline_json) AND json_type(outline_json)='array' AND json_array_length(outline_json)=4),
+ linked_assignment_id TEXT UNIQUE REFERENCES activity_assignments(id) ON DELETE SET NULL,
+ status TEXT NOT NULL DEFAULT 'Planned' CHECK(status IN ('Planned','In Progress','Completed')),
+ version INTEGER NOT NULL DEFAULT 1 CHECK(version>=1),
+ created_by TEXT NOT NULL,
+ created_at TEXT NOT NULL,
+ updated_at TEXT NOT NULL,
+ completed_at TEXT
+);
+CREATE INDEX IF NOT EXISTS ix_activity_session_plans_batch_date ON activity_session_plans(batch_id,session_date DESC,created_at DESC);
+CREATE INDEX IF NOT EXISTS ix_activity_session_plans_company_date ON activity_session_plans(company_id,session_date DESC);
 CREATE UNIQUE INDEX IF NOT EXISTS ix_daily_native_unique ON daily_attendance(trainee_id,date) WHERE source_id IS NULL;
 CREATE UNIQUE INDEX IF NOT EXISTS ix_assessment_native_unique ON assessments(trainee_id,batch_id) WHERE source_id IS NULL;
 CREATE UNIQUE INDEX IF NOT EXISTS ix_checklist_native_unique ON attendance_10day(trainee_id,batch_id,period_start,period_end) WHERE source_id IS NULL;
-PRAGMA user_version = 4;
+PRAGMA user_version = 15;

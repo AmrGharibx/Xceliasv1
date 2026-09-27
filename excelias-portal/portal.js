@@ -18,6 +18,11 @@ const PROJECTS = {
     url: '/activities/',
     mode: 'iframe',
   },
+  trainerstudio: {
+    name: 'Trainer Activities Studio',
+    url: IS_LOCAL ? `http://${location.hostname}:3000/trainer-activities/` : '/red-academy/trainer-activities/',
+    mode: 'tab',
+  },
   content: {
     name: 'Training Manual',
     url: '/content/',

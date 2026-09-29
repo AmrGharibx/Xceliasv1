@@ -4573,10 +4573,11 @@
       "zone": "New Cairo",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 5300000,
+      "priceMin": 3500000,
       "unitTypes": [
         "Apartment",
-        "Penthouse"
+        "Penthouse",
+        "Studio"
       ],
       "areaMin": 84,
       "areaMax": 418,
@@ -4601,7 +4602,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1585-jade-blue",
-            "observedPrice": 5300000,
+            "observedPrice": 3500000,
             "sourceId": "nawy:1585"
           },
           {
@@ -4611,7 +4612,7 @@
             "sourceId": "property-finder:331e16e9-1a4f-4d41-a111-30bc45558eb0"
           }
         ],
-        "updatedAt": "2026-09-28T03:01:31.437Z"
+        "updatedAt": "2026-09-29T12:46:23.142Z"
       }
     },
     {
@@ -8249,9 +8250,9 @@
       "type": "residential",
       "priceMin": 32000000,
       "unitTypes": [
-        "Town House",
-        "Twin House",
-        "Villa"
+        "Villa",
+        "Twinhouse",
+        "Townhouse"
       ],
       "areaMin": 85,
       "areaMax": 425,
@@ -8263,24 +8264,30 @@
         5,
         6
       ],
-      "paymentPlan": "10% Down Payment, 8 Years Installments",
-      "downPayment": 0,
-      "installmentYears": 0,
+      "paymentPlan": "5% Down Payment, 7 Years Installments",
+      "downPayment": 5,
+      "installmentYears": 7,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19116-el-patio-town",
             "observedPrice": 32000000,
             "sourceId": "red:19116"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1113-el-patio-town",
+            "observedPrice": 34000000,
+            "sourceId": "nawy:1113"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-09-29T12:46:23.142Z"
       }
     },
     {
@@ -8593,7 +8600,7 @@
       "zone": "New Cairo",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 9721140,
+      "priceMin": 10336200,
       "unitTypes": [
         "Apartment",
         "Chalet",
@@ -8620,7 +8627,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1152-sq1",
-            "observedPrice": 9721140,
+            "observedPrice": 10336200,
             "sourceId": "nawy:1152"
           },
           {
@@ -8630,7 +8637,7 @@
             "sourceId": "red:19192"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-09-29T12:46:23.142Z"
       }
     },
     {
@@ -24410,7 +24417,7 @@
       "zone": "October",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 4496712,
+      "priceMin": 4076523,
       "unitTypes": [
         "Apartment"
       ],
@@ -24437,7 +24444,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1547-westdays",
-            "observedPrice": 4496712,
+            "observedPrice": 4076523,
             "sourceId": "nawy:1547"
           },
           {
@@ -24453,7 +24460,7 @@
             "sourceId": "property-finder:b0158dfb-221c-48b2-907a-b7759ebed7f8"
           }
         ],
-        "updatedAt": "2026-09-28T03:01:31.437Z"
+        "updatedAt": "2026-09-29T12:46:23.142Z"
       }
     },
     {
@@ -26058,9 +26065,10 @@
       "layouts": [
         "http://www.newcities.gov.eg/english/New_Communities/Marina_El_Alamein/default.aspx"
       ],
-      "priceMin": 12915000,
+      "priceMin": 10125000,
       "unitTypes": [
         "Chalet",
+        "Studio",
         "Apartment"
       ],
       "areaMin": 87,
@@ -26086,7 +26094,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1624-the-island-marina-5",
-            "observedPrice": 12915000,
+            "observedPrice": 10125000,
             "sourceId": "nawy:1624"
           },
           {
@@ -26096,7 +26104,7 @@
             "sourceId": "red:30925"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-09-29T12:46:23.142Z"
       }
     },
     {
@@ -59222,7 +59230,7 @@
       "zone": "Zayed",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 6272251,
+      "priceMin": 6003984,
       "unitTypes": [
         "Apartment"
       ],
@@ -59249,7 +59257,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1375-westview-residence",
-            "observedPrice": 6272251,
+            "observedPrice": 6003984,
             "sourceId": "nawy:1375"
           },
           {
@@ -59259,7 +59267,7 @@
             "sourceId": "property-finder:4bbc04c9-3b7e-476b-bb0e-7099db7cbefe"
           }
         ],
-        "updatedAt": "2026-09-28T03:01:31.437Z"
+        "updatedAt": "2026-09-29T12:46:23.142Z"
       }
     },
     {
@@ -60454,13 +60462,13 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Town House",
-        "Twin House",
-        "Villa"
+        "Villa",
+        "Twinhouse",
+        "Townhouse"
       ],
-      "downPayment": 0,
-      "installmentYears": 0,
-      "paymentPlan": "12% Down Payment, 9 Years Installments",
+      "downPayment": 5,
+      "installmentYears": 7,
+      "paymentPlan": "5% Down Payment, 7 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2701",
@@ -60472,16 +60480,22 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19116-el-patio-town",
             "observedPrice": 32000000,
             "sourceId": "red:19116"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1113-el-patio-town",
+            "observedPrice": 34000000,
+            "sourceId": "nawy:1113"
           }
         ],
-        "updatedAt": "2026-09-22T18:36:05.501Z"
+        "updatedAt": "2026-09-29T12:46:23.142Z"
       }
     },
     {
@@ -66139,7 +66153,8 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Chalet"
+        "Chalet",
+        "Studio"
       ],
       "downPayment": 15,
       "installmentYears": 4,
@@ -66149,7 +66164,7 @@
         "sourceId": "nawy-inventory:2260",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 12915000,
+      "priceMin": 10125000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -66160,11 +66175,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/2260-blu-stays---the-island",
-            "observedPrice": 12915000,
+            "observedPrice": 10125000,
             "sourceId": "nawy:2260"
           }
         ],
-        "updatedAt": "2026-09-22T18:36:05.501Z"
+        "updatedAt": "2026-09-29T12:46:23.142Z"
       }
     },
     {
@@ -69984,17 +69999,18 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "apartment"
+        "Studio",
+        "Apartment"
       ],
       "downPayment": 5,
-      "installmentYears": 0,
-      "paymentPlan": "5% Down Payment",
+      "installmentYears": 10,
+      "paymentPlan": "5% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2561",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 3250000,
+      "priceMin": 3500000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -70003,13 +70019,13 @@
         "sourceCount": 1,
         "sources": [
           {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/aspect-developments/daymark",
-            "observedPrice": 3250000,
-            "sourceId": "property-finder:461f7f63-9e9d-403f-bd0f-9230c1a1adce"
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2561-daymark",
+            "observedPrice": 3500000,
+            "sourceId": "nawy:2561"
           }
         ],
-        "updatedAt": "2026-09-24T02:54:29.356Z"
+        "updatedAt": "2026-09-29T12:46:23.142Z"
       }
     },
     {

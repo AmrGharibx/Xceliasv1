@@ -1021,7 +1021,8 @@
       "type": "residential",
       "priceMin": 10446000,
       "unitTypes": [
-        "apartment"
+        "Apartment",
+        "Chalet"
       ],
       "areaMin": 84,
       "areaMax": 367,
@@ -1034,29 +1035,23 @@
         6
       ],
       "paymentPlan": "10% Down Payment",
-      "downPayment": 10,
+      "downPayment": 0,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19235-blanca",
             "observedPrice": 10446000,
             "sourceId": "red:19235"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/somabay-realestate/blanca",
-            "observedPrice": 19900000,
-            "sourceId": "property-finder:2ae373c3-ca46-4ff5-9395-3263f366ba07"
           }
         ],
-        "updatedAt": "2026-09-28T03:01:31.437Z"
+        "updatedAt": "2026-09-29T02:56:32.782Z"
       }
     },
     {
@@ -2213,16 +2208,22 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/2239-coral-coves",
             "observedPrice": 18900000,
             "sourceId": "nawy:2239"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/somabay-realestate/soma-coves",
+            "observedPrice": 22100000,
+            "sourceId": "property-finder:9e4e375f-5822-47f1-9cee-4fc1d43d23b2"
           }
         ],
-        "updatedAt": "2026-09-28T18:38:40.552Z"
+        "updatedAt": "2026-09-29T02:56:32.782Z"
       }
     },
     {

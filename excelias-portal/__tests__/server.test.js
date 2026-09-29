@@ -319,6 +319,39 @@ describe('Student guard middleware', () => {
     expect(res.status).not.toBe(302);
   });
 
+  test('redirects unauthenticated users away from Market to Mastery', async () => {
+    const res = await request(app).get('/market-to-mastery/');
+    expect(res.status).toBe(302);
+    expect(res.headers.location).toBe('/');
+  });
+
+  test('allows agents to open Market to Mastery', async () => {
+    const token = makeSession({ uid: 'agent-test', role: 'agent' });
+    const res = await request(app).get('/market-to-mastery/').set('Cookie', cookieHeader(token));
+    expect(res.status).toBe(200);
+    expect(res.text).toContain('Make the price conversation provable.');
+  });
+
+  test('allows admins to open Market to Mastery', async () => {
+    const token = makeSession({ uid: UID_ADMIN, role: 'admin' });
+    const res = await request(app).get('/market-to-mastery/').set('Cookie', cookieHeader(token));
+    expect(res.status).toBe(200);
+    expect(res.text).toContain('Buyer briefs');
+  });
+
+  test('does not allow guest users into Market to Mastery', async () => {
+    const token = makeSession({ uid: 'guest-test', role: 'guest' });
+    const res = await request(app).get('/market-to-mastery/').set('Cookie', cookieHeader(token));
+    expect(res.status).toBe(403);
+  });
+
+  test('redirects students from Market to Mastery to their study guide', async () => {
+    const token = makeSession({ uid: UID_STUDENT, role: 'student' });
+    const res = await request(app).get('/market-to-mastery/').set('Cookie', cookieHeader(token));
+    expect(res.status).toBe(302);
+    expect(res.headers.location).toBe('/studyguide/');
+  });
+
   test('redirects removed /atlas/ route to /', async () => {
     const res = await request(app).get('/atlas/');
     expect(res.status).toBe(302);

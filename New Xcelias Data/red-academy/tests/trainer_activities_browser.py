@@ -13,6 +13,7 @@ ROOT=Path(__file__).resolve().parents[1]
 TODAY=subprocess.check_output(['node','--input-type=module','-e',"import {today} from './public/modules/core.mjs'; console.log(today())"],cwd=ROOT,text=True).strip()
 parser=argparse.ArgumentParser()
 parser.add_argument('--screenshots')
+parser.add_argument('--scroll-only',action='store_true',help='Run only the live-challenge scroll regression check.')
 args=parser.parse_args()
 
 def check(name,condition=True):
@@ -78,6 +79,28 @@ with tempfile.TemporaryDirectory(prefix='red-activities-studio-') as temporary:
             expect(trainer.get_by_role('heading',name="Turn today's lesson into a challenge.")).to_be_visible()
             expect(trainer.locator('.quiz-tile')).to_have_count(8)
             check('Trainer sees Academy Studio with eight curated, ready-to-run challenges')
+            trainer.locator('.quiz-tile[data-activity-id="quiz-discovery"]').get_by_role('button',name='Host live').click()
+            trainer.locator('[name="phone_enabled"]').check()
+            trainer.locator('#live-room-form [type="submit"]').click()
+            expect(trainer.locator('.room-join-panel')).to_be_visible()
+            trainer.set_viewport_size({'width':390,'height':640})
+            trainer.locator('.room-options').scroll_into_view_if_needed()
+            live_room_shell=trainer.locator('.live-room-shell')
+            scroll_before_refresh=live_room_shell.evaluate('(el)=>el.scrollTop')
+            assert scroll_before_refresh>0,'The small-screen live challenge should require scrolling to reach its choices.'
+            screenshot('live-challenge-options-before-refresh',trainer,full_page=False)
+            trainer.wait_for_timeout(2200)
+            scroll_after_refresh=trainer.locator('.live-room-shell').evaluate('(el)=>el.scrollTop')
+            assert scroll_after_refresh>=scroll_before_refresh-5, f'Live challenge refresh pulled the trainer back to the top (before={scroll_before_refresh}, after={scroll_after_refresh}).'
+            screenshot('live-challenge-options-after-refresh',trainer,full_page=False)
+            check(f'Trainer remains at the challenge choices while the live room refreshes ({scroll_before_refresh}px to {scroll_after_refresh}px)')
+            trainer.once('dialog',lambda popup:popup.accept())
+            trainer.get_by_role('button',name='End phone room').click()
+            expect(trainer.locator('#trainer-dialog')).not_to_be_visible()
+            trainer.set_viewport_size({'width':1440,'height':1000})
+            if args.scroll_only:
+                browser.close()
+                raise SystemExit(0)
             trainer.locator('[data-action="roleplay-open"]').click()
             expect(trainer.locator('.roleplay-setup')).to_be_visible()
             expect(trainer.locator('.roleplay-scenario-choice')).to_have_count(10)

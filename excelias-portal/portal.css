@@ -514,6 +514,27 @@ body {
 .project-card:active {
   transform: translateY(-2px) scale(0.995);
 }
+.project-card[data-coming-soon='true'] {
+  cursor: default;
+}
+.project-card[data-coming-soon='true']:hover,
+.project-card[data-coming-soon='true']:focus-visible,
+.project-card[data-coming-soon='true']:active {
+  transform: none;
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+}
+.project-card[data-coming-soon='true'] .card-shimmer,
+.project-card[data-coming-soon='true'] .card-border-glow,
+.project-card[data-coming-soon='true']::before {
+  display: none;
+}
+.project-card[data-coming-soon='true'] .card-launch:disabled {
+  cursor: not-allowed;
+  filter: saturate(0.7);
+  opacity: 0.72;
+  box-shadow: none;
+}
 
 /* Shimmer sweep effect on hover */
 .card-shimmer {
@@ -1124,6 +1145,11 @@ body {
   box-shadow:
     0 20px 50px rgba(0, 0, 0, 0.34),
     0 0 40px rgba(181, 35, 50, 0.12);
+}
+.project-card[data-coming-soon='true']:hover,
+.project-card[data-coming-soon='true']:focus-visible {
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
 }
 .tag,
 .hero-stats,

@@ -53,6 +53,12 @@ const PROJECTS = {
     url: '/website/',
     mode: 'iframe',
   },
+  markettomastery: {
+    name: 'Market to Mastery',
+    url: '/market-to-mastery/',
+    mode: 'iframe',
+    comingSoon: true,
+  },
   pitchlab: {
     name: 'Pitch Lab',
     url: '/pitch-lab/',
@@ -69,6 +75,7 @@ let xcPortalUser = null;
 // Keys not listed = accessible to any logged-in user
 const XCP_ROLE_MAP = {
   website: ['admin', 'agent', 'guest'], // Guest user explicitly allowed access to Property Explorer!
+  markettomastery: ['admin', 'agent'],
 };
 
 /* â”€â”€â”€ DOM refs â”€â”€â”€ */
@@ -237,7 +244,7 @@ topbarNewTab.addEventListener('click', function () {
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function launchProject(key) {
   const proj = PROJECTS[key];
-  if (!proj) return;
+  if (!proj || proj.comingSoon) return;
   // Ignore stale deep links to the hidden legacy card; unhide the card to restore it.
   const legacyActivitiesCard = document.querySelector('.project-card[data-project="activities"]');
   if (key === 'activities' && legacyActivitiesCard?.hidden) return;
@@ -577,6 +584,7 @@ function initCreatorGuestPanel() {
 /* â”€â”€â”€ Card click / keyboard bindings â”€â”€â”€ */
 document.querySelectorAll('.project-card').forEach((card) => {
   const key = card.dataset.project;
+  if (PROJECTS[key]?.comingSoon || card.dataset.comingSoon === 'true') return;
 
   card.addEventListener('click', (e) => {
     if (e.target.closest('.card-launch')) return;

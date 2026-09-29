@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f5f3ef" />
+    <meta name="description" content="Build source-backed, buyer-ready real estate comparisons." />
+    <title>Market to Mastery · Xcelias</title>
+    <link rel="stylesheet" href="market-to-mastery.css" />
+    <script src="price-csv.js" defer></script>
+    <script src="market-to-mastery.js" defer></script>
+  </head>
+  <body>
+    <div class="workspace-shell">
+      <aside class="rail" aria-label="Market to Mastery navigation">
+        <a class="brand" href="/" target="_top" aria-label="Back to Xcelias portal">
+          <span class="brand-mark">X</span>
+          <span><strong>XCELIAS</strong><small>MARKET DESK</small></span>
+        </a>
+        <div class="rail-rule"></div>
+        <p class="rail-label" data-i18n="workspace">WORKSPACE</p>
+        <nav class="rail-nav">
+          <a class="rail-link active" href="#brief-builder" data-section="brief-builder"><span class="nav-icon">▧</span><span data-i18n="buyerBriefs">Buyer briefs</span></a>
+          <a class="rail-link" href="#evidence" data-section="evidence"><span class="nav-icon">◈</span><span data-i18n="priceEvidence">Price evidence</span></a>
+          <a class="rail-link" href="#sources" data-section="sources"><span class="nav-icon">⌁</span><span data-i18n="sourceAccess">Source access</span></a>
+        </nav>
+        <div class="rail-bottom">
+          <span class="local-indicator"></span>
+          <span><strong data-i18n="privateWorkspace">Private workspace</strong><small data-i18n="savedInBrowser">Saved in this browser only</small></span>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <header class="topbar">
+          <div class="crumb"><a href="/" data-i18n="portal">Portal</a><span>/</span><strong>Market to Mastery</strong></div>
+          <div class="top-actions">
+            <button class="quiet-button" id="export-data" type="button" data-i18n="exportBackup">Export backup</button>
+            <label class="quiet-button import-button" for="import-data" data-i18n="importBackup">Import backup</label>
+            <input id="import-data" type="file" accept="application/json,.json" hidden />
+            <div class="language-switch" role="group" aria-label="Language">
+              <button type="button" class="language-option selected" data-language="en" aria-pressed="true">EN</button>
+              <button type="button" class="language-option" data-language="ar" aria-pressed="false">عربي</button>
+            </div>
+          </div>
+        </header>
+
+        <section class="page-intro" id="brief-builder">
+          <div>
+            <p class="eyebrow"><span class="eyebrow-dot"></span><span data-i18n="fieldDesk">FIELD DESK · EGYPT</span></p>
+            <h1 data-i18n="headline">Make the price conversation provable.</h1>
+            <p class="intro-copy" data-i18n="intro">Build buyer-ready comparisons from evidence you are allowed to use. Keep launch offers, resale asking prices, and transaction evidence separate.</p>
+          </div>
+          <button class="primary-button" id="add-project" type="button"><span aria-hidden="true">＋</span><span data-i18n="addEvidence">Add project evidence</span></button>
+        </section>
+
+        <section class="notice-row" aria-label="Data handling notice">
+          <span class="notice-icon">i</span>
+          <p><strong data-i18n="localOnlyTitle">Local by design</strong><span data-i18n="localOnlyText">Your project notes and buyer criteria stay in this browser. Nothing is uploaded or shared unless you export or print it.</span></p>
+          <span class="notice-badge" data-i18n="noLiveFeeds">NO LIVE FEEDS CONNECTED</span>
+        </section>
+        <p class="auth-error" id="auth-error" role="alert" hidden>We couldn't verify your workspace session. Refresh the portal and try again.</p>
+
+        <section class="metrics" aria-label="Workspace summary">
+          <article class="metric-card"><span data-i18n="savedBriefs">SAVED PROJECTS</span><strong id="metric-projects">0</strong><small data-i18n="savedLocally">Stored only on this device</small></article>
+          <article class="metric-card"><span data-i18n="priceObservations">PRICE OBSERVATIONS</span><strong id="metric-observations">0</strong><small data-i18n="evidenceCount">Evidence entries you added</small></article>
+          <article class="metric-card metric-card--attention"><span data-i18n="permissionGate">AUTOMATION GATE</span><strong data-i18n="permissionRequired">Permission first</strong><small data-i18n="permissionCount">No source has an approved feed here</small></article>
+        </section>
+
+        <div class="content-grid">
+          <section class="panel evidence-panel" id="evidence">
+            <div class="panel-heading">
+              <div><p class="section-kicker" data-i18n="workingSet">YOUR WORKING SET</p><h2 data-i18n="evidenceTitle">Price evidence</h2></div>
+              <span class="count-pill" id="project-count">0 projects</span>
+            </div>
+            <section class="daily-intake" aria-labelledby="daily-intake-heading">
+              <div class="daily-intake-copy"><p class="section-kicker" data-i18n="dailyIntakeLabel">DAILY PRICE INTAKE</p><h3 id="daily-intake-heading" data-i18n="dailyIntakeTitle">Submit today’s authorized prices</h3><p data-i18n="dailyIntakeCopy">Download the blank CSV, add only price facts Xcelias is permitted to use, then import it here. The file is read on this device and never uploaded.</p></div>
+              <div class="daily-intake-actions"><button class="outline-button" id="download-csv-template" type="button" data-i18n="downloadCsvTemplate">Download blank CSV</button><button class="primary-button" id="choose-daily-csv" type="button" data-i18n="chooseDailyCsv">Choose daily CSV</button><input id="daily-csv-file" type="file" accept=".csv,text/csv,text/plain" hidden /></div>
+              <p class="csv-file-hint" data-i18n="csvFileHint">Keep the template headers unchanged. Dates use YYYY-MM-DD; amounts are EGP digits without commas.</p>
+              <div class="daily-import-preview" id="daily-import-preview" hidden>
+                <div class="import-preview-head"><h4 data-i18n="csvPreviewTitle">Import preview</h4><div class="import-summary" id="daily-import-summary"></div></div>
+                <div class="import-errors" id="daily-import-errors" role="alert" hidden></div>
+                <div class="import-table-wrap"><table class="import-table"><thead><tr><th data-i18n="csvLine">Line</th><th data-i18n="csvProject">Project</th><th data-i18n="kindColumn">Offer type</th><th data-i18n="csvPrice">Observed price</th><th data-i18n="capturedLabel">Captured</th><th data-i18n="csvSource">Source</th><th data-i18n="csvResult">Import result</th></tr></thead><tbody id="daily-import-rows"></tbody></table></div>
+                <label class="permission-check import-rights-check"><input id="import-rights-confirmation" type="checkbox" /><span data-i18n="importRightsConfirm">I confirm every row is authorized for Xcelias to use. I did not scrape competitor or portal data, copy confidential material, or collect private group messages. This checkbox is my responsibility; the app cannot verify rights.</span></label>
+                <div class="daily-import-submit"><button class="primary-button" id="stage-import" type="button" disabled data-i18n="stageCsvBatch">Stage for review</button></div>
+              </div>
+            </section>
+            <section class="pending-batches" id="pending-batches" hidden>
+              <div class="panel-heading pending-heading"><div><p class="section-kicker" data-i18n="pendingReview">PENDING REVIEW</p><h3 data-i18n="pendingBatchesTitle">Daily batches awaiting review</h3></div></div>
+              <div class="pending-batch-list" id="pending-batch-list" aria-live="polite"></div>
+            </section>
+            <div id="project-list" class="project-list" aria-live="polite"></div>
+            <div class="empty-state" id="empty-state">
+              <div class="empty-mark" aria-hidden="true">＋</div>
+              <h3 data-i18n="emptyTitle">Start with one real source</h3>
+              <p data-i18n="emptyText">Add a developer-issued price sheet or an authorized resale-feed observation. We do not seed this desk with guessed or unlicensed prices.</p>
+              <button class="outline-button" id="empty-add" type="button" data-i18n="addFirst">Add your first evidence</button>
+            </div>
+          </section>
+
+          <aside class="side-stack">
+            <section class="panel buyer-panel">
+              <div class="panel-heading"><div><p class="section-kicker" data-i18n="buyerFit">BUYER FIT</p><h2 data-i18n="buyerNeeds">What matters to them?</h2></div><span class="spark">✳</span></div>
+              <p class="panel-copy" data-i18n="buyerPrivacy">Keep it non-identifying. No buyer name, phone, income, or contact history belongs in a property brief.</p>
+              <div class="field-grid">
+                <label class="field field-wide"><span data-i18n="areas">Preferred areas</span><input id="buyer-areas" maxlength="120" placeholder="e.g. New Cairo, Mostakbal City" autocomplete="off" /></label>
+                <label class="field"><span data-i18n="budgetCeiling">Budget ceiling (EGP)</span><input id="buyer-budget" type="number" min="0" step="100000" inputmode="numeric" placeholder="Optional" /></label>
+                <label class="field"><span data-i18n="propertyType">Property type</span><select id="buyer-type"><option value="" data-i18n="anyType">Any type</option><option value="apartment" data-i18n="apartments">Apartment</option><option value="villa" data-i18n="villas">Villa</option><option value="townhouse" data-i18n="townhouses">Townhouse</option><option value="commercial" data-i18n="commercial">Commercial</option></select></label>
+                <label class="field field-wide"><span data-i18n="mustHave">Must-have / trade-off</span><textarea id="buyer-priorities" maxlength="280" rows="3" placeholder="Delivery timing, payment flexibility, commute…"></textarea></label>
+              </div>
+              <div class="stress-test" id="stress-test"><span class="stress-symbol">✓</span><span><strong data-i18n="stressReady">Deal Stress Test ready</strong><small data-i18n="stressDesc">Add evidence to surface missing terms, stale dates, and incomparable offers.</small></span></div>
+              <div class="panel-actions"><button class="primary-button" id="preview-brief" type="button" disabled data-i18n="previewBrief">Preview buyer brief</button><button class="outline-button" id="clear-workspace" type="button" hidden data-i18n="clearDraft">Clear workspace</button></div>
+            </section>
+
+            <section class="panel source-panel" id="sources">
+              <div class="panel-heading"><div><p class="section-kicker" data-i18n="permissionMap">PERMISSION MAP</p><h2 data-i18n="sourceAccessTitle">Connect sources the right way</h2></div></div>
+              <div class="source-row"><span class="source-icon source-icon--green">01</span><span><strong data-i18n="developerFeed">Developer price books</strong><small data-i18n="developerFeedDetail">Best launch-price source · request a dated feed or approved price sheet</small></span><em class="status-tag status-tag--pending" data-i18n="permissionNeeded">PERMISSION NEEDED</em></div>
+              <div class="source-row"><span class="source-icon">02</span><span><strong>Property Finder</strong><small data-i18n="pfSourceDetail">Partner feed only · public terms restrict scraping and property-database reuse</small></span><em class="status-tag status-tag--pending" data-i18n="partnerAccess">PARTNER ACCESS</em></div>
+              <div class="source-row"><span class="source-icon">03</span><span><strong>Nawy</strong><small data-i18n="nawySourceDetail">Written permission needed before any automated collection</small></span><em class="status-tag status-tag--pending" data-i18n="permissionNeeded">PERMISSION NEEDED</em></div>
+              <div class="source-row"><span class="source-icon">04</span><span><strong data-i18n="dubizzleName">Dubizzle resale</strong><small data-i18n="dubizzleDetail">Commercial feed/contract only · show as asking price, not a sale</small></span><em class="status-tag status-tag--blocked" data-i18n="noFeed">NO FEED</em></div>
+              <div class="source-row"><span class="source-icon">05</span><span><strong data-i18n="redOfficial">RED / official property platform</strong><small data-i18n="redOfficialDetail">Review data rights; public discovery is not transaction proof</small></span><em class="status-tag status-tag--pending" data-i18n="reviewRights">RIGHTS REVIEW</em></div>
+              <div class="source-row"><span class="source-icon">06</span><span><strong data-i18n="humanIntake">Authorized documents &amp; messages</strong><small data-i18n="humanIntakeDetail">Human entry only when Xcelias may use the exact price fact</small></span><em class="status-tag status-tag--manual" data-i18n="manual">MANUAL</em></div>
+              <div class="source-links" aria-label="Source terms and integration references">
+                <a href="https://pfdn.propertyfinder.com/integration-guide" target="_blank" rel="noopener noreferrer">PF partner guide ↗</a>
+                <a href="https://www.propertyfinder.eg/en/terms-and-conditions.html" target="_blank" rel="noopener noreferrer">PF terms ↗</a>
+                <a href="https://www.nawy.com/terms" target="_blank" rel="noopener noreferrer">Nawy terms ↗</a>
+                <a href="https://help.dubizzle.com.eg/hc/en-us/articles/4405534023823-What-are-Terms-of-Use" target="_blank" rel="noopener noreferrer">Dubizzle terms ↗</a>
+                <a href="https://www.whatsapp.com/legal/WhatsApp-Terms-for-WhatsApp-Business-App" target="_blank" rel="noopener noreferrer">WhatsApp terms ↗</a>
+              </div>
+              <p class="source-footnote" data-i18n="sourceFootnote">No WhatsApp group monitoring, browser scraping, or listing mirroring. A joined phone number is not permission to harvest messages.</p>
+            </section>
+          </aside>
+        </div>
+
+        <footer class="page-footer"><span>XCELIAS · MARKET TO MASTERY</span><span data-i18n="footerNote">Evidence, not promises. Every price needs a source, capture date, and like-for-like basis.</span></footer>
+      </main>
+    </div>
+
+    <dialog class="modal" id="evidence-dialog" aria-labelledby="dialog-title">
+      <form id="evidence-form" method="dialog">
+        <div class="modal-heading"><div><p class="section-kicker" data-i18n="newEvidence">NEW EVIDENCE</p><h2 id="dialog-title" data-i18n="recordOffer">Record a price observation</h2></div><button class="icon-button" type="button" id="close-dialog" aria-label="Close">×</button></div>
+        <p class="modal-lede" data-i18n="formLede">Capture exactly what the source says. The app will not combine offers with different unit, phase, or payment terms.</p>
+        <div class="form-grid">
+          <label class="field"><span data-i18n="projectName">Project name</span><input name="project" required maxlength="100" autocomplete="off" /></label>
+          <label class="field"><span data-i18n="developer">Developer / seller</span><input name="developer" maxlength="100" autocomplete="off" /></label>
+          <label class="field"><span data-i18n="area">Area / city</span><input name="area" maxlength="100" autocomplete="off" /></label>
+          <label class="field"><span data-i18n="offerKind">What kind of price?</span><select name="kind" required><option value="launch" data-i18n="launchPrice">Developer launch / primary offer</option><option value="resale" data-i18n="resaleAsking">Resale asking price</option><option value="transaction" data-i18n="transactionEvidence">Completed transaction evidence</option><option value="rent" data-i18n="rentAsking">Rental asking price</option></select></label>
+          <label class="field"><span data-i18n="amount">Observed amount (EGP)</span><input name="amount" type="number" min="1" step="1" required inputmode="numeric" /></label>
+          <label class="field"><span data-i18n="capturedDate">Captured on</span><input name="capturedAt" type="date" required /></label>
+          <label class="field"><span data-i18n="unitType">Unit type</span><input name="unitType" maxlength="80" placeholder="Apartment, townhouse…" /></label>
+          <label class="field"><span data-i18n="areaSize">Area (m²)</span><input name="areaSize" type="number" min="0" step="1" inputmode="numeric" /></label>
+          <label class="field"><span data-i18n="phase">Phase / release</span><input name="phase" maxlength="100" /></label>
+          <label class="field"><span data-i18n="finishing">Finishing</span><input name="finishing" maxlength="80" placeholder="Core & shell, finished…" /></label>
+          <label class="field field-wide"><span data-i18n="paymentTerms">Payment / delivery terms</span><input name="terms" maxlength="180" /></label>
+          <label class="field field-wide"><span data-i18n="sourceName">Source name / document reference</span><input name="sourceName" required maxlength="120" placeholder="e.g. Developer-issued September price list" /></label>
+          <label class="field field-wide"><span data-i18n="sourceUrl">Source URL (optional)</span><input name="sourceUrl" type="url" maxlength="500" placeholder="https://…" /></label>
+          <label class="field field-wide"><span data-i18n="permissionReference">Permission / authorization reference (optional)</span><input name="permissionReference" maxlength="200" autocomplete="off" /></label>
+        </div>
+        <label class="permission-check"><input name="authorized" type="checkbox" required /><span data-i18n="authorizedConfirm">I confirm Xcelias is allowed to use this price fact and source for an internal buyer brief. I have not copied private group messages or unlicensed portal data.</span></label>
+        <p class="form-error" id="form-error" role="alert" hidden></p>
+        <div class="modal-actions"><button class="outline-button" type="button" id="cancel-dialog" data-i18n="cancel">Cancel</button><button class="primary-button" type="submit" data-i18n="saveEvidence">Save evidence locally</button></div>
+      </form>
+    </dialog>
+
+    <dialog class="modal brief-modal" id="brief-dialog" aria-labelledby="brief-title">
+      <div class="brief-toolbar"><button class="outline-button" id="close-brief" type="button" data-i18n="backToDesk">Back to desk</button><button class="primary-button" id="print-brief" type="button" data-i18n="printOrPdf">Print / Save as PDF</button></div>
+      <article class="buyer-sheet" id="buyer-sheet"></article>
+    </dialog>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>

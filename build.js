@@ -454,6 +454,20 @@ console.log(
   '    → Added <base href="/pitch-lab/"> + student-guard.js external script',
 );
 
+/* ════════ Market to Mastery — private evidence desk ════════ */
+console.log("[9/9] Market to Mastery...");
+const marketDeskSrc = path.join(ROOT, "Market to Mastery ( WorkSpace )");
+const marketDeskDest = path.join(DIST, "market-to-mastery");
+copyDir(marketDeskSrc, marketDeskDest);
+const marketDeskHtml = path.join(marketDeskDest, "index.html");
+let marketHtml = fs.readFileSync(marketDeskHtml, "utf8");
+marketHtml = marketHtml.replace(
+  "<head>",
+  '<head>\n    <base href="/market-to-mastery/" />\n    ' + studentGuardTag,
+);
+fs.writeFileSync(marketDeskHtml, marketHtml);
+console.log("    → Added /market-to-mastery/ (agent/admin access required)");
+
 /* ════════ Done ════════ */
 const total = countFiles(DIST);
 console.log(`\n✅ Build complete!`);
@@ -467,6 +481,7 @@ console.log(`   ✓ Reports (Report Generator)`);
 console.log(`   ✓ Study Guide (Batch Library)`);
 console.log(`   ✓ Website (Property Explorer)`);
 console.log(`   ✓ Pitch Lab (AI Call Simulation Studio)`);
+console.log(`   ✓ Market to Mastery (source-backed buyer evidence desk)`);
 console.log(`   ⊘ Avaria (requires separate server — opens in new tab)`);
 
 /* ════════ Post-build: Minify Website JS + CSS ════════ */

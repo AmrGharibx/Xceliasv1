@@ -1,6 +1,6 @@
 # Market-to-Mastery: Product and System Design
 
-**Status:** Proposed for Amr's review; not approved for product implementation
+**Status:** Local implementation in progress; not pushed or deployed
 **Date:** 2026-09-28
 
 ## Decision summary
@@ -16,7 +16,7 @@ The system cannot guarantee that a public listing is accurate or available. It c
 - **Primary users:** Egypt-based property agents and buyers comparing residential projects.
 - **Connected users:** trainers and trainees using current public market facts in the existing Academy Studio.
 - **Success:** an agent can prepare/share a useful brief faster than manually assembling project details; a buyer can identify the source and date of a quoted starting figure and see material unknowns; a trainer can turn a reviewed market fact into a practice activity without receiving buyer data.
-- **Constraints:** use the real Explorer catalog and existing approved source list; do not invent projects, prices, customers, source confirmations, legal status, availability, returns, usage metrics, or historical price changes. Do not read or change Academy operational records for this module. Do not push or deploy as part of design work.
+- **Constraints:** do not invent projects, prices, customers, source confirmations, legal status, availability, returns, usage metrics, or historical price changes. A source is not approved just because it is public or already appears in the Explorer catalog. Do not read or change Academy operational records for this module. Keep implementation local until Amr explicitly asks to push or deploy.
 - **Privacy default:** buyer preference inputs stay in the buyer's browser. A share URL contains selected public project identifiers only, never buyer name, phone, income, budget, or private notes. Buyer sharing is explicit and revocable only if a later persistent-link service is approved; the MVP does not promise revocation for a stateless public URL.
 
 ## Existing product and market evidence
@@ -27,7 +27,9 @@ The repository audit on 2026-09-28 found 1,980 project records; 1,238 have `pric
 
 The current price summarizer picks the lowest matched source value as the project's `priceMin`. Its `confidence` is based on project-match score, not price agreement. The current RITA prompt and Explorer modal describe the aggregate as a “verified starting price.” The website README says 1,520 projects, so its count is stale against the current 1,980-record data file. The price status file calls its timestamp `lastPublishedAt`, and the updater writes that file only when project data changes; it therefore cannot represent the last successful source check when a run finds no changes. The monitor's state file retains quarantined pending changes but is not a historical price ledger.
 
-The existing six-hour Nawy/RED checks and daily Property Finder cross-check remain the only source schedule and allowlist for this design. No new source is added. Public listing pages are not official transaction or availability records. Egypt's official property platform offers search, comparison, and mortgage tools, while its own terms disclaim guarantees of listing accuracy, timeliness, and availability. Property Finder also exposes new-project prices, payment plans, and agent discovery. (Sources: [Official Egyptian Real Estate Platform](https://realestate.gov.eg/en), [Official platform terms](https://realestate.gov.eg/en/terms-and-conditions), [Property Finder Egypt](https://www.propertyfinder.eg/en), [Aqarmap](https://aqarmap.com.eg/en/?action=language.language&code=en).)
+The repository contains a legacy six-hour Nawy/RED collector and a daily Property Finder collector. Current Nawy, Property Finder, and Dubizzle terms restrict automated scraping and/or commercial aggregation without express authorization. The Property Finder partner network is an onboarding route, not permission implied by its public pages. Therefore Market-to-Mastery starts with agent-entered facts from documents/feeds Xcelias is authorized to use; no existing scraped catalog price is imported into a buyer brief and no new collector is enabled. The legacy workflow remains separate and has not been changed by this local module work. (Sources: [Nawy terms](https://www.nawy.com/terms), [Property Finder terms](https://www.propertyfinder.eg/en/terms-and-conditions.html), [Property Finder Developer Network](https://pfdn.propertyfinder.com/integration-guide), [Dubizzle Egypt terms](https://help.dubizzle.com.eg/hc/en-us/articles/4405534023823-What-are-Terms-of-Use), [official Egyptian property platform terms](https://realestate.gov.eg/en/terms-and-conditions).)
+
+Source families to pursue, in order: (1) developer-issued price books/API access under written reuse/display terms; (2) licensed portal feeds/partnerships; (3) resale portals only via an approved commercial feed; (4) human-reviewed documents where Xcelias has permission; and (5) official registry/transaction evidence only for the exact fact that registry is authorized and able to attest. A resale listing is an asking price, not a completed transaction. WhatsApp is a delivery channel, not a license: no group scraping, joined-phone monitoring, or unapproved app integration. Manually transcribe only minimal price facts from a source the company may use; do not retain private group messages or other participants' personal data.
 
 **Product implication:** do not compete on having another catalog, calculator, or chat window. Win by making a real property comparison traceable and useful in a buyer conversation, then turn its reviewed facts into better practice.
 
@@ -69,18 +71,18 @@ The existing six-hour Nawy/RED checks and daily Property Finder cross-check rema
 
 ## System boundaries and rollout
 
-Use the current repository's JavaScript, Express/static build, portal auth, and Academy Studio. Do not add a second application stack or a new production database for the first release.
+Use the current repository's JavaScript, Express/static build, and portal auth. Do not add a second application stack or connect a new production database before its access and retention model is approved.
 
-1. **Foundation — price truth:** establish stable project identifiers independent of array order; preserve individual source observations; distinguish match confidence from price agreement; persist per-source run health on every attempt; start an append-only event history from a declared baseline; update Explorer modal, RITA context, alerts, and documentation so none call the lowest multi-source observation a universally verified price. Preserve existing user-created local alerts without deleting or reinterpreting them. Because legacy alerts may target an aggregate that mixes sources or incomparable offers, mark them “needs review” and pause notifications until the user reconfirms a source/offer, currency, and comparable unit basis.
-2. **Buyer/agent brief:** add a role-protected Market-to-Mastery workspace and a narrowly public, read-only brief route. Integrate with Property Explorer comparison, generate QR/copy/print options from the existing catalog and source records, support English/Arabic and mobile RTL, and add the optional agent-only Deal Stress Test. Do not add customer records or persistent leads.
-3. **Trainer bridge:** pass reviewed public observation context to the existing Studio draft builder; require trainer approval; retain current learner privacy and assignment semantics.
+1. **Local evidence desk (implemented slice):** role-protected agent/admin workspace; agent can enter a permitted observation or import a daily CSV template. CSV rows are validated locally, deduplicated, staged as pending, and excluded from buyer briefs until a person reviews and approves the batch. The app checks format, not legal rights; the submitter must confirm permission and provide source context. Deterministic checks surface missing/comparable fields; no AI guesses, scraped catalog import, server persistence, or public link. Data stays in browser storage with explicit JSON backup and print-to-PDF sharing.
+2. **Licensed source automation:** only after written rights and endpoint access exist, build adapters for source APIs/feeds. Each connector gets its own authorization record, permitted fields, attribution, quota, retention, error policy, and refresh cadence. Human review is required for uncertain project/unit matches and changes outside policy.
+3. **Shared buyer briefs and Academy bridge:** only after approved source rights and a suitable persistence/revocation design. A public route must expose the minimum approved facts, never personal buyer information. Trainer handoff remains an Academy draft requiring trainer approval.
 
-Each phase is independently testable. Phase 1 is the first implementation slice because later buyer and training views must not inherit misleading status or stale timestamps. Source/history JSON contains public project observations only. The existing GitHub Actions job commits price-data changes and Vercel publishes the resulting static site; adding event history means future scheduled runs may publish additional public market-observation records. It must never publish buyer preferences or Academy data.
+Each phase is independently testable. The local evidence desk does not claim live price monitoring. Do not promise hourly updates: choose a cadence per authorized source based on its update mechanism, contract limits, and actual change rate. The existing GitHub Actions job is a separate scheduled auto-commit path and remains unchanged/unpushed by this work; its sources require permission review before relying on it for this product.
 
 ## Security, failure behavior, and accessibility
 
 - Staff APIs and screens verify the existing signed session server-side and use an explicit admin/agent role allowlist. Hiding a portal card is not authorization.
-- The buyer brief is a separate public read-only surface; do not expose staff APIs, RITA proxy credentials, private notes, portal cookies, or Academy data. Validate project IDs against the public catalog and cap them at three. Escape all rendered source-derived text and allow only HTTPS links from the configured source set.
+- The current buyer brief is an on-device print preview behind the authenticated staff workspace. Do not expose staff APIs, RITA proxy credentials, buyer criteria, portal cookies, or Academy data. User-entered source values and names must be escaped; only HTTPS links may open. The MVP has no unauthenticated buyer route.
 - AI calls reuse the existing server-side Gemini proxy and rate limiting; never expose a key in browser code. No public unauthenticated AI endpoint is introduced.
 - If source data is missing, stale, malformed, or unavailable, render the last known observation with its actual old timestamp and warning, or no price. Do not substitute a guessed value. If AI is unavailable or its citations do not validate, keep the deterministic brief working and omit the AI draft.
 - Provide keyboard access, visible focus, screen-reader labels, responsive layouts, readable Arabic fonts/RTL, and reduced-motion support. Public and staff pages need distinct empty, stale, conflicting-source, loading, and error states.
@@ -98,9 +100,9 @@ Pilot with willing agents and real buyers using public project facts. Measure ag
 - A property listings marketplace, CRM, lead database, booking/payment product, mortgage approval, legal/title verification, or guaranteed investment advice.
 - A second generic chatbot or replacement for RITA/Academy Studio.
 - Automatic publication of AI prose, automatic learner grading, use of customer conversations as training data, or access to Academy operational records.
-- New scraping sources, a claim of official government verification, or reconstructed price history without evidence.
+- New scraping sources, private WhatsApp group ingestion, a claim of official government verification, or reconstructed price history without evidence.
 - Changes to live data, production secrets, DNS/subdomains, or deployment configuration during design review.
 
 ## Approval and next step
 
-This document describes the proposed architecture and rollout, not permission to implement or deploy it. After Amr reviews and approves or edits this spec, create a detailed implementation plan for **Phase 1: price truth foundation** only. Review that plan before changing product code. Later phases should receive their own scoped plans after Phase 1 proves the data contract in tests and in the local app.
+This document describes a locally implemented first slice and future gated phases. It does not authorize source agreements, external messages, changes to the legacy scheduled collector, production storage, pushing, or deployment. Any such action requires a separate explicit request.

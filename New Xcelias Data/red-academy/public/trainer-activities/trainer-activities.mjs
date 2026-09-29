@@ -1157,7 +1157,17 @@ function liveRoomQrMarkup(code) {
   return `<figure class="room-qr-card"><div class="qr-code-frame" data-qr-url="${e(liveRoomHref(code))}" data-qr-alt="QR code for this live classroom"><span>Preparing QR code…</span></div><figcaption>Scan with your phone camera to join this room.</figcaption></figure>`;
 }
 
-function renderLivePulseRoom() {
+function liveRoomScrollTop() {
+  return dialog.querySelector('.live-room-shell')?.scrollTop ?? 0;
+}
+
+function restoreLiveRoomScroll(scrollTop) {
+  const shell = dialog.querySelector('.live-room-shell');
+  if (!shell) return;
+  shell.scrollTop = Math.min(scrollTop, Math.max(0, shell.scrollHeight - shell.clientHeight));
+}
+
+function renderLivePulseRoom(scrollTop = liveRoomScrollTop()) {
   const room=liveRoom,remote=room?.remote;
   if(!room||!remote)return;
   const question=remote.question||room.activity.questions[0],joined=room.teams[0]?.playerCount||0,count=Number(remote.response_count)||0,counts=remote.answer_counts;
@@ -1170,6 +1180,7 @@ function renderLivePulseRoom() {
   dialog.classList.add('live-room-dialog');dialog.classList.remove('session-run-dialog');
   mountLiveRoomQrCodes(dialog);
   if(!dialog.open)dialog.showModal();
+  restoreLiveRoomScroll(scrollTop);
 }
 
 function sequenceStepList(steps, order, { interactive = false, disabled = false, revealed = false } = {}) {
@@ -1210,7 +1221,7 @@ function liveClassroomDebrief(remote) {
   return liveClassroomDebriefBase(remote).replace('</aside>', `${calibration}</aside>`);
 }
 
-function renderLiveSequenceRoom(room, activity, remote, question, onlineTotal) {
+function renderLiveSequenceRoom(room, activity, remote, question, onlineTotal, scrollTop = liveRoomScrollTop()) {
   const teams = room.teams.map((team, index) => {
     const members = room.phoneMode ? (team.players || []).map(person => `<span class="room-player-pill">${e(person.nickname)} <b>${Number(person.points) || 0}</b></span>`).join('') : '';
     const spoken = !room.phoneMode && index === room.roundIndex % room.teams.length && !room.finished;
@@ -1236,19 +1247,21 @@ function renderLiveSequenceRoom(room, activity, remote, question, onlineTotal) {
   if (!room.finished && room.phoneMode && room.revealed) dialog.querySelector('.room-coaching')?.insertAdjacentHTML('afterend', liveClassroomDebrief(remote));
   if (room.finished) dialog.querySelectorAll('.room-team-label').forEach((label, index) => { label.textContent = `PLACE ${String(index + 1).padStart(2, '0')}${room.phoneMode ? ` · ${room.teams[index].playerCount} PLAYERS` : ''}`; });
   if (!dialog.open) dialog.showModal();
+  restoreLiveRoomScroll(scrollTop);
 }
 
 function renderLiveRoom() {
   if (!liveRoom) return;
+  const scrollTop = liveRoomScrollTop();
   registerActivityArabic(liveRoom.activity);
-  if(liveRoom.mode==='pulse'){renderLivePulseRoom();return;}
+  if(liveRoom.mode==='pulse'){renderLivePulseRoom(scrollTop);return;}
   const room = liveRoom.finished ? {...liveRoom,teams:[...liveRoom.teams].sort((a,b)=>b.points-a.points)} : liveRoom, activity = room.activity;
   registerActivityArabic(activity);
   const remote = room.remote;
   const onlineTotal = remote?.room.total_rounds || activity.questions.length;
   const question = room.phoneMode ? (remote?.question || activity.questions[room.roundIndex]) : activity.questions[room.roundIndex];
   if (!question) return;
-  if (question.type === 'sequence') { renderLiveSequenceRoom(room, activity, remote, question, onlineTotal); return; }
+  if (question.type === 'sequence') { renderLiveSequenceRoom(room, activity, remote, question, onlineTotal, scrollTop); return; }
   const teams = room.teams.map((team, index) => {
     const members = room.phoneMode ? (team.players || []).map(person => `<span class="room-player-pill">${e(person.nickname)} <b>${Number(person.points)||0}</b></span>`).join('') : '';
     const spoken = !room.phoneMode && index === room.roundIndex % room.teams.length && !room.finished;
@@ -1268,6 +1281,7 @@ function renderLiveRoom() {
   if (!room.finished && room.phoneMode && room.revealed) dialog.querySelector('.room-coaching')?.insertAdjacentHTML('afterend', liveClassroomDebrief(remote));
   if(room.finished)dialog.querySelectorAll('.room-team-label').forEach((label,index)=>{label.textContent=`PLACE ${String(index+1).padStart(2,'0')}${room.phoneMode?` · ${room.teams[index].playerCount} PLAYERS`:''}`;});
   if (!dialog.open) dialog.showModal();
+  restoreLiveRoomScroll(scrollTop);
 }
 
 async function showLiveRoomSetup(selectedActivityId = '') {

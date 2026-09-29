@@ -306,6 +306,10 @@ const STUDY_GUIDE_DIR = useDist ? path.join(DIST, 'studyguide') : STUDY_GUIDE_SR
 const PITCH_LAB_DIR = useDist
   ? path.join(DIST, 'pitch-lab')
   : path.join(WS, 'Pitch Lab ( WorkSpace )');
+const MARKET_TO_MASTERY_DIST = path.join(DIST, 'market-to-mastery');
+const MARKET_TO_MASTERY_DIR = fs.existsSync(MARKET_TO_MASTERY_DIST)
+  ? MARKET_TO_MASTERY_DIST
+  : path.join(WS, 'Market to Mastery ( WorkSpace )');
 const PORTAL_DIR = useDist ? DIST : __dirname;
 
 // UCAN Mapbox public token — split so source-scanners don't flag the literal
@@ -464,6 +468,19 @@ app.use('/content', studentGuardMiddleware, express.static(CONTENT_BUILD));
 app.use('/static', studentGuardMiddleware, express.static(path.join(CONTENT_BUILD, 'static')));
 app.use('/reports', reportsAccessMiddleware, express.static(REPORTS_DIR));
 app.use('/pitch-lab', studentGuardMiddleware, express.static(PITCH_LAB_DIR));
+app.use('/market-to-mastery', (req, res, next) => {
+  const session = verifySession(parseCookies(req).xc_session);
+  if (!session) {
+    if (_isHtmlReq(req.path)) return res.redirect(302, '/');
+    return res.status(401).send('Authentication required');
+  }
+  if (!['admin', 'agent'].includes(session.role)) {
+    if (session.role === 'student') return res.redirect(302, '/studyguide/');
+    if (session.role === 'reports') return res.redirect(302, '/reports/');
+    return res.status(403).send('Access restricted');
+  }
+  next();
+}, express.static(MARKET_TO_MASTERY_DIR));
 
 /* Portal — guard students away from the home page */
 app.use((req, res, next) => {

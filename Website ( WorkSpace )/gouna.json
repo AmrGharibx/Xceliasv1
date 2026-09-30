@@ -2032,6 +2032,27 @@
         "sourceId": "nawy-inventory:265",
         "observedAt": "2026-09-22T10:02:00.468Z"
       }
+    },
+    {
+      "name": "Ria-Makadi Heights",
+      "dev": "Orascom Development Egypt",
+      "lat": 26.96770559839804,
+      "lng": 33.89051634436913,
+      "zone": "Hurghada",
+      "status": "Available",
+      "type": "residential",
+      "unitTypes": [
+        "Townhouse"
+      ],
+      "downPayment": 35,
+      "installmentYears": 3,
+      "paymentPlan": "35% Down Payment, 3 Years Installments",
+      "catalogMeta": {
+        "status": "observed",
+        "sourceId": "nawy-inventory:2747",
+        "observedAt": "2026-09-30T03:39:20.077Z"
+      },
+      "priceMin": 26325000
     }
   ],
   "projectDetails": {
@@ -2829,6 +2850,19 @@
       "layouts": [],
       "images": [
         "https://prod-images.nawy.com/processed/area/image/265/high.webp"
+      ]
+    },
+    "Ria-Makadi Heights": {
+      "unitTypes": "Townhouse",
+      "areas": "",
+      "paymentPlan": "35% Down Payment, 3 Years Installments",
+      "status": "Available",
+      "amenities": "",
+      "description": "Project information is being verified.",
+      "masterplan": "",
+      "layouts": [],
+      "images": [
+        "https://prod-images.nawy.com/processed/inventory/compounds/2747/cover-images/WhatsApp%20Image%202026-09-17%20at%201.05.08%20PM/high.webp"
       ]
     }
   }

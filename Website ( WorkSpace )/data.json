@@ -4664,19 +4664,19 @@
         "sourceCount": 2,
         "sources": [
           {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1726-riverton",
+            "observedPrice": 5092200,
+            "sourceId": "nawy:1726"
+          },
+          {
             "name": "RED",
             "url": "https://redww.com/en/projects/30899-riverton",
             "observedPrice": 5092200,
             "sourceId": "red:30899"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1726-riverton",
-            "observedPrice": 6906189,
-            "sourceId": "nawy:1726"
           }
         ],
-        "updatedAt": "2026-09-21T14:54:37.284Z"
+        "updatedAt": "2026-09-30T12:49:07.027Z"
       }
     },
     {
@@ -11664,10 +11664,13 @@
       "zone": "Sidi Abdel Rahman",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 90219000,
+      "priceMin": 11825000,
       "unitTypes": [
+        "Chalet",
         "Villa",
-        "Chalet"
+        "Apartment",
+        "Twinhouse",
+        "Penthouse"
       ],
       "areaMin": 64,
       "areaMax": 275,
@@ -11679,16 +11682,22 @@
         5,
         6
       ],
-      "paymentPlan": "5% Down Payment, 8 Years Installments",
-      "downPayment": 0,
-      "installmentYears": 0,
+      "paymentPlan": "5% Down Payment, 10 Years Installments",
+      "downPayment": 5,
+      "installmentYears": 10,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2310-hacienda-ras-el-hekma",
+            "observedPrice": 11825000,
+            "sourceId": "nawy:2310"
+          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19099-hacienda-bay",
@@ -11696,7 +11705,7 @@
             "sourceId": "red:19099"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-09-30T12:49:07.027Z"
       }
     },
     {
@@ -20917,8 +20926,8 @@
       "type": "residential",
       "priceMin": 18974959,
       "unitTypes": [
-        "Townhouse",
-        "Villa"
+        "Villa",
+        "Townhouse"
       ],
       "areaMin": 72,
       "areaMax": 315,
@@ -20955,11 +20964,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/800-mountain-view-4",
-            "observedPrice": 25203726,
+            "observedPrice": 38232189,
             "sourceId": "nawy:800"
           }
         ],
-        "updatedAt": "2026-09-30T02:59:47.607Z"
+        "updatedAt": "2026-09-30T12:49:07.027Z"
       }
     },
     {
@@ -22390,7 +22399,7 @@
       "zone": "October",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 10500000,
+      "priceMin": 19509336,
       "unitTypes": [
         "Office",
         "Retail"
@@ -22413,14 +22422,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/gates-developments/gates-prive",
-            "observedPrice": 10500000,
-            "sourceId": "property-finder:54b74660-08da-4d85-a252-54184468a150"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/879-gates-prive",
@@ -22428,7 +22431,7 @@
             "sourceId": "nawy:879"
           }
         ],
-        "updatedAt": "2026-09-28T12:47:37.254Z"
+        "updatedAt": "2026-09-30T12:49:07.027Z"
       }
     },
     {
@@ -23302,7 +23305,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/422-mountain-view-icity-october",
-            "observedPrice": 10515764,
+            "observedPrice": 11154986,
             "sourceId": "nawy:422"
           },
           {
@@ -23312,7 +23315,7 @@
             "sourceId": "property-finder:608c56cf-216a-4415-b177-b7859e1e88cb"
           }
         ],
-        "updatedAt": "2026-09-30T02:59:47.607Z"
+        "updatedAt": "2026-09-30T12:49:07.027Z"
       }
     },
     {
@@ -34672,11 +34675,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/237-the-loft",
-            "observedPrice": 9274222,
+            "observedPrice": 7909034,
             "sourceId": "nawy:237"
           }
         ],
-        "updatedAt": "2026-09-30T02:59:47.607Z"
+        "updatedAt": "2026-09-30T12:49:07.027Z"
       }
     },
     {
@@ -35504,24 +35507,33 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "commercial",
-      "priceMin": 12000000,
+      "priceMin": 11825000,
       "unitTypes": [
+        "Chalet",
         "Villa",
-        "Chalet"
+        "Apartment",
+        "Twinhouse",
+        "Penthouse"
       ],
       "areaMin": 78,
       "areaMax": 340,
       "bedrooms": [],
-      "paymentPlan": "5% Down Payment",
+      "paymentPlan": "5% Down Payment, 10 Years Installments",
       "downPayment": 5,
-      "installmentYears": 0,
+      "installmentYears": 10,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 3,
         "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2310-hacienda-ras-el-hekma",
+            "observedPrice": 11825000,
+            "sourceId": "nawy:2310"
+          },
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/palm-hills/hacienda-ras-el-hekma",
@@ -35535,7 +35547,7 @@
             "sourceId": "red:19099"
           }
         ],
-        "updatedAt": "2026-09-30T02:59:47.607Z"
+        "updatedAt": "2026-09-30T12:49:07.027Z"
       }
     },
     {
@@ -40446,7 +40458,7 @@
       "zone": "October",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 10515764,
+      "priceMin": 11154986,
       "unitTypes": [
         "Duplex",
         "Apartment",
@@ -40475,7 +40487,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1619-club-park-icity-october",
-            "observedPrice": 10515764,
+            "observedPrice": 11154986,
             "sourceId": "nawy:1619"
           },
           {
@@ -40485,7 +40497,7 @@
             "sourceId": "red:19090"
           }
         ],
-        "updatedAt": "2026-09-28T12:47:37.254Z"
+        "updatedAt": "2026-09-30T12:49:07.027Z"
       }
     },
     {
@@ -61919,14 +61931,33 @@
       "zone": "New Cairo",
       "status": "Available",
       "type": "residential",
-      "unitTypes": [],
-      "downPayment": 0,
-      "installmentYears": 0,
-      "paymentPlan": "0% Down Payment, 0 Years Installments",
+      "unitTypes": [
+        "Villa"
+      ],
+      "downPayment": 15,
+      "installmentYears": 7,
+      "paymentPlan": "15% Down Payment, 7 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2046",
         "observedAt": "2026-09-22T10:02:00.468Z"
+      },
+      "priceMin": 55414848,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1611-the-park",
+            "observedPrice": 55414848,
+            "sourceId": "nawy:1611"
+          }
+        ],
+        "updatedAt": "2026-09-30T12:49:07.027Z"
       }
     },
     {

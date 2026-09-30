@@ -1576,10 +1576,13 @@
       "zone": "Sidi Abdel Rahman",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 90219000,
+      "priceMin": 11825000,
       "unitTypes": [
+        "Chalet",
         "Villa",
-        "Chalet"
+        "Apartment",
+        "Twinhouse",
+        "Penthouse"
       ],
       "areaMin": 64,
       "areaMax": 275,
@@ -1591,16 +1594,22 @@
         5,
         6
       ],
-      "paymentPlan": "5% Down Payment, 8 Years Installments",
-      "downPayment": 0,
-      "installmentYears": 0,
+      "paymentPlan": "5% Down Payment, 10 Years Installments",
+      "downPayment": 5,
+      "installmentYears": 10,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2310-hacienda-ras-el-hekma",
+            "observedPrice": 11825000,
+            "sourceId": "nawy:2310"
+          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19099-hacienda-bay",
@@ -1608,7 +1617,7 @@
             "sourceId": "red:19099"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-09-30T12:49:07.027Z"
       }
     },
     {
@@ -7326,24 +7335,33 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "commercial",
-      "priceMin": 12000000,
+      "priceMin": 11825000,
       "unitTypes": [
+        "Chalet",
         "Villa",
-        "Chalet"
+        "Apartment",
+        "Twinhouse",
+        "Penthouse"
       ],
       "areaMin": 78,
       "areaMax": 340,
       "bedrooms": [],
-      "paymentPlan": "5% Down Payment",
+      "paymentPlan": "5% Down Payment, 10 Years Installments",
       "downPayment": 5,
-      "installmentYears": 0,
+      "installmentYears": 10,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 3,
         "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2310-hacienda-ras-el-hekma",
+            "observedPrice": 11825000,
+            "sourceId": "nawy:2310"
+          },
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/palm-hills/hacienda-ras-el-hekma",
@@ -7357,7 +7375,7 @@
             "sourceId": "red:19099"
           }
         ],
-        "updatedAt": "2026-09-30T02:59:47.607Z"
+        "updatedAt": "2026-09-30T12:49:07.027Z"
       }
     },
     {

@@ -900,10 +900,10 @@
       "type": "residential",
       "priceMin": 6910000,
       "unitTypes": [
-        "Apartment",
         "Villa",
         "Chalet",
         "Studio",
+        "Apartment",
         "Townhouse"
       ],
       "areaMin": 109,
@@ -924,7 +924,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
@@ -933,19 +933,13 @@
             "sourceId": "nawy:1199"
           },
           {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/il-cazar-developments/safia-ras-el-hekma",
-            "observedPrice": 6910000,
-            "sourceId": "property-finder:29d777ae-b220-4700-8484-b6dde7a22dec"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/19193-safia",
             "observedPrice": 8500000,
             "sourceId": "red:19193"
           }
         ],
-        "updatedAt": "2026-09-28T18:38:40.552Z"
+        "updatedAt": "2026-09-30T06:50:11.234Z"
       }
     },
     {
@@ -4509,7 +4503,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
@@ -4522,15 +4516,9 @@
             "url": "https://www.nawy.com/compound/528-bianchi-ilios",
             "observedPrice": 6858000,
             "sourceId": "nawy:528"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/developer-x/bianchi-ilios",
-            "observedPrice": 26200000,
-            "sourceId": "property-finder:1cffe0b1-c6b9-4676-84de-cab0af7e01f8"
           }
         ],
-        "updatedAt": "2026-09-28T18:38:40.552Z"
+        "updatedAt": "2026-09-30T06:50:11.234Z"
       }
     },
     {
@@ -15494,17 +15482,34 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
+        "Chalet",
         "Villa"
       ],
-      "downPayment": 10,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "10% Down Payment, 8 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2749",
         "observedAt": "2026-09-30T03:39:20.077Z"
       },
-      "priceMin": 89595000
+      "priceMin": 17724000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/19032-azha",
+            "observedPrice": 17724000,
+            "sourceId": "red:19032"
+          }
+        ],
+        "updatedAt": "2026-09-30T06:50:11.234Z"
+      }
     }
   ],
   "projectDetails": {

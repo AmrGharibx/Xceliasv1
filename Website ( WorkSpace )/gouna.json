@@ -2042,17 +2042,38 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Townhouse"
+        "Villa",
+        "Twin House",
+        "Duplex",
+        "Penthouse",
+        "Chalet",
+        "Town House"
       ],
-      "downPayment": 35,
-      "installmentYears": 3,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "35% Down Payment, 3 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2747",
         "observedAt": "2026-09-30T03:39:20.077Z"
       },
-      "priceMin": 26325000
+      "priceMin": 8020000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/52-makadi-heights",
+            "observedPrice": 8020000,
+            "sourceId": "red:52"
+          }
+        ],
+        "updatedAt": "2026-09-30T06:50:11.234Z"
+      }
     }
   ],
   "projectDetails": {

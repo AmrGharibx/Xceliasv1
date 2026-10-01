@@ -2,10 +2,22 @@ import {writeFile} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import path from 'node:path';
 import {EGYPTIAN_ARABIC_REVIEW_COPY} from '../public/modules/egyptian-arabic.mjs';
+import {studioLibrary,studioQuiz} from '../server/activity-studio.mjs';
 
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const escapeCell=value=>String(value).replaceAll('|','\\|').replaceAll('\r',' ').replaceAll('\n','<br>');
-const rows=Object.entries(EGYPTIAN_ARABIC_REVIEW_COPY)
+const inventory={...EGYPTIAN_ARABIC_REVIEW_COPY};
+const add=(english,arabic)=>{if(english&&arabic)inventory[english]=arabic;};
+for(const item of studioLibrary()){
+ const activity=studioQuiz(item.id);
+ for(const key of ['title','category','description'])add(activity[key],activity.arabic?.[key]);
+ for(const question of activity.questions){
+  for(const key of ['prompt','hint','explanation'])add(question[key],question.arabic?.[key]);
+  question.options.forEach((option,index)=>add(option,question.arabic?.options?.[index]));
+ }
+ for(const card of activity.study_cards||[])for(const key of ['front','back'])add(card[key],card.arabic?.[key]);
+}
+const rows=Object.entries(inventory)
  .sort(([left],[right])=>left.localeCompare(right,'en'))
  .map(([english,egyptian])=>`| ${escapeCell(english)} | ${escapeCell(egyptian)} |`);
 const document=[

@@ -1,4 +1,5 @@
 // @ts-nocheck -- runtime validation is shared with the tested JavaScript app.
+import {liveCompetitionMode,livePlayerStandings} from '../../../server/activity-live-competition.mjs';
 import {createHash,randomBytes,scrypt as nodeScrypt,timingSafeEqual} from 'node:crypto';
 import {Buffer} from 'node:buffer';
 import {promisify} from 'node:util';
@@ -131,7 +132,7 @@ async function activityLiveInfo(codeHash){
  if(!room||Date.parse(room.expires_at)<=Date.now())throw new ApiError(404,'That room code is invalid or expired. Ask your trainer for the current code.');
  if(room.status!=='Open')throw new ApiError(409,'This live room has ended. Ask your trainer to start another round.');
  const players=await rows('activity_live_players',{select:'team_no',room_id:`eq.${room.id}`,limit:100}),deck=room.deck_snapshot,teamNames=liveRoomTeamNames(room,deck);
- return {mode:deck.mode==='pulse'?'pulse':'quiz',title:deck.title,category:deck.category,level:deck.level,...(deck.arabic?{arabic:deck.arabic}:{}),total_rounds:deck.questions.length,timer_duration:room.timer_duration,teams:teamNames.map((name,index)=>({team_no:index+1,name,players:players.filter(item=>item.team_no===index+1).length}))};
+ return {competition_mode:deck.competition_mode||'teams',mode:deck.mode==='pulse'?'pulse':'quiz',title:deck.title,category:deck.category,level:deck.level,...(deck.arabic?{arabic:deck.arabic}:{}),total_rounds:deck.questions.length,timer_duration:room.timer_duration,teams:teamNames.map((name,index)=>({team_no:index+1,name,players:players.filter(item=>item.team_no===index+1).length}))};
 }
 async function activityLivePlayerState(playerHash){
  await purgeExpiredLiveRooms();
@@ -151,10 +152,10 @@ async function activityLivePlayerState(playerHash){
  }
  const teamPlayers=await rows('activity_live_players',{select:'points',room_id:`eq.${player.room_id}`,team_no:`eq.${player.team_no}`,limit:100});
  const teamRoster=await rows('activity_live_players',{select:'team_no,points',room_id:`eq.${player.room_id}`,limit:100});
- const leaders=room.revealed?(await rows('activity_live_players',{select:'nickname,team_no,points,streak,joined_at',room_id:`eq.${player.room_id}`,order:'points.desc,streak.desc,joined_at.asc',limit:5})):[];
+ const leaders=room.revealed?livePlayerStandings(await rows('activity_live_players',{select:'nickname,team_no,points,streak,joined_at',room_id:`eq.${player.room_id}`,order:'points.desc,joined_at.asc',limit:80})).slice(0,deck.competition_mode==='individuals'?80:5):[];
  const teamPoints=teamPlayers.reduce((sum,item)=>sum+item.points,0);
  const teamScores=teamNames.map((name,index)=>{const team_no=index+1,people=teamRoster.filter(item=>item.team_no===team_no);return {team_no,name,points:people.reduce((sum,item)=>sum+item.points,0),players:people.length};});
- return {mode,status:room.status,round_index:room.round_index,total_rounds:deck.questions.length,revealed,complete:room.status==='Complete',room_closed:room.status==='Closed',activity:{title:deck.title,category:deck.category,level:deck.level,...(deck.arabic?{arabic:deck.arabic}:{})},team:{team_no:player.team_no,name:teamNames[player.team_no-1],points:teamPoints,players:teamPlayers.length},team_scores:teamScores,player:{nickname:player.nickname,points:player.points,streak:player.streak,choice:answer?.choice??null,confidence:answer?.confidence??null,correct:revealed&&answer?!!answer.correct:null,awarded_points:revealed?(answer?.awarded_points||0):0},question:liveRoomQuestionView(question,revealed),response_count:answers.length,timer_duration:player.timer_duration,timer_ends_at:player.timer_ends_at,leaders};
+ return {mode,status:room.status,round_index:room.round_index,total_rounds:deck.questions.length,revealed,complete:room.status==='Complete',room_closed:room.status==='Closed',activity:{title:deck.title,category:deck.category,level:deck.level,...(deck.arabic?{arabic:deck.arabic}:{})},competition_mode:deck.competition_mode||'teams',participant_count:teamRoster.length,team:{team_no:player.team_no,name:teamNames[player.team_no-1],points:teamPoints,players:teamPlayers.length},team_scores:teamScores,player:{nickname:player.nickname,points:player.points,streak:player.streak,choice:answer?.choice??null,confidence:answer?.confidence??null,correct:revealed&&answer?!!answer.correct:null,awarded_points:revealed?(answer?.awarded_points||0):0},question:liveRoomQuestionView(question,revealed),response_count:answers.length,timer_duration:player.timer_duration,timer_ends_at:player.timer_ends_at,leaders};
 }
 async function activityLiveHostState(roomId,ownerId){
  await purgeExpiredLiveRooms();
@@ -174,7 +175,7 @@ async function activityLiveHostState(roomId,ownerId){
  const playerById=new Map(players.map(person=>[person.id,person])),revealed=!!room.revealed;
  const teamNames=liveRoomTeamNames(room,deck),teams=teamNames.map((name,index)=>{const team_no=index+1,people=players.filter(person=>person.team_no===team_no);return {team_no,name,points:people.reduce((sum,person)=>sum+person.points,0),player_count:people.length,players:people.map(({nickname,points,streak})=>({nickname,points,streak}))};});
  const responses=answers.map(answer=>({answer,person:playerById.get(answer.player_id)})).filter(item=>item.person).map(({answer,person})=>({nickname:person.nickname,team_no:person.team_no,choice:answer.choice,correct:!!answer.correct,awarded_points:answer.awarded_points}));
- return {room:{id:room.id,status:room.status,round_index:room.round_index,total_rounds:deck.questions.length,revealed,correct_choice:revealed?room.correct_choice:null,timer_duration:room.timer_duration,timer_ends_at:room.timer_ends_at,expires_at:room.expires_at},activity:{id:deck.id,title:deck.title,category:deck.category,level:deck.level,...(deck.arabic?{arabic:deck.arabic}:{})},question:liveRoomQuestionView(question,revealed),teams,response_count:answers.length,answer_counts:question.type==='sequence'?null:question.options.map((_,choice)=>answers.filter(answer=>answer.choice===choice).length),responses:revealed?responses:[],confidence_summary:liveConfidenceSummary(answers,revealed)};
+ return {room:{id:room.id,competition_mode:deck.competition_mode||'teams',status:room.status,round_index:room.round_index,total_rounds:deck.questions.length,revealed,correct_choice:revealed?room.correct_choice:null,timer_duration:room.timer_duration,timer_ends_at:room.timer_ends_at,expires_at:room.expires_at},activity:{id:deck.id,title:deck.title,category:deck.category,level:deck.level,...(deck.arabic?{arabic:deck.arabic}:{})},question:liveRoomQuestionView(question,revealed),teams,leaders:livePlayerStandings(players),participant_count:players.length,response_count:answers.length,answer_counts:question.type==='sequence'?null:question.options.map((_,choice)=>answers.filter(answer=>answer.choice===choice).length),responses:revealed?responses:[],confidence_summary:liveConfidenceSummary(answers,revealed)};
 }
 async function activityLiveRooms(ownerId){
  await purgeExpiredLiveRooms();
@@ -312,14 +313,14 @@ async function handle(request){
   }
   if(route==='activities/live/info'&&method==='POST'){
    const body=await bodyOf(request),code=checkedLiveRoomCode(body.code),hash=tokenHash(code);
-   if(!await rate('activity-live-public-info',600,60)||!await rate('activity-live-info:'+hash,20,60))throw new ApiError(429,'Too many checks for this room code. Wait a moment and try again.');
+   if(!await rate('activity-live-public-info',600,60)||!await rate('activity-live-info:'+hash,240,60))throw new ApiError(429,'Too many checks for this room code. Wait a moment and try again.');
    return json(request,await activityLiveInfo(hash));
   }
   if(route==='activities/live/join'&&method==='POST'){
    const body=await bodyOf(request),code=checkedLiveRoomCode(body.code),hash=tokenHash(code);
-   if(!await rate('activity-live-public-join',300,60)||!await rate('activity-live-join:'+hash,10,60))throw new ApiError(429,'Too many join attempts for this room. Check the code and try again in a minute.');
+   if(!await rate('activity-live-public-join',300,60)||!await rate('activity-live-join:'+hash,120,60))throw new ApiError(429,'Too many join attempts for this room. Check the code and try again in a minute.');
    const info=await activityLiveInfo(hash),pulse=info.mode==='pulse',nickname=pulse?`Pulse-${randomBytes(4).toString('hex')}`:typeof body.nickname==='string'?body.nickname.trim():'';
-   const teamNo=pulse?1:body.team_no;
+   const teamNo=pulse||info.competition_mode==='individuals'?1:body.team_no;
    if(!nickname||nickname.length>24||/[\u0000-\u001f\u007f]/.test(nickname)||!Number.isInteger(teamNo)||teamNo<1||teamNo>4)throw new ApiError(400,'Choose a nickname and one of the teams shown on the join screen.');
    const seatToken=safeToken(),playerId=id();
    await rpc('red_activity_live_join',{p_payload:{code_hash:hash,player_id:playerId,token_hash:tokenHash(seatToken),nickname,team_no:teamNo}});
@@ -393,12 +394,12 @@ async function handle(request){
   }
   if(route==='activities/live/create'&&method==='POST'){
    canWrite(user);if(!await rate('activity-live-create:'+user.id,12,3600))throw new ApiError(429,'Live room limit reached. Try again later.');
-   const body=await bodyOf(request),isPulse=body.mode==='pulse',pulse=isPulse?validateActivityLivePulse(body):null,activityId=isPulse?'session-pulse':body.activity_id,teamNames=isPulse?['Whole class']:activityTeamNames(body);
+   const body=await bodyOf(request),isPulse=body.mode==='pulse',pulse=isPulse?validateActivityLivePulse(body):null,activityId=isPulse?'session-pulse':body.activity_id,competitionMode=liveCompetitionMode(body),teamNames=isPulse?['Whole class']:competitionMode==='individuals'?['Individuals']:activityTeamNames(body);
    if(body.mode!==undefined&&body.mode!=='pulse')throw new ApiError(400,'Choose a supported live-room mode.');
    if(typeof activityId!=='string'||!/^[a-z0-9][a-z0-9-]{1,39}$/.test(activityId)||!isPulse&&![0,20,30,45].includes(body.timer_duration))throw new ApiError(400,'Choose a challenge, two to four different team names, and a valid timer.');
    const activity=isPulse?pulse:studioFacilitatorDeck(await customStudioChallenges()).find(item=>item.id===activityId);if(!activity)throw new ApiError(400,'Choose a challenge from the live deck.');
    const code=liveRoomCode(),roomId=id(),expiresAt=new Date(Date.now()+4*60*60*1000).toISOString();
-   await rpc('red_activity_live_mutate',{p_action:'create',p_payload:{id:roomId,code_hash:tokenHash(code),owner_id:user.id,activity_id:activity.id,deck_snapshot:{...activity,team_names:teamNames},team_one:teamNames[0],team_two:teamNames[1]||teamNames[0],timer_duration:isPulse?pulse.timer_duration:body.timer_duration,expires_at:expiresAt}});
+   await rpc('red_activity_live_mutate',{p_action:'create',p_payload:{id:roomId,code_hash:tokenHash(code),owner_id:user.id,activity_id:activity.id,deck_snapshot:{...activity,competition_mode:competitionMode,team_names:teamNames},team_one:teamNames[0],team_two:teamNames[1]||teamNames[0],timer_duration:isPulse?pulse.timer_duration:body.timer_duration,expires_at:expiresAt}});
    return json(request,{room_id:roomId,join_code:code,expires_at:expiresAt},201);
   }
   if(route==='activities/live/reveal'&&method==='POST'){

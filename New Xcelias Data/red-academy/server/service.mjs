@@ -1,3 +1,4 @@
+import {liveCompetitionMode} from './activity-live-competition.mjs';
 import {EventEmitter} from 'node:events';
 import crypto from 'node:crypto';
 import {TABLES,id,emptyState,attendanceStats,scores,assessedRows,assessmentFor,sessionChecklistFor} from '../public/modules/core.mjs';
@@ -189,15 +190,15 @@ export async function handleApi(request){
   }
   if(route==='activities/live/info'&&method==='POST'){
    const body=await bodyOf(request),code=checkedLiveRoomCode(body.code),hash=tokenHash(code);
-   if(!await repo.rate('activity-live-public-info',600,60)||!await repo.rate('activity-live-info:'+hash,20,60))throw new ApiError(429,'Too many checks for this room code. Wait a moment and try again.');
+   if(!await repo.rate('activity-live-public-info',600,60)||!await repo.rate('activity-live-info:'+hash,240,60))throw new ApiError(429,'Too many checks for this room code. Wait a moment and try again.');
    return json(await repo.activityLiveInfo(hash));
   }
   if(route==='activities/live/join'&&method==='POST'){
    const body=await bodyOf(request),code=checkedLiveRoomCode(body.code),hash=tokenHash(code);
-   if(!await repo.rate('activity-live-public-join',300,60)||!await repo.rate('activity-live-join:'+hash,10,60))throw new ApiError(429,'Too many join attempts for this room. Check the code and try again in a minute.');
+   if(!await repo.rate('activity-live-public-join',300,60)||!await repo.rate('activity-live-join:'+hash,120,60))throw new ApiError(429,'Too many join attempts for this room. Check the code and try again in a minute.');
    const info=await repo.activityLiveInfo(hash),pulse=info.mode==='pulse';
    const nickname=pulse?`Pulse-${crypto.randomBytes(4).toString('hex')}`:typeof body.nickname==='string'?body.nickname.trim():'';
-   const teamNo=pulse?1:body.team_no;
+   const teamNo=pulse||info.competition_mode==='individuals'?1:body.team_no;
    if(!nickname||nickname.length>24||/[\u0000-\u001f\u007f]/.test(nickname)||!Number.isInteger(teamNo)||teamNo<1||teamNo>4)throw new ApiError(400,'Choose a nickname and one of the teams shown on the join screen.');
    const seatToken=crypto.randomBytes(32).toString('base64url'),playerId=id();
    const room=await repo.joinActivityLiveRoom({code_hash:hash,player_id:playerId,player_hash:tokenHash(seatToken),nickname,team_no:teamNo});
@@ -291,11 +292,11 @@ export async function handleApi(request){
   }
   if(route==='activities/live/create'&&method==='POST'){
    canWrite(user);if(!await repo.rate('activity-live-create:'+user.id,12,3600))throw new ApiError(429,'Live room limit reached. Try again later.');
-   const body=await bodyOf(request),isPulse=body.mode==='pulse',pulse=isPulse?validateActivityLivePulse(body):null,activityId=isPulse?'session-pulse':body.activity_id,teamNames=isPulse?['Whole class']:activityTeamNames(body);
+   const body=await bodyOf(request),isPulse=body.mode==='pulse',pulse=isPulse?validateActivityLivePulse(body):null,activityId=isPulse?'session-pulse':body.activity_id,competitionMode=liveCompetitionMode(body),teamNames=isPulse?['Whole class']:competitionMode==='individuals'?['Individuals']:activityTeamNames(body);
    if(body.mode!==undefined&&body.mode!=='pulse')throw new ApiError(400,'Choose a supported live-room mode.');
    if(typeof activityId!=='string'||!/^[a-z0-9][a-z0-9-]{1,39}$/.test(activityId)||!isPulse&&![0,20,30,45].includes(body.timer_duration))throw new ApiError(400,'Choose a challenge, two to four different team names, and a valid timer.');
    const code=liveRoomCode(),roomId=id(),expiresAt=new Date(Date.now()+4*60*60*1000).toISOString();
-   const room=await repo.createActivityLiveRoom({id:roomId,code_hash:tokenHash(code),activity_id:activityId,mode:isPulse?'pulse':'quiz',pulse,teams:teamNames,team_one:teamNames[0],team_two:teamNames[1]||teamNames[0],timer_duration:isPulse?pulse.timer_duration:body.timer_duration,expires_at:expiresAt},user);
+   const room=await repo.createActivityLiveRoom({id:roomId,code_hash:tokenHash(code),activity_id:activityId,mode:isPulse?'pulse':'quiz',competition_mode:competitionMode,pulse,teams:teamNames,team_one:teamNames[0],team_two:teamNames[1]||teamNames[0],timer_duration:isPulse?pulse.timer_duration:body.timer_duration,expires_at:expiresAt},user);
    return json({room_id:room.id,join_code:code,expires_at:room.expires_at},201,outgoing);
   }
   if(route==='activities/live/reveal'&&method==='POST'){

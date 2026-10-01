@@ -1,9 +1,11 @@
 import {ApiError} from './validation.mjs';
 import {SEQUENCE_SPRINT_ACTIVITY} from './activity-sequence.mjs';
+import {NEW_CAIRO_FOUNDATIONS} from './activity-new-cairo.mjs';
 
 // Answer keys stay on the server. The public library exposes metadata only, and
 // the learner endpoint strips both the correct option and the explanation.
 const QUIZZES = Object.freeze([
+  NEW_CAIRO_FOUNDATIONS,
   {
     id: 'quiz-discovery', title: 'Discovery Sprint', category: 'Client discovery', level: 'Warm-up', duration_minutes: 5,
     description: 'A fast team warm-up for asking better questions before recommending a property.',
@@ -247,7 +249,7 @@ export function validateStudioArabicChallenge(challenge){
 }
 
 export function studioLibrary(customActivities=[]) {
-  const builtIn=QUIZZES.map(({id,title,category,level,duration_minutes,description,questions}) => ({id,title,category,level,duration_minutes,description,question_count:questions.length,xp_per_correct:100}));
+  const builtIn=QUIZZES.map(({id,title,category,level,duration_minutes,description,questions,arabic}) => ({id,title,category,level,duration_minutes,description,...(arabic?{arabic}:{}),question_count:questions.length,xp_per_correct:100}));
   const custom=customActivities.filter(activity=>!activity.archived_at).map(({id,title,category,level,duration_minutes,description,arabic,questions,created_by})=>({id,title,category,level,duration_minutes,description,...(arabic?{arabic}:{}),question_count:questions.length,xp_per_correct:100,is_custom:true,created_by}));
   return [...builtIn,...custom];
 }
@@ -259,9 +261,9 @@ export function studioQuiz(id,customActivities=[]) {
 // Use only behind the staff-writer facilitator endpoint. Public learner and
 // assignment libraries must continue using studioLibrary/publicQuiz instead.
 export function studioFacilitatorDeck(customActivities=[]) {
-  const builtIn=QUIZZES.map(({id,title,category,level,duration_minutes,questions}) => ({
-    id,title,category,level,duration_minutes,
-    questions:questions.map(({id:questionId,prompt,options,answer,explanation}) => ({id:questionId,prompt,options,answer,explanation}))
+  const builtIn=QUIZZES.map(({id,title,category,level,duration_minutes,questions,arabic}) => ({
+    id,title,category,level,duration_minutes,...(arabic?{arabic}:{}),
+    questions:questions.map(({id:questionId,prompt,options,answer,explanation,arabic:arabicQuestion}) => ({id:questionId,prompt,options,answer,explanation,...(arabicQuestion?{arabic:arabicQuestion}:{})}))
   }));
   const custom=customActivities.filter(activity=>!activity.archived_at).map(({id,title,category,level,duration_minutes,arabic,questions})=>({id,title,category,level,duration_minutes,...(arabic?{arabic}:{}),questions:questions.map(({id:questionId,prompt,options,answer,explanation,arabic:arabicQuestion})=>({id:questionId,prompt,options,answer,explanation,...(arabicQuestion?{arabic:arabicQuestion}:{})}))}));
   return [...builtIn,...custom,SEQUENCE_SPRINT_ACTIVITY];

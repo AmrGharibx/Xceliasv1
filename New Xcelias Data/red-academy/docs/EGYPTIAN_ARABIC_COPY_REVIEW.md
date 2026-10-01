@@ -20,6 +20,8 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | “What felt like the best fit, and what gave you pause? We can compare those against the routine you described.” | «إيه أكتر حاجة حسّيتها مناسبة، وإيه اللي خلّاك تتردد؟ نقدر نقارن ده بروتينك اليومي اللي حكيتلي عنه.» |
 | “You should not have to start over. With your permission, I’ll confirm the commute priority with you and make sure the next advisor has only that agreed context.” | «مش المفروض تبدأ من الأول. لو تسمحلي، هأكد معاك إن المشوار الأقصر هو الأولوية، وهتأكد إن المستشار اللي جاي معاه التفاصيل دي بس.» |
 | “You’re right to expect the update I promised. I’m sorry I missed it. I’ll check the viewing status now and send you a clear update by 2 pm; if I can’t confirm it by then, I’ll tell you what is still pending.” | «من حقك تستنى التحديث اللي وعدتك بيه، وأنا آسف إني ما التزمتش. هراجع حالة المعاينة دلوقتي وأبعتلك تحديث واضح قبل الساعة ٢؛ ولو ماقدرتش أتأكد لحد ساعتها، هقولك إيه اللي لسه معلق.» |
+| 90 North and East Rehab. | التسعين الشمالي وشرق الرحاب. |
+| 90 South, Taha Hussein, Sadat, Shinzo Abe. | التسعين الجنوبي، طه حسين، السادات، شينزو آبي. |
 | A balanced comparison respects the concern and supports the client's own decision process. | المقارنة المتوازنة بتحترم قلق العميل وبتساعده ياخد قراره بنفسه. |
 | A balanced comparison respects the concern and supports the client’s own decision process. | المقارنة المتوازنة بتحترم قلق العميل وبتساعده ياخد قراره بنفسه. |
 | A balcony would be lovely, but it is not worth stretching for. | البلكونة هتبقى حلوة، بس مش مستاهلة أزوّد الميزانية علشانها. |
@@ -27,6 +29,10 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | A brief check-back now can prevent an irrelevant shortlist later. | مراجعة سريعة دلوقتي ممكن تمنع قائمة ترشيحات مش مناسبة بعدين. |
 | A brief check-in anchors the visit to the client's priorities and gives them control of what to explore. | سؤال سريع في البداية بيربط المعاينة بأولويات العميل ويديله حرية يختار إيه يستكشف. |
 | A brief check-in anchors the visit to the client’s priorities and gives them control of what to explore. | سؤال سريع في البداية بيربط المعاينة بأولويات العميل ويديله حرية يختار إيه يستكشف. |
+| A broker builds the project; a developer only compares listings. | البروكر هو اللي بيبني المشروع؛ المطوّر بيقارن إعلانات بس. |
+| A broker compares diverse projects and advises around the client’s request; a developer representative focuses on the developer’s own projects and unit offering. | البروكر بيقارن مشاريع مختلفة وينصح حسب طلب العميل؛ مندوب المطوّر بيركّز على مشاريع المطوّر ووحداته. |
+| A broker compares projects across developers and advises around client needs. A developer sells its own projects. Primary means buying from the developer, with cash or an offered payment plan. Resale means buying from an existing owner; cash is common, but any transferable installments must be verified. Either can be off-plan or ready. | البروكر بيقارن بين مشاريع مطوّرين مختلفين وينصح حسب احتياج العميل. المطوّر بيبيع مشاريعه. البرايمري من المطوّر، كاش أو بنظام سداد متاح. الريسيل من مالك حالي؛ الكاش شائع، وأي أقساط هتتنقل لازم تتراجع. الاتنين ممكن يكونوا تحت الإنشاء أو جاهزين. |
+| A broker typically works across projects, builds wider market awareness, calls around an opportunity or client request, and advises from that knowledge. A developer representative focuses on its own projects and unit types. Broader scope is not proof that any individual knows more or less. | البروكر غالبًا بيشتغل على مشاريع مختلفة، بيتابع السوق بشكل أوسع، وبيتصل بخصوص فرصة أو طلب العميل وينصح على أساس معرفته. مندوب المطوّر تركيزه على مشاريع المطوّر وأنواع وحداته. نطاق الشغل مش دليل إن شخص بعينه بيعرف أكتر أو أقل. |
 | A clear verification step and a promised follow-up preserve trust. | خطوة تأكد واضحة وميعاد متابعة متفق عليه بيحافظوا على الثقة. |
 | A clear verification step protects accuracy and trust; do not convert uncertainty into a promise. | خطوة تأكد واضحة بتحافظ على الدقة والثقة؛ ما تحوّلش عدم التأكد لوعد. |
 | A client asks about a feature that may vary by unit or handover stage. Practice being useful while clearly separating what is known from what still needs checking. | العميل بيسأل عن ميزة ممكن تختلف من وحدة للتانية أو حسب مرحلة التسليم. اتدرّب تكون مفيد وتفرّق بوضوح بين المعلومة المؤكدة واللي لسه محتاجة مراجعة. |
@@ -107,6 +113,7 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | After a viewing, the client becomes quiet. What is a constructive response? | بعد المعاينة، العميل سكت. إيه رد يساعدك تفهم رأيه؟ |
 | After assigning, create learner links. Each trainee gets a matching one-use QR; show it only to its named trainee. Scores are calculated on the server and appear here live. | بعد ما تكلّف التحدّي، أنشئ لينكات المتدرّبين. كل متدرّب هيكون له كود QR خاص لمرة واحدة؛ اعرضه للمتدرّب المقصود بس. التقييم بيتحسب على النظام وبيظهر هنا لحظيًا. |
 | After learners finish an Academy Studio challenge, this space turns their private results into a small-sample-aware group practice plan. No names or individual answers appear here. | بعد ما المتدرّبين يخلصوا تحدّي من الاستوديو، المساحة دي هتحوّل نتايجهم الخاصة لخطة تدريب مناسبة للمجموعة، من غير ما تكشف أسماء أو إجابات أي حد. |
+| After reveal | بعد ظهور الإجابة |
 | Agree on a clear next step, including a time and channel that suit the client. | اتفقوا على خطوة جاية واضحة، بميعاد وطريقة تواصل يناسبوا العميل. |
 | Agree on a realistic follow-up time. | اتفقوا على ميعاد واقعي للمتابعة. |
 | Agree on a useful next step together. | اتفقوا سوا على خطوة جاية مفيدة. |
@@ -121,6 +128,7 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | An open, neutral debrief reveals the client's reaction without pressure. | مراجعة هادية بسؤال مفتوح بتوضح رأي العميل من غير ضغط. |
 | Answer from memory if it sounds right. | جاوب من ذاكرتك لو الإجابة شكلها صح. |
 | Answer on your own phone. Your trainer reveals the strongest move after the room has had time to think. | جاوب من موبايلك. المدرّب هيعرض الاختيار الأقوى بعد ما الكل ياخد وقته في التفكير. |
+| Apartments and furnished units: studio, villa, retail. | شقق ووحدات مفروشة: استوديو، فيلا، محل. |
 | Ask an open, neutral question about their reaction. | اسأل سؤال مفتوح ومحايد عن رأيه. |
 | Ask another client what they heard. | اسأل عميل تاني سمع إيه. |
 | Ask both to send separate updates. | اطلب من الاتنين يبعتوا تحديثات منفصلة. |
@@ -182,6 +190,8 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | Blame the source and move on. | حمّل المصدر المسؤولية وكمل. |
 | Blaming a colleague, minimizing the impact, or making another promise without checking that it is achievable. | لوم زميل، أو التقليل من أثر التأخير، أو تقديم وعد جديد من غير ما يتأكد إنه قابل للتنفيذ. |
 | Blaming the colleague, repeating unnecessary personal information, or leaving the client unsure who owns the next step. | لوم الزميل، أو تكرار معلومات شخصية مش لازمة، أو ترك العميل مش عارف مين مسؤول عن الخطوة الجاية. |
+| Both can offer only one developer’s projects. | الاتنين يقدروا يعرضوا مشاريع مطوّر واحد بس. |
+| Broker / developer and primary / resale | البروكر والمطوّر، والبرايمري والريسيل |
 | Build a challenge | جهّز تحدّي |
 | Build a four-part run-of-show: quick recall, a live team challenge, a coaching huddle, and one next-step exit ticket. Every trainer can pick up the shared board. | جهّز خطة من أربع خطوات: مراجعة سريعة، وتحدّي جماعي مباشر، ونقاش تدريبي، وخطوة عملية يطلعوا بيها. أي مدرّب يقدر يكمل الخطة المشتركة. |
 | Build follow-ups clients can act on: concise, permission-based, owned, and on time. | جهّز متابعة واضحة ومختصرة، بموافقة العميل، وبمسؤول وميعاد محددين. |
@@ -202,12 +212,14 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | Check the client's permission and the approved purpose and channel before sharing anything. | اتأكد من موافقة العميل، والغرض والقناة المعتمدين، قبل ما تشارك أي بيانات. |
 | Check the client’s permission and the approved purpose and channel before sharing anything. | اتأكد من موافقة العميل، وسبب المشاركة والقناة المعتمدة، قبل ما تبعت أي حاجة. |
 | Check the current approved source and note when it was verified. | راجع المصدر المعتمد الحالي، وسجّل إمتى اتأكدت من المعلومة. |
+| Check the northern approach group, not the Ring Road group. | راجع مجموعة المدخل الشمالي، مش مجموعة الدائري. |
 | Checking the private link with RED Academy. | بنتأكد من اللينك الخاص مع أكاديمية RED. |
 | Checking your access | بنتأكد من صلاحية دخولك |
 | CHOOSE A CLIENT MOMENT | اختار موقف مع عميل |
 | Choose a team | اختار فريق |
 | Choose another scene | اختار موقف تاني |
 | Choose one batch in the filters to add this review to its shared session calendar. | اختار دفعة من الفلاتر علشان تضيف المراجعة دي لجدول جلساتها المشترك. |
+| Choose teams or let every trainee compete individually. | اختار فرق، أو خلّي كل متدرّب ينافس لوحده. |
 | Choose the energy for today. | اختاروا شكل التحدّي المناسب لدرس النهارده. |
 | Choose the one with the highest commission. | اختار اللي عمولته أعلى. |
 | Choose the preferences you think are realistic. | اختار إنت التفضيلات اللي شايفها منطقية. |
@@ -236,9 +248,11 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | Commits to an approved current source | يلتزم بمراجعة مصدر معتمد ومحدّث |
 | Company | الشركة |
 | Compare the client's stated priorities using verified details and trade-offs. | قارن بينهم حسب أولويات العميل المعلنة، وبمعلومات مؤكدة وفروق واضحة. |
+| Compare the scope of the role, not someone’s intelligence or honesty. | قارن نطاق الشغل، مش ذكاء الشخص أو أمانته. |
 | Compare what matters | قارن اللي يهم العميل |
 | Compare your reasoning with the coaching order above. | قارن طريقة تفكيرك بالترتيب التدريبي اللي فوق. |
 | Compares verified trade-offs that matter | يقارن فروق مؤكدة تهم العميل |
+| Competition mode | نظام المنافسة |
 | Completed | مكتمل |
 | Confirm how the client defines the budget and what they are comfortable considering. | اتأكد العميل قاصد إيه بالميزانية وإيه النطاق اللي مرتاح يدرسه. |
 | Confirm permission and follow approved data-handling practice before sharing client information. | اتأكد من الإذن واتبع قواعد التعامل المعتمدة قبل مشاركة بيانات العميل. |
@@ -263,6 +277,8 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | Conversation skills | مهارات الحوار |
 | Coordinate the open item and keep the client informed without assigning blame or guessing. | تابع النقطة المفتوحة وحدّث العميل من غير لوم أو تخمين. |
 | Core | أساسي |
+| Core and shell, semi-finished, fully finished, fully furnished. | عالطوب، نص تشطيب، كامل التشطيب، كامل الفرش. |
+| Core and shell, semi-finished, furnished. | عالطوب، نص تشطيب، مفروش. |
 | Correct | صح |
 | Correct it promptly, explain what changed, and provide the verified detail. | صحّحها بسرعة، وضّح إيه اللي اتغيّر، وابعتهاله بعد ما تتأكد. |
 | Could you send me the details? | ممكن تبعتلي التفاصيل؟ |
@@ -286,7 +302,9 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | Email is best. I am usually free after work if you need to talk. | الإيميل أنسب. غالبًا ببقى فاضي بعد الشغل لو محتاجين نتكلم. |
 | End the conversation without checking what they need. | أنهِ الكلام من غير ما تعرف هو محتاج إيه. |
 | English | English |
+| Equal scores share a place · temporary room points | النقاط المتساوية ليها نفس المركز · نقاط مؤقتة للجولة |
 | Every round is practice. Pick one coaching note and try it in the next role-play. | كل جولة فرصة للتدريب. اختار ملاحظة واحدة وجرّبها في المحاكاة الجاية. |
+| Every trainee joins with a nickname and answers on their own phone. Correct answers earn 100 points plus a streak bonus. Everyone appears on the leaderboard; equal scores share a place. Up to 80 participants. | كل متدرّب بيدخل باسم يختاره ويجاوب من موبايله. الإجابة الصح بـ١٠٠ نقطة ومكافأة للإجابات الصح المتتالية. كل الناس بتظهر في الترتيب، واللي نقاطهم متساوية بياخدوا نفس المركز. لحد ٨٠ مشارك. |
 | Exit facilitation | إنهاء إدارة الجلسة |
 | Explain genuine constraints only when verified. Give the client space to make an informed choice. | اتكلم عن القيود الحقيقية بعد ما تتأكد منها، وادي العميل فرصة يختار على أساس واضح. |
 | Explain that they are wrong. | قوله إنه فاهم الموضوع غلط. |
@@ -303,13 +321,18 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | First clarify what "expensive" means to this client; avoid defending or dismissing it. | افهم الأول العميل شايف السعر غالي مقارنة بإيه؛ من غير ما تدافع عن السعر أو تقلّل من اعتراضه. |
 | First clarify what “expensive” means to this client; avoid defending or dismissing it. | افهم الأول العميل شايف السعر عالي مقارنة بإيه؛ ما تدافعش عن السعر ولا تقلّل من اعتراضه. |
 | First learn what would actually help the client decide, agree how and when they want to hear from you, and send only details you have verified. | اعرف الأول إيه اللي هيساعد العميل يقرر فعلًا، واتفقوا على طريقة وميعاد التواصل، وابعت بس التفاصيل اللي اتأكدت منها. |
+| Focus on what is delivered inside the unit. | ركّز على إيه اللي بيتسلّم جوه الوحدة. |
 | Follow the agreed cadence; a lack of reply is not permission to escalate contact. | التزم بمواعيد المتابعة المتفق عليها؛ عدم الرد مش معناه تزود الاتصالات. |
 | Follow the client's stated channel and timing preferences; ask before changing them. | التزم بطريقة وميعاد التواصل اللي العميل اختارهم، واستأذنه قبل ما تغيّرهم. |
 | Follow the client’s stated channel and timing preferences; ask before changing them. | التزم بطريقة وميعاد التواصل اللي العميل اختارهم، واستأذنه قبل ما تغيّرهم. |
 | Follow-Through Lab | ورشة المتابعة وإنجاز الوعود |
 | Forward them if the group might be useful. | ابعتها لو شايف إن المجموعة ممكن تستفيد. |
 | Forwarding first and asking later, assuming consent from an earlier conversation, or sharing more than the agreed purpose needs. | إرسال البيانات الأول والاستئذان بعدين، أو افتراض إن موافقة قديمة لسه سارية، أو مشاركة معلومات أكتر من الغرض المتفق عليه. |
+| Four roads: Ring, Suez, Middle Ring, Ain Sokhna. Ring axes: Gamal Abdel Nasser, 90 South, Taha Hussein, Sadat, Shinzo Abe. Suez axes: Mostafa Kamel, Mohamed Naguib, East Rehab, 90 North. Middle Ring: Mohamed Bin Zayed, 90 South. | ٤ طرق: الدائري، السويس، الدائري الأوسطي، العين السخنة. محاور الدائري: جمال عبد الناصر، التسعين الجنوبي، طه حسين، السادات، شينزو آبي. محاور السويس: مصطفى كامل، محمد نجيب، شرق الرحاب، التسعين الشمالي. الأوسطي: محمد بن زايد، التسعين الجنوبي. |
 | Fullscreen | ملء الشاشة |
+| Gamal Abdel Nasser, 90 North, Mohamed Bin Zayed, East Rehab, Sadat. | جمال عبد الناصر، التسعين الشمالي، محمد بن زايد، شرق الرحاب، السادات. |
+| Gamal Abdel Nasser, 90 South, Taha Hussein, Sadat, Shinzo Abe. | جمال عبد الناصر، التسعين الجنوبي، طه حسين، السادات، شينزو آبي. |
+| Gamal Abdel Nasser, Taha Hussein, Sadat, Shinzo Abe. | جمال عبد الناصر، طه حسين، السادات، شينزو آبي. |
 | Give the answer that sounds most likely. | قول الإجابة اللي شكلها الأقرب للصح. |
 | Give the client time to experience the space. Use open questions rather than leading them. | ادي العميل وقت يلاحظ المكان بنفسه، واسأله أسئلة مفتوحة من غير ما توجّهه لإجابة. |
 | Give them a moment, then ask an open question about what they notice. | اديه لحظة، وبعدها اسأله سؤال مفتوح عن اللي لفت نظره. |
@@ -317,6 +340,7 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | Gives the client a genuine choice before sharing | يدي العميل اختيار حقيقي قبل المشاركة |
 | Good practice — every round teaches the move | تدريب مفيد؛ كل جولة بتعلّمك خطوة جديدة |
 | Ground the area discussion in the client's real weekly routine. | اربط اختيار المنطقة بمشاوير العميل الحقيقية خلال الأسبوع. |
+| Group the examples by home format, not finish or transaction type. | قسّم الأمثلة حسب شكل البيت، مش التشطيب أو طريقة البيع. |
 | Guarantee it verbally to reassure them. | اضمنهاله بالكلام عشان تطمّنه. |
 | Guessing, relying on an old message, promising an outcome, or leaving the follow-up vague. | التخمين، أو الاعتماد على رسالة قديمة، أو ضمان نتيجة، أو ترك المتابعة من غير تفاصيل واضحة. |
 | Handoff with context | سلّم المتابعة بسياق واضح |
@@ -342,7 +366,13 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | If the update is delayed again, what should I expect? | ولو التحديث اتأخر تاني، أتوقع إيه؟ |
 | Ignore the list and send current inventory. | اتجاهل اللي قاله وابعت الوحدات المتاحة. |
 | Immediately offer a different property. | اعرض عليه عقار تاني فورًا. |
+| In our New Cairo lesson, which four roads surround the area? | في درس القاهرة الجديدة، إيه الـ٤ طرق اللي حوالين المنطقة؟ |
 | Include it in a personal chat instead. | ابعتها في شات شخصي بدل كده. |
+| INDIVIDUAL COMPETITION | منافسة فردية |
+| INDIVIDUAL LEADERBOARD | ترتيب المتدرّبين |
+| INDIVIDUAL ROOM · LIVE SYNC | جولة فردية · متابعة مباشرة |
+| Individual standings | الترتيب الفردي |
+| Individuals · everyone competes | فردي · كل متدرّب بينافس لوحده |
 | Introduce the next owner and agree on follow-up. | عرّف العميل بالمسؤول الجديد واتفقوا على المتابعة. |
 | Investment evidence | الاستناد لمعلومات الاستثمار |
 | Invite an honest reaction with a neutral question, listen without trying to persuade, and then reflect the trade-off you heard so the client can confirm or correct it. | ابدأ بسؤال محايد يفتح المجال لرأي صريح، واسمع من غير محاولة إقناع، وبعدها لخّص الفرق اللي سمعته علشان العميل يأكده أو يصححه. |
@@ -363,6 +393,10 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | Keep the brief inside budget | خلّي الاختيارات في حدود الميزانية |
 | Keep the comparison evidence-led and professional; do not criticize without support. | خلّي المقارنة مبنية على معلومات مؤكدة وبأسلوب مهني؛ ما تنتقدش من غير دليل. |
 | Keeps the next step within the agreed limit | يخلّي الخطوة الجاية في حدود الميزانية المتفق عليها |
+| Know the four approach roads, key axes, property categories, finishes, and primary versus resale basics. | راجع الطرق والمحاور، أنواع العقارات والتشطيب، والفرق بين المطوّر والبروكر وبين البرايمري والريسيل. |
+| Land and commercial: townhouse, office, shop. | أرض وتجاري: تاون، مكتب، محل. |
+| Land, residential, commercial, resale. | أرض، سكني، تجاري، ريسيل. |
+| Land, residential, commercial. | أرض، سكني، تجاري. |
 | Launch a short Academy Studio quiz, send each trainee a private link, and watch participation, scores and XP update in the shared roster. | ابدأ تحدّي قصير من استوديو الأكاديمية، وابعت لكل متدرّب لينك خاص، وتابع المشاركة والنتايج ونقاط الخبرة في سجل الفريق. |
 | Lead with the client's stated priority and the answer or item they asked you to check. | ابدأ بأولوية العميل، وبعدها الإجابة أو النقطة اللي طلب منك تراجعها. |
 | Lead with the client’s stated priority and the answer or item they asked you to check. | ابدأ بأولوية العميل نفسها وبالإجابة أو المعلومة اللي طلب منك تتأكد منها. |
@@ -419,7 +453,15 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | Make the visit about the client’s own criteria, not a standard sales script. | خلّي المعاينة على مقاييس العميل هو، مش على كلام بيع محفوظ. |
 | Make uncertainty useful | حوّل عدم التأكد لخطوة واضحة |
 | Make up a likely answer so the team appears coordinated. | اخترع إجابة متوقعة عشان الفريق يبان متابع. |
+| Market foundations | أساسيات السوق |
+| Middle Ring Road, Sadat, Shinzo Abe, Ring Road. | الدائري الأوسطي، السادات، شينزو آبي، الدائري. |
+| Mohamed Bin Zayed and 90 South. | محمد بن زايد والتسعين الجنوبي. |
+| Mohamed Bin Zayed, 90 South, Sadat, East Rehab. | محمد بن زايد، التسعين الجنوبي، السادات، شرق الرحاب. |
 | More tools | أدوات إضافية |
+| Mostafa Kamel and Mohamed Naguib. | مصطفى كامل ومحمد نجيب. |
+| Mostafa Kamel, Mohamed Naguib, 90 South. | مصطفى كامل، محمد نجيب، التسعين الجنوبي. |
+| Mostafa Kamel, Mohamed Naguib, East Rehab, 90 North, Sadat. | مصطفى كامل، محمد نجيب، شرق الرحاب، التسعين الشمالي، السادات. |
+| Mostafa Kamel, Mohamed Naguib, East Rehab, 90 North. | مصطفى كامل، محمد نجيب، شرق الرحاب، التسعين الشمالي. |
 | Move to a different topic and hope it does not come up. | غيّر الموضوع وخلاص، يمكن ما يسألش تاني. |
 | My lease ends in six weeks, but I might be able to extend it. | عقد الإيجار هيخلص كمان ست أسابيع، بس ممكن أقدر أمدّه شوية. |
 | My partner cares about the commute. I care more about a quiet area. | شريكي فارق معاه المشوار، وأنا الأهم عندي منطقة هادية. |
@@ -435,6 +477,8 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | Need a nudge? | محتاج تلميح؟ |
 | Needs & priorities | الاحتياجات والأولويات |
 | Needs Decoder | فك شفرة احتياجات العميل |
+| New Cairo & Property Foundations | القاهرة الجديدة وأساسيات العقار |
+| New Cairo road and axis checklist | راجع طرق ومحاور القاهرة الجديدة |
 | Next round | الجولة الجاية |
 | Next step → | الخطوة الجاية ← |
 | No invented urgency | من غير استعجال مصطنع |
@@ -449,6 +493,7 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | Nudge unlocked | التلميح ظهر |
 | Objection Arena | ساحة التعامل مع الاعتراضات |
 | of | من |
+| Off-plan, ready, cash, installment. | تحت الإنشاء، جاهز، كاش، أقساط. |
 | Offer a discount before asking what they think. | اعرض خصم قبل ما تسأله رأيه. |
 | Offers current sources and room to verify | يوفر مصادر حديثة وفرصة للتحقق |
 | Okay, what happens next? | تمام، إيه الخطوة الجاية؟ |
@@ -474,6 +519,7 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | Partners take opposite roles, then swap on replay. | كل اتنين ياخدوا دور مختلف، وبعدها يبدّلوا الأدوار. |
 | Pass along useful, factual context and the commitment already made, not speculation. | انقل معلومات مفيدة ومؤكدة والالتزام اللي اتاخد، مش توقعات شخصية. |
 | Pick a class nickname and team. | اختار اسم مستعار وفريق. |
+| Pick a nickname. Compete against the whole class. | اختار اسم تدخل بيه ونافس المجموعة كلها. |
 | Pick a ready-made challenge or build a lesson-specific one, then assign it privately or host it live. | اختار تحدّي جاهز أو جهّز واحد مناسب لدرس النهارده، وبعدها ابعته بشكل خاص أو شغّله لايف مع المجموعة. |
 | Plan a session | خطّط للجلسة |
 | Plan a spaced review | خطّط لمراجعة على فترات |
@@ -485,6 +531,11 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | Pretty sure | واثق إلى حد كبير |
 | Previous | السابق |
 | Previous step | الخطوة اللي فاتت |
+| Primary and resale can be distinguished by finishing alone. | تعرف البرايمري من الريسيل من التشطيب بس. |
+| Primary is always ready; resale is always off-plan. | البرايمري دايمًا جاهز؛ الريسيل دايمًا تحت الإنشاء. |
+| Primary is from the developer, with cash or an offered payment plan; resale is from an existing owner, commonly cash. Either may be off-plan or ready; verify any remaining installments and transfer terms. | البرايمري من المطوّر، كاش أو بنظام سداد متاح؛ الريسيل من مالك حالي وغالبًا كاش. الاتنين ممكن يكونوا تحت الإنشاء أو جاهزين؛ راجع الأقساط المتبقية وشروط التنازل. |
+| Primary, resale, installment. | برايمري، ريسيل، أقساط. |
+| Primary: buy from the developer, cash or an available installment plan, off-plan or ready to deliver. Resale: buy from an existing owner, often cash, off-plan or ready to move. Resale can include remaining installments or other agreed terms; never assume cash-only without checking the contract. | البرايمري شراء من المطوّر، كاش أو خطة أقساط متاحة، تحت الإنشاء أو جاهز للتسليم. الريسيل شراء من مالك حالي، غالبًا كاش، تحت الإنشاء أو جاهز للسكن. ممكن يكون فيه أقساط متبقية أو شروط تانية؛ متقولش كاش بس قبل ما تراجع العقد. |
 | Privacy & consent | الخصوصية والموافقة |
 | Privacy & results | الخصوصية والنتائج |
 | Private link not recognized | اللينك الخاص مش معروف |
@@ -498,6 +549,7 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | Promise that it can be changed later. | اوعده إنها ممكن تتغيّر بعدين. |
 | Promising an outcome, presenting a projection as certain, or using an unverified headline figure to create urgency. | وعد بنتيجة، أو عرض توقع كأنه مؤكد، أو استخدام رقم غير متحقق منه لخلق استعجال. |
 | Promptly correct the record and provide the verified information without shifting blame. | صحّح المعلومة فورًا وابعث البديل المؤكد من غير ما ترمي المسؤولية على غيرك. |
+| Property use is different from unit format or payment method. | استخدام العقار غير شكل الوحدة أو طريقة السداد. |
 | Protect the client's information | احمِ بيانات العميل |
 | Protect the client’s information | حافظ على خصوصية معلومات العميل |
 | QR code for this live classroom | كود QR للانضمام للجلسة المباشرة |
@@ -517,6 +569,8 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | Reflects both decision-makers’ priorities | يلخّص أولويات كل المشاركين في القرار |
 | Repair the missed callback | عالج تأخير مكالمة المتابعة |
 | Replace it with a feature you know is popular. | بدّله بميزة عارف إنها مشهورة. |
+| Required for individual competition. Share one QR code with the whole class; no team selection or Academy login needed. | ضروري للمنافسة الفردية. شارك كود QR واحد مع المجموعة كلها؛ مش محتاجين يختاروا فريق أو يسجّلوا دخول للأكاديمية. |
+| Resale is from the developer and always includes new installments. | الريسيل من المطوّر ودايمًا فيه أقساط جديدة. |
 | Reset | إعادة ضبط |
 | Reset filters | مسح الفلاتر |
 | Respect the client's preferred channel and timing; do not create a message flood. | احترم وسيلة التواصل والميعاد اللي العميل فضّلهم، وما تغرقوش بالرسائل. |
@@ -533,11 +587,14 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | Reveal hint | اظهر التلميح |
 | Reveal the client’s next line | اعرض الجملة الجاية للعميل |
 | Review this move | راجع الاختيار ده |
+| Ring Road, Suez Road, Alexandria Desert Road, Fayoum Road. | الدائري، السويس، إسكندرية الصحراوي، الفيوم. |
+| Ring Road, Suez Road, Middle Ring Road, Ain Sokhna Road. | الدائري، السويس، الدائري الأوسطي، العين السخنة. |
 | Role-play Lab | معمل المحاكاة |
 | ROOM ENDED | الجولة انتهت |
 | ROOM LEADERS | متصدّري الجولة |
 | Round review | مراجعة الجولات |
 | Run a live team round | ابدأ جولة مباشرة للفرق |
+| Sadat and Shinzo Abe. | السادات وشينزو آبي. |
 | Saved to your batch record | اتحفظت في سجل دفعتك |
 | Saving your result… | بنحفظ نتيجتك… |
 | Say another project has even less availability. | قوله إن مشروع تاني الوحدات فيه أقل كمان. |
@@ -568,6 +625,7 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | Send the same message through every channel. | ابعت نفس الرسالة على كل وسائل التواصل. |
 | Sending a pile of brochures, contacting the client repeatedly, or using personal information for an unagreed purpose. | إرسال كومة بروشورات، أو الاتصال المتكرر، أو استخدام بيانات شخصية لغرض ما اتفقتوش عليه. |
 | Separate must-haves from preferences | فرّق بين الضروري والمفضّل |
+| Separate the major surrounding roads from internal axes. | فرّق بين الطرق الرئيسية اللي حوالين المنطقة والمحاور اللي جواها. |
 | Separate verified facts from assumptions. If unsure, say what you will check and when you will return. | فرّق بين المعلومة المؤكدة والتوقع. لو مش متأكد، قول هتراجع إيه وإمتى هترجعله. |
 | Separates evidence, estimates, and assumptions | يفرّق بين البيانات والتقديرات والافتراضات |
 | Separates needs from preferences with permission | يفرّق بين الاحتياجات والتفضيلات بعد ما يتأكد من العميل |
@@ -590,6 +648,7 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | Show QR | اعرض كود QR |
 | Sign in to continue | سجّل دخولك علشان تكمّل |
 | Sign out | تسجيل الخروج |
+| Single-family homes: townhouse, twin house, stand-alone villa. Apartments: studio, 1-, 2-, 3-bedroom, duplex. | بيوت لعيلة واحدة: تاون، توين، ستاند ألون. شقق: استوديو، غرفة، غرفتين، ٣ غرف، دوبلكس. |
 | So a short commute is essential, while the balcony is a preference. Is that accurate? | يعني المشوار القصير أساسي، والبلكونة ميزة تفضّلها. فهمت كده صح؟ |
 | Solid progress. Review the coaching notes and bring one idea into your next session. | تقدّم ممتاز. راجع ملاحظات التدريب وجرّب فكرة منها في الجلسة الجاية. |
 | Space to reflect followed by a neutral question helps the client describe their real reaction. | لما تسيب للعميل وقت يفكر وبعدها تسأله بهدوء، هيقدر يشرح رأيه الحقيقي. |
@@ -599,6 +658,7 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | Start timer | ابدأ المؤقّت |
 | Start with the outcome | ابدأ بالهدف |
 | Start with the story | ابدأ بالحكاية |
+| Start with who is selling, then verify payment and delivery terms. | ابدأ بمين البائع، وبعدها اتأكد من السداد والتسليم. |
 | State that you want to verify the exact unit detail and agree when you will follow up. | قوله إنك هتراجع تفاصيل الوحدة نفسها، واتفقوا على ميعاد ترجعله فيه. |
 | State the limit of what you know and verify the specific detail before presenting it as fact. | قول بوضوح إيه اللي تعرفه، واتأكد من التفصيلة نفسها قبل ما تعرضها كحقيقة. |
 | States clearly that a future return is not guaranteed | يوضح إن العائد المستقبلي مش مضمون |
@@ -608,6 +668,10 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | steps complete | خطوات اكتملت |
 | Still thinking | لسه بفكّر |
 | Stronger choice: | الاختيار الأقوى: |
+| STRONGEST MOVE | الاختيار الأنسب |
+| Studio, apartment, twin house, villa. | استوديو، شقة، توين، فيلا. |
+| Studio, twin house, stand-alone. | استوديو، توين، ستاند ألون. |
+| Suez Road, 90 North, 90 South, Ain Sokhna Road. | السويس، التسعين الشمالي، التسعين الجنوبي، العين السخنة. |
 | Suggesting a stretch, minimizing total costs, or framing a client preference as a must-have without checking. | اقتراح تجاوز الميزانية، أو التقليل من إجمالي التكاليف، أو اعتبار تفضيل العميل حاجة أساسية من غير ما يتأكد منه. |
 | Summarize differences that matter to them. | لخّص الفروق اللي تهمه هو. |
 | Summarize the priorities and invite a correction before shortlisting options. | لخّص الأولويات واطلب من العميل يصحّحلك قبل ما تبدأ تختار وحدات. |
@@ -616,6 +680,7 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | Switch to a different property without discussing it. | انقل لعقار تاني من غير ما تناقش الموضوع. |
 | Team collaboration | التعاون بين الفريق |
 | Team Handoff Relay | تمرير سلس بين الفريق |
+| Teams · collaborate in 2–4 groups | فرق · اتعاونوا في مجموعتين لـ٤ مجموعات |
 | Teamwork | العمل الجماعي |
 | Tell the client the specialist is at fault. | قول للعميل إن المتخصص هو السبب. |
 | Tell the client to contact the other team directly. | اطلب من العميل يكلم الفريق التاني بنفسه. |
@@ -641,22 +706,34 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | The client's stated goal, verified facts, open questions, and agreed next step—shared appropriately. | هدف العميل، والمعلومات المؤكدة، والنقط المفتوحة، والخطوة المتفق عليها، من خلال وسيلة مناسبة. |
 | The client’s stated goal, verified facts, open questions, and agreed next step—shared appropriately. | هدف العميل، والمعلومات المؤكدة، والنقط المفتوحة، والخطوة اللي اتفقتوا عليها؛ وبالقدر المناسب. |
 | The commute might be harder than we thought. | المشوار ممكن يطلع أصعب ما كنا متخيلين. |
+| The developer always knows less about every property fact. | المطوّر دايمًا بيعرف أقل في أي معلومة عقارية. |
+| The five are Gamal Abdel Nasser, 90 South, Taha Hussein, Sadat, and Shinzo Abe. | المحاور الـ٥: جمال عبد الناصر، التسعين الجنوبي، طه حسين، السادات، وشينزو آبي. |
 | The floor plan and the current service-charge figure would help. | مخطط الدور ورقم الصيانة الحالي هيفيدوني. |
+| The four categories are core and shell, semi-finished, fully finished, and fully furnished. Verify the specification sheet: fully finished does not automatically include furniture. | الـ٤ أنواع: عالطوب، نص تشطيب، كامل التشطيب، وكامل الفرش. راجع ورقة المواصفات؛ كامل التشطيب مش معناه تلقائيًا إن الفرش داخل. |
+| The four Suez Road axes are Mostafa Kamel, Mohamed Naguib, East Rehab, and 90 North. | محاور السويس الـ٤: مصطفى كامل، محمد نجيب، شرق الرحاب، والتسعين الشمالي. |
 | The group split stays private. | تفاصيل اختيارات المجموعة لسه خاصة. |
+| The lesson groups five axes under Ring Road. | الدرس بيجمع ٥ محاور تحت طريق الدائري. |
+| The lesson identifies four roads: Ring Road, Suez Road, Middle Ring Road, and Ain Sokhna Road. | الدرس بيحدد ٤ طرق: الدائري، السويس، الدائري الأوسطي، وطريق العين السخنة. |
 | The light was great, though. I am not sure how to weigh that. | بس الإضاءة كانت ممتازة. مش عارف أوازن بين ده وبين المشوار. |
 | The maximum number they could possibly borrow. | أكبر مبلغ ممكن يستلفه. |
+| The Middle Ring Road group contains Mohamed Bin Zayed and 90 South. | مجموعة الدائري الأوسطي: محمد بن زايد والتسعين الجنوبي. |
 | The next class can start here. | ابدأ تجهيز الجلسة الجاية من هنا. |
 | The quiet viewing | معاينة هادية |
 | The return question | سؤال العائد الاستثماري |
 | The secure Academy service could not be reached. Check your connection and try again. | مش قادرين نوصل لخدمة الأكاديمية الآمنة. راجع اتصالك بالإنترنت وحاول تاني. |
 | The six-week move | نقلة بعد ست أسابيع |
+| The three property categories taught here are land, residential, and commercial. | أنواع العقارات الـ٣ اللي في الدرس: أرض، سكني، وتجاري. |
+| The two teaching groups are single-family homes (townhouse, twin house, stand-alone villa) and apartments (studio, one-, two-, three-bedroom, duplex). Check the actual project classification for any specific unit. | المجموعتين في الدرس: بيوت لعيلة واحدة زي التاون والتوين والستاند ألون، وشقق زي الاستوديو وغرفة وغرفتين و٣ غرف والدوبلكس. أي وحدة بعينها راجع تصنيفها في المشروع. |
 | Then what can you show me before I decide? | طب إيه اللي ممكن تورّيهولي قبل ما أقرر؟ |
 | There is no need to verify availability. | مش محتاجين نتأكد من التوافر. |
+| THINK IT THROUGH | فكّر فيها |
 | This correct answer can earn up to 70 XP. | الإجابة الصح بعد التلميح تكسبك لحد 70 نقطة خبرة. |
+| This group has only two axes in the lesson. | المجموعة دي فيها محورين بس في الدرس. |
 | This QR code is private to this trainee. Share it only with them. | كود QR ده خاص بالمتدرّب ده؛ شاركه معاه هو بس. |
 | This reflection lives only in this page session. It is not sent to your trainer, saved, or included in your score or XP. | المراجعة دي ظاهرة ليك في الجلسة دي بس؛ مش بتتبعت للمدرّب ومش بتدخل في الدرجة أو نقاط الخبرة. |
 | This unit will definitely be available next week. | الوحدة دي أكيد هتكون متاحة الأسبوع الجاي. |
 | Time-sensitive details should be checked against an approved current source. | التفاصيل اللي بتتغير لازم تتراجع من مصدر معتمد ومحدّث. |
+| Townhouses and twin houses only; apartments are not a unit family. | تاون وتوين بس؛ الشقق مش مجموعة وحدات. |
 | Trainer + trainee | مدرّب ومتدرّب |
 | Trainer Activities Studio | استوديو أنشطة التدريب |
 | Trainer note · keep private during the rep | ملاحظة للمدرّب · خليك محتفظ بيها أثناء التدريب |
@@ -674,6 +751,8 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | Two properties meet the client's budget. How should you compare them? | عقارين مناسبين لميزانية العميل. تقارن بينهم إزاي؟ |
 | Two teammates believe the other one owns the promised update. How do you prevent a repeat? | كل زميل فاكر إن التاني مسؤول عن التحديث الموعود. تمنع تكرار ده إزاي؟ |
 | Understand the motivation and timeline before searching; it makes the next recommendation relevant. | افهم الدافع والميعاد قبل البحث؛ كده ترشيحك الجاي هيكون مناسب فعلًا. |
+| Unit families: single-family homes (townhouse, twin house, stand-alone villa) and apartments (studio, 1-, 2-, 3-bedroom, duplex). Property categories: land, residential, commercial. Finishes: core and shell, semi-finished, fully finished, fully furnished. | مجموعتين للوحدات: بيوت لعيلة واحدة زي التاون والتوين والستاند ألون، وشقق زي الاستوديو وغرفة وغرفتين و٣ غرف والدوبلكس. العقارات: أرض، سكني، تجاري. التشطيب: عالطوب، نص تشطيب، كامل التشطيب، كامل الفرش. |
+| Unit, property, and finishing categories | أنواع الوحدات والعقارات والتشطيب |
 | Update my order | عدّل الترتيب |
 | Update the client before the promised time, explain what is pending, and set a realistic next update. | حدّث العميل قبل الميعاد، وضّح إيه اللي لسه ناقص، وحدد ميعاد واقعي للتحديث الجاي. |
 | Urgency claims are facts too; verify them before repeating them. | حتى كلام الاستعجال يعتبر معلومة؛ اتأكد منه قبل ما تكرره. |
@@ -700,6 +779,7 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | Warm-up | تمهيدي |
 | We could not open this challenge | ماقدرناش نفتح التحدّي |
 | Welcome, | أهلًا بيك، |
+| What are the three property categories in the lesson? | إيه أنواع العقارات الـ٣ في الدرس؟ |
 | What changed when the advisor explored the concern instead of trying to overcome it? | إيه اللي اتغير لما المستشار فهم سبب القلق بدل ما يحاول يخلّص العميل منه؟ |
 | What did the advisor confirm before treating the request as permission? | إيه اللي المستشار اتأكد منه قبل ما يعتبر الطلب موافقة على مشاركة البيانات؟ |
 | What felt right, what did not fit, and what would you like to compare next? | إيه اللي حسّيته مناسب، وإيه اللي ما ناسبكش، وحابب تقارن إيه بعد كده؟ |
@@ -713,12 +793,19 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | Whether they can stretch the budget for a better-looking unit. | هل يقدر يزوّد الميزانية عشان وحدة شكلها أحلى. |
 | Which area has the largest buildings? | أنهي منطقة فيها أكبر مباني؟ |
 | Which area is trending online? | أنهي منطقة عليها كلام أكتر أونلاين؟ |
+| Which comparison best describes a broker versus a developer sales representative? | إيه المقارنة الأدق بين البروكر ومندوب مبيعات المطوّر؟ |
+| Which four axes belong to the Suez Road group in this lesson? | إيه محاور طريق السويس الـ٤ في الدرس؟ |
+| Which list contains all four finishing categories? | إيه القائمة اللي فيها أنواع التشطيب الـ٤؟ |
+| Which list contains the five Ring Road axes in this lesson? | إيه القائمة اللي فيها محاور الدائري الـ٥ في الدرس؟ |
 | Which part of the repair made the next commitment feel more dependable? | أنهي جزء في طريقة معالجة الموقف خلّى الالتزام الجاي أوثق؟ |
+| Which primary-versus-resale explanation should you give a client? | تشرح للعميل الفرق بين البرايمري والريسيل إزاي؟ |
 | Which project name have you already chosen? | إنت اخترت اسم مشروع إيه؟ |
 | Which question best checks that you understood a client's priorities? | أنهي سؤال يبيّن أحسن إنك فهمت أولويات العميل؟ |
 | Which question changed the quality of the brief before the advisor recommended anything? | أنهي سؤال خلّى تفاصيل احتياج العميل أوضح قبل ما المستشار يرشّح أي حاجة؟ |
 | Which question helped the client move from a vague reaction to a decision criterion? | أنهي سؤال ساعد العميل يحوّل إحساس عام لمعيار واضح يقدر يقرر على أساسه؟ |
 | Which statement is safest when availability may change? | أنهي جملة أدق لو التوافر ممكن يتغيّر؟ |
+| Which two axes form the Middle Ring Road group in this lesson? | إيه المحورين اللي في مجموعة الدائري الأوسطي في الدرس؟ |
+| Which two unit families and examples match the lesson? | إيه مجموعتين الوحدات وأمثلتهم حسب الدرس؟ |
 | Will the pool definitely be ready by handover? | حمام السباحة هيكون جاهز أكيد وقت التسليم؟ |
 | Will they use it for anything else? | هيستخدموه في حاجة تانية؟ |
 | Workspace unavailable | المساحة مش متاحة دلوقتي |
@@ -760,6 +847,9 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | Your order is in. | ترتيبك اتسجّل. |
 | Your personal impression of the client's personality. | انطباعك الشخصي عن شخصية العميل. |
 | Your personal impression of the client’s personality. | انطباعك الشخصي عن شخصية العميل. |
+| YOUR PICK | اختيارك |
+| Your place | مركزك |
+| Your points | نقاطك |
 | YOUR PRIVATE CONFIDENCE MIRROR | مراجعة ثقتك في إجاباتك |
 | Your response was not saved. Check your connection and try again. | إجابتك ما اتحفظتش. راجع اتصالك وحاول تاني. |
 | Your streak: | إجاباتك الصح ورا بعض: |

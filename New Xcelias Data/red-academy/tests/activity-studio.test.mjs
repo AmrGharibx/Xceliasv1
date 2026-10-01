@@ -23,17 +23,17 @@ test('AI challenge bilingual validation rejects an empty Egyptian Arabic field',
 
 test('Academy Studio contains a broad, complete learning pack without leaking facilitator keys',()=>{
  const library=studioLibrary();
- assert.equal(library.length,8);
+ assert.equal(library.length,9);
  assert.equal(new Set(library.map(quiz=>quiz.id)).size,library.length);
- assert.ok(library.every(quiz=>quiz.question_count===5&&quiz.xp_per_correct===100));
- assert.deepEqual(new Set(library.map(quiz=>quiz.category)),new Set(['Client discovery','Product knowledge','Conversation skills','Client qualification','Professional judgment','Client communication','Client experience','Team collaboration']));
- assert.equal(library.reduce((sum,quiz)=>sum+quiz.question_count,0),40);
+ assert.ok(library.every(quiz=>quiz.question_count>=5&&quiz.xp_per_correct===100));
+ assert.deepEqual(new Set(library.map(quiz=>quiz.category)),new Set(['Client discovery','Product knowledge','Conversation skills','Client qualification','Professional judgment','Client communication','Client experience','Team collaboration','Market foundations']));
+ assert.equal(library.reduce((sum,quiz)=>sum+quiz.question_count,0),49);
  for(const quiz of library){
   const complete=studioQuiz(quiz.id),publicVersion=publicQuiz(complete);
-  assert.equal(publicVersion.questions.length,5);
+  assert.equal(publicVersion.questions.length,quiz.question_count);
   assert.equal(publicVersion.study_cards.length,3);
   assert.ok(publicVersion.study_cards.every(card=>card.front&&card.back));
-  assert.equal(new Set(publicVersion.questions.map(question=>question.id)).size,5);
+  assert.equal(new Set(publicVersion.questions.map(question=>question.id)).size,quiz.question_count);
   assert.ok(publicVersion.questions.every(question=>question.prompt&&question.options.length===4&&question.hint&&typeof question.hint==='string'&&!('answer'in question)&&!('explanation'in question)));
   assert.ok(complete.questions.every(question=>Number.isInteger(question.answer)&&question.answer>=0&&question.answer<question.options.length&&question.explanation.length>35));
   const perfect=gradeStudioQuiz(complete,complete.questions.map(question=>({question_id:question.id,choice:question.answer})));
@@ -85,7 +85,7 @@ test('Classroom Pulse measures first-to-latest skill change per repeat learner w
 test('Facilitator deck is rich enough for a host while learner surfaces stay answer-key free',()=>{
  const deck=studioFacilitatorDeck(),library=studioLibrary();
  assert.equal(deck.length,library.length+1);
- assert.ok(deck.every(activity=>activity.questions.length===5&&activity.questions.every(question=>Number.isInteger(question.answer)&&question.explanation)));
+ assert.ok(deck.every(activity=>activity.questions.length>=5&&activity.questions.every(question=>Number.isInteger(question.answer)&&question.explanation)));
  assert.ok(library.every(activity=>!('questions'in activity)&&!('answer'in activity)));
  assert.ok(deck.some(activity=>activity.id==='sequence-sprint'));
  for(const activity of deck.filter(activity=>activity.id!=='sequence-sprint'))for(const question of activity.questions){

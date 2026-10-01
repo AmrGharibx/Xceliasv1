@@ -6,6 +6,7 @@ import {promisify} from 'node:util';
 import {id,TABLES,emptyState,today} from '../public/modules/core.mjs';
 import {ApiError} from './validation.mjs';
 import {liveConfidenceSummary} from './activity-live-confidence.mjs';
+import {livePlayerStandings} from './activity-live-competition.mjs';
 import {activityCohortPulse,activityPracticeInsights,studioLibrary,studioQuiz,studioFacilitatorDeck,publicQuiz,gradeStudioQuiz,validateStudioQuizDraft,liveRoomQuestionView} from './activity-studio.mjs';
 const scrypt=promisify(crypto.scrypt);
 function secretMatches(token,hash) {if(typeof token!=='string'||token.length>256)return false;const actual=Buffer.from(tokenHash(token),'hex'),expected=Buffer.from(hash,'hex');return actual.length===expected.length&&crypto.timingSafeEqual(actual,expected);}
@@ -197,7 +198,7 @@ export class SQLiteRepository {
   try{
    this.db.prepare('DELETE FROM activity_live_rooms WHERE expires_at<=?').run(now);
    this.db.prepare('INSERT INTO activity_live_rooms(id,code_hash,owner_id,activity_id,deck_snapshot,team_one,team_two,timer_duration,created_at,updated_at,expires_at) VALUES(?,?,?,?,?,?,?,?,?,?,?)')
-    .run(data.id,data.code_hash,user.id,activity.id,JSON.stringify({...activity,mode:data.mode==='pulse'?'pulse':'quiz',team_names:teams}),teams[0],teams[1]||teams[0],data.timer_duration,now,now,data.expires_at);
+    .run(data.id,data.code_hash,user.id,activity.id,JSON.stringify({...activity,mode:data.mode==='pulse'?'pulse':'quiz',competition_mode:data.competition_mode||'teams',team_names:teams}),teams[0],teams[1]||teams[0],data.timer_duration,now,now,data.expires_at);
    this.db.exec('COMMIT');return {id:data.id,expires_at:data.expires_at};
   }catch(error){this.db.exec('ROLLBACK');throw error;}
  }
@@ -207,7 +208,7 @@ export class SQLiteRepository {
   if(!room||room.expires_at<=new Date().toISOString())throw new ApiError(404,'That room code is invalid or expired. Ask your trainer for the current code.');
   if(room.status!=='Open')throw new ApiError(409,'This live room has ended. Ask your trainer to start another round.');
   const deck=JSON.parse(room.deck_snapshot),teams=liveRoomTeamNames(room,deck),counts=this.db.prepare('SELECT team_no,COUNT(*) count FROM activity_live_players WHERE room_id=? GROUP BY team_no').all(room.id);
-  return {mode:deck.mode==='pulse'?'pulse':'quiz',title:deck.title,category:deck.category,level:deck.level,...(deck.arabic?{arabic:deck.arabic}:{}),total_rounds:deck.questions.length,timer_duration:room.timer_duration,teams:teams.map((name,index)=>({team_no:index+1,name,players:counts.find(row=>row.team_no===index+1)?.count||0}))};
+  return {competition_mode:deck.competition_mode||'teams',mode:deck.mode==='pulse'?'pulse':'quiz',title:deck.title,category:deck.category,level:deck.level,...(deck.arabic?{arabic:deck.arabic}:{}),total_rounds:deck.questions.length,timer_duration:room.timer_duration,teams:teams.map((name,index)=>({team_no:index+1,name,players:counts.find(row=>row.team_no===index+1)?.count||0}))};
  }
  async joinActivityLiveRoom(data){
   const now=new Date().toISOString();this.db.exec('BEGIN IMMEDIATE');
@@ -241,9 +242,9 @@ export class SQLiteRepository {
   }
   const teamPoints=this.db.prepare('SELECT COALESCE(SUM(points),0) points,COUNT(*) count FROM activity_live_players WHERE room_id=(SELECT room_id FROM activity_live_players WHERE id=?) AND team_no=?').get(player.id,player.team_no);
   const teamRows=this.db.prepare('SELECT team_no,COALESCE(SUM(points),0) points,COUNT(*) players FROM activity_live_players WHERE room_id=(SELECT room_id FROM activity_live_players WHERE id=?) GROUP BY team_no').all(player.id);
-  const leaders=player.revealed?this.db.prepare('SELECT nickname,team_no,points,streak FROM activity_live_players WHERE room_id=(SELECT room_id FROM activity_live_players WHERE id=?) ORDER BY points DESC,streak DESC,joined_at LIMIT 5').all(player.id):[];
+  const leaders=player.revealed?livePlayerStandings(this.db.prepare('SELECT nickname,team_no,points,streak FROM activity_live_players WHERE room_id=(SELECT room_id FROM activity_live_players WHERE id=?) ORDER BY points DESC,joined_at LIMIT 80').all(player.id)).slice(0,deck.competition_mode==='individuals'?80:5):[];
   const teamScores=teamNames.map((name,index)=>{const teamNo=index+1,row=teamRows.find(item=>item.team_no===teamNo);return {team_no:teamNo,name,points:row?.points||0,players:row?.players||0};});
-  return {mode,status:player.room_status,round_index:player.round_index,total_rounds:deck.questions.length,revealed,complete:player.room_status==='Complete',room_closed:player.room_status==='Closed',activity:{title:deck.title,category:deck.category,level:deck.level,...(deck.arabic?{arabic:deck.arabic}:{})},team:{team_no:player.team_no,name:teamNames[player.team_no-1],points:teamPoints.points,players:teamPoints.count},team_scores:teamScores,player:{nickname:player.nickname,points:player.points,streak:player.streak,choice:answer?.choice??null,confidence:answer?.confidence??null,correct:revealed&&answer?!!answer.correct:null,awarded_points:revealed?(answer?.awarded_points||0):0},question:liveRoomQuestionView(question,revealed),response_count:count,timer_duration:player.timer_duration,timer_ends_at:player.timer_ends_at,leaders};
+  return {mode,status:player.room_status,round_index:player.round_index,total_rounds:deck.questions.length,revealed,complete:player.room_status==='Complete',room_closed:player.room_status==='Closed',activity:{title:deck.title,category:deck.category,level:deck.level,...(deck.arabic?{arabic:deck.arabic}:{})},competition_mode:deck.competition_mode||'teams',participant_count:teamRows.reduce((sum,team)=>sum+team.players,0),team:{team_no:player.team_no,name:teamNames[player.team_no-1],points:teamPoints.points,players:teamPoints.count},team_scores:teamScores,player:{nickname:player.nickname,points:player.points,streak:player.streak,choice:answer?.choice??null,confidence:answer?.confidence??null,correct:revealed&&answer?!!answer.correct:null,awarded_points:revealed?(answer?.awarded_points||0):0},question:liveRoomQuestionView(question,revealed),response_count:count,timer_duration:player.timer_duration,timer_ends_at:player.timer_ends_at,leaders};
  }
  async submitActivityLiveAnswer(playerHash,choice,confidence=null){
   if(confidence!==null&&!['tentative','confident'].includes(confidence))throw new ApiError(400,'Choose one of the confidence options shown on your screen.');
@@ -277,7 +278,7 @@ export class SQLiteRepository {
   }
   const teams=teamNames.map((name,index)=>{const team_no=index+1,people=players.filter(person=>person.team_no===team_no);return {team_no,name,points:people.reduce((sum,person)=>sum+person.points,0),player_count:people.length,players:people.map(({nickname,points,streak})=>({nickname,points,streak}))};});
   const revealed=!!room.revealed;
-  return {room:{id:room.id,status:room.status,round_index:room.round_index,total_rounds:deck.questions.length,revealed,correct_choice:revealed?room.correct_choice:null,timer_duration:room.timer_duration,timer_ends_at:room.timer_ends_at,expires_at:room.expires_at},activity:{id:deck.id,title:deck.title,category:deck.category,level:deck.level,...(deck.arabic?{arabic:deck.arabic}:{})},question:liveRoomQuestionView(question,revealed),teams,response_count:answers.length,answer_counts:question.type==='sequence'?null:question.options.map((_,choice)=>answers.filter(answer=>answer.choice===choice).length),responses:revealed?answers.map(answer=>({nickname:answer.nickname,team_no:answer.team_no,choice:answer.choice,correct:!!answer.correct,awarded_points:answer.awarded_points})):[],confidence_summary:liveConfidenceSummary(answers,revealed)};
+  return {room:{id:room.id,competition_mode:deck.competition_mode||'teams',status:room.status,round_index:room.round_index,total_rounds:deck.questions.length,revealed,correct_choice:revealed?room.correct_choice:null,timer_duration:room.timer_duration,timer_ends_at:room.timer_ends_at,expires_at:room.expires_at},activity:{id:deck.id,title:deck.title,category:deck.category,level:deck.level,...(deck.arabic?{arabic:deck.arabic}:{})},question:liveRoomQuestionView(question,revealed),teams,leaders:livePlayerStandings(players),participant_count:players.length,response_count:answers.length,answer_counts:question.type==='sequence'?null:question.options.map((_,choice)=>answers.filter(answer=>answer.choice===choice).length),responses:revealed?answers.map(answer=>({nickname:answer.nickname,team_no:answer.team_no,choice:answer.choice,correct:!!answer.correct,awarded_points:answer.awarded_points})):[],confidence_summary:liveConfidenceSummary(answers,revealed)};
  }
  async revealActivityLiveRoom(roomId,ownerId){
   this.db.exec('BEGIN IMMEDIATE');

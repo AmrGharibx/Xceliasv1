@@ -14,6 +14,7 @@ TODAY=subprocess.check_output(['node','--input-type=module','-e',"import {today}
 parser=argparse.ArgumentParser()
 parser.add_argument('--screenshots')
 parser.add_argument('--scroll-only',action='store_true',help='Run only the live-challenge scroll regression check.')
+parser.add_argument('--competition-only',action='store_true',help='Test team regression plus individual competition and the bilingual New Cairo lesson.')
 args=parser.parse_args()
 
 def check(name,condition=True):
@@ -77,8 +78,8 @@ with tempfile.TemporaryDirectory(prefix='red-activities-studio-') as temporary:
             trainer.locator('#trainer-login [name="password"]').fill(env['BOOTSTRAP_ADMIN_PASSWORD'])
             trainer.locator('#trainer-login [type="submit"]').click()
             expect(trainer.get_by_role('heading',name="Turn today's lesson into a challenge.")).to_be_visible()
-            expect(trainer.locator('.quiz-tile')).to_have_count(8)
-            check('Trainer sees Academy Studio with eight curated, ready-to-run challenges')
+            expect(trainer.locator('.quiz-tile')).to_have_count(9)
+            check('Trainer sees Academy Studio with nine curated, ready-to-run challenges')
             trainer.locator('.quiz-tile[data-activity-id="quiz-discovery"]').get_by_role('button',name='Host live').click()
             trainer.locator('[name="phone_enabled"]').check()
             trainer.locator('#live-room-form [type="submit"]').click()
@@ -100,6 +101,90 @@ with tempfile.TemporaryDirectory(prefix='red-activities-studio-') as temporary:
             trainer.set_viewport_size({'width':1440,'height':1000})
             if args.scroll_only:
                 browser.close()
+                raise SystemExit(0)
+            if args.competition_only:
+                tile=trainer.locator('.quiz-tile[data-activity-id="quiz-new-cairo"]')
+                expect(tile).to_contain_text('New Cairo & Property Foundations')
+                trainer.locator('.topbar [data-set-locale="ar-EG"]').click()
+                expect(tile).to_contain_text('القاهرة الجديدة وأساسيات العقار')
+                trainer.locator('.topbar [data-set-locale="en"]').click()
+                tile.get_by_role('button',name='Host live').click()
+                trainer.locator('[name="competition_mode"]').select_option('individuals')
+                expect(trainer.locator('#room-team-one')).not_to_be_visible()
+                expect(trainer.locator('[name="phone_enabled"]')).to_be_checked()
+                expect(trainer.locator('[name="phone_enabled"]')).to_be_disabled()
+                trainer.locator('#live-room-form [type="submit"]').click()
+                expect(trainer.locator('.room-join-code')).to_be_visible()
+                code=trainer.locator('.room-join-code').inner_text()
+                check('Individual setup hides teams and generates one shared QR invite')
+                phone_context=browser.new_context(viewport={'width':390,'height':844})
+                phone=phone_context.new_page();phone.on('pageerror',lambda error:errors.append(str(error)))
+                invite=trainer.locator('.room-join-copy code').inner_text()
+                phone.goto(invite,wait_until='networkidle')
+                expect(phone.locator('#live-phone-join')).to_be_visible()
+                expect(phone.locator('[name="team_no"]')).to_have_count(0)
+                phone.locator('[name="nickname"]').fill('Player 01')
+                phone.locator('#live-phone-join [type="submit"]').click()
+                expect(phone.locator('.live-play-card')).to_be_visible()
+                expect(phone.locator('.live-score-strip')).to_contain_text('Your points')
+                seats=[]
+                for number in range(2,21):
+                    response=h.Transport().call('activities/live/join','POST',{'code':code,'nickname':f'Player {number:02d}'})
+                    assert response['status']==200,response
+                    seats.append(json.loads(response['text'])['seat_token'])
+                expect(trainer.locator('.room-individual-list li')).to_have_count(20,timeout=10000)
+                screenshot('individual-trainer-desktop',trainer,full_page=False)
+                assert trainer.locator('.room-team').count()==0
+                phone.locator('[data-action="phone-answer"][data-choice="0"]').click()
+                expect(phone.locator('.live-phone-option.is-selected')).to_be_visible()
+                for seat in seats:
+                    response=h.Transport().call('activities/live/answer','POST',{'seat_token':seat,'choice':0})
+                    assert response['status']==200,response
+                trainer.locator('[data-action="room-reveal"]').click()
+                expect(phone.locator('.live-phone-feedback')).to_contain_text('+100 room points',timeout=10000)
+                expect(phone.locator('.live-leaderboard>div')).to_have_count(20)
+                expect(phone.locator('.live-score-strip')).to_contain_text('#1 / 20')
+                assert 'your team' not in phone.locator('.live-leaderboard').inner_text()
+                check('Twenty individuals join without teams, earn separate points, and share first place fairly')
+                phone.locator('[data-set-locale="ar-EG"]').click()
+                expect(phone.locator('.live-phone-question h2')).to_contain_text('٤ طرق')
+                expect(phone.locator('.live-phone-feedback p')).to_contain_text('العين السخنة')
+                assert phone.evaluate('document.documentElement.dir')=='rtl'
+                screenshot('individual-trainee-arabic-mobile',phone,full_page=False)
+                phone.reload(wait_until='networkidle')
+                expect(phone.locator('.live-score-strip')).to_contain_text('#1 / 20')
+                check('The Egyptian Arabic edition and mobile seat survive a page reload')
+                trainer.set_viewport_size({'width':390,'height':640})
+                trainer.locator('.room-options').scroll_into_view_if_needed()
+                previous=trainer.locator('.live-room-shell').evaluate('(el)=>el.scrollTop')
+                trainer.wait_for_timeout(2200)
+                assert trainer.locator('.live-room-shell').evaluate('(el)=>el.scrollTop')>=previous-5
+                screenshot('individual-trainer-mobile',trainer,full_page=False)
+                check('Individual leaderboard refresh preserves mobile challenge scroll')
+                room_response=owner.call('activities/live/active')
+                room_id=next(room['id'] for room in json.loads(room_response['text'])['rooms'] if room['title']=='New Cairo & Property Foundations')
+                deck_response=owner.call('activities/facilitator-deck')
+                deck=next(activity for activity in json.loads(deck_response['text'])['activities'] if activity['id']=='quiz-new-cairo')
+                for question in deck['questions'][1:]:
+                    response=owner.call('activities/live/advance','POST',{'room_id':room_id})
+                    assert response['status']==200,response
+                    for seat in seats:
+                        response=h.Transport().call('activities/live/answer','POST',{'seat_token':seat,'choice':question['answer']})
+                        assert response['status']==200,response
+                    response=owner.call('activities/live/reveal','POST',{'room_id':room_id})
+                    assert response['status']==200,response
+                response=owner.call('activities/live/advance','POST',{'room_id':room_id})
+                assert response['status']==200,response
+                expect(trainer.locator('.room-finish h2')).to_contain_text('19 trainees share first place!',timeout=10000)
+                expect(phone.locator('.live-finish-card')).to_be_visible(timeout=10000)
+                expect(phone.locator('.live-leaderboard>div')).to_have_count(20)
+                screenshot('individual-final-standings',trainer,full_page=False)
+                trainer.locator('[data-action="room-again"]').click()
+                expect(trainer.locator('.room-round-badge')).to_contain_text('ROUND 1')
+                expect(phone.locator('.live-play-card')).to_be_visible(timeout=10000)
+                check('Trainer finish and replay screens and trainee final standings work with a full class')
+                assert not errors,errors
+                phone_context.close();browser.close()
                 raise SystemExit(0)
             trainer.locator('[data-action="roleplay-open"]').click()
             expect(trainer.locator('.roleplay-setup')).to_be_visible()

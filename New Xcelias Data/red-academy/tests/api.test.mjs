@@ -55,7 +55,7 @@ test('Instructor can delete operational batches and trainees',async()=>{
 });
 test('Activity assignments use the authenticated Academy roster and are shared immediately',async()=>{
  assert.equal((await request('activities')).status,401);
- const created=await request('activities/assign',{method:'POST',cookie:instructorCookie,body:{batch_id:batch.id,activity_id:'rapidfire',instructions:'Focus on concise discovery questions.',due_date:'2026-09-30',trainee_ids:[trainee.id]}});
+ const created=await request('activities/assign',{method:'POST',cookie:instructorCookie,body:{batch_id:batch.id,activity_id:'rapidfire',instructions:'Focus on concise discovery questions.',due_date:today(),trainee_ids:[trainee.id]}});
  assert.equal(created.status,201,JSON.stringify(created.data));
  assert.equal(created.data.record.title,'Rapid Fire');
  assert.equal(created.data.record.created_by,'instructor@example.test');
@@ -143,7 +143,7 @@ test('A session follow-up quiz unlocks on Cairo date, links once under concurren
  assert.ok(after.audit_log.some(row=>row.action==='link-session-quiz'&&row.entity_id===current.data.record.id));
 });
 test('Academy Studio learner links run a private, one-submit quiz loop and stream the real grade to trainers',async()=>{
- const library=await request('activities/library',{cookie:instructorCookie});assert.equal(library.status,200);assert.equal(library.data.activities.length,8);assert.ok(library.data.activities.every(activity=>!('questions'in activity)));
+ const library=await request('activities/library',{cookie:instructorCookie});assert.equal(library.status,200);assert.equal(library.data.activities.length,9);assert.ok(library.data.activities.every(activity=>!('questions'in activity)));
  const created=await request('activities/assign',{method:'POST',cookie:instructorCookie,body:{batch_id:batch.id,activity_id:'quiz-discovery',instructions:'Listen for the client goal before recommending.',due_date:'2026-10-04',trainee_ids:[trainee.id]}});
  assert.equal(created.status,201,JSON.stringify(created.data));assert.equal(created.data.record.title,'Discovery Sprint');
  const assignmentId=created.data.record.id;
@@ -364,4 +364,52 @@ test('Stale expectedVersion returns conflict without overwriting',async()=>{cons
 test('AI without provider configuration returns 503, not a fabricated AI report',async()=>assert.equal((await request('ai',{method:'POST',cookie:adminCookie,body:{traineeId:trainee.id,kind:'attendance',consent:true}})).status,503));
 test('Unknown tables and endpoints are rejected',async()=>{assert.equal((await request('mutate',{method:'POST',cookie:adminCookie,body:{table:'users',action:'create',data:{role:'admin'}}})).status,400);assert.equal((await request('no-such-route',{cookie:adminCookie})).status,404);});
 test('Live event stream emits a change notification after a successful mutation',async()=>{const controller=new AbortController();const response=await handleApi(new Request(process.env.APP_URL+'/api/events',{headers:{cookie:adminCookie},signal:controller.signal}));assert.equal(response.status,200);assert.match(response.headers.get('content-type'),/text\/event-stream/);const reader=response.body.getReader();assert.match(new TextDecoder().decode((await reader.read()).value),/connected/);await request('mutate',{method:'POST',cookie:adminCookie,body:{table:'companies',action:'create',data:{name:'SSE Company'}}});const next=await reader.read();assert.match(new TextDecoder().decode(next.value),/refresh/);controller.abort();await reader.cancel();});
+test('A twenty-trainee individual room joins in one burst, scores every round, resumes and preserves Academy records',async()=>{
+ const body={activity_id:'quiz-new-cairo',competition_mode:'individuals',timer_duration:0};
+ assert.equal((await request('activities/live/create',{method:'POST',body})).status,401);
+ assert.equal((await request('activities/live/create',{method:'POST',cookie:viewerCookie,body})).status,403);
+ assert.equal((await request('activities/live/create',{method:'POST',cookie:adminCookie,body:{...body,competition_mode:'unsupported'}})).status,400);
+ const before=(await request('state',{cookie:adminCookie})).data;
+ const created=await request('activities/live/create',{method:'POST',cookie:adminCookie,body});
+ assert.equal(created.status,201,JSON.stringify(created.data));
+ const roomId=created.data.room_id,code=created.data.join_code;
+ const info=await request('activities/live/info',{method:'POST',body:{code}});
+ assert.equal(info.data.competition_mode,'individuals');assert.equal(info.data.total_rounds,9);
+ const activity=(await request('activities/facilitator-deck',{cookie:adminCookie})).data.activities.find(item=>item.id===body.activity_id);
+ const seats=[];
+ for(let index=0;index<20;index++){
+  assert.equal((await request('activities/live/info',{method:'POST',body:{code}})).status,200);
+  const joined=await request('activities/live/join',{method:'POST',body:{code,nickname:`Player ${String(index+1).padStart(2,'0')}`}});
+  assert.equal(joined.status,200,JSON.stringify(joined.data));seats.push(joined.data.seat_token);
+  assert.equal(joined.data.room.competition_mode,'individuals');assert.equal('answer' in joined.data.room.question,false);
+ }
+ assert.equal((await request('activities/live/join',{method:'POST',body:{code,nickname:'player 01'}})).status,409);
+ let revealed;
+ for(const [index,question] of activity.questions.entries()){
+  for(const [player,seat] of seats.entries()){
+   const answer=await request('activities/live/answer',{method:'POST',body:{seat_token:seat,choice:player<2?question.answer:(question.answer+1)%4,points:99999}});
+   assert.equal(answer.status,200);assert.deepEqual(answer.data.leaders,[]);
+  }
+  revealed=await request('activities/live/reveal',{method:'POST',cookie:adminCookie,body:{room_id:roomId}});
+  assert.equal(revealed.status,200);assert.equal(revealed.data.participant_count,20);
+  assert.equal(revealed.data.leaders.length,20);assert.deepEqual(revealed.data.leaders.slice(0,3).map(person=>person.rank),[1,1,3]);
+  assert.equal(revealed.data.responses.filter(person=>person.correct).length,2);
+  const state=(await request('activities/live/state',{method:'POST',body:{seat_token:seats[19]}})).data;
+  assert.equal(state.leaders.length,20);assert.equal(state.player.points,0);assert.equal(state.question.arabic.explanation,question.arabic.explanation);
+  assert.ok(!JSON.stringify(state).includes('token_hash'));
+  assert.equal((await request('activities/live/reveal',{method:'POST',cookie:adminCookie,body:{room_id:roomId}})).status,409);
+  const next=await request('activities/live/advance',{method:'POST',cookie:adminCookie,body:{room_id:roomId}});
+  assert.equal(next.status,200);assert.equal(next.data.room.status,index===8?'Complete':'Open');
+ }
+ const finished=(await request('activities/live/state',{method:'POST',body:{seat_token:seats[0]}})).data;
+ assert.equal(finished.complete,true);assert.equal(finished.player.points,1550);
+ const resumed=await request('activities/live/resume',{method:'POST',cookie:adminCookie,body:{room_id:roomId}});
+ assert.equal(resumed.data.room.room.competition_mode,'individuals');assert.equal(resumed.data.room.leaders.length,20);
+ const replay=await request('activities/live/replay',{method:'POST',cookie:adminCookie,body:{room_id:roomId}});
+ assert.equal(replay.data.room.round_index,0);assert.ok(replay.data.leaders.every(person=>person.points===0&&person.rank===1));
+ await request('activities/live/close',{method:'POST',cookie:adminCookie,body:{room_id:roomId}});
+ const after=(await request('state',{cookie:adminCookie})).data;
+ for(const key of ['batches','trainees','assessments','daily_attendance','attendance'])assert.deepEqual(after[key],before[key]);
+});
+
 test('Logout invalidates the session and expires its cookie',async()=>{const login=await request('auth/login',{method:'POST',body:{email:'instructor@example.test',password:'API-Test-Password-123!'}});const r=await request('auth/logout',{method:'POST',cookie:login.cookie});assert.match(r.response.headers.getSetCookie()[0],/Max-Age=0/);assert.equal((await request('state',{cookie:login.cookie})).status,401);});

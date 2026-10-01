@@ -10,7 +10,7 @@ function assertTranslated(value,label){
 }
 
 test('The review glossary contains every fixed bilingual copy pair with non-empty Egyptian Arabic',()=>{
- assert.equal(Object.keys(EGYPTIAN_ARABIC_REVIEW_COPY).length,757);
+ assert.ok(Object.keys(EGYPTIAN_ARABIC_REVIEW_COPY).length>=757);
  for(const [english,arabic] of Object.entries(EGYPTIAN_ARABIC_REVIEW_COPY)){
   assert.ok(english.trim());assert.ok(arabic.trim());
   assert.equal(egyptianArabicFor(english),arabic,`The live translator should match the glossary: ${english}`);

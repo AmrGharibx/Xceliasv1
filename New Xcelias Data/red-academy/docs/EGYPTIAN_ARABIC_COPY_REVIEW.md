@@ -99,11 +99,14 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | A useful follow-up closes the loop on the promised items and is honest about anything still pending. | المتابعة المفيدة بتقفل النقط اللي وعدت بيها، وبتكون واضحة في اللي لسه مستني. |
 | A useful update depends on one detail from another team. How do you keep the client informed? | التحديث متوقف على معلومة من فريق تاني. تتابع مع العميل إزاي؟ |
 | A viewing is not a reason to lower the standard for accuracy. | المعاينة مش سبب إنك تتساهل في دقة المعلومات. |
+| Absent | غايب |
 | Academy experience earned | نقاط خبرة الأكاديمية |
 | Academy Studio | استوديو الأكاديمية |
 | ACADEMY STUDIO · LIVE QUIZZES | استوديو الأكاديمية · تحدّيات مباشرة |
 | Accuracy & trust | الدقة والثقة |
 | Accuracy beats confidence | الدقة أهم من الثقة الزايدة |
+| Accuracy counts all rounds, including unanswered rounds. Streak points are shown separately. This does not update formal grades, attendance or Academy XP. | نسبة الإجابات الصح بتتحسب من كل الأسئلة، حتى اللي ما اتجاوبتش. مكافأة الإجابات الصح المتتالية بتظهر لوحدها. ده مش بيغيّر درجات التقييم ولا الحضور ولا نقط الأكاديمية. |
+| Accuracy counts all rounds. Confirmed correct answers earn 100 Academy XP each; streak bonuses are game points only. Participating trainees can count as present on the selected session date. Existing attendance and formal assessments are preserved. | نسبة الصح بتتحسب من كل الأسئلة. كل إجابة صح بعد التأكيد بـ١٠٠ نقطة أكاديمية، ومكافأة الإجابات المتتالية للعبة بس. المتدرّبين اللي شاركوا ممكن يتحسبوا حاضرين في يوم التدريب اللي تختاره. الحضور الموجود والتقييمات الأساسية بيفضلوا محفوظين. |
 | Acknowledge both points and ask how the trade-off compares with their priorities. | قدّر النقطتين واسأله إزاي الفرق ده بيتماشى مع أولوياته. |
 | Acknowledges the missed commitment and apologizes | يعترف إنه ما التزمش بالميعاد ويعتذر |
 | Acknowledges the repeated effort and takes ownership | يقدّر إن العميل كرر كلامه ويتحمّل مسؤولية المتابعة |
@@ -163,6 +166,7 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | Ask your trainer to send you a fresh Academy Studio link. | اطلب من المدرّب يبعتلك لينك جديد من استوديو الأكاديمية. |
 | Assign a challenge | ابعت تحدّي |
 | Assigned or in progress | اتبعَت أو لسه شغّال |
+| Assignment deleted. A private recovery snapshot was retained. | التكليف اتحذف، وفي نسخة خاصة محفوظة للاسترجاع. |
 | Assignment status | حالة التكليف |
 | Assignments, live participation and results by trainee and company | التكليفات والمشاركة المباشرة والنتايج حسب المتدرّب والشركة |
 | Assume the client's preferred unit includes it. | افترض إن الوحدة اللي العميل عايزها فيها الميزة. |
@@ -171,11 +175,15 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | Assume they have lost interest and close the record. | افترض إنه فقد الاهتمام واقفل الملف. |
 | At the end of the viewing, which debrief question is most useful? | في نهاية المعاينة، أنهي سؤال يساعد العميل يعبّر عن رأيه؟ |
 | Attack the competing option without evidence. | تهاجم الاختيار التاني من غير دليل. |
+| Attendance confirmed. Existing records were preserved. | الحضور اتأكد، وسجلات الحضور الموجودة فضلت زي ما هي. |
 | Availability changes; I will recheck current inventory before you decide. | التوافر بيتغيّر؛ هراجع المخزون الحالي قبل ما تاخد قرارك. |
 | Avoid mentioning the feature. | ما تجيبش سيرة الميزة. |
 | Avoid mentioning uncertainty unless they ask again. | ما تجيبش سيرة عدم التأكد إلا لو سأل تاني. |
 | Avoid the question and continue the tour. | عدّي السؤال وكمّل المعاينة. |
 | Batch | الدفعة |
+| Batch-linked activity · confirmed results earn Academy XP and can count towards session attendance. | نشاط مربوط بالدفعة · النتايج بعد التأكيد بتزوّد نقط الأكاديمية وممكن تتحسب ضمن الحضور. |
+| Batch-linked activity · trainer confirmation required. Formal grades, attendance and Academy XP stay unchanged. | نشاط مربوط بالدفعة · لازم تأكيد المدرّب. درجات التقييم والحضور ونقط الأكاديمية مش بتتغيّر. |
+| Batch-linked results need trainer confirmation. | نتايج الدفعة محتاجة تأكيد المدرّب. |
 | Be clear about limits and evidence; never promise an outcome outside your control. | وضّح حدود اللي تعرفه والدليل الموجود؛ ما تضمنش نتيجة مش بإيدك. |
 | Be precise about where the feature applies; do not generalize across the whole project. | وضّح الميزة موجودة فين بالضبط، وما تعمّمش على المشروع كله. |
 | Be specific about the scope of a feature and verify it for the unit under discussion. | حدّد نطاق الميزة بدقة واتأكد إنها موجودة في الوحدة المقصودة. |
@@ -191,6 +199,7 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | Blaming a colleague, minimizing the impact, or making another promise without checking that it is achievable. | لوم زميل، أو التقليل من أثر التأخير، أو تقديم وعد جديد من غير ما يتأكد إنه قابل للتنفيذ. |
 | Blaming the colleague, repeating unnecessary personal information, or leaving the client unsure who owns the next step. | لوم الزميل، أو تكرار معلومات شخصية مش لازمة، أو ترك العميل مش عارف مين مسؤول عن الخطوة الجاية. |
 | Both can offer only one developer’s projects. | الاتنين يقدروا يعرضوا مشاريع مطوّر واحد بس. |
+| Brilliant run! | جولة ممتازة! |
 | Broker / developer and primary / resale | البروكر والمطوّر، والبرايمري والريسيل |
 | Build a challenge | جهّز تحدّي |
 | Build a four-part run-of-show: quick recall, a live team challenge, a coaching huddle, and one next-step exit ticket. Every trainer can pick up the shared board. | جهّز خطة من أربع خطوات: مراجعة سريعة، وتحدّي جماعي مباشر، ونقاش تدريبي، وخطوة عملية يطلعوا بيها. أي مدرّب يقدر يكمل الخطة المشتركة. |
@@ -216,6 +225,8 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | Checking the private link with RED Academy. | بنتأكد من اللينك الخاص مع أكاديمية RED. |
 | Checking your access | بنتأكد من صلاحية دخولك |
 | CHOOSE A CLIENT MOMENT | اختار موقف مع عميل |
+| Choose a scheduled session date that is today or earlier. | اختار يوم موجود في جدول الدفعة، النهارده أو قبله. |
+| Choose a session date | اختار يوم التدريب |
 | Choose a team | اختار فريق |
 | Choose another scene | اختار موقف تاني |
 | Choose one batch in the filters to add this review to its shared session calendar. | اختار دفعة من الفلاتر علشان تضيف المراجعة دي لجدول جلساتها المشترك. |
@@ -223,6 +234,8 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | Choose the energy for today. | اختاروا شكل التحدّي المناسب لدرس النهارده. |
 | Choose the one with the highest commission. | اختار اللي عمولته أعلى. |
 | Choose the preferences you think are realistic. | اختار إنت التفضيلات اللي شايفها منطقية. |
+| Choose your name | اختار اسمك |
+| Choose your real name. Play under a nickname if you like. | اختار اسمك الحقيقي، والعب باسم مستعار لو حابب. |
 | Clarifies the comparison without getting defensive | يفهم أساس المقارنة من غير دفاعية |
 | Clarifies the real timeline and flexibility | يوضّح الميعاد الحقيقي ومدى المرونة |
 | Clarify the client's objective and time horizon before comparing options; never promise an investment result. | وضّح هدف العميل والمدة اللي بيفكر فيها قبل المقارنة؛ وما توعدش بعائد استثماري. |
@@ -254,7 +267,11 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | Compares verified trade-offs that matter | يقارن فروق مؤكدة تهم العميل |
 | Competition mode | نظام المنافسة |
 | Completed | مكتمل |
+| Completed participants count as present on the chosen session date. Existing attendance is preserved. No arrival time, late flag or absence is inferred. | المتدرّبين اللي خلّصوا النشاط بيتحسبوا حاضرين في يوم التدريب اللي تختاره. الحضور الموجود بيفضل زي ما هو، ومش بنفترض ميعاد وصول أو تأخير أو غياب. |
+| Confirm attendance | أكّد الحضور |
 | Confirm how the client defines the budget and what they are comfortable considering. | اتأكد العميل قاصد إيه بالميزانية وإيه النطاق اللي مرتاح يدرسه. |
+| Confirm matches & save to profiles | أكّد الأسماء واحفظ في الملفات |
+| Confirm names & save results | أكّد الأسماء واحفظ النتايج |
 | Confirm permission and follow approved data-handling practice before sharing client information. | اتأكد من الإذن واتبع قواعد التعامل المعتمدة قبل مشاركة بيانات العميل. |
 | Confirm the open point and reflect the brief back so the search follows the client's actual criteria. | وضّح النقطة المفتوحة ولخّص المتطلبات علشان البحث يمشي حسب معايير العميل الحقيقية. |
 | Confirm the open point and reflect the brief back so the search follows the client’s actual criteria. | وضّح النقطة اللي لسه محتاجة إجابة، ولخّص للعميل طلبه علشان البحث يمشي على معاييره الحقيقية. |
@@ -264,6 +281,8 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | Confirm the receiving teammate has the handoff and tell the client what to expect. | اتأكد إن زميلك استلم المتابعة، ووضّح للعميل إيه اللي هيحصل بعد كده. |
 | Confirm the unclear preference and summarize the agreed brief before searching. | وضّح النقطة الناقصة ولخّصوا المتطلبات المتفق عليها قبل البحث. |
 | Confirm who will contact them and by when, and make sure the receiving teammate has accepted the handoff. | أكد مين هيتواصل معاه وإمتى، واتأكد إن زميلك استلم المتابعة فعلًا. |
+| Confirmed activity results earn Academy XP and can count towards session attendance. | نتايج النشاط بعد تأكيد المدرّب بتزوّد نقط الأكاديمية وممكن تتحسب ضمن حضور التدريب. |
+| Confirmed activity results earn Academy XP. Your trainer can count participation towards session attendance. Up to 80 participants; a 40-person batch fits. | نتايج النشاط بعد تأكيد المدرّب بتزوّد نقط الأكاديمية، ومشاركتك ممكن تتحسب ضمن حضور التدريب. لحد ٨٠ مشارك، يعني دفعة ٤٠ متدرّب تدخل عادي. |
 | Confirms an owner and a realistic time | يحدد المسؤول وميعاد واقعي |
 | Confirms only relevant, agreed context | يتأكد من نقل التفاصيل المهمة والمتفق عليها بس |
 | Confirms who needs the detail and why | يحدد مين محتاج المعلومة وليه |
@@ -282,10 +301,13 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | Correct | صح |
 | Correct it promptly, explain what changed, and provide the verified detail. | صحّحها بسرعة، وضّح إيه اللي اتغيّر، وابعتهاله بعد ما تتأكد. |
 | Could you send me the details? | ممكن تبعتلي التفاصيل؟ |
+| Count participation as attendance | احسب المشاركة ضمن الحضور |
 | Create a challenge | أنشئ تحدّي |
 | Create urgency even if none is verified. | استعجله حتى لو مفيش سبب مؤكد. |
 | Debrief without pressure | راجعوا التجربة من غير ضغط |
 | Delay the conversation until both people call together. | أجّل الكلام لحد ما الاتنين يتصلوا مع بعض. |
+| Delete assignment | احذف التكليف |
+| Delete this whole assignment? | تحذف التكليف ده بالكامل؟ |
 | Deliver the promised information directly and distinguish anything that is still open. | ابعث المعلومات اللي وعدت بيها مباشرة، ووضّح أي نقطة لسه مفتوحة. |
 | Describe it as standard for the whole project. | قدّمها كأنها موجودة في كل وحدات المشروع. |
 | Discovery Sprint | سباق اكتشاف احتياجات العميل |
@@ -294,9 +316,12 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | Do not invent urgency or criticize another option without reliable evidence. | ما تخلقش إحساس بالاستعجال من غير دليل، وما تنتقدش اختيار تاني من غير معلومة موثوقة. |
 | Do not manufacture pressure. Verify current availability and let the client decide using accurate information. | ما تخلقش ضغط على العميل. راجع التوافر الحالي وسيبه يقرر على أساس معلومة دقيقة. |
 | Do not repeat an unverified scarcity claim; check the current source and communicate only what it confirms. | ما تكررش معلومة عن قلة الوحدات من غير تأكيد؛ راجع المصدر الحالي وبلّغ العميل باللي اتأكدت منه بس. |
+| Do not save | ما تحفظش |
 | Do not send anything. | ما تبعتلوش حاجة. |
 | Do not turn a previous availability check into a future guarantee. | ما تحوّلش معلومة توافر قديمة لضمان إنها هتفضل متاحة. |
 | Done | تم |
+| e.g. Orbit | مثلاً: الصقر |
+| Each trainee can receive only one result from this game. Resolve duplicate name matches. | كل متدرّب ينفع تتحفظ له نتيجة واحدة بس من الجولة دي. راجع الأسماء المكررة الأول. |
 | Each trainee gets a private, one-use link and matching QR code. Share each code only with its named trainee. | كل متدرّب هيكون له لينك وكود QR خاص لمرة واحدة. شارك كل كود مع صاحبه بس. |
 | Email at an agreed time and ask before changing the channel. | ابعت إيميل في ميعاد متفق عليه، واستأذنه قبل ما تغيّر طريقة التواصل. |
 | Email is best. I am usually free after work if you need to talk. | الإيميل أنسب. غالبًا ببقى فاضي بعد الشغل لو محتاجين نتكلم. |
@@ -326,6 +351,7 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | Follow the client's stated channel and timing preferences; ask before changing them. | التزم بطريقة وميعاد التواصل اللي العميل اختارهم، واستأذنه قبل ما تغيّرهم. |
 | Follow the client’s stated channel and timing preferences; ask before changing them. | التزم بطريقة وميعاد التواصل اللي العميل اختارهم، واستأذنه قبل ما تغيّرهم. |
 | Follow-Through Lab | ورشة المتابعة وإنجاز الوعود |
+| Formal grades, attendance and Academy XP stay unchanged. | درجات التقييم والحضور ونقط الأكاديمية مش بتتغيّر. |
 | Forward them if the group might be useful. | ابعتها لو شايف إن المجموعة ممكن تستفيد. |
 | Forwarding first and asking later, assuming consent from an earlier conversation, or sharing more than the agreed purpose needs. | إرسال البيانات الأول والاستئذان بعدين، أو افتراض إن موافقة قديمة لسه سارية، أو مشاركة معلومات أكتر من الغرض المتفق عليه. |
 | Four roads: Ring, Suez, Middle Ring, Ain Sokhna. Ring axes: Gamal Abdel Nasser, 90 South, Taha Hussein, Sadat, Shinzo Abe. Suez axes: Mostafa Kamel, Mohamed Naguib, East Rehab, 90 North. Middle Ring: Mohamed Bin Zayed, 90 South. | ٤ طرق: الدائري، السويس، الدائري الأوسطي، العين السخنة. محاور الدائري: جمال عبد الناصر، التسعين الجنوبي، طه حسين، السادات، شينزو آبي. محاور السويس: مصطفى كامل، محمد نجيب، شرق الرحاب، التسعين الشمالي. الأوسطي: محمد بن زايد، التسعين الجنوبي. |
@@ -339,6 +365,7 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | Give this moment its space. | ادي كل خطوة وقتها. |
 | Gives the client a genuine choice before sharing | يدي العميل اختيار حقيقي قبل المشاركة |
 | Good practice — every round teaches the move | تدريب مفيد؛ كل جولة بتعلّمك خطوة جديدة |
+| Great momentum! | مستواك بيتقدّم! |
 | Ground the area discussion in the client's real weekly routine. | اربط اختيار المنطقة بمشاوير العميل الحقيقية خلال الأسبوع. |
 | Group the examples by home format, not finish or transaction type. | قسّم الأمثلة حسب شكل البيت، مش التشطيب أو طريقة البيع. |
 | Guarantee it verbally to reassure them. | اضمنهاله بالكلام عشان تطمّنه. |
@@ -383,6 +410,7 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | It should be fine. | غالبًا مفيش مشكلة. |
 | It stays private. You may change it before your trainer reveals the coaching sequence. | إجابتك خاصة، وتقدر تغيّرها قبل ما المدرّب يعرض الترتيب. |
 | It was available when I last checked, so it is yours. | كانت متاحة آخر مرة سألت، فاعتبرها بقت بتاعتك. |
+| Its learner links, assigned entries, quiz scores and assignment XP will disappear. The batch, trainees, attendance and formal assessments stay. A private recovery snapshot is retained. | لينكات التكليف ومشاركات المتدرّبين ودرجاته ونقطه هتتشال. الدفعة وملفات المتدرّبين والحضور والتقييمات الأساسية هتفضل زي ما هي. وفي نسخة خاصة محفوظة للاسترجاع. |
 | Join anonymously | شارك من غير اسم |
 | Join the game | ادخل الجولة |
 | Jumping straight to listings, assuming “soon” has one meaning, or treating one partner’s preference as the shared brief. | البدء بعرض الوحدات فورًا، أو افتراض إن «قريب» معناها واحد، أو اعتبار تفضيل طرف واحد هو طلب الاتنين. |
@@ -409,6 +437,7 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | Let the client choose a comfortable, consent-based way to involve the other person. | سيب للعميل يختار طريقة مناسبة وبموافقته لإشراك الشخص التاني. |
 | Limit shared information to what is relevant and use the organization's approved channel. | شارك المعلومات المرتبطة بالمتابعة بس، واستخدم قناة الشركة المعتمدة. |
 | Limit shared information to what is relevant and use the organization’s approved channel. | شارك المعلومات المرتبطة بالمتابعة بس، واستخدم قناة الشركة المعتمدة. |
+| Link results to a batch (optional) | اربط النتايج بدفعة (اختياري) |
 | List every feature before they enter. | عدّد كل المميزات قبل ما يدخل. |
 | Listen for a balanced summary that leaves the priorities with the client. | لاحظ هل لخّص المميزات والقلق بشكل متوازن وساب الأولويات للعميل. |
 | Listen for a calm clarification of timing, flexibility, and who is involved in the decision. | لاحظ هل وضّح بهدوء الميعاد ومدى مرونته ومين مشارك في القرار. |
@@ -481,6 +510,10 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | New Cairo road and axis checklist | راجع طرق ومحاور القاهرة الجديدة |
 | Next round | الجولة الجاية |
 | Next step → | الخطوة الجاية ← |
+| Nickname (optional) | اسم مستعار (اختياري) |
+| Nickname-only · no profile updates | اسم مستعار بس · من غير حفظ في ملف المتدرّب |
+| No attendance recorded | مفيش حضور اتسجّل |
+| No completed participants are available to record attendance. | مفيش متدرّبين خلّصوا النشاط لسه عشان يتسجّل لهم حضور. |
 | No invented urgency | من غير استعجال مصطنع |
 | No message is needed because the team knows. | مش محتاج تبعت حاجة؛ الفريق عارف. |
 | No name, login, team, score, or learner record is attached to this answer. | إجابتك مش مرتبطة باسم أو حساب أو فريق أو درجة أو سجل متدرّب. |
@@ -493,6 +526,7 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | Nudge unlocked | التلميح ظهر |
 | Objection Arena | ساحة التعامل مع الاعتراضات |
 | of | من |
+| Off Day | يوم إجازة |
 | Off-plan, ready, cash, installment. | تحت الإنشاء، جاهز، كاش، أقساط. |
 | Offer a discount before asking what they think. | اعرض خصم قبل ما تسأله رأيه. |
 | Offers current sources and room to verify | يوفر مصادر حديثة وفرصة للتحقق |
@@ -500,9 +534,12 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | One named owner and a visible due time prevent the client-facing commitment from falling between teammates. | مسؤول واحد وميعاد واضح بيمنعوا الوعد للعميل يضيع بين الزملاء. |
 | One private link and QR per trainee | لينك وكود QR خاص لكل متدرّب |
 | One short question. Your response is anonymous and ungraded. | سؤال واحد سريع. إجابتك من غير اسم ومش عليها درجات. |
+| Only an administrator or the assigning trainer can delete this assignment. | حذف التكليف متاح للمسؤول أو المدرّب اللي كلّف بيه بس. |
+| Only confirmed name matches are saved to trainee profiles. Formal grades, attendance and Academy XP stay unchanged. Up to 80 participants; a 40-person batch fits. | النتايج بتتحفظ في ملف المتدرّب بعد تأكيد اسمه بس. درجات التقييم والحضور ونقط الأكاديمية مش بتتغيّر. الجولة بتشيل لحد ٨٠ مشارك، يعني دفعة ٤٠ متدرّب تدخل عادي. |
 | Only for the viewing, and please use my work number. | للمعاينة بس، وياريت تستخدموا رقم الشغل. |
 | Only the client's phone number. | رقم تليفون العميل بس. |
 | Only the client’s phone number. | رقم تليفون العميل بس. |
+| Only trainees who answered are counted as present. Existing attendance records are preserved; missing participation is not automatically marked absent. | الحضور بيتحسب للمتدرّبين اللي جاوبوا بس. أي سجل حضور موجود بيفضل زي ما هو، واللي ما شاركش مش بيتسجّل غايب تلقائيًا. |
 | Only used for your own reflection in this session. It is not sent to your trainer. | للتفكير الشخصي في الجلسة دي بس، ومش بيتبعت للمدرّب. |
 | Open | مفتوح |
 | Open Academy Operations | افتح إدارة الأكاديمية |
@@ -528,6 +565,7 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | Practice the small decisions that protect client trust when facts, privacy, or pressure are involved. | اتدرّب على قرارات صغيرة بتحافظ على ثقة العميل، خصوصًا مع المعلومات والخصوصية والضغط. |
 | Practice-only · ungraded · nothing is saved to trainee records. | للتدريب بس · من غير درجات · ومفيش حاجة بتتحفظ في سجل المتدرّب. |
 | Preparing QR code… | بنجهّز كود QR… |
+| Present | حاضر |
 | Pretty sure | واثق إلى حد كبير |
 | Previous | السابق |
 | Previous step | الخطوة اللي فاتت |
@@ -580,21 +618,25 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | Respect their space, while gently inviting any unresolved question—without inventing urgency. | احترم مساحة العميل، واسأله بهدوء لو فيه نقطة لسه مش واضحة، من غير استعجال مصطنع. |
 | Response time | وقت الرد |
 | Restart the request with a different team without checking. | ابدأ الطلب من الأول مع فريق تاني من غير ما تراجع. |
+| Results confirmed. Open a trainee profile to see their activity history. Start a new room for another recorded game. | النتايج اتأكدت. افتح ملف أي متدرّب عشان تشوف نتايج أنشطته. لو عايز تسجّل جولة تانية، افتح غرفة جديدة. |
 | Return to portal | الرجوع للبوابة |
 | Return to Xcelias portal | الرجوع لبوابة إكسلياس |
 | Reuse the last message you sent. | استخدم آخر رسالة كنت باعتها. |
 | Reveal a coaching hint. A correct answer can then earn up to 70 instead of 100 XP. | اظهر تلميح يساعدك. لو إجابتك صح بعده هتكسب لحد 70 بدل 100 نقطة خبرة. |
 | Reveal hint | اظهر التلميح |
 | Reveal the client’s next line | اعرض الجملة الجاية للعميل |
+| Review the name matches below before saving these game results to trainee profiles. | راجع الأسماء اللي تحت قبل ما تحفظ نتايج الجولة في ملفات المتدرّبين. |
 | Review this move | راجع الاختيار ده |
 | Ring Road, Suez Road, Alexandria Desert Road, Fayoum Road. | الدائري، السويس، إسكندرية الصحراوي، الفيوم. |
 | Ring Road, Suez Road, Middle Ring Road, Ain Sokhna Road. | الدائري، السويس، الدائري الأوسطي، العين السخنة. |
 | Role-play Lab | معمل المحاكاة |
 | ROOM ENDED | الجولة انتهت |
+| Room invitations show roster names and companies only. The trainer confirms name matches before saving profile results. | لينك الجولة بيعرض أسماء متدرّبي الدفعة وشركاتهم بس. المدرّب بيراجع كل اسم قبل ما يحفظ النتيجة في ملفه. |
 | ROOM LEADERS | متصدّري الجولة |
 | Round review | مراجعة الجولات |
 | Run a live team round | ابدأ جولة مباشرة للفرق |
 | Sadat and Shinzo Abe. | السادات وشينزو آبي. |
+| Save scores & XP only | احفظ درجات النشاط والنقط بس |
 | Saved to your batch record | اتحفظت في سجل دفعتك |
 | Saving your result… | بنحفظ نتيجتك… |
 | Say another project has even less availability. | قوله إن مشروع تاني الوحدات فيه أقل كمان. |
@@ -612,8 +654,10 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | Scan with your phone camera to join this room. | امسح الكود بكاميرا الموبايل علشان تدخل الجولة. |
 | Scoreboard updates after each reveal. | الترتيب بيتحدّث بعد كل إجابة معلنة. |
 | Scored attempts | محاولات اتقيّمت |
+| Scores and XP follow the Academy challenge rules. Trainers can count completed participation towards session attendance without replacing formal assessments. | درجات النشاط والنقط بتتحسب بنظام تحدّيات الأكاديمية. المدرّب يقدر يحسب المشاركة المكتملة ضمن الحضور، من غير ما يستبدل التقييمات الأساسية. |
 | Search | بحث |
 | Search broadly and let the client sort through everything. | دوّر بشكل واسع وسيب العميل يفرز كل النتائج. |
+| Selecting a name is not proof of identity. Check each match with the class. Correct a match or choose “Do not save” before confirming. | اختيار الاسم لوحده مش إثبات إن ده صاحبه. راجع الأسماء مع المجموعة، وصحّح أي اسم أو اختار «ما تحفظش» قبل التأكيد. |
 | Send a guess so the client is not waiting. | ابعت تخمين عشان العميل ما يستناش. |
 | Send every brochure you have. | ابعتله كل البروشورات اللي عندك. |
 | Send every two-bedroom listing you have. | ابعتله كل الوحدات اللي عندك بغرفتين. |
@@ -633,6 +677,7 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | Sequence Sprint | سباق ترتيب الخطوات |
 | Server-graded quiz submissions | إجابات اتقيّمت تلقائيًا على النظام |
 | Service recovery | معالجة مشكلة في الخدمة |
+| Session attendance | حضور يوم التدريب |
 | SESSION COMPLETE | الجلسة خلصت |
 | Set the client's lens | ابدأ من منظور العميل |
 | Set the client’s lens | ابدأ المعاينة من وجهة نظر العميل |
@@ -690,6 +735,7 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | Tell them which room should matter most. | قوله أنهي أوضة المفروض تهمه أكتر. |
 | Thanks for checking in. | شكرًا على مشاركتك. |
 | Thanks for playing, | شكرًا على مشاركتك يا |
+| Thanks for showing up! | تسلم على مشاركتك! |
 | That works. What should I expect next? | تمام. إيه اللي هيحصل بعد كده؟ |
 | The brochure mentions a projection. Is that a promise? | البروشور كاتب رقم متوقع. ده وعد؟ |
 | THE CLASSROOM COACHING LOOP | متابعة تطوّر المجموعة |
@@ -728,11 +774,14 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | There is no need to verify availability. | مش محتاجين نتأكد من التوافر. |
 | THINK IT THROUGH | فكّر فيها |
 | This correct answer can earn up to 70 XP. | الإجابة الصح بعد التلميح تكسبك لحد 70 نقطة خبرة. |
+| This game is linked to your batch. Your trainer will confirm the name matches before saving profile results. | الجولة دي مربوطة بدفعتك. المدرّب هيراجع الأسماء قبل ما يحفظ النتايج في الملفات. |
 | This group has only two axes in the lesson. | المجموعة دي فيها محورين بس في الدرس. |
 | This QR code is private to this trainee. Share it only with them. | كود QR ده خاص بالمتدرّب ده؛ شاركه معاه هو بس. |
 | This reflection lives only in this page session. It is not sent to your trainer, saved, or included in your score or XP. | المراجعة دي ظاهرة ليك في الجلسة دي بس؛ مش بتتبعت للمدرّب ومش بتدخل في الدرجة أو نقاط الخبرة. |
 | This unit will definitely be available next week. | الوحدة دي أكيد هتكون متاحة الأسبوع الجاي. |
 | Time-sensitive details should be checked against an approved current source. | التفاصيل اللي بتتغير لازم تتراجع من مصدر معتمد ومحدّث. |
+| TODAY’S CLASS LEADERS | أعلى نقاط في المجموعة النهارده |
+| Tour Day | يوم الجولة |
 | Townhouses and twin houses only; apartments are not a unit family. | تاون وتوين بس؛ الشقق مش مجموعة وحدات. |
 | Trainer + trainee | مدرّب ومتدرّب |
 | Trainer Activities Studio | استوديو أنشطة التدريب |
@@ -837,11 +886,13 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | You want the cheapest option, right? | إنت عايز أرخص اختيار، صح؟ |
 | You want the current floor plan and an accurate service-charge figure. You are busy during the day and prefer one concise email. Do not volunteer contact details; they are already on the company record. | إنت عايز مخطط الدور والرقم الحالي الدقيق للصيانة. يومك زحمة وبتفضّل إيميل واحد مختصر. ما تقولش بيانات تواصل من نفسك؛ هي موجودة بالفعل في سجل الشركة. |
 | You’re in the room | إنت دخلت الجولة |
+| YOU’RE IN THE ROOM | إنت في الجولة |
 | Your accuracy is based on the answer, not the hint. Independent correct answers earn 100 XP; a correct answer after a nudge earns 70 XP. | تقييمك على إجابتك، مش على استخدام التلميح. الإجابة الصح من غير تلميح تكسب 100 نقطة خبرة، ومع التلميح تكسب 70. |
 | Your challenge is saved | التحدّي محفوظ |
 | Your choices and any coaching nudges are private to this link. | اختياراتك والتلميحات اللي استخدمتها خاصة باللينك ده. |
 | Your class nickname | اسمك المستعار في الجولة |
 | YOUR CLASSROOM RUN OF SHOW | خطة سير الجلسة |
+| Your name in the batch | اسمك في الدفعة |
 | Your next lesson gets smarter here. | الدرس الجاي هيبقى أركز وأفيد. |
 | Your order | ترتيبك |
 | Your order is in. | ترتيبك اتسجّل. |
@@ -852,6 +903,10 @@ The table below contains the fixed UI phrases and all curated quiz, challenge, r
 | Your points | نقاطك |
 | YOUR PRIVATE CONFIDENCE MIRROR | مراجعة ثقتك في إجاباتك |
 | Your response was not saved. Check your connection and try again. | إجابتك ما اتحفظتش. راجع اتصالك وحاول تاني. |
+| Your result was confirmed and saved to your trainee profile. | المدرّب أكّد نتيجتك واتحفظت في ملفك. |
 | Your streak: | إجاباتك الصح ورا بعض: |
 | Your temporary room points were only for this session. They were never saved to Academy records. | نقاط الجولة دي مؤقتة للجلسة دي بس، ومش بتتحفظ في سجلات الأكاديمية. |
+| Your trainer reviewed this game. No result was saved to your profile. | المدرّب راجع الجولة دي، ومفيش نتيجة اتحفظت في ملفك. |
+| Your trainer will confirm name matches before saving results to profiles. Formal grades, attendance and Academy XP stay unchanged. | المدرّب هيراجع الأسماء قبل حفظ النتايج في ملفات المتدرّبين. درجات التقييم والحضور ونقط الأكاديمية مش هتتغيّر. |
+| Your trainer will confirm name matches. Activity results earn Academy XP and can count towards session attendance. | المدرّب هيراجع الأسماء ويأكّدها. نتايج النشاط بتزوّد نقط الأكاديمية وممكن تتحسب ضمن حضور التدريب. |
 | Your turn: answer naturally, as if this were a real client conversation. | دورك ترد بطبيعتك، كأنك بتتكلم مع عميل حقيقي. |

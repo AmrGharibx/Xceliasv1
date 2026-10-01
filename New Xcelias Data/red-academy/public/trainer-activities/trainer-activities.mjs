@@ -48,6 +48,9 @@ function localizedCopy(value) {
     return `${scopePart(insightScope[1])} · ${scopePart(insightScope[2])} · راجع نتائج التحدّيات المكتملة، وخلي الجلسة الجاية تركز على أهم احتياج للمجموعة.`;
   }
   const dynamicPatterns = [
+    [/^LIVE ROOM COMPLETE · (.+)$/, 'الجولة خلصت · $1'],
+    [/^(.+) · (.+) · (\d+) quick rounds$/, (_,category,level,count)=>`${localizedCopy(category)} · ${localizedCopy(level)} · ${count} أسئلة سريعة`],
+    [/^(\d+) \/ (\d+) correct · (\d+) answered · (\d+) pts$/, '$1 / $2 صح · $3 إجابات · $4 نقطة'],
     [/^INDIVIDUAL COMPETITION · (.+)$/, 'منافسة فردية · $1'],
     [/^(\d+) responses in$/, '$1 إجابة وصلت'],
     [/^(\d+) joined$/, '$1 مشارك'],
@@ -565,6 +568,16 @@ function filteredAssignments() {
   });
 }
 
+function openAssignmentAttendance(assignmentId){
+  const assignment=state.assignments.find(item=>item.id===assignmentId);if(!assignment||!store.canWrite())return;
+  const batch=store.data.batches.find(item=>item.id===assignment.batch_id),dates=(batch?.session_dates||[]).filter(date=>date<=today());
+  openDialog('Count participation as attendance',assignment.title+' · '+assignment.batch_name,`<form id="assignment-attendance-form"><p>Completed participants count as present on the chosen session date. Existing attendance is preserved. No arrival time, late flag or absence is inferred.</p><label class="field"><span>Session date</span><select name="session_date" required><option value="">Choose a session date</option>${dates.map(date=>`<option value="${e(date)}">${e(date)}</option>`).join('')}</select></label><p class="form-error" role="alert" hidden></p><div class="dialog-actions"><button class="button" type="button" data-action="dialog-close">Cancel</button><button class="button button-primary" type="submit" ${dates.length?'':'disabled'}>Confirm attendance</button></div></form>`);
+  dialog.querySelector('form').onsubmit=async event=>{event.preventDefault();const form=event.currentTarget,submit=form.querySelector('[type="submit"]');submit.disabled=true;
+    try{const result=await store.api('activities/attendance','POST',{id:assignment.id,expected_version:assignment.version,session_date:form.elements.session_date.value});dialog.close();await store.refresh();await refreshAssignments();showToast(localizedCopy('Attendance confirmed. Existing records were preserved.')+` (${result.created} / ${result.preserved})`);}
+    catch(error){const alert=form.querySelector('[role="alert"]');alert.textContent=localizedCopy(error.message);alert.hidden=false;submit.disabled=false;}
+  };localizeTree(dialog);
+}
+
 function assignmentCard(assignment) {
   const participants = assignment.participants || [];
   const visible = participants.filter(person => !state.companyId || person.company_id === state.companyId);
@@ -577,7 +590,8 @@ function assignmentCard(assignment) {
     const details = quizResult ? `${person.correct_count ?? '—'} / ${studio.question_count} correct · ${person.earned_xp || 0} XP` : studio ? (person.status === 'In Progress' ? 'Playing now' : 'Waiting to start') : e(person.trainer_feedback || '—');
     return `<tr><td><span class="person-name">${e(person.trainee_name)}</span><span class="person-company">${e(person.company_name || companyName(person.company_id))}</span></td><td><span class="progress-pill ${person.status === 'Completed' ? 'completed' : person.status === 'In Progress' ? 'in-progress' : ''}">${e(person.status)}</span></td><td>${person.score === null ? '—' : `${Number(person.score).toFixed(0)}%`}</td><td>${details}</td><td>${!studio && store.canWrite() && assignment.status === 'Open' ? `<button class="micro-button" data-action="edit-progress" data-assignment="${e(assignment.id)}" data-trainee="${e(person.trainee_id)}">Coach / update</button>` : ''}</td></tr>`;
   }).join('');
-  const actions = `${studio && store.canWrite() && assignment.status === 'Open' ? `<button class="micro-button" data-action="share-links" data-assignment="${e(assignment.id)}">Create learner links</button>` : ''}${assignment.status === 'Open' && store.canWrite() ? `<button class="micro-button" data-action="close-assignment" data-assignment="${e(assignment.id)}">Close assignment</button>` : ''}`;
+  const canDelete=store.canWrite()&&(store.user?.role==='admin'||assignment.created_by===store.user?.email);
+  const actions = `${studio && store.canWrite() && assignment.status === 'Open' ? `<button class="micro-button" data-action="share-links" data-assignment="${e(assignment.id)}">Create learner links</button>` : ''}${assignment.status === 'Open' && store.canWrite() ? `<button class="micro-button" data-action="close-assignment" data-assignment="${e(assignment.id)}">Close assignment</button>` : ''}${store.canWrite()&&(assignment.participants||[]).some(person=>person.status==='Completed')?`<button class="micro-button" data-action="assignment-attendance" data-assignment="${e(assignment.id)}">Count participation as attendance</button>`:''}${canDelete?`<button class="micro-button assignment-delete" data-action="delete-assignment" data-assignment="${e(assignment.id)}">Delete assignment</button>`:''}`;
   const category = studio ? `${studio.category} · ${studio.level} · ${studio.duration_minutes} min` : fallback?.title || assignment.activity_id;
   return `<article class="assignment-card"><div class="assignment-head"><div><div class="assignment-title-row"><h3 class="assignment-title">${e(assignment.title)}</h3><span class="status ${assignment.status === 'Open' ? 'status-open' : 'status-closed'}">${e(assignment.status)}</span>${studio ? '<span class="studio-chip">ACADEMY STUDIO</span>' : '<span class="studio-chip fallback-chip">FALLBACK ACTIVITY</span>'}</div><div class="assignment-meta">${e(assignment.batch_name)} <span aria-hidden="true">·</span> ${e(category)} <span aria-hidden="true">·</span> Assigned by <b>${e(assignment.created_by)}</b></div></div><div class="assignment-actions">${actions}</div></div>${assignment.instructions ? `<p class="instructions">${e(assignment.instructions)}</p>` : ''}<div class="assignment-stats"><span><strong>${visible.length}</strong> trainees</span><span><strong>${started}</strong> in progress</span><span><strong>${complete}</strong> completed</span>${studio ? `<span><strong>${visible.reduce((sum,person)=>sum+(Number(person.earned_xp)||0),0)}</strong> XP earned</span>` : ''}<span>${assignment.due_date ? `Due <strong>${e(assignment.due_date)}</strong>` : 'No due date'}</span></div><div class="participant-wrap"><table class="participant-table"><thead><tr><th>Trainee / company</th><th>Progress</th><th>Score</th><th>${studio ? 'Quiz result / XP' : 'Trainer feedback'}</th><th></th></tr></thead><tbody>${rows || '<tr><td colspan="5">No trainees match this company filter.</td></tr>'}</tbody></table></div></article>`;
 }
@@ -653,6 +667,11 @@ function xpLadder() {
       if(person.status!=='Completed')continue;
       const row=totals.get(person.trainee_id)||{id:person.trainee_id,name:person.trainee_name,company:person.company_name||companyName(person.company_id),xp:0,completed:0};row.xp+=Number(person.earned_xp)||0;row.completed++;totals.set(person.trainee_id,row);
     }
+  }
+  for(const result of state.liveXp||[]){
+    if(state.batchId&&result.batch_id!==state.batchId)continue;
+    const trainee=store.data.trainees.find(item=>item.id===result.trainee_id);if(!trainee||state.companyId&&trainee.company_id!==state.companyId)continue;
+    const row=totals.get(trainee.id)||{id:trainee.id,name:trainee.trainee_name,company:companyName(trainee.company_id),xp:0,completed:0};row.xp+=Number(result.earned_xp)||0;row.completed+=Number(result.games)||0;totals.set(trainee.id,row);
   }
   const leaders=[...totals.values()].sort((a,b)=>b.xp-a.xp||b.completed-a.completed||a.name.localeCompare(b.name)).slice(0,5);
   const scope=state.batchId?store.data.batches.find(batch=>batch.id===state.batchId)?.batch_name:'All batches';
@@ -846,6 +865,7 @@ async function refreshAssignments() {
       store.canWrite()?store.api('activities/session-plans').catch(error=>({plans:[],skills:[],error})):Promise.resolve({plans:[],skills:[]}),
     ]);
     state.assignments = result.assignments || [];
+    state.liveXp = result.live_xp || [];
     state.library = library.activities || [];
     state.library.forEach(registerActivityArabic);
     // The facilitator deck includes answer keys and is cached separately from
@@ -994,6 +1014,8 @@ async function syncLiveRoom(snapshot) {
   if (!liveRoom || liveRoom.roomId !== roomId) return;
   applyLiveRoomSnapshot(fresh);
   liveRoom.syncError = '';
+  // Do not replace a native roster selector while the trainer is using it.
+  if(dialog.querySelector('[data-profile-player]:focus'))return;
   renderLiveRoom();
 }
 
@@ -1085,6 +1107,9 @@ function renderLiveRoomSetup(error = '', selectedActivityId = '') {
   competitionField.innerHTML='<span>Competition mode</span><select name="competition_mode" id="room-competition-mode"><option value="teams">Teams · collaborate in 2–4 groups</option><option value="individuals">Individuals · everyone competes</option></select>';
   form.querySelector('.form-grid').prepend(competitionField);
   const competitionSelect=form.elements.competition_mode;
+  const batchField=document.createElement('label');batchField.className='field field-full';
+  batchField.innerHTML=`<span>Link results to a batch (optional)</span><select name="live_batch_id"><option value="">Nickname-only · no profile updates</option>${store.data.batches.filter(batch=>!batch.archived_at).map(batch=>`<option value="${e(batch.id)}">${e(batch.batch_name)}</option>`).join('')}</select><small>Room invitations show roster names and companies only. The trainer confirms name matches before saving profile results.</small>`;
+  competitionField.after(batchField);
   const teamOneField=form.querySelector('#room-team-one').closest('.field'),teamTwoField=form.querySelector('#room-team-two').closest('.field');
   teamOneField.dataset.liveTeam='1';teamTwoField.dataset.liveTeam='2';
   const teamCountField=document.createElement('div');teamCountField.className='field';
@@ -1104,12 +1129,15 @@ function renderLiveRoomSetup(error = '', selectedActivityId = '') {
     teamCountField.hidden=individual;
     form.querySelectorAll('[data-live-team]').forEach(field=>{const enabled=!individual&&Number(field.dataset.liveTeam)<=count;field.hidden=!enabled;field.querySelector('input').required=enabled;});
     const phone=form.elements.phone_enabled;
-    if(individual)phone.checked=true;
-    phone.disabled=individual;
+    if(individual||form.elements.live_batch_id.value)phone.checked=true;
+    phone.disabled=individual||!!form.elements.live_batch_id.value;
+    dialog.querySelector('.room-privacy-note strong').textContent=form.elements.live_batch_id.value?'Batch-linked results need trainer confirmation.':'Live points stay in this room only.';
+    dialog.querySelector('.room-privacy-note span').textContent=form.elements.live_batch_id.value?'Confirmed activity results earn Academy XP. Your trainer can count participation towards session attendance. Up to 80 participants; a 40-person batch fits.':'No names, answers, scores, or XP are written to trainee, attendance, assessment, or assignment records. Rooms expire automatically after four hours.';
     form.querySelector('.room-rules p').textContent=individual?'Every trainee joins with a nickname and answers on their own phone. Correct answers earn 100 points plus a streak bonus. Everyone appears on the leaderboard; equal scores share a place. Up to 80 participants.':'Teams discuss or answer together. Reveal each coaching move when the class is ready. Correct phone answers earn temporary room points, with a small streak bonus; this is not Academy XP.';
     form.querySelector('.room-phone-toggle small').textContent=individual?'Required for individual competition. Share one QR code with the whole class; no team selection or Academy login needed.':'Creates a live join code, team leaderboard, anonymous class response counts, and automatic room points. The existing talk-it-out mode stays available when this is off.';
   };
   competitionSelect.addEventListener('change',syncTeamNameFields);
+  form.elements.live_batch_id.addEventListener('change',syncTeamNameFields);
   teamCount.addEventListener('change',syncTeamNameFields);syncTeamNameFields();
   if (activities.some(item => item.id === selectedActivityId)) form.elements.activity_id.value = selectedActivityId;
   form.addEventListener('submit', async event => {
@@ -1126,7 +1154,7 @@ function renderLiveRoomSetup(error = '', selectedActivityId = '') {
     try {
       let roomId = '', joinCode = '';
       if (phoneMode) {
-        const created = await store.api('activities/live/create', 'POST', { activity_id: activity.id, competition_mode:competitionMode, teams:teamNames, timer_duration: timerDuration });
+        const created = await store.api('activities/live/create', 'POST', { batch_id:form.elements.live_batch_id.value || null, activity_id: activity.id, competition_mode:competitionMode, teams:teamNames, timer_duration: timerDuration });
         roomId = created.room_id; joinCode = created.join_code;
       }
       liveRoom = { activity, competitionMode, teams: teamNames.map((name, index) => ({ id: `team-${index + 1}`, team_no:index+1, name, points: 0, players: [] })), roundIndex: 0, revealed: false, pointAwarded: false, history: [], timerDuration, timeLeft: timerDuration, timerEndsAt: 0, finished: false, phoneMode, roomId, joinCode, syncError: '' };
@@ -1175,6 +1203,39 @@ function mountQrCode(frame) {
 
 function mountLiveRoomQrCodes(root = dialog) {
   root.querySelectorAll('.qr-code-frame[data-qr-url]').forEach(mountQrCode);
+  mountLiveProfileReview();
+}
+
+function mountLiveProfileReview() {
+  const room=liveRoom,review=room?.remote?.profile_linking;if(!review)return;
+  const footer=dialog.querySelector('.room-footer span');if(footer)footer.textContent='Batch-linked activity · confirmed results earn Academy XP and can count towards session attendance.';
+  if(!room.finished)return;
+  const finish=dialog.querySelector('.room-finish');if(!finish)return;
+  finish.querySelector('p').textContent='Review the name matches below before saving these game results to trainee profiles.';
+  if(review.saved_at){
+    finish.querySelector('[data-action="room-again"]').hidden=true;
+    const saved=document.createElement('p');saved.className='profile-results-saved';saved.setAttribute('role','status');saved.textContent='Results confirmed. Open a trainee profile to see their activity history. Start a new room for another recorded game.';finish.append(saved);return;
+  }
+  if(!room.profileDraft)room.profileDraft=new Map(review.players.map(player=>[player.player_id,player.trainee_id||'']));
+  const section=document.createElement('section');section.className='room-profile-review';
+  section.innerHTML=`<h3>Confirm names & save results</h3><p>${e(review.batch_name)}</p><p>Selecting a name is not proof of identity. Check each match with the class. Correct a match or choose “Do not save” before confirming.</p><div class="room-profile-list">${review.players.map(player=>`<label class="room-profile-row"><span><strong>${e(player.nickname)}</strong><small>${player.correct_count} / ${room.remote.room.total_rounds} correct · ${player.answered_count} answered · ${player.points} pts</small></span><select data-profile-player="${e(player.player_id)}" aria-label="${e(player.nickname)} — trainee profile"><option value="" ${!room.profileDraft.get(player.player_id)?'selected':''}>Do not save</option>${review.trainees.map(trainee=>`<option value="${e(trainee.id)}" ${room.profileDraft.get(player.player_id)===trainee.id?'selected':''}>${e(trainee.name)}${trainee.company?' · '+e(trainee.company):''}</option>`).join('')}</select></label>`).join('')}</div><p class="form-error" role="alert" ${room.profileError?'':'hidden'}>${e(room.profileError||'')}</p><button class="button button-flat button-primary" data-action="room-save-profiles" type="button" ${room.profileSaving||!review.players.length?'disabled':''}>${room.profileSaving?'Saving…':'Confirm matches & save to profiles'}</button><p>Accuracy counts all rounds, including unanswered rounds. Streak points are shown separately. This does not update formal grades, attendance or Academy XP.</p>`;
+  finish.after(section);
+  section.querySelector('p:last-child').textContent='Accuracy counts all rounds. Confirmed correct answers earn 100 Academy XP each; streak bonuses are game points only. Participating trainees can count as present on the selected session date. Existing attendance and formal assessments are preserved.';
+  const attendance=document.createElement('label');attendance.className='room-profile-attendance';
+  const batch=store.data.batches.find(item=>item.id===review.batch_id),dates=(batch?.session_dates||[]).filter(date=>date<=today());
+  attendance.innerHTML=`<span>Session attendance</span><select data-activity-attendance aria-label="Session attendance"><option value="">Save scores & XP only</option>${dates.map(date=>`<option value="${e(date)}" ${room.attendanceDate===date?'selected':''}>${e(date)}</option>`).join('')}</select><small>Only trainees who answered are counted as present. Existing attendance records are preserved; missing participation is not automatically marked absent.</small>`;
+  section.querySelector('[data-action="room-save-profiles"]').before(attendance);
+  attendance.querySelector('select').addEventListener('change',event=>{room.attendanceDate=event.target.value;});
+  section.querySelectorAll('[data-profile-player]').forEach(select=>select.addEventListener('change',()=>{room.profileDraft.set(select.dataset.profilePlayer,select.value);room.profileError='';const alert=section.querySelector('[role="alert"]');alert.textContent='';alert.hidden=true;}));
+  section.querySelector('[data-action="room-save-profiles"]').onclick=async()=>{
+    if(room.profileSaving)return;
+    const mappings=review.players.map(player=>({player_id:player.player_id,trainee_id:room.profileDraft.get(player.player_id)||null}));
+    const targets=mappings.map(match=>match.trainee_id).filter(Boolean);
+    if(new Set(targets).size!==targets.length){room.profileError='Each trainee can receive only one result from this game. Resolve duplicate name matches.';renderLiveRoom();return;}
+    room.profileSaving=true;room.profileError='';renderLiveRoom();
+    try{const result=await store.api('activities/live/save-results','POST',{room_id:room.roomId,mappings,session_date:room.attendanceDate||null});if(liveRoom===room){room.profileSaving=false;await syncLiveRoom(result);}await store.refresh();await refreshAssignments();}
+    catch(error){if(liveRoom!==room)return;room.profileSaving=false;room.profileError=error.message||'Results could not be saved. Please try again.';renderLiveRoom();}
+  };
 }
 
 function liveRoomQrMarkup(code) {
@@ -1502,7 +1563,7 @@ function showAssignmentForm(selectedActivityId = '', selectedTraineeId = '', pre
     document.getElementById('dialog-title').textContent = prefill.isSpacedReview ? 'Assign the spaced review' : 'Assign the session quiz';
     dialog.querySelector('.dialog-head p').textContent = `${prefill.sessionTitle || 'This classroom session'} · the linked challenge and active roster are preselected. Each trainee gets a private quiz link; links are prepared here for you to share and are not sent automatically.`;
     form.querySelector('.studio-assignment-note strong').textContent = prefill.isSpacedReview ? 'Review day · individual retrieval' : 'Connected to this session plan';
-    form.querySelector('.studio-assignment-note span').textContent = 'Scores and XP follow the standard Academy challenge rules. This does not create attendance or a formal assessment.';
+    form.querySelector('.studio-assignment-note span').textContent = 'Scores and XP follow the Academy challenge rules. Trainers can count completed participation towards session attendance without replacing formal assessments.';
     form.querySelector('[type="submit"]').textContent = 'Assign and prepare private links';
   }
   if (targetTrainee && targetTrainee.batch_id === defaultBatch) { companyField.value = targetTrainee.company_id || ''; drawRoster(); }
@@ -2017,6 +2078,12 @@ function livePlayerShell(content) {
     ? '<span class="brand" aria-label="Red Training Academy"><img src="../training-academy-logo.svg" alt="Red Training Academy"><span class="brand-copy"><span>Academy Studio</span></span></span>'
     : `<a class="brand" href="${e(portalUrl())}" aria-label="Return to Xcelias portal"><img src="../training-academy-logo.svg" alt="Red Training Academy"><span class="brand-copy"><span>Academy Studio</span></span></a>`;
   app.innerHTML = `<main class="learner-shell live-player-shell"><header class="learner-header">${brand}<span class="live-player-status ${livePlayer.error?'is-reconnecting':''}"><i></i>${livePlayer.error?'RECONNECTING':'LIVE CLASSROOM'}</span>${localeSwitch()}</header>${content}</main>`;
+  if(data?.profile){
+    const note=data.profile.reviewed?(data.profile.recorded?'Your result was confirmed and saved to your trainee profile.':'Your trainer reviewed this game. No result was saved to your profile.'):'This game is linked to your batch. Your trainer will confirm the name matches before saving profile results.';
+    app.querySelectorAll('.quiz-private-foot,.result-rank-copy,.live-finish-card > p').forEach(el=>{const status=document.createElement('span'),outcome=document.createElement('span');status.textContent=note;outcome.textContent='Confirmed activity results earn Academy XP and can count towards session attendance.';el.replaceChildren(status,document.createTextNode(' '),outcome);});
+    if(data.profile.recorded){const awards=document.createElement('p');awards.className='live-outcome-badges';const xp=document.createElement('strong');xp.dir='ltr';xp.textContent=`+${data.profile.earned_xp} XP`;awards.append(xp);if(data.profile.session_date){const attendance=document.createElement('span'),date=document.createElement('time');date.textContent=data.profile.session_date;attendance.append(date,document.createTextNode(' · '+localizedCopy(data.profile.attendance_status||'No attendance recorded')));awards.append(attendance);}app.querySelector('.learner-card')?.append(awards);}
+    const message=document.createElement('p');message.className='live-profile-status';message.setAttribute('role','status');message.textContent=data.profile.recorded?data.profile.confirmed_name:data.profile.name;app.querySelector('.learner-card')?.prepend(message);
+  }
   if (participantHost) removeParticipantExitLinks();
 }
 
@@ -2037,15 +2104,24 @@ function renderLivePlayerJoin(error = '') {
   const individual=info.competition_mode==='individuals';
   const defaultTeam = info.teams.reduce((least,team)=>team.players<least.players?team:least,info.teams[0]).team_no;
   const teamOptions = info.teams.map(team => `<label class="live-team-choice"><input type="radio" name="team_no" value="${team.team_no}" ${team.team_no===defaultTeam?'checked':''}><span><strong>${e(team.name)}</strong><small>${team.players} joined</small></span><i></i></label>`).join('');
-  livePlayerShell(`<section class="learner-card live-join-card"><span class="eyebrow">YOU’RE IN THE ROOM</span><h1>${e(info.title)}</h1><p class="intro-welcome">${e(info.category)} · ${e(info.level)} · ${info.total_rounds} quick rounds</p><div class="live-join-welcome"><strong>${individual?'Pick a nickname. Compete against the whole class.':'Pick a class nickname and team.'}</strong><span>This live game is temporary. It is not linked to your trainee profile or Academy XP.</span></div><form id="live-phone-join" class="live-phone-join"><label class="field"><span class="field-label">Your class nickname</span><input name="nickname" required maxlength="24" autocomplete="nickname" placeholder="e.g. Orbit" autofocus></label>${individual?'':`<fieldset class="live-team-field"><legend>Choose a team</legend><div class="live-team-options">${teamOptions}</div></fieldset>`}${error?`<div class="error-box" role="alert">${e(error)}</div>`:''}<button class="button button-flat button-primary" type="submit" ${livePlayer.busy?'disabled':''}>${livePlayer.busy?'Joining…':'Join the game'}</button></form><p class="quiz-private-foot">Answer on your own phone. Your trainer reveals the strongest move after the room has had time to think.</p></section>`);
+  livePlayerShell(`<section class="learner-card live-join-card"><span class="eyebrow">YOU’RE IN THE ROOM</span><h1>${e(info.title)}</h1><p class="intro-welcome">${e(info.category)} · ${e(info.level)} · ${info.total_rounds} quick rounds</p><div class="live-join-welcome"><strong>${individual?'Pick a nickname. Compete against the whole class.':'Pick a class nickname and team.'}</strong><span>This live game is temporary. It is not linked to your trainee profile or Academy XP.</span></div><form id="live-phone-join" class="live-phone-join"><label class="field"><span class="field-label">Your class nickname</span><input name="nickname" ${info.roster?'':'required'} maxlength="24" autocomplete="nickname" placeholder="e.g. Orbit" autofocus></label>${individual?'':`<fieldset class="live-team-field"><legend>Choose a team</legend><div class="live-team-options">${teamOptions}</div></fieldset>`}${error?`<div class="error-box" role="alert">${e(error)}</div>`:''}<button class="button button-flat button-primary" type="submit" ${livePlayer.busy?'disabled':''}>${livePlayer.busy?'Joining…':'Join the game'}</button></form><p class="quiz-private-foot">Answer on your own phone. Your trainer reveals the strongest move after the room has had time to think.</p></section>`);
   const form = document.getElementById('live-phone-join');
+  if(info.roster){
+    form.querySelector('[name="nickname"]').removeAttribute('autofocus');
+    const names=document.createElement('label');names.className='field live-roster-field';
+    names.innerHTML=`<span class="field-label">Your name in the batch</span><select name="trainee_id" required autofocus><option value="">Choose your name</option>${info.roster.trainees.map(trainee=>`<option value="${e(trainee.id)}">${e(trainee.name)}${trainee.company?' · '+e(trainee.company):''}</option>`).join('')}</select>`;form.prepend(names);
+    form.querySelector('[name="nickname"]').previousElementSibling.textContent='Nickname (optional)';
+    app.querySelector('.live-join-welcome strong').textContent='Choose your real name. Play under a nickname if you like.';
+    app.querySelector('.live-join-welcome span').textContent='Your trainer will confirm name matches. Activity results earn Academy XP and can count towards session attendance.';
+    form.elements.trainee_id.addEventListener('change',()=>{const chosen=info.roster.trainees.find(item=>item.id===form.elements.trainee_id.value);form.elements.nickname.placeholder=chosen?.name.slice(0,24)||'e.g. Orbit';});
+  }
   form.addEventListener('submit', async event => {
     event.preventDefault();if(livePlayer.busy)return;
-    const nickname=form.elements.nickname.value.trim(),teamNo=individual?1:Number(form.elements.team_no.value);
-    if(!nickname||nickname.length>24){renderLivePlayerJoin('Choose a nickname of 1 to 24 characters.');return;}
+    const traineeId=form.elements.trainee_id?.value || null,nickname=form.elements.nickname.value.trim(),teamNo=individual?1:Number(form.elements.team_no.value);
+    if((!nickname&&!info.roster)||nickname.length>24){renderLivePlayerJoin('Choose a nickname of 1 to 24 characters.');return;}
     livePlayer.busy=true;renderLivePlayerJoin();
     try {
-      const joined=await liveRoomRequest('join',{code:livePlayer.code,nickname,team_no:teamNo});
+      const joined=await liveRoomRequest('join',{code:livePlayer.code,nickname,trainee_id:traineeId,team_no:teamNo});
       livePlayer.seatToken=joined.seat_token;livePlayer.data=joined.room;livePlayer.busy=false;
       try{sessionStorage.setItem(`red-academy-live:${livePlayer.code}`,livePlayer.seatToken);}catch{}
       renderLivePlayer();startLivePlayerPolling();
@@ -2442,6 +2518,12 @@ document.addEventListener('click', async event => {
       await refreshAssignments();
       showToast('Assignment closed. Its progress history was preserved.');
     }
+    if(action==='delete-assignment'){
+      const assignment=state.assignments.find(row=>row.id===buttonEl.dataset.assignment);if(!assignment)return;
+      if(!window.confirm(localizedCopy('Delete this whole assignment?')+'\n'+assignment.title+' · '+assignment.batch_name+'\n'+localizedCopy('Its learner links, assigned entries, quiz scores and assignment XP will disappear. The batch, trainees, attendance and formal assessments stay. A private recovery snapshot is retained.')))return;
+      await store.api('activities/delete','DELETE',{id:assignment.id,expected_version:assignment.version});await refreshAssignments();showToast('Assignment deleted. A private recovery snapshot was retained.');
+    }
+    if(action==='assignment-attendance')openAssignmentAttendance(buttonEl.dataset.assignment);
     if (action === 'reload') await refreshAssignments();
     if (action === 'academy-fallback') location.assign(academyUrl('/activities'));
     if (action === 'legacy-library') window.open(portalUrl('activities/'), '_blank', 'noopener');

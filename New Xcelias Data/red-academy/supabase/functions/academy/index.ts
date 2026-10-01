@@ -1,11 +1,13 @@
 // @ts-nocheck -- runtime validation is shared with the tested JavaScript app.
 import {liveCompetitionMode,livePlayerStandings} from '../../../server/activity-live-competition.mjs';
+import {liveRoster,liveJoinIdentity,checkedLiveMappings,liveProfileReview,livePlayerProfile} from '../../../server/activity-live-roster.mjs';
 import {createHash,randomBytes,scrypt as nodeScrypt,timingSafeEqual} from 'node:crypto';
 import {Buffer} from 'node:buffer';
 import {promisify} from 'node:util';
 import {assessmentFor,attendanceStats,emptyState,id,scores,sessionChecklistFor,today} from '../../../public/modules/core.mjs';
 import {ApiError,isId} from '../../../server/validation.mjs';
 import {validateActivityAssignment,validateActivityProgress,validateAssignmentClose} from '../../../server/activity-validation.mjs';
+import {activityAssignmentAction,activitySessionDate} from '../../../server/activity-outcomes.mjs';
 import {activityCohortPulse,activityPracticeInsights,gradeStudioQuiz,liveRoomQuestionView,publicQuiz,STUDIO_SKILLS,studioFacilitatorDeck,studioLibrary,studioQuiz,validateStudioArabicChallenge,validateStudioChallenge,validateStudioDraftRequest,validateStudioQuizDraft} from '../../../server/activity-studio.mjs';
 import {draftActivitySessionPromptsWithGemini,validateActivitySessionPlan,validateActivitySessionPromptDraftRequest,validateActivitySessionStep} from '../../../server/activity-session-plans.mjs';
 import {validateActivityLivePulse} from '../../../server/activity-live-pulse.mjs';
@@ -84,7 +86,8 @@ function databaseError(error){
  if(!(error instanceof BackendError))return error;
  if(error.code==='RED_ACTIVITY_DRAFT_CONFLICT')return new ApiError(409,'This quiz progress was updated in another open session. Reload the link to continue from the latest saved progress.');
  const messages={
-  RED_CONFLICT:[409,'This record changed in another session. Refresh and try again.'],RED_NOT_FOUND:[404,'Record not found.'],RED_DUPLICATE:[409,'A matching record already exists. Refresh the page before retrying.'],RED_LINKED:[409,'This record is linked to other data. Reassign the linked records first.'],RED_INVALID_RECORD:[400,'The record could not be saved. Check the supplied values.'],RED_INVALID_OPERATION:[400,'The requested change is not valid.'],RED_ACTIVITY_BATCH:[409,'This batch is no longer available. Refresh and choose an active batch.'],RED_ACTIVITY_TARGETS:[409,'The selected roster changed. Refresh and select active trainees from this batch.'],RED_ACTIVITY_CLOSED:[409,'This assignment is closed or past its due date.'],RED_ACTIVITY_SUBMITTED:[409,'This activity response was already submitted.'],RED_ACTIVITY_SESSION_EARLY:[409,'This session’s private quiz unlocks on its scheduled date.'],RED_ACTIVITY_SESSION_QUIZ_EXISTS:[409,'This session already has a linked follow-up quiz. Open that assignment from the shared session board.'],RED_ACTIVITY_SESSION_INVALID:[409,'This session plan changed. Refresh the shared board and try again.'],RED_ACTIVITY_LIVE_INVALID_CODE:[404,'That room code is invalid or expired. Ask your trainer for the current code.'],RED_ACTIVITY_LIVE_CLOSED:[409,'This live room has ended. Ask your trainer to start another round.'],RED_ACTIVITY_LIVE_FULL:[409,'This room has reached its participant limit. Ask your trainer to start another room.'],RED_ACTIVITY_LIVE_NICKNAME:[409,'That nickname is already in the room. Choose a different nickname.'],RED_ACTIVITY_LIVE_INVALID_JOIN:[400,'Choose a nickname and one of the teams shown on the join screen.'],RED_ACTIVITY_LIVE_NO_SEAT:[401,'Your room seat is no longer active. Rejoin with the current room code.'],RED_ACTIVITY_LIVE_ANSWER_CLOSED:[409,'This answer window has closed. Wait for the trainer to open the next round.'],RED_ACTIVITY_LIVE_BAD_ANSWER:[400,'Choose one of the answers shown on the screen.'],RED_ACTIVITY_LIVE_HOST:[403,'Only the trainer who started this room can control it.'],RED_ACTIVITY_LIVE_REVEAL:[409,'This round is already revealed or the room has ended.'],RED_ACTIVITY_LIVE_ADVANCE:[409,'Reveal the current answer before advancing the room.'],RED_ACTIVITY_LIVE_REPLAY:[409,'Finish the current live room before starting a replay.'],RED_ACTIVITY_LIVE_RESUME:[409,'This live room has ended or expired.'],RED_ACTIVITY_LIVE_TIMER:[409,'The room timer is unavailable for this question.'],RED_ACTIVITY_LIVE_INVALID_CREATE:[400,'Choose a valid challenge, team names, and timer.'],RED_ACTIVITY_LIVE_INVALID_ACTION:[400,'The requested live-room action is not valid.'],RED_EMAIL_EXISTS:[409,'This email already has an account. Manage its existing access instead.'],RED_INVITATION_INVALID:[400,'This invitation is invalid, expired, or already used. Ask your company administrator for a new invitation.'],RED_INVITATION_USED:[409,'This invitation can no longer be used.'],RED_LAST_ADMIN:[400,'You cannot deactivate or demote the last administrator.'],RED_PASSWORD_CONFLICT:[409,'Your password changed. Sign in again before changing account credentials.'],RED_SETUP_USED:[409,'This workspace is already configured. Sign in with your company account.'],RED_SETUP_INVALID:[403,'The setup code is invalid or expired. Ask the server owner for the current code.']
+  RED_ACTIVITY_ATTENDANCE_DATE:[400,'Choose a scheduled session date that is today or earlier.'],RED_ACTIVITY_ATTENDANCE_EMPTY:[409,'No completed participants are available to record attendance.'],RED_ACTIVITY_DELETE_FORBIDDEN:[403,'Only an administrator or the assigning trainer can delete this assignment.'],
+  RED_CONFLICT:[409,'This record changed in another session. Refresh and try again.'],RED_NOT_FOUND:[404,'Record not found.'],RED_DUPLICATE:[409,'A matching record already exists. Refresh the page before retrying.'],RED_LINKED:[409,'This record is linked to other data. Reassign the linked records first.'],RED_INVALID_RECORD:[400,'The record could not be saved. Check the supplied values.'],RED_INVALID_OPERATION:[400,'The requested change is not valid.'],RED_ACTIVITY_BATCH:[409,'This batch is no longer available. Refresh and choose an active batch.'],RED_ACTIVITY_TARGETS:[409,'The selected roster changed. Refresh and select active trainees from this batch.'],RED_ACTIVITY_CLOSED:[409,'This assignment is closed or past its due date.'],RED_ACTIVITY_SUBMITTED:[409,'This activity response was already submitted.'],RED_ACTIVITY_SESSION_EARLY:[409,'This session’s private quiz unlocks on its scheduled date.'],RED_ACTIVITY_SESSION_QUIZ_EXISTS:[409,'This session already has a linked follow-up quiz. Open that assignment from the shared session board.'],RED_ACTIVITY_SESSION_INVALID:[409,'This session plan changed. Refresh the shared board and try again.'],RED_ACTIVITY_LIVE_INVALID_CODE:[404,'That room code is invalid or expired. Ask your trainer for the current code.'],RED_ACTIVITY_LIVE_CLOSED:[409,'This live room has ended. Ask your trainer to start another round.'],RED_ACTIVITY_LIVE_FULL:[409,'This room has reached its participant limit. Ask your trainer to start another room.'],RED_ACTIVITY_LIVE_NICKNAME:[409,'That nickname is already in the room. Choose a different nickname.'],RED_ACTIVITY_LIVE_INVALID_JOIN:[400,'Choose a nickname and one of the teams shown on the join screen.'],RED_ACTIVITY_LIVE_NO_SEAT:[401,'Your room seat is no longer active. Rejoin with the current room code.'],RED_ACTIVITY_LIVE_ANSWER_CLOSED:[409,'This answer window has closed. Wait for the trainer to open the next round.'],RED_ACTIVITY_LIVE_BAD_ANSWER:[400,'Choose one of the answers shown on the screen.'],RED_ACTIVITY_LIVE_HOST:[403,'Only the trainer who started this room can control it.'],RED_ACTIVITY_LIVE_REVEAL:[409,'This round is already revealed or the room has ended.'],RED_ACTIVITY_LIVE_ADVANCE:[409,'Reveal the current answer before advancing the room.'],RED_ACTIVITY_LIVE_REPLAY:[409,'Finish the current live room before starting a replay.'],RED_ACTIVITY_LIVE_RESUME:[409,'This live room has ended or expired.'],RED_ACTIVITY_LIVE_TIMER:[409,'The room timer is unavailable for this question.'],RED_ACTIVITY_LIVE_INVALID_CREATE:[400,'Choose a valid challenge, team names, and timer.'],RED_ACTIVITY_LIVE_INVALID_ACTION:[400,'The requested live-room action is not valid.'],RED_ACTIVITY_LIVE_ROSTER:[400,'Choose your name from this batch.'],RED_ACTIVITY_LIVE_RESULTS_STATE:[409,'Finish a batch-linked game before saving results.'],RED_ACTIVITY_LIVE_RESULTS_MAPPING:[400,'Review every player and resolve duplicate name matches before saving results.'],RED_ACTIVITY_LIVE_RESULTS_SAVED:[409,'These results are saved. Start a new room to record another game.'],RED_EMAIL_EXISTS:[409,'This email already has an account. Manage its existing access instead.'],RED_INVITATION_INVALID:[400,'This invitation is invalid, expired, or already used. Ask your company administrator for a new invitation.'],RED_INVITATION_USED:[409,'This invitation can no longer be used.'],RED_LAST_ADMIN:[400,'You cannot deactivate or demote the last administrator.'],RED_PASSWORD_CONFLICT:[409,'Your password changed. Sign in again before changing account credentials.'],RED_SETUP_USED:[409,'This workspace is already configured. Sign in with your company account.'],RED_SETUP_INVALID:[403,'The setup code is invalid or expired. Ask the server owner for the current code.']
  };
  const match=messages[error.code];return match?new ApiError(match[0],match[1]):new ApiError(error.status===404?404:500,'The company workspace could not complete that request. Please try again.');
 }
@@ -132,13 +135,13 @@ async function activityLiveInfo(codeHash){
  if(!room||Date.parse(room.expires_at)<=Date.now())throw new ApiError(404,'That room code is invalid or expired. Ask your trainer for the current code.');
  if(room.status!=='Open')throw new ApiError(409,'This live room has ended. Ask your trainer to start another round.');
  const players=await rows('activity_live_players',{select:'team_no',room_id:`eq.${room.id}`,limit:100}),deck=room.deck_snapshot,teamNames=liveRoomTeamNames(room,deck);
- return {competition_mode:deck.competition_mode||'teams',mode:deck.mode==='pulse'?'pulse':'quiz',title:deck.title,category:deck.category,level:deck.level,...(deck.arabic?{arabic:deck.arabic}:{}),total_rounds:deck.questions.length,timer_duration:room.timer_duration,teams:teamNames.map((name,index)=>({team_no:index+1,name,players:players.filter(item=>item.team_no===index+1).length}))};
+ return {roster:deck.roster||null,competition_mode:deck.competition_mode||'teams',mode:deck.mode==='pulse'?'pulse':'quiz',title:deck.title,category:deck.category,level:deck.level,...(deck.arabic?{arabic:deck.arabic}:{}),total_rounds:deck.questions.length,timer_duration:room.timer_duration,teams:teamNames.map((name,index)=>({team_no:index+1,name,players:players.filter(item=>item.team_no===index+1).length}))};
 }
 async function activityLivePlayerState(playerHash){
  await purgeExpiredLiveRooms();
- const player=await row('activity_live_players',{select:'id,room_id,nickname,team_no,points,streak',token_hash:`eq.${playerHash}`});
+ const player=await row('activity_live_players',{select:'id,room_id,nickname,team_no,points,streak,trainee_id',token_hash:`eq.${playerHash}`});
  if(!player)throw new ApiError(401,'Your room seat is no longer active. Rejoin with the current room code.');
- const room=await row('activity_live_rooms',{select:'activity_id,deck_snapshot,team_one,team_two,status,round_index,revealed,correct_choice,timer_duration,timer_ends_at,expires_at',id:`eq.${player.room_id}`});
+ const room=await row('activity_live_rooms',{select:'activity_id,deck_snapshot,team_one,team_two,status,round_index,revealed,correct_choice,timer_duration,timer_ends_at,expires_at,profile_results_saved_at',id:`eq.${player.room_id}`});
  if(!room||Date.parse(room.expires_at)<=Date.now())throw new ApiError(401,'Your room seat is no longer active. Rejoin with the current room code.');
  const deck=room.deck_snapshot,teamNames=liveRoomTeamNames(room,deck),question=deck.questions[room.round_index];if(!question)throw new ApiError(409,'This live round is not available. Ask your trainer to restart the room.');
  const [answer,answers]=await Promise.all([
@@ -155,7 +158,11 @@ async function activityLivePlayerState(playerHash){
  const leaders=room.revealed?livePlayerStandings(await rows('activity_live_players',{select:'nickname,team_no,points,streak,joined_at',room_id:`eq.${player.room_id}`,order:'points.desc,joined_at.asc',limit:80})).slice(0,deck.competition_mode==='individuals'?80:5):[];
  const teamPoints=teamPlayers.reduce((sum,item)=>sum+item.points,0);
  const teamScores=teamNames.map((name,index)=>{const team_no=index+1,people=teamRoster.filter(item=>item.team_no===team_no);return {team_no,name,points:people.reduce((sum,item)=>sum+item.points,0),players:people.length};});
- return {mode,status:room.status,round_index:room.round_index,total_rounds:deck.questions.length,revealed,complete:room.status==='Complete',room_closed:room.status==='Closed',activity:{title:deck.title,category:deck.category,level:deck.level,...(deck.arabic?{arabic:deck.arabic}:{})},competition_mode:deck.competition_mode||'teams',participant_count:teamRoster.length,team:{team_no:player.team_no,name:teamNames[player.team_no-1],points:teamPoints,players:teamPlayers.length},team_scores:teamScores,player:{nickname:player.nickname,points:player.points,streak:player.streak,choice:answer?.choice??null,confidence:answer?.confidence??null,correct:revealed&&answer?!!answer.correct:null,awarded_points:revealed?(answer?.awarded_points||0):0},question:liveRoomQuestionView(question,revealed),response_count:answers.length,timer_duration:player.timer_duration,timer_ends_at:player.timer_ends_at,leaders};
+ return {profile:livePlayerProfile(deck,player,room.profile_results_saved_at,room.profile_results_saved_at?await row('activity_live_profile_results',{select:'trainee_id,earned_xp,session_date,attendance_status',source_room_id:`eq.${player.room_id}`,source_player_id:`eq.${player.id}`}):null),mode,status:room.status,round_index:room.round_index,total_rounds:deck.questions.length,revealed,complete:room.status==='Complete',room_closed:room.status==='Closed',activity:{title:deck.title,category:deck.category,level:deck.level,...(deck.arabic?{arabic:deck.arabic}:{})},competition_mode:deck.competition_mode||'teams',participant_count:teamRoster.length,team:{team_no:player.team_no,name:teamNames[player.team_no-1],points:teamPoints,players:teamPlayers.length},team_scores:teamScores,player:{nickname:player.nickname,points:player.points,streak:player.streak,choice:answer?.choice??null,confidence:answer?.confidence??null,correct:revealed&&answer?!!answer.correct:null,awarded_points:revealed?(answer?.awarded_points||0):0},question:liveRoomQuestionView(question,revealed),response_count:answers.length,timer_duration:room.timer_duration,timer_ends_at:room.timer_ends_at,leaders};
+}
+async function liveProfileAnswers(roomId){
+ const result=[];
+ for(let offset=0;;offset+=1000){const page=await rows('activity_live_answers',{select:'player_id,correct',room_id:`eq.${roomId}`,order:'player_id.asc,round_index.asc',limit:1000,offset});result.push(...page);if(page.length<1000)return result;}
 }
 async function activityLiveHostState(roomId,ownerId){
  await purgeExpiredLiveRooms();
@@ -165,7 +172,7 @@ async function activityLiveHostState(roomId,ownerId){
  if(Date.parse(room.expires_at)<=Date.now())throw new ApiError(404,'This live room has expired. Start a new room to continue.');
  const deck=room.deck_snapshot,question=deck.questions[room.round_index],mode=deck.mode==='pulse'?'pulse':'quiz';if(!question)throw new ApiError(409,'This live round is not available.');
  const [players,answers]=await Promise.all([
-  rows('activity_live_players',{select:mode==='pulse'?'id':'id,nickname,team_no,points,streak,joined_at',room_id:`eq.${room.id}`,order:'team_no.asc,points.desc,joined_at.asc',limit:100}),
+  rows('activity_live_players',{select:mode==='pulse'?'id':'id,nickname,team_no,points,streak,joined_at,trainee_id',room_id:`eq.${room.id}`,order:'team_no.asc,points.desc,joined_at.asc',limit:100}),
   rows('activity_live_answers',{select:mode==='pulse'?'player_id,choice':'player_id,choice,confidence,correct,awarded_points',room_id:`eq.${room.id}`,round_index:`eq.${room.round_index}`,limit:100})
  ]);
  if(mode==='pulse'){
@@ -175,7 +182,7 @@ async function activityLiveHostState(roomId,ownerId){
  const playerById=new Map(players.map(person=>[person.id,person])),revealed=!!room.revealed;
  const teamNames=liveRoomTeamNames(room,deck),teams=teamNames.map((name,index)=>{const team_no=index+1,people=players.filter(person=>person.team_no===team_no);return {team_no,name,points:people.reduce((sum,person)=>sum+person.points,0),player_count:people.length,players:people.map(({nickname,points,streak})=>({nickname,points,streak}))};});
  const responses=answers.map(answer=>({answer,person:playerById.get(answer.player_id)})).filter(item=>item.person).map(({answer,person})=>({nickname:person.nickname,team_no:person.team_no,choice:answer.choice,correct:!!answer.correct,awarded_points:answer.awarded_points}));
- return {room:{id:room.id,competition_mode:deck.competition_mode||'teams',status:room.status,round_index:room.round_index,total_rounds:deck.questions.length,revealed,correct_choice:revealed?room.correct_choice:null,timer_duration:room.timer_duration,timer_ends_at:room.timer_ends_at,expires_at:room.expires_at},activity:{id:deck.id,title:deck.title,category:deck.category,level:deck.level,...(deck.arabic?{arabic:deck.arabic}:{})},question:liveRoomQuestionView(question,revealed),teams,leaders:livePlayerStandings(players),participant_count:players.length,response_count:answers.length,answer_counts:question.type==='sequence'?null:question.options.map((_,choice)=>answers.filter(answer=>answer.choice===choice).length),responses:revealed?responses:[],confidence_summary:liveConfidenceSummary(answers,revealed)};
+ return {profile_linking:liveProfileReview(deck,players,deck.roster&&room.status==='Complete'?await liveProfileAnswers(room.id):[],room.profile_results_saved_at),room:{id:room.id,competition_mode:deck.competition_mode||'teams',status:room.status,round_index:room.round_index,total_rounds:deck.questions.length,revealed,correct_choice:revealed?room.correct_choice:null,timer_duration:room.timer_duration,timer_ends_at:room.timer_ends_at,expires_at:room.expires_at},activity:{id:deck.id,title:deck.title,category:deck.category,level:deck.level,...(deck.arabic?{arabic:deck.arabic}:{})},question:liveRoomQuestionView(question,revealed),teams,leaders:livePlayerStandings(players),participant_count:players.length,response_count:answers.length,answer_counts:question.type==='sequence'?null:question.options.map((_,choice)=>answers.filter(answer=>answer.choice===choice).length),responses:revealed?responses:[],confidence_summary:liveConfidenceSummary(answers,revealed)};
 }
 async function activityLiveRooms(ownerId){
  await purgeExpiredLiveRooms();
@@ -319,11 +326,11 @@ async function handle(request){
   if(route==='activities/live/join'&&method==='POST'){
    const body=await bodyOf(request),code=checkedLiveRoomCode(body.code),hash=tokenHash(code);
    if(!await rate('activity-live-public-join',300,60)||!await rate('activity-live-join:'+hash,120,60))throw new ApiError(429,'Too many join attempts for this room. Check the code and try again in a minute.');
-   const info=await activityLiveInfo(hash),pulse=info.mode==='pulse',nickname=pulse?`Pulse-${randomBytes(4).toString('hex')}`:typeof body.nickname==='string'?body.nickname.trim():'';
+   const info=await activityLiveInfo(hash),pulse=info.mode==='pulse',identity=pulse?{nickname:`Pulse-${randomBytes(4).toString('hex')}`,trainee_id:null}:liveJoinIdentity(body,info.roster),nickname=identity.nickname;
    const teamNo=pulse||info.competition_mode==='individuals'?1:body.team_no;
    if(!nickname||nickname.length>24||/[\u0000-\u001f\u007f]/.test(nickname)||!Number.isInteger(teamNo)||teamNo<1||teamNo>4)throw new ApiError(400,'Choose a nickname and one of the teams shown on the join screen.');
    const seatToken=safeToken(),playerId=id();
-   await rpc('red_activity_live_join',{p_payload:{code_hash:hash,player_id:playerId,token_hash:tokenHash(seatToken),nickname,team_no:teamNo}});
+   await rpc('red_activity_live_roster_join',{p_payload:{code_hash:hash,player_id:playerId,token_hash:tokenHash(seatToken),...identity,team_no:teamNo}});
    return json(request,{seat_token:seatToken,room:await activityLivePlayerState(tokenHash(seatToken))});
   }
   if(route==='activities/live/state'&&method==='POST'){
@@ -382,6 +389,17 @@ async function handle(request){
    canWrite(user);const roomId=new URL(request.url).searchParams.get('room_id')||'';if(!isId(roomId))throw new ApiError(400,'Choose a valid live room.');
    return json(request,await activityLiveHostState(roomId,user.id));
   }
+  if(route==='activities/live/results'&&method==='GET'){
+   const traineeId=new URL(request.url).searchParams.get('trainee_id');if(!isId(traineeId))throw new ApiError(400,'Choose a valid trainee.');
+   if(!await row('trainees',{select:'id',id:`eq.${traineeId}`}))throw new ApiError(404,'Trainee not found.');
+   return json(request,{results:await rows('activity_live_profile_results',{select:'*',trainee_id:`eq.${traineeId}`,order:'created_at.desc,id.desc',limit:100}),limit:100});
+  }
+  if(route==='activities/live/save-results'&&method==='POST'){
+   canWrite(user);const body=await bodyOf(request),mappings=checkedLiveMappings(body);
+   if(body.session_date!=null){const host=await activityLiveHostState(body.room_id,user.id),workspace=await workspaceState(user);activitySessionDate(body.session_date,workspace.batches.find(item=>item.id===host.profile_linking?.batch_id));}
+   await rpc('red_activity_live_save_outcomes',{p_room_id:body.room_id,p_owner_id:user.id,p_mappings:mappings,p_session_date:body.session_date||null});
+   return json(request,await activityLiveHostState(body.room_id,user.id));
+  }
   if(route==='activities/live/active'&&method==='GET'){canWrite(user);return json(request,await activityLiveRooms(user.id));}
   if(route==='activities/live/resume'&&method==='POST'){
    canWrite(user);const body=await bodyOf(request);if(!isId(body.room_id))throw new ApiError(400,'Choose a valid live room.');
@@ -399,7 +417,7 @@ async function handle(request){
    if(typeof activityId!=='string'||!/^[a-z0-9][a-z0-9-]{1,39}$/.test(activityId)||!isPulse&&![0,20,30,45].includes(body.timer_duration))throw new ApiError(400,'Choose a challenge, two to four different team names, and a valid timer.');
    const activity=isPulse?pulse:studioFacilitatorDeck(await customStudioChallenges()).find(item=>item.id===activityId);if(!activity)throw new ApiError(400,'Choose a challenge from the live deck.');
    const code=liveRoomCode(),roomId=id(),expiresAt=new Date(Date.now()+4*60*60*1000).toISOString();
-   await rpc('red_activity_live_mutate',{p_action:'create',p_payload:{id:roomId,code_hash:tokenHash(code),owner_id:user.id,activity_id:activity.id,deck_snapshot:{...activity,competition_mode:competitionMode,team_names:teamNames},team_one:teamNames[0],team_two:teamNames[1]||teamNames[0],timer_duration:isPulse?pulse.timer_duration:body.timer_duration,expires_at:expiresAt}});
+   await rpc('red_activity_live_mutate',{p_action:'create',p_payload:{id:roomId,code_hash:tokenHash(code),owner_id:user.id,activity_id:activity.id,deck_snapshot:{...activity,competition_mode:competitionMode,team_names:teamNames,roster:liveRoster(body,body.batch_id?await workspaceState(user):{batches:[],trainees:[],companies:[]})},team_one:teamNames[0],team_two:teamNames[1]||teamNames[0],timer_duration:isPulse?pulse.timer_duration:body.timer_duration,expires_at:expiresAt}});
    return json(request,{room_id:roomId,join_code:code,expires_at:expiresAt},201);
   }
   if(route==='activities/live/reveal'&&method==='POST'){
@@ -480,11 +498,11 @@ async function handle(request){
    return json(request,{record},200);
   }
   if(route==='activities'&&method==='GET'){
-   const [state,assignments,participants,custom]=await Promise.all([
+   const [state,assignments,participants,custom,liveXp]=await Promise.all([
     workspaceState(user),
     rows('activity_assignments',{select:'*',order:'created_at.desc'}),
     rows('activity_assignment_participants',{select:'id,assignment_id,trainee_id,batch_id,status,score,trainer_feedback,completed_at,learner_answers,learner_submitted_at,correct_count,earned_xp,version,created_at,updated_at',order:'created_at.asc'}),
-    customStudioChallenges(true)
+    customStudioChallenges(true),rpc('red_activity_live_xp',{})
    ]);
    const traineeById=new Map(state.trainees.map(record=>[record.id,record]));
    const batchById=new Map(state.batches.map(record=>[record.id,record]));
@@ -497,7 +515,7 @@ async function handle(request){
     group.push({...safeParticipant,learning_insight:insightByTrainee.get(participant.trainee_id)||null,trainee_name:trainee?.trainee_name||'Trainee not found',company_id:trainee?.company_id||null,company_name:state.companies.find(company=>company.id===trainee?.company_id)?.name||'Company not recorded'});
     participantGroups.set(participant.assignment_id,group);
    }
-   return json(request,{assignments:assignments.map(assignment=>{const activity=studioQuiz(assignment.activity_id,custom);return {...assignment,batch_name:batchById.get(assignment.batch_id)?.batch_name||'Batch not found',studio_activity:activity?{id:activity.id,title:activity.title,category:activity.category,level:activity.level,duration_minutes:activity.duration_minutes,question_count:activity.questions.length,is_custom:!!activity.created_by,archived_at:activity.archived_at||null}:null,participants:participantGroups.get(assignment.id)||[]};})});
+   return json(request,{live_xp:liveXp,assignments:assignments.map(assignment=>{const activity=studioQuiz(assignment.activity_id,custom);return {...assignment,batch_name:batchById.get(assignment.batch_id)?.batch_name||'Batch not found',studio_activity:activity?{id:activity.id,title:activity.title,category:activity.category,level:activity.level,duration_minutes:activity.duration_minutes,question_count:activity.questions.length,is_custom:!!activity.created_by,archived_at:activity.archived_at||null}:null,participants:participantGroups.get(assignment.id)||[]};})});
   }
   if(route==='activities/assign'&&method==='POST'){
    canWrite(user);const body=await bodyOf(request),state=await workspaceState(user),challenge=typeof body.activity_id==='string'?await academyActivity(body.activity_id,false):null;
@@ -520,6 +538,16 @@ async function handle(request){
    canWrite(user);const data=validateAssignmentClose(await bodyOf(request));
    const record=await rpc('red_close_activity_assignment',{p_id:data.id,p_expected_version:data.expected_version,p_actor:user.email});
    return json(request,{record});
+  }
+  if(route==='activities/delete'&&method==='DELETE'){
+   canWrite(user);const data=activityAssignmentAction(await bodyOf(request));
+   return json(request,await rpc('red_delete_activity_assignment',{p_id:data.id,p_expected_version:data.expected_version,p_actor:user.email}));
+  }
+  if(route==='activities/attendance'&&method==='POST'){
+   canWrite(user);const body=await bodyOf(request),data=activityAssignmentAction(body),assignment=await row('activity_assignments',{select:'batch_id',id:`eq.${data.id}`}),workspace=await workspaceState(user);
+   if(!assignment)throw new ApiError(404,'Activity assignment not found.');
+   const date=activitySessionDate(body.session_date,workspace.batches.find(item=>item.id===assignment.batch_id));if(!date)throw new ApiError(400,'Choose a scheduled session date that is today or earlier.');
+   return json(request,await rpc('red_record_activity_attendance',{p_id:data.id,p_expected_version:data.expected_version,p_session_date:date,p_actor:user.email}));
   }
   if(route==='batches/archive'&&method==='POST'){
    requireAdmin(user);const body=await bodyOf(request);

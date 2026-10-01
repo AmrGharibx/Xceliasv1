@@ -15,6 +15,7 @@ parser=argparse.ArgumentParser()
 parser.add_argument('--screenshots')
 parser.add_argument('--scroll-only',action='store_true',help='Run only the live-challenge scroll regression check.')
 parser.add_argument('--competition-only',action='store_true',help='Test team regression plus individual competition and the bilingual New Cairo lesson.')
+parser.add_argument('--roster-only',action='store_true',help='Test a 40-person roster-linked competition and trainer-confirmed profile results.')
 args=parser.parse_args()
 
 def check(name,condition=True):
@@ -57,7 +58,7 @@ with tempfile.TemporaryDirectory(prefix='red-activities-studio-') as temporary:
         batch=owner.call('mutate','POST',{'table':'batches','action':'create','data':{
             'batch_name':'Studio QA Batch','status':'Active','start_date':min(TODAY,'2026-10-01'),'end_date':max(TODAY,'2026-10-14'),
             'session_dates':sorted(set([TODAY,'2026-10-01','2026-10-04','2026-10-05','2026-10-06','2026-10-07','2026-10-08','2026-10-11','2026-10-12','2026-10-13','2026-10-14'])),
-            'capacity':10,'description':''}})
+            'capacity':40 if args.roster_only else 10,'description':''}})
         assert batch['status']==200,batch
         batch_data=json.loads(batch['text'])
         trainee=owner.call('mutate','POST',{'table':'trainees','action':'create','data':{
@@ -65,6 +66,12 @@ with tempfile.TemporaryDirectory(prefix='red-activities-studio-') as temporary:
             'batch_id':batch_data['records'][0]['id'],'email':'','phone':'','job_title':'','notes':''}})
         assert trainee['status']==200,trainee
         trainee_data=json.loads(trainee['text'])
+        roster=[trainee_data['records'][0]]
+        if args.roster_only:
+            for number in range(2,41):
+                response=owner.call('mutate','POST',{'table':'trainees','action':'create','data':{'trainee_name':f'Roster QA {number:02d}','company_id':company_data['records'][0]['id'],'batch_id':batch_data['records'][0]['id'],'email':'','phone':'','job_title':'','notes':''}})
+                assert response['status']==200,response
+                roster.append(json.loads(response['text'])['records'][0])
 
         with sync_playwright() as playwright:
             browser=playwright.chromium.launch(headless=True,args=['--no-sandbox'])
@@ -80,6 +87,15 @@ with tempfile.TemporaryDirectory(prefix='red-activities-studio-') as temporary:
             expect(trainer.get_by_role('heading',name="Turn today's lesson into a challenge.")).to_be_visible()
             expect(trainer.locator('.quiz-tile')).to_have_count(9)
             check('Trainer sees Academy Studio with nine curated, ready-to-run challenges')
+            expect(trainer.locator('canvas.starfield')).to_have_attribute('data-star-count','1400')
+            expect(trainer.locator('canvas.starfield')).to_have_attribute('data-motion','flying')
+            assert trainer.locator('canvas.starfield').evaluate('(el)=>getComputedStyle(el).pointerEvents')=='none'
+            trainer.emulate_media(reduced_motion='reduce')
+            expect(trainer.locator('canvas.starfield')).to_have_attribute('data-motion','paused')
+            trainer.emulate_media(reduced_motion='no-preference')
+            expect(trainer.locator('canvas.starfield')).to_have_attribute('data-motion','flying')
+            screenshot('studio-1400-stars-desktop',trainer)
+            check('1400 flying stars stay behind controls and stop for reduced-motion preferences')
             trainer.locator('.quiz-tile[data-activity-id="quiz-discovery"]').get_by_role('button',name='Host live').click()
             trainer.locator('[name="phone_enabled"]').check()
             trainer.locator('#live-room-form [type="submit"]').click()
@@ -102,7 +118,8 @@ with tempfile.TemporaryDirectory(prefix='red-activities-studio-') as temporary:
             if args.scroll_only:
                 browser.close()
                 raise SystemExit(0)
-            if args.competition_only:
+            if args.competition_only or args.roster_only:
+                participants=40 if args.roster_only else 20
                 tile=trainer.locator('.quiz-tile[data-activity-id="quiz-new-cairo"]')
                 expect(tile).to_contain_text('New Cairo & Property Foundations')
                 trainer.locator('.topbar [data-set-locale="ar-EG"]').click()
@@ -110,6 +127,10 @@ with tempfile.TemporaryDirectory(prefix='red-activities-studio-') as temporary:
                 trainer.locator('.topbar [data-set-locale="en"]').click()
                 tile.get_by_role('button',name='Host live').click()
                 trainer.locator('[name="competition_mode"]').select_option('individuals')
+                if args.roster_only:
+                    trainer.locator('[name="live_batch_id"]').select_option(batch_data['records'][0]['id'])
+                    expect(trainer.locator('.room-privacy-note')).to_contain_text('trainer confirmation')
+                    screenshot('roster-linked-room-setup',trainer,full_page=False)
                 expect(trainer.locator('#room-team-one')).not_to_be_visible()
                 expect(trainer.locator('[name="phone_enabled"]')).to_be_checked()
                 expect(trainer.locator('[name="phone_enabled"]')).to_be_disabled()
@@ -123,16 +144,25 @@ with tempfile.TemporaryDirectory(prefix='red-activities-studio-') as temporary:
                 phone.goto(invite,wait_until='networkidle')
                 expect(phone.locator('#live-phone-join')).to_be_visible()
                 expect(phone.locator('[name="team_no"]')).to_have_count(0)
+                if args.roster_only:
+                    expect(phone.locator('[name="trainee_id"] option')).to_have_count(41)
+                    phone.locator('[data-set-locale="ar-EG"]').click()
+                    expect(phone.locator('.live-roster-field')).to_contain_text('اسمك في الدفعة')
+                    screenshot('roster-name-choice-arabic-mobile',phone,full_page=False)
+                    phone.locator('[data-set-locale="en"]').click()
+                    phone.locator('[name="trainee_id"]').select_option(roster[0]['id'])
                 phone.locator('[name="nickname"]').fill('Player 01')
                 phone.locator('#live-phone-join [type="submit"]').click()
                 expect(phone.locator('.live-play-card')).to_be_visible()
                 expect(phone.locator('.live-score-strip')).to_contain_text('Your points')
                 seats=[]
-                for number in range(2,21):
-                    response=h.Transport().call('activities/live/join','POST',{'code':code,'nickname':f'Player {number:02d}'})
+                for number in range(2,participants+1):
+                    payload={'code':code,'nickname':f'Player {number:02d}'}
+                    if args.roster_only: payload['trainee_id']=roster[0 if number==2 else number-1]['id']
+                    response=h.Transport().call('activities/live/join','POST',payload)
                     assert response['status']==200,response
                     seats.append(json.loads(response['text'])['seat_token'])
-                expect(trainer.locator('.room-individual-list li')).to_have_count(20,timeout=10000)
+                expect(trainer.locator('.room-individual-list li')).to_have_count(participants,timeout=10000)
                 screenshot('individual-trainer-desktop',trainer,full_page=False)
                 assert trainer.locator('.room-team').count()==0
                 phone.locator('[data-action="phone-answer"][data-choice="0"]').click()
@@ -142,17 +172,17 @@ with tempfile.TemporaryDirectory(prefix='red-activities-studio-') as temporary:
                     assert response['status']==200,response
                 trainer.locator('[data-action="room-reveal"]').click()
                 expect(phone.locator('.live-phone-feedback')).to_contain_text('+100 room points',timeout=10000)
-                expect(phone.locator('.live-leaderboard>div')).to_have_count(20)
-                expect(phone.locator('.live-score-strip')).to_contain_text('#1 / 20')
+                expect(phone.locator('.live-leaderboard>div')).to_have_count(participants)
+                expect(phone.locator('.live-score-strip')).to_contain_text(f'#1 / {participants}')
                 assert 'your team' not in phone.locator('.live-leaderboard').inner_text()
-                check('Twenty individuals join without teams, earn separate points, and share first place fairly')
+                check(f'{participants} individuals join without teams, earn separate points, and share first place fairly')
                 phone.locator('[data-set-locale="ar-EG"]').click()
                 expect(phone.locator('.live-phone-question h2')).to_contain_text('٤ طرق')
                 expect(phone.locator('.live-phone-feedback p')).to_contain_text('العين السخنة')
                 assert phone.evaluate('document.documentElement.dir')=='rtl'
                 screenshot('individual-trainee-arabic-mobile',phone,full_page=False)
                 phone.reload(wait_until='networkidle')
-                expect(phone.locator('.live-score-strip')).to_contain_text('#1 / 20')
+                expect(phone.locator('.live-score-strip')).to_contain_text(f'#1 / {participants}')
                 check('The Egyptian Arabic edition and mobile seat survive a page reload')
                 trainer.set_viewport_size({'width':390,'height':640})
                 trainer.locator('.room-options').scroll_into_view_if_needed()
@@ -175,10 +205,71 @@ with tempfile.TemporaryDirectory(prefix='red-activities-studio-') as temporary:
                     assert response['status']==200,response
                 response=owner.call('activities/live/advance','POST',{'room_id':room_id})
                 assert response['status']==200,response
-                expect(trainer.locator('.room-finish h2')).to_contain_text('19 trainees share first place!',timeout=10000)
+                expect(trainer.locator('.room-finish h2')).to_contain_text(f'{participants-1} trainees share first place!',timeout=10000)
                 expect(phone.locator('.live-finish-card')).to_be_visible(timeout=10000)
-                expect(phone.locator('.live-leaderboard>div')).to_have_count(20)
+                expect(phone.locator('.live-leaderboard>div')).to_have_count(participants)
                 screenshot('individual-final-standings',trainer,full_page=False)
+                if args.roster_only:
+                    expect(trainer.locator('[data-profile-player]')).to_have_count(40)
+                    trainer.locator('[data-action="room-save-profiles"]').click()
+                    expect(trainer.locator('.room-profile-review .form-error')).to_contain_text('Resolve duplicate name matches')
+                    host=json.loads(owner.call('activities/live/host?room_id='+room_id)['text'])
+                    second=next(player['player_id'] for player in host['profile_linking']['players'] if player['nickname']=='Player 02')
+                    last=next(player['player_id'] for player in host['profile_linking']['players'] if player['nickname']=='Player 40')
+                    choice=trainer.locator(f'[data-profile-player="{second}"]')
+                    choice.select_option(roster[1]['id']);choice.focus()
+                    trainer.wait_for_timeout(2300)
+                    expect(choice).to_have_value(roster[1]['id'])
+                    trainer.locator(f'[data-profile-player="{last}"]').select_option('')
+                    trainer.locator('[data-activity-attendance]').select_option(TODAY)
+                    trainer.locator('.room-profile-review h3').scroll_into_view_if_needed()
+                    screenshot('roster-confirmation-mobile',trainer,full_page=False)
+                    trainer.set_viewport_size({'width':1440,'height':1000})
+                    trainer.locator('.room-profile-review').scroll_into_view_if_needed()
+                    screenshot('roster-confirmation-desktop',trainer,full_page=False)
+                    trainer.locator('[data-action="room-save-profiles"]').click()
+                    expect(trainer.locator('.profile-results-saved')).to_be_visible()
+                    expect(trainer.locator('[data-action="room-again"]')).not_to_be_visible()
+                    expect(phone.locator('.result-rank-copy')).to_contain_text('اتحفظت في ملفك',timeout=10000)
+                    result=json.loads(owner.call('activities/live/results?trainee_id='+roster[0]['id'])['text'])['results'][0]
+                    assert result['score']==11.11 and result['nickname']=='Player 01',result
+                    assert result['earned_xp']==100 and result['session_date']==TODAY and result['attendance_status']=='Present',result
+                    expect(phone.locator('canvas.starfield')).to_have_attribute('data-star-count','1400')
+                    expect(phone.locator('.live-outcome-badges strong')).to_contain_text('100')
+                    saved_state=json.loads(owner.call('state')['text'])
+                    assert len([row for row in saved_state['daily_attendance'] if row['batch_id']==batch_data['records'][0]['id'] and row['date']==TODAY])==39
+                    screenshot('trainee-stars-xp-attendance-mobile',phone)
+                    excluded=json.loads(h.Transport().call('activities/live/state','POST',{'seat_token':seats[-1]})['text'])['profile']
+                    assert excluded['reviewed'] and not excluded['recorded'],excluded
+                    profile=context.new_page();profile.on('pageerror',lambda error:errors.append(str(error)))
+                    profile.goto(h.BASE+'/#/trainees',wait_until='networkidle')
+                    profile.locator('#view-search').fill('Studio QA Trainee')
+                    profile.get_by_role('button',name='Studio QA Trainee',exact=True).click()
+                    expect(profile.locator('.activity-profile-history')).to_contain_text('11.11%')
+                    expect(profile.locator('.activity-profile-history')).to_contain_text('Player 01')
+                    profile.locator('.activity-profile-history').scroll_into_view_if_needed()
+                    profile.wait_for_timeout(350)
+                    screenshot('trainee-profile-live-results',profile,full_page=False)
+                    check('Trainer resolves a duplicate claim, excludes a player, saves once, and sees accurate profile history')
+                    trainer.once('dialog',lambda popup:popup.accept())
+                    trainer.get_by_role('button',name='End phone room').click()
+                    expect(trainer.locator('#trainer-dialog')).not_to_be_visible()
+                    assignment_response=owner.call('activities/assign','POST',{'batch_id':batch_data['records'][0]['id'],'activity_id':'quiz-new-cairo','due_date':None,'instructions':'Isolated deletion QA','trainee_ids':[roster[0]['id']]})
+                    assert assignment_response['status']==201,assignment_response
+                    assignment_id=json.loads(assignment_response['text'])['record']['id']
+                    trainer.reload(wait_until='networkidle')
+                    delete_button=trainer.locator(f'[data-action="delete-assignment"][data-assignment="{assignment_id}"]')
+                    expect(delete_button).to_be_visible()
+                    screenshot('assignment-delete-control-desktop',trainer)
+                    trainer.once('dialog',lambda popup:popup.dismiss())
+                    delete_button.click();expect(delete_button).to_be_visible()
+                    trainer.once('dialog',lambda popup:popup.accept())
+                    delete_button.click();expect(trainer.locator(f'[data-assignment="{assignment_id}"]')).to_have_count(0)
+                    after_delete=json.loads(owner.call('state')['text'])
+                    for key in ['batches','trainees','assessments','daily_attendance']:assert after_delete[key]==saved_state[key],f'deletion changed {key}'
+                    check('Trainer can cancel or confirm whole-assignment deletion without changing batches, roster, attendance or grades')
+                    assert not errors,errors
+                    phone_context.close();browser.close();raise SystemExit(0)
                 trainer.locator('[data-action="room-again"]').click()
                 expect(trainer.locator('.room-round-badge')).to_contain_text('ROUND 1')
                 expect(phone.locator('.live-play-card')).to_be_visible(timeout=10000)

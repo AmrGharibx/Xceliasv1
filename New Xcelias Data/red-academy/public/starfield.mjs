@@ -6,6 +6,7 @@ const NEAR_COUNT = STAR_COUNT - FAR_COUNT - MID_COUNT;
 const canvas = document.createElement('canvas');
 canvas.className = 'starfield';
 canvas.setAttribute('aria-hidden', 'true');
+canvas.dataset.starCount = String(STAR_COUNT);
 document.body.prepend(canvas);
 
 const context = canvas.getContext('2d', { alpha: true });
@@ -36,7 +37,7 @@ function createStar(layer, index) {
     speed: layer === 'far' ? randomBetween(0.00008, 0.00028) : layer === 'mid' ? randomBetween(0.00014, 0.0005) : randomBetween(0.00022, 0.00082),
     alpha: layer === 'far' ? randomBetween(0.18, 0.5) : layer === 'mid' ? randomBetween(0.28, 0.75) : randomBetween(0.45, 0.95),
     hue: index % 11 === 0 ? 'rgba(244, 142, 142,' : index % 17 === 0 ? 'rgba(255, 221, 180,' : 'rgba(245, 247, 255,',
-    lightHue: index % 13 === 0 ? 'rgba(151, 111, 194,' : index % 19 === 0 ? 'rgba(190, 112, 147,' : 'rgba(79, 96, 145,',
+    lightHue: index % 13 === 0 ? 'rgba(155, 45, 57,' : index % 19 === 0 ? 'rgba(153, 112, 67,' : 'rgba(87, 95, 111,',
     phase: Math.random() * Math.PI * 2,
   };
 }
@@ -57,6 +58,8 @@ function resize() {
   canvas.style.height = `${height}px`;
   context.setTransform(ratio, 0, 0, ratio, 0, 0);
   stars = Array.from({ length: STAR_COUNT }, (_, index) => createStar(index < FAR_COUNT ? 'far' : index < FAR_COUNT + MID_COUNT ? 'mid' : 'near', index));
+  lastTime = performance.now();
+  if (context) draw(lastTime);
 }
 
 function drawLightGalaxy() {
@@ -69,10 +72,10 @@ function drawLightGalaxy() {
   context.rotate(-0.26);
   context.scale(1, 0.2);
   const core = context.createRadialGradient(0, 0, 0, 0, 0, diagonal);
-  core.addColorStop(0, 'rgba(114, 98, 190, 0.16)');
-  core.addColorStop(0.28, 'rgba(175, 117, 178, 0.09)');
-  core.addColorStop(0.62, 'rgba(123, 143, 202, 0.035)');
-  core.addColorStop(1, 'rgba(123, 143, 202, 0)');
+  core.addColorStop(0, 'rgba(155, 45, 57, 0.12)');
+  core.addColorStop(0.28, 'rgba(190, 112, 100, 0.07)');
+  core.addColorStop(0.62, 'rgba(143, 132, 122, 0.035)');
+  core.addColorStop(1, 'rgba(143, 132, 122, 0)');
   context.fillStyle = core;
   context.beginPath();
   context.arc(0, 0, diagonal, 0, Math.PI * 2);
@@ -80,9 +83,9 @@ function drawLightGalaxy() {
   context.restore();
 
   const haze = context.createRadialGradient(width * 0.22, height * 0.78, 0, width * 0.22, height * 0.78, diagonal * 0.7);
-  haze.addColorStop(0, 'rgba(224, 139, 180, 0.07)');
-  haze.addColorStop(0.5, 'rgba(176, 145, 209, 0.025)');
-  haze.addColorStop(1, 'rgba(176, 145, 209, 0)');
+  haze.addColorStop(0, 'rgba(190, 139, 110, 0.07)');
+  haze.addColorStop(0.5, 'rgba(176, 145, 129, 0.025)');
+  haze.addColorStop(1, 'rgba(176, 145, 129, 0)');
   context.fillStyle = haze;
   context.fillRect(0, 0, width, height);
 }
@@ -133,20 +136,32 @@ function draw(time) {
     }
   }
 
-  frame = requestAnimationFrame(draw);
 }
 
-window.addEventListener('resize', resize, { passive: true });
+function stop() {
+  cancelAnimationFrame(frame);frame = 0;canvas.dataset.motion = 'paused';
+}
+function tick(time) {
+  frame = 0;
+  if (document.hidden || reducedMotion.matches) { stop();return; }
+  draw(time);frame = requestAnimationFrame(tick);canvas.dataset.motion = 'flying';
+}
+function start() {
+  if (!context || document.hidden || reducedMotion.matches || frame) return;
+  lastTime = performance.now();frame = requestAnimationFrame(tick);canvas.dataset.motion = 'flying';
+}
+const lifecycle = new AbortController();
+window.addEventListener('resize', resize, { passive: true, signal: lifecycle.signal });
 window.addEventListener('pointermove', (event) => {
+  if (reducedMotion.matches || document.hidden) return;
   pointerX = event.clientX / Math.max(width, 1) - 0.5;
   pointerY = event.clientY / Math.max(height, 1) - 0.5;
-}, { passive: true });
-reducedMotion.addEventListener?.('change', () => {
-  if (reducedMotion.matches) {
-    cancelAnimationFrame(frame);
-    draw(performance.now());
-  }
-});
+}, { passive: true, signal: lifecycle.signal });
+reducedMotion.addEventListener('change', () => { stop();draw(performance.now());start(); }, {signal:lifecycle.signal});
+document.addEventListener('visibilitychange', () => { document.hidden ? stop() : start(); }, {signal:lifecycle.signal});
+const themeObserver = new MutationObserver(() => { if(context) draw(performance.now()); });
+themeObserver.observe(document.body,{attributes:true,attributeFilter:['class']});
+window.addEventListener('pagehide', (event) => { stop();if(!event.persisted){themeObserver.disconnect();lifecycle.abort();} }, {signal:lifecycle.signal});
+window.addEventListener('pageshow',start,{signal:lifecycle.signal});
 
-resize();
-draw(performance.now());
+if(context){resize();canvas.dataset.motion='paused';start();}

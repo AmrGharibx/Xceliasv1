@@ -189,6 +189,11 @@ CREATE TABLE IF NOT EXISTS activity_assignments (
  UNIQUE(id,batch_id)
 );
 CREATE INDEX IF NOT EXISTS ix_activity_assignments_batch ON activity_assignments(batch_id,created_at DESC);
+-- Private recovery snapshot; never included in workspace state or learner APIs.
+CREATE TABLE IF NOT EXISTS activity_assignment_deletions (
+ id TEXT PRIMARY KEY, snapshot TEXT NOT NULL CHECK(json_valid(snapshot)),
+ deleted_by TEXT NOT NULL, deleted_at TEXT NOT NULL
+);
 CREATE TABLE IF NOT EXISTS activity_custom_challenges (
  id TEXT PRIMARY KEY CHECK(id GLOB 'studio-*' AND length(id) BETWEEN 10 AND 40),
  title TEXT NOT NULL CHECK(length(title) BETWEEN 3 AND 80),
@@ -272,6 +277,31 @@ CREATE TABLE IF NOT EXISTS activity_live_answers (
  PRIMARY KEY(room_id,player_id,round_index)
 );
 CREATE INDEX IF NOT EXISTS ix_activity_live_answers_round ON activity_live_answers(room_id,round_index,choice);
+-- Permanent trainer-confirmed activity history; intentionally independent of expiring rooms.
+CREATE TABLE IF NOT EXISTS activity_live_profile_results (
+ id TEXT PRIMARY KEY,
+ source_room_id TEXT NOT NULL,
+ source_player_id TEXT NOT NULL,
+ trainee_id TEXT NOT NULL,
+ batch_id TEXT NOT NULL,
+ activity_id TEXT NOT NULL,
+ title TEXT NOT NULL,
+ nickname TEXT NOT NULL,
+ correct_count INTEGER NOT NULL CHECK(correct_count>=0 AND correct_count<=answered_count),
+ answered_count INTEGER NOT NULL CHECK(answered_count>=0 AND answered_count<=total_rounds),
+ total_rounds INTEGER NOT NULL CHECK(total_rounds>0),
+ score REAL NOT NULL CHECK(score BETWEEN 0 AND 100),
+ room_points INTEGER NOT NULL CHECK(room_points>=0),
+ earned_xp INTEGER NOT NULL DEFAULT 0 CHECK(earned_xp>=0),
+ session_date TEXT,
+ attendance_status TEXT,
+ confirmed_by TEXT NOT NULL,
+ created_at TEXT NOT NULL,
+ UNIQUE(source_room_id,trainee_id),
+ UNIQUE(source_room_id,source_player_id),
+ FOREIGN KEY(trainee_id,batch_id) REFERENCES trainees(id,batch_id) ON DELETE CASCADE
+);
+CREATE INDEX IF NOT EXISTS ix_activity_live_profile_history ON activity_live_profile_results(trainee_id,created_at DESC,id);
 CREATE TABLE IF NOT EXISTS activity_session_plans (
  id TEXT PRIMARY KEY,
  batch_id TEXT NOT NULL REFERENCES batches(id) ON DELETE CASCADE,
@@ -295,4 +325,4 @@ CREATE INDEX IF NOT EXISTS ix_activity_session_plans_company_date ON activity_se
 CREATE UNIQUE INDEX IF NOT EXISTS ix_daily_native_unique ON daily_attendance(trainee_id,date) WHERE source_id IS NULL;
 CREATE UNIQUE INDEX IF NOT EXISTS ix_assessment_native_unique ON assessments(trainee_id,batch_id) WHERE source_id IS NULL;
 CREATE UNIQUE INDEX IF NOT EXISTS ix_checklist_native_unique ON attendance_10day(trainee_id,batch_id,period_start,period_end) WHERE source_id IS NULL;
-PRAGMA user_version = 15;
+PRAGMA user_version = 17;

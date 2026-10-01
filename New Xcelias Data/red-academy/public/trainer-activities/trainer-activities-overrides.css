@@ -477,3 +477,29 @@ html[dir=rtl] .hero-more-tools-menu{right:auto;left:0}
 html[dir=rtl] .hero-more-tools-toggle,html[dir=rtl] .workspace-note-disclosure>summary,html[dir=rtl] .xp-ladder-disclosure>summary{font-family:'Noto Sans Arabic',Sora,Montserrat,sans-serif}
 html[dir=rtl] .pulse-load-error,html[dir=rtl] .workspace-note-disclosure>summary>strong,html[dir=rtl] .workspace-note-disclosure>summary>span:last-child,html[dir=rtl] .xp-ladder-disclosure>summary{font-size:12px}
 @media(max-width:600px){.hero-more-tools-menu{right:auto;left:0}.workspace-note-disclosure>summary{align-items:flex-start;flex-wrap:wrap}.workspace-note-disclosure>summary>span:last-child{flex-basis:calc(100% - 42px);margin-left:33px}}
+/* Name confirmation is a separate, scrollable review step, never a grading control. */
+.room-profile-review { margin-block: 24px; padding: 24px; border: 1px solid var(--line, #384047); border-radius: 18px; background: var(--surface, #151b20); }
+.room-profile-review > p { margin-block: 12px; line-height: 1.6; }
+.room-profile-list { max-height: 480px; overflow: auto; overscroll-behavior: contain; }
+.room-profile-row { display: grid; grid-template-columns: minmax(160px, 1fr) minmax(200px, 1fr); gap: 16px; align-items: center; padding-block: 12px; border-bottom: 1px solid var(--line, #384047); }
+.room-profile-row strong, .room-profile-row small { display: block; }
+.room-profile-row small { margin-block-start: 6px; }
+.room-profile-row select, .live-roster-field select { min-width: 0; width: 100%; min-height: 44px; color: var(--text, #f1f3f5); background: var(--surface, #151b20); border: 1px solid var(--line, #384047); border-radius: 10px; padding: 10px; font: inherit; }
+.live-profile-status { font-size: .9rem; color: var(--muted, #aab6bc); }
+.profile-results-saved { color: var(--text, #f1f3f5); }
+.room-finish-actions [hidden] { display: none !important; }
+.room-profile-review [hidden] { display: none !important; }
+@media(max-width: 600px) { .room-profile-review { padding: 16px; } .room-profile-row { grid-template-columns: 1fr; gap: 8px; } }
+.starfield{position:fixed;inset:0;z-index:0;width:100%;height:100%;pointer-events:none;opacity:.52;mix-blend-mode:screen}
+#app{position:relative;z-index:1}#toast-root{z-index:50}
+body{background:radial-gradient(ellipse at 12% 0,#7f18251c,transparent 46%),#090d11}
+.shell,.learner-shell{background:transparent}
+.room-profile-attendance{display:grid;gap:6px;margin:16px 0;padding:12px;border:1px solid var(--line);border-radius:12px}
+.assignment-delete{border-color:#ee546455;color:#fba8b0}
+.assignment-delete:hover{background:#ee546415;border-color:#ee5464}
+.live-outcome-badges{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;margin-top:16px}
+.live-outcome-badges strong,.live-outcome-badges span{padding:8px 12px;border:1px solid #d6a64855;border-radius:10px;background:#d6a6480a;color:#f0cf83;font-size:11px}
+.live-outcome-badges strong{direction:ltr;unicode-bidi:isolate}
+.live-outcome-badges time{display:inline-block;direction:ltr;unicode-bidi:isolate}
+body.light .starfield{mix-blend-mode:multiply;opacity:.36}
+@media(prefers-reduced-motion:reduce){.starfield{opacity:.35}}

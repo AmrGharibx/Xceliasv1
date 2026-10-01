@@ -36,8 +36,8 @@ test('cloud quiz drafts validate bearer-link state and successful submit clears 
 test('upgrading a schema-12 SQLite workspace adds the draft version without changing saved participants',async()=>{
  const directory=fs.mkdtempSync(path.join(os.tmpdir(),'red-draft-version-'));
  const filename=path.join(directory,'academy.db');
- const schema=fs.readFileSync(new URL('../server/schema.sql',import.meta.url),'utf8');
- const legacy=schema.replace(' learner_draft_version INTEGER NOT NULL DEFAULT 0 CHECK(learner_draft_version>=0),\n','').replace(' linked_assignment_id TEXT UNIQUE REFERENCES activity_assignments(id) ON DELETE SET NULL,\n','').replace(" confidence TEXT CHECK(confidence IS NULL OR confidence IN ('tentative','confident')),\n",'').replace('PRAGMA user_version = 15;','PRAGMA user_version = 12;');
+ const schema=fs.readFileSync(new URL('../server/schema.sql',import.meta.url),'utf8').replaceAll('\r\n','\n');
+ const legacy=schema.replace(' learner_draft_version INTEGER NOT NULL DEFAULT 0 CHECK(learner_draft_version>=0),\n','').replace(' linked_assignment_id TEXT UNIQUE REFERENCES activity_assignments(id) ON DELETE SET NULL,\n','').replace(" confidence TEXT CHECK(confidence IS NULL OR confidence IN ('tentative','confident')),\n",'').replace('PRAGMA user_version = 17;','PRAGMA user_version = 12;');
  assert.notEqual(legacy,schema);
  const oldDb=new DatabaseSync(filename);
  oldDb.exec(legacy);oldDb.exec('PRAGMA foreign_keys=OFF;');
@@ -46,7 +46,7 @@ test('upgrading a schema-12 SQLite workspace adds the draft version without chan
  const repository=new SQLiteRepository(filename);
  try{
   await repository.init();
-  assert.equal(repository.db.prepare('PRAGMA user_version').get().user_version,15);
+  assert.equal(repository.db.prepare('PRAGMA user_version').get().user_version,17);
   assert.deepEqual({...repository.db.prepare('SELECT id,assignment_id,trainee_id,batch_id,status,version,learner_draft_version FROM activity_assignment_participants WHERE id=?').get('kept-participant')},{id:'kept-participant',assignment_id:'old-assignment',trainee_id:'old-trainee',batch_id:'old-batch',status:'In Progress',version:7,learner_draft_version:0});
  }finally{repository.close();fs.rmSync(directory,{recursive:true,force:true});}
 });

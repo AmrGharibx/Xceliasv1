@@ -7,6 +7,8 @@ import {id,TABLES,emptyState,today} from '../public/modules/core.mjs';
 import {ApiError} from './validation.mjs';
 import {liveConfidenceSummary} from './activity-live-confidence.mjs';
 import {livePlayerStandings} from './activity-live-competition.mjs';
+import {liveRoster,liveJoinIdentity,liveProfileReview,livePlayerProfile} from './activity-live-roster.mjs';
+import {activitySessionDate,recordActivityPresence} from './activity-outcomes.mjs';
 import {activityCohortPulse,activityPracticeInsights,studioLibrary,studioQuiz,studioFacilitatorDeck,publicQuiz,gradeStudioQuiz,validateStudioQuizDraft,liveRoomQuestionView} from './activity-studio.mjs';
 const scrypt=promisify(crypto.scrypt);
 function secretMatches(token,hash) {if(typeof token!=='string'||token.length>256)return false;const actual=Buffer.from(tokenHash(token),'hex'),expected=Buffer.from(hash,'hex');return actual.length===expected.length&&crypto.timingSafeEqual(actual,expected);}
@@ -59,12 +61,18 @@ export class SQLiteRepository {
   ensureColumn(this.db,'activity_assignment_participants','earned_xp','INTEGER NOT NULL DEFAULT 0 CHECK(earned_xp>=0)');
   ensureColumn(this.db,'activity_session_plans','linked_assignment_id','TEXT');
   ensureColumn(this.db,'activity_live_answers','confidence',"TEXT CHECK(confidence IS NULL OR confidence IN ('tentative','confident'))");
-  this.db.exec('CREATE UNIQUE INDEX IF NOT EXISTS ix_activity_learner_code ON activity_assignment_participants(learner_code_hash) WHERE learner_code_hash IS NOT NULL; CREATE UNIQUE INDEX IF NOT EXISTS ix_activity_session_plan_assignment ON activity_session_plans(linked_assignment_id) WHERE linked_assignment_id IS NOT NULL; PRAGMA user_version = 15');
+  ensureColumn(this.db,'activity_live_players','trainee_id','TEXT');
+  ensureColumn(this.db,'activity_live_rooms','profile_results_saved_at','TEXT');
+  ensureColumn(this.db,'activity_live_profile_results','earned_xp','INTEGER NOT NULL DEFAULT 0 CHECK(earned_xp>=0)');
+  ensureColumn(this.db,'activity_live_profile_results','session_date','TEXT');
+  ensureColumn(this.db,'activity_live_profile_results','attendance_status','TEXT');
+  this.db.exec('CREATE UNIQUE INDEX IF NOT EXISTS ix_activity_learner_code ON activity_assignment_participants(learner_code_hash) WHERE learner_code_hash IS NOT NULL; CREATE UNIQUE INDEX IF NOT EXISTS ix_activity_session_plan_assignment ON activity_session_plans(linked_assignment_id) WHERE linked_assignment_id IS NOT NULL; PRAGMA user_version = 17');
  }
 
  async init() {
   migrateLiveRoomTeamLimit(this.db);
-  this.db.exec('PRAGMA user_version = 15');
+  ensureColumn(this.db,'activity_live_players','trainee_id','TEXT');
+  this.db.exec('PRAGMA user_version = 17');
   // Business data is NEVER seeded, even when an old environment requests it.
   this.db.prepare('DELETE FROM sessions WHERE expires_at <= ?').run(Date.now());
   this.db.prepare('DELETE FROM rate_limits WHERE window_start < ?').run(Date.now()-86400000);
@@ -197,8 +205,9 @@ export class SQLiteRepository {
   this.db.exec('BEGIN IMMEDIATE');
   try{
    this.db.prepare('DELETE FROM activity_live_rooms WHERE expires_at<=?').run(now);
+   const roster=liveRoster(data,{batches:this.db.prepare('SELECT * FROM batches').all(),trainees:this.db.prepare('SELECT * FROM trainees').all(),companies:this.db.prepare('SELECT * FROM companies').all()});
    this.db.prepare('INSERT INTO activity_live_rooms(id,code_hash,owner_id,activity_id,deck_snapshot,team_one,team_two,timer_duration,created_at,updated_at,expires_at) VALUES(?,?,?,?,?,?,?,?,?,?,?)')
-    .run(data.id,data.code_hash,user.id,activity.id,JSON.stringify({...activity,mode:data.mode==='pulse'?'pulse':'quiz',competition_mode:data.competition_mode||'teams',team_names:teams}),teams[0],teams[1]||teams[0],data.timer_duration,now,now,data.expires_at);
+    .run(data.id,data.code_hash,user.id,activity.id,JSON.stringify({...activity,mode:data.mode==='pulse'?'pulse':'quiz',competition_mode:data.competition_mode||'teams',team_names:teams,roster}),teams[0],teams[1]||teams[0],data.timer_duration,now,now,data.expires_at);
    this.db.exec('COMMIT');return {id:data.id,expires_at:data.expires_at};
   }catch(error){this.db.exec('ROLLBACK');throw error;}
  }
@@ -208,7 +217,8 @@ export class SQLiteRepository {
   if(!room||room.expires_at<=new Date().toISOString())throw new ApiError(404,'That room code is invalid or expired. Ask your trainer for the current code.');
   if(room.status!=='Open')throw new ApiError(409,'This live room has ended. Ask your trainer to start another round.');
   const deck=JSON.parse(room.deck_snapshot),teams=liveRoomTeamNames(room,deck),counts=this.db.prepare('SELECT team_no,COUNT(*) count FROM activity_live_players WHERE room_id=? GROUP BY team_no').all(room.id);
-  return {competition_mode:deck.competition_mode||'teams',mode:deck.mode==='pulse'?'pulse':'quiz',title:deck.title,category:deck.category,level:deck.level,...(deck.arabic?{arabic:deck.arabic}:{}),total_rounds:deck.questions.length,timer_duration:room.timer_duration,teams:teams.map((name,index)=>({team_no:index+1,name,players:counts.find(row=>row.team_no===index+1)?.count||0}))};
+  const roster=deck.roster||null;
+  return {roster,competition_mode:deck.competition_mode||'teams',mode:deck.mode==='pulse'?'pulse':'quiz',title:deck.title,category:deck.category,level:deck.level,...(deck.arabic?{arabic:deck.arabic}:{}),total_rounds:deck.questions.length,timer_duration:room.timer_duration,teams:teams.map((name,index)=>({team_no:index+1,name,players:counts.find(row=>row.team_no===index+1)?.count||0}))};
  }
  async joinActivityLiveRoom(data){
   const now=new Date().toISOString();this.db.exec('BEGIN IMMEDIATE');
@@ -218,17 +228,19 @@ export class SQLiteRepository {
    if(!room||room.expires_at<=now)throw new ApiError(404,'That room code is invalid or expired. Ask your trainer for the current code.');
    if(room.status!=='Open')throw new ApiError(409,'This live room has ended. Ask your trainer to start another round.');
    const teamNames=liveRoomTeamNames(room,JSON.parse(room.deck_snapshot));
+   const identity=liveJoinIdentity(data,JSON.parse(room.deck_snapshot).roster);
+   data={...data,...identity};
    if(!Number.isInteger(data.team_no)||data.team_no<1||data.team_no>teamNames.length)throw new ApiError(400,'Choose one of the teams shown on the join screen.');
    if(this.db.prepare('SELECT COUNT(*) count FROM activity_live_players WHERE room_id=?').get(room.id).count>=80)throw new ApiError(409,'This room has reached its participant limit. Ask your trainer to start another room.');
    if(this.db.prepare('SELECT 1 FROM activity_live_players WHERE room_id=? AND nickname=? COLLATE NOCASE').get(room.id,data.nickname))throw new ApiError(409,'That nickname is already in the room. Choose a different nickname.');
-   this.db.prepare('INSERT INTO activity_live_players(id,room_id,token_hash,nickname,team_no,joined_at,last_seen_at) VALUES(?,?,?,?,?,?,?)').run(data.player_id,room.id,data.player_hash,data.nickname,data.team_no,now,now);
+   this.db.prepare('INSERT INTO activity_live_players(id,room_id,token_hash,nickname,team_no,joined_at,last_seen_at,trainee_id) VALUES(?,?,?,?,?,?,?,?)').run(data.player_id,room.id,data.player_hash,data.nickname,data.team_no,now,now,data.trainee_id);
    this.db.exec('COMMIT');
   }catch(error){this.db.exec('ROLLBACK');throw error;}
   return this.activityLivePlayerState(data.player_hash);
  }
  async activityLivePlayerState(playerHash){
   this.purgeExpiredActivityLiveRooms();
-  const player=this.db.prepare('SELECT p.*,r.activity_id,r.deck_snapshot,r.team_one,r.team_two,r.status AS room_status,r.round_index,r.revealed,r.correct_choice,r.timer_duration,r.timer_ends_at,r.expires_at FROM activity_live_players p JOIN activity_live_rooms r ON r.id=p.room_id WHERE p.token_hash=?').get(playerHash);
+  const player=this.db.prepare('SELECT p.*,r.activity_id,r.deck_snapshot,r.team_one,r.team_two,r.status AS room_status,r.round_index,r.revealed,r.correct_choice,r.timer_duration,r.timer_ends_at,r.expires_at,r.profile_results_saved_at FROM activity_live_players p JOIN activity_live_rooms r ON r.id=p.room_id WHERE p.token_hash=?').get(playerHash);
   if(!player||player.expires_at<=new Date().toISOString())throw new ApiError(401,'Your room seat is no longer active. Rejoin with the current room code.');
   this.db.prepare('UPDATE activity_live_players SET last_seen_at=? WHERE id=?').run(new Date().toISOString(),player.id);
   const deck=JSON.parse(player.deck_snapshot),teamNames=liveRoomTeamNames(player,deck),question=deck.questions[player.round_index];
@@ -244,7 +256,7 @@ export class SQLiteRepository {
   const teamRows=this.db.prepare('SELECT team_no,COALESCE(SUM(points),0) points,COUNT(*) players FROM activity_live_players WHERE room_id=(SELECT room_id FROM activity_live_players WHERE id=?) GROUP BY team_no').all(player.id);
   const leaders=player.revealed?livePlayerStandings(this.db.prepare('SELECT nickname,team_no,points,streak FROM activity_live_players WHERE room_id=(SELECT room_id FROM activity_live_players WHERE id=?) ORDER BY points DESC,joined_at LIMIT 80').all(player.id)).slice(0,deck.competition_mode==='individuals'?80:5):[];
   const teamScores=teamNames.map((name,index)=>{const teamNo=index+1,row=teamRows.find(item=>item.team_no===teamNo);return {team_no:teamNo,name,points:row?.points||0,players:row?.players||0};});
-  return {mode,status:player.room_status,round_index:player.round_index,total_rounds:deck.questions.length,revealed,complete:player.room_status==='Complete',room_closed:player.room_status==='Closed',activity:{title:deck.title,category:deck.category,level:deck.level,...(deck.arabic?{arabic:deck.arabic}:{})},competition_mode:deck.competition_mode||'teams',participant_count:teamRows.reduce((sum,team)=>sum+team.players,0),team:{team_no:player.team_no,name:teamNames[player.team_no-1],points:teamPoints.points,players:teamPoints.count},team_scores:teamScores,player:{nickname:player.nickname,points:player.points,streak:player.streak,choice:answer?.choice??null,confidence:answer?.confidence??null,correct:revealed&&answer?!!answer.correct:null,awarded_points:revealed?(answer?.awarded_points||0):0},question:liveRoomQuestionView(question,revealed),response_count:count,timer_duration:player.timer_duration,timer_ends_at:player.timer_ends_at,leaders};
+  return {profile:livePlayerProfile(deck,player,player.profile_results_saved_at,player.profile_results_saved_at?this.db.prepare('SELECT trainee_id,earned_xp,session_date,attendance_status FROM activity_live_profile_results WHERE source_room_id=? AND source_player_id=?').get(player.room_id,player.id):null),mode,status:player.room_status,round_index:player.round_index,total_rounds:deck.questions.length,revealed,complete:player.room_status==='Complete',room_closed:player.room_status==='Closed',activity:{title:deck.title,category:deck.category,level:deck.level,...(deck.arabic?{arabic:deck.arabic}:{})},competition_mode:deck.competition_mode||'teams',participant_count:teamRows.reduce((sum,team)=>sum+team.players,0),team:{team_no:player.team_no,name:teamNames[player.team_no-1],points:teamPoints.points,players:teamPoints.count},team_scores:teamScores,player:{nickname:player.nickname,points:player.points,streak:player.streak,choice:answer?.choice??null,confidence:answer?.confidence??null,correct:revealed&&answer?!!answer.correct:null,awarded_points:revealed?(answer?.awarded_points||0):0},question:liveRoomQuestionView(question,revealed),response_count:count,timer_duration:player.timer_duration,timer_ends_at:player.timer_ends_at,leaders};
  }
  async submitActivityLiveAnswer(playerHash,choice,confidence=null){
   if(confidence!==null&&!['tentative','confident'].includes(confidence))throw new ApiError(400,'Choose one of the confidence options shown on your screen.');
@@ -270,7 +282,7 @@ export class SQLiteRepository {
   if(room.owner_id!==ownerId)throw new ApiError(403,'Only the trainer who started this room can control it.');
   const deck=JSON.parse(room.deck_snapshot),teamNames=liveRoomTeamNames(room,JSON.parse(room.deck_snapshot)),question=deck.questions[room.round_index],mode=deck.mode==='pulse'?'pulse':'quiz';
   if(!question)throw new ApiError(409,'This live round is not available.');
-  const players=this.db.prepare(mode==='pulse'?'SELECT id FROM activity_live_players WHERE room_id=?':'SELECT id,nickname,team_no,points,streak,joined_at FROM activity_live_players WHERE room_id=? ORDER BY team_no,points DESC,joined_at').all(room.id);
+  const players=this.db.prepare(mode==='pulse'?'SELECT id FROM activity_live_players WHERE room_id=?':'SELECT id,nickname,team_no,points,streak,joined_at,trainee_id FROM activity_live_players WHERE room_id=? ORDER BY team_no,points DESC,joined_at').all(room.id);
   const answers=this.db.prepare(mode==='pulse'?'SELECT player_id,choice FROM activity_live_answers WHERE room_id=? AND round_index=? ORDER BY updated_at':'SELECT a.player_id,a.choice,a.confidence,a.correct,a.awarded_points,p.nickname,p.team_no FROM activity_live_answers a JOIN activity_live_players p ON p.id=a.player_id WHERE a.room_id=? AND a.round_index=? ORDER BY p.joined_at').all(room.id,room.round_index);
   if(mode==='pulse'){
    const answerCounts=answers.length>=3?question.options.map((_,choice)=>answers.filter(answer=>answer.choice===choice).length):null;
@@ -278,7 +290,7 @@ export class SQLiteRepository {
   }
   const teams=teamNames.map((name,index)=>{const team_no=index+1,people=players.filter(person=>person.team_no===team_no);return {team_no,name,points:people.reduce((sum,person)=>sum+person.points,0),player_count:people.length,players:people.map(({nickname,points,streak})=>({nickname,points,streak}))};});
   const revealed=!!room.revealed;
-  return {room:{id:room.id,competition_mode:deck.competition_mode||'teams',status:room.status,round_index:room.round_index,total_rounds:deck.questions.length,revealed,correct_choice:revealed?room.correct_choice:null,timer_duration:room.timer_duration,timer_ends_at:room.timer_ends_at,expires_at:room.expires_at},activity:{id:deck.id,title:deck.title,category:deck.category,level:deck.level,...(deck.arabic?{arabic:deck.arabic}:{})},question:liveRoomQuestionView(question,revealed),teams,leaders:livePlayerStandings(players),participant_count:players.length,response_count:answers.length,answer_counts:question.type==='sequence'?null:question.options.map((_,choice)=>answers.filter(answer=>answer.choice===choice).length),responses:revealed?answers.map(answer=>({nickname:answer.nickname,team_no:answer.team_no,choice:answer.choice,correct:!!answer.correct,awarded_points:answer.awarded_points})):[],confidence_summary:liveConfidenceSummary(answers,revealed)};
+  return {profile_linking:liveProfileReview(deck,players,this.db.prepare('SELECT player_id,correct FROM activity_live_answers WHERE room_id=?').all(room.id),room.profile_results_saved_at),room:{id:room.id,competition_mode:deck.competition_mode||'teams',status:room.status,round_index:room.round_index,total_rounds:deck.questions.length,revealed,correct_choice:revealed?room.correct_choice:null,timer_duration:room.timer_duration,timer_ends_at:room.timer_ends_at,expires_at:room.expires_at},activity:{id:deck.id,title:deck.title,category:deck.category,level:deck.level,...(deck.arabic?{arabic:deck.arabic}:{})},question:liveRoomQuestionView(question,revealed),teams,leaders:livePlayerStandings(players),participant_count:players.length,response_count:answers.length,answer_counts:question.type==='sequence'?null:question.options.map((_,choice)=>answers.filter(answer=>answer.choice===choice).length),responses:revealed?answers.map(answer=>({nickname:answer.nickname,team_no:answer.team_no,choice:answer.choice,correct:!!answer.correct,awarded_points:answer.awarded_points})):[],confidence_summary:liveConfidenceSummary(answers,revealed)};
  }
  async revealActivityLiveRoom(roomId,ownerId){
   this.db.exec('BEGIN IMMEDIATE');
@@ -326,11 +338,46 @@ export class SQLiteRepository {
    const room=this.db.prepare('SELECT * FROM activity_live_rooms WHERE id=?').get(roomId);if(!room)throw new ApiError(404,'This live room could not be found.');
    if(room.owner_id!==ownerId)throw new ApiError(403,'Only the trainer who started this room can control it.');
    if(room.status!=='Complete')throw new ApiError(409,'Finish the current live room before starting a replay.');
+   if(room.profile_results_saved_at)throw new ApiError(409,'These results are saved. Start a new room to record another game.');
    this.db.prepare('DELETE FROM activity_live_answers WHERE room_id=?').run(room.id);
    this.db.prepare('UPDATE activity_live_players SET points=0,streak=0 WHERE room_id=?').run(room.id);
    this.db.prepare("UPDATE activity_live_rooms SET status='Open',round_index=0,revealed=0,correct_choice=NULL,timer_ends_at=NULL,updated_at=? WHERE id=?").run(new Date().toISOString(),room.id);
    this.db.exec('COMMIT');return this.activityLiveHostState(room.id,ownerId);
   }catch(error){this.db.exec('ROLLBACK');throw error;}
+ }
+ async saveActivityLiveResults(roomId,mappings,user,sessionDate=null){
+  this.db.exec('BEGIN IMMEDIATE');
+  try{
+   const room=this.db.prepare('SELECT * FROM activity_live_rooms WHERE id=?').get(roomId);
+   if(!room||room.expires_at<=new Date().toISOString())throw new ApiError(404,'This live room could not be found.');
+   if(room.owner_id!==user.id)throw new ApiError(403,'Only the trainer who started this room can control it.');
+   const deck=JSON.parse(room.deck_snapshot);
+   if(room.status!=='Complete'||!deck.roster)throw new ApiError(409,'Finish a batch-linked game before saving results.');
+   if(room.profile_results_saved_at){this.db.exec('COMMIT');return this.activityLiveHostState(roomId,user.id);}
+   const players=this.db.prepare('SELECT * FROM activity_live_players WHERE room_id=?').all(roomId);
+   if(mappings.length!==players.length||mappings.some(item=>!players.some(player=>player.id===item.player_id)))throw new ApiError(400,'Review every player before saving results.');
+   const batch=this.db.prepare('SELECT * FROM batches WHERE id=?').get(deck.roster.batch_id);
+   if(!batch||batch.archived_at)throw new ApiError(409,'This batch is no longer available. Refresh and choose an active batch.');
+   const attendanceDate=activitySessionDate(sessionDate,batch);
+   const now=new Date().toISOString();
+   for(const match of mappings){
+    if(!match.trainee_id)continue;
+    const trainee=this.db.prepare('SELECT * FROM trainees WHERE id=? AND batch_id=?').get(match.trainee_id,batch.id);
+    if(!trainee||trainee.enrollment_status==='Stopped Attending'||!deck.roster.trainees.some(item=>item.id===trainee.id))throw new ApiError(409,'The selected roster changed. Refresh and select active trainees from this batch.');
+    const player=players.find(item=>item.id===match.player_id);
+    const counts=this.db.prepare('SELECT COUNT(*) answered_count,COALESCE(SUM(correct),0) correct_count FROM activity_live_answers WHERE room_id=? AND player_id=? AND correct IS NOT NULL').get(roomId,player.id);
+    const presence=attendanceDate&&counts.answered_count>0?recordActivityPresence(this,trainee.id,batch.id,attendanceDate,roomId,user):null;
+    this.insert('activity_live_profile_results',{id:id(),source_room_id:roomId,source_player_id:player.id,trainee_id:trainee.id,batch_id:batch.id,activity_id:deck.id,title:deck.title,nickname:player.nickname,...counts,total_rounds:deck.questions.length,score:Math.round(counts.correct_count/deck.questions.length*10000)/100,room_points:player.points,earned_xp:counts.correct_count*100,session_date:attendanceDate,attendance_status:presence?.status||null,confirmed_by:user.email,created_at:now});
+   }
+   this.db.prepare('UPDATE activity_live_rooms SET profile_results_saved_at=?,updated_at=? WHERE id=?').run(now,now,roomId);
+   this.audit(user,'confirm-live-activity-results','activity_live_rooms',roomId,`Confirmed ${mappings.filter(item=>item.trainee_id).length} activity profile results and earned XP.${attendanceDate?' Session attendance confirmed; existing records preserved.':''} Formal assessments preserved.`);
+   this.db.exec('COMMIT');
+  }catch(error){this.db.exec('ROLLBACK');throw error;}
+  return this.activityLiveHostState(roomId,user.id);
+ }
+ async activityLiveProfileResults(traineeId){
+  if(!this.db.prepare('SELECT id FROM trainees WHERE id=?').get(traineeId))throw new ApiError(404,'Trainee not found.');
+  return {results:this.db.prepare('SELECT * FROM activity_live_profile_results WHERE trainee_id=? ORDER BY created_at DESC,id DESC LIMIT 100').all(traineeId),limit:100};
  }
  async setActivityLiveTimer(roomId,ownerId,endsAt){
   this.purgeExpiredActivityLiveRooms();
@@ -358,7 +405,7 @@ export class SQLiteRepository {
   const custom=this.customChallenges(true),insightByTrainee=activityPracticeInsights(participants.filter(row=>row.learner_submitted_at).map(row=>({trainee_id:row.trainee_id,activity_id:activityByAssignment.get(row.assignment_id),answers:row.learner_answers})),custom);
   const safeParticipants=participants.map(({learner_answers,...row})=>({...row,learning_insight:insightByTrainee.get(row.trainee_id)||null}));
   const grouped=new Map();for(const participant of safeParticipants){const rows=grouped.get(participant.assignment_id)||[];rows.push(participant);grouped.set(participant.assignment_id,rows);}
-  return {assignments:assignments.map(row=>{const activity=studioQuiz(row.activity_id,custom);return {...row,studio_activity:activity?{id:activity.id,title:activity.title,category:activity.category,level:activity.level,duration_minutes:activity.duration_minutes,question_count:activity.questions.length,is_custom:!!activity.created_by,archived_at:activity.archived_at||null}:null,participants:grouped.get(row.id)||[]};})};
+  return {live_xp:this.db.prepare('SELECT trainee_id,batch_id,SUM(earned_xp) earned_xp,COUNT(*) games FROM activity_live_profile_results GROUP BY trainee_id,batch_id').all(),assignments:assignments.map(row=>{const activity=studioQuiz(row.activity_id,custom);return {...row,studio_activity:activity?{id:activity.id,title:activity.title,category:activity.category,level:activity.level,duration_minutes:activity.duration_minutes,question_count:activity.questions.length,is_custom:!!activity.created_by,archived_at:activity.archived_at||null}:null,participants:grouped.get(row.id)||[]};})};
  }
  async activityPulse({batchId='',companyId=''}={}){
   const filters=['p.learner_submitted_at IS NOT NULL'],params=[];
@@ -524,6 +571,38 @@ export class SQLiteRepository {
    const now=new Date().toISOString();this.db.prepare("UPDATE activity_assignments SET status='Closed',version=version+1,updated_at=? WHERE id=?").run(now,row.id);
    this.audit(user,'close-activity-assignment','activity_assignments',row.id,`Closed ${row.title}.`);
    this.db.exec('COMMIT');return this.db.prepare('SELECT * FROM activity_assignments WHERE id=?').get(row.id);
+  }catch(error){this.db.exec('ROLLBACK');throw error;}
+ }
+ async deleteActivityAssignment(data,user){
+  this.db.exec('BEGIN IMMEDIATE');
+  try{
+   const assignment=this.db.prepare('SELECT * FROM activity_assignments WHERE id=?').get(data.id);
+   if(!assignment)throw new ApiError(404,'Activity assignment not found.');
+   if(user.role!=='admin'&&assignment.created_by!==user.email)throw new ApiError(403,'Only an administrator or the assigning trainer can delete this assignment.');
+   if(assignment.version!==data.expected_version)throw new ApiError(409,'This assignment changed in another session. Refresh and try again.');
+   const participants=this.db.prepare('SELECT * FROM activity_assignment_participants WHERE assignment_id=?').all(data.id),plans=this.db.prepare('SELECT * FROM activity_session_plans WHERE linked_assignment_id=?').all(data.id);
+   const now=new Date().toISOString();
+   this.insert('activity_assignment_deletions',{id:data.id,snapshot:{assignment,participants,session_plans:plans},deleted_by:user.email,deleted_at:now});
+   this.db.prepare('UPDATE activity_session_plans SET linked_assignment_id=NULL,version=version+1,updated_at=? WHERE linked_assignment_id=?').run(now,data.id);
+   this.db.prepare('DELETE FROM activity_assignments WHERE id=?').run(data.id);
+   this.audit(user,'delete-activity-assignment','activity_assignments',data.id,`Deleted ${assignment.title} and ${participants.length} assigned entries. Private recovery snapshot retained. Batch, attendance and formal assessments preserved.`);
+   this.db.exec('COMMIT');return {id:data.id,deleted:true,recoverable:true};
+  }catch(error){this.db.exec('ROLLBACK');throw error;}
+ }
+ async recordAssignmentAttendance(data,sessionDate,user){
+  this.db.exec('BEGIN IMMEDIATE');
+  try{
+   const assignment=this.db.prepare('SELECT * FROM activity_assignments WHERE id=?').get(data.id);
+   if(!assignment)throw new ApiError(404,'Activity assignment not found.');
+   if(assignment.version!==data.expected_version)throw new ApiError(409,'This assignment changed in another session. Refresh and try again.');
+   const batch=this.db.prepare('SELECT * FROM batches WHERE id=?').get(assignment.batch_id);
+   if(!batch||batch.archived_at)throw new ApiError(409,'This batch is no longer available. Refresh and choose an active batch.');
+   const date=activitySessionDate(sessionDate,batch);if(!date)throw new ApiError(400,'Choose a scheduled session date that is today or earlier.');
+   const participants=this.db.prepare("SELECT p.trainee_id FROM activity_assignment_participants p JOIN trainees t ON t.id=p.trainee_id AND t.batch_id=p.batch_id WHERE p.assignment_id=? AND p.status='Completed' AND t.enrollment_status='Active'").all(data.id);
+   if(!participants.length)throw new ApiError(409,'No completed participants are available to record attendance.');
+   let created=0;for(const participant of participants)if(recordActivityPresence(this,participant.trainee_id,batch.id,date,assignment.id,user).created)created++;
+   this.audit(user,'confirm-assignment-attendance','activity_assignments',assignment.id,`Confirmed ${participants.length} completed participants for ${date}; created ${created} attendance records. Existing records preserved.`);
+   this.db.exec('COMMIT');return {created,preserved:participants.length-created,session_date:date};
   }catch(error){this.db.exec('ROLLBACK');throw error;}
  }
  async traineePhoto(traineeId){const row=this.db.prepare('SELECT mime_type,bytes,updated_at FROM trainee_photos WHERE trainee_id=?').get(traineeId);return row?{mime_type:row.mime_type,bytes:Buffer.from(row.bytes),updated_at:row.updated_at}:null;}

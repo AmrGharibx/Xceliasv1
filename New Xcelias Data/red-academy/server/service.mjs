@@ -1,4 +1,5 @@
 import {liveCompetitionMode} from './activity-live-competition.mjs';
+import {liveJoinIdentity,checkedLiveMappings} from './activity-live-roster.mjs';
 import {EventEmitter} from 'node:events';
 import crypto from 'node:crypto';
 import {TABLES,id,emptyState,attendanceStats,scores,assessedRows,assessmentFor,sessionChecklistFor} from '../public/modules/core.mjs';
@@ -7,6 +8,7 @@ import {validateActivityAssignment,validateActivityProgress,validateAssignmentCl
 import {STUDIO_SKILLS,validateStudioArabicChallenge,validateStudioChallenge,validateStudioDraftRequest} from './activity-studio.mjs';
 import {draftActivitySessionPromptsWithGemini,validateActivitySessionPlan,validateActivitySessionPromptDraftRequest,validateActivitySessionStep} from './activity-session-plans.mjs';
 import {validateActivityLivePulse} from './activity-live-pulse.mjs';
+import {activityAssignmentAction} from './activity-outcomes.mjs';
 import {draftActivityRoleplayWithGemini,validateActivityRoleplayDraftRequest} from './activity-roleplay-draft.mjs';
 export const events=new EventEmitter();events.setMaxListeners(200);
 let repositoryPromise;
@@ -197,11 +199,11 @@ export async function handleApi(request){
    const body=await bodyOf(request),code=checkedLiveRoomCode(body.code),hash=tokenHash(code);
    if(!await repo.rate('activity-live-public-join',300,60)||!await repo.rate('activity-live-join:'+hash,120,60))throw new ApiError(429,'Too many join attempts for this room. Check the code and try again in a minute.');
    const info=await repo.activityLiveInfo(hash),pulse=info.mode==='pulse';
-   const nickname=pulse?`Pulse-${crypto.randomBytes(4).toString('hex')}`:typeof body.nickname==='string'?body.nickname.trim():'';
+   const identity=pulse?{nickname:`Pulse-${crypto.randomBytes(4).toString('hex')}`,trainee_id:null}:liveJoinIdentity(body,info.roster),nickname=identity.nickname;
    const teamNo=pulse||info.competition_mode==='individuals'?1:body.team_no;
    if(!nickname||nickname.length>24||/[\u0000-\u001f\u007f]/.test(nickname)||!Number.isInteger(teamNo)||teamNo<1||teamNo>4)throw new ApiError(400,'Choose a nickname and one of the teams shown on the join screen.');
    const seatToken=crypto.randomBytes(32).toString('base64url'),playerId=id();
-   const room=await repo.joinActivityLiveRoom({code_hash:hash,player_id:playerId,player_hash:tokenHash(seatToken),nickname,team_no:teamNo});
+   const room=await repo.joinActivityLiveRoom({code_hash:hash,player_id:playerId,player_hash:tokenHash(seatToken),...identity,team_no:teamNo});
    return json({seat_token:seatToken,room});
   }
   if(route==='activities/live/state'&&method==='POST'){
@@ -283,6 +285,14 @@ export async function handleApi(request){
    canWrite(user);const roomId=url.searchParams.get('room_id')||'';if(!isId(roomId))throw new ApiError(400,'Choose a valid live room.');
    return json(await repo.activityLiveHostState(roomId,user.id),200,outgoing);
   }
+  if(route==='activities/live/results'&&method==='GET'){
+   const traineeId=url.searchParams.get('trainee_id');if(!isId(traineeId))throw new ApiError(400,'Choose a valid trainee.');
+   return json(await repo.activityLiveProfileResults(traineeId),200,outgoing);
+  }
+  if(route==='activities/live/save-results'&&method==='POST'){
+   canWrite(user);const body=await bodyOf(request),mappings=checkedLiveMappings(body);
+   const result=await repo.saveActivityLiveResults(body.room_id,mappings,user,body.session_date);events.emit('change');return json(result,200,outgoing);
+  }
   if(route==='activities/live/active'&&method==='GET'){canWrite(user);return json(await repo.activityLiveRooms(user.id),200,outgoing);}
   if(route==='activities/live/resume'&&method==='POST'){
    canWrite(user);const body=await bodyOf(request);if(!isId(body.room_id))throw new ApiError(400,'Choose a valid live room.');
@@ -296,7 +306,7 @@ export async function handleApi(request){
    if(body.mode!==undefined&&body.mode!=='pulse')throw new ApiError(400,'Choose a supported live-room mode.');
    if(typeof activityId!=='string'||!/^[a-z0-9][a-z0-9-]{1,39}$/.test(activityId)||!isPulse&&![0,20,30,45].includes(body.timer_duration))throw new ApiError(400,'Choose a challenge, two to four different team names, and a valid timer.');
    const code=liveRoomCode(),roomId=id(),expiresAt=new Date(Date.now()+4*60*60*1000).toISOString();
-   const room=await repo.createActivityLiveRoom({id:roomId,code_hash:tokenHash(code),activity_id:activityId,mode:isPulse?'pulse':'quiz',competition_mode:competitionMode,pulse,teams:teamNames,team_one:teamNames[0],team_two:teamNames[1]||teamNames[0],timer_duration:isPulse?pulse.timer_duration:body.timer_duration,expires_at:expiresAt},user);
+   const room=await repo.createActivityLiveRoom({batch_id:body.batch_id,id:roomId,code_hash:tokenHash(code),activity_id:activityId,mode:isPulse?'pulse':'quiz',competition_mode:competitionMode,pulse,teams:teamNames,team_one:teamNames[0],team_two:teamNames[1]||teamNames[0],timer_duration:isPulse?pulse.timer_duration:body.timer_duration,expires_at:expiresAt},user);
    return json({room_id:room.id,join_code:code,expires_at:room.expires_at},201,outgoing);
   }
   if(route==='activities/live/reveal'&&method==='POST'){
@@ -336,6 +346,12 @@ export async function handleApi(request){
   }
   if(route==='activities/close'&&method==='POST'){
    canWrite(user);const body=validateAssignmentClose(await bodyOf(request)),record=await repo.closeActivityAssignment(body,user);events.emit('change');return json({record},200,outgoing);
+  }
+  if(route==='activities/delete'&&method==='DELETE'){
+   canWrite(user);const data=activityAssignmentAction(await bodyOf(request)),result=await repo.deleteActivityAssignment(data,user);events.emit('change');return json(result,200,outgoing);
+  }
+  if(route==='activities/attendance'&&method==='POST'){
+   canWrite(user);const body=await bodyOf(request),data=activityAssignmentAction(body),result=await repo.recordAssignmentAttendance(data,body.session_date,user);events.emit('change');return json(result,200,outgoing);
   }
   if(route==='batches/archive'&&method==='POST'){
    admin(user);const body=await bodyOf(request);

@@ -3216,10 +3216,9 @@
       "priceMin": 9641467,
       "unitTypes": [
         "Apartment",
-        "Town House",
         "Duplex",
         "Villa",
-        "Penthouse"
+        "Townhouse"
       ],
       "areaMin": 94,
       "areaMax": 469,
@@ -3231,15 +3230,15 @@
         5,
         6
       ],
-      "paymentPlan": "2% Down Payment",
-      "downPayment": 2,
-      "installmentYears": 0,
+      "paymentPlan": "0% Down Payment, 10 Years Installments",
+      "downPayment": 0,
+      "installmentYears": 10,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 3,
         "sources": [
           {
             "name": "RED",
@@ -3252,9 +3251,15 @@
             "url": "https://www.propertyfinder.eg/en/new-projects/mountain-view/aliva",
             "observedPrice": 10631210,
             "sourceId": "property-finder:ae1dae39-d2ee-44da-874c-5a2440d8c991"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/996-aliva-mountain-view-mostakbal-city",
+            "observedPrice": 11302005,
+            "sourceId": "nawy:996"
           }
         ],
-        "updatedAt": "2026-09-30T02:59:47.607Z"
+        "updatedAt": "2026-10-01T12:45:48.192Z"
       }
     },
     {
@@ -15138,12 +15143,12 @@
       "zone": "New Capital",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 3213600,
+      "priceMin": 2768125,
       "unitTypes": [
         "Apartment",
         "Duplex",
-        "Medical",
         "Retail",
+        "Medical",
         "Administrative"
       ],
       "areaMin": 72,
@@ -15169,7 +15174,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1467-de-joya-4",
-            "observedPrice": 3213600,
+            "observedPrice": 2768125,
             "sourceId": "nawy:1467"
           },
           {
@@ -15179,7 +15184,7 @@
             "sourceId": "property-finder:0bfe8624-0bb6-48aa-a8d3-ddd22d657c44"
           }
         ],
-        "updatedAt": "2026-10-01T03:01:35.955Z"
+        "updatedAt": "2026-10-01T12:45:48.192Z"
       }
     },
     {
@@ -26997,11 +27002,9 @@
       "zone": "New Cairo",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 15525009,
-      "priceMax": 35252424,
+      "priceMin": 16493354,
       "unitTypes": [
-        "Villa",
-        "Apartment"
+        "Duplex"
       ],
       "areaMin": 99,
       "areaMax": 494,
@@ -27013,9 +27016,25 @@
         5,
         6
       ],
-      "paymentPlan": "5% Down Payment, 8 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 8
+      "paymentPlan": "1.5% Down Payment, 12 Years Installments",
+      "downPayment": 1.5,
+      "installmentYears": 12,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1579-river-park",
+            "observedPrice": 16493354,
+            "sourceId": "nawy:1579"
+          }
+        ],
+        "updatedAt": "2026-10-01T12:45:48.192Z"
+      }
     },
     {
       "name": "Fields park",
@@ -31000,10 +31019,10 @@
       "zone": "New Capital",
       "status": "Delivered",
       "type": "commercial",
-      "priceMin": 3213600,
+      "priceMin": 2768125,
       "unitTypes": [
-        "Medical",
         "Retail",
+        "Medical",
         "Administrative"
       ],
       "areaMin": 74,
@@ -31022,7 +31041,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1840-dejoya-4-strip-mall",
-            "observedPrice": 3213600,
+            "observedPrice": 2768125,
             "sourceId": "nawy:1840"
           },
           {
@@ -31032,7 +31051,7 @@
             "sourceId": "property-finder:52832183-7cdf-4186-8749-2a16ba499fc5"
           }
         ],
-        "updatedAt": "2026-10-01T03:01:35.955Z"
+        "updatedAt": "2026-10-01T12:45:48.192Z"
       }
     },
     {
@@ -39296,11 +39315,9 @@
       "type": "residential",
       "priceMin": 9641467,
       "unitTypes": [
-        "Apartment",
-        "Town House",
-        "Duplex",
         "Villa",
-        "Penthouse"
+        "Townhouse",
+        "Duplex"
       ],
       "areaMin": 81,
       "areaMax": 407,
@@ -39312,24 +39329,30 @@
         5,
         6
       ],
-      "paymentPlan": "1.5% Down Payment, 12 Years Installments",
+      "paymentPlan": "0% Down Payment, 10 Years Installments",
       "downPayment": 0,
-      "installmentYears": 0,
+      "installmentYears": 10,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19070-aliva",
             "observedPrice": 9641467,
             "sourceId": "red:19070"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1322-central-park-aliva",
+            "observedPrice": 22116549,
+            "sourceId": "nawy:1322"
           }
         ],
-        "updatedAt": "2026-09-29T18:38:47.352Z"
+        "updatedAt": "2026-10-01T12:45:48.192Z"
       }
     },
     {
@@ -39343,10 +39366,7 @@
       "priceMin": 9641467,
       "unitTypes": [
         "Apartment",
-        "Town House",
-        "Duplex",
-        "Villa",
-        "Penthouse"
+        "Duplex"
       ],
       "areaMin": 93,
       "areaMax": 466,
@@ -39358,24 +39378,30 @@
         5,
         6
       ],
-      "paymentPlan": "1.5% Down Payment, 12 Years Installments",
+      "paymentPlan": "0% Down Payment, 10 Years Installments",
       "downPayment": 0,
-      "installmentYears": 0,
+      "installmentYears": 10,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19070-aliva",
             "observedPrice": 9641467,
             "sourceId": "red:19070"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1323-club-park-aliva",
+            "observedPrice": 11302005,
+            "sourceId": "nawy:1323"
           }
         ],
-        "updatedAt": "2026-09-29T18:38:47.352Z"
+        "updatedAt": "2026-10-01T12:45:48.192Z"
       }
     },
     {
@@ -39389,10 +39415,7 @@
       "priceMin": 9641467,
       "unitTypes": [
         "Apartment",
-        "Town House",
-        "Duplex",
-        "Villa",
-        "Penthouse"
+        "Duplex"
       ],
       "areaMin": 92,
       "areaMax": 458,
@@ -39404,24 +39427,30 @@
         5,
         6
       ],
-      "paymentPlan": "1.5% Down Payment, 12 Years Installments",
+      "paymentPlan": "0% Down Payment, 10 Years Installments",
       "downPayment": 0,
-      "installmentYears": 0,
+      "installmentYears": 10,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19070-aliva",
             "observedPrice": 9641467,
             "sourceId": "red:19070"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1324-lagoon-beach-park-aliva",
+            "observedPrice": 11892894,
+            "sourceId": "nawy:1324"
           }
         ],
-        "updatedAt": "2026-09-29T18:38:47.352Z"
+        "updatedAt": "2026-10-01T12:45:48.192Z"
       }
     },
     {
@@ -43207,7 +43236,7 @@
         "sourceId": "nawy-inventory:1983",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 70516000,
+      "priceMin": 74073000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -43218,7 +43247,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1983-lake-front-villas",
-            "observedPrice": 70516000,
+            "observedPrice": 74073000,
             "sourceId": "nawy:1983"
           },
           {
@@ -43228,7 +43257,7 @@
             "sourceId": "property-finder:6e5738ee-097a-4b35-bd9d-e2897815b51a"
           }
         ],
-        "updatedAt": "2026-09-30T02:59:47.607Z"
+        "updatedAt": "2026-10-01T12:45:48.192Z"
       }
     },
     {

@@ -9739,7 +9739,7 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 2100000,
+      "priceMin": 4280000,
       "unitTypes": [
         "Chalet",
         "Studio"
@@ -9762,14 +9762,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/arabia-holding/ruby",
-            "observedPrice": 2100000,
-            "sourceId": "property-finder:4bc2e595-f7ad-4d99-8fd4-879d4743c6f5"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1737-ruby",
@@ -9777,7 +9771,7 @@
             "sourceId": "nawy:1737"
           }
         ],
-        "updatedAt": "2026-09-29T06:50:06.267Z"
+        "updatedAt": "2026-10-01T12:45:48.192Z"
       }
     },
     {
@@ -10418,13 +10412,12 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 18843300,
+      "priceMin": 21465000,
       "unitTypes": [
-        "Chalet",
         "Villa",
-        "Apartment",
-        "Twinhouse",
-        "Townhouse"
+        "Twin House",
+        "Town House",
+        "Chalet"
       ],
       "areaMin": 81,
       "areaMax": 352,
@@ -10437,21 +10430,15 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 7 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 7,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1237-ogami-ras-el-hekma",
-            "observedPrice": 18843300,
-            "sourceId": "nawy:1237"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19203-ogami",
@@ -10459,7 +10446,7 @@
             "sourceId": "red:19203"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-10-01T12:45:48.192Z"
       }
     },
     {
@@ -11476,8 +11463,7 @@
       "type": "residential",
       "priceMin": 18037000,
       "unitTypes": [
-        "Cabin",
-        "Loft"
+        "Cabin"
       ],
       "areaMin": 87,
       "areaMax": 383,
@@ -11489,9 +11475,9 @@
         5,
         6
       ],
-      "paymentPlan": "5% Down Payment, 10 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 10,
+      "paymentPlan": "20% Down Payment, 5 Years Installments",
+      "downPayment": 20,
+      "installmentYears": 5,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -11508,11 +11494,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/810-le-gray-beach-hotel-and-residences",
-            "observedPrice": 27362000,
+            "observedPrice": 66624000,
             "sourceId": "nawy:810"
           }
         ],
-        "updatedAt": "2026-09-30T02:59:47.607Z"
+        "updatedAt": "2026-10-01T12:45:48.192Z"
       }
     },
     {
@@ -12431,18 +12417,18 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "villa",
-        "apartment"
+        "Apartment",
+        "Studio"
       ],
       "downPayment": 5,
-      "installmentYears": 0,
-      "paymentPlan": "5% Down Payment",
+      "installmentYears": 8,
+      "paymentPlan": "5% Down Payment, 8 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2612",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 30000000,
+      "priceMin": 34262000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -12451,13 +12437,13 @@
         "sourceCount": 1,
         "sources": [
           {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/sodic/nobu-branded-villas-ogami",
-            "observedPrice": 30000000,
-            "sourceId": "property-finder:c749d2ef-faac-4683-989c-155ddd77eb28"
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2612-nobu-residence",
+            "observedPrice": 34262000,
+            "sourceId": "nawy:2612"
           }
         ],
-        "updatedAt": "2026-09-23T02:53:48.002Z"
+        "updatedAt": "2026-10-01T12:45:48.192Z"
       }
     },
     {

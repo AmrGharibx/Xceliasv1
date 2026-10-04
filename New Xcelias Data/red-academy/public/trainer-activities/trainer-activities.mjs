@@ -213,7 +213,7 @@ function loginScreen() {
 }
 
 function currentRoster(batchId = state.batchId, companyId = state.companyId) {
-  return store.data.trainees.filter(trainee => trainee.batch_id === batchId && trainee.enrollment_status !== 'Stopped Attending' && (!companyId || trainee.company_id === companyId));
+  return store.data.trainees.filter(trainee => trainee.batch_id === batchId && trainee.enrollment_status === 'Active' && (!companyId || trainee.company_id === companyId));
 }
 
 function companyName(companyId) {
@@ -1534,7 +1534,7 @@ function showAssignmentForm(selectedActivityId = '', selectedTraineeId = '', pre
   if (!state.library.length) { showToast('Academy Studio is still loading. Try again in a moment.', true); return; }
   const batches = store.data.batches.filter(batch => !batch.archived_at);
   if (!batches.length) { showToast('Create or restore a batch before assigning activities.', true); return; }
-  const targetTrainee = store.data.trainees.find(person => person.id === selectedTraineeId && person.enrollment_status !== 'Stopped Attending');
+  const targetTrainee = store.data.trainees.find(person => person.id === selectedTraineeId && person.enrollment_status === 'Active');
   const targetBatch = targetTrainee && batches.find(batch => batch.id === targetTrainee.batch_id);
   const prefilledBatch = batches.find(batch => batch.id === prefill.batchId);
   const defaultBatch = targetBatch?.id || prefilledBatch?.id || (state.batchId && batches.some(batch => batch.id === state.batchId) ? state.batchId : batches.find(batch => batch.status === 'Active')?.id || batches[0].id);
@@ -1597,7 +1597,7 @@ function showAssignmentForm(selectedActivityId = '', selectedTraineeId = '', pre
 };
 
 function activePlanCompanies(batchId,selected='') {
-  const eligible=new Set(store.data.trainees.filter(person=>person.batch_id===batchId&&person.enrollment_status!=='Stopped Attending'&&person.company_id).map(person=>person.company_id));
+  const eligible=new Set(store.data.trainees.filter(person=>person.batch_id===batchId&&person.enrollment_status==='Active'&&person.company_id).map(person=>person.company_id));
   const companies=store.data.companies.filter(company=>eligible.has(company.id)).slice().sort((a,b)=>a.name.localeCompare(b.name));
   return `<option value="">All companies in this batch</option>${options(companies,selected,row=>row.id,row=>row.name)}`;
 }

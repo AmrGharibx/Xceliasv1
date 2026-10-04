@@ -22,7 +22,7 @@ test('expanding live teams preserves existing two-team players, answers and fore
  const directory=fs.mkdtempSync(path.join(os.tmpdir(),'red-live-teams-'));
  const filename=path.join(directory,'academy.db');
  const schema=fs.readFileSync(new URL('../server/schema.sql',import.meta.url),'utf8').replaceAll('\r\n','\n');
- const legacySchema=schema.replace('team_no INTEGER NOT NULL CHECK(team_no BETWEEN 1 AND 4)','team_no INTEGER NOT NULL CHECK(team_no IN (1,2))').replace(" confidence TEXT CHECK(confidence IS NULL OR confidence IN ('tentative','confident')),\n",'').replace('PRAGMA user_version = 17;','PRAGMA user_version = 8;');
+ const legacySchema=schema.replace('team_no INTEGER NOT NULL CHECK(team_no BETWEEN 1 AND 4)','team_no INTEGER NOT NULL CHECK(team_no IN (1,2))').replace(" confidence TEXT CHECK(confidence IS NULL OR confidence IN ('tentative','confident')),\n",'').replace('PRAGMA user_version = 18;','PRAGMA user_version = 8;');
  assert.notEqual(legacySchema,schema,'fixture must carry the previous two-team constraint');
  const oldDb=new DatabaseSync(filename);
  oldDb.exec(legacySchema);
@@ -40,7 +40,7 @@ test('expanding live teams preserves existing two-team players, answers and fore
   repository.db.prepare('INSERT INTO activity_live_players(id,room_id,token_hash,nickname,team_no,joined_at,last_seen_at) VALUES(?,?,?,?,?,?,?)').run('player-four','room','c'.repeat(64),'Comet',4,'2026-09-24T00:03:00.000Z','2026-09-24T00:03:00.000Z');
   assert.equal(repository.db.prepare('SELECT team_no FROM activity_live_players WHERE id=?').get('player-four').team_no,4);
   assert.deepEqual(repository.db.prepare('PRAGMA foreign_key_check').all(),[]);
-  assert.equal(repository.db.prepare('PRAGMA user_version').get().user_version,17);
+  assert.equal(repository.db.prepare('PRAGMA user_version').get().user_version,18);
  }finally{
   repository.close();
   fs.rmSync(directory,{recursive:true,force:true});

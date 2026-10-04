@@ -92,7 +92,7 @@ export function validateActivitySessionPlan(input,workspace,activity){
  const batch=(workspace.batches||[]).find(item=>item.id===batchId&&!item.archived_at);
  if(!batch)throw new ApiError(400,'Choose an active, non-archived batch.');
  if(companyId!==null&&!isId(companyId))throw new ApiError(400,'Choose a valid company or all companies.');
- if(companyId&&!(workspace.trainees||[]).some(person=>person.batch_id===batchId&&person.company_id===companyId&&person.enrollment_status!=='Stopped Attending'))throw new ApiError(400,'Choose a company with active trainees in this batch.');
+ if(companyId&&!(workspace.trainees||[]).some(person=>person.batch_id===batchId&&person.company_id===companyId&&person.enrollment_status==='Active'))throw new ApiError(400,'Choose a company with active trainees in this batch.');
  if(!validDate(input.session_date))throw new ApiError(400,'Choose a valid session date.');
  if(typeof input.title!=='string'||input.title.trim().length<3||input.title.trim().length>120||/[\u0000-\u001f\u007f]/.test(input.title))throw new ApiError(400,'Give this session a title of 3 to 120 characters.');
  if(typeof input.focus_skill!=='string'||!STUDIO_SKILLS.some(skill=>skill.id===input.focus_skill))throw new ApiError(400,'Choose a valid learning focus.');

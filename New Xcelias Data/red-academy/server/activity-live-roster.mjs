@@ -6,7 +6,7 @@ export function liveRoster(body, state) {
   if (body.mode === 'pulse' || !isId(body.batch_id)) throw new ApiError(400, 'Choose an active batch for a scored live game.');
   const batch = state.batches.find(item => item.id === body.batch_id && !item.archived_at);
   if (!batch) throw new ApiError(400, 'Choose an active batch for a scored live game.');
-  const trainees = state.trainees.filter(item => item.batch_id === batch.id && item.enrollment_status !== 'Stopped Attending')
+  const trainees = state.trainees.filter(item => item.batch_id === batch.id && item.enrollment_status === 'Active')
     .map(item => ({id:item.id,name:item.trainee_name,company:state.companies.find(company => company.id === item.company_id)?.name || ''}))
     .sort((a,b) => a.name.localeCompare(b.name));
   if (!trainees.length) throw new ApiError(400, 'This batch has no active trainees to join.');

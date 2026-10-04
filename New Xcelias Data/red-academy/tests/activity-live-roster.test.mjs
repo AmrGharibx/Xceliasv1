@@ -48,6 +48,14 @@ test('roster and mapping validation reject invalid targets, duplicate players an
  assert.throws(()=>checkedLiveMappings({room_id:room.room_id,mappings:[{player_id:player,trainee_id:null},{player_id:player,trainee_id:null}]}),{status:400});
 });
 
+test('Never Started trainees cannot join newly opened scored live activities',()=>{
+ const noShow={id:id(),batch_id:batch.id,company_id:roster[0].company_id,trainee_name:'Never attended',enrollment_status:'Never Started'};
+ const expanded={...original,trainees:[...original.trainees,noShow]};
+ const allowed=liveRoster({batch_id:batch.id},expanded).trainees;
+ assert.equal(allowed.length,40);
+ assert.ok(!allowed.some(trainee=>trainee.id===noShow.id));
+});
+
 test('room roster contains exactly 40 eligible names, no contact details, grades or answer keys',async()=>{
  const response=await request('activities/live/info',{code:room.join_code});assert.equal(response.status,200);
  assert.equal(response.data.roster.trainees.length,40);

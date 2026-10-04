@@ -34,7 +34,9 @@ export function reportNarrative(item){
  const attendanceLine=attendance.rate===null
   ? 'Attendance is still being recorded; unrecorded sessions are not treated as absences.'
   : `Recorded classroom attendance is ${fmt(attendance.rate,1)}% (${attendance.present} present and ${attendance.absent} absent).`;
- const checklistLine=check
+ const checklistLine=item.trainee.enrollment_status==='Never Started'
+  ? 'Enrollment status is Never Started: the trainee was enrolled but did not attend any sessions. The enrollment remains on file, but ongoing attendance and session-progress counts exclude it.'
+  : check
   ? `The attendance checklist shows ${check.count} of ${check.total} due scheduled sessions attended${check.tour?`, including ${check.tour} tour day${check.tour===1?'':'s'}`:''}. It reflects Daily Attendance; future and off days are not counted as due sessions.`
   : 'No scheduled sessions are available for the attendance checklist yet.';
  if(!item.profile.complete)return `A complete four-skill assessment has not been saved, so this report does not assign a score band or infer a result. ${attendanceLine} ${checklistLine} Complete the measured assessment when evidence is available, then review practical next steps with the trainee.`;

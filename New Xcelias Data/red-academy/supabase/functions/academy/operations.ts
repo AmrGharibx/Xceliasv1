@@ -1,6 +1,6 @@
 // @ts-nocheck -- this intentionally reuses the JavaScript validation contract.
 import {TABLES,id,scores} from '../../../public/modules/core.mjs';
-import {ApiError,isId,validate} from '../../../server/validation.mjs';
+import {ApiError,isId,validate,validateNeverStarted} from '../../../server/validation.mjs';
 
 function canWrite(user){if(!['admin','instructor'].includes(user.role))throw new ApiError(403,'Your role is read-only.');}
 function asArray(value){return Array.isArray(value)?value:[];}
@@ -30,11 +30,15 @@ export function prepareCloudOperations(body,state,user){
   if(table==='trainees'){
    const batch=asArray(state.batches).find(record=>record.id===data.batch_id);if((data.batch_id&&!batch)||(data.company_id&&!asArray(state.companies).some(company=>company.id===data.company_id)))throw new ApiError(400,'Choose an existing batch and company.');
    if(old&&old.batch_id!==data.batch_id)throw new ApiError(400,'Create a new enrollment to place this trainee in another batch.');
-   if(!old&&batch?.capacity!=null&&asArray(state.trainees).filter(trainee=>trainee.batch_id===batch.id).length>=batch.capacity)throw new ApiError(400,'This batch is at capacity.');
+   validateNeverStarted(old?.id||input.id,data.enrollment_status,state);
+   const activeCount=asArray(state.trainees).filter(trainee=>trainee.batch_id===batch?.id&&trainee.enrollment_status!=='Never Started').length;
+   if(batch?.capacity!=null&&data.enrollment_status!=='Never Started'&&(!old||old.enrollment_status==='Never Started')&&activeCount>=batch.capacity)throw new ApiError(400,'This batch is at capacity. Increase its capacity or mark an unstarted enrollment before adding another active trainee.');
   }
-  if(table==='batches'&&old){if(data.capacity!=null&&data.capacity<asArray(state.trainees).filter(trainee=>trainee.batch_id===old.id).length)throw new ApiError(400,'Batch capacity cannot be lower than enrollment.');const scheduleChanged=JSON.stringify(old.session_dates)!==JSON.stringify(data.session_dates)||old.start_date!==data.start_date||old.end_date!==data.end_date;if(scheduleChanged&&!old.source_id&&asArray(state.trainees).some(trainee=>trainee.batch_id===old.id))throw new ApiError(400,'Enrolled batch dates are locked to preserve attendance history. Create a new batch for a new schedule.');}
+  if(table==='batches'&&old){if(data.capacity!=null&&data.capacity<asArray(state.trainees).filter(trainee=>trainee.batch_id===old.id&&trainee.enrollment_status!=='Never Started').length)throw new ApiError(400,'Batch capacity cannot be lower than active enrollment.');const scheduleChanged=JSON.stringify(old.session_dates)!==JSON.stringify(data.session_dates)||old.start_date!==data.start_date||old.end_date!==data.end_date;if(scheduleChanged&&!old.source_id&&asArray(state.trainees).some(trainee=>trainee.batch_id===old.id))throw new ApiError(400,'Enrolled batch dates are locked to preserve attendance history. Create a new batch for a new schedule.');}
   if(table==='daily_attendance'){
    const batch=asArray(state.batches).find(record=>record.id===data.batch_id);
+   const attendanceTrainee=asArray(state.trainees).find(trainee=>trainee.id===data.trainee_id);
+   if(attendanceTrainee?.enrollment_status==='Never Started'&&(!old||!['Absent','Off Day'].includes(data.status)))throw new ApiError(409,'This trainee is marked Never Started and is excluded from new attendance. Change the enrollment status to Active first if they return.');
    if(batch?.source_id&&data.date&&!batch.session_dates.includes(data.date)&&!ops.some(operation=>operation.table==='batches'&&operation.id===batch.id)){const additions=inputs.map(item=>item.data).filter(item=>item?.batch_id===batch.id&&item.date).map(item=>item.date);ops.push({table:'batches',action:'update',id:batch.id,expectedVersion:batch.version,data:{...batch,session_dates:[...new Set([...batch.session_dates,...additions])].sort()}});}
    if((!batch&&!old?.source_id)||(!old?.source_id&&!batch?.source_id&&!batch?.session_dates.includes(data.date)))throw new ApiError(400,'Attendance must be recorded on a scheduled session date. Add the date to the batch schedule before taking attendance.');
    if(data.trainee_id&&asArray(state.daily_attendance).some(record=>record.id!==old?.id&&record.trainee_id===data.trainee_id&&record.date===data.date)&&!(old?.source_id&&old.trainee_id===data.trainee_id&&old.date===data.date))throw new ApiError(409,'Attendance already exists for this trainee and date.');
@@ -47,7 +51,7 @@ export function prepareCloudOperations(body,state,user){
    if(!old||!['duplicate','multiple_results','shared'].includes(old.source_meta?.assessment_state))data.analytics_included=complete&&!notAssessed&&!!data.trainee_id;
   }
   const newId=old?.id||id();ops.push({table,action,id:newId,expectedVersion:old?.version,data});
-  if(table==='trainees'&&!old){const batch=asArray(state.batches).find(record=>record.id===data.batch_id);if(batch?.start_date&&batch?.end_date)ops.push({table:'attendance_10day',action:'create',id:id(),data:{trainee_id:newId,batch_id:batch.id,period_start:batch.start_date,period_end:batch.end_date,days:Array(10).fill(false),report:'',report_kind:'template'}});}
+  if(table==='trainees'&&!old&&data.enrollment_status!=='Never Started'){const batch=asArray(state.batches).find(record=>record.id===data.batch_id);if(batch?.start_date&&batch?.end_date)ops.push({table:'attendance_10day',action:'create',id:id(),data:{trainee_id:newId,batch_id:batch.id,period_start:batch.start_date,period_end:batch.end_date,days:Array(10).fill(false),report:'',report_kind:'template',source_id:null,source_meta:{}}});}
  }
  return ops;
 }

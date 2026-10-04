@@ -206,6 +206,7 @@ export function standaloneReportItem(item,fallbackBatch){
     name:item.trainee.trainee_name,
     company:item.company?.name||'Company not recorded',
     batch:item.batch?.batch_name||fallbackBatch?.batch_name||'Batch not recorded',
+    enrollmentStatus:item.trainee.enrollment_status||'Active',
     photo:item.photo||'',
     rawAssessmentOutcome:rawOutcome,
     overallScore:complete?roundToTwo(overall):'N/A',
@@ -230,7 +231,8 @@ export function standaloneReportItem(item,fallbackBatch){
     overallAssessment:'',
     comments:assessment.instructor_comment||''
   };
-  trainee.overallAssessment=complete?generatedAssessment(trainee):'Assessment pending. A complete four-skill assessment has not been saved, so no score band or result has been inferred.';
+  const enrollmentNote=trainee.enrollmentStatus==='Never Started'?'Enrollment status: Never Started. This trainee was enrolled but never attended; ongoing attendance and session-progress counts exclude this enrollment. ':'';
+  trainee.overallAssessment=enrollmentNote+(complete?generatedAssessment(trainee):'Assessment pending. A complete four-skill assessment has not been saved, so no score band or result has been inferred.');
   if(!trainee.comments&&complete)trainee.comments=generatedComments(trainee);
   return trainee;
 }

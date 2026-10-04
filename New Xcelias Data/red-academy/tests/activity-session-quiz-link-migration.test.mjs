@@ -30,7 +30,7 @@ test('SQLite upgrades an existing session board additively and preserves every s
  const directory=fs.mkdtempSync(path.join(os.tmpdir(),'red-session-quiz-link-'));
  const filename=path.join(directory,'academy.db');
  const schema=fs.readFileSync(new URL('../server/schema.sql',import.meta.url),'utf8').replaceAll('\r\n','\n');
- const legacy=schema.replace(' linked_assignment_id TEXT UNIQUE REFERENCES activity_assignments(id) ON DELETE SET NULL,\n','').replace(" confidence TEXT CHECK(confidence IS NULL OR confidence IN ('tentative','confident')),\n",'').replace('PRAGMA user_version = 17;','PRAGMA user_version = 13;');
+ const legacy=schema.replace(' linked_assignment_id TEXT UNIQUE REFERENCES activity_assignments(id) ON DELETE SET NULL,\n','').replace(" confidence TEXT CHECK(confidence IS NULL OR confidence IN ('tentative','confident')),\n",'').replace('PRAGMA user_version = 18;','PRAGMA user_version = 13;');
  assert.notEqual(legacy,schema,'fixture must model the previous unlinked session-plan schema');
  const oldDb=new DatabaseSync(filename);
  oldDb.exec(legacy);
@@ -46,7 +46,7 @@ test('SQLite upgrades an existing session board additively and preserves every s
   const saved=repository.db.prepare('SELECT id,batch_id,title,status,version,linked_assignment_id FROM activity_session_plans WHERE id=?').get('plan-keep');
   assert.deepEqual({...saved},{id:'plan-keep',batch_id:'batch-keep',title:'Saved discovery class',status:'In Progress',version:4,linked_assignment_id:null});
   assert.ok(repository.db.prepare('PRAGMA table_info(activity_session_plans)').all().some(column=>column.name==='linked_assignment_id'));
-  assert.equal(repository.db.prepare('PRAGMA user_version').get().user_version,17);
+  assert.equal(repository.db.prepare('PRAGMA user_version').get().user_version,18);
   assert.deepEqual(repository.db.prepare('PRAGMA foreign_key_check').all(),[]);
  }finally{
   repository.close();

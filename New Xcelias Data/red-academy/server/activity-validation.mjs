@@ -23,7 +23,7 @@ export function validateActivityAssignment(body,state,additionalActivity=null,se
  if(body.due_date!=null&&body.due_date!==''&&(!validDate(body.due_date)||body.due_date<today()))throw new ApiError(400,'Choose a valid due date that is today or later.');
  if(typeof body.instructions!=='string'||body.instructions.length>2000)throw new ApiError(400,'Instructions must be 2,000 characters or fewer.');
  if(!Array.isArray(body.trainee_ids)||body.trainee_ids.length<1||body.trainee_ids.length>1000||body.trainee_ids.some(value=>!isId(value))||new Set(body.trainee_ids).size!==body.trainee_ids.length)throw new ApiError(400,'Select between 1 and 1,000 distinct trainees.');
- const eligible=state.trainees.filter(row=>row.batch_id===batch.id&&row.enrollment_status!=='Stopped Attending');
+ const eligible=state.trainees.filter(row=>row.batch_id===batch.id&&row.enrollment_status==='Active');
  if(body.trainee_ids.some(id=>!eligible.some(row=>row.id===id)))throw new ApiError(400,'Every selected trainee must be active and belong to this batch.');
  if(sessionPlan?.company_id&&body.trainee_ids.some(id=>state.trainees.find(row=>row.id===id)?.company_id!==sessionPlan.company_id))throw new ApiError(400,'Every selected trainee must belong to the company scoped by this session.');
  return {batch_id:batch.id,activity_id:body.activity_id,title:selectedActivity.title,instructions:body.instructions.trim(),due_date:body.due_date||null,trainee_ids:[...body.trainee_ids],...(sessionPlanId?{session_plan_id:sessionPlanId}:{})};

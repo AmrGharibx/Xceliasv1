@@ -3,6 +3,9 @@ export class ApiError extends Error {constructor(status,message){super(message);
 const fail=message=>{throw new ApiError(400,message);};
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 export function isId(value){return typeof value==='string'&&uuid.test(value);}
+export function validateNeverStarted(traineeId,status,state){
+ if(status==='Never Started'&&traineeId&&state.daily_attendance.some(row=>row.trainee_id===traineeId&&['Present','Tour Day'].includes(row.status)))fail('A trainee with a recorded Present or Tour Day session cannot be marked Never Started. Use Stopped Attending instead.');
+}
 /** Imported records may preserve explicit unknowns. The client cannot grant this exception. */
 export function validate(table,input,{old=null}={}) {
  if(!input||typeof input!=='object'||Array.isArray(input))fail('A record object is required.');

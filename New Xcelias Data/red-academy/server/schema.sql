@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS batches (
 CREATE TABLE IF NOT EXISTS trainees (
  id TEXT PRIMARY KEY, trainee_name TEXT NOT NULL, company_id TEXT REFERENCES companies(id) ON DELETE RESTRICT,
  batch_id TEXT REFERENCES batches(id) ON DELETE CASCADE, email TEXT NOT NULL DEFAULT '',phone TEXT NOT NULL DEFAULT '',
- job_title TEXT NOT NULL DEFAULT '', notes TEXT NOT NULL DEFAULT '', enrollment_status TEXT NOT NULL DEFAULT 'Active' CHECK(enrollment_status IN ('Active','Stopped Attending')),
+ job_title TEXT NOT NULL DEFAULT '', notes TEXT NOT NULL DEFAULT '', enrollment_status TEXT NOT NULL DEFAULT 'Active' CHECK(enrollment_status IN ('Active','Stopped Attending','Never Started')),
  source_id TEXT, source_meta TEXT NOT NULL DEFAULT '{}' CHECK(json_valid(source_meta)),
  version INTEGER NOT NULL DEFAULT 1, created_at TEXT NOT NULL, updated_at TEXT NOT NULL, UNIQUE(id,batch_id)
 );
@@ -92,12 +92,16 @@ CREATE TABLE IF NOT EXISTS sessions (
 );
 CREATE TABLE IF NOT EXISTS rate_limits (key TEXT PRIMARY KEY,window_start INTEGER NOT NULL,count INTEGER NOT NULL);
 CREATE TRIGGER IF NOT EXISTS trainee_capacity BEFORE INSERT ON trainees BEGIN
- SELECT CASE WHEN (SELECT COUNT(*) FROM trainees WHERE batch_id=NEW.batch_id)>=(SELECT capacity FROM batches WHERE id=NEW.batch_id)
+ SELECT CASE WHEN NEW.enrollment_status<>'Never Started' AND (SELECT COUNT(*) FROM trainees WHERE batch_id=NEW.batch_id AND enrollment_status<>'Never Started')>=(SELECT capacity FROM batches WHERE id=NEW.batch_id)
+ THEN RAISE(ABORT,'Batch is at capacity.') END; END;
+CREATE TRIGGER IF NOT EXISTS trainee_capacity_update BEFORE UPDATE OF enrollment_status ON trainees
+ WHEN OLD.enrollment_status='Never Started' AND NEW.enrollment_status<>'Never Started' BEGIN
+ SELECT CASE WHEN (SELECT COUNT(*) FROM trainees WHERE batch_id=NEW.batch_id AND id<>NEW.id AND enrollment_status<>'Never Started')>=(SELECT capacity FROM batches WHERE id=NEW.batch_id)
  THEN RAISE(ABORT,'Batch is at capacity.') END; END;
 CREATE TRIGGER IF NOT EXISTS trainee_batch_immutable BEFORE UPDATE OF batch_id ON trainees
  WHEN NEW.batch_id IS NOT OLD.batch_id BEGIN SELECT RAISE(ABORT,'Create a new enrollment to change batches.'); END;
 CREATE TRIGGER IF NOT EXISTS batch_guard BEFORE UPDATE ON batches BEGIN
- SELECT CASE WHEN NEW.capacity<(SELECT COUNT(*) FROM trainees WHERE batch_id=OLD.id)
+ SELECT CASE WHEN NEW.capacity<(SELECT COUNT(*) FROM trainees WHERE batch_id=OLD.id AND enrollment_status<>'Never Started')
  THEN RAISE(ABORT,'Batch capacity cannot be lower than enrollment.') END;
  SELECT CASE WHEN OLD.source_id IS NULL AND EXISTS(SELECT 1 FROM trainees WHERE batch_id=OLD.id) AND
  (NEW.start_date<>OLD.start_date OR NEW.end_date<>OLD.end_date OR NEW.session_dates<>OLD.session_dates)
@@ -325,4 +329,4 @@ CREATE INDEX IF NOT EXISTS ix_activity_session_plans_company_date ON activity_se
 CREATE UNIQUE INDEX IF NOT EXISTS ix_daily_native_unique ON daily_attendance(trainee_id,date) WHERE source_id IS NULL;
 CREATE UNIQUE INDEX IF NOT EXISTS ix_assessment_native_unique ON assessments(trainee_id,batch_id) WHERE source_id IS NULL;
 CREATE UNIQUE INDEX IF NOT EXISTS ix_checklist_native_unique ON attendance_10day(trainee_id,batch_id,period_start,period_end) WHERE source_id IS NULL;
-PRAGMA user_version = 17;
+PRAGMA user_version = 18;

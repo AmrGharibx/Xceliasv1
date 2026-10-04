@@ -3,7 +3,7 @@ import {today} from './core.mjs';
 import {btn,e,openModal,closeModal,icon,toast,badge,stat,dateLabel} from './ui.mjs';
 import {heading,scopeBar} from './views.mjs';
 
-const activeTrainees=(ctx,batchId,companyId='')=>ctx.store.data.trainees.filter(trainee=>trainee.batch_id===batchId&&trainee.enrollment_status!=='Stopped Attending'&&(!companyId||trainee.company_id===companyId));
+const activeTrainees=(ctx,batchId,companyId='')=>ctx.store.data.trainees.filter(trainee=>trainee.batch_id===batchId&&trainee.enrollment_status==='Active'&&(!companyId||trainee.company_id===companyId));
 const companyName=(ctx,id)=>ctx.store.data.companies.find(company=>company.id===id)?.name||'Company not recorded';
 
 export async function loadActivityAssignments(ctx){

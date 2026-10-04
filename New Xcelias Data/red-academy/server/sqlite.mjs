@@ -35,9 +35,49 @@ CREATE TABLE activity_live_players_new (
 INSERT INTO activity_live_players_new(id,room_id,token_hash,nickname,team_no,points,streak,joined_at,last_seen_at)
  SELECT id,room_id,token_hash,nickname,team_no,points,streak,joined_at,last_seen_at FROM activity_live_players;
 DROP TABLE activity_live_players;
-ALTER TABLE activity_live_players_new RENAME TO activity_live_players;
-CREATE INDEX ix_activity_live_players_room ON activity_live_players(room_id,team_no,points DESC);
-COMMIT;`);}catch(error){try{db.exec('ROLLBACK');}catch{}throw error;}finally{db.exec('PRAGMA foreign_keys=ON');}const violations=db.prepare('PRAGMA foreign_key_check').all();if(violations.length)throw new Error('Live-room team migration found a foreign-key inconsistency.');}
+ ALTER TABLE activity_live_players_new RENAME TO activity_live_players;
+ CREATE INDEX ix_activity_live_players_room ON activity_live_players(room_id,team_no,points DESC);
+ COMMIT;`);}catch(error){try{db.exec('ROLLBACK');}catch{}throw error;}finally{db.exec('PRAGMA foreign_keys=ON');}const violations=db.prepare('PRAGMA foreign_key_check').all();if(violations.length)throw new Error('Live-room team migration found a foreign-key inconsistency.');}
+function migrateNeverStartedEnrollment(db){
+ const sql=db.prepare("SELECT sql FROM sqlite_master WHERE type='table' AND name='trainees'").get()?.sql||'';
+ if(!/Never Started/i.test(sql)){
+  db.exec('PRAGMA foreign_keys=OFF');
+  try{db.exec(`BEGIN IMMEDIATE;
+DROP TRIGGER IF EXISTS batch_guard;
+CREATE TABLE trainees_new (
+ id TEXT PRIMARY KEY, trainee_name TEXT NOT NULL, company_id TEXT REFERENCES companies(id) ON DELETE RESTRICT,
+ batch_id TEXT REFERENCES batches(id) ON DELETE CASCADE, email TEXT NOT NULL DEFAULT '',phone TEXT NOT NULL DEFAULT '',
+ job_title TEXT NOT NULL DEFAULT '', notes TEXT NOT NULL DEFAULT '', enrollment_status TEXT NOT NULL DEFAULT 'Active' CHECK(enrollment_status IN ('Active','Stopped Attending','Never Started')),
+ source_id TEXT, source_meta TEXT NOT NULL DEFAULT '{}' CHECK(json_valid(source_meta)),
+ version INTEGER NOT NULL DEFAULT 1, created_at TEXT NOT NULL, updated_at TEXT NOT NULL, UNIQUE(id,batch_id)
+);
+INSERT INTO trainees_new(id,trainee_name,company_id,batch_id,email,phone,job_title,notes,enrollment_status,source_id,source_meta,version,created_at,updated_at)
+ SELECT id,trainee_name,company_id,batch_id,email,phone,job_title,notes,enrollment_status,source_id,source_meta,version,created_at,updated_at FROM trainees;
+DROP TABLE trainees;
+ALTER TABLE trainees_new RENAME TO trainees;
+COMMIT;`);}catch(error){try{db.exec('ROLLBACK');}catch{}throw error;}finally{db.exec('PRAGMA foreign_keys=ON');}
+  const violations=db.prepare('PRAGMA foreign_key_check').all();if(violations.length)throw new Error('Never-started enrollment migration found a foreign-key inconsistency.');
+ }
+ db.exec(`CREATE INDEX IF NOT EXISTS ix_trainee_batch ON trainees(batch_id);
+CREATE INDEX IF NOT EXISTS ix_trainee_company ON trainees(company_id);
+DROP TRIGGER IF EXISTS trainee_capacity;
+CREATE TRIGGER trainee_capacity BEFORE INSERT ON trainees BEGIN
+ SELECT CASE WHEN NEW.enrollment_status<>'Never Started' AND (SELECT COUNT(*) FROM trainees WHERE batch_id=NEW.batch_id AND enrollment_status<>'Never Started')>=(SELECT capacity FROM batches WHERE id=NEW.batch_id)
+ THEN RAISE(ABORT,'Batch is at capacity.') END; END;
+DROP TRIGGER IF EXISTS trainee_capacity_update;
+CREATE TRIGGER trainee_capacity_update BEFORE UPDATE OF enrollment_status ON trainees
+ WHEN OLD.enrollment_status='Never Started' AND NEW.enrollment_status<>'Never Started' BEGIN
+ SELECT CASE WHEN (SELECT COUNT(*) FROM trainees WHERE batch_id=NEW.batch_id AND id<>NEW.id AND enrollment_status<>'Never Started')>=(SELECT capacity FROM batches WHERE id=NEW.batch_id)
+ THEN RAISE(ABORT,'Batch is at capacity.') END; END;
+DROP TRIGGER IF EXISTS trainee_batch_immutable;
+CREATE TRIGGER trainee_batch_immutable BEFORE UPDATE OF batch_id ON trainees
+ WHEN NEW.batch_id IS NOT OLD.batch_id BEGIN SELECT RAISE(ABORT,'Create a new enrollment to change batches.'); END;
+DROP TRIGGER IF EXISTS batch_guard;
+CREATE TRIGGER batch_guard BEFORE UPDATE ON batches BEGIN
+ SELECT CASE WHEN NEW.capacity<(SELECT COUNT(*) FROM trainees WHERE batch_id=OLD.id AND enrollment_status<>'Never Started') THEN RAISE(ABORT,'Batch capacity cannot be lower than enrollment.') END;
+ SELECT CASE WHEN OLD.source_id IS NULL AND EXISTS(SELECT 1 FROM trainees WHERE batch_id=OLD.id) AND (NEW.start_date<>OLD.start_date OR NEW.end_date<>OLD.end_date OR NEW.session_dates<>OLD.session_dates) THEN RAISE(ABORT,'Enrolled batch dates are locked.') END;
+END;`);
+}
 export class SQLiteRepository {
  constructor(filename){
   if(filename!==':memory:')fs.mkdirSync(path.dirname(path.resolve(filename)),{recursive:true,mode:0o700});
@@ -46,7 +86,8 @@ export class SQLiteRepository {
   if(version&&version<3){this.db.close();throw new Error('This is an older RED database. Use the imported v3 database in a fresh folder; do not copy a v2 database over it. Keep a backup of your older workspace.');}
   if(filename!==':memory:'){try{fs.chmodSync(filename,0o600);}catch{}}
   this.db.exec(fs.readFileSync(new URL('./schema.sql',import.meta.url),'utf8'));
-  ensureColumn(this.db,'trainees','enrollment_status',"TEXT NOT NULL DEFAULT 'Active' CHECK(enrollment_status IN ('Active','Stopped Attending'))");
+  ensureColumn(this.db,'trainees','enrollment_status',"TEXT NOT NULL DEFAULT 'Active' CHECK(enrollment_status IN ('Active','Stopped Attending','Never Started'))");
+  migrateNeverStartedEnrollment(this.db);
   ensureColumn(this.db,'daily_attendance','assessment_day','INTEGER NOT NULL DEFAULT 0 CHECK(assessment_day IN (0,1))');
   ensureColumn(this.db,'batches','archived_at','TEXT');
   ensureColumn(this.db,'batches','archived_by','TEXT');
@@ -66,13 +107,13 @@ export class SQLiteRepository {
   ensureColumn(this.db,'activity_live_profile_results','earned_xp','INTEGER NOT NULL DEFAULT 0 CHECK(earned_xp>=0)');
   ensureColumn(this.db,'activity_live_profile_results','session_date','TEXT');
   ensureColumn(this.db,'activity_live_profile_results','attendance_status','TEXT');
-  this.db.exec('CREATE UNIQUE INDEX IF NOT EXISTS ix_activity_learner_code ON activity_assignment_participants(learner_code_hash) WHERE learner_code_hash IS NOT NULL; CREATE UNIQUE INDEX IF NOT EXISTS ix_activity_session_plan_assignment ON activity_session_plans(linked_assignment_id) WHERE linked_assignment_id IS NOT NULL; PRAGMA user_version = 17');
+  this.db.exec('CREATE UNIQUE INDEX IF NOT EXISTS ix_activity_learner_code ON activity_assignment_participants(learner_code_hash) WHERE learner_code_hash IS NOT NULL; CREATE UNIQUE INDEX IF NOT EXISTS ix_activity_session_plan_assignment ON activity_session_plans(linked_assignment_id) WHERE linked_assignment_id IS NOT NULL; PRAGMA user_version = 18');
  }
 
  async init() {
   migrateLiveRoomTeamLimit(this.db);
   ensureColumn(this.db,'activity_live_players','trainee_id','TEXT');
-  this.db.exec('PRAGMA user_version = 17');
+  this.db.exec('PRAGMA user_version = 18');
   // Business data is NEVER seeded, even when an old environment requests it.
   this.db.prepare('DELETE FROM sessions WHERE expires_at <= ?').run(Date.now());
   this.db.prepare('DELETE FROM rate_limits WHERE window_start < ?').run(Date.now()-86400000);
@@ -363,7 +404,7 @@ export class SQLiteRepository {
    for(const match of mappings){
     if(!match.trainee_id)continue;
     const trainee=this.db.prepare('SELECT * FROM trainees WHERE id=? AND batch_id=?').get(match.trainee_id,batch.id);
-    if(!trainee||trainee.enrollment_status==='Stopped Attending'||!deck.roster.trainees.some(item=>item.id===trainee.id))throw new ApiError(409,'The selected roster changed. Refresh and select active trainees from this batch.');
+    if(!trainee||trainee.enrollment_status!=='Active'||!deck.roster.trainees.some(item=>item.id===trainee.id))throw new ApiError(409,'The selected roster changed. Refresh and select active trainees from this batch.');
     const player=players.find(item=>item.id===match.player_id);
     const counts=this.db.prepare('SELECT COUNT(*) answered_count,COALESCE(SUM(correct),0) correct_count FROM activity_live_answers WHERE room_id=? AND player_id=? AND correct IS NOT NULL').get(roomId,player.id);
     const presence=attendanceDate&&counts.answered_count>0?recordActivityPresence(this,trainee.id,batch.id,attendanceDate,roomId,user):null;

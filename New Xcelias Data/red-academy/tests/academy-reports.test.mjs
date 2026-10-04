@@ -52,6 +52,19 @@ test('tour attendance counts as present in a batch report',()=>{
  assert.equal(report.items[0].attendance.rate,100);
 });
 
+test('Never Started remains visible in reports without being described as missing schedule data',()=>{
+ const {state,company,batch,trainee}=fixtureState();
+ trainee.enrollment_status='Never Started';
+ state.daily_attendance=[attendance('first-day-no-show',trainee.id,batch.id,'Absent')];
+ const report=buildBatchReport(state,{batchId:batch.id,companyId:company.id}),item=report.items[0];
+ assert.equal(item.checklist,null);
+ assert.match(item.narrative,/enrolled but did not attend any sessions/i);
+ assert.match(item.narrative,/ongoing attendance and session-progress counts exclude/i);
+ const pdf=standaloneReportItem(item,batch);
+ assert.match(pdf.overallAssessment,/Enrollment status: Never Started/);
+ assert.match(renderDetailPage(pdf),/Enrollment status: Never Started/);
+});
+
 test('batch PDF jobs create one standalone report per company without cross-company trainees',()=>{
  const {state,company,batch,trainee,assessment}=fixtureState();
  const otherCompany={...company,id:'company-other',name:'Other company'};

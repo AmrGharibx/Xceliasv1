@@ -6,7 +6,7 @@ export type Timestamp=string;
 export type UserRole='admin'|'instructor'|'viewer';
 export type BatchStatus='Planning'|'Active'|'Completed';
 export type AttendanceStatus='Present'|'Absent'|'Tour Day'|'Off Day';
-export type EnrollmentStatus='Active'|'Stopped Attending';
+export type EnrollmentStatus='Active'|'Stopped Attending'|'Never Started';
 export type AssessmentOutcome='Failed'|'Needs Improvement'|'Good'|'Very Good'|'Excellent'|'Aced';
 export type ReportKind='template'|'ai'|'notion';
 export interface Versioned {id:UUID;version:number;created_at:Timestamp;updated_at:Timestamp;}

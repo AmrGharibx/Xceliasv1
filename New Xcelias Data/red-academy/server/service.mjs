@@ -3,7 +3,7 @@ import {liveJoinIdentity,checkedLiveMappings} from './activity-live-roster.mjs';
 import {EventEmitter} from 'node:events';
 import crypto from 'node:crypto';
 import {TABLES,id,emptyState,attendanceStats,scores,assessedRows,assessmentFor,sessionChecklistFor} from '../public/modules/core.mjs';
-import {validate,ApiError,isId} from './validation.mjs';
+import {validate,validateNeverStarted,ApiError,isId} from './validation.mjs';
 import {validateActivityAssignment,validateActivityProgress,validateAssignmentClose} from './activity-validation.mjs';
 import {STUDIO_SKILLS,validateStudioArabicChallenge,validateStudioChallenge,validateStudioDraftRequest} from './activity-studio.mjs';
 import {draftActivitySessionPromptsWithGemini,validateActivitySessionPlan,validateActivitySessionPromptDraftRequest,validateActivitySessionStep} from './activity-session-plans.mjs';
@@ -57,11 +57,15 @@ export function prepareOperations(body,state,user){
   if(table==='trainees'){
    const b=state.batches.find(b=>b.id===data.batch_id);if((data.batch_id&&!b)||(data.company_id&&!state.companies.some(c=>c.id===data.company_id)))throw new ApiError(400,'Choose an existing batch and company.');
    if(old&&old.batch_id!==data.batch_id)throw new ApiError(400,'Create a new enrollment to place this trainee in another batch.');
-   if(!old&&b?.capacity!=null&&state.trainees.filter(t=>t.batch_id===b.id).length>=b.capacity)throw new ApiError(400,'This batch is at capacity.');
+   validateNeverStarted(old?.id||input.id,data.enrollment_status,state);
+   const activeCount=state.trainees.filter(t=>t.batch_id===b?.id&&t.enrollment_status!=='Never Started').length;
+   if(b?.capacity!=null&&data.enrollment_status!=='Never Started'&&(!old||old.enrollment_status==='Never Started')&&activeCount>=b.capacity)throw new ApiError(400,'This batch is at capacity. Increase its capacity or mark an unstarted enrollment before adding another active trainee.');
   }
-  if(table==='batches'&&old){if(data.capacity!=null&&data.capacity<state.trainees.filter(t=>t.batch_id===old.id).length)throw new ApiError(400,'Capacity cannot be lower than the enrolled headcount.');const scheduleChanged=JSON.stringify(old.session_dates)!==JSON.stringify(data.session_dates)||old.start_date!==data.start_date||old.end_date!==data.end_date;if(scheduleChanged&&!old.source_id&&state.trainees.some(t=>t.batch_id===old.id))throw new ApiError(400,'Enrolled batch dates are locked to preserve attendance history. Create a new batch for a new schedule.');}
+  if(table==='batches'&&old){if(data.capacity!=null&&data.capacity<state.trainees.filter(t=>t.batch_id===old.id&&t.enrollment_status!=='Never Started').length)throw new ApiError(400,'Capacity cannot be lower than the active enrollment headcount.');const scheduleChanged=JSON.stringify(old.session_dates)!==JSON.stringify(data.session_dates)||old.start_date!==data.start_date||old.end_date!==data.end_date;if(scheduleChanged&&!old.source_id&&state.trainees.some(t=>t.batch_id===old.id))throw new ApiError(400,'Enrolled batch dates are locked to preserve attendance history. Create a new batch for a new schedule.');}
   if(table==='daily_attendance'){
    const b=state.batches.find(b=>b.id===data.batch_id);
+   const attendanceTrainee=state.trainees.find(t=>t.id===data.trainee_id);
+   if(attendanceTrainee?.enrollment_status==='Never Started'&&(!old||!['Absent','Off Day'].includes(data.status)))throw new ApiError(409,'This trainee is marked Never Started and is excluded from new attendance. Change the enrollment status to Active first if they return.');
    if(b?.source_id&&data.date&&!b.session_dates.includes(data.date)&&!ops.some(o=>o.table==='batches'&&o.id===b.id)){const additions=inputs.map(x=>x.data).filter(x=>x?.batch_id===b.id&&x.date).map(x=>x.date);ops.push({table:'batches',action:'update',id:b.id,expectedVersion:b.version,data:{...b,session_dates:[...new Set([...b.session_dates,...additions])].sort()}});}
    if((!b&&!old?.source_id)||(!old?.source_id&&!b?.source_id&&!b?.session_dates.includes(data.date)))throw new ApiError(400,'Attendance must be recorded on a scheduled session date. Add the date to the batch schedule before taking attendance.');
    if(data.trainee_id&&state.daily_attendance.some(r=>r.id!==old?.id&&r.trainee_id===data.trainee_id&&r.date===data.date)&&!(old?.source_id&&old.trainee_id===data.trainee_id&&old.date===data.date))throw new ApiError(409,'Attendance already exists for this trainee and date.');
@@ -74,7 +78,7 @@ export function prepareOperations(body,state,user){
    if(!old||!['duplicate','multiple_results','shared'].includes(old.source_meta?.assessment_state))data.analytics_included=complete&&!notAssessed&&!!data.trainee_id;
   }
   const newId=old?.id||id();ops.push({table,action,id:newId,expectedVersion:old?.version,data});
-  if(table==='trainees'&&!old){const b=state.batches.find(b=>b.id===data.batch_id);if(b?.start_date&&b?.end_date)ops.push({table:'attendance_10day',action:'create',id:id(),data:{trainee_id:newId,batch_id:b.id,period_start:b.start_date,period_end:b.end_date,days:Array(10).fill(false),report:'',report_kind:'template'}});}
+  if(table==='trainees'&&!old&&data.enrollment_status!=='Never Started'){const b=state.batches.find(b=>b.id===data.batch_id);if(b?.start_date&&b?.end_date)ops.push({table:'attendance_10day',action:'create',id:id(),data:{trainee_id:newId,batch_id:b.id,period_start:b.start_date,period_end:b.end_date,days:Array(10).fill(false),report:'',report_kind:'template',source_id:null,source_meta:{}}});}
  }
  return ops;
 }
@@ -148,8 +152,8 @@ async function aiReport(repo,user,token,body){
  const state=await repo.state(user,token);const trainee=state.trainees.find(t=>t.id===body.traineeId);if(!trainee)throw new ApiError(404,'Trainee not found.');
  const a=assessmentFor(state,trainee.id),r=sessionChecklistFor(state,trainee.id);
  if(body.kind==='assessment'&&!a)throw new ApiError(400,'Save an assessment first.');
- const metrics={type:body.kind,attendance:attendanceStats(state.daily_attendance.filter(r=>r.trainee_id===trainee.id)),checklist:r?{count:r.count,total:r.total,percent:r.percent,status:r.status,tour:r.tour}:null,assessment:a?{mapping:a.mapping,productKnowledge:a.product_knowledge,presentability:a.presentability,softSkills:a.soft_skills,...scores(a),outcome:a.assessment_outcome}:null};
- const response=await fetch('https://api.openai.com/v1/responses',{method:'POST',headers:{Authorization:`Bearer ${process.env.OPENAI_API_KEY}`,'Content-Type':'application/json'},body:JSON.stringify({model:process.env.OPENAI_MODEL,store:false,max_output_tokens:650,instructions:'Write a clear, constructive training report of 130-180 words. Use only the supplied metrics. Never infer personality, motivation, employment suitability, or missing attendance. Distinguish manual late flags from calculated late arrivals. The session checklist is derived from Daily Attendance: Present and Tour Day count as attended, Off Day is excluded, and unrecorded is not absence. Mention practical next steps. Plain text only. Do not include names or contact details. An instructor will review the report.',input:JSON.stringify(metrics)}),signal:AbortSignal.timeout(45000)});
+ const metrics={type:body.kind,enrollmentStatus:trainee.enrollment_status||'Active',attendance:attendanceStats(state.daily_attendance.filter(r=>r.trainee_id===trainee.id)),checklist:r?{count:r.count,total:r.total,percent:r.percent,status:r.status,tour:r.tour}:null,assessment:a?{mapping:a.mapping,productKnowledge:a.product_knowledge,presentability:a.presentability,softSkills:a.soft_skills,...scores(a),outcome:a.assessment_outcome}:null};
+ const response=await fetch('https://api.openai.com/v1/responses',{method:'POST',headers:{Authorization:`Bearer ${process.env.OPENAI_API_KEY}`,'Content-Type':'application/json'},body:JSON.stringify({model:process.env.OPENAI_MODEL,store:false,max_output_tokens:650,instructions:'Write a clear, constructive training report of 130-180 words. Use only the supplied metrics. Never infer personality, motivation, employment suitability, or missing attendance. Distinguish manual late flags from calculated late arrivals. The session checklist is derived from Daily Attendance: Present and Tour Day count as attended, Off Day is excluded, and unrecorded is not absence. If enrollmentStatus is Never Started, explicitly state that the trainee was enrolled but did not attend any sessions and is excluded from ongoing progress counts; do not imply that dates are missing. Mention practical next steps. Plain text only. Do not include names or contact details. An instructor will review the report.',input:JSON.stringify(metrics)}),signal:AbortSignal.timeout(45000)});
  if(!response.ok){console.error('AI provider response',response.status);throw new ApiError(502,'The AI provider could not complete the report. Your data has not been changed.');}
  const result=await response.json();const report=(result.output||[]).flatMap(o=>o.content||[]).filter(c=>c.type==='output_text').map(c=>c.text).join('\n').trim();if(!report)throw new ApiError(502,'The provider returned an empty report.');return {report,source:'ai'};
 }

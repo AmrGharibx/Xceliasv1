@@ -1825,10 +1825,9 @@
       "zone": "Sokhna",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 5112250,
+      "priceMin": 8980000,
       "unitTypes": [
-        "townhouse",
-        "apartment"
+        "Chalet"
       ],
       "areaMin": 60,
       "areaMax": 248,
@@ -1841,21 +1840,15 @@
         6
       ],
       "paymentPlan": "10% Down Payment",
-      "downPayment": 10,
+      "downPayment": 0,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/pioneers-real-estate/jebal-el-sokhna",
-            "observedPrice": 5112250,
-            "sourceId": "property-finder:dd56861f-b819-410b-be0c-f7a33bc19e87"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19064-jebal-el-sokhna",
@@ -1863,7 +1856,7 @@
             "sourceId": "red:19064"
           }
         ],
-        "updatedAt": "2026-10-02T02:58:26.669Z"
+        "updatedAt": "2026-10-04T01:37:10.168Z"
       }
     },
     {

@@ -1066,14 +1066,14 @@
       "zone": "Ras El Hekma",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 14000000,
+      "priceMin": 14028000,
       "unitTypes": [
+        "Chalet",
         "Villa",
         "Townhouse",
-        "Chalet",
+        "Penthouse",
         "Twinhouse",
-        "Apartment",
-        "Penthouse"
+        "Apartment"
       ],
       "areaMin": 96,
       "areaMax": 382,
@@ -1098,7 +1098,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1212-mar-bay-ras-el-hekma",
-            "observedPrice": 14000000,
+            "observedPrice": 14028000,
             "sourceId": "nawy:1212"
           },
           {
@@ -1114,7 +1114,7 @@
             "sourceId": "red:19229"
           }
         ],
-        "updatedAt": "2026-10-04T03:55:35.305Z"
+        "updatedAt": "2026-10-04T14:17:50.996Z"
       }
     },
     {
@@ -4240,12 +4240,7 @@
       ],
       "priceMin": 9429168,
       "unitTypes": [
-        "Chalet",
-        "Cabin",
-        "Duplex",
-        "Townhouse",
-        "Penthouse",
-        "Villa"
+        "Cabin"
       ],
       "areaMin": 78,
       "areaMax": 341,
@@ -4258,14 +4253,14 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 9 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 9,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Property Finder",
@@ -4278,15 +4273,9 @@
             "url": "https://redww.com/en/projects/30946-crysta",
             "observedPrice": 9560129,
             "sourceId": "red:30946"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1648-crysta",
-            "observedPrice": 9757007,
-            "sourceId": "nawy:1648"
           }
         ],
-        "updatedAt": "2026-10-04T03:55:35.305Z"
+        "updatedAt": "2026-10-04T14:17:50.996Z"
       }
     },
     {
@@ -4886,19 +4875,19 @@
             "sourceId": "property-finder:a49de7a8-f3e7-4786-9bb6-c8583e3dda6d"
           },
           {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/789-marsa-baghush",
+            "observedPrice": 17000000,
+            "sourceId": "nawy:789"
+          },
+          {
             "name": "RED",
             "url": "https://redww.com/en/projects/30862-marsa-baghush",
             "observedPrice": 19065000,
             "sourceId": "red:30862"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/789-marsa-baghush",
-            "observedPrice": 19800000,
-            "sourceId": "nawy:789"
           }
         ],
-        "updatedAt": "2026-10-04T03:55:35.305Z"
+        "updatedAt": "2026-10-04T14:17:50.996Z"
       }
     },
     {
@@ -5197,7 +5186,7 @@
       "layouts": [
         "https://alahlysabbour.com/en/project/gaia"
       ],
-      "priceMin": 13500000,
+      "priceMin": 13800000,
       "unitTypes": [
         "Cabin"
       ],
@@ -5224,7 +5213,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1156-gaia-cabanas",
-            "observedPrice": 13500000,
+            "observedPrice": 13800000,
             "sourceId": "nawy:1156"
           },
           {
@@ -5240,7 +5229,7 @@
             "sourceId": "red:43"
           }
         ],
-        "updatedAt": "2026-10-03T03:08:51.635Z"
+        "updatedAt": "2026-10-04T14:17:50.996Z"
       }
     },
     {
@@ -10370,7 +10359,7 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 10243350,
+      "priceMin": 11346480,
       "unitTypes": [
         "Chalet"
       ],
@@ -10384,9 +10373,9 @@
         5,
         6
       ],
-      "paymentPlan": "10% Down Payment, 10 Years Installments",
-      "downPayment": 10,
-      "installmentYears": 10,
+      "paymentPlan": "5% Down Payment, 8 Years Installments",
+      "downPayment": 5,
+      "installmentYears": 8,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -10397,11 +10386,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1767-sway-dose",
-            "observedPrice": 10243350,
+            "observedPrice": 11346480,
             "sourceId": "nawy:1767"
           }
         ],
-        "updatedAt": "2026-09-30T18:38:12.946Z"
+        "updatedAt": "2026-10-04T14:17:50.996Z"
       }
     },
     {

@@ -11178,14 +11178,14 @@
       "zone": "Ras El Hekma",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 14000000,
+      "priceMin": 14028000,
       "unitTypes": [
+        "Chalet",
         "Villa",
         "Townhouse",
-        "Chalet",
+        "Penthouse",
         "Twinhouse",
-        "Apartment",
-        "Penthouse"
+        "Apartment"
       ],
       "areaMin": 96,
       "areaMax": 382,
@@ -11210,7 +11210,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1212-mar-bay-ras-el-hekma",
-            "observedPrice": 14000000,
+            "observedPrice": 14028000,
             "sourceId": "nawy:1212"
           },
           {
@@ -11226,7 +11226,7 @@
             "sourceId": "red:19229"
           }
         ],
-        "updatedAt": "2026-10-04T03:55:35.305Z"
+        "updatedAt": "2026-10-04T14:17:50.996Z"
       }
     },
     {
@@ -18865,7 +18865,7 @@
       "zone": "New Capital",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 4102496,
+      "priceMin": 3998496,
       "unitTypes": [
         "Administrative",
         "Retail"
@@ -18893,11 +18893,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/895-paragon-2",
-            "observedPrice": 4102496,
+            "observedPrice": 3998496,
             "sourceId": "nawy:895"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-10-04T14:17:50.996Z"
       }
     },
     {
@@ -18908,7 +18908,7 @@
       "zone": "New Capital",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 2449132,
+      "priceMin": 2099132,
       "unitTypes": [
         "Administrative"
       ],
@@ -18935,11 +18935,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/896-paragon-3",
-            "observedPrice": 2449132,
+            "observedPrice": 2099132,
             "sourceId": "nawy:896"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-10-04T14:17:50.996Z"
       }
     },
     {
@@ -22428,7 +22428,6 @@
       "type": "residential",
       "priceMin": 10500000,
       "unitTypes": [
-        "Office",
         "Retail"
       ],
       "areaMin": 77,
@@ -22460,11 +22459,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/879-gates-prive",
-            "observedPrice": 19509336,
+            "observedPrice": 44385125,
             "sourceId": "nawy:879"
           }
         ],
-        "updatedAt": "2026-10-03T03:08:51.635Z"
+        "updatedAt": "2026-10-04T14:17:50.996Z"
       }
     },
     {
@@ -26109,12 +26108,7 @@
       ],
       "priceMin": 9429168,
       "unitTypes": [
-        "Chalet",
-        "Cabin",
-        "Duplex",
-        "Townhouse",
-        "Penthouse",
-        "Villa"
+        "Cabin"
       ],
       "areaMin": 78,
       "areaMax": 341,
@@ -26127,14 +26121,14 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 9 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 9,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Property Finder",
@@ -26147,15 +26141,9 @@
             "url": "https://redww.com/en/projects/30946-crysta",
             "observedPrice": 9560129,
             "sourceId": "red:30946"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1648-crysta",
-            "observedPrice": 9757007,
-            "sourceId": "nawy:1648"
           }
         ],
-        "updatedAt": "2026-10-04T03:55:35.305Z"
+        "updatedAt": "2026-10-04T14:17:50.996Z"
       }
     },
     {
@@ -26755,19 +26743,19 @@
             "sourceId": "property-finder:a49de7a8-f3e7-4786-9bb6-c8583e3dda6d"
           },
           {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/789-marsa-baghush",
+            "observedPrice": 17000000,
+            "sourceId": "nawy:789"
+          },
+          {
             "name": "RED",
             "url": "https://redww.com/en/projects/30862-marsa-baghush",
             "observedPrice": 19065000,
             "sourceId": "red:30862"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/789-marsa-baghush",
-            "observedPrice": 19800000,
-            "sourceId": "nawy:789"
           }
         ],
-        "updatedAt": "2026-10-04T03:55:35.305Z"
+        "updatedAt": "2026-10-04T14:17:50.996Z"
       }
     },
     {
@@ -27066,7 +27054,7 @@
       "layouts": [
         "https://alahlysabbour.com/en/project/gaia"
       ],
-      "priceMin": 13500000,
+      "priceMin": 13800000,
       "unitTypes": [
         "Cabin"
       ],
@@ -27093,7 +27081,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1156-gaia-cabanas",
-            "observedPrice": 13500000,
+            "observedPrice": 13800000,
             "sourceId": "nawy:1156"
           },
           {
@@ -27109,7 +27097,7 @@
             "sourceId": "red:43"
           }
         ],
-        "updatedAt": "2026-10-03T03:08:51.635Z"
+        "updatedAt": "2026-10-04T14:17:50.996Z"
       }
     },
     {
@@ -45048,7 +45036,7 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 10243350,
+      "priceMin": 11346480,
       "unitTypes": [
         "Chalet"
       ],
@@ -45062,9 +45050,9 @@
         5,
         6
       ],
-      "paymentPlan": "10% Down Payment, 10 Years Installments",
-      "downPayment": 10,
-      "installmentYears": 10,
+      "paymentPlan": "5% Down Payment, 8 Years Installments",
+      "downPayment": 5,
+      "installmentYears": 8,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -45075,11 +45063,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1767-sway-dose",
-            "observedPrice": 10243350,
+            "observedPrice": 11346480,
             "sourceId": "nawy:1767"
           }
         ],
-        "updatedAt": "2026-09-30T18:38:12.946Z"
+        "updatedAt": "2026-10-04T14:17:50.996Z"
       }
     },
     {
@@ -55077,7 +55065,7 @@
       "priceMin": 6526696,
       "unitTypes": [
         "Apartment",
-        "Townhouse",
+        "Town House",
         "Villa"
       ],
       "areaMin": 95,
@@ -55091,14 +55079,14 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 5 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 5,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Property Finder",
@@ -55107,19 +55095,13 @@
             "sourceId": "property-finder:1077ba38-42e7-4571-b334-dc5e50c4c5bf"
           },
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1041-lugar",
-            "observedPrice": 7619971,
-            "sourceId": "nawy:1041"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/19216-gates-lugar",
             "observedPrice": 7712108,
             "sourceId": "red:19216"
           }
         ],
-        "updatedAt": "2026-10-04T03:55:35.305Z"
+        "updatedAt": "2026-10-04T14:17:50.996Z"
       }
     },
     {
@@ -67918,18 +67900,19 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
+        "Studio",
         "Apartment",
         "Loft"
       ],
-      "downPayment": 5,
-      "installmentYears": 8,
-      "paymentPlan": "5% Down Payment, 8 Years Installments",
+      "downPayment": 15,
+      "installmentYears": 13,
+      "paymentPlan": "15% Down Payment, 13 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2199",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 2922150,
+      "priceMin": 2034400,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -67940,7 +67923,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/2199-upmount",
-            "observedPrice": 2922150,
+            "observedPrice": 2034400,
             "sourceId": "nawy:2199"
           },
           {
@@ -67950,7 +67933,7 @@
             "sourceId": "property-finder:54d89260-4bf0-49f1-8b7a-4d9714329b7c"
           }
         ],
-        "updatedAt": "2026-10-03T03:08:51.635Z"
+        "updatedAt": "2026-10-04T14:17:50.996Z"
       }
     },
     {
@@ -68095,7 +68078,7 @@
         "sourceId": "nawy-inventory:2142",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 35000000,
+      "priceMin": 33552083,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -68106,11 +68089,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/2142-citystars-park-street",
-            "observedPrice": 35000000,
+            "observedPrice": 33552083,
             "sourceId": "nawy:2142"
           }
         ],
-        "updatedAt": "2026-09-22T18:36:05.501Z"
+        "updatedAt": "2026-10-04T14:17:50.996Z"
       }
     },
     {

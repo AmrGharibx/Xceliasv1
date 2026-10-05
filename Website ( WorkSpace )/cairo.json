@@ -11203,7 +11203,7 @@
       "zone": "New Capital",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 8550000,
+      "priceMin": 26300193,
       "unitTypes": [
         "Townhouse",
         "Retail",
@@ -11227,14 +11227,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/better-home-development/midtown-villa",
-            "observedPrice": 8550000,
-            "sourceId": "property-finder:a26d143e-64cd-4e71-9bb7-f8225b5d1637"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/443-midtown-new-capital-villa",
@@ -11242,7 +11236,7 @@
             "sourceId": "nawy:443"
           }
         ],
-        "updatedAt": "2026-10-03T03:08:51.635Z"
+        "updatedAt": "2026-10-05T01:14:05.346Z"
       }
     },
     {
@@ -40112,11 +40106,12 @@
       "zone": "Zayed",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 9000000,
+      "priceMin": 14039000,
       "unitTypes": [
-        "apartment",
-        "villa",
-        "townhouse"
+        "Apartment",
+        "Twin House",
+        "Villa",
+        "Town House"
       ],
       "areaMin": 102,
       "areaMax": 410,
@@ -40129,21 +40124,15 @@
         6
       ],
       "paymentPlan": "5% Down Payment",
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/madaar/kinz",
-            "observedPrice": 9000000,
-            "sourceId": "property-finder:4d93038f-f6f6-4935-9c43-833974cc1b26"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30904-kinz",
@@ -40151,7 +40140,7 @@
             "sourceId": "red:30904"
           }
         ],
-        "updatedAt": "2026-10-03T03:08:51.635Z"
+        "updatedAt": "2026-10-05T01:14:05.346Z"
       }
     },
     {
@@ -42573,28 +42562,22 @@
         "sourceId": "nawy-inventory:2040",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 3800000,
+      "priceMin": 8933100,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/palm-hills/park-views-badya",
-            "observedPrice": 3800000,
-            "sourceId": "property-finder:b475422b-5935-449c-9137-7ab22cdfad57"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/2040-park-views",
-            "observedPrice": 6678050,
+            "observedPrice": 8933100,
             "sourceId": "nawy:2040"
           }
         ],
-        "updatedAt": "2026-10-03T03:08:51.635Z"
+        "updatedAt": "2026-10-05T01:14:05.346Z"
       }
     },
     {
@@ -42798,7 +42781,7 @@
         "Duplex",
         "Penthouse"
       ],
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 0,
       "paymentPlan": "5% Down Payment",
       "catalogMeta": {
@@ -42806,20 +42789,14 @@
         "sourceId": "nawy-inventory:2189",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 6324000,
+      "priceMin": 12400000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/hassan-allam-holding/park-central",
-            "observedPrice": 6324000,
-            "sourceId": "property-finder:60534e09-935c-4b62-b3bc-147ccf967264"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30959-park-central",
@@ -42827,7 +42804,7 @@
             "sourceId": "red:30959"
           }
         ],
-        "updatedAt": "2026-10-03T03:08:51.635Z"
+        "updatedAt": "2026-10-05T01:14:05.346Z"
       }
     },
     {
@@ -43630,9 +43607,11 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "apartment"
+        "Studio",
+        "Apartment",
+        "Town House"
       ],
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 0,
       "paymentPlan": "5% Down Payment",
       "catalogMeta": {
@@ -43640,20 +43619,14 @@
         "sourceId": "nawy-inventory:2202",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 3458670,
+      "priceMin": 5709022,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/m-squared/mist",
-            "observedPrice": 3458670,
-            "sourceId": "property-finder:f7c57f62-e1a4-4f8b-8204-d9c44e441fb4"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30880-mist",
@@ -43661,7 +43634,7 @@
             "sourceId": "red:30880"
           }
         ],
-        "updatedAt": "2026-10-03T03:08:51.635Z"
+        "updatedAt": "2026-10-05T01:14:05.346Z"
       }
     },
     {
@@ -44047,20 +44020,14 @@
         "sourceId": "nawy-inventory:2139",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 7700000,
+      "priceMin": 17065000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/madaar/the-hillage",
-            "observedPrice": 7700000,
-            "sourceId": "property-finder:3ccbc007-0070-4d55-b59d-4682bef034f3"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/2139-the-hillage",
@@ -44068,7 +44035,7 @@
             "sourceId": "nawy:2139"
           }
         ],
-        "updatedAt": "2026-10-03T03:08:51.635Z"
+        "updatedAt": "2026-10-05T01:14:05.346Z"
       }
     },
     {
@@ -44848,20 +44815,14 @@
         "sourceId": "nawy-inventory:2156",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 6500000,
+      "priceMin": 13000000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/efid-developments/park-valley-compound",
-            "observedPrice": 6500000,
-            "sourceId": "property-finder:a9c70065-8b07-40ae-87e1-1e16727e64d0"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/2156-park-valley-zayed-13",
@@ -44869,7 +44830,7 @@
             "sourceId": "nawy:2156"
           }
         ],
-        "updatedAt": "2026-10-03T03:08:51.635Z"
+        "updatedAt": "2026-10-05T01:14:05.346Z"
       }
     },
     {
@@ -45439,20 +45400,14 @@
         "sourceId": "nawy-inventory:1927",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 10729680,
+      "priceMin": 17084952,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/torec-developments/t-pearl",
-            "observedPrice": 10729680,
-            "sourceId": "property-finder:41cd50bf-7ad6-4382-b788-9f8427adb98d"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1927-t-pearl",
@@ -45460,7 +45415,7 @@
             "sourceId": "nawy:1927"
           }
         ],
-        "updatedAt": "2026-10-03T03:08:51.635Z"
+        "updatedAt": "2026-10-05T01:14:05.346Z"
       }
     },
     {
@@ -45979,9 +45934,9 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "villa"
+        "Villa"
       ],
-      "downPayment": 10,
+      "downPayment": 0,
       "installmentYears": 0,
       "paymentPlan": "10% Down Payment",
       "catalogMeta": {
@@ -45989,20 +45944,14 @@
         "sourceId": "nawy-inventory:540",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 10800000,
+      "priceMin": 43000000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/al-karma-developments/novella",
-            "observedPrice": 10800000,
-            "sourceId": "property-finder:d8dfea08-dad2-4aa6-b67b-e206bff040ad"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19120-novella",
@@ -46010,7 +45959,7 @@
             "sourceId": "red:19120"
           }
         ],
-        "updatedAt": "2026-10-03T03:08:51.635Z"
+        "updatedAt": "2026-10-05T01:14:05.346Z"
       }
     },
     {
@@ -46799,10 +46748,10 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "apartment",
-        "townhouse"
+        "Town House",
+        "Twin House"
       ],
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 0,
       "paymentPlan": "5% Down Payment",
       "catalogMeta": {
@@ -46810,20 +46759,14 @@
         "sourceId": "nawy-inventory:1960",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 7710600,
+      "priceMin": 17784000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/dunes-capital-group/v-levels",
-            "observedPrice": 7710600,
-            "sourceId": "property-finder:d6704f6a-7915-4aa7-ba31-7a8ef7595f79"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30905-v-levels",
@@ -46831,7 +46774,7 @@
             "sourceId": "red:30905"
           }
         ],
-        "updatedAt": "2026-10-03T03:08:51.635Z"
+        "updatedAt": "2026-10-05T01:14:05.346Z"
       }
     },
     {
@@ -46843,10 +46786,10 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "apartment",
-        "townhouse"
+        "Town House",
+        "Twin House"
       ],
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 0,
       "paymentPlan": "5% Down Payment",
       "catalogMeta": {
@@ -46854,20 +46797,14 @@
         "sourceId": "nawy-inventory:1959",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 7710600,
+      "priceMin": 17784000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/dunes-capital-group/v-levels",
-            "observedPrice": 7710600,
-            "sourceId": "property-finder:d6704f6a-7915-4aa7-ba31-7a8ef7595f79"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30905-v-levels",
@@ -46875,7 +46812,7 @@
             "sourceId": "red:30905"
           }
         ],
-        "updatedAt": "2026-10-03T03:08:51.635Z"
+        "updatedAt": "2026-10-05T01:14:05.346Z"
       }
     },
     {
@@ -47601,10 +47538,9 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "apartment",
-        "duplex"
+        "Apartment"
       ],
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 0,
       "paymentPlan": "5% Down Payment",
       "catalogMeta": {
@@ -47612,20 +47548,14 @@
         "sourceId": "nawy-inventory:1504",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 4917250,
+      "priceMin": 8418060,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/edge-stone-developmnents/moraya",
-            "observedPrice": 4917250,
-            "sourceId": "property-finder:ddbb54dd-d17c-4b68-a904-d46cc51b3ed4"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30886-moraya",
@@ -47633,7 +47563,7 @@
             "sourceId": "red:30886"
           }
         ],
-        "updatedAt": "2026-10-03T03:08:51.635Z"
+        "updatedAt": "2026-10-05T01:14:05.346Z"
       }
     },
     {

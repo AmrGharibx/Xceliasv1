@@ -7286,7 +7286,7 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "commercial",
-      "priceMin": 12000000,
+      "priceMin": 12032000,
       "unitTypes": [
         "Chalet",
         "Villa",
@@ -7305,14 +7305,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/palm-hills/hacienda-ras-el-hekma",
-            "observedPrice": 12000000,
-            "sourceId": "property-finder:797a38f4-0686-4977-8f94-9ac81b2d8204"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/2310-hacienda-ras-el-hekma",
@@ -7326,7 +7320,7 @@
             "sourceId": "red:19099"
           }
         ],
-        "updatedAt": "2026-10-04T19:31:27.675Z"
+        "updatedAt": "2026-10-06T12:44:22.142Z"
       }
     },
     {
@@ -8114,11 +8108,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1623-jay",
-            "observedPrice": 9262500,
+            "observedPrice": 9750000,
             "sourceId": "nawy:1623"
           }
         ],
-        "updatedAt": "2026-10-06T02:59:41.782Z"
+        "updatedAt": "2026-10-06T12:44:22.142Z"
       }
     },
     {
@@ -10352,7 +10346,7 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 11346480,
+      "priceMin": 12607200,
       "unitTypes": [
         "Chalet"
       ],
@@ -10366,9 +10360,9 @@
         5,
         6
       ],
-      "paymentPlan": "5% Down Payment, 8 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 8,
+      "paymentPlan": "10% Down Payment, 10 Years Installments",
+      "downPayment": 10,
+      "installmentYears": 10,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -10379,11 +10373,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1767-sway-dose",
-            "observedPrice": 11346480,
+            "observedPrice": 12607200,
             "sourceId": "nawy:1767"
           }
         ],
-        "updatedAt": "2026-10-04T14:17:50.996Z"
+        "updatedAt": "2026-10-06T12:44:22.142Z"
       }
     },
     {

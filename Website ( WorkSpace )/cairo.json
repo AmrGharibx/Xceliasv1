@@ -3567,7 +3567,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
@@ -3580,15 +3580,9 @@
             "url": "https://www.nawy.com/compound/148-palm-hills-new-cairo",
             "observedPrice": 10285000,
             "sourceId": "nawy:148"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/palm-hills/palm-hills-new-cairo",
-            "observedPrice": 40000000,
-            "sourceId": "property-finder:3e01b5df-51d3-4b38-9161-76393674044c"
           }
         ],
-        "updatedAt": "2026-10-04T19:31:27.675Z"
+        "updatedAt": "2026-10-06T12:44:22.142Z"
       }
     },
     {
@@ -3735,7 +3729,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
@@ -3748,15 +3742,9 @@
             "url": "https://www.nawy.com/compound/148-palm-hills-new-cairo",
             "observedPrice": 10285000,
             "sourceId": "nawy:148"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/palm-hills/palm-hills-new-cairo",
-            "observedPrice": 40000000,
-            "sourceId": "property-finder:3e01b5df-51d3-4b38-9161-76393674044c"
           }
         ],
-        "updatedAt": "2026-10-04T19:31:27.675Z"
+        "updatedAt": "2026-10-06T12:44:22.142Z"
       }
     },
     {
@@ -4883,7 +4871,7 @@
       "zone": "New Cairo",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 28190000,
+      "priceMin": 28684000,
       "unitTypes": [
         "Apartment",
         "Villa",
@@ -4908,14 +4896,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/palm-hills/97-hills",
-            "observedPrice": 28190000,
-            "sourceId": "property-finder:ec602207-5cde-4baf-adc0-e9b820e8831c"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1841-97-hills",
@@ -4929,7 +4911,7 @@
             "sourceId": "red:30945"
           }
         ],
-        "updatedAt": "2026-10-04T19:31:27.675Z"
+        "updatedAt": "2026-10-06T12:44:22.142Z"
       }
     },
     {
@@ -16367,7 +16349,7 @@
       "zone": "October",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 8555000,
+      "priceMin": 15908000,
       "unitTypes": [
         "Apartment",
         "Studio",
@@ -16393,14 +16375,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/palm-hills/palm-parks",
-            "observedPrice": 8555000,
-            "sourceId": "property-finder:2d6ccf82-f19f-486a-afcc-1e304d536d2e"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19104-palm-parks",
@@ -16414,7 +16390,7 @@
             "sourceId": "nawy:64"
           }
         ],
-        "updatedAt": "2026-10-04T19:31:27.675Z"
+        "updatedAt": "2026-10-06T12:44:22.142Z"
       }
     },
     {
@@ -17574,7 +17550,7 @@
       "zone": "October",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 10500000,
+      "priceMin": 44385125,
       "unitTypes": [
         "Retail"
       ],
@@ -17596,14 +17572,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/gates-developments/gates-prive",
-            "observedPrice": 10500000,
-            "sourceId": "property-finder:54b74660-08da-4d85-a252-54184468a150"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/879-gates-prive",
@@ -17611,7 +17581,7 @@
             "sourceId": "nawy:879"
           }
         ],
-        "updatedAt": "2026-10-04T14:17:50.996Z"
+        "updatedAt": "2026-10-06T12:44:22.142Z"
       }
     },
     {
@@ -36701,11 +36671,10 @@
       "zone": "Zayed",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 7712108,
+      "priceMin": 5640410,
       "unitTypes": [
         "Apartment",
-        "Town House",
-        "Villa"
+        "Townhouse"
       ],
       "areaMin": 95,
       "areaMax": 380,
@@ -36718,15 +36687,21 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 5 Years Installments",
-      "downPayment": 0,
-      "installmentYears": 0,
+      "downPayment": 5,
+      "installmentYears": 5,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1041-lugar",
+            "observedPrice": 5640410,
+            "sourceId": "nawy:1041"
+          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19216-gates-lugar",
@@ -36734,7 +36709,7 @@
             "sourceId": "red:19216"
           }
         ],
-        "updatedAt": "2026-10-06T06:50:45.235Z"
+        "updatedAt": "2026-10-06T12:44:22.142Z"
       }
     },
     {

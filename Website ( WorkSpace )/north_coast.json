@@ -75,9 +75,9 @@
         5,
         6
       ],
-      "paymentPlan": "10% Down Payment, 7 Years Installments",
-      "downPayment": 10,
-      "installmentYears": 7,
+      "paymentPlan": "5% Down Payment, 8 Years Installments",
+      "downPayment": 5,
+      "installmentYears": 8,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -86,19 +86,19 @@
         "sourceCount": 2,
         "sources": [
           {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/175-la-vista-ras-el-hekma",
+            "observedPrice": 16800000,
+            "sourceId": "nawy:175"
+          },
+          {
             "name": "RED",
             "url": "https://redww.com/en/projects/19041-la-vista-ras-el-hikma",
             "observedPrice": 16800000,
             "sourceId": "red:19041"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/175-la-vista-ras-el-hekma",
-            "observedPrice": 17800000,
-            "sourceId": "nawy:175"
           }
         ],
-        "updatedAt": "2026-10-05T18:40:53.952Z"
+        "updatedAt": "2026-10-06T01:08:20.238Z"
       }
     },
     {
@@ -330,10 +330,10 @@
       "zone": "Ras El Hekma",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 11290510,
+      "priceMin": 17724000,
       "unitTypes": [
-        "apartment",
-        "villa"
+        "Chalet",
+        "Villa"
       ],
       "areaMin": 91,
       "areaMax": 363,
@@ -344,21 +344,15 @@
         4
       ],
       "paymentPlan": "5% Down Payment",
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/madaar-developments/azha-north-coast",
-            "observedPrice": 11290510,
-            "sourceId": "property-finder:af68447c-a30c-4fb7-983a-037b5cfef8f7"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19032-azha",
@@ -366,7 +360,7 @@
             "sourceId": "red:19032"
           }
         ],
-        "updatedAt": "2026-10-04T03:55:35.305Z"
+        "updatedAt": "2026-10-06T01:08:20.238Z"
       }
     },
     {
@@ -4210,7 +4204,7 @@
       "layouts": [
         "https://cityedgedevelopments.com/project/downtown"
       ],
-      "priceMin": 3770600,
+      "priceMin": 6609000,
       "unitTypes": [
         "Studio",
         "Chalet",
@@ -4235,14 +4229,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/modon-developments/lagoons-al-alamin",
-            "observedPrice": 3770600,
-            "sourceId": "property-finder:8a2b1bb1-e116-4155-96cb-0e5dc4e625d8"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1649-lagoons-al-alamin",
@@ -4250,7 +4238,7 @@
             "sourceId": "nawy:1649"
           }
         ],
-        "updatedAt": "2026-10-04T03:55:35.305Z"
+        "updatedAt": "2026-10-06T01:08:20.238Z"
       }
     },
     {
@@ -8541,7 +8529,7 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 81109600,
+      "priceMin": 216250000,
       "unitTypes": [
         "Villa"
       ],
@@ -8563,14 +8551,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/starlight-developments/katameya-coast-the-north-coast-see-the-sea-phase",
-            "observedPrice": 81109600,
-            "sourceId": "property-finder:c7aa4b5d-00b7-4144-a7d2-1aea28668c96"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1673-see-the-sea",
@@ -8578,7 +8560,7 @@
             "sourceId": "nawy:1673"
           }
         ],
-        "updatedAt": "2026-10-04T03:55:35.305Z"
+        "updatedAt": "2026-10-06T01:08:20.238Z"
       }
     },
     {
@@ -9505,7 +9487,7 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 2100000,
+      "priceMin": 4280000,
       "unitTypes": [
         "Chalet",
         "Studio"
@@ -9528,14 +9510,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/arabia-holding/ruby",
-            "observedPrice": 2100000,
-            "sourceId": "property-finder:4bc2e595-f7ad-4d99-8fd4-879d4743c6f5"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1737-ruby",
@@ -9543,7 +9519,7 @@
             "sourceId": "nawy:1737"
           }
         ],
-        "updatedAt": "2026-10-04T03:55:35.305Z"
+        "updatedAt": "2026-10-06T01:08:20.238Z"
       }
     },
     {
@@ -10372,9 +10348,9 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 9900000,
+      "priceMin": 66000000,
       "unitTypes": [
-        "villa"
+        "Villa"
       ],
       "areaMin": 79,
       "areaMax": 344,
@@ -10387,21 +10363,15 @@
         6
       ],
       "paymentPlan": "5% Down Payment",
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/al-ahly-sabbour-developments/ten-islands",
-            "observedPrice": 9900000,
-            "sourceId": "property-finder:9d1b6b86-be6a-4018-a7b3-b9e0b30fa998"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30930-ten-islands",
@@ -10409,7 +10379,7 @@
             "sourceId": "red:30930"
           }
         ],
-        "updatedAt": "2026-10-04T03:55:35.305Z"
+        "updatedAt": "2026-10-06T01:08:20.238Z"
       }
     },
     {
@@ -10725,7 +10695,7 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 15600000,
+      "priceMin": 31300000,
       "unitTypes": [
         "Villa",
         "Townhouse",
@@ -10749,14 +10719,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/qatari-diar/alam-al-roum",
-            "observedPrice": 15600000,
-            "sourceId": "property-finder:02b76736-bc16-4eba-9968-6b6166ed7dad"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1891-alam-al-roum",
@@ -10764,7 +10728,7 @@
             "sourceId": "nawy:1891"
           }
         ],
-        "updatedAt": "2026-10-04T03:55:35.305Z"
+        "updatedAt": "2026-10-06T01:08:20.238Z"
       }
     },
     {
@@ -11145,9 +11109,12 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 9545233,
+      "priceMin": 15621507,
       "unitTypes": [
-        "villa"
+        "Chalet",
+        "Town House",
+        "Twin House",
+        "Villa"
       ],
       "areaMin": 75,
       "areaMax": 330,
@@ -11160,21 +11127,15 @@
         6
       ],
       "paymentPlan": "5% Down Payment",
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/mountain-view/evia",
-            "observedPrice": 9545233,
-            "sourceId": "property-finder:200275ff-0708-4dee-b23d-8bf100a7c765"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30814-evia",
@@ -11182,7 +11143,7 @@
             "sourceId": "red:30814"
           }
         ],
-        "updatedAt": "2026-10-04T03:55:35.305Z"
+        "updatedAt": "2026-10-06T01:08:20.238Z"
       }
     },
     {
@@ -11193,7 +11154,7 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 18037000,
+      "priceMin": 66624000,
       "unitTypes": [
         "Cabin"
       ],
@@ -11215,14 +11176,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/people-and-places-developments/le-gray-beach-hotel-and-residences",
-            "observedPrice": 18037000,
-            "sourceId": "property-finder:1f1921dc-ec9e-492a-b0d3-c575bee2bda2"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/810-le-gray-beach-hotel-and-residences",
@@ -11230,7 +11185,7 @@
             "sourceId": "nawy:810"
           }
         ],
-        "updatedAt": "2026-10-04T03:55:35.305Z"
+        "updatedAt": "2026-10-06T01:08:20.238Z"
       }
     },
     {

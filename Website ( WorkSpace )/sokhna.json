@@ -1265,11 +1265,11 @@
       "priceMin": 17724000,
       "unitTypes": [
         "Chalet",
+        "Townhouse",
         "Villa",
         "Apartment",
         "Penthouse",
-        "Twinhouse",
-        "Townhouse"
+        "Twinhouse"
       ],
       "areaMin": 64,
       "areaMax": 267,
@@ -1298,11 +1298,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/88-azha",
-            "observedPrice": 41419550,
+            "observedPrice": 40896360,
             "sourceId": "nawy:88"
           }
         ],
-        "updatedAt": "2026-09-21T14:54:37.284Z"
+        "updatedAt": "2026-10-06T18:39:01.864Z"
       }
     },
     {
@@ -2788,7 +2788,7 @@
       "zone": "Sokhna",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 41419550,
+      "priceMin": 40896360,
       "unitTypes": [
         "Villa"
       ],
@@ -2815,11 +2815,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1599-lacerta",
-            "observedPrice": 41419550,
+            "observedPrice": 40896360,
             "sourceId": "nawy:1599"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-10-06T18:39:01.864Z"
       }
     },
     {
@@ -3349,10 +3349,18 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "apartment",
-        "penthouse"
+        "Villa",
+        "Twin House",
+        "Town House",
+        "Chalet",
+        "Studio",
+        "Cabin",
+        "Loft",
+        "Apartment",
+        "Service Apartment",
+        "Duplex"
       ],
-      "downPayment": 10,
+      "downPayment": 0,
       "installmentYears": 0,
       "paymentPlan": "10% Down Payment",
       "catalogMeta": {
@@ -3366,22 +3374,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/28-il-monte-galala",
             "observedPrice": 6642000,
             "sourceId": "red:28"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/tatweer-misr/marina-towers",
-            "observedPrice": 10970700,
-            "sourceId": "property-finder:d2483468-f1c9-4bbb-937b-132ed4db9e2e"
           }
         ],
-        "updatedAt": "2026-10-05T03:03:29.632Z"
+        "updatedAt": "2026-10-06T18:39:01.864Z"
       }
     },
     {
@@ -3393,10 +3395,18 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "apartment",
-        "penthouse"
+        "Villa",
+        "Twin House",
+        "Town House",
+        "Chalet",
+        "Studio",
+        "Cabin",
+        "Loft",
+        "Apartment",
+        "Service Apartment",
+        "Duplex"
       ],
-      "downPayment": 10,
+      "downPayment": 0,
       "installmentYears": 0,
       "paymentPlan": "10% Down Payment",
       "catalogMeta": {
@@ -3410,22 +3420,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/28-il-monte-galala",
             "observedPrice": 6642000,
             "sourceId": "red:28"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/tatweer-misr/marina-towers",
-            "observedPrice": 10970700,
-            "sourceId": "property-finder:d2483468-f1c9-4bbb-937b-132ed4db9e2e"
           }
         ],
-        "updatedAt": "2026-10-05T03:03:29.632Z"
+        "updatedAt": "2026-10-06T18:39:01.864Z"
       }
     },
     {
@@ -3814,20 +3818,14 @@
         "sourceId": "nawy-inventory:2403",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 3200000,
+      "priceMin": 4000000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/lasirena-group/tamera",
-            "observedPrice": 3200000,
-            "sourceId": "property-finder:7ab4ed16-a3cd-4441-9607-4fd615432543"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/2403-tamera",
@@ -3835,7 +3833,7 @@
             "sourceId": "nawy:2403"
           }
         ],
-        "updatedAt": "2026-10-05T03:03:29.632Z"
+        "updatedAt": "2026-10-06T18:39:01.864Z"
       }
     },
     {

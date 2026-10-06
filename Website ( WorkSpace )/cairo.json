@@ -36701,7 +36701,7 @@
       "zone": "Zayed",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 6526696,
+      "priceMin": 7712108,
       "unitTypes": [
         "Apartment",
         "Town House",
@@ -36725,14 +36725,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/gates-developments/lugar-compound",
-            "observedPrice": 6526696,
-            "sourceId": "property-finder:1077ba38-42e7-4571-b334-dc5e50c4c5bf"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19216-gates-lugar",
@@ -36740,7 +36734,7 @@
             "sourceId": "red:19216"
           }
         ],
-        "updatedAt": "2026-10-04T14:17:50.996Z"
+        "updatedAt": "2026-10-06T06:50:45.235Z"
       }
     },
     {
@@ -45096,9 +45090,9 @@
         "Apartment",
         "Loft"
       ],
-      "downPayment": 15,
-      "installmentYears": 13,
-      "paymentPlan": "15% Down Payment, 13 Years Installments",
+      "downPayment": 10,
+      "installmentYears": 12,
+      "paymentPlan": "10% Down Payment, 12 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2199",
@@ -45110,22 +45104,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/2199-upmount",
             "observedPrice": 2034400,
             "sourceId": "nawy:2199"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/empire-state-developments/up-mount",
-            "observedPrice": 7000000,
-            "sourceId": "property-finder:54d89260-4bf0-49f1-8b7a-4d9714329b7c"
           }
         ],
-        "updatedAt": "2026-10-04T14:17:50.996Z"
+        "updatedAt": "2026-10-06T06:50:45.235Z"
       }
     },
     {
@@ -54306,22 +54294,36 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Apartment",
-        "Duplex",
-        "Twinhouse",
-        "Penthouse",
         "Villa",
-        "Townhouse"
+        "Twin House",
+        "Apartment",
+        "Town House"
       ],
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:664",
         "observedAt": "2026-10-06T03:39:11.527Z"
       },
-      "priceMin": 19135000
+      "priceMin": 22679000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/20-the-estates",
+            "observedPrice": 22679000,
+            "sourceId": "red:20"
+          }
+        ],
+        "updatedAt": "2026-10-06T06:50:45.235Z"
+      }
     },
     {
       "name": "The Estates",
@@ -54333,19 +54335,35 @@
       "type": "residential",
       "unitTypes": [
         "Villa",
-        "Twinhouse",
-        "Townhouse",
-        "Apartment"
+        "Twin House",
+        "Apartment",
+        "Town House"
       ],
-      "downPayment": 10,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "10% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:310",
         "observedAt": "2026-10-06T03:39:11.527Z"
       },
-      "priceMin": 71116000
+      "priceMin": 22679000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/20-the-estates",
+            "observedPrice": 22679000,
+            "sourceId": "red:20"
+          }
+        ],
+        "updatedAt": "2026-10-06T06:50:45.235Z"
+      }
     },
     {
       "name": "Mountain View Executive Residence Katameya",
@@ -54397,16 +54415,37 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
+        "Villa",
         "Apartment",
-        "Villa"
+        "Office",
+        "Retail",
+        "Townhouse",
+        "Twinhouse"
       ],
-      "downPayment": 0,
-      "installmentYears": 0,
-      "paymentPlan": "0% Down Payment, 0 Years Installments",
+      "downPayment": 5,
+      "installmentYears": 3,
+      "paymentPlan": "5% Down Payment, 3 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:372",
         "observedAt": "2026-10-06T03:39:11.527Z"
+      },
+      "priceMin": 9414000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/271-al-maqsad",
+            "observedPrice": 9414000,
+            "sourceId": "nawy:271"
+          }
+        ],
+        "updatedAt": "2026-10-06T06:50:45.235Z"
       }
     },
     {
@@ -54433,7 +54472,23 @@
         "sourceId": "nawy-inventory:271",
         "observedAt": "2026-10-06T03:39:11.527Z"
       },
-      "priceMin": 9414000
+      "priceMin": 9414000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/271-al-maqsad",
+            "observedPrice": 9414000,
+            "sourceId": "nawy:271"
+          }
+        ],
+        "updatedAt": "2026-10-06T06:50:45.235Z"
+      }
     },
     {
       "name": "De Joya 3 strip mall",

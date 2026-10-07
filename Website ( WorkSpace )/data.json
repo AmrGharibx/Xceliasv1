@@ -8890,11 +8890,11 @@
       "zone": "New Cairo",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 4363000,
+      "priceMin": 4501251,
       "unitTypes": [
-        "Studio",
         "Apartment",
-        "Duplex"
+        "Duplex",
+        "Studio"
       ],
       "areaMin": 98,
       "areaMax": 492,
@@ -8917,19 +8917,19 @@
         "sourceCount": 2,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1219-nurai",
-            "observedPrice": 4363000,
-            "sourceId": "nawy:1219"
-          },
-          {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/mercon-developments/nurai",
             "observedPrice": 4501251,
             "sourceId": "property-finder:11eb9770-9207-4fae-b08d-4047fd8cf133"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1219-nurai",
+            "observedPrice": 5486068,
+            "sourceId": "nawy:1219"
           }
         ],
-        "updatedAt": "2026-10-06T02:59:41.782Z"
+        "updatedAt": "2026-10-07T12:47:00.190Z"
       }
     },
     {
@@ -15873,9 +15873,9 @@
         5,
         6
       ],
-      "paymentPlan": "10% Down Payment, 10 Years Installments",
-      "downPayment": 10,
-      "installmentYears": 10,
+      "paymentPlan": "0% Down Payment, 5.6 Years Installments",
+      "downPayment": 0,
+      "installmentYears": 5.6,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -15892,11 +15892,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1830-40-square",
-            "observedPrice": 4517000,
+            "observedPrice": 4519300,
             "sourceId": "nawy:1830"
           }
         ],
-        "updatedAt": "2026-10-06T02:59:41.782Z"
+        "updatedAt": "2026-10-07T12:47:00.190Z"
       }
     },
     {
@@ -20993,11 +20993,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/800-mountain-view-4",
-            "observedPrice": 24402955,
+            "observedPrice": 24417509,
             "sourceId": "nawy:800"
           }
         ],
-        "updatedAt": "2026-10-07T06:50:07.428Z"
+        "updatedAt": "2026-10-07T12:47:00.190Z"
       }
     },
     {
@@ -22624,8 +22624,9 @@
       "type": "residential",
       "priceMin": 15008000,
       "unitTypes": [
-        "villa",
-        "townhouse"
+        "Villa",
+        "Townhouse",
+        "Twinhouse"
       ],
       "areaMin": 86,
       "areaMax": 375,
@@ -22637,15 +22638,15 @@
         5,
         6
       ],
-      "paymentPlan": "10% Down Payment",
+      "paymentPlan": "10% Down Payment, 8 Years Installments",
       "downPayment": 10,
-      "installmentYears": 0,
+      "installmentYears": 8,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 3,
         "sources": [
           {
             "name": "Property Finder",
@@ -22654,13 +22655,19 @@
             "sourceId": "property-finder:b63d782a-a13d-414f-ae41-e8a62796e6ba"
           },
           {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1009-ira",
+            "observedPrice": 16525000,
+            "sourceId": "nawy:1009"
+          },
+          {
             "name": "RED",
             "url": "https://redww.com/en/projects/30825-ira",
             "observedPrice": 21080000,
             "sourceId": "red:30825"
           }
         ],
-        "updatedAt": "2026-10-06T02:59:41.782Z"
+        "updatedAt": "2026-10-07T12:47:00.190Z"
       }
     },
     {
@@ -24953,12 +24960,12 @@
       "layouts": [
         "https://www.modon.com/en/our-projects"
       ],
-      "priceMin": 18500000,
+      "priceMin": 15000000,
       "unitTypes": [
         "Apartment",
+        "Townhouse",
         "Villa",
-        "Duplex",
-        "Townhouse"
+        "Duplex"
       ],
       "areaMin": 86,
       "areaMax": 377,
@@ -24983,11 +24990,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1493-ras-el-hekma-egypt",
-            "observedPrice": 18500000,
+            "observedPrice": 15000000,
             "sourceId": "nawy:1493"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-10-07T12:47:00.190Z"
       }
     },
     {
@@ -31194,14 +31201,14 @@
       "zone": "Zayed",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 7130000,
+      "priceMin": 37476476,
       "unitTypes": [
-        "Villa",
         "Townhouse",
-        "Duplex",
         "Twinhouse",
-        "Medical",
-        "Office"
+        "Villa",
+        "Office",
+        "Duplex",
+        "Medical"
       ],
       "areaMin": 95,
       "areaMax": 378,
@@ -31221,14 +31228,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/city-edge/etapa-compound",
-            "observedPrice": 7130000,
-            "sourceId": "property-finder:a2754439-b7d8-4cba-bc5b-a43a68bbdd4a"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/243-etapa",
@@ -31236,7 +31237,7 @@
             "sourceId": "nawy:243"
           }
         ],
-        "updatedAt": "2026-10-05T12:47:38.731Z"
+        "updatedAt": "2026-10-07T12:47:00.190Z"
       }
     },
     {
@@ -31643,10 +31644,9 @@
       "zone": "Zayed",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 6500000,
+      "priceMin": 6209480,
       "unitTypes": [
-        "Apartment",
-        "Penthouse"
+        "Apartment"
       ],
       "areaMin": 107,
       "areaMax": 430,
@@ -31658,9 +31658,9 @@
         5,
         6
       ],
-      "paymentPlan": "0% Down Payment, 8 Years Installments",
-      "downPayment": 0,
-      "installmentYears": 8,
+      "paymentPlan": "5% Down Payment, 10 Years Installments",
+      "downPayment": 5,
+      "installmentYears": 10,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -31669,19 +31669,19 @@
         "sourceCount": 2,
         "sources": [
           {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1457-the-harv",
+            "observedPrice": 6209480,
+            "sourceId": "nawy:1457"
+          },
+          {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/dal-developments/the-harv-by-dal-developments",
             "observedPrice": 6500000,
             "sourceId": "property-finder:a38fa098-fb99-4045-b9c4-aa29608d25e3"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1457-the-harv",
-            "observedPrice": 6839140,
-            "sourceId": "nawy:1457"
           }
         ],
-        "updatedAt": "2026-10-06T02:59:41.782Z"
+        "updatedAt": "2026-10-07T12:47:00.190Z"
       }
     },
     {
@@ -31745,15 +31745,15 @@
       "zone": "New Cairo",
       "status": "Delivered",
       "type": "commercial",
-      "priceMin": 13900000,
+      "priceMin": 8975000,
       "unitTypes": [
-        "Administrative",
         "Townhouse",
-        "Medical",
         "Villa",
         "Apartment",
         "Twinhouse",
-        "Duplex"
+        "Duplex",
+        "Administrative",
+        "Medical"
       ],
       "areaMin": 86,
       "areaMax": 429,
@@ -31771,7 +31771,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1077-solana-east",
-            "observedPrice": 13900000,
+            "observedPrice": 8975000,
             "sourceId": "nawy:1077"
           },
           {
@@ -31787,7 +31787,7 @@
             "sourceId": "red:30830"
           }
         ],
-        "updatedAt": "2026-10-07T03:02:13.236Z"
+        "updatedAt": "2026-10-07T12:47:00.190Z"
       }
     },
     {
@@ -40211,7 +40211,7 @@
       "zone": "New Cairo",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 19398829,
+      "priceMin": 16586259,
       "unitTypes": [
         "Apartment",
         "Townhouse",
@@ -40240,19 +40240,19 @@
         "sourceCount": 2,
         "sources": [
           {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/655-mountain-view-1.1",
+            "observedPrice": 16586259,
+            "sourceId": "nawy:655"
+          },
+          {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/mountain-view/mountain-view-1-1",
             "observedPrice": 19398829,
             "sourceId": "property-finder:4b1cf5c7-5324-4857-8eeb-233c309af232"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/655-mountain-view-1.1",
-            "observedPrice": 55414848,
-            "sourceId": "nawy:655"
           }
         ],
-        "updatedAt": "2026-10-07T03:02:13.236Z"
+        "updatedAt": "2026-10-07T12:47:00.190Z"
       }
     },
     {
@@ -46493,11 +46493,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1822-yemm-boulevard-ras-el-hekma",
-            "observedPrice": 18900000,
+            "observedPrice": 15000000,
             "sourceId": "nawy:1822"
           }
         ],
-        "updatedAt": "2026-10-07T03:02:13.236Z"
+        "updatedAt": "2026-10-07T12:47:00.190Z"
       }
     },
     {
@@ -48042,9 +48042,8 @@
       "zone": "October",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 17011626,
+      "priceMin": 24533388,
       "unitTypes": [
-        "Duplex",
         "Villa",
         "Apartment"
       ],
@@ -48069,19 +48068,19 @@
         "sourceCount": 2,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1889-mv-park-icity-new-october",
-            "observedPrice": 17011626,
-            "sourceId": "nawy:1889"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/19090-october-park",
             "observedPrice": 24533388,
             "sourceId": "red:19090"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1889-mv-park-icity-new-october",
+            "observedPrice": 63159269,
+            "sourceId": "nawy:1889"
           }
         ],
-        "updatedAt": "2026-10-05T18:40:53.952Z"
+        "updatedAt": "2026-10-07T12:47:00.190Z"
       }
     },
     {
@@ -49905,18 +49904,20 @@
       "zone": "New Cairo",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 6000000,
+      "priceMin": 6180000,
       "unitTypes": [
-        "Duplex",
-        "Villa",
-        "Townhouse",
+        "Medical",
         "Apartment",
-        "Twinhouse",
-        "Studio",
+        "Townhouse",
+        "Villa",
+        "Duplex",
         "Office",
-        "Penthouse",
+        "Twinhouse",
         "Administrative",
-        "Medical"
+        "Studio",
+        "Penthouse",
+        "Retail",
+        "Family House"
       ],
       "areaMin": 97,
       "areaMax": 487,
@@ -49928,9 +49929,9 @@
         5,
         6
       ],
-      "paymentPlan": "5% Down Payment, 10 Years Installments",
+      "paymentPlan": "5% Down Payment, 8 Years Installments",
       "downPayment": 5,
-      "installmentYears": 10,
+      "installmentYears": 8,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -49939,19 +49940,19 @@
         "sourceCount": 2,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/38-hyde-park",
-            "observedPrice": 6000000,
-            "sourceId": "nawy:38"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/39-hyde-park-new-cairo",
             "observedPrice": 6180000,
             "sourceId": "red:39"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/38-hyde-park",
+            "observedPrice": 6870000,
+            "sourceId": "nawy:38"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-10-07T12:47:00.190Z"
       }
     },
     {
@@ -51311,7 +51312,7 @@
       "zone": "Central Cairo",
       "status": "Delivered",
       "type": "commercial",
-      "priceMin": 13426141,
+      "priceMin": 17637000,
       "unitTypes": [
         "Retail"
       ],
@@ -51331,11 +51332,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/702-maspero-mall",
-            "observedPrice": 13426141,
+            "observedPrice": 17637000,
             "sourceId": "nawy:702"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-10-07T12:47:00.190Z"
       }
     },
     {
@@ -61356,26 +61357,28 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Duplex",
-        "Villa",
-        "Townhouse",
+        "Medical",
         "Apartment",
-        "Twinhouse",
-        "Studio",
+        "Townhouse",
+        "Villa",
+        "Duplex",
         "Office",
-        "Penthouse",
+        "Twinhouse",
         "Administrative",
-        "Medical"
+        "Studio",
+        "Penthouse",
+        "Retail",
+        "Family House"
       ],
       "downPayment": 5,
-      "installmentYears": 10,
-      "paymentPlan": "5% Down Payment, 10 Years Installments",
+      "installmentYears": 8,
+      "paymentPlan": "5% Down Payment, 8 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2583",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 6000000,
+      "priceMin": 6180000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -61384,19 +61387,19 @@
         "sourceCount": 2,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/38-hyde-park",
-            "observedPrice": 6000000,
-            "sourceId": "nawy:38"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/39-hyde-park-new-cairo",
             "observedPrice": 6180000,
             "sourceId": "red:39"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/38-hyde-park",
+            "observedPrice": 6870000,
+            "sourceId": "nawy:38"
           }
         ],
-        "updatedAt": "2026-09-22T18:36:05.501Z"
+        "updatedAt": "2026-10-07T12:47:00.190Z"
       }
     },
     {
@@ -61445,28 +61448,28 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
+        "Medical",
+        "Apartment",
+        "Townhouse",
+        "Villa",
         "Duplex",
         "Office",
-        "Apartment",
-        "Villa",
-        "Medical",
-        "Townhouse",
-        "Administrative",
         "Twinhouse",
-        "Penthouse",
+        "Administrative",
         "Studio",
+        "Penthouse",
         "Retail",
         "Family House"
       ],
       "downPayment": 5,
-      "installmentYears": 10,
-      "paymentPlan": "5% Down Payment, 10 Years Installments",
+      "installmentYears": 8,
+      "paymentPlan": "5% Down Payment, 8 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2500",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 6000000,
+      "priceMin": 6180000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -61475,16 +61478,16 @@
         "sourceCount": 3,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/38-hyde-park",
-            "observedPrice": 6000000,
-            "sourceId": "nawy:38"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/39-hyde-park-new-cairo",
             "observedPrice": 6180000,
             "sourceId": "red:39"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/38-hyde-park",
+            "observedPrice": 6870000,
+            "sourceId": "nawy:38"
           },
           {
             "name": "Property Finder",
@@ -61493,7 +61496,7 @@
             "sourceId": "property-finder:5f08d7f9-a6ca-4abe-94fe-594241e54dad"
           }
         ],
-        "updatedAt": "2026-10-07T03:02:13.236Z"
+        "updatedAt": "2026-10-07T12:47:00.190Z"
       }
     },
     {
@@ -61505,28 +61508,28 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
+        "Medical",
+        "Apartment",
+        "Townhouse",
+        "Villa",
         "Duplex",
         "Office",
-        "Apartment",
-        "Villa",
-        "Medical",
-        "Townhouse",
-        "Administrative",
         "Twinhouse",
-        "Penthouse",
+        "Administrative",
         "Studio",
+        "Penthouse",
         "Retail",
         "Family House"
       ],
       "downPayment": 5,
-      "installmentYears": 10,
-      "paymentPlan": "5% Down Payment, 10 Years Installments",
+      "installmentYears": 8,
+      "paymentPlan": "5% Down Payment, 8 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2491",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 6000000,
+      "priceMin": 6180000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -61535,16 +61538,16 @@
         "sourceCount": 3,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/38-hyde-park",
-            "observedPrice": 6000000,
-            "sourceId": "nawy:38"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/39-hyde-park-new-cairo",
             "observedPrice": 6180000,
             "sourceId": "red:39"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/38-hyde-park",
+            "observedPrice": 6870000,
+            "sourceId": "nawy:38"
           },
           {
             "name": "Property Finder",
@@ -61553,7 +61556,7 @@
             "sourceId": "property-finder:5f08d7f9-a6ca-4abe-94fe-594241e54dad"
           }
         ],
-        "updatedAt": "2026-10-07T03:02:13.236Z"
+        "updatedAt": "2026-10-07T12:47:00.190Z"
       }
     },
     {

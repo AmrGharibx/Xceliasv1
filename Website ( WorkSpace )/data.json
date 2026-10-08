@@ -3340,7 +3340,7 @@
       "zone": "New Cairo",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 6336000,
+      "priceMin": 8303412,
       "unitTypes": [
         "Apartment",
         "Penthouse"
@@ -3363,14 +3363,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/il-cazar-developments/glen",
-            "observedPrice": 6336000,
-            "sourceId": "property-finder:41453441-1602-4a83-b04a-ba7740b951cf"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1426-glen",
@@ -3378,7 +3372,7 @@
             "sourceId": "nawy:1426"
           }
         ],
-        "updatedAt": "2026-10-06T18:39:01.864Z"
+        "updatedAt": "2026-10-08T06:52:23.114Z"
       }
     },
     {
@@ -7852,9 +7846,10 @@
       "type": "residential",
       "priceMin": 3963700,
       "unitTypes": [
-        "apartment",
-        "duplex",
-        "penthouse"
+        "Apartment",
+        "Penthouse",
+        "Villa",
+        "Studio"
       ],
       "areaMin": 89,
       "areaMax": 444,
@@ -7866,15 +7861,15 @@
         5,
         6
       ],
-      "paymentPlan": "10% Down Payment",
-      "downPayment": 10,
-      "installmentYears": 0,
+      "paymentPlan": "2.5% Down Payment, 10 Years Installments",
+      "downPayment": 2.5,
+      "installmentYears": 10,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 3,
         "sources": [
           {
             "name": "Property Finder",
@@ -7883,13 +7878,19 @@
             "sourceId": "property-finder:2b81779f-8464-4997-8171-c392d88cf80f"
           },
           {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1078-peerage-residence",
+            "observedPrice": 4552200,
+            "sourceId": "nawy:1078"
+          },
+          {
             "name": "RED",
             "url": "https://redww.com/en/projects/19077-peerage",
             "observedPrice": 8820000,
             "sourceId": "red:19077"
           }
         ],
-        "updatedAt": "2026-10-08T03:01:09.920Z"
+        "updatedAt": "2026-10-08T06:52:23.114Z"
       }
     },
     {
@@ -25669,17 +25670,17 @@
       ],
       "priceMin": 6081000,
       "unitTypes": [
-        "Retail",
-        "Apartment",
         "Chalet",
+        "Retail",
         "Villa",
-        "Studio",
+        "Apartment",
         "Administrative",
+        "Studio",
         "Penthouse",
-        "Office",
         "Townhouse",
-        "Twinhouse",
-        "Duplex"
+        "Duplex",
+        "Office",
+        "Twinhouse"
       ],
       "areaMin": 73,
       "areaMax": 321,
@@ -25699,22 +25700,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/231-north-edge-new-alamein",
             "observedPrice": 6081000,
             "sourceId": "nawy:231"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/city-edge/north-edge-towers",
-            "observedPrice": 6390000,
-            "sourceId": "property-finder:7ca04720-01fd-4d19-bc02-227143c86f70"
           }
         ],
-        "updatedAt": "2026-10-06T18:39:01.864Z"
+        "updatedAt": "2026-10-08T06:52:23.114Z"
       }
     },
     {
@@ -30600,10 +30595,10 @@
       "amenities": "Crystal Lagoons, International Hotel, Commercial Strip (Q Lane), Aqua Park",
       "masterplan": "https://qdevelopments.com/project/q-north",
       "layouts": "https://qdevelopments.com/project/q-north",
-      "priceMin": 3608000,
+      "priceMin": 4500000,
       "unitTypes": [
-        "Twinhouse",
         "Chalet",
+        "Twinhouse",
         "Apartment"
       ],
       "areaMin": 75,
@@ -30624,14 +30619,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/q-developments/q-north",
-            "observedPrice": 3608000,
-            "sourceId": "property-finder:33351d2f-484b-42c8-90b6-5df9f3ed0904"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1336-q-north",
@@ -30639,7 +30628,7 @@
             "sourceId": "nawy:1336"
           }
         ],
-        "updatedAt": "2026-10-06T18:39:01.864Z"
+        "updatedAt": "2026-10-08T06:52:23.114Z"
       }
     },
     {
@@ -37281,9 +37270,12 @@
       "zone": "New Cairo",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 8820000,
+      "priceMin": 4552200,
       "unitTypes": [
-        "Apartment"
+        "Apartment",
+        "Penthouse",
+        "Villa",
+        "Studio"
       ],
       "areaMin": 90,
       "areaMax": 452,
@@ -37296,15 +37288,21 @@
         6
       ],
       "paymentPlan": "2.5% Down Payment, 10 Years Installments",
-      "downPayment": 0,
-      "installmentYears": 0,
+      "downPayment": 2.5,
+      "installmentYears": 10,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1078-peerage-residence",
+            "observedPrice": 4552200,
+            "sourceId": "nawy:1078"
+          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19077-peerage",
@@ -37312,7 +37310,7 @@
             "sourceId": "red:19077"
           }
         ],
-        "updatedAt": "2026-10-08T01:11:24.824Z"
+        "updatedAt": "2026-10-08T06:52:23.114Z"
       }
     },
     {
@@ -38904,22 +38902,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1567-parkside-owest",
             "observedPrice": 7685000,
             "sourceId": "nawy:1567"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/orascom-development/parkside-in-owest",
-            "observedPrice": 8668000,
-            "sourceId": "property-finder:8db8a1b4-9078-481f-8af4-b987187bb97d"
           }
         ],
-        "updatedAt": "2026-10-06T18:39:01.864Z"
+        "updatedAt": "2026-10-08T06:52:23.114Z"
       }
     },
     {
@@ -79274,22 +79266,36 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Apartment",
-        "Duplex",
-        "Townhouse",
         "Villa",
-        "Penthouse",
-        "Twinhouse"
+        "Twin House",
+        "Apartment",
+        "Town House"
       ],
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:664",
         "observedAt": "2026-10-08T03:42:18.583Z"
       },
-      "priceMin": 19135000
+      "priceMin": 22679000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/20-the-estates",
+            "observedPrice": 22679000,
+            "sourceId": "red:20"
+          }
+        ],
+        "updatedAt": "2026-10-08T06:52:23.114Z"
+      }
     },
     {
       "name": "The Estates",
@@ -79301,19 +79307,35 @@
       "type": "residential",
       "unitTypes": [
         "Villa",
-        "Townhouse",
+        "Twin House",
         "Apartment",
-        "Twinhouse"
+        "Town House"
       ],
-      "downPayment": 10,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "10% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:310",
         "observedAt": "2026-10-08T03:42:18.583Z"
       },
-      "priceMin": 77223960
+      "priceMin": 22679000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/20-the-estates",
+            "observedPrice": 22679000,
+            "sourceId": "red:20"
+          }
+        ],
+        "updatedAt": "2026-10-08T06:52:23.114Z"
+      }
     },
     {
       "name": "Mountain View Executive Residence  Katameya",
@@ -79380,7 +79402,23 @@
         "sourceId": "nawy-inventory:271",
         "observedAt": "2026-10-08T03:42:18.583Z"
       },
-      "priceMin": 9414000
+      "priceMin": 9414000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/271-al-maqsad",
+            "observedPrice": 9414000,
+            "sourceId": "nawy:271"
+          }
+        ],
+        "updatedAt": "2026-10-08T06:52:23.114Z"
+      }
     },
     {
       "name": "Al Maqsad Residences",
@@ -79392,15 +79430,36 @@
       "type": "residential",
       "unitTypes": [
         "Apartment",
-        "Villa"
+        "Office",
+        "Retail",
+        "Villa",
+        "Townhouse",
+        "Twinhouse"
       ],
-      "downPayment": 0,
-      "installmentYears": 0,
-      "paymentPlan": "0% Down Payment, 0 Years Installments",
+      "downPayment": 5,
+      "installmentYears": 3,
+      "paymentPlan": "5% Down Payment, 3 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:372",
         "observedAt": "2026-10-08T03:42:18.583Z"
+      },
+      "priceMin": 9414000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/271-al-maqsad",
+            "observedPrice": 9414000,
+            "sourceId": "nawy:271"
+          }
+        ],
+        "updatedAt": "2026-10-08T06:52:23.114Z"
       }
     },
     {

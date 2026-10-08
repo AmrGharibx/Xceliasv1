@@ -3795,17 +3795,17 @@
       ],
       "priceMin": 6081000,
       "unitTypes": [
-        "Retail",
-        "Apartment",
         "Chalet",
+        "Retail",
         "Villa",
-        "Studio",
+        "Apartment",
         "Administrative",
+        "Studio",
         "Penthouse",
-        "Office",
         "Townhouse",
-        "Twinhouse",
-        "Duplex"
+        "Duplex",
+        "Office",
+        "Twinhouse"
       ],
       "areaMin": 73,
       "areaMax": 321,
@@ -3825,22 +3825,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/231-north-edge-new-alamein",
             "observedPrice": 6081000,
             "sourceId": "nawy:231"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/city-edge/north-edge-towers",
-            "observedPrice": 6390000,
-            "sourceId": "property-finder:7ca04720-01fd-4d19-bc02-227143c86f70"
           }
         ],
-        "updatedAt": "2026-10-06T18:39:01.864Z"
+        "updatedAt": "2026-10-08T06:52:23.114Z"
       }
     },
     {
@@ -6559,10 +6553,10 @@
       "amenities": "Crystal Lagoons, International Hotel, Commercial Strip (Q Lane), Aqua Park",
       "masterplan": "https://qdevelopments.com/project/q-north",
       "layouts": "https://qdevelopments.com/project/q-north",
-      "priceMin": 3608000,
+      "priceMin": 4500000,
       "unitTypes": [
-        "Twinhouse",
         "Chalet",
+        "Twinhouse",
         "Apartment"
       ],
       "areaMin": 75,
@@ -6583,14 +6577,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/q-developments/q-north",
-            "observedPrice": 3608000,
-            "sourceId": "property-finder:33351d2f-484b-42c8-90b6-5df9f3ed0904"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1336-q-north",
@@ -6598,7 +6586,7 @@
             "sourceId": "nawy:1336"
           }
         ],
-        "updatedAt": "2026-10-06T18:39:01.864Z"
+        "updatedAt": "2026-10-08T06:52:23.114Z"
       }
     },
     {

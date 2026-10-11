@@ -13848,11 +13848,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/874-boardwalk",
-            "observedPrice": 6900000,
+            "observedPrice": 6700000,
             "sourceId": "nawy:874"
           }
         ],
-        "updatedAt": "2026-10-10T03:02:24.806Z"
+        "updatedAt": "2026-10-11T12:43:27.553Z"
       }
     },
     {
@@ -21239,7 +21239,7 @@
       "zone": "October",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 10800000,
+      "priceMin": 10865000,
       "unitTypes": [
         "Administrative"
       ],
@@ -21266,11 +21266,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1531-being",
-            "observedPrice": 10800000,
+            "observedPrice": 10865000,
             "sourceId": "nawy:1531"
           }
         ],
-        "updatedAt": "2026-09-28T12:47:37.254Z"
+        "updatedAt": "2026-10-11T12:43:27.553Z"
       }
     },
     {
@@ -21281,7 +21281,7 @@
       "zone": "October",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 5625000,
+      "priceMin": 5550000,
       "unitTypes": [
         "Apartment",
         "Duplex",
@@ -21310,11 +21310,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/884-leaves",
-            "observedPrice": 5625000,
+            "observedPrice": 5550000,
             "sourceId": "nawy:884"
           }
         ],
-        "updatedAt": "2026-09-27T12:39:48.129Z"
+        "updatedAt": "2026-10-11T12:43:27.553Z"
       }
     },
     {
@@ -43018,7 +43018,7 @@
         "sourceId": "nawy-inventory:1949",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 10800000,
+      "priceMin": 10865000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -43029,11 +43029,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1949-mindset",
-            "observedPrice": 10800000,
+            "observedPrice": 10865000,
             "sourceId": "nawy:1949"
           }
         ],
-        "updatedAt": "2026-09-28T12:47:37.254Z"
+        "updatedAt": "2026-10-11T12:43:27.553Z"
       }
     },
     {
@@ -44313,14 +44313,33 @@
       "zone": "New Cairo",
       "status": "Available",
       "type": "residential",
-      "unitTypes": [],
-      "downPayment": 0,
-      "installmentYears": 0,
-      "paymentPlan": "0% Down Payment, 0 Years Installments",
+      "unitTypes": [
+        "Administrative"
+      ],
+      "downPayment": 10,
+      "installmentYears": 8,
+      "paymentPlan": "10% Down Payment, 8 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2267",
         "observedAt": "2026-09-22T10:02:00.468Z"
+      },
+      "priceMin": 6522000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2267-vie-halo",
+            "observedPrice": 6522000,
+            "sourceId": "nawy:2267"
+          }
+        ],
+        "updatedAt": "2026-10-11T12:43:27.553Z"
       }
     },
     {
@@ -45350,7 +45369,7 @@
         "sourceId": "nawy-inventory:2142",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 25523969,
+      "priceMin": 25523960,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -45361,11 +45380,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/2142-citystars-park-street",
-            "observedPrice": 25523969,
+            "observedPrice": 25523960,
             "sourceId": "nawy:2142"
           }
         ],
-        "updatedAt": "2026-10-04T19:31:27.675Z"
+        "updatedAt": "2026-10-11T12:43:27.553Z"
       }
     },
     {

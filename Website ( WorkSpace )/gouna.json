@@ -1985,7 +1985,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 3,
         "sources": [
           {
             "name": "RED",
@@ -1994,13 +1994,19 @@
             "sourceId": "red:30963"
           },
           {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/travco-properties/makadina",
+            "observedPrice": 7400000,
+            "sourceId": "property-finder:6f94f94b-9809-4220-9620-aa5688b81f76"
+          },
+          {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/2025-makadina",
             "observedPrice": 7750000,
             "sourceId": "nawy:2025"
           }
         ],
-        "updatedAt": "2026-10-10T18:37:11.240Z"
+        "updatedAt": "2026-10-11T03:02:59.054Z"
       }
     },
     {
@@ -2030,14 +2036,9 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Villa",
-        "Twin House",
-        "Duplex",
-        "Penthouse",
-        "Chalet",
-        "Town House"
+        "apartment"
       ],
-      "downPayment": 0,
+      "downPayment": 10,
       "installmentYears": 0,
       "paymentPlan": "10% Down Payment",
       "catalogMeta": {
@@ -2051,16 +2052,22 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/52-makadi-heights",
             "observedPrice": 8020000,
             "sourceId": "red:52"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/orascom-development/makadi-heights",
+            "observedPrice": 11000000,
+            "sourceId": "property-finder:6e9a4054-9bf0-4a4d-926a-2c73e79f84eb"
           }
         ],
-        "updatedAt": "2026-10-10T18:37:11.240Z"
+        "updatedAt": "2026-10-11T03:02:59.054Z"
       }
     }
   ],

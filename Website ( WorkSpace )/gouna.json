@@ -843,7 +843,7 @@
       "zone": "Hurghada",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 13654075,
+      "priceMin": 12000000,
       "unitTypes": [
         "Chalet",
         "Townhouse"
@@ -866,8 +866,14 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/the-land-developers/il-bayou",
+            "observedPrice": 12000000,
+            "sourceId": "property-finder:9150aa0f-8aa4-4c3c-9760-eb1b2152a1a5"
+          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/978-il-bayou",
@@ -875,7 +881,7 @@
             "sourceId": "nawy:978"
           }
         ],
-        "updatedAt": "2026-10-11T18:38:09.084Z"
+        "updatedAt": "2026-10-12T03:08:38.622Z"
       }
     },
     {
@@ -910,16 +916,22 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1744-encore",
             "observedPrice": 25000000,
             "sourceId": "nawy:1744"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/hassan-allam-holding/encore",
+            "observedPrice": 25800000,
+            "sourceId": "property-finder:3cffc930-4d93-44d7-9931-b52b49a7133b"
           }
         ],
-        "updatedAt": "2026-10-12T01:19:10.181Z"
+        "updatedAt": "2026-10-12T03:08:38.622Z"
       }
     },
     {
@@ -1887,7 +1899,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 3,
         "sources": [
           {
             "name": "RED",
@@ -1896,13 +1908,19 @@
             "sourceId": "red:30949"
           },
           {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/orascom-development/siyal-makadi-heights",
+            "observedPrice": 22695000,
+            "sourceId": "property-finder:e5e8e6a6-eb17-4a83-a28d-8ad5ea97f773"
+          },
+          {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1965-siyal",
             "observedPrice": 23575000,
             "sourceId": "nawy:1965"
           }
         ],
-        "updatedAt": "2026-10-10T18:37:11.240Z"
+        "updatedAt": "2026-10-12T03:08:38.622Z"
       }
     },
     {

@@ -36,12 +36,13 @@
       "zone": "Zaafarana",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 11265766,
+      "priceMin": 8000000,
       "unitTypes": [
+        "Apartment",
         "Chalet",
-        "Loft",
-        "Penthouse",
-        "Studio"
+        "Villa",
+        "Studio",
+        "Loft"
       ],
       "areaMin": 73,
       "areaMax": 317,
@@ -53,16 +54,22 @@
         5,
         6
       ],
-      "paymentPlan": "10% Down Payment, 8 Years Installments",
-      "downPayment": 0,
-      "installmentYears": 0,
+      "paymentPlan": "5% Down Payment, 8 Years Installments",
+      "downPayment": 5,
+      "installmentYears": 8,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/191-kai-sokhna",
+            "observedPrice": 8000000,
+            "sourceId": "nawy:191"
+          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/50-kai-sokhna",
@@ -70,7 +77,7 @@
             "sourceId": "red:50"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-10-12T18:40:48.390Z"
       }
     },
     {
@@ -692,9 +699,11 @@
       "zone": "Galala",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 8980000,
+      "priceMin": 7755000,
       "unitTypes": [
-        "Chalet"
+        "Chalet",
+        "Apartment",
+        "Penthouse"
       ],
       "areaMin": 74,
       "areaMax": 322,
@@ -706,16 +715,22 @@
         5,
         6
       ],
-      "paymentPlan": "10% Down Payment, 8 Years Installments",
-      "downPayment": 0,
-      "installmentYears": 0,
+      "paymentPlan": "10% Down Payment, 6 Years Installments",
+      "downPayment": 10,
+      "installmentYears": 6,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/434-jebal-el-sokhna",
+            "observedPrice": 7755000,
+            "sourceId": "nawy:434"
+          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19064-jebal-el-sokhna",
@@ -723,7 +738,7 @@
             "sourceId": "red:19064"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-10-12T18:40:48.390Z"
       }
     },
     {
@@ -1096,10 +1111,11 @@
       "zone": "Galala",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 6400000,
+      "priceMin": 5257000,
       "unitTypes": [
+        "Chalet",
         "Villa",
-        "Apartment"
+        "Twinhouse"
       ],
       "areaMin": 73,
       "areaMax": 321,
@@ -1111,9 +1127,9 @@
         5,
         6
       ],
-      "paymentPlan": "5% Down Payment",
-      "downPayment": 5,
-      "installmentYears": 0,
+      "paymentPlan": "30% Down Payment, 12 Years Installments",
+      "downPayment": 30,
+      "installmentYears": 12,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -1122,13 +1138,13 @@
         "sourceCount": 1,
         "sources": [
           {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/dm-developments/the-groove-resort",
-            "observedPrice": 6400000,
-            "sourceId": "property-finder:e453bd30-4a43-4266-8cde-75e8a0e39225"
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/392-the-groove",
+            "observedPrice": 5257000,
+            "sourceId": "nawy:392"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-10-12T18:40:48.390Z"
       }
     },
     {
@@ -1139,18 +1155,18 @@
       "zone": "Galala",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 6642000,
+      "priceMin": 5265000,
       "unitTypes": [
-        "Villa",
-        "Twin House",
-        "Town House",
         "Chalet",
-        "Studio",
-        "Cabin",
-        "Loft",
         "Apartment",
-        "Service Apartment",
-        "Duplex"
+        "Duplex",
+        "Penthouse",
+        "Studio",
+        "Loft",
+        "Townhouse",
+        "Villa",
+        "Twinhouse",
+        "Cabin"
       ],
       "areaMin": 83,
       "areaMax": 364,
@@ -1162,16 +1178,22 @@
         5,
         6
       ],
-      "paymentPlan": "5% Down Payment",
-      "downPayment": 0,
-      "installmentYears": 0,
+      "paymentPlan": "5% Down Payment, 10 Years Installments",
+      "downPayment": 5,
+      "installmentYears": 10,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/90-il-monte-galala",
+            "observedPrice": 5265000,
+            "sourceId": "nawy:90"
+          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/28-il-monte-galala",
@@ -1179,7 +1201,7 @@
             "sourceId": "red:28"
           }
         ],
-        "updatedAt": "2026-09-30T02:59:47.607Z"
+        "updatedAt": "2026-10-12T18:40:48.390Z"
       }
     },
     {
@@ -1805,12 +1827,13 @@
       "zone": "Sokhna",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 11265766,
+      "priceMin": 8000000,
       "unitTypes": [
+        "Apartment",
         "Chalet",
-        "Loft",
-        "Penthouse",
-        "Studio"
+        "Villa",
+        "Studio",
+        "Loft"
       ],
       "areaMin": 55,
       "areaMax": 229,
@@ -1822,16 +1845,22 @@
         5,
         6
       ],
-      "paymentPlan": "10% Down Payment, 8 Years Installments",
-      "downPayment": 0,
-      "installmentYears": 0,
+      "paymentPlan": "5% Down Payment, 8 Years Installments",
+      "downPayment": 5,
+      "installmentYears": 8,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/191-kai-sokhna",
+            "observedPrice": 8000000,
+            "sourceId": "nawy:191"
+          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/50-kai-sokhna",
@@ -1839,7 +1868,7 @@
             "sourceId": "red:50"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-10-12T18:40:48.390Z"
       }
     },
     {
@@ -1880,8 +1909,9 @@
       "type": "residential",
       "priceMin": 5112250,
       "unitTypes": [
-        "townhouse",
-        "apartment"
+        "Chalet",
+        "Apartment",
+        "Penthouse"
       ],
       "areaMin": 60,
       "areaMax": 248,
@@ -1893,15 +1923,15 @@
         5,
         6
       ],
-      "paymentPlan": "10% Down Payment",
+      "paymentPlan": "10% Down Payment, 6 Years Installments",
       "downPayment": 10,
-      "installmentYears": 0,
+      "installmentYears": 6,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 3,
         "sources": [
           {
             "name": "Property Finder",
@@ -1910,13 +1940,19 @@
             "sourceId": "property-finder:dd56861f-b819-410b-be0c-f7a33bc19e87"
           },
           {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/434-jebal-el-sokhna",
+            "observedPrice": 7755000,
+            "sourceId": "nawy:434"
+          },
+          {
             "name": "RED",
             "url": "https://redww.com/en/projects/19064-jebal-el-sokhna",
             "observedPrice": 8980000,
             "sourceId": "red:19064"
           }
         ],
-        "updatedAt": "2026-10-12T03:08:38.622Z"
+        "updatedAt": "2026-10-12T18:40:48.390Z"
       }
     },
     {
@@ -3348,18 +3384,26 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "apartment",
-        "penthouse"
+        "Chalet",
+        "Apartment",
+        "Duplex",
+        "Penthouse",
+        "Studio",
+        "Loft",
+        "Townhouse",
+        "Villa",
+        "Twinhouse",
+        "Cabin"
       ],
-      "downPayment": 10,
-      "installmentYears": 0,
-      "paymentPlan": "10% Down Payment",
+      "downPayment": 5,
+      "installmentYears": 10,
+      "paymentPlan": "5% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:1984",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 6642000,
+      "priceMin": 5265000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -3368,19 +3412,19 @@
         "sourceCount": 2,
         "sources": [
           {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/90-il-monte-galala",
+            "observedPrice": 5265000,
+            "sourceId": "nawy:90"
+          },
+          {
             "name": "RED",
             "url": "https://redww.com/en/projects/28-il-monte-galala",
             "observedPrice": 6642000,
             "sourceId": "red:28"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/tatweer-misr/marina-towers",
-            "observedPrice": 10970700,
-            "sourceId": "property-finder:d2483468-f1c9-4bbb-937b-132ed4db9e2e"
           }
         ],
-        "updatedAt": "2026-10-11T03:02:59.054Z"
+        "updatedAt": "2026-10-12T18:40:48.390Z"
       }
     },
     {
@@ -3392,18 +3436,26 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "apartment",
-        "penthouse"
+        "Chalet",
+        "Apartment",
+        "Duplex",
+        "Penthouse",
+        "Studio",
+        "Loft",
+        "Townhouse",
+        "Villa",
+        "Twinhouse",
+        "Cabin"
       ],
-      "downPayment": 10,
-      "installmentYears": 0,
-      "paymentPlan": "10% Down Payment",
+      "downPayment": 5,
+      "installmentYears": 10,
+      "paymentPlan": "5% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:634",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 6642000,
+      "priceMin": 5265000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -3412,19 +3464,19 @@
         "sourceCount": 2,
         "sources": [
           {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/90-il-monte-galala",
+            "observedPrice": 5265000,
+            "sourceId": "nawy:90"
+          },
+          {
             "name": "RED",
             "url": "https://redww.com/en/projects/28-il-monte-galala",
             "observedPrice": 6642000,
             "sourceId": "red:28"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/tatweer-misr/marina-towers",
-            "observedPrice": 10970700,
-            "sourceId": "property-finder:d2483468-f1c9-4bbb-937b-132ed4db9e2e"
           }
         ],
-        "updatedAt": "2026-10-11T03:02:59.054Z"
+        "updatedAt": "2026-10-12T18:40:48.390Z"
       }
     },
     {
@@ -3540,18 +3592,21 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "apartment",
-        "penthouse"
+        "Apartment",
+        "Chalet",
+        "Villa",
+        "Studio",
+        "Loft"
       ],
-      "downPayment": 10,
-      "installmentYears": 0,
-      "paymentPlan": "10% Down Payment",
+      "downPayment": 5,
+      "installmentYears": 8,
+      "paymentPlan": "5% Down Payment, 8 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:1968",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 6890000,
+      "priceMin": 8000000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -3560,10 +3615,10 @@
         "sourceCount": 2,
         "sources": [
           {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/misr-italia/can-limon-kai-sokhna",
-            "observedPrice": 6890000,
-            "sourceId": "property-finder:32a6b5ec-de31-4895-943f-14497e63ff82"
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/191-kai-sokhna",
+            "observedPrice": 8000000,
+            "sourceId": "nawy:191"
           },
           {
             "name": "RED",
@@ -3572,7 +3627,7 @@
             "sourceId": "red:50"
           }
         ],
-        "updatedAt": "2026-10-11T03:02:59.054Z"
+        "updatedAt": "2026-10-12T18:40:48.390Z"
       }
     },
     {
@@ -3629,24 +3684,32 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Chalet"
+        "Chalet",
+        "Apartment",
+        "Penthouse"
       ],
-      "downPayment": 0,
-      "installmentYears": 0,
+      "downPayment": 10,
+      "installmentYears": 6,
       "paymentPlan": "10% Down Payment, 6 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2151",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 8980000,
+      "priceMin": 7755000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/434-jebal-el-sokhna",
+            "observedPrice": 7755000,
+            "sourceId": "nawy:434"
+          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19064-jebal-el-sokhna",
@@ -3654,7 +3717,7 @@
             "sourceId": "red:19064"
           }
         ],
-        "updatedAt": "2026-09-22T18:36:05.501Z"
+        "updatedAt": "2026-10-12T18:40:48.390Z"
       }
     },
     {
@@ -3667,25 +3730,33 @@
       "type": "residential",
       "unitTypes": [
         "Chalet",
+        "Townhouse",
+        "Villa",
         "Duplex",
-        "Apartment"
+        "Penthouse"
       ],
-      "downPayment": 0,
-      "installmentYears": 0,
+      "downPayment": 5,
+      "installmentYears": 10,
       "paymentPlan": "5% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2141",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 15759090,
+      "priceMin": 6082180,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1051-murano-wadi-degla",
+            "observedPrice": 6082180,
+            "sourceId": "nawy:1051"
+          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19029-murano",
@@ -3693,7 +3764,7 @@
             "sourceId": "red:19029"
           }
         ],
-        "updatedAt": "2026-09-22T18:36:05.501Z"
+        "updatedAt": "2026-10-12T18:40:48.390Z"
       }
     },
     {
@@ -3744,7 +3815,9 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Chalet"
+        "Chalet",
+        "Villa",
+        "Twinhouse"
       ],
       "downPayment": 30,
       "installmentYears": 12,
@@ -3754,7 +3827,23 @@
         "sourceId": "nawy-inventory:2413",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 6935000
+      "priceMin": 5257000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/392-the-groove",
+            "observedPrice": 5257000,
+            "sourceId": "nawy:392"
+          }
+        ],
+        "updatedAt": "2026-10-12T18:40:48.390Z"
+      }
     },
     {
       "name": "Sereia-The Groove",
@@ -3765,17 +3854,35 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Chalet"
+        "Chalet",
+        "Villa",
+        "Twinhouse"
       ],
-      "downPayment": 20,
-      "installmentYears": 4,
-      "paymentPlan": "20% Down Payment, 4 Years Installments",
+      "downPayment": 30,
+      "installmentYears": 12,
+      "paymentPlan": "30% Down Payment, 12 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2412",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 7761000
+      "priceMin": 5257000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/392-the-groove",
+            "observedPrice": 5257000,
+            "sourceId": "nawy:392"
+          }
+        ],
+        "updatedAt": "2026-10-12T18:40:48.390Z"
+      }
     },
     {
       "name": "Brellia-The Groove",
@@ -3786,17 +3893,35 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Chalet"
+        "Chalet",
+        "Villa",
+        "Twinhouse"
       ],
-      "downPayment": 20,
-      "installmentYears": 4,
-      "paymentPlan": "20% Down Payment, 4 Years Installments",
+      "downPayment": 30,
+      "installmentYears": 12,
+      "paymentPlan": "30% Down Payment, 12 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2411",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 10000000
+      "priceMin": 5257000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/392-the-groove",
+            "observedPrice": 5257000,
+            "sourceId": "nawy:392"
+          }
+        ],
+        "updatedAt": "2026-10-12T18:40:48.390Z"
+      }
     },
     {
       "name": "Tamera",

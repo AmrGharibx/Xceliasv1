@@ -5448,7 +5448,6 @@
       ],
       "priceMin": 2304806,
       "unitTypes": [
-        "Chalet",
         "Studio"
       ],
       "areaMin": 78,
@@ -5462,14 +5461,14 @@
         6
       ],
       "paymentPlan": "10% Down Payment, 6 Years Installments",
-      "downPayment": 10,
-      "installmentYears": 6,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Property Finder",
@@ -5482,15 +5481,9 @@
             "url": "https://redww.com/en/projects/30958-bungalows",
             "observedPrice": 3299670,
             "sourceId": "red:30958"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1231-bungalows",
-            "observedPrice": 4280000,
-            "sourceId": "nawy:1231"
           }
         ],
-        "updatedAt": "2026-10-11T03:02:59.054Z"
+        "updatedAt": "2026-10-12T13:04:13.396Z"
       }
     },
     {
@@ -6091,11 +6084,12 @@
       "layouts": "https://egodevelopments.com/project/masaya",
       "priceMin": 6081075,
       "unitTypes": [
-        "Apartment",
-        "Chalet",
         "Villa",
         "Duplex",
-        "Twinhouse",
+        "Chalet",
+        "Twin House",
+        "Service Apartment",
+        "Apartment",
         "Studio"
       ],
       "areaMin": 79,
@@ -6109,14 +6103,14 @@
         6
       ],
       "paymentPlan": "10% Down Payment, 8 Years Installments",
-      "downPayment": 10,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Property Finder",
@@ -6129,15 +6123,9 @@
             "url": "https://redww.com/en/projects/19021-masaya",
             "observedPrice": 8951000,
             "sourceId": "red:19021"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/788-masaya",
-            "observedPrice": 10895000,
-            "sourceId": "nawy:788"
           }
         ],
-        "updatedAt": "2026-10-12T03:08:38.622Z"
+        "updatedAt": "2026-10-12T13:04:13.396Z"
       }
     },
     {
@@ -15151,11 +15139,12 @@
       "type": "residential",
       "unitTypes": [
         "Chalet",
-        "Townhouse",
+        "Studio",
+        "Town House",
         "Villa"
       ],
-      "downPayment": 10,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "10% Down Payment, 8 Years Installments",
       "catalogMeta": {
         "status": "observed",
@@ -15168,7 +15157,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
@@ -15181,15 +15170,9 @@
             "url": "https://www.propertyfinder.eg/en/new-projects/q-developments/q-bay",
             "observedPrice": 6880000,
             "sourceId": "property-finder:d6a9f4c4-2c0d-4f81-aed6-4e70e796b67f"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/2013-q-bay",
-            "observedPrice": 7200000,
-            "sourceId": "nawy:2013"
           }
         ],
-        "updatedAt": "2026-10-11T03:02:59.054Z"
+        "updatedAt": "2026-10-12T13:04:13.396Z"
       }
     },
     {

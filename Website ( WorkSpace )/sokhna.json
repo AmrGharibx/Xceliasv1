@@ -287,12 +287,12 @@
       "type": "residential",
       "priceMin": 5280500,
       "unitTypes": [
-        "Duplex",
-        "Villa",
-        "Townhouse",
         "Chalet",
-        "Studio",
-        "Apartment"
+        "Townhouse",
+        "Villa",
+        "Apartment",
+        "Duplex",
+        "Studio"
       ],
       "areaMin": 81,
       "areaMax": 354,
@@ -312,7 +312,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
@@ -321,19 +321,13 @@
             "sourceId": "red:30849"
           },
           {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/atric-developments/boho-el-sokhna",
-            "observedPrice": 6372240,
-            "sourceId": "property-finder:47db6ec4-5fbc-475e-96a2-0ad7bd0a62f8"
-          },
-          {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/864-boho-el-sokhna",
             "observedPrice": 9103200,
             "sourceId": "nawy:864"
           }
         ],
-        "updatedAt": "2026-10-12T03:08:38.622Z"
+        "updatedAt": "2026-10-13T18:41:15.407Z"
       }
     },
     {
@@ -397,7 +391,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
@@ -406,19 +400,13 @@
             "sourceId": "nawy:16"
           },
           {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/la-vista-developments/la-vista-gardens",
-            "observedPrice": 12400000,
-            "sourceId": "property-finder:554807a6-0456-467e-ac17-92967e27397a"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/19046-la-vista-gardens",
             "observedPrice": 16000000,
             "sourceId": "red:19046"
           }
         ],
-        "updatedAt": "2026-10-12T03:08:38.622Z"
+        "updatedAt": "2026-10-13T18:41:15.407Z"
       }
     },
     {
@@ -485,12 +473,12 @@
       "zone": "Zaafarana",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 9000000,
+      "priceMin": 13500000,
       "unitTypes": [
         "Chalet",
+        "Townhouse",
         "Penthouse",
-        "Villa",
-        "Townhouse"
+        "Villa"
       ],
       "areaMin": 75,
       "areaMax": 328,
@@ -502,22 +490,16 @@
         5,
         6
       ],
-      "paymentPlan": "5% Down Payment, 7 Years Installments",
+      "paymentPlan": "5% Down Payment, 8 Years Installments",
       "downPayment": 5,
-      "installmentYears": 7,
+      "installmentYears": 8,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/la-vista-developments/la-vista-topaz-resort",
-            "observedPrice": 9000000,
-            "sourceId": "property-finder:a73ea1ae-9c9a-4df1-a670-fdff66e2e55f"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/225-la-vista-topaz",
@@ -525,7 +507,7 @@
             "sourceId": "nawy:225"
           }
         ],
-        "updatedAt": "2026-10-12T03:08:38.622Z"
+        "updatedAt": "2026-10-13T18:41:15.407Z"
       }
     },
     {
@@ -628,10 +610,11 @@
       "zone": "Galala",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 6403320,
+      "priceMin": 8537760,
       "unitTypes": [
-        "apartment",
-        "duplex"
+        "Apartment",
+        "Duplex",
+        "Studio"
       ],
       "areaMin": 73,
       "areaMax": 321,
@@ -644,21 +627,15 @@
         6
       ],
       "paymentPlan": "10% Down Payment",
-      "downPayment": 10,
+      "downPayment": 0,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/orbit-alliance/marina-hills",
-            "observedPrice": 6403320,
-            "sourceId": "property-finder:c2620092-5abe-4bd1-aaf0-59dc4deac587"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30844-marina-hills",
@@ -666,7 +643,7 @@
             "sourceId": "red:30844"
           }
         ],
-        "updatedAt": "2026-10-12T03:08:38.622Z"
+        "updatedAt": "2026-10-13T18:41:15.407Z"
       }
     },
     {
@@ -705,7 +682,7 @@
       "zone": "Galala",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 7755000,
+      "priceMin": 7317350,
       "unitTypes": [
         "Chalet",
         "Apartment",
@@ -721,9 +698,9 @@
         5,
         6
       ],
-      "paymentPlan": "10% Down Payment, 6 Years Installments",
-      "downPayment": 10,
-      "installmentYears": 6,
+      "paymentPlan": "5% Down Payment, 10 Years Installments",
+      "downPayment": 5,
+      "installmentYears": 10,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -734,7 +711,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/434-jebal-el-sokhna",
-            "observedPrice": 7755000,
+            "observedPrice": 7317350,
             "sourceId": "nawy:434"
           },
           {
@@ -744,7 +721,7 @@
             "sourceId": "red:19064"
           }
         ],
-        "updatedAt": "2026-10-12T18:40:48.390Z"
+        "updatedAt": "2026-10-13T18:41:15.407Z"
       }
     },
     {
@@ -755,12 +732,11 @@
       "zone": "Galala",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 4285033,
+      "priceMin": 6121475,
       "unitTypes": [
-        "apartment",
-        "villa",
-        "duplex",
-        "townhouse"
+        "Twin House",
+        "Town House",
+        "Chalet"
       ],
       "areaMin": 78,
       "areaMax": 342,
@@ -780,14 +756,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/iwan-developments-company/majada",
-            "observedPrice": 4285033,
-            "sourceId": "property-finder:1999bbf3-0157-4647-bdab-52325148fbd6"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19026-majada",
@@ -795,7 +765,7 @@
             "sourceId": "red:19026"
           }
         ],
-        "updatedAt": "2026-10-12T03:08:38.622Z"
+        "updatedAt": "2026-10-13T18:41:15.407Z"
       }
     },
     {
@@ -848,7 +818,7 @@
       "zone": "Galala",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 5010200,
+      "priceMin": 7708000,
       "unitTypes": [
         "Apartment"
       ],
@@ -870,14 +840,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/new-jersey-developments/jura-el-galala",
-            "observedPrice": 5010200,
-            "sourceId": "property-finder:ad5b79e6-e7d5-4d7d-a59e-a6589141d41a"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1342-jura",
@@ -885,7 +849,7 @@
             "sourceId": "nawy:1342"
           }
         ],
-        "updatedAt": "2026-10-12T03:08:38.622Z"
+        "updatedAt": "2026-10-13T18:41:15.407Z"
       }
     },
     {
@@ -1065,7 +1029,7 @@
       "zone": "Galala",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 6236000,
+      "priceMin": 8332000,
       "unitTypes": [
         "Chalet",
         "Townhouse",
@@ -1091,14 +1055,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/maven-developments/baymount",
-            "observedPrice": 6236000,
-            "sourceId": "property-finder:7952cf7d-a34a-432d-b5ae-85a58b4f849e"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/355-baymount",
@@ -1106,7 +1064,7 @@
             "sourceId": "nawy:355"
           }
         ],
-        "updatedAt": "2026-10-12T03:08:38.622Z"
+        "updatedAt": "2026-10-13T18:41:15.407Z"
       }
     },
     {
@@ -1527,22 +1485,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/728-lasirena-palm-beach",
             "observedPrice": 4000000,
             "sourceId": "nawy:728"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/lasirena-group/lasirena-palm-beach",
-            "observedPrice": 4875000,
-            "sourceId": "property-finder:2d810769-f1f9-4eaf-acc6-56d081602cb1"
           }
         ],
-        "updatedAt": "2026-10-12T03:08:38.622Z"
+        "updatedAt": "2026-10-13T18:41:15.407Z"
       }
     },
     {
@@ -1643,13 +1595,13 @@
       "type": "residential",
       "priceMin": 4800000,
       "unitTypes": [
-        "Villa",
         "Chalet",
+        "Studio",
+        "Townhouse",
         "Twinhouse",
         "Apartment",
-        "Duplex",
-        "Townhouse",
-        "Studio"
+        "Villa",
+        "Duplex"
       ],
       "areaMin": 58,
       "areaMax": 243,
@@ -1669,22 +1621,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/87-telal-sokhna",
             "observedPrice": 4800000,
             "sourceId": "nawy:87"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/roya-for-real-estate-company/telal-sokhna",
-            "observedPrice": 6341040,
-            "sourceId": "property-finder:3bbb374c-8801-4dbe-90fa-0eb7d6d0efa7"
           }
         ],
-        "updatedAt": "2026-10-12T03:08:38.622Z"
+        "updatedAt": "2026-10-13T18:41:15.407Z"
       }
     },
     {
@@ -1935,9 +1881,9 @@
         5,
         6
       ],
-      "paymentPlan": "10% Down Payment, 6 Years Installments",
-      "downPayment": 10,
-      "installmentYears": 6,
+      "paymentPlan": "5% Down Payment, 10 Years Installments",
+      "downPayment": 5,
+      "installmentYears": 10,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -1954,7 +1900,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/434-jebal-el-sokhna",
-            "observedPrice": 7755000,
+            "observedPrice": 7317350,
             "sourceId": "nawy:434"
           },
           {
@@ -1964,7 +1910,7 @@
             "sourceId": "red:19064"
           }
         ],
-        "updatedAt": "2026-10-12T18:40:48.390Z"
+        "updatedAt": "2026-10-13T18:41:15.407Z"
       }
     },
     {
@@ -2097,22 +2043,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/728-lasirena-palm-beach",
             "observedPrice": 4000000,
             "sourceId": "nawy:728"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/lasirena-group/lasirena-palm-beach",
-            "observedPrice": 4875000,
-            "sourceId": "property-finder:2d810769-f1f9-4eaf-acc6-56d081602cb1"
           }
         ],
-        "updatedAt": "2026-10-12T03:08:38.622Z"
+        "updatedAt": "2026-10-13T18:41:15.407Z"
       }
     },
     {
@@ -2123,14 +2063,14 @@
       "zone": "Sokhna",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 6372240,
+      "priceMin": 9103200,
       "unitTypes": [
-        "Duplex",
-        "Villa",
-        "Townhouse",
         "Chalet",
-        "Studio",
-        "Apartment"
+        "Townhouse",
+        "Villa",
+        "Apartment",
+        "Duplex",
+        "Studio"
       ],
       "areaMin": 64,
       "areaMax": 268,
@@ -2150,14 +2090,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/atric-developments/boho-el-sokhna",
-            "observedPrice": 6372240,
-            "sourceId": "property-finder:47db6ec4-5fbc-475e-96a2-0ad7bd0a62f8"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/864-boho-el-sokhna",
@@ -2165,7 +2099,7 @@
             "sourceId": "nawy:864"
           }
         ],
-        "updatedAt": "2026-10-12T03:08:38.622Z"
+        "updatedAt": "2026-10-13T18:41:15.407Z"
       }
     },
     {
@@ -2358,13 +2292,13 @@
       "zone": "Sokhna",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 7500000,
+      "priceMin": 11200000,
       "unitTypes": [
-        "Penthouse",
-        "Townhouse",
-        "Twinhouse",
         "Chalet",
-        "Apartment"
+        "Townhouse",
+        "Apartment",
+        "Twinhouse",
+        "Penthouse"
       ],
       "areaMin": 57,
       "areaMax": 237,
@@ -2384,14 +2318,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/la-vista-developments/la-vista-ray",
-            "observedPrice": 7500000,
-            "sourceId": "property-finder:23e00920-92f3-4bc2-ae95-9753636142c1"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/220-la-vista-ray",
@@ -2405,7 +2333,7 @@
             "sourceId": "red:19047"
           }
         ],
-        "updatedAt": "2026-10-12T03:08:38.622Z"
+        "updatedAt": "2026-10-13T18:41:15.407Z"
       }
     },
     {
@@ -2591,15 +2519,15 @@
       "priceMin": 5265000,
       "unitTypes": [
         "Chalet",
-        "Duplex",
-        "Villa",
-        "Twinhouse",
-        "Cabin",
         "Apartment",
+        "Duplex",
+        "Penthouse",
         "Studio",
         "Loft",
         "Townhouse",
-        "Penthouse"
+        "Villa",
+        "Twinhouse",
+        "Cabin"
       ],
       "areaMin": 58,
       "areaMax": 243,
@@ -2619,7 +2547,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
@@ -2628,19 +2556,13 @@
             "sourceId": "nawy:90"
           },
           {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/tatweer-misr/phia-il-monte-galala",
-            "observedPrice": 6575000,
-            "sourceId": "property-finder:16785ace-641e-497b-ab02-76b2a194b70b"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/28-il-monte-galala",
             "observedPrice": 6642000,
             "sourceId": "red:28"
           }
         ],
-        "updatedAt": "2026-10-12T03:08:38.622Z"
+        "updatedAt": "2026-10-13T18:41:15.407Z"
       }
     },
     {
@@ -3164,15 +3086,15 @@
         5,
         6
       ],
-      "paymentPlan": "5% Down Payment, 10 Years Installments",
+      "paymentPlan": "5% Down Payment, 9 Years Installments",
       "downPayment": 5,
-      "installmentYears": 10,
+      "installmentYears": 9,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
@@ -3181,19 +3103,13 @@
             "sourceId": "nawy:1051"
           },
           {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/wadi-degla/murano-wadi-degla",
-            "observedPrice": 8036600,
-            "sourceId": "property-finder:39b44706-3901-437f-bde2-699ec54675f2"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/19029-murano",
             "observedPrice": 15759090,
             "sourceId": "red:19029"
           }
         ],
-        "updatedAt": "2026-10-12T03:08:38.622Z"
+        "updatedAt": "2026-10-13T18:41:15.407Z"
       }
     },
     {
@@ -3667,15 +3583,15 @@
         "Apartment",
         "Penthouse"
       ],
-      "downPayment": 10,
-      "installmentYears": 6,
-      "paymentPlan": "10% Down Payment, 6 Years Installments",
+      "downPayment": 5,
+      "installmentYears": 10,
+      "paymentPlan": "5% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2152",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 7755000,
+      "priceMin": 7317350,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -3686,7 +3602,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/434-jebal-el-sokhna",
-            "observedPrice": 7755000,
+            "observedPrice": 7317350,
             "sourceId": "nawy:434"
           },
           {
@@ -3696,7 +3612,7 @@
             "sourceId": "red:19064"
           }
         ],
-        "updatedAt": "2026-09-22T18:36:05.501Z"
+        "updatedAt": "2026-10-13T18:41:15.407Z"
       }
     },
     {
@@ -3712,15 +3628,15 @@
         "Apartment",
         "Penthouse"
       ],
-      "downPayment": 10,
-      "installmentYears": 6,
-      "paymentPlan": "10% Down Payment, 6 Years Installments",
+      "downPayment": 5,
+      "installmentYears": 10,
+      "paymentPlan": "5% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2151",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 7755000,
+      "priceMin": 7317350,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -3731,7 +3647,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/434-jebal-el-sokhna",
-            "observedPrice": 7755000,
+            "observedPrice": 7317350,
             "sourceId": "nawy:434"
           },
           {
@@ -3741,7 +3657,7 @@
             "sourceId": "red:19064"
           }
         ],
-        "updatedAt": "2026-10-12T18:40:48.390Z"
+        "updatedAt": "2026-10-13T18:41:15.407Z"
       }
     },
     {

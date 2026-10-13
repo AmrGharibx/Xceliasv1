@@ -999,14 +999,14 @@
       "type": "residential",
       "priceMin": 8020000,
       "unitTypes": [
+        "Chalet",
+        "Duplex",
+        "Loft",
         "Townhouse",
         "Apartment",
-        "Loft",
-        "Chalet",
         "Villa",
         "Twinhouse",
-        "Penthouse",
-        "Duplex"
+        "Penthouse"
       ],
       "areaMin": 65,
       "areaMax": 273,
@@ -1018,9 +1018,9 @@
         5,
         6
       ],
-      "paymentPlan": "0% Down Payment, 7 Years Installments",
-      "downPayment": 0,
-      "installmentYears": 7,
+      "paymentPlan": "25% Down Payment, 3 Years Installments",
+      "downPayment": 25,
+      "installmentYears": 3,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -1037,11 +1037,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/454-makadi-heights",
-            "observedPrice": 13425000,
+            "observedPrice": 14150000,
             "sourceId": "nawy:454"
           }
         ],
-        "updatedAt": "2026-10-12T18:40:48.390Z"
+        "updatedAt": "2026-10-13T12:49:10.344Z"
       }
     },
     {
@@ -1872,18 +1872,18 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
+        "Chalet",
+        "Duplex",
+        "Loft",
         "Townhouse",
         "Apartment",
-        "Loft",
-        "Chalet",
         "Villa",
         "Twinhouse",
-        "Penthouse",
-        "Duplex"
+        "Penthouse"
       ],
-      "downPayment": 0,
-      "installmentYears": 7,
-      "paymentPlan": "0% Down Payment, 7 Years Installments",
+      "downPayment": 25,
+      "installmentYears": 3,
+      "paymentPlan": "25% Down Payment, 3 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2047",
@@ -1906,11 +1906,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/454-makadi-heights",
-            "observedPrice": 13425000,
+            "observedPrice": 14150000,
             "sourceId": "nawy:454"
           }
         ],
-        "updatedAt": "2026-10-12T18:40:48.390Z"
+        "updatedAt": "2026-10-13T12:49:10.344Z"
       }
     },
     {
@@ -2075,18 +2075,18 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
+        "Chalet",
+        "Duplex",
+        "Loft",
         "Townhouse",
         "Apartment",
-        "Loft",
-        "Chalet",
         "Villa",
         "Twinhouse",
-        "Penthouse",
-        "Duplex"
+        "Penthouse"
       ],
-      "downPayment": 0,
-      "installmentYears": 7,
-      "paymentPlan": "0% Down Payment, 7 Years Installments",
+      "downPayment": 25,
+      "installmentYears": 3,
+      "paymentPlan": "25% Down Payment, 3 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2747",
@@ -2115,11 +2115,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/454-makadi-heights",
-            "observedPrice": 13425000,
+            "observedPrice": 14150000,
             "sourceId": "nawy:454"
           }
         ],
-        "updatedAt": "2026-10-13T03:04:10.844Z"
+        "updatedAt": "2026-10-13T12:49:10.344Z"
       }
     }
   ],

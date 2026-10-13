@@ -4201,7 +4201,7 @@
       "zone": "New Cairo",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 18040000,
+      "priceMin": 16236000,
       "unitTypes": [
         "Apartment",
         "Villa",
@@ -4231,7 +4231,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/361-katameya-creeks",
-            "observedPrice": 18040000,
+            "observedPrice": 16236000,
             "sourceId": "nawy:361"
           },
           {
@@ -4241,7 +4241,7 @@
             "sourceId": "property-finder:dbbcbd05-1995-449f-b342-995e7ec9da9a"
           }
         ],
-        "updatedAt": "2026-10-12T03:08:38.622Z"
+        "updatedAt": "2026-10-13T12:49:10.344Z"
       }
     },
     {
@@ -7448,19 +7448,19 @@
             "sourceId": "red:30824"
           },
           {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1011-regent's-square",
+            "observedPrice": 13594064,
+            "sourceId": "nawy:1011"
+          },
+          {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/al-dawlia-developments/regents-square",
             "observedPrice": 13600000,
             "sourceId": "property-finder:9d290284-7ec8-4e63-920d-458331d718c4"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1011-regent's-square",
-            "observedPrice": 15052727,
-            "sourceId": "nawy:1011"
           }
         ],
-        "updatedAt": "2026-10-12T18:40:48.390Z"
+        "updatedAt": "2026-10-13T12:49:10.344Z"
       }
     },
     {
@@ -8061,8 +8061,11 @@
       "type": "residential",
       "priceMin": 6697200,
       "unitTypes": [
-        "villa",
-        "duplex"
+        "Medical",
+        "Administrative",
+        "Apartment",
+        "Duplex",
+        "Villa"
       ],
       "areaMin": 88,
       "areaMax": 442,
@@ -8074,15 +8077,15 @@
         5,
         6
       ],
-      "paymentPlan": "5% Down Payment",
+      "paymentPlan": "5% Down Payment, 8 Years Installments",
       "downPayment": 5,
-      "installmentYears": 0,
+      "installmentYears": 8,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 3,
         "sources": [
           {
             "name": "Property Finder",
@@ -8091,13 +8094,19 @@
             "sourceId": "property-finder:289ddb55-f705-4895-a98e-64ddd45f314f"
           },
           {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1076-ivoire-east",
+            "observedPrice": 8331840,
+            "sourceId": "nawy:1076"
+          },
+          {
             "name": "RED",
             "url": "https://redww.com/en/projects/30895-ivoire-east",
             "observedPrice": 11554000,
             "sourceId": "red:30895"
           }
         ],
-        "updatedAt": "2026-10-12T03:08:38.622Z"
+        "updatedAt": "2026-10-13T12:49:10.344Z"
       }
     },
     {
@@ -8551,7 +8560,8 @@
       "type": "residential",
       "priceMin": 1150000,
       "unitTypes": [
-        "Apartment"
+        "Apartment",
+        "Studio"
       ],
       "areaMin": 97,
       "areaMax": 487,
@@ -8564,23 +8574,29 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 10 Years Installments",
-      "downPayment": 0,
-      "installmentYears": 0,
+      "downPayment": 5,
+      "installmentYears": 10,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19087-avelin",
             "observedPrice": 1150000,
             "sourceId": "red:19087"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1116-avelin",
+            "observedPrice": 3400000,
+            "sourceId": "nawy:1116"
           }
         ],
-        "updatedAt": "2026-10-07T18:40:17.744Z"
+        "updatedAt": "2026-10-13T12:49:10.344Z"
       }
     },
     {
@@ -41526,7 +41542,8 @@
       "type": "residential",
       "priceMin": 1150000,
       "unitTypes": [
-        "Apartment"
+        "Apartment",
+        "Studio"
       ],
       "areaMin": 83,
       "areaMax": 413,
@@ -41539,23 +41556,29 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 10 Years Installments",
-      "downPayment": 0,
-      "installmentYears": 0,
+      "downPayment": 5,
+      "installmentYears": 10,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19087-avelin",
             "observedPrice": 1150000,
             "sourceId": "red:19087"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1116-avelin",
+            "observedPrice": 3400000,
+            "sourceId": "nawy:1116"
           }
         ],
-        "updatedAt": "2026-10-07T18:40:17.744Z"
+        "updatedAt": "2026-10-13T12:49:10.344Z"
       }
     },
     {
@@ -42257,26 +42280,34 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
+        "Medical",
+        "Administrative",
         "Apartment",
-        "Villa",
-        "Town House"
+        "Duplex",
+        "Villa"
       ],
-      "downPayment": 0,
-      "installmentYears": 0,
+      "downPayment": 5,
+      "installmentYears": 8,
       "paymentPlan": "5% Down Payment, 8 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2711",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 11554000,
+      "priceMin": 8331840,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1076-ivoire-east",
+            "observedPrice": 8331840,
+            "sourceId": "nawy:1076"
+          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30895-ivoire-east",
@@ -42284,7 +42315,7 @@
             "sourceId": "red:30895"
           }
         ],
-        "updatedAt": "2026-09-22T18:36:05.501Z"
+        "updatedAt": "2026-10-13T12:49:10.344Z"
       }
     },
     {

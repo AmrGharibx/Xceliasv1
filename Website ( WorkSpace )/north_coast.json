@@ -298,10 +298,15 @@
       "zone": "Ras El Hekma",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 10500000,
+      "priceMin": 24031000,
       "unitTypes": [
-        "apartment",
-        "duplex"
+        "Twin House",
+        "Villa",
+        "Town House",
+        "Chalet",
+        "Apartment",
+        "Duplex",
+        "Studio"
       ],
       "areaMin": 105,
       "areaMax": 419,
@@ -314,21 +319,15 @@
         6
       ],
       "paymentPlan": "5% Down Payment",
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/ora-developers/the-cove-silversands",
-            "observedPrice": 10500000,
-            "sourceId": "property-finder:02841ccf-42a3-4b54-85d6-bc791762abe3"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/11-silversands",
@@ -336,7 +335,7 @@
             "sourceId": "red:11"
           }
         ],
-        "updatedAt": "2026-10-11T03:02:59.054Z"
+        "updatedAt": "2026-10-13T01:14:50.719Z"
       }
     },
     {
@@ -3867,11 +3866,14 @@
       "layouts": [
         "https://thewaterwaydevelopments.com/project/the-waterway-north-coast/"
       ],
-      "priceMin": 37454400,
+      "priceMin": 15606000,
       "unitTypes": [
-        "penthouse",
-        "townhouse",
-        "villa"
+        "Chalet",
+        "Townhouse",
+        "Villa",
+        "Twinhouse",
+        "Loft",
+        "Duplex"
       ],
       "areaMin": 84,
       "areaMax": 369,
@@ -3883,9 +3885,9 @@
         5,
         6
       ],
-      "paymentPlan": "10% Down Payment",
+      "paymentPlan": "10% Down Payment, 8 Years Installments",
       "downPayment": 10,
-      "installmentYears": 0,
+      "installmentYears": 8,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -3894,13 +3896,13 @@
         "sourceCount": 1,
         "sources": [
           {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/waterway-developments/the-waterway-north-coast",
-            "observedPrice": 37454400,
-            "sourceId": "property-finder:7e946f6b-23f6-47d3-820b-3b9db23a3119"
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/221-the-waterway-north-coast",
+            "observedPrice": 15606000,
+            "sourceId": "nawy:221"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-10-13T01:14:50.719Z"
       }
     },
     {
@@ -4026,14 +4028,14 @@
       "layouts": [
         "https://lmd.com.eg/project/zoya/"
       ],
-      "priceMin": 7726320,
+      "priceMin": 11458788,
       "unitTypes": [
         "Apartment",
         "Chalet",
         "Townhouse",
         "Villa",
-        "Cabin",
-        "Twinhouse"
+        "Twinhouse",
+        "Cabin"
       ],
       "areaMin": 74,
       "areaMax": 325,
@@ -4053,14 +4055,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/landmark-developments/zoya-ghazala-bay",
-            "observedPrice": 7726320,
-            "sourceId": "property-finder:72d58cad-44a3-4b44-96d0-f1676dd6d5f5"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19039-zoya-ghazala-bay",
@@ -4074,7 +4070,7 @@
             "sourceId": "nawy:238"
           }
         ],
-        "updatedAt": "2026-10-11T12:43:27.553Z"
+        "updatedAt": "2026-10-13T01:14:50.719Z"
       }
     },
     {
@@ -4834,9 +4830,11 @@
       "layouts": [
         "https://lasirena-group.com/north-coast/"
       ],
-      "priceMin": 12000000,
+      "priceMin": 3890000,
       "unitTypes": [
-        "apartment"
+        "Chalet",
+        "Apartment",
+        "Studio"
       ],
       "areaMin": 77,
       "areaMax": 336,
@@ -4848,9 +4846,9 @@
         5,
         6
       ],
-      "paymentPlan": "10% Down Payment",
-      "downPayment": 10,
-      "installmentYears": 0,
+      "paymentPlan": "50% Down Payment, 5 Years Installments",
+      "downPayment": 50,
+      "installmentYears": 5,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -4859,13 +4857,13 @@
         "sourceCount": 1,
         "sources": [
           {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/lasirena-group/lasirena-north-coast",
-            "observedPrice": 12000000,
-            "sourceId": "property-finder:b73de620-10f5-4568-9c72-bb02e751a392"
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/734-lasirena-north-coast",
+            "observedPrice": 3890000,
+            "sourceId": "nawy:734"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-10-13T01:14:50.719Z"
       }
     },
     {
@@ -8791,9 +8789,14 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 51900000,
+      "priceMin": 19769341,
       "unitTypes": [
-        "villa"
+        "Villa",
+        "Chalet",
+        "Townhouse",
+        "Twinhouse",
+        "Duplex",
+        "Loft"
       ],
       "areaMin": 86,
       "areaMax": 375,
@@ -8805,9 +8808,9 @@
         5,
         6
       ],
-      "paymentPlan": "10% Down Payment",
+      "paymentPlan": "10% Down Payment, 8 Years Installments",
       "downPayment": 10,
-      "installmentYears": 0,
+      "installmentYears": 8,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -8816,13 +8819,13 @@
         "sourceCount": 1,
         "sources": [
           {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/beit-al-bahr-developments/hills-beit-al-bahr",
-            "observedPrice": 51900000,
-            "sourceId": "property-finder:e5224c43-debe-4e96-a894-56aff278c75c"
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1263-beit-al-bahr",
+            "observedPrice": 19769341,
+            "sourceId": "nawy:1263"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-10-13T01:14:50.719Z"
       }
     },
     {
@@ -9537,11 +9540,14 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 37454400,
+      "priceMin": 15606000,
       "unitTypes": [
-        "penthouse",
-        "townhouse",
-        "villa"
+        "Chalet",
+        "Townhouse",
+        "Villa",
+        "Twinhouse",
+        "Loft",
+        "Duplex"
       ],
       "areaMin": 84,
       "areaMax": 369,
@@ -9553,9 +9559,9 @@
         5,
         6
       ],
-      "paymentPlan": "10% Down Payment",
+      "paymentPlan": "10% Down Payment, 8 Years Installments",
       "downPayment": 10,
-      "installmentYears": 0,
+      "installmentYears": 8,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -9564,13 +9570,13 @@
         "sourceCount": 1,
         "sources": [
           {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/waterway-developments/the-waterway-north-coast",
-            "observedPrice": 37454400,
-            "sourceId": "property-finder:7e946f6b-23f6-47d3-820b-3b9db23a3119"
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/221-the-waterway-north-coast",
+            "observedPrice": 15606000,
+            "sourceId": "nawy:221"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-10-13T01:14:50.719Z"
       }
     },
     {
@@ -9581,11 +9587,14 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 37454400,
+      "priceMin": 15606000,
       "unitTypes": [
-        "penthouse",
-        "townhouse",
-        "villa"
+        "Chalet",
+        "Townhouse",
+        "Villa",
+        "Twinhouse",
+        "Loft",
+        "Duplex"
       ],
       "areaMin": 77,
       "areaMax": 336,
@@ -9597,9 +9606,9 @@
         5,
         6
       ],
-      "paymentPlan": "10% Down Payment",
+      "paymentPlan": "10% Down Payment, 8 Years Installments",
       "downPayment": 10,
-      "installmentYears": 0,
+      "installmentYears": 8,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -9608,13 +9617,13 @@
         "sourceCount": 1,
         "sources": [
           {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/waterway-developments/the-waterway-north-coast",
-            "observedPrice": 37454400,
-            "sourceId": "property-finder:7e946f6b-23f6-47d3-820b-3b9db23a3119"
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/221-the-waterway-north-coast",
+            "observedPrice": 15606000,
+            "sourceId": "nawy:221"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-10-13T01:14:50.719Z"
       }
     },
     {
@@ -13317,10 +13326,15 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "apartment",
-        "duplex"
+        "Twin House",
+        "Villa",
+        "Town House",
+        "Chalet",
+        "Apartment",
+        "Duplex",
+        "Studio"
       ],
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 0,
       "paymentPlan": "5% Down Payment",
       "catalogMeta": {
@@ -13328,20 +13342,14 @@
         "sourceId": "nawy-inventory:1980",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 10500000,
+      "priceMin": 24031000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/ora-developers/the-cove-silversands",
-            "observedPrice": 10500000,
-            "sourceId": "property-finder:02841ccf-42a3-4b54-85d6-bc791762abe3"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/11-silversands",
@@ -13349,7 +13357,7 @@
             "sourceId": "red:11"
           }
         ],
-        "updatedAt": "2026-10-11T03:02:59.054Z"
+        "updatedAt": "2026-10-13T01:14:50.719Z"
       }
     },
     {
@@ -13361,10 +13369,15 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "apartment",
-        "duplex"
+        "Twin House",
+        "Villa",
+        "Town House",
+        "Chalet",
+        "Apartment",
+        "Duplex",
+        "Studio"
       ],
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 0,
       "paymentPlan": "5% Down Payment",
       "catalogMeta": {
@@ -13372,20 +13385,14 @@
         "sourceId": "nawy-inventory:1967",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 10500000,
+      "priceMin": 24031000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/ora-developers/the-cove-silversands",
-            "observedPrice": 10500000,
-            "sourceId": "property-finder:02841ccf-42a3-4b54-85d6-bc791762abe3"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/11-silversands",
@@ -13393,7 +13400,7 @@
             "sourceId": "red:11"
           }
         ],
-        "updatedAt": "2026-10-11T03:02:59.054Z"
+        "updatedAt": "2026-10-13T01:14:50.719Z"
       }
     },
     {

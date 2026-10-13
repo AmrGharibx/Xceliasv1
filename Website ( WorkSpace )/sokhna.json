@@ -559,16 +559,22 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/599-la-vista-6",
             "observedPrice": 9300000,
             "sourceId": "nawy:599"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/la-vista-developments/la-vista-6",
+            "observedPrice": 21690000,
+            "sourceId": "property-finder:c01ccd91-6140-4733-8c46-253cfb115a2a"
           }
         ],
-        "updatedAt": "2026-10-13T01:14:50.719Z"
+        "updatedAt": "2026-10-13T03:04:10.844Z"
       }
     },
     {
@@ -1135,16 +1141,22 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/392-the-groove",
             "observedPrice": 5257000,
             "sourceId": "nawy:392"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/dm-developments/the-groove-resort",
+            "observedPrice": 6400000,
+            "sourceId": "property-finder:e453bd30-4a43-4266-8cde-75e8a0e39225"
           }
         ],
-        "updatedAt": "2026-10-12T18:40:48.390Z"
+        "updatedAt": "2026-10-13T03:04:10.844Z"
       }
     },
     {
@@ -3090,11 +3102,11 @@
       "zone": "Sokhna",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 10568400,
+      "priceMin": 15825100,
       "unitTypes": [
-        "Chalet",
-        "Townhouse",
-        "Twinhouse"
+        "apartment",
+        "villa",
+        "townhouse"
       ],
       "areaMin": 58,
       "areaMax": 241,
@@ -3106,22 +3118,16 @@
         5,
         6
       ],
-      "paymentPlan": "5% Down Payment, 10 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 10,
+      "paymentPlan": "0% Down Payment",
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
-        "confidence": "verified",
-        "sourceCount": 2,
+        "confidence": "high",
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1028-telal-shores",
-            "observedPrice": 10568400,
-            "sourceId": "nawy:1028"
-          },
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/roya-for-real-estate-company/telal-shores",
@@ -3129,7 +3135,7 @@
             "sourceId": "property-finder:c5cb1776-d9f8-4d89-b3a3-da503584b9e0"
           }
         ],
-        "updatedAt": "2026-10-12T03:08:38.622Z"
+        "updatedAt": "2026-10-13T03:04:10.844Z"
       }
     },
     {
@@ -3245,16 +3251,22 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/599-la-vista-6",
             "observedPrice": 9300000,
             "sourceId": "nawy:599"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/la-vista-developments/la-vista-6",
+            "observedPrice": 21690000,
+            "sourceId": "property-finder:c01ccd91-6140-4733-8c46-253cfb115a2a"
           }
         ],
-        "updatedAt": "2026-10-13T01:14:50.719Z"
+        "updatedAt": "2026-10-13T03:04:10.844Z"
       }
     },
     {
@@ -3409,7 +3421,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 3,
         "sources": [
           {
             "name": "Nawy",
@@ -3422,9 +3434,15 @@
             "url": "https://redww.com/en/projects/28-il-monte-galala",
             "observedPrice": 6642000,
             "sourceId": "red:28"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/tatweer-misr/marina-towers",
+            "observedPrice": 10970700,
+            "sourceId": "property-finder:d2483468-f1c9-4bbb-937b-132ed4db9e2e"
           }
         ],
-        "updatedAt": "2026-10-12T18:40:48.390Z"
+        "updatedAt": "2026-10-13T03:04:10.844Z"
       }
     },
     {
@@ -3461,7 +3479,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 3,
         "sources": [
           {
             "name": "Nawy",
@@ -3474,9 +3492,15 @@
             "url": "https://redww.com/en/projects/28-il-monte-galala",
             "observedPrice": 6642000,
             "sourceId": "red:28"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/tatweer-misr/marina-towers",
+            "observedPrice": 10970700,
+            "sourceId": "property-finder:d2483468-f1c9-4bbb-937b-132ed4db9e2e"
           }
         ],
-        "updatedAt": "2026-10-12T18:40:48.390Z"
+        "updatedAt": "2026-10-13T03:04:10.844Z"
       }
     },
     {
@@ -3932,11 +3956,11 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Chalet"
+        "apartment"
       ],
       "downPayment": 20,
-      "installmentYears": 6,
-      "paymentPlan": "20% Down Payment, 6 Years Installments",
+      "installmentYears": 0,
+      "paymentPlan": "20% Down Payment",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2403",
@@ -3948,22 +3972,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/lasirena-group/tamera",
             "observedPrice": 3200000,
             "sourceId": "property-finder:7ab4ed16-a3cd-4441-9607-4fd615432543"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/2403-tamera",
-            "observedPrice": 4000000,
-            "sourceId": "nawy:2403"
           }
         ],
-        "updatedAt": "2026-10-11T03:02:59.054Z"
+        "updatedAt": "2026-10-13T03:04:10.844Z"
       }
     },
     {

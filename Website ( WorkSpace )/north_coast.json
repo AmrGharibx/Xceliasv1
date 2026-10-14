@@ -3179,12 +3179,11 @@
       "layouts": [
         "https://www.modon.com/en/our-projects"
       ],
-      "priceMin": 15000000,
+      "priceMin": 15700000,
       "unitTypes": [
         "Apartment",
         "Townhouse",
-        "Villa",
-        "Duplex"
+        "Villa"
       ],
       "areaMin": 86,
       "areaMax": 377,
@@ -3196,9 +3195,9 @@
         5,
         6
       ],
-      "paymentPlan": "5% Down Payment, 8 Years Installments",
+      "paymentPlan": "5% Down Payment, 7.9 Years Installments",
       "downPayment": 5,
-      "installmentYears": 8,
+      "installmentYears": 7.9,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -3209,11 +3208,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1493-ras-el-hekma-egypt",
-            "observedPrice": 15000000,
+            "observedPrice": 15700000,
             "sourceId": "nawy:1493"
           }
         ],
-        "updatedAt": "2026-10-07T12:47:00.190Z"
+        "updatedAt": "2026-10-14T12:42:19.758Z"
       }
     },
     {
@@ -11309,15 +11308,15 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 15000000,
+      "priceMin": 16798706,
       "unitTypes": [
-        "Studio",
-        "Apartment",
         "Chalet",
+        "Loft",
+        "Penthouse",
         "Townhouse",
         "Twinhouse",
         "Villa",
-        "Penthouse",
+        "Apartment",
         "Cabin"
       ],
       "areaMin": 87,
@@ -11343,11 +11342,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/45-mountain-view-ras-el-hekma",
-            "observedPrice": 15000000,
+            "observedPrice": 16798706,
             "sourceId": "nawy:45"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-10-14T12:42:19.758Z"
       }
     },
     {
@@ -11676,16 +11675,16 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 15000000,
+      "priceMin": 15621507,
       "unitTypes": [
-        "Apartment",
         "Chalet",
-        "Studio",
+        "Loft",
+        "Penthouse",
         "Townhouse",
         "Twinhouse",
         "Villa",
-        "Cabin",
-        "Penthouse"
+        "Apartment",
+        "Cabin"
       ],
       "areaMin": 75,
       "areaMax": 330,
@@ -11708,19 +11707,19 @@
         "sourceCount": 2,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/45-mountain-view-ras-el-hekma",
-            "observedPrice": 15000000,
-            "sourceId": "nawy:45"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/30814-evia",
             "observedPrice": 15621507,
             "sourceId": "red:30814"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/45-mountain-view-ras-el-hekma",
+            "observedPrice": 16798706,
+            "sourceId": "nawy:45"
           }
         ],
-        "updatedAt": "2026-10-14T06:47:33.002Z"
+        "updatedAt": "2026-10-14T12:42:19.758Z"
       }
     },
     {
@@ -13212,18 +13211,24 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "villa",
-        "townhouse"
+        "Chalet",
+        "Loft",
+        "Penthouse",
+        "Townhouse",
+        "Twinhouse",
+        "Villa",
+        "Apartment",
+        "Cabin"
       ],
-      "downPayment": 10,
-      "installmentYears": 0,
-      "paymentPlan": "10% Down Payment",
+      "downPayment": 2.5,
+      "installmentYears": 8,
+      "paymentPlan": "2.5% Down Payment, 8 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:45",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 26249920,
+      "priceMin": 16798706,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -13232,13 +13237,13 @@
         "sourceCount": 1,
         "sources": [
           {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/mountain-view/lvls",
-            "observedPrice": 26249920,
-            "sourceId": "property-finder:fbd48d90-f2e5-45ab-a214-ac751fe1d080"
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/45-mountain-view-ras-el-hekma",
+            "observedPrice": 16798706,
+            "sourceId": "nawy:45"
           }
         ],
-        "updatedAt": "2026-09-23T02:53:48.002Z"
+        "updatedAt": "2026-10-14T12:42:19.758Z"
       }
     },
     {

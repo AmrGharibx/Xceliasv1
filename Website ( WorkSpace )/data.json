@@ -529,10 +529,10 @@
       "zone": "New Cairo",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 13500000,
+      "priceMin": 56267000,
       "unitTypes": [
-        "Administrative",
         "Apartment",
+        "Administrative",
         "Penthouse",
         "Duplex"
       ],
@@ -554,14 +554,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/sodic/eastown-residence",
-            "observedPrice": 13500000,
-            "sourceId": "property-finder:f12e4fc3-2710-4c11-b6ef-d0e08e9d018b"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/925-eastown",
@@ -569,7 +563,7 @@
             "sourceId": "nawy:925"
           }
         ],
-        "updatedAt": "2026-10-12T18:40:48.390Z"
+        "updatedAt": "2026-10-14T12:42:19.758Z"
       }
     },
     {
@@ -5097,7 +5091,7 @@
       "zone": "New Cairo",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 5290000,
+      "priceMin": 7590000,
       "unitTypes": [
         "Studio",
         "Apartment"
@@ -5125,11 +5119,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1845-branded-residences",
-            "observedPrice": 5290000,
+            "observedPrice": 7590000,
             "sourceId": "nawy:1845"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-10-14T12:42:19.758Z"
       }
     },
     {
@@ -16438,7 +16432,7 @@
       "zone": "New Capital",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 8550000,
+      "priceMin": 27615203,
       "unitTypes": [
         "Retail",
         "Townhouse",
@@ -16462,14 +16456,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/better-home-development/midtown-villa",
-            "observedPrice": 8550000,
-            "sourceId": "property-finder:a26d143e-64cd-4e71-9bb7-f8225b5d1637"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/443-midtown-new-capital-villa",
@@ -16477,7 +16465,7 @@
             "sourceId": "nawy:443"
           }
         ],
-        "updatedAt": "2026-10-12T13:04:13.396Z"
+        "updatedAt": "2026-10-14T12:42:19.758Z"
       }
     },
     {
@@ -22925,7 +22913,8 @@
       "type": "residential",
       "priceMin": 10500000,
       "unitTypes": [
-        "Retail"
+        "Retail",
+        "Administrative"
       ],
       "areaMin": 77,
       "areaMax": 335,
@@ -22956,11 +22945,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/879-gates-prive",
-            "observedPrice": 44385125,
+            "observedPrice": 11971200,
             "sourceId": "nawy:879"
           }
         ],
-        "updatedAt": "2026-10-13T03:04:10.844Z"
+        "updatedAt": "2026-10-14T12:42:19.758Z"
       }
     },
     {
@@ -24376,11 +24365,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1148-rock-eden",
-            "observedPrice": 10580080,
+            "observedPrice": 11522321,
             "sourceId": "nawy:1148"
           }
         ],
-        "updatedAt": "2026-10-12T18:40:48.390Z"
+        "updatedAt": "2026-10-14T12:42:19.758Z"
       }
     },
     {
@@ -25471,12 +25460,11 @@
       "layouts": [
         "https://www.modon.com/en/our-projects"
       ],
-      "priceMin": 15000000,
+      "priceMin": 15700000,
       "unitTypes": [
         "Apartment",
         "Townhouse",
-        "Villa",
-        "Duplex"
+        "Villa"
       ],
       "areaMin": 86,
       "areaMax": 377,
@@ -25488,9 +25476,9 @@
         5,
         6
       ],
-      "paymentPlan": "5% Down Payment, 8 Years Installments",
+      "paymentPlan": "5% Down Payment, 7.9 Years Installments",
       "downPayment": 5,
-      "installmentYears": 8,
+      "installmentYears": 7.9,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -25501,11 +25489,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1493-ras-el-hekma-egypt",
-            "observedPrice": 15000000,
+            "observedPrice": 15700000,
             "sourceId": "nawy:1493"
           }
         ],
-        "updatedAt": "2026-10-07T12:47:00.190Z"
+        "updatedAt": "2026-10-14T12:42:19.758Z"
       }
     },
     {
@@ -32691,10 +32679,10 @@
       "zone": "Shorouk",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 5300000,
+      "priceMin": 5940000,
       "unitTypes": [
-        "Apartment",
         "Townhouse",
+        "Apartment",
         "Office",
         "Duplex",
         "Villa",
@@ -32725,7 +32713,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/219-al-burouj",
-            "observedPrice": 5300000,
+            "observedPrice": 5940000,
             "sourceId": "nawy:219"
           },
           {
@@ -32735,7 +32723,7 @@
             "sourceId": "red:4"
           }
         ],
-        "updatedAt": "2026-10-14T06:47:33.002Z"
+        "updatedAt": "2026-10-14T12:42:19.758Z"
       }
     },
     {
@@ -37784,10 +37772,10 @@
       "zone": "Shorouk",
       "status": "Delivered",
       "type": "commercial",
-      "priceMin": 5300000,
+      "priceMin": 5940000,
       "unitTypes": [
-        "Apartment",
         "Townhouse",
+        "Apartment",
         "Office",
         "Duplex",
         "Villa",
@@ -37811,11 +37799,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/219-al-burouj",
-            "observedPrice": 5300000,
+            "observedPrice": 5940000,
             "sourceId": "nawy:219"
           }
         ],
-        "updatedAt": "2026-10-12T18:40:48.390Z"
+        "updatedAt": "2026-10-14T12:42:19.758Z"
       }
     },
     {
@@ -47802,16 +47790,16 @@
       "zone": "Shorouk",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 5300000,
+      "priceMin": 5940000,
       "unitTypes": [
-        "Apartment",
-        "Administrative",
-        "Duplex",
         "Townhouse",
+        "Apartment",
+        "Office",
+        "Duplex",
         "Villa",
+        "Administrative",
         "Twinhouse",
-        "Studio",
-        "Office"
+        "Studio"
       ],
       "areaMin": 81,
       "areaMax": 304,
@@ -47836,11 +47824,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/219-al-burouj",
-            "observedPrice": 5300000,
+            "observedPrice": 5940000,
             "sourceId": "nawy:219"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-10-14T12:42:19.758Z"
       }
     },
     {
@@ -48554,7 +48542,7 @@
       "zone": "New Cairo",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 8471397,
+      "priceMin": 23055703,
       "unitTypes": [
         "Apartment"
       ],
@@ -48576,14 +48564,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/tbk-developments/90-avenue",
-            "observedPrice": 8471397,
-            "sourceId": "property-finder:d685693e-db16-4478-a55f-30fd8a962c0d"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19033-90-avenue",
@@ -48591,7 +48573,7 @@
             "sourceId": "red:19033"
           }
         ],
-        "updatedAt": "2026-10-12T18:40:48.390Z"
+        "updatedAt": "2026-10-14T12:42:19.758Z"
       }
     },
     {
@@ -49179,15 +49161,15 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 15000000,
+      "priceMin": 16798706,
       "unitTypes": [
-        "Studio",
-        "Apartment",
         "Chalet",
+        "Loft",
+        "Penthouse",
         "Townhouse",
         "Twinhouse",
         "Villa",
-        "Penthouse",
+        "Apartment",
         "Cabin"
       ],
       "areaMin": 87,
@@ -49213,11 +49195,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/45-mountain-view-ras-el-hekma",
-            "observedPrice": 15000000,
+            "observedPrice": 16798706,
             "sourceId": "nawy:45"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-10-14T12:42:19.758Z"
       }
     },
     {
@@ -52549,16 +52531,16 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 15000000,
+      "priceMin": 15621507,
       "unitTypes": [
-        "Apartment",
         "Chalet",
-        "Studio",
+        "Loft",
+        "Penthouse",
         "Townhouse",
         "Twinhouse",
         "Villa",
-        "Cabin",
-        "Penthouse"
+        "Apartment",
+        "Cabin"
       ],
       "areaMin": 75,
       "areaMax": 330,
@@ -52581,19 +52563,19 @@
         "sourceCount": 2,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/45-mountain-view-ras-el-hekma",
-            "observedPrice": 15000000,
-            "sourceId": "nawy:45"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/30814-evia",
             "observedPrice": 15621507,
             "sourceId": "red:30814"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/45-mountain-view-ras-el-hekma",
+            "observedPrice": 16798706,
+            "sourceId": "nawy:45"
           }
         ],
-        "updatedAt": "2026-10-14T06:47:33.002Z"
+        "updatedAt": "2026-10-14T12:42:19.758Z"
       }
     },
     {
@@ -54887,15 +54869,14 @@
       "zone": "Hurghada",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 12700000,
+      "priceMin": 17500000,
       "unitTypes": [
         "Apartment",
         "Chalet",
         "Villa",
-        "Twinhouse",
-        "Townhouse",
         "Duplex",
-        "Penthouse"
+        "Penthouse",
+        "Townhouse"
       ],
       "areaMin": 60,
       "areaMax": 250,
@@ -54920,11 +54901,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/941-ras-soma",
-            "observedPrice": 12700000,
+            "observedPrice": 17500000,
             "sourceId": "nawy:941"
           }
         ],
-        "updatedAt": "2026-10-12T18:40:48.390Z"
+        "updatedAt": "2026-10-14T12:42:19.758Z"
       }
     },
     {
@@ -62982,18 +62963,24 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "villa",
-        "townhouse"
+        "Chalet",
+        "Loft",
+        "Penthouse",
+        "Townhouse",
+        "Twinhouse",
+        "Villa",
+        "Apartment",
+        "Cabin"
       ],
-      "downPayment": 10,
-      "installmentYears": 0,
-      "paymentPlan": "10% Down Payment",
+      "downPayment": 2.5,
+      "installmentYears": 8,
+      "paymentPlan": "2.5% Down Payment, 8 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:45",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 26249920,
+      "priceMin": 16798706,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -63002,13 +62989,13 @@
         "sourceCount": 1,
         "sources": [
           {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/mountain-view/lvls",
-            "observedPrice": 26249920,
-            "sourceId": "property-finder:fbd48d90-f2e5-45ab-a214-ac751fe1d080"
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/45-mountain-view-ras-el-hekma",
+            "observedPrice": 16798706,
+            "sourceId": "nawy:45"
           }
         ],
-        "updatedAt": "2026-09-23T02:53:48.002Z"
+        "updatedAt": "2026-10-14T12:42:19.758Z"
       }
     },
     {
@@ -69212,8 +69199,8 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Apartment",
         "Townhouse",
+        "Apartment",
         "Office",
         "Duplex",
         "Villa",
@@ -69229,7 +69216,7 @@
         "sourceId": "nawy-inventory:2352",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 5300000,
+      "priceMin": 5940000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -69240,7 +69227,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/219-al-burouj",
-            "observedPrice": 5300000,
+            "observedPrice": 5940000,
             "sourceId": "nawy:219"
           },
           {
@@ -69250,7 +69237,7 @@
             "sourceId": "property-finder:a6ae4702-08eb-497f-8674-f13f1a1dc3d1"
           }
         ],
-        "updatedAt": "2026-10-13T03:04:10.844Z"
+        "updatedAt": "2026-10-14T12:42:19.758Z"
       }
     },
     {
@@ -69262,8 +69249,8 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Apartment",
         "Townhouse",
+        "Apartment",
         "Office",
         "Duplex",
         "Villa",
@@ -69279,7 +69266,7 @@
         "sourceId": "nawy-inventory:2351",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 5300000,
+      "priceMin": 5940000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -69290,11 +69277,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/219-al-burouj",
-            "observedPrice": 5300000,
+            "observedPrice": 5940000,
             "sourceId": "nawy:219"
           }
         ],
-        "updatedAt": "2026-10-12T18:40:48.390Z"
+        "updatedAt": "2026-10-14T12:42:19.758Z"
       }
     },
     {
@@ -69306,8 +69293,8 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Apartment",
         "Townhouse",
+        "Apartment",
         "Office",
         "Duplex",
         "Villa",
@@ -69323,7 +69310,7 @@
         "sourceId": "nawy-inventory:2350",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 5300000,
+      "priceMin": 5940000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -69334,11 +69321,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/219-al-burouj",
-            "observedPrice": 5300000,
+            "observedPrice": 5940000,
             "sourceId": "nawy:219"
           }
         ],
-        "updatedAt": "2026-10-12T18:40:48.390Z"
+        "updatedAt": "2026-10-14T12:42:19.758Z"
       }
     },
     {
@@ -69350,8 +69337,8 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Apartment",
         "Townhouse",
+        "Apartment",
         "Office",
         "Duplex",
         "Villa",
@@ -69367,7 +69354,7 @@
         "sourceId": "nawy-inventory:2349",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 5300000,
+      "priceMin": 5940000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -69378,11 +69365,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/219-al-burouj",
-            "observedPrice": 5300000,
+            "observedPrice": 5940000,
             "sourceId": "nawy:219"
           }
         ],
-        "updatedAt": "2026-10-12T18:40:48.390Z"
+        "updatedAt": "2026-10-14T12:42:19.758Z"
       }
     },
     {
@@ -75153,10 +75140,9 @@
         "Apartment",
         "Chalet",
         "Villa",
-        "Twinhouse",
-        "Townhouse",
         "Duplex",
-        "Penthouse"
+        "Penthouse",
+        "Townhouse"
       ],
       "downPayment": 5,
       "installmentYears": 7,
@@ -75175,19 +75161,19 @@
         "sourceCount": 2,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/941-ras-soma",
-            "observedPrice": 12700000,
-            "sourceId": "nawy:941"
-          },
-          {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/travco-properties/ras-soma",
             "observedPrice": 12700000,
             "sourceId": "property-finder:c129378a-e139-48a4-a3c5-8bbaec67e41e"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/941-ras-soma",
+            "observedPrice": 17500000,
+            "sourceId": "nawy:941"
           }
         ],
-        "updatedAt": "2026-10-13T03:04:10.844Z"
+        "updatedAt": "2026-10-14T12:42:19.758Z"
       }
     },
     {
@@ -75202,10 +75188,9 @@
         "Apartment",
         "Chalet",
         "Villa",
-        "Twinhouse",
-        "Townhouse",
         "Duplex",
-        "Penthouse"
+        "Penthouse",
+        "Townhouse"
       ],
       "downPayment": 5,
       "installmentYears": 7,
@@ -75224,19 +75209,19 @@
         "sourceCount": 2,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/941-ras-soma",
-            "observedPrice": 12700000,
-            "sourceId": "nawy:941"
-          },
-          {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/travco-properties/ras-soma",
             "observedPrice": 12700000,
             "sourceId": "property-finder:c129378a-e139-48a4-a3c5-8bbaec67e41e"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/941-ras-soma",
+            "observedPrice": 17500000,
+            "sourceId": "nawy:941"
           }
         ],
-        "updatedAt": "2026-10-13T03:04:10.844Z"
+        "updatedAt": "2026-10-14T12:42:19.758Z"
       }
     },
     {
@@ -75251,10 +75236,9 @@
         "Apartment",
         "Chalet",
         "Villa",
-        "Twinhouse",
-        "Townhouse",
         "Duplex",
-        "Penthouse"
+        "Penthouse",
+        "Townhouse"
       ],
       "downPayment": 5,
       "installmentYears": 7,
@@ -75273,19 +75257,19 @@
         "sourceCount": 2,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/941-ras-soma",
-            "observedPrice": 12700000,
-            "sourceId": "nawy:941"
-          },
-          {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/travco-properties/ras-soma",
             "observedPrice": 12700000,
             "sourceId": "property-finder:c129378a-e139-48a4-a3c5-8bbaec67e41e"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/941-ras-soma",
+            "observedPrice": 17500000,
+            "sourceId": "nawy:941"
           }
         ],
-        "updatedAt": "2026-10-13T03:04:10.844Z"
+        "updatedAt": "2026-10-14T12:42:19.758Z"
       }
     },
     {

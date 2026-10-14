@@ -682,7 +682,7 @@
       "zone": "Galala",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 7317350,
+      "priceMin": 5483100,
       "unitTypes": [
         "Chalet",
         "Apartment",
@@ -711,7 +711,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/434-jebal-el-sokhna",
-            "observedPrice": 7317350,
+            "observedPrice": 5483100,
             "sourceId": "nawy:434"
           },
           {
@@ -721,7 +721,7 @@
             "sourceId": "red:19064"
           }
         ],
-        "updatedAt": "2026-10-13T18:41:15.407Z"
+        "updatedAt": "2026-10-14T01:00:42.557Z"
       }
     },
     {
@@ -1125,17 +1125,17 @@
       "zone": "Galala",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 5265000,
+      "priceMin": 6642000,
       "unitTypes": [
         "Chalet",
         "Apartment",
-        "Duplex",
-        "Penthouse",
         "Studio",
+        "Duplex",
         "Loft",
         "Townhouse",
         "Villa",
         "Twinhouse",
+        "Penthouse",
         "Cabin"
       ],
       "areaMin": 83,
@@ -1159,19 +1159,19 @@
         "sourceCount": 2,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/90-il-monte-galala",
-            "observedPrice": 5265000,
-            "sourceId": "nawy:90"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/28-il-monte-galala",
             "observedPrice": 6642000,
             "sourceId": "red:28"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/90-il-monte-galala",
+            "observedPrice": 7392000,
+            "sourceId": "nawy:90"
           }
         ],
-        "updatedAt": "2026-10-12T18:40:48.390Z"
+        "updatedAt": "2026-10-14T01:00:42.557Z"
       }
     },
     {
@@ -1900,7 +1900,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/434-jebal-el-sokhna",
-            "observedPrice": 7317350,
+            "observedPrice": 5483100,
             "sourceId": "nawy:434"
           },
           {
@@ -1910,7 +1910,7 @@
             "sourceId": "red:19064"
           }
         ],
-        "updatedAt": "2026-10-13T18:41:15.407Z"
+        "updatedAt": "2026-10-14T01:00:42.557Z"
       }
     },
     {
@@ -2516,17 +2516,17 @@
       "zone": "Sokhna",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 5265000,
+      "priceMin": 6642000,
       "unitTypes": [
         "Chalet",
         "Apartment",
-        "Duplex",
-        "Penthouse",
         "Studio",
+        "Duplex",
         "Loft",
         "Townhouse",
         "Villa",
         "Twinhouse",
+        "Penthouse",
         "Cabin"
       ],
       "areaMin": 58,
@@ -2550,19 +2550,19 @@
         "sourceCount": 2,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/90-il-monte-galala",
-            "observedPrice": 5265000,
-            "sourceId": "nawy:90"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/28-il-monte-galala",
             "observedPrice": 6642000,
             "sourceId": "red:28"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/90-il-monte-galala",
+            "observedPrice": 7392000,
+            "sourceId": "nawy:90"
           }
         ],
-        "updatedAt": "2026-10-13T18:41:15.407Z"
+        "updatedAt": "2026-10-14T01:00:42.557Z"
       }
     },
     {
@@ -2601,17 +2601,17 @@
       "zone": "Sokhna",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 5265000,
+      "priceMin": 6642000,
       "unitTypes": [
-        "Apartment",
         "Chalet",
-        "Loft",
-        "Penthouse",
-        "Duplex",
+        "Apartment",
         "Studio",
+        "Duplex",
+        "Loft",
         "Townhouse",
-        "Twinhouse",
         "Villa",
+        "Twinhouse",
+        "Penthouse",
         "Cabin"
       ],
       "areaMin": 65,
@@ -2635,19 +2635,19 @@
         "sourceCount": 2,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/90-il-monte-galala",
-            "observedPrice": 5265000,
-            "sourceId": "nawy:90"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/28-il-monte-galala",
             "observedPrice": 6642000,
             "sourceId": "red:28"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/90-il-monte-galala",
+            "observedPrice": 7392000,
+            "sourceId": "nawy:90"
           }
         ],
-        "updatedAt": "2026-09-29T18:38:47.352Z"
+        "updatedAt": "2026-10-14T01:00:42.557Z"
       }
     },
     {
@@ -3314,13 +3314,13 @@
       "unitTypes": [
         "Chalet",
         "Apartment",
-        "Duplex",
-        "Penthouse",
         "Studio",
+        "Duplex",
         "Loft",
         "Townhouse",
         "Villa",
         "Twinhouse",
+        "Penthouse",
         "Cabin"
       ],
       "downPayment": 5,
@@ -3331,7 +3331,7 @@
         "sourceId": "nawy-inventory:1984",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 5265000,
+      "priceMin": 6642000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -3340,16 +3340,16 @@
         "sourceCount": 3,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/90-il-monte-galala",
-            "observedPrice": 5265000,
-            "sourceId": "nawy:90"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/28-il-monte-galala",
             "observedPrice": 6642000,
             "sourceId": "red:28"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/90-il-monte-galala",
+            "observedPrice": 7392000,
+            "sourceId": "nawy:90"
           },
           {
             "name": "Property Finder",
@@ -3358,7 +3358,7 @@
             "sourceId": "property-finder:d2483468-f1c9-4bbb-937b-132ed4db9e2e"
           }
         ],
-        "updatedAt": "2026-10-13T03:04:10.844Z"
+        "updatedAt": "2026-10-14T01:00:42.557Z"
       }
     },
     {
@@ -3372,13 +3372,13 @@
       "unitTypes": [
         "Chalet",
         "Apartment",
-        "Duplex",
-        "Penthouse",
         "Studio",
+        "Duplex",
         "Loft",
         "Townhouse",
         "Villa",
         "Twinhouse",
+        "Penthouse",
         "Cabin"
       ],
       "downPayment": 5,
@@ -3389,7 +3389,7 @@
         "sourceId": "nawy-inventory:634",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 5265000,
+      "priceMin": 6642000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -3398,16 +3398,16 @@
         "sourceCount": 3,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/90-il-monte-galala",
-            "observedPrice": 5265000,
-            "sourceId": "nawy:90"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/28-il-monte-galala",
             "observedPrice": 6642000,
             "sourceId": "red:28"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/90-il-monte-galala",
+            "observedPrice": 7392000,
+            "sourceId": "nawy:90"
           },
           {
             "name": "Property Finder",
@@ -3416,7 +3416,7 @@
             "sourceId": "property-finder:d2483468-f1c9-4bbb-937b-132ed4db9e2e"
           }
         ],
-        "updatedAt": "2026-10-13T03:04:10.844Z"
+        "updatedAt": "2026-10-14T01:00:42.557Z"
       }
     },
     {
@@ -3428,15 +3428,15 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Apartment",
         "Chalet",
-        "Loft",
-        "Penthouse",
-        "Duplex",
+        "Apartment",
         "Studio",
+        "Duplex",
+        "Loft",
         "Townhouse",
-        "Twinhouse",
         "Villa",
+        "Twinhouse",
+        "Penthouse",
         "Cabin"
       ],
       "downPayment": 5,
@@ -3447,7 +3447,7 @@
         "sourceId": "nawy-inventory:396",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 5265000,
+      "priceMin": 6642000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -3456,19 +3456,19 @@
         "sourceCount": 2,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/90-il-monte-galala",
-            "observedPrice": 5265000,
-            "sourceId": "nawy:90"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/28-il-monte-galala",
             "observedPrice": 6642000,
             "sourceId": "red:28"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/90-il-monte-galala",
+            "observedPrice": 7392000,
+            "sourceId": "nawy:90"
           }
         ],
-        "updatedAt": "2026-09-29T18:38:47.352Z"
+        "updatedAt": "2026-10-14T01:00:42.557Z"
       }
     },
     {
@@ -3480,15 +3480,15 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Apartment",
         "Chalet",
-        "Loft",
-        "Penthouse",
-        "Duplex",
+        "Apartment",
         "Studio",
+        "Duplex",
+        "Loft",
         "Townhouse",
-        "Twinhouse",
         "Villa",
+        "Twinhouse",
+        "Penthouse",
         "Cabin"
       ],
       "downPayment": 5,
@@ -3499,7 +3499,7 @@
         "sourceId": "nawy-inventory:182",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 5265000,
+      "priceMin": 6642000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -3508,19 +3508,19 @@
         "sourceCount": 2,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/90-il-monte-galala",
-            "observedPrice": 5265000,
-            "sourceId": "nawy:90"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/28-il-monte-galala",
             "observedPrice": 6642000,
             "sourceId": "red:28"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/90-il-monte-galala",
+            "observedPrice": 7392000,
+            "sourceId": "nawy:90"
           }
         ],
-        "updatedAt": "2026-09-29T18:38:47.352Z"
+        "updatedAt": "2026-10-14T01:00:42.557Z"
       }
     },
     {
@@ -3591,7 +3591,7 @@
         "sourceId": "nawy-inventory:2152",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 7317350,
+      "priceMin": 5483100,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -3602,7 +3602,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/434-jebal-el-sokhna",
-            "observedPrice": 7317350,
+            "observedPrice": 5483100,
             "sourceId": "nawy:434"
           },
           {
@@ -3612,7 +3612,7 @@
             "sourceId": "red:19064"
           }
         ],
-        "updatedAt": "2026-10-13T18:41:15.407Z"
+        "updatedAt": "2026-10-14T01:00:42.557Z"
       }
     },
     {
@@ -3636,7 +3636,7 @@
         "sourceId": "nawy-inventory:2151",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 7317350,
+      "priceMin": 5483100,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -3647,7 +3647,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/434-jebal-el-sokhna",
-            "observedPrice": 7317350,
+            "observedPrice": 5483100,
             "sourceId": "nawy:434"
           },
           {
@@ -3657,7 +3657,7 @@
             "sourceId": "red:19064"
           }
         ],
-        "updatedAt": "2026-10-13T18:41:15.407Z"
+        "updatedAt": "2026-10-14T01:00:42.557Z"
       }
     },
     {

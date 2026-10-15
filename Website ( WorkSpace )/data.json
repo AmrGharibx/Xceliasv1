@@ -3100,8 +3100,8 @@
       "type": "residential",
       "priceMin": 5600000,
       "unitTypes": [
-        "Apartment",
-        "Penthouse"
+        "Penthouse",
+        "Apartment"
       ],
       "areaMin": 89,
       "areaMax": 443,
@@ -3137,11 +3137,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1761-el-patio-riva",
-            "observedPrice": 8700000,
+            "observedPrice": 7250000,
             "sourceId": "nawy:1761"
           }
         ],
-        "updatedAt": "2026-10-14T02:54:14.505Z"
+        "updatedAt": "2026-10-15T06:47:46.515Z"
       }
     },
     {
@@ -7065,7 +7065,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/962-rosail",
-            "observedPrice": 6041000,
+            "observedPrice": 6011801,
             "sourceId": "nawy:962"
           },
           {
@@ -7075,7 +7075,7 @@
             "sourceId": "red:19076"
           }
         ],
-        "updatedAt": "2026-10-15T02:55:00.372Z"
+        "updatedAt": "2026-10-15T06:47:46.515Z"
       }
     },
     {
@@ -20683,22 +20683,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1467-de-joya-4",
             "observedPrice": 3213056,
             "sourceId": "nawy:1467"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/taj-misr-development/de-joya",
-            "observedPrice": 3962000,
-            "sourceId": "property-finder:0bfe8624-0bb6-48aa-a8d3-ddd22d657c44"
           }
         ],
-        "updatedAt": "2026-10-13T18:41:15.407Z"
+        "updatedAt": "2026-10-15T06:47:46.515Z"
       }
     },
     {
@@ -52077,11 +52071,13 @@
       "zone": "New Capital Gardens",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 14264133,
-      "priceMax": 36679424,
+      "priceMin": 5700000,
       "unitTypes": [
+        "Apartment",
+        "Townhouse",
         "Villa",
-        "Apartment"
+        "Twinhouse",
+        "Studio"
       ],
       "areaMin": 75,
       "areaMax": 319,
@@ -52093,9 +52089,25 @@
         5,
         6
       ],
-      "paymentPlan": "5% Down Payment, 10 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 10
+      "paymentPlan": "2% Down Payment, 14 Years Installments",
+      "downPayment": 2,
+      "installmentYears": 14,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/622-noor-capital-gardens",
+            "observedPrice": 5700000,
+            "sourceId": "nawy:622"
+          }
+        ],
+        "updatedAt": "2026-10-15T06:47:46.515Z"
+      }
     },
     {
       "name": "Sky Condos",
@@ -84420,22 +84432,36 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Apartment",
-        "Duplex",
-        "Townhouse",
         "Villa",
-        "Penthouse",
-        "Twinhouse"
+        "Twin House",
+        "Apartment",
+        "Town House"
       ],
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:664",
         "observedAt": "2026-10-15T03:36:40.243Z"
       },
-      "priceMin": 19135000
+      "priceMin": 22679000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/20-the-estates",
+            "observedPrice": 22679000,
+            "sourceId": "red:20"
+          }
+        ],
+        "updatedAt": "2026-10-15T06:47:46.515Z"
+      }
     },
     {
       "name": "The Estates",
@@ -84447,19 +84473,35 @@
       "type": "residential",
       "unitTypes": [
         "Villa",
-        "Townhouse",
+        "Twin House",
         "Apartment",
-        "Twinhouse"
+        "Town House"
       ],
-      "downPayment": 10,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "10% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:310",
         "observedAt": "2026-10-15T03:36:40.243Z"
       },
-      "priceMin": 77223960
+      "priceMin": 22679000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/20-the-estates",
+            "observedPrice": 22679000,
+            "sourceId": "red:20"
+          }
+        ],
+        "updatedAt": "2026-10-15T06:47:46.515Z"
+      }
     }
   ],
   "projectDetails": {

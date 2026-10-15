@@ -4112,23 +4112,17 @@
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
-        "confidence": "verified",
-        "sourceCount": 2,
+        "confidence": "high",
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/361-katameya-creeks",
             "observedPrice": 16236000,
             "sourceId": "nawy:361"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/starlight-developments/katameya-creeks",
-            "observedPrice": 21735000,
-            "sourceId": "property-finder:dbbcbd05-1995-449f-b342-995e7ec9da9a"
           }
         ],
-        "updatedAt": "2026-10-13T12:49:10.344Z"
+        "updatedAt": "2026-10-15T00:59:34.541Z"
       }
     },
     {
@@ -7266,7 +7260,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
@@ -7279,15 +7273,9 @@
             "url": "https://www.nawy.com/compound/1011-regent's-square",
             "observedPrice": 13594064,
             "sourceId": "nawy:1011"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/al-dawlia-developments/regents-square",
-            "observedPrice": 13600000,
-            "sourceId": "property-finder:9d290284-7ec8-4e63-920d-458331d718c4"
           }
         ],
-        "updatedAt": "2026-10-13T12:49:10.344Z"
+        "updatedAt": "2026-10-15T00:59:34.541Z"
       }
     },
     {
@@ -7868,7 +7856,7 @@
       "zone": "New Cairo",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 6697200,
+      "priceMin": 8331840,
       "unitTypes": [
         "Medical",
         "Administrative",
@@ -7894,14 +7882,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/pre-developments/ivoire-east",
-            "observedPrice": 6697200,
-            "sourceId": "property-finder:289ddb55-f705-4895-a98e-64ddd45f314f"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1076-ivoire-east",
@@ -7915,7 +7897,7 @@
             "sourceId": "red:30895"
           }
         ],
-        "updatedAt": "2026-10-13T12:49:10.344Z"
+        "updatedAt": "2026-10-15T00:59:34.541Z"
       }
     },
     {
@@ -11208,7 +11190,7 @@
       "zone": "New Capital",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 2277739,
+      "priceMin": 4840145,
       "unitTypes": [
         "Retail",
         "Apartment",
@@ -11235,14 +11217,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/better-home-development/midtown-sky-new-capital",
-            "observedPrice": 2277739,
-            "sourceId": "property-finder:e0212a46-fd4e-4897-ad51-c0f454149d28"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/440-midtown-sky",
@@ -11250,7 +11226,7 @@
             "sourceId": "nawy:440"
           }
         ],
-        "updatedAt": "2026-10-13T03:04:10.844Z"
+        "updatedAt": "2026-10-15T00:59:34.541Z"
       }
     },
     {
@@ -11261,7 +11237,7 @@
       "zone": "New Capital",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 2277739,
+      "priceMin": 4840145,
       "unitTypes": [
         "Retail",
         "Apartment",
@@ -11288,14 +11264,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/better-home-development/midtown-sky-new-capital",
-            "observedPrice": 2277739,
-            "sourceId": "property-finder:e0212a46-fd4e-4897-ad51-c0f454149d28"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/440-midtown-sky",
@@ -11303,7 +11273,7 @@
             "sourceId": "nawy:440"
           }
         ],
-        "updatedAt": "2026-10-13T03:04:10.844Z"
+        "updatedAt": "2026-10-15T00:59:34.541Z"
       }
     },
     {
@@ -40699,11 +40669,12 @@
       "zone": "Zayed",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 9000000,
+      "priceMin": 14039000,
       "unitTypes": [
-        "apartment",
-        "villa",
-        "townhouse"
+        "Apartment",
+        "Twin House",
+        "Villa",
+        "Town House"
       ],
       "areaMin": 102,
       "areaMax": 410,
@@ -40716,21 +40687,15 @@
         6
       ],
       "paymentPlan": "5% Down Payment",
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/madaar/kinz",
-            "observedPrice": 9000000,
-            "sourceId": "property-finder:4d93038f-f6f6-4935-9c43-833974cc1b26"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30904-kinz",
@@ -40738,7 +40703,7 @@
             "sourceId": "red:30904"
           }
         ],
-        "updatedAt": "2026-10-13T03:04:10.844Z"
+        "updatedAt": "2026-10-15T00:59:34.541Z"
       }
     },
     {
@@ -40856,7 +40821,7 @@
       "zone": "Zayed",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 10280120,
+      "priceMin": 23656869,
       "unitTypes": [
         "Townhouse",
         "Twinhouse"
@@ -40879,14 +40844,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/better-home-development/midtown-west",
-            "observedPrice": 10280120,
-            "sourceId": "property-finder:a780b002-117e-41ad-9c95-ffbced6a9b0c"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1432-midtown-new-zayed-west",
@@ -40894,7 +40853,7 @@
             "sourceId": "nawy:1432"
           }
         ],
-        "updatedAt": "2026-10-13T03:04:10.844Z"
+        "updatedAt": "2026-10-15T00:59:34.541Z"
       }
     },
     {
@@ -44831,20 +44790,14 @@
         "sourceId": "nawy-inventory:2139",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 7700000,
+      "priceMin": 17065000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/madaar/the-hillage",
-            "observedPrice": 7700000,
-            "sourceId": "property-finder:3ccbc007-0070-4d55-b59d-4682bef034f3"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/2139-the-hillage",
@@ -44852,7 +44805,7 @@
             "sourceId": "nawy:2139"
           }
         ],
-        "updatedAt": "2026-10-13T03:04:10.844Z"
+        "updatedAt": "2026-10-15T00:59:34.541Z"
       }
     },
     {
@@ -45709,20 +45662,14 @@
         "sourceId": "nawy-inventory:2156",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 6500000,
+      "priceMin": 13000000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/efid-developments/park-valley-compound",
-            "observedPrice": 6500000,
-            "sourceId": "property-finder:a9c70065-8b07-40ae-87e1-1e16727e64d0"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/2156-park-valley-zayed-13",
@@ -45730,7 +45677,7 @@
             "sourceId": "nawy:2156"
           }
         ],
-        "updatedAt": "2026-10-13T03:04:10.844Z"
+        "updatedAt": "2026-10-15T00:59:34.541Z"
       }
     },
     {
@@ -45945,20 +45892,14 @@
         "sourceId": "nawy-inventory:2053",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 10280120,
+      "priceMin": 23656869,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/better-home-development/midtown-west",
-            "observedPrice": 10280120,
-            "sourceId": "property-finder:a780b002-117e-41ad-9c95-ffbced6a9b0c"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1432-midtown-new-zayed-west",
@@ -45966,7 +45907,7 @@
             "sourceId": "nawy:1432"
           }
         ],
-        "updatedAt": "2026-10-13T03:04:10.844Z"
+        "updatedAt": "2026-10-15T00:59:34.541Z"
       }
     },
     {
@@ -45989,20 +45930,14 @@
         "sourceId": "nawy-inventory:2052",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 10280120,
+      "priceMin": 23656869,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/better-home-development/midtown-west",
-            "observedPrice": 10280120,
-            "sourceId": "property-finder:a780b002-117e-41ad-9c95-ffbced6a9b0c"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1432-midtown-new-zayed-west",
@@ -46010,7 +45945,7 @@
             "sourceId": "nawy:1432"
           }
         ],
-        "updatedAt": "2026-10-13T03:04:10.844Z"
+        "updatedAt": "2026-10-15T00:59:34.541Z"
       }
     },
     {
@@ -46302,7 +46237,8 @@
       "type": "residential",
       "unitTypes": [
         "Duplex",
-        "Townhouse"
+        "Townhouse",
+        "Twinhouse"
       ],
       "downPayment": 5,
       "installmentYears": 9,
@@ -46312,20 +46248,14 @@
         "sourceId": "nawy-inventory:1927",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 10729680,
+      "priceMin": 17084952,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/torec-developments/t-pearl",
-            "observedPrice": 10729680,
-            "sourceId": "property-finder:41cd50bf-7ad6-4382-b788-9f8427adb98d"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1927-t-pearl",
@@ -46333,7 +46263,7 @@
             "sourceId": "nawy:1927"
           }
         ],
-        "updatedAt": "2026-10-13T03:04:10.844Z"
+        "updatedAt": "2026-10-15T00:59:34.541Z"
       }
     },
     {
@@ -46911,9 +46841,9 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "villa"
+        "Villa"
       ],
-      "downPayment": 10,
+      "downPayment": 0,
       "installmentYears": 0,
       "paymentPlan": "10% Down Payment",
       "catalogMeta": {
@@ -46921,20 +46851,14 @@
         "sourceId": "nawy-inventory:540",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 10800000,
+      "priceMin": 43000000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/al-karma-developments/novella",
-            "observedPrice": 10800000,
-            "sourceId": "property-finder:d8dfea08-dad2-4aa6-b67b-e206bff040ad"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19120-novella",
@@ -46942,7 +46866,7 @@
             "sourceId": "red:19120"
           }
         ],
-        "updatedAt": "2026-10-13T03:04:10.844Z"
+        "updatedAt": "2026-10-15T00:59:34.541Z"
       }
     },
     {
@@ -47299,28 +47223,22 @@
       "unitTypes": [
         "Villa"
       ],
-      "downPayment": 15,
-      "installmentYears": 8,
-      "paymentPlan": "15% Down Payment, 8 Years Installments",
+      "downPayment": 10,
+      "installmentYears": 10,
+      "paymentPlan": "10% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2179",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 6702494,
+      "priceMin": 10586000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
-        "confidence": "verified",
-        "sourceCount": 2,
+        "confidence": "high",
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/zayard-developments/zayard-memora",
-            "observedPrice": 6702494,
-            "sourceId": "property-finder:cfdc64bd-8cec-4e2b-a606-79e4b1aa3d72"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/2179-zayard-memora",
@@ -47328,7 +47246,7 @@
             "sourceId": "nawy:2179"
           }
         ],
-        "updatedAt": "2026-10-13T03:04:10.844Z"
+        "updatedAt": "2026-10-15T00:59:34.541Z"
       }
     },
     {
@@ -48553,10 +48471,9 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "apartment",
-        "duplex"
+        "Apartment"
       ],
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 0,
       "paymentPlan": "5% Down Payment",
       "catalogMeta": {
@@ -48564,20 +48481,14 @@
         "sourceId": "nawy-inventory:1504",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 4917250,
+      "priceMin": 8418060,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/edge-stone-developmnents/moraya",
-            "observedPrice": 4917250,
-            "sourceId": "property-finder:ddbb54dd-d17c-4b68-a904-d46cc51b3ed4"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30886-moraya",
@@ -48585,7 +48496,7 @@
             "sourceId": "red:30886"
           }
         ],
-        "updatedAt": "2026-10-13T03:04:10.844Z"
+        "updatedAt": "2026-10-15T00:59:34.541Z"
       }
     },
     {
@@ -49308,20 +49219,14 @@
         "sourceId": "nawy-inventory:1381",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 3943822,
+      "priceMin": 6127200,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/concrete-developments/elen-residence",
-            "observedPrice": 3943822,
-            "sourceId": "property-finder:f1c3094c-9de8-4e2d-aa12-22a7ce65f2cd"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1381-elen-new-cairo",
@@ -49329,7 +49234,7 @@
             "sourceId": "nawy:1381"
           }
         ],
-        "updatedAt": "2026-10-13T03:04:10.844Z"
+        "updatedAt": "2026-10-15T00:59:34.541Z"
       }
     },
     {

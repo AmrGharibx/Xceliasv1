@@ -77,6 +77,39 @@ test('batch PDF jobs create one standalone report per company without cross-comp
  assert.equal(reportFilename(jobs[1]),'Xcelias_Report_Test_Company_BatchTest batch.pdf');
 });
 
+test('a solo report contains only the selected trainee and their measured totals',()=>{
+ const {state,company,batch,trainee,assessment}=fixtureState();
+ const peer={...trainee,id:'same-company-peer',trainee_name:'Another Trainee'};
+ state.trainees.push(peer);
+ state.assessments=[assessment,{...assessment,id:'peer-assessment',trainee_id:peer.id,mapping:1,product_knowledge:1,presentability:1,soft_skills:1}];
+ state.daily_attendance=[attendance('selected-present',trainee.id,batch.id,'Present'),attendance('peer-absent',peer.id,batch.id,'Absent')];
+ const report=buildBatchReport(state,{batchId:batch.id,companyId:company.id,traineeId:trainee.id});
+ assert.deepEqual(report.items.map(item=>item.trainee.id),[trainee.id]);
+ assert.equal(report.assessed,1);
+ assert.equal(report.average,97.5);
+ assert.equal(report.items[0].attendance.present,1);
+ assert.equal(report.items[0].attendance.absent,0);
+ const [job]=companyReportJobs(report);
+ assert.equal(job.items.length,1);
+ assert.equal(reportFilename(job),'Xcelias_Report_Test_Company_BatchTest batch_Test_Trainee.pdf');
+});
+
+test('a solo report never falls back to company output when the trainee is outside its scope',()=>{
+ const {state,company,batch,trainee}=fixtureState();
+ state.companies.push({...company,id:'other-company',name:'Other Company'});
+ state.batches.push({...batch,id:'other-batch',batch_name:'Other batch'});
+ for(const scope of [
+  {batchId:batch.id,companyId:company.id,traineeId:'missing-trainee'},
+  {batchId:batch.id,companyId:'other-company',traineeId:trainee.id},
+  {batchId:'other-batch',companyId:company.id,traineeId:trainee.id}
+ ]){
+  const report=buildBatchReport(state,scope);
+  assert.deepEqual(report.items,[]);
+  assert.equal(report.average,null);
+  assert.deepEqual(companyReportJobs(report),[]);
+ }
+});
+
 test('embedded PDF rounds floating-point percentages and emphasizes attendance risks in red',()=>{
  const prepared=standaloneReportItem({
   trainee:{id:'trainee-rounding',trainee_name:'Test Trainee'},

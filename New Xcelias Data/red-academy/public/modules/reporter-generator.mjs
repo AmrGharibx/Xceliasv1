@@ -271,10 +271,12 @@ function conclusion(report,items){
 export function companyReportJobs(report){
   const grouped=new Map();
   report.items.forEach(item=>{const key=item.company?.id||item.trainee.company_id||'__unassigned__';if(!grouped.has(key))grouped.set(key,{companyId:key,companyName:item.company?.name||'Company not recorded',items:[]});grouped.get(key).items.push(item);});
-  return [...grouped.values()].sort((a,b)=>a.companyName.localeCompare(b.companyName)).map(group=>({...group,batch:report.batch}));
+  return [...grouped.values()].sort((a,b)=>a.companyName.localeCompare(b.companyName)).map(group=>({...group,batch:report.batch,traineeId:report.traineeId||''}));
 }
 export function reportFilename(report){
-  return 'Xcelias_Report_'+String(report.companyName||'Company not recorded').replace(/\s+/g,'_')+'_Batch'+String(report.batch?.batch_name||'')+'.pdf';
+  const trainee=report.traineeId?report.items.find(item=>item.trainee.id===report.traineeId)?.trainee:null;
+  const traineeName=trainee?'_'+String(trainee.trainee_name).replace(/[<>:"/\\|?*\u0000-\u001f\s]+/g,'_').replace(/[. ]+$/g,''):'';
+  return 'Xcelias_Report_'+String(report.companyName||'Company not recorded').replace(/\s+/g,'_')+'_Batch'+String(report.batch?.batch_name||'')+traineeName+'.pdf';
 }
 function loadScript(src){
   return new Promise((resolve,reject)=>{

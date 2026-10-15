@@ -48,11 +48,11 @@ export function reportNarrative(item){
  return `${scoreLine} The strongest assessed area is ${strongest.label} (${fmt(strongest.value,2)}/5). ${development} ${attendanceLine} ${checklistLine}`;
 }
 
-export function buildBatchReport(data,{batchId,companyId=''}){
+export function buildBatchReport(data,{batchId,companyId='',traineeId=''}){
  const batch=data.batches.find(row=>row.id===batchId);
  if(!batch)throw new Error('Batch not found.');
  const companyById=new Map(data.companies.map(row=>[row.id,row]));
- const trainees=data.trainees.filter(row=>row.batch_id===batch.id&&(!companyId||row.company_id===companyId)).sort((a,b)=>a.trainee_name.localeCompare(b.trainee_name));
+ const trainees=data.trainees.filter(row=>row.batch_id===batch.id&&(!companyId||row.company_id===companyId)&&(!traineeId||row.id===traineeId)).sort((a,b)=>a.trainee_name.localeCompare(b.trainee_name));
  const items=trainees.map(trainee=>{
   const assessment=assessmentFor(data,trainee.id),profile=reporterAssessment(assessment);
   const attendance=attendanceStats(data.daily_attendance.filter(row=>row.trainee_id===trainee.id&&row.batch_id===batch.id));
@@ -64,6 +64,7 @@ export function buildBatchReport(data,{batchId,companyId=''}){
  return {
   batch,
   companyId,
+  traineeId,
   company:companyId?companyById.get(companyId)||null:null,
   items,
   assessed:assessed.length,
@@ -105,38 +106,52 @@ function legacyBuilderMarkup(ctx,batch,selectedCompany){
 
 // The batch workflow uses the exact standalone PDF exporter while retaining
 // the existing review preview below for quick on-screen checks.
-function builderMarkup(ctx,batch,selectedCompany){
- const data=ctx.store.data,companies=companyOptions(data,batch),selected=selectedCompany||'',roster=data.trainees.filter(row=>row.batch_id===batch.id&&(!selected||row.company_id===selected)).sort((a,b)=>a.trainee_name.localeCompare(b.trainee_name)),write=ctx.store.canWrite();
- return `<div id="academy-report-builder"><div class="academy-report-intro"><span>${icon('book',18)}</span><div><strong>Internal trainee reports</strong><p>Creates the same A4 report format as the standalone Reporter Generator. Each company receives its own PDF with that company’s trainees, portraits, scores, attendance, comments, and concluding remarks.</p></div></div><div class="form-grid"><label class="field full" for="academy-report-company"><span>Company</span><select id="academy-report-company"><option value="" ${selected?'':'selected'}>All companies in this batch</option>${companies.map(company=>`<option value="${e(company.id)}" ${company.id===selected?'selected':''}>${e(company.name)}</option>`).join('')}</select><small>Select one company for a single PDF, or leave this on all companies to create one PDF per company.</small></label></div><div class="academy-roster-head"><div><strong>${roster.length} trainee${roster.length===1?'':'s'} selected</strong><span>Portraits are private server records and are never sent to the AI provider.</span></div></div><div class="academy-roster-list">${roster.map(trainee=>rosterRow(ctx,trainee,data.companies.find(company=>company.id===trainee.company_id),write)).join('')||'<p class="faint" style="padding:16px 0">No trainees match this company selection.</p>'}</div>${write&&ctx.store.aiEnabled?'<label class="checkbox-field academy-ai-consent"><input id="academy-report-ai-consent" type="checkbox">I approve sending anonymized score and attendance totals to the configured AI provider for this report preview. Names, photos, contact details, and instructor comments are excluded.</label>':'<p class="academy-local-note">This report uses the built-in local report engine. AI drafts are unavailable until an authorized administrator configures the provider.</p>'}<div class="modal-actions"><button type="button" class="btn primary" data-academy-company-pdf ${roster.length?'':'disabled'}>${icon('download',16)}<span>Generate company PDF</span></button><button type="button" class="btn secondary" data-academy-all-pdfs ${data.trainees.filter(row=>row.batch_id===batch.id).length?'':'disabled'}>${icon('download',16)}<span>Generate all company PDFs</span></button><button type="button" class="btn secondary" data-academy-build-report ${roster.length?'':'disabled'}>${icon('book',16)}<span>Open review preview</span></button></div></div>`;
+function builderMarkup(ctx,batch,selectedCompany,selectedTrainee=''){
+ const data=ctx.store.data,companies=companyOptions(data,batch),selected=selectedCompany||'',write=ctx.store.canWrite();
+ const trainees=data.trainees.filter(row=>row.batch_id===batch.id&&(!selected||row.company_id===selected)).sort((a,b)=>a.trainee_name.localeCompare(b.trainee_name));
+ const roster=trainees.filter(row=>!selectedTrainee||row.id===selectedTrainee);
+ return `<div id="academy-report-builder">
+  <div class="academy-report-intro"><span>${icon('book',18)}</span><div><strong>Internal trainee reports</strong><p>Create an A4 report for one trainee, a company, or the whole batch, including portraits, scores, attendance, comments, and concluding remarks.</p></div></div>
+  <div class="form-grid">
+   <label class="field" for="academy-report-company"><span>Company</span><select id="academy-report-company"><option value="" ${selected?'':'selected'}>All companies in this batch</option>${companies.map(company=>`<option value="${e(company.id)}" ${company.id===selected?'selected':''}>${e(company.name)}</option>`).join('')}</select><small>Narrow the trainee list to one company, or include all companies.</small></label>
+   <label class="field" for="academy-report-trainee"><span>Trainee</span><select id="academy-report-trainee"><option value="" ${selectedTrainee?'':'selected'}>All trainees in scope</option>${trainees.map(trainee=>`<option value="${e(trainee.id)}" ${trainee.id===selectedTrainee?'selected':''}>${e(trainee.trainee_name)}${selected?'':` — ${e(data.companies.find(company=>company.id===trainee.company_id)?.name||'Company not recorded')}`}</option>`).join('')}</select><small>Choose one name to generate a PDF containing only that trainee.</small></label>
+  </div>
+  <div class="academy-roster-head"><div><strong>${roster.length} trainee${roster.length===1?'':'s'} selected</strong><span>Portraits are private server records and are never sent to the AI provider.</span></div></div>
+  <div class="academy-roster-list">${roster.map(trainee=>rosterRow(ctx,trainee,data.companies.find(company=>company.id===trainee.company_id),write)).join('')||'<p class="faint" style="padding:16px 0">No trainees match this selection.</p>'}</div>
+  ${write&&ctx.store.aiEnabled?'<label class="checkbox-field academy-ai-consent"><input id="academy-report-ai-consent" type="checkbox">I approve sending anonymized score and attendance totals to the configured AI provider for this report preview. Names, photos, contact details, and instructor comments are excluded.</label>':'<p class="academy-local-note">This report uses the built-in local report engine. AI drafts are unavailable until an authorized administrator configures the provider.</p>'}
+  <div class="modal-actions"><button type="button" class="btn primary" data-academy-company-pdf ${roster.length?'':'disabled'}>${icon('download',16)}<span>${selectedTrainee?'Generate trainee PDF':selected?'Generate company PDF':'Generate company PDFs'}</span></button><button type="button" class="btn secondary" data-academy-all-pdfs ${data.trainees.some(row=>row.batch_id===batch.id)?'':'disabled'}>${icon('download',16)}<span>Generate all company PDFs</span></button><button type="button" class="btn secondary" data-academy-build-report ${roster.length?'':'disabled'}>${icon('book',16)}<span>Open review preview</span></button></div>
+ </div>`;
 }
 
-async function generateCompanyPdfs(ctx,batch,companyId,trigger){
- const report=buildBatchReport(ctx.store.data,{batchId:batch.id,companyId});
- const jobs=companyId?[{companyId:companyId,companyName:report.company?.name||'Company not recorded',items:report.items,batch:report.batch}]:companyReportJobs(report);
- if(!jobs.length){toast('There are no trainees to report in this batch.','error');return;}
+async function generateCompanyPdfs(ctx,batch,companyId,trigger,traineeId=''){
+ const report=buildBatchReport(ctx.store.data,{batchId:batch.id,companyId,traineeId});
+ const jobs=companyReportJobs(report);
+ if(!jobs.length){toast('There are no trainees matching this report selection.','error');return;}
  if(trigger)trigger.disabled=true;
  try{
   for(let index=0;index<jobs.length;index++){
-   const job=jobs[index];toast('Generating '+job.companyName+' ('+(index+1)+' of '+jobs.length+')...');
+   const job=jobs[index];toast('Generating '+(traineeId?job.items[0].trainee.trainee_name:job.companyName)+' ('+(index+1)+' of '+jobs.length+')...');
    await downloadCompanyReport(job,ctx.store,progress=>{if(trigger)trigger.dataset.progress=progress.page+'/'+progress.total;});
   }
-  toast(jobs.length===1?'Company PDF downloaded.':jobs.length+' company PDFs downloaded.');
- }catch(error){console.error(error);toast('The company PDF could not be generated. Check the browser download permission and try again.','error');}
+  toast(traineeId?'Trainee PDF downloaded.':jobs.length===1?'Company PDF downloaded.':jobs.length+' company PDFs downloaded.');
+ }catch(error){console.error(error);toast('The PDF could not be generated. Check the browser download permission and try again.','error');}
  finally{if(trigger){trigger.disabled=false;delete trigger.dataset.progress;}}
 }
 
-export function academyReportModal(ctx,batch,initialCompanyId=''){
+export function academyReportModal(ctx,batch,initialCompanyId='',initialTraineeId=''){
  if(!batch){toast('This batch is no longer available.','error');return;}
- let selectedCompany=initialCompanyId;
+ if(initialTraineeId&&!ctx.store.data.trainees.some(row=>row.id===initialTraineeId&&row.batch_id===batch.id&&(!initialCompanyId||row.company_id===initialCompanyId))){toast('This trainee is no longer in the selected batch and company. Choose the trainee again.','error');return;}
+ let selectedCompany=initialCompanyId,selectedTrainee=initialTraineeId;
  const portraitUrls=new Set();
  const renderBuilder=()=>{
   release(portraitUrls);const body=document.querySelector('.modal-body');if(!body)return;
-  body.innerHTML=builderMarkup(ctx,batch,selectedCompany);bindBuilder();
+  body.innerHTML=builderMarkup(ctx,batch,selectedCompany,selectedTrainee);bindBuilder();
  };
  const bindBuilder=()=>{
   const root=document.getElementById('academy-report-builder');if(!root)return;
   hydratePortraits(root,ctx.store,portraitUrls);
-  root.querySelector('#academy-report-company').onchange=event=>{selectedCompany=event.currentTarget.value;renderBuilder();};
+  root.querySelector('#academy-report-company').onchange=event=>{selectedCompany=event.currentTarget.value;selectedTrainee='';renderBuilder();};
+  root.querySelector('#academy-report-trainee').onchange=event=>{selectedTrainee=event.currentTarget.value;renderBuilder();};
   root.querySelectorAll('[data-academy-portrait-select]').forEach(button=>button.addEventListener('click',()=>root.querySelector(`#academy-portrait-${button.dataset.academyPortraitSelect}`).click()));
   root.querySelectorAll('[data-academy-portrait-input]').forEach(input=>input.addEventListener('change',async event=>{
    const file=event.currentTarget.files?.[0];if(!file)return;
@@ -145,13 +160,13 @@ export function academyReportModal(ctx,batch,initialCompanyId=''){
    catch(error){toast(error.message||'The portrait could not be saved.','error');if(trigger)trigger.disabled=false;}
   }));
   root.querySelector('[data-academy-build-report]').onclick=()=>{
-   const report=buildBatchReport(ctx.store.data,{batchId:batch.id,companyId:selectedCompany});
+   const report=buildBatchReport(ctx.store.data,{batchId:batch.id,companyId:selectedCompany,traineeId:selectedTrainee});
    openReportPreview(ctx,report,!!root.querySelector('#academy-report-ai-consent')?.checked);
   };
-  root.querySelector('[data-academy-company-pdf]')?.addEventListener('click',event=>generateCompanyPdfs(ctx,batch,selectedCompany,event.currentTarget));
+  root.querySelector('[data-academy-company-pdf]')?.addEventListener('click',event=>generateCompanyPdfs(ctx,batch,selectedCompany,event.currentTarget,selectedTrainee));
   root.querySelector('[data-academy-all-pdfs]')?.addEventListener('click',event=>generateCompanyPdfs(ctx,batch,'',event.currentTarget));
  };
- openModal('Generate trainee reports',`${batch.batch_name} · Select a company, add portraits, then create the internal report set.`,builderMarkup(ctx,batch,selectedCompany),{wide:true});
+ openModal('Generate trainee reports',`${batch.batch_name} · Select a company or a single trainee, add portraits, then generate your PDF.`,builderMarkup(ctx,batch,selectedCompany,selectedTrainee),{wide:true});
  document.querySelector('[data-action="close-modal"]')?.addEventListener('click',()=>release(portraitUrls),{once:true});
  document.querySelector('.modal-overlay')?.addEventListener('click',event=>{if(event.target.classList.contains('modal-overlay'))release(portraitUrls);});
  bindBuilder();
@@ -201,7 +216,7 @@ function openReportPreview(ctx,report,allowAi){
   if(note)note.textContent='This checklist is derived from scheduled batch dates and Daily Attendance. Present and Tour Day count as attended; Off Day is excluded, and an unrecorded date is not an absence.';
  });
  hydratePortraits(root,ctx.store,portraitUrls).then(()=>root.querySelector('[data-academy-print]')?.removeAttribute('disabled'));
- root.querySelector('[data-academy-back]').onclick=()=>{release(portraitUrls);academyReportModal(ctx,report.batch,report.companyId);};
+ root.querySelector('[data-academy-back]').onclick=()=>{release(portraitUrls);academyReportModal(ctx,report.batch,report.companyId,report.traineeId);};
  root.querySelector('[data-academy-print]').onclick=()=>{
   document.body.classList.add('printing-academy');const clear=()=>document.body.classList.remove('printing-academy');window.addEventListener('afterprint',clear,{once:true});window.print();setTimeout(clear,0);
  };

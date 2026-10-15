@@ -144,7 +144,7 @@ test('A session follow-up quiz unlocks on Cairo date, links once under concurren
 });
 test('Academy Studio learner links run a private, one-submit quiz loop and stream the real grade to trainers',async()=>{
  const library=await request('activities/library',{cookie:instructorCookie});assert.equal(library.status,200);assert.equal(library.data.activities.length,9);assert.ok(library.data.activities.every(activity=>!('questions'in activity)));
- const created=await request('activities/assign',{method:'POST',cookie:instructorCookie,body:{batch_id:batch.id,activity_id:'quiz-discovery',instructions:'Listen for the client goal before recommending.',due_date:'2026-10-04',trainee_ids:[trainee.id]}});
+ const created=await request('activities/assign',{method:'POST',cookie:instructorCookie,body:{batch_id:batch.id,activity_id:'quiz-discovery',instructions:'Listen for the client goal before recommending.',due_date:today(),trainee_ids:[trainee.id]}});
  assert.equal(created.status,201,JSON.stringify(created.data));assert.equal(created.data.record.title,'Discovery Sprint');
  const assignmentId=created.data.record.id;
  assert.equal((await request('activities/links',{method:'POST',cookie:viewerCookie,body:{assignment_id:assignmentId}})).status,403);

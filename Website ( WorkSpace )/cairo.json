@@ -3594,7 +3594,7 @@
       "zone": "New Cairo",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 9800000,
+      "priceMin": 11808000,
       "unitTypes": [
         "Apartment",
         "Penthouse",
@@ -3612,9 +3612,9 @@
         5,
         6
       ],
-      "paymentPlan": "15% Down Payment, 6 Years Installments",
-      "downPayment": 15,
-      "installmentYears": 6,
+      "paymentPlan": "20% Down Payment, 4 Years Installments",
+      "downPayment": 20,
+      "installmentYears": 4,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -3623,16 +3623,16 @@
         "sourceCount": 3,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/207-el-patio-oro",
-            "observedPrice": 9800000,
-            "sourceId": "nawy:207"
-          },
-          {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/la-vista-developments/el-patio-oro",
             "observedPrice": 11808000,
             "sourceId": "property-finder:3339d60b-648c-4dba-8667-76ac9451d4fd"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/207-el-patio-oro",
+            "observedPrice": 14500000,
+            "sourceId": "nawy:207"
           },
           {
             "name": "RED",
@@ -3641,7 +3641,7 @@
             "sourceId": "red:19045"
           }
         ],
-        "updatedAt": "2026-10-15T02:55:00.372Z"
+        "updatedAt": "2026-10-15T12:43:22.245Z"
       }
     },
     {
@@ -18466,9 +18466,10 @@
       "zone": "October",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 19700000,
+      "priceMin": 22200000,
       "unitTypes": [
-        "Office"
+        "Office",
+        "Administrative"
       ],
       "areaMin": 87,
       "areaMax": 382,
@@ -18493,11 +18494,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1571-junction",
-            "observedPrice": 19700000,
+            "observedPrice": 22200000,
             "sourceId": "nawy:1571"
           }
         ],
-        "updatedAt": "2026-09-23T18:35:34.352Z"
+        "updatedAt": "2026-10-15T12:43:22.245Z"
       }
     },
     {
@@ -23253,7 +23254,7 @@
       "zone": "Shorouk",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 5940000,
+      "priceMin": 5820000,
       "unitTypes": [
         "Townhouse",
         "Apartment",
@@ -23287,7 +23288,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/219-al-burouj",
-            "observedPrice": 5940000,
+            "observedPrice": 5820000,
             "sourceId": "nawy:219"
           },
           {
@@ -23303,7 +23304,7 @@
             "sourceId": "property-finder:a6ae4702-08eb-497f-8674-f13f1a1dc3d1"
           }
         ],
-        "updatedAt": "2026-10-15T02:55:00.372Z"
+        "updatedAt": "2026-10-15T12:43:22.245Z"
       }
     },
     {
@@ -25990,13 +25991,13 @@
       "zone": "Shorouk",
       "status": "Delivered",
       "type": "commercial",
-      "priceMin": 5940000,
+      "priceMin": 5820000,
       "unitTypes": [
         "Townhouse",
         "Apartment",
         "Office",
-        "Duplex",
         "Villa",
+        "Duplex",
         "Administrative",
         "Twinhouse",
         "Studio"
@@ -26017,11 +26018,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/219-al-burouj",
-            "observedPrice": 5940000,
+            "observedPrice": 5820000,
             "sourceId": "nawy:219"
           }
         ],
-        "updatedAt": "2026-10-14T12:42:19.758Z"
+        "updatedAt": "2026-10-15T12:43:22.245Z"
       }
     },
     {
@@ -32048,13 +32049,13 @@
       "zone": "Shorouk",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 5940000,
+      "priceMin": 5820000,
       "unitTypes": [
         "Townhouse",
         "Apartment",
         "Office",
-        "Duplex",
         "Villa",
+        "Duplex",
         "Administrative",
         "Twinhouse",
         "Studio"
@@ -32082,11 +32083,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/219-al-burouj",
-            "observedPrice": 5940000,
+            "observedPrice": 5820000,
             "sourceId": "nawy:219"
           }
         ],
-        "updatedAt": "2026-10-14T12:42:19.758Z"
+        "updatedAt": "2026-10-15T12:43:22.245Z"
       }
     },
     {
@@ -43526,15 +43527,15 @@
         "Administrative",
         "Twinhouse"
       ],
-      "downPayment": 15,
-      "installmentYears": 6,
-      "paymentPlan": "15% Down Payment, 6 Years Installments",
+      "downPayment": 20,
+      "installmentYears": 4,
+      "paymentPlan": "20% Down Payment, 4 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2321",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 9800000,
+      "priceMin": 14500000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -43545,7 +43546,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/207-el-patio-oro",
-            "observedPrice": 9800000,
+            "observedPrice": 14500000,
             "sourceId": "nawy:207"
           },
           {
@@ -43555,7 +43556,7 @@
             "sourceId": "red:19045"
           }
         ],
-        "updatedAt": "2026-10-12T18:40:48.390Z"
+        "updatedAt": "2026-10-15T12:43:22.245Z"
       }
     },
     {
@@ -43573,15 +43574,15 @@
         "Administrative",
         "Twinhouse"
       ],
-      "downPayment": 15,
-      "installmentYears": 6,
-      "paymentPlan": "15% Down Payment, 6 Years Installments",
+      "downPayment": 20,
+      "installmentYears": 4,
+      "paymentPlan": "20% Down Payment, 4 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2320",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 9800000,
+      "priceMin": 11808000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -43590,16 +43591,16 @@
         "sourceCount": 3,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/207-el-patio-oro",
-            "observedPrice": 9800000,
-            "sourceId": "nawy:207"
-          },
-          {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/la-vista-developments/el-patio-oro",
             "observedPrice": 11808000,
             "sourceId": "property-finder:3339d60b-648c-4dba-8667-76ac9451d4fd"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/207-el-patio-oro",
+            "observedPrice": 14500000,
+            "sourceId": "nawy:207"
           },
           {
             "name": "RED",
@@ -43608,7 +43609,7 @@
             "sourceId": "red:19045"
           }
         ],
-        "updatedAt": "2026-10-15T02:55:00.372Z"
+        "updatedAt": "2026-10-15T12:43:22.245Z"
       }
     },
     {
@@ -43626,15 +43627,15 @@
         "Administrative",
         "Twinhouse"
       ],
-      "downPayment": 15,
-      "installmentYears": 6,
-      "paymentPlan": "15% Down Payment, 6 Years Installments",
+      "downPayment": 20,
+      "installmentYears": 4,
+      "paymentPlan": "20% Down Payment, 4 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2319",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 9800000,
+      "priceMin": 11808000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -43643,16 +43644,16 @@
         "sourceCount": 3,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/207-el-patio-oro",
-            "observedPrice": 9800000,
-            "sourceId": "nawy:207"
-          },
-          {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/la-vista-developments/el-patio-oro",
             "observedPrice": 11808000,
             "sourceId": "property-finder:3339d60b-648c-4dba-8667-76ac9451d4fd"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/207-el-patio-oro",
+            "observedPrice": 14500000,
+            "sourceId": "nawy:207"
           },
           {
             "name": "RED",
@@ -43661,7 +43662,7 @@
             "sourceId": "red:19045"
           }
         ],
-        "updatedAt": "2026-10-15T02:55:00.372Z"
+        "updatedAt": "2026-10-15T12:43:22.245Z"
       }
     },
     {
@@ -43679,15 +43680,15 @@
         "Administrative",
         "Twinhouse"
       ],
-      "downPayment": 15,
-      "installmentYears": 6,
-      "paymentPlan": "15% Down Payment, 6 Years Installments",
+      "downPayment": 20,
+      "installmentYears": 4,
+      "paymentPlan": "20% Down Payment, 4 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2318",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 9800000,
+      "priceMin": 11808000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -43696,16 +43697,16 @@
         "sourceCount": 3,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/207-el-patio-oro",
-            "observedPrice": 9800000,
-            "sourceId": "nawy:207"
-          },
-          {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/la-vista-developments/el-patio-oro",
             "observedPrice": 11808000,
             "sourceId": "property-finder:3339d60b-648c-4dba-8667-76ac9451d4fd"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/207-el-patio-oro",
+            "observedPrice": 14500000,
+            "sourceId": "nawy:207"
           },
           {
             "name": "RED",
@@ -43714,7 +43715,7 @@
             "sourceId": "red:19045"
           }
         ],
-        "updatedAt": "2026-10-15T02:55:00.372Z"
+        "updatedAt": "2026-10-15T12:43:22.245Z"
       }
     },
     {
@@ -46292,7 +46293,7 @@
         "sourceId": "nawy-inventory:2352",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 5940000,
+      "priceMin": 5820000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -46303,7 +46304,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/219-al-burouj",
-            "observedPrice": 5940000,
+            "observedPrice": 5820000,
             "sourceId": "nawy:219"
           },
           {
@@ -46313,7 +46314,7 @@
             "sourceId": "property-finder:a6ae4702-08eb-497f-8674-f13f1a1dc3d1"
           }
         ],
-        "updatedAt": "2026-10-15T02:55:00.372Z"
+        "updatedAt": "2026-10-15T12:43:22.245Z"
       }
     },
     {
@@ -46328,8 +46329,8 @@
         "Townhouse",
         "Apartment",
         "Office",
-        "Duplex",
         "Villa",
+        "Duplex",
         "Administrative",
         "Twinhouse",
         "Studio"
@@ -46342,7 +46343,7 @@
         "sourceId": "nawy-inventory:2351",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 5940000,
+      "priceMin": 5820000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -46353,11 +46354,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/219-al-burouj",
-            "observedPrice": 5940000,
+            "observedPrice": 5820000,
             "sourceId": "nawy:219"
           }
         ],
-        "updatedAt": "2026-10-14T12:42:19.758Z"
+        "updatedAt": "2026-10-15T12:43:22.245Z"
       }
     },
     {
@@ -46372,8 +46373,8 @@
         "Townhouse",
         "Apartment",
         "Office",
-        "Duplex",
         "Villa",
+        "Duplex",
         "Administrative",
         "Twinhouse",
         "Studio"
@@ -46386,7 +46387,7 @@
         "sourceId": "nawy-inventory:2350",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 5940000,
+      "priceMin": 5820000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -46397,11 +46398,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/219-al-burouj",
-            "observedPrice": 5940000,
+            "observedPrice": 5820000,
             "sourceId": "nawy:219"
           }
         ],
-        "updatedAt": "2026-10-14T12:42:19.758Z"
+        "updatedAt": "2026-10-15T12:43:22.245Z"
       }
     },
     {
@@ -46416,8 +46417,8 @@
         "Townhouse",
         "Apartment",
         "Office",
-        "Duplex",
         "Villa",
+        "Duplex",
         "Administrative",
         "Twinhouse",
         "Studio"
@@ -46430,7 +46431,7 @@
         "sourceId": "nawy-inventory:2349",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 5940000,
+      "priceMin": 5820000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -46441,11 +46442,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/219-al-burouj",
-            "observedPrice": 5940000,
+            "observedPrice": 5820000,
             "sourceId": "nawy:219"
           }
         ],
-        "updatedAt": "2026-10-14T12:42:19.758Z"
+        "updatedAt": "2026-10-15T12:43:22.245Z"
       }
     },
     {

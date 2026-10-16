@@ -16573,7 +16573,7 @@
       "zone": "October",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 18974959,
+      "priceMin": 22881784,
       "unitTypes": [
         "Townhouse",
         "Villa"
@@ -16596,14 +16596,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/mountain-view/mountain-view-4",
-            "observedPrice": 18974959,
-            "sourceId": "property-finder:f61e8804-f72a-41a5-85b1-113d3ef545fd"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/24-mountain-view-4",
@@ -16617,7 +16611,7 @@
             "sourceId": "nawy:800"
           }
         ],
-        "updatedAt": "2026-10-14T18:38:58.329Z"
+        "updatedAt": "2026-10-16T06:47:39.566Z"
       }
     },
     {
@@ -59594,22 +59588,36 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Apartment",
-        "Duplex",
-        "Townhouse",
         "Villa",
-        "Penthouse",
-        "Twinhouse"
+        "Twin House",
+        "Apartment",
+        "Town House"
       ],
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:664",
         "observedAt": "2026-10-16T03:36:56.900Z"
       },
-      "priceMin": 19135000
+      "priceMin": 22679000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/20-the-estates",
+            "observedPrice": 22679000,
+            "sourceId": "red:20"
+          }
+        ],
+        "updatedAt": "2026-10-16T06:47:39.566Z"
+      }
     },
     {
       "name": "The Estates",
@@ -59621,19 +59629,35 @@
       "type": "residential",
       "unitTypes": [
         "Villa",
-        "Townhouse",
+        "Twin House",
         "Apartment",
-        "Twinhouse"
+        "Town House"
       ],
-      "downPayment": 10,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "10% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:310",
         "observedAt": "2026-10-16T03:36:56.900Z"
       },
-      "priceMin": 77223960
+      "priceMin": 22679000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/20-the-estates",
+            "observedPrice": 22679000,
+            "sourceId": "red:20"
+          }
+        ],
+        "updatedAt": "2026-10-16T06:47:39.566Z"
+      }
     }
   ],
   "projectDetails": {

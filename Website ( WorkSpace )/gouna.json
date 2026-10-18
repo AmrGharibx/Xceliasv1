@@ -849,7 +849,7 @@
       "zone": "Hurghada",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 13654075,
+      "priceMin": 12000000,
       "unitTypes": [
         "Chalet",
         "Townhouse"
@@ -872,8 +872,14 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/the-land-developers/il-bayou",
+            "observedPrice": 12000000,
+            "sourceId": "property-finder:9150aa0f-8aa4-4c3c-9760-eb1b2152a1a5"
+          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/978-il-bayou",
@@ -881,7 +887,7 @@
             "sourceId": "nawy:978"
           }
         ],
-        "updatedAt": "2026-10-17T18:31:50.868Z"
+        "updatedAt": "2026-10-18T02:53:55.899Z"
       }
     },
     {
@@ -1020,7 +1026,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
@@ -1029,19 +1035,13 @@
             "sourceId": "red:52"
           },
           {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/orascom-development/makadi-heights",
-            "observedPrice": 11000000,
-            "sourceId": "property-finder:6e9a4054-9bf0-4a4d-926a-2c73e79f84eb"
-          },
-          {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/454-makadi-heights",
             "observedPrice": 14150000,
             "sourceId": "nawy:454"
           }
         ],
-        "updatedAt": "2026-10-17T02:54:09.889Z"
+        "updatedAt": "2026-10-18T02:53:55.899Z"
       }
     },
     {

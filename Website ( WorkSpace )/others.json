@@ -593,7 +593,7 @@
       "zone": "Somabay",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 20900000,
+      "priceMin": 23500000,
       "unitTypes": [
         "Chalet",
         "Apartment"
@@ -616,14 +616,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/somabay-realestate/reef-town",
-            "observedPrice": 20900000,
-            "sourceId": "property-finder:1e6ef37d-ad96-42e2-929d-daf05041c69f"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/136-reef-town",
@@ -631,7 +625,7 @@
             "sourceId": "nawy:136"
           }
         ],
-        "updatedAt": "2026-10-18T02:53:55.899Z"
+        "updatedAt": "2026-10-19T02:57:22.366Z"
       }
     },
     {
@@ -667,7 +661,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 3,
         "sources": [
           {
             "name": "RED",
@@ -676,13 +670,19 @@
             "sourceId": "red:19101"
           },
           {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/palm-hills/palm-hills-alexandria",
+            "observedPrice": 9418000,
+            "sourceId": "property-finder:32791fee-4182-4ae1-8a60-39c97256919c"
+          },
+          {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/201-palm-hills-alexandria",
             "observedPrice": 11122000,
             "sourceId": "nawy:201"
           }
         ],
-        "updatedAt": "2026-10-18T18:33:22.357Z"
+        "updatedAt": "2026-10-19T02:57:22.366Z"
       }
     },
     {
@@ -1442,7 +1442,8 @@
       "type": "residential",
       "priceMin": 10446000,
       "unitTypes": [
-        "apartment"
+        "Apartment",
+        "Chalet"
       ],
       "areaMin": 74,
       "areaMax": 326,
@@ -1455,29 +1456,23 @@
         6
       ],
       "paymentPlan": "10% Down Payment",
-      "downPayment": 10,
+      "downPayment": 0,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19235-blanca",
             "observedPrice": 10446000,
             "sourceId": "red:19235"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/somabay-realestate/blanca",
-            "observedPrice": 19900000,
-            "sourceId": "property-finder:2ae373c3-ca46-4ff5-9395-3263f366ba07"
           }
         ],
-        "updatedAt": "2026-10-18T02:53:55.899Z"
+        "updatedAt": "2026-10-19T02:57:22.366Z"
       }
     },
     {
@@ -2195,16 +2190,22 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/2239-coral-coves",
             "observedPrice": 20800000,
             "sourceId": "nawy:2239"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/somabay-realestate/soma-coves",
+            "observedPrice": 22100000,
+            "sourceId": "property-finder:9e4e375f-5822-47f1-9cee-4fc1d43d23b2"
           }
         ],
-        "updatedAt": "2026-10-18T18:33:22.357Z"
+        "updatedAt": "2026-10-19T02:57:22.366Z"
       }
     },
     {

@@ -60243,6 +60243,101 @@
         ],
         "updatedAt": "2026-10-19T02:57:22.366Z"
       }
+    },
+    {
+      "name": "Befit living",
+      "dev": "Paragon Adeer",
+      "lat": 30.053479186724104,
+      "lng": 31.62401787879574,
+      "zone": "New Cairo",
+      "status": "Available",
+      "type": "residential",
+      "unitTypes": [
+        "Apartment",
+        "Studio"
+      ],
+      "downPayment": 5,
+      "installmentYears": 10,
+      "paymentPlan": "5% Down Payment, 10 Years Installments",
+      "catalogMeta": {
+        "status": "observed",
+        "sourceId": "nawy-inventory:2760",
+        "observedAt": "2026-10-19T03:40:01.972Z"
+      },
+      "priceMin": 3600000
+    },
+    {
+      "name": "The Estates Residence",
+      "dev": "SODIC",
+      "lat": 30.074697,
+      "lng": 30.87622,
+      "zone": "New Zayed",
+      "status": "Available",
+      "type": "residential",
+      "unitTypes": [
+        "Apartment",
+        "Townhouse",
+        "Duplex",
+        "Villa",
+        "Penthouse",
+        "Twinhouse"
+      ],
+      "downPayment": 5,
+      "installmentYears": 10,
+      "paymentPlan": "5% Down Payment, 10 Years Installments",
+      "catalogMeta": {
+        "status": "observed",
+        "sourceId": "nawy-inventory:664",
+        "observedAt": "2026-10-19T03:40:01.972Z"
+      },
+      "priceMin": 19135000
+    },
+    {
+      "name": "The Estates",
+      "dev": "SODIC",
+      "lat": 30.08172,
+      "lng": 30.878458,
+      "zone": "New Zayed",
+      "status": "Available",
+      "type": "residential",
+      "unitTypes": [
+        "Villa",
+        "Townhouse",
+        "Apartment",
+        "Twinhouse"
+      ],
+      "downPayment": 10,
+      "installmentYears": 10,
+      "paymentPlan": "10% Down Payment, 10 Years Installments",
+      "catalogMeta": {
+        "status": "observed",
+        "sourceId": "nawy-inventory:310",
+        "observedAt": "2026-10-19T03:40:01.972Z"
+      },
+      "priceMin": 77223960
+    },
+    {
+      "name": "C Yard",
+      "dev": "Concrete Development",
+      "lat": 30.033008251631387,
+      "lng": 31.471673837826728,
+      "zone": "New Cairo",
+      "status": "Available",
+      "type": "commercial",
+      "unitTypes": [
+        "Retail",
+        "Medical",
+        "Administrative"
+      ],
+      "downPayment": 15,
+      "installmentYears": 8,
+      "paymentPlan": "15% Down Payment, 8 Years Installments",
+      "catalogMeta": {
+        "status": "observed",
+        "sourceId": "nawy-inventory:2761",
+        "observedAt": "2026-10-19T03:40:01.972Z"
+      },
+      "priceMin": 6719700
     }
   ],
   "projectDetails": {
@@ -74514,7 +74609,7 @@
       ]
     },
     "The Estates Residence": {
-      "unitTypes": "Apartment, Duplex, Townhouse, Villa, Penthouse, Twinhouse",
+      "unitTypes": "Apartment, Townhouse, Duplex, Villa, Penthouse, Twinhouse",
       "areas": "",
       "paymentPlan": "5% Down Payment, 10 Years Installments",
       "status": "Available",
@@ -74569,7 +74664,7 @@
         "https://prod-images.nawy.com/processed/compound_image/image/1798/high.webp"
       ],
       "assetMeta": {
-        "lastEnrichedAt": "2026-10-18T03:36:11.976Z",
+        "lastEnrichedAt": "2026-10-19T03:40:14.418Z",
         "sourceId": "red-asset:20"
       }
     },
@@ -78113,6 +78208,32 @@
       "layouts": [],
       "images": [
         "https://prod-images.nawy.com/processed/inventory/compounds/2729/cover-images/Cover/high.webp"
+      ]
+    },
+    "Befit living": {
+      "unitTypes": "Apartment, Studio",
+      "areas": "",
+      "paymentPlan": "5% Down Payment, 10 Years Installments",
+      "status": "Available",
+      "amenities": "",
+      "description": "Project information is being verified.",
+      "masterplan": "",
+      "layouts": [],
+      "images": [
+        "https://prod-images.nawy.com/processed/inventory/compounds/2760/cover-images/Befit%20living/high.webp"
+      ]
+    },
+    "C Yard": {
+      "unitTypes": "Retail, Medical, Administrative",
+      "areas": "",
+      "paymentPlan": "15% Down Payment, 8 Years Installments",
+      "status": "Available",
+      "amenities": "",
+      "description": "Project information is being verified.",
+      "masterplan": "",
+      "layouts": [],
+      "images": [
+        "https://prod-images.nawy.com/processed/inventory/compounds/2761/cover-images/Black_colour/high.webp"
       ]
     }
   }

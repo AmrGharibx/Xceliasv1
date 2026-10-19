@@ -122,14 +122,14 @@ test('Reports list assessed trainees first, reports selected trainees only, and 
  const scored={...trainee,id:'scored-trainee',trainee_name:'Scored Trainee'};
  const stopped={...trainee,id:'stopped-trainee',trainee_name:'Stopped Trainee',enrollment_status:'Stopped Attending'};
  const never={...trainee,id:'never-trainee',trainee_name:'Never Trainee',enrollment_status:'Never Started'};
- state.trainees.push(scored,stopped,never);batch.status='Completed';
+ state.trainees.push(scored,stopped,never);batch.status='In Progress';
  state.assessments=[
   {...assessment,id:'scored-result',trainee_id:scored.id},
   {...assessment,id:'missed-result',mapping:null,product_knowledge:null,presentability:null,soft_skills:null,assessment_outcome:null,analytics_included:false,source_meta:{assessment_state:'assessment_missed'}}
  ];
  const report=buildBatchReport(state,{batchId:batch.id,companyId:company.id,traineeIds:[trainee.id,scored.id,stopped.id,never.id]});
  assert.deepEqual(report.items.map(item=>item.trainee.id),[scored.id,trainee.id,never.id,stopped.id]);
- assert.deepEqual(report.completionCounts,{total:4,completed:2,notCompleted:2});
+ assert.deepEqual(report.completionCounts,{total:4,completed:1,notCompleted:3});
  assert.deepEqual(buildBatchReport(state,{batchId:batch.id,companyId:company.id,traineeIds:[scored.id,stopped.id]}).items.map(item=>item.trainee.id),[scored.id,stopped.id]);
  const otherCompany={...company,id:'other-company',name:'Other Company'},otherPerson={...trainee,id:'other-person',company_id:otherCompany.id};
  state.companies.push(otherCompany);state.trainees.push(otherPerson);
@@ -137,9 +137,55 @@ test('Reports list assessed trainees first, reports selected trainees only, and 
  const [job]=companyReportJobs(report);
  assert.deepEqual(job.traineeIds,[trainee.id,scored.id,stopped.id,never.id]);
  assert.match(renderReportCover(job),/Number of Trainees<\/span><span class="cover-info-value">4/);
- assert.match(renderReportCover(job),/Completed Training<\/span><span class="cover-info-value">2/);
- assert.match(renderReportCover(job),/Not Completed<\/span><span class="cover-info-value">2/);
+ assert.match(renderReportCover(job),/Completed Training<\/span><span class="cover-info-value">1/);
+ assert.match(renderReportCover(job),/Not Completed<\/span><span class="cover-info-value">3/);
+ assert.doesNotMatch(renderReportCover(job),/Completion means the batch is marked Completed/);
 });
+
+test('assessed trainees remain completed even while their batch is still in progress',()=>{
+ const {state,company,batch,trainee,assessment}=fixtureState();
+ const pending={...trainee,id:'pending-trainee',trainee_name:'Pending Trainee'};
+ state.trainees.push(pending);state.assessments=[assessment];batch.status='In Progress';
+ const report=buildBatchReport(state,{batchId:batch.id,companyId:company.id});
+ assert.deepEqual(report.completionCounts,{total:2,completed:1,notCompleted:1});
+ assert.equal(report.items.find(item=>item.trainee.id===trainee.id).trainingCompleted,true);
+ assert.equal(report.items.find(item=>item.trainee.id===pending.id).trainingCompleted,false);
+});
+
+test('report cover does not include the completion-definition paragraph',()=>{
+ const {state,company,batch}=fixtureState();
+ const [job]=companyReportJobs(buildBatchReport(state,{batchId:batch.id,companyId:company.id}));
+ assert.doesNotMatch(renderReportCover(job),/Completion means the batch is marked Completed/);
+});
+
+test('stopped trainees are placed last even when they have assessment marks',()=>{
+ const {state,company,batch,trainee,assessment}=fixtureState();
+ const never={...trainee,id:'never-trainee',trainee_name:'Never Trainee',enrollment_status:'Never Started'};
+ const stopped={...trainee,id:'stopped-scored-trainee',trainee_name:'A Stopped Trainee',enrollment_status:'Stopped Attending'};
+ state.trainees.push(never,stopped);
+ state.assessments=[assessment,{...assessment,id:'stopped-assessment',trainee_id:stopped.id}];
+ const report=buildBatchReport(state,{batchId:batch.id,companyId:company.id});
+ assert.deepEqual(report.items.map(item=>item.trainee.id),[trainee.id,never.id,stopped.id]);
+ assert.equal(report.items.at(-1).profile.complete,true);
+ assert.equal(report.items.at(-1).reportStatus.code,'assessed');
+ assert.match(report.items.at(-1).narrative,/Enrollment is marked Stopped Attending/);
+});
+
+test('concluding remarks keep the shorter assessment-tier summary',async()=>{
+ const {renderConclusionPage}=await import('../public/modules/reporter-generator.mjs');
+ assert.equal(typeof renderConclusionPage,'function');
+ const items=[
+  {name:'Scored Trainee',assessmentResult:'Aced',overallScore:95},
+  {name:'Stopped Trainee',assessmentResult:'Stopped Attending',overallScore:'N/A',reportStatusCode:'stopped',attendedDays:3},
+  {name:'Never Started Trainee',assessmentResult:'Never Started',overallScore:'N/A',reportStatusCode:'never_started'},
+  {name:'Missed Trainee',assessmentResult:'Assessment not attended',overallScore:'N/A',reportStatusCode:'assessment_missed'},
+  {name:'Excused Trainee',assessmentResult:'Excused - pending assessment',overallScore:'N/A',reportStatusCode:'assessment_excused'}
+ ];
+ const html=renderConclusionPage(items);
+ assert.match(html,/outstanding performance confirms their readiness/);
+ assert.doesNotMatch(html,/stopped attending after 3 attended days|never attended from the first day|did not attend the scheduled assessment|excused assessment absence/i);
+});
+
 
 test('Multi-trainee controls appear only after selecting a batch and company',()=>{
  const {state,company,batch,trainee}=fixtureState();

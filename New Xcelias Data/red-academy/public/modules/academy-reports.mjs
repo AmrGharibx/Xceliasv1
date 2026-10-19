@@ -52,7 +52,7 @@ export function reportNarrative(item){
  const development=focus.value<4
   ? `Prioritize a focused practice activity for ${focus.label.toLowerCase()} (${fmt(focus.value,2)}/5), then review it with a concrete example.`
   : `Maintain the current standard through practical application, with particular attention to ${focus.label.toLowerCase()} (${fmt(focus.value,2)}/5).`;
- const enrollmentNote=item.reportStatus.code==='stopped'?(item.attendedDays>0?` Enrollment is marked Stopped Attending after ${item.attendedDays} attended training day${item.attendedDays===1?'':'s'}.`:' Enrollment is marked Stopped Attending, but no attended training days are recorded, so the duration cannot be confirmed.'):'';
+ const enrollmentNote=item.trainee.enrollment_status==='Stopped Attending'?(item.attendedDays>0?` Enrollment is marked Stopped Attending after ${item.attendedDays} attended training day${item.attendedDays===1?'':'s'}.`:' Enrollment is marked Stopped Attending, but no attended training days are recorded, so the duration cannot be confirmed.'):'';
  return `${scoreLine} The strongest assessed area is ${strongest.label} (${fmt(strongest.value,2)}/5). ${development} ${attendanceLine} ${checklistLine}${enrollmentNote}`;
 }
 
@@ -66,7 +66,7 @@ function reportStatus(trainee,assessment,profile){
  return {code:'pending',label:'Assessment pending'};
 }
 
-const reportOrder={assessed:0,assessment_missed:1,assessment_excused:2,never_started:3,stopped:4,pending:5};
+const reportOrder={assessed:0,assessment_missed:1,assessment_excused:2,never_started:3,pending:4,stopped:5};
 
 export function buildBatchReport(data,{batchId,companyId='',traineeId='',traineeIds=[]}){
  const batch=data.batches.find(row=>row.id===batchId);
@@ -85,9 +85,10 @@ export function buildBatchReport(data,{batchId,companyId='',traineeId='',trainee
   const attendanceRows=data.daily_attendance.filter(row=>row.trainee_id===trainee.id&&row.batch_id===batch.id);
   const attendance=attendanceStats(attendanceRows),attendedDays=new Set(attendanceRows.filter(row=>row.analytics_included!==false&&row.analytics_included!==0&&['Present','Tour Day'].includes(row.status)&&validDate(row.date)).map(row=>row.date)).size;
   const summary=checklistFor(data,trainee.id),check=summary?{count:summary.count,total:summary.total,percent:summary.percent,tour:summary.tour}:null;
-  const item={trainee,batch,company:companyById.get(trainee.company_id)||null,assessment,profile,attendance,checklist:check,attendedDays,reportStatus:reportStatus(trainee,assessment,profile),trainingCompleted:batch.status==='Completed'&&(trainee.enrollment_status||'Active')==='Active'};
+  const status=reportStatus(trainee,assessment,profile);
+  const item={trainee,batch,company:companyById.get(trainee.company_id)||null,assessment,profile,attendance,checklist:check,attendedDays,reportStatus:status,reportOrderCode:trainee.enrollment_status==='Stopped Attending'?'stopped':status.code,trainingCompleted:profile.complete};
   return {...item,narrative:reportNarrative(item)};
- }).sort((a,b)=>(reportOrder[a.reportStatus.code]??99)-(reportOrder[b.reportStatus.code]??99)||a.trainee.trainee_name.localeCompare(b.trainee.trainee_name));
+ }).sort((a,b)=>(reportOrder[a.reportOrderCode]??99)-(reportOrder[b.reportOrderCode]??99)||a.trainee.trainee_name.localeCompare(b.trainee.trainee_name));
  const assessed=items.filter(item=>item.profile.complete);
  const completionCounts={total:items.length,completed:items.filter(item=>item.trainingCompleted).length,notCompleted:items.filter(item=>!item.trainingCompleted).length};
  return {

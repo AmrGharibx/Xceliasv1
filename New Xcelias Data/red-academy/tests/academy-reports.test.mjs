@@ -89,6 +89,21 @@ test('Stopped Attending reports count distinct attended days and never assign a 
  assert.doesNotMatch(renderDetailPage(pdf),/0 out of 5|score-red|badge b-red/);
 });
 
+test('Stopped Attending with zero saved marks is not labeled Failed',()=>{
+ const {state,company,batch,trainee,assessment}=fixtureState();
+ trainee.enrollment_status='Stopped Attending';
+ state.assessments=[{...assessment,mapping:0,product_knowledge:0,presentability:0,soft_skills:0,assessment_outcome:'Failed'}];
+ const [item]=buildBatchReport(state,{batchId:batch.id,companyId:company.id}).items;
+ const pdf=standaloneReportItem(item,batch),html=renderDetailPage(pdf);
+ assert.equal(pdf.assessmentResult,'Stopped Attending');
+ assert.equal(pdf.overallScore,0);
+ assert.equal(pdf.badgeClass,'b-gray');
+ assert.equal(pdf.rawAssessmentOutcome,'');
+ assert.match(html,/Stopped Attending/);
+ assert.match(html,/score-neutral/);
+ assert.doesNotMatch(html,/Failed|score-red|badge b-red/);
+});
+
 test('Stopped Attending with no recorded attended dates does not claim an exact duration',()=>{
  const {state,company,batch,trainee}=fixtureState();
  trainee.enrollment_status='Stopped Attending';
@@ -167,7 +182,7 @@ test('stopped trainees are placed last even when they have assessment marks',()=
  const report=buildBatchReport(state,{batchId:batch.id,companyId:company.id});
  assert.deepEqual(report.items.map(item=>item.trainee.id),[trainee.id,never.id,stopped.id]);
  assert.equal(report.items.at(-1).profile.complete,true);
- assert.equal(report.items.at(-1).reportStatus.code,'assessed');
+ assert.equal(report.items.at(-1).reportStatus.code,'stopped');
  assert.match(report.items.at(-1).narrative,/Enrollment is marked Stopped Attending/);
 });
 

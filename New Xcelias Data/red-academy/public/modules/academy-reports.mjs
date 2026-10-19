@@ -57,9 +57,9 @@ export function reportNarrative(item){
 }
 
 function reportStatus(trainee,assessment,profile){
+ if(trainee.enrollment_status==='Stopped Attending')return {code:'stopped',label:'Stopped Attending'};
  if(profile.complete)return {code:'assessed',label:profile.tier};
  if(trainee.enrollment_status==='Never Started')return {code:'never_started',label:'Never Started'};
- if(trainee.enrollment_status==='Stopped Attending')return {code:'stopped',label:'Stopped Attending'};
  const sourceState=assessment?.source_meta?.assessment_state;
  if(sourceState==='assessment_missed')return {code:'assessment_missed',label:'Assessment not attended'};
  if(sourceState==='assessment_excused')return {code:'assessment_excused',label:'Excused - pending assessment'};

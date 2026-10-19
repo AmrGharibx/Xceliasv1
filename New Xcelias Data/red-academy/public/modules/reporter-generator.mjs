@@ -199,12 +199,13 @@ export function roundToTwo(value){
 
 export function standaloneReportItem(item,fallbackBatch){
   const assessment=item.assessment||{},profile=item.profile||{},attendance=item.attendance||{};
-  const complete=profile.complete===true,overall=complete?profile.overall:null,present=Number(attendance.present||0),absent=Number(attendance.absent||0),hasAttendance=present+absent>0,rawOutcome=complete?String(assessment.assessment_outcome||''):'';
+  const complete=profile.complete===true,overall=complete?profile.overall:null,present=Number(attendance.present||0),absent=Number(attendance.absent||0),hasAttendance=present+absent>0;
   const sourceState=assessment.source_meta?.assessment_state,enrollmentStatus=item.trainee.enrollment_status||'Active';
-  const disposition=item.reportStatus?.code||(complete?'assessed':enrollmentStatus==='Never Started'?'never_started':enrollmentStatus==='Stopped Attending'?'stopped':sourceState==='assessment_missed'?'assessment_missed':sourceState==='assessment_excused'?'assessment_excused':'pending');
+  const disposition=item.reportStatus?.code||(enrollmentStatus==='Stopped Attending'?'stopped':complete?'assessed':enrollmentStatus==='Never Started'?'never_started':sourceState==='assessment_missed'?'assessment_missed':sourceState==='assessment_excused'?'assessment_excused':'pending');
+  const rawOutcome=complete&&disposition!=='stopped'?String(assessment.assessment_outcome||''):'';
   const dispositionLabel={stopped:'Stopped Attending',never_started:'Never Started',assessment_missed:'Assessment not attended',assessment_excused:'Excused - pending assessment',pending:'Assessment pending'}[disposition];
   const score=value=>complete?Number(value):'N/A';
-  const result=complete?normalOutcome(rawOutcome,overall):dispositionLabel;
+  const result=disposition==='stopped'?'Stopped Attending':complete?normalOutcome(rawOutcome,overall):dispositionLabel;
   const trainee={
     name:item.trainee.trainee_name,
     company:item.company?.name||'Company not recorded',
@@ -255,7 +256,7 @@ export function renderDetailPage(item){
   const attendanceDays=item.attendance.attendanceDays==='N/A'||item.attendance.attendanceDays==null?'N/A':item.attendance.attendanceDays+' Day'+(item.attendance.attendanceDays!==1?'s':'');
   const missedContent=item.attendance.missedContent==='N/A'||item.attendance.missedContent==null?'N/A':item.attendance.missedContent+'%';
   const technicalMaximum=item.scores.mapping.max+item.scores.productKnowledge.max,conductMaximum=item.scores.presentability.max+item.scores.softSkills.max;
-  const scoreClass=item.assessmentResult==='Failed'?'score-red':!isAssessed?'score-neutral':'score-green';
+  const scoreClass=item.reportStatusCode==='stopped'?'score-neutral':item.assessmentResult==='Failed'?'score-red':!isAssessed?'score-neutral':'score-green';
   const attendanceClass=item.attendance.attendanceDays==='N/A'||item.attendance.attendanceDays==null?'text-na':'text-aok';
   const lateClass='text-alert';
   const absenceClass='text-alert';

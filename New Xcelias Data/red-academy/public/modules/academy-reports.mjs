@@ -1,4 +1,4 @@
-import {assessmentFor,attendanceStats,checklist,checklistFor,scores} from './core.mjs';
+import {assessmentFor,attendanceStats,checklist,checklistFor,scores,validDate} from './core.mjs';
 import {btn,closeModal,dateLabel,e,fmt,icon,openModal,toast} from './ui.mjs';
 import {companyReportJobs,downloadCompanyReport} from './reporter-generator.mjs';
 
@@ -20,7 +20,7 @@ export function reporterTier(percent){
 }
 
 export function reporterAssessment(assessment){
- if(!assessment||assessment.analytics_included===false||assessment.analytics_included===0||assessment.source_meta?.assessment_state==='not_assessed')return {complete:false,tech:null,soft:null,overall:null,tier:'Assessment pending'};
+ if(!assessment||assessment.analytics_included===false||assessment.analytics_included===0||['not_assessed','assessment_missed','assessment_excused'].includes(assessment.source_meta?.assessment_state))return {complete:false,tech:null,soft:null,overall:null,tier:'Assessment pending'};
  const result=scores(assessment);
  return {...result,complete:result.overall!==null,tier:reporterTier(result.overall)};
 }
@@ -35,40 +35,71 @@ export function reportNarrative(item){
   ? 'Attendance is still being recorded; unrecorded sessions are not treated as absences.'
   : `Recorded classroom attendance is ${fmt(attendance.rate,1)}% (${attendance.present} present and ${attendance.absent} absent).`;
  const checklistLine=item.trainee.enrollment_status==='Never Started'
-  ? 'Enrollment status is Never Started: the trainee was enrolled but did not attend any sessions. The enrollment remains on file, but ongoing attendance and session-progress counts exclude it.'
+  ? 'Enrollment status: Never Started. The trainee was enrolled but did not attend any sessions; ongoing attendance and session-progress counts exclude this enrollment.'
   : check
   ? `The attendance checklist shows ${check.count} of ${check.total} due scheduled sessions attended${check.tour?`, including ${check.tour} tour day${check.tour===1?'':'s'}`:''}. It reflects Daily Attendance; future and off days are not counted as due sessions.`
   : 'No scheduled sessions are available for the attendance checklist yet.';
- if(!item.profile.complete)return `A complete four-skill assessment has not been saved, so this report does not assign a score band or infer a result. ${attendanceLine} ${checklistLine} Complete the measured assessment when evidence is available, then review practical next steps with the trainee.`;
+ if(!item.profile.complete){
+  const reason=item.assessment?.instructor_comment?.trim();
+  if(item.reportStatus.code==='stopped'){const stoppedLine=item.attendedDays>0?`The trainee stopped attending after ${item.attendedDays} attended training day${item.attendedDays===1?'':'s'}.`:'Enrollment is marked Stopped Attending, but no attended training days are recorded, so the duration cannot be confirmed.';return `${stoppedLine} No formal assessment was completed, so no marks or failing result have been assigned. ${attendanceLine} ${checklistLine}`;}
+  if(item.reportStatus.code==='never_started')return `The trainee was enrolled but never attended from the first day. No assessment was made, and no marks or failing result have been assigned. ${attendanceLine} ${checklistLine}`;
+  if(item.reportStatus.code==='assessment_missed')return `The trainee did not attend the scheduled assessment. No marks or result have been recorded; a make-up assessment is needed. ${attendanceLine} ${checklistLine}`;
+  if(item.reportStatus.code==='assessment_excused')return `The assessment absence was excused, so the assessment remains pending. No marks or result have been assigned${reason?`; recorded excuse or trainer note: ${reason}`:''}. ${attendanceLine} ${checklistLine}`;
+  return `A complete four-skill assessment has not been saved, so this report does not assign a score band or infer a result. ${attendanceLine} ${checklistLine} Complete the measured assessment when evidence is available, then review practical next steps with the trainee.`;
+ }
  const ranked=strengths(item.assessment),strongest=ranked[0],focus=ranked.at(-1);
  const scoreLine=`The measured profile is ${item.profile.tier}: ${fmt(item.profile.overall,1)}% overall, with ${fmt(item.profile.tech,1)}% technical and ${fmt(item.profile.soft,1)}% people skills.`;
  const development=focus.value<4
   ? `Prioritize a focused practice activity for ${focus.label.toLowerCase()} (${fmt(focus.value,2)}/5), then review it with a concrete example.`
   : `Maintain the current standard through practical application, with particular attention to ${focus.label.toLowerCase()} (${fmt(focus.value,2)}/5).`;
- return `${scoreLine} The strongest assessed area is ${strongest.label} (${fmt(strongest.value,2)}/5). ${development} ${attendanceLine} ${checklistLine}`;
+ const enrollmentNote=item.reportStatus.code==='stopped'?(item.attendedDays>0?` Enrollment is marked Stopped Attending after ${item.attendedDays} attended training day${item.attendedDays===1?'':'s'}.`:' Enrollment is marked Stopped Attending, but no attended training days are recorded, so the duration cannot be confirmed.'):'';
+ return `${scoreLine} The strongest assessed area is ${strongest.label} (${fmt(strongest.value,2)}/5). ${development} ${attendanceLine} ${checklistLine}${enrollmentNote}`;
 }
 
-export function buildBatchReport(data,{batchId,companyId='',traineeId=''}){
+function reportStatus(trainee,assessment,profile){
+ if(profile.complete)return {code:'assessed',label:profile.tier};
+ if(trainee.enrollment_status==='Never Started')return {code:'never_started',label:'Never Started'};
+ if(trainee.enrollment_status==='Stopped Attending')return {code:'stopped',label:'Stopped Attending'};
+ const sourceState=assessment?.source_meta?.assessment_state;
+ if(sourceState==='assessment_missed')return {code:'assessment_missed',label:'Assessment not attended'};
+ if(sourceState==='assessment_excused')return {code:'assessment_excused',label:'Excused - pending assessment'};
+ return {code:'pending',label:'Assessment pending'};
+}
+
+const reportOrder={assessed:0,assessment_missed:1,assessment_excused:2,never_started:3,stopped:4,pending:5};
+
+export function buildBatchReport(data,{batchId,companyId='',traineeId='',traineeIds=[]}){
  const batch=data.batches.find(row=>row.id===batchId);
  if(!batch)throw new Error('Batch not found.');
+ if(!Array.isArray(traineeIds)||traineeIds.some(id=>typeof id!=='string'))throw new Error('Choose valid trainees for this report.');
+ if(traineeId&&traineeIds.length)throw new Error('Choose a single trainee or a multi-trainee selection, not both.');
+ const selectedIds=[...new Set(traineeIds)];
+ const selectedTrainees=selectedIds.length?selectedIds.map(id=>data.trainees.find(row=>row.id===id)):[];
+ if(selectedTrainees.some(row=>!row||row.batch_id!==batch.id||companyId&&row.company_id!==companyId))throw new Error('One or more selected trainees are outside the selected batch or company.');
+ if(new Set(selectedTrainees.map(row=>row.company_id||'__unassigned__')).size>1)throw new Error('Select trainees from the same company for a focused report.');
  const companyById=new Map(data.companies.map(row=>[row.id,row]));
- const trainees=data.trainees.filter(row=>row.batch_id===batch.id&&(!companyId||row.company_id===companyId)&&(!traineeId||row.id===traineeId)).sort((a,b)=>a.trainee_name.localeCompare(b.trainee_name));
+ const selectedSet=new Set(selectedIds);
+ const trainees=data.trainees.filter(row=>row.batch_id===batch.id&&(!companyId||row.company_id===companyId)&&(!traineeId||row.id===traineeId)&&(!selectedSet.size||selectedSet.has(row.id)));
  const items=trainees.map(trainee=>{
   const assessment=assessmentFor(data,trainee.id),profile=reporterAssessment(assessment);
-  const attendance=attendanceStats(data.daily_attendance.filter(row=>row.trainee_id===trainee.id&&row.batch_id===batch.id));
+  const attendanceRows=data.daily_attendance.filter(row=>row.trainee_id===trainee.id&&row.batch_id===batch.id);
+  const attendance=attendanceStats(attendanceRows),attendedDays=new Set(attendanceRows.filter(row=>row.analytics_included!==false&&row.analytics_included!==0&&['Present','Tour Day'].includes(row.status)&&validDate(row.date)).map(row=>row.date)).size;
   const summary=checklistFor(data,trainee.id),check=summary?{count:summary.count,total:summary.total,percent:summary.percent,tour:summary.tour}:null;
-  const item={trainee,batch,company:companyById.get(trainee.company_id)||null,assessment,profile,attendance,checklist:check};
+  const item={trainee,batch,company:companyById.get(trainee.company_id)||null,assessment,profile,attendance,checklist:check,attendedDays,reportStatus:reportStatus(trainee,assessment,profile),trainingCompleted:batch.status==='Completed'&&(trainee.enrollment_status||'Active')==='Active'};
   return {...item,narrative:reportNarrative(item)};
- });
+ }).sort((a,b)=>(reportOrder[a.reportStatus.code]??99)-(reportOrder[b.reportStatus.code]??99)||a.trainee.trainee_name.localeCompare(b.trainee.trainee_name));
  const assessed=items.filter(item=>item.profile.complete);
+ const completionCounts={total:items.length,completed:items.filter(item=>item.trainingCompleted).length,notCompleted:items.filter(item=>!item.trainingCompleted).length};
  return {
   batch,
   companyId,
   traineeId,
   company:companyId?companyById.get(companyId)||null:null,
+  traineeIds:selectedIds,
   items,
   assessed:assessed.length,
   pending:items.length-assessed.length,
+  completionCounts,
   average:assessed.length?assessed.reduce((sum,item)=>sum+item.profile.overall,0)/assessed.length:null
  };
 }
@@ -106,52 +137,62 @@ function legacyBuilderMarkup(ctx,batch,selectedCompany){
 
 // The batch workflow uses the exact standalone PDF exporter while retaining
 // the existing review preview below for quick on-screen checks.
-function builderMarkup(ctx,batch,selectedCompany,selectedTrainee=''){
+function builderMarkup(ctx,batch,selectedCompany,selectedTrainee='',selectedTraineeIds=[]){
  const data=ctx.store.data,companies=companyOptions(data,batch),selected=selectedCompany||'',write=ctx.store.canWrite();
  const trainees=data.trainees.filter(row=>row.batch_id===batch.id&&(!selected||row.company_id===selected)).sort((a,b)=>a.trainee_name.localeCompare(b.trainee_name));
- const roster=trainees.filter(row=>!selectedTrainee||row.id===selectedTrainee);
+ const rosterIds=selectedTraineeIds.length?selectedTraineeIds:selectedTrainee?[selectedTrainee]:[];
+ const roster=rosterIds.length?trainees.filter(row=>rosterIds.includes(row.id)):trainees;
+ const selection=selected?`<details class="academy-trainee-multiselect" ${selectedTraineeIds.length?'open':''}><summary>Select multiple trainees from this company</summary><p>Leave all boxes clear to include the whole company. Select one or more names for a focused report.</p><div class="academy-trainee-select-actions"><button type="button" class="btn small" data-academy-select-all-trainees>Select all</button><button type="button" class="btn small secondary" data-academy-clear-trainees>Clear selection</button></div><div class="academy-trainee-select-list">${trainees.map(trainee=>`<label><input type="checkbox" data-academy-trainee-select="${e(trainee.id)}" ${rosterIds.includes(trainee.id)?'checked':''}><span>${e(trainee.trainee_name)}</span></label>`).join('')||'<p class="faint">No trainees are enrolled with this company in the selected batch.</p>'}</div></details>`:'';
  return `<div id="academy-report-builder">
   <div class="academy-report-intro"><span>${icon('book',18)}</span><div><strong>Internal trainee reports</strong><p>Create an A4 report for one trainee, a company, or the whole batch, including portraits, scores, attendance, comments, and concluding remarks.</p></div></div>
   <div class="form-grid">
    <label class="field" for="academy-report-company"><span>Company</span><select id="academy-report-company"><option value="" ${selected?'':'selected'}>All companies in this batch</option>${companies.map(company=>`<option value="${e(company.id)}" ${company.id===selected?'selected':''}>${e(company.name)}</option>`).join('')}</select><small>Narrow the trainee list to one company, or include all companies.</small></label>
-   <label class="field" for="academy-report-trainee"><span>Trainee</span><select id="academy-report-trainee"><option value="" ${selectedTrainee?'':'selected'}>All trainees in scope</option>${trainees.map(trainee=>`<option value="${e(trainee.id)}" ${trainee.id===selectedTrainee?'selected':''}>${e(trainee.trainee_name)}${selected?'':` — ${e(data.companies.find(company=>company.id===trainee.company_id)?.name||'Company not recorded')}`}</option>`).join('')}</select><small>Choose one name to generate a PDF containing only that trainee.</small></label>
+    <label class="field" for="academy-report-trainee"><span>Trainee</span><select id="academy-report-trainee" ${selectedTraineeIds.length?'disabled':''}><option value="" ${selectedTrainee?'':'selected'}>${selectedTraineeIds.length?'Using the selected trainees':'All trainees in scope'}</option>${trainees.map(trainee=>`<option value="${e(trainee.id)}" ${trainee.id===selectedTrainee?'selected':''}>${e(trainee.trainee_name)}${selected?'':` — ${e(data.companies.find(company=>company.id===trainee.company_id)?.name||'Company not recorded')}`}</option>`).join('')}</select><small>Choose one trainee, or select several from one company below.</small></label>
   </div>
+   ${selection}
   <div class="academy-roster-head"><div><strong>${roster.length} trainee${roster.length===1?'':'s'} selected</strong><span>Portraits are private server records and are never sent to the AI provider.</span></div></div>
   <div class="academy-roster-list">${roster.map(trainee=>rosterRow(ctx,trainee,data.companies.find(company=>company.id===trainee.company_id),write)).join('')||'<p class="faint" style="padding:16px 0">No trainees match this selection.</p>'}</div>
   ${write&&ctx.store.aiEnabled?'<label class="checkbox-field academy-ai-consent"><input id="academy-report-ai-consent" type="checkbox">I approve sending anonymized score and attendance totals to the configured AI provider for this report preview. Names, photos, contact details, and instructor comments are excluded.</label>':'<p class="academy-local-note">This report uses the built-in local report engine. AI drafts are unavailable until an authorized administrator configures the provider.</p>'}
-  <div class="modal-actions"><button type="button" class="btn primary" data-academy-company-pdf ${roster.length?'':'disabled'}>${icon('download',16)}<span>${selectedTrainee?'Generate trainee PDF':selected?'Generate company PDF':'Generate company PDFs'}</span></button><button type="button" class="btn secondary" data-academy-all-pdfs ${data.trainees.some(row=>row.batch_id===batch.id)?'':'disabled'}>${icon('download',16)}<span>Generate all company PDFs</span></button><button type="button" class="btn secondary" data-academy-build-report ${roster.length?'':'disabled'}>${icon('book',16)}<span>Open review preview</span></button></div>
+   <div class="modal-actions"><button type="button" class="btn primary" data-academy-company-pdf ${roster.length?'':'disabled'}>${icon('download',16)}<span>${selectedTraineeIds.length>1?'Generate selected trainees PDF':selectedTraineeIds.length===1?'Generate trainee PDF':selectedTrainee?'Generate trainee PDF':selected?'Generate company PDF':'Generate company PDFs'}</span></button><button type="button" class="btn secondary" data-academy-all-pdfs ${data.trainees.some(row=>row.batch_id===batch.id)?'':'disabled'}>${icon('download',16)}<span>Generate all company PDFs</span></button><button type="button" class="btn secondary" data-academy-build-report ${roster.length?'':'disabled'}>${icon('book',16)}<span>Open review preview</span></button></div>
  </div>`;
 }
 
-async function generateCompanyPdfs(ctx,batch,companyId,trigger,traineeId=''){
- const report=buildBatchReport(ctx.store.data,{batchId:batch.id,companyId,traineeId});
+async function generateCompanyPdfs(ctx,batch,companyId,trigger,traineeId='',traineeIds=[]){
+ const report=buildBatchReport(ctx.store.data,{batchId:batch.id,companyId,traineeId,traineeIds});
  const jobs=companyReportJobs(report);
  if(!jobs.length){toast('There are no trainees matching this report selection.','error');return;}
  if(trigger)trigger.disabled=true;
  try{
-  for(let index=0;index<jobs.length;index++){
-   const job=jobs[index];toast('Generating '+(traineeId?job.items[0].trainee.trainee_name:job.companyName)+' ('+(index+1)+' of '+jobs.length+')...');
+   for(let index=0;index<jobs.length;index++){
+    const job=jobs[index];toast('Generating '+(traineeId||traineeIds.length?job.items[0].trainee.trainee_name+(traineeIds.length>1?' and selected trainees':''):job.companyName)+' ('+(index+1)+' of '+jobs.length+')...');
    await downloadCompanyReport(job,ctx.store,progress=>{if(trigger)trigger.dataset.progress=progress.page+'/'+progress.total;});
   }
-  toast(traineeId?'Trainee PDF downloaded.':jobs.length===1?'Company PDF downloaded.':jobs.length+' company PDFs downloaded.');
+   toast(traineeId||traineeIds.length===1?'Trainee PDF downloaded.':traineeIds.length>1?'Selected trainee PDF downloaded.':jobs.length===1?'Company PDF downloaded.':jobs.length+' company PDFs downloaded.');
  }catch(error){console.error(error);toast('The PDF could not be generated. Check the browser download permission and try again.','error');}
  finally{if(trigger){trigger.disabled=false;delete trigger.dataset.progress;}}
 }
 
-export function academyReportModal(ctx,batch,initialCompanyId='',initialTraineeId=''){
+export function academyReportModal(ctx,batch,initialCompanyId='',initialTraineeId='',initialTraineeIds=[]){
  if(!batch){toast('This batch is no longer available.','error');return;}
  if(initialTraineeId&&!ctx.store.data.trainees.some(row=>row.id===initialTraineeId&&row.batch_id===batch.id&&(!initialCompanyId||row.company_id===initialCompanyId))){toast('This trainee is no longer in the selected batch and company. Choose the trainee again.','error');return;}
- let selectedCompany=initialCompanyId,selectedTrainee=initialTraineeId;
+ if(!Array.isArray(initialTraineeIds)||initialTraineeIds.some(id=>typeof id!=='string')){toast('The selected trainee list is invalid. Please select the trainees again.','error');return;}
+ const selectedRows=initialTraineeIds.map(id=>ctx.store.data.trainees.find(row=>row.id===id));
+ if(selectedRows.some(row=>!row||row.batch_id!==batch.id||initialCompanyId&&row.company_id!==initialCompanyId)||new Set(selectedRows.map(row=>row?.company_id||'__unassigned__')).size>1){toast('Choose trainees from one company in the selected batch.','error');return;}
+ let selectedCompany=initialCompanyId,selectedTrainee=initialTraineeId,selectedTraineeIds=[...new Set(initialTraineeIds)];
+ if(selectedTraineeIds.length)selectedTrainee='';
  const portraitUrls=new Set();
  const renderBuilder=()=>{
   release(portraitUrls);const body=document.querySelector('.modal-body');if(!body)return;
-  body.innerHTML=builderMarkup(ctx,batch,selectedCompany,selectedTrainee);bindBuilder();
+   body.innerHTML=builderMarkup(ctx,batch,selectedCompany,selectedTrainee,selectedTraineeIds);bindBuilder();
  };
  const bindBuilder=()=>{
   const root=document.getElementById('academy-report-builder');if(!root)return;
   hydratePortraits(root,ctx.store,portraitUrls);
-  root.querySelector('#academy-report-company').onchange=event=>{selectedCompany=event.currentTarget.value;selectedTrainee='';renderBuilder();};
-  root.querySelector('#academy-report-trainee').onchange=event=>{selectedTrainee=event.currentTarget.value;renderBuilder();};
+   root.querySelector('#academy-report-company').onchange=event=>{selectedCompany=event.currentTarget.value;selectedTrainee='';selectedTraineeIds=[];renderBuilder();};
+   root.querySelector('#academy-report-trainee').onchange=event=>{selectedTrainee=event.currentTarget.value;selectedTraineeIds=[];renderBuilder();};
+   root.querySelectorAll('[data-academy-trainee-select]').forEach(input=>input.addEventListener('change',()=>{selectedTrainee='';selectedTraineeIds=[...root.querySelectorAll('[data-academy-trainee-select]:checked')].map(box=>box.dataset.academyTraineeSelect);renderBuilder();}));
+   root.querySelector('[data-academy-select-all-trainees]')?.addEventListener('click',()=>{selectedTrainee='';selectedTraineeIds=ctx.store.data.trainees.filter(row=>row.batch_id===batch.id&&row.company_id===selectedCompany).map(row=>row.id);renderBuilder();});
+   root.querySelector('[data-academy-clear-trainees]')?.addEventListener('click',()=>{selectedTrainee='';selectedTraineeIds=[];renderBuilder();});
   root.querySelectorAll('[data-academy-portrait-select]').forEach(button=>button.addEventListener('click',()=>root.querySelector(`#academy-portrait-${button.dataset.academyPortraitSelect}`).click()));
   root.querySelectorAll('[data-academy-portrait-input]').forEach(input=>input.addEventListener('change',async event=>{
    const file=event.currentTarget.files?.[0];if(!file)return;
@@ -160,13 +201,13 @@ export function academyReportModal(ctx,batch,initialCompanyId='',initialTraineeI
    catch(error){toast(error.message||'The portrait could not be saved.','error');if(trigger)trigger.disabled=false;}
   }));
   root.querySelector('[data-academy-build-report]').onclick=()=>{
-   const report=buildBatchReport(ctx.store.data,{batchId:batch.id,companyId:selectedCompany,traineeId:selectedTrainee});
+    const report=buildBatchReport(ctx.store.data,{batchId:batch.id,companyId:selectedCompany,traineeId:selectedTrainee,traineeIds:selectedTraineeIds});
    openReportPreview(ctx,report,!!root.querySelector('#academy-report-ai-consent')?.checked);
   };
-  root.querySelector('[data-academy-company-pdf]')?.addEventListener('click',event=>generateCompanyPdfs(ctx,batch,selectedCompany,event.currentTarget,selectedTrainee));
+   root.querySelector('[data-academy-company-pdf]')?.addEventListener('click',event=>generateCompanyPdfs(ctx,batch,selectedCompany,event.currentTarget,selectedTrainee,selectedTraineeIds));
   root.querySelector('[data-academy-all-pdfs]')?.addEventListener('click',event=>generateCompanyPdfs(ctx,batch,'',event.currentTarget));
  };
- openModal('Generate trainee reports',`${batch.batch_name} · Select a company or a single trainee, add portraits, then generate your PDF.`,builderMarkup(ctx,batch,selectedCompany,selectedTrainee),{wide:true});
+  openModal('Generate trainee reports',`${batch.batch_name} · Select a company, one trainee, or multiple trainees from the same company.`,builderMarkup(ctx,batch,selectedCompany,selectedTrainee,selectedTraineeIds),{wide:true});
  document.querySelector('[data-action="close-modal"]')?.addEventListener('click',()=>release(portraitUrls),{once:true});
  document.querySelector('.modal-overlay')?.addEventListener('click',event=>{if(event.target.classList.contains('modal-overlay'))release(portraitUrls);});
  bindBuilder();
@@ -189,18 +230,19 @@ export async function compressPortrait(file){
 }
 
 function scoreRows(item){
- if(!item.profile.complete)return '<p class="academy-pending">Assessment pending. Missing skills are never changed into zeroes or a failing grade.</p>';
+ if(!item.profile.complete)return `<p class="academy-pending">${e(item.reportStatus.label)}. No skill marks or failing result have been entered.</p>`;
  return `<table class="academy-score-table"><tbody>${SCORE_FIELDS.map(([key,label])=>`<tr><th>${e(label)}</th><td>${fmt(item.assessment[key],2)} / 5</td></tr>`).join('')}<tr class="academy-score-total"><th>Technical / people / overall</th><td>${fmt(item.profile.tech,1)}% / ${fmt(item.profile.soft,1)}% / ${fmt(item.profile.overall,1)}%</td></tr></tbody></table>`;
 }
 
 function reportSheet(item,write,allowAi){
- const attendance=item.attendance,check=item.checklist,assessmentLabel=item.profile.complete?item.profile.tier:'Assessment pending';
- return `<article class="academy-report-sheet" data-academy-trainee="${e(item.trainee.id)}"><header class="academy-sheet-head"><div class="academy-photo-slot is-loading" data-academy-photo-id="${e(item.trainee.id)}" data-academy-photo-name="${e(item.trainee.trainee_name)}">${icon('users',26)}<span>Portrait</span></div><div><span class="academy-overline">TRAINEE PERFORMANCE REPORT</span><h2>${e(item.trainee.trainee_name)}</h2><p>${e(item.company?.name||'Company not recorded')} · ${e(item.batch.batch_name)}${item.trainee.job_title?` · ${e(item.trainee.job_title)}`:''}</p></div><span class="academy-tier">${e(assessmentLabel)}</span></header><div class="academy-report-columns"><section><h3>Measured performance</h3>${scoreRows(item)}<p class="academy-measure-note">The technical score is Product knowledge + Mapping; the people score is Presentability + Soft skills. Each pair is out of 10 and expressed as a percentage.</p></section><section><h3>Recorded participation</h3><dl class="academy-attendance"><div><dt>Present</dt><dd>${attendance.present}</dd></div><div><dt>Absent</dt><dd>${attendance.absent}</dd></div><div><dt>Recorded rate</dt><dd>${attendance.rate===null?'Not yet available':fmt(attendance.rate,1)+'%'}</dd></div><div><dt>Manual late flags</dt><dd>${attendance.late}</dd></div><div><dt>After 11:00 AM</dt><dd>${attendance.calculatedLate}</dd></div><div><dt>Checklist</dt><dd>${check?`${check.percent}% (${check.count}/10)`:'Not started'}</dd></div></dl><p class="academy-measure-note">Attendance totals use saved classroom records only. The checklist is separate; unrecorded sessions are not absences.</p></section></div><section class="academy-narrative-card"><div><h3>Performance narrative</h3><span class="academy-edit-note">${write?'Editable for this printout only':'Built-in local narrative'}</span></div><div class="academy-narrative" data-academy-narrative="${e(item.trainee.id)}" contenteditable="${write?'true':'false'}" role="textbox" aria-label="Editable performance narrative for ${e(item.trainee.trainee_name)}">${e(item.narrative)}</div>${item.assessment?.instructor_comment?`<p class="academy-instructor-comment"><strong>Instructor comment:</strong> ${e(item.assessment.instructor_comment)}</p>`:''}${allowAi&&item.profile.complete?`<div class="academy-ai-row"><button type="button" class="btn small" data-academy-ai="${e(item.trainee.id)}">${icon('spark',14)}<span>Generate AI draft</span></button><span>Uses anonymized metrics only. Review before printing.</span></div>`:''}</section><footer><span>Internal company training record</span><span>Generated ${dateLabel(new Date().toISOString(),{year:'numeric',month:'long',day:'numeric'})}</span></footer></article>`;
+ const attendance=item.attendance,check=item.checklist,assessmentLabel=item.reportStatus.label;
+ return `<article class="academy-report-sheet" data-academy-trainee="${e(item.trainee.id)}"><header class="academy-sheet-head"><div class="academy-photo-slot is-loading" data-academy-photo-id="${e(item.trainee.id)}" data-academy-photo-name="${e(item.trainee.trainee_name)}">${icon('users',26)}<span>Portrait</span></div><div><span class="academy-overline">TRAINEE PERFORMANCE REPORT</span><h2>${e(item.trainee.trainee_name)}</h2><p>${e(item.company?.name||'Company not recorded')} · ${e(item.batch.batch_name)}${item.trainee.job_title?` · ${e(item.trainee.job_title)}`:''}</p></div><span class="academy-tier">${e(assessmentLabel)}</span></header><div class="academy-report-columns"><section><h3>Measured performance</h3>${scoreRows(item)}<p class="academy-measure-note">The technical score is Product knowledge + Mapping; the people score is Presentability + Soft skills. Each pair is out of 10 and expressed as a percentage.</p></section><section><h3>Recorded participation</h3><dl class="academy-attendance"><div><dt>Present</dt><dd>${attendance.present}</dd></div><div><dt>Absent</dt><dd>${attendance.absent}</dd></div><div><dt>Recorded rate</dt><dd>${attendance.rate===null?'Not yet available':fmt(attendance.rate,1)+'%'}</dd></div><div><dt>Manual late flags</dt><dd>${attendance.late}</dd></div><div><dt>After 11:00 AM</dt><dd>${attendance.calculatedLate}</dd></div><div><dt>Checklist</dt><dd>${check?`${check.percent}% (${check.count}/${check.total})`:'Not started'}</dd></div></dl><p class="academy-measure-note">Attendance totals use saved classroom records only. The checklist is separate; unrecorded sessions are not absences.</p></section></div><section class="academy-narrative-card"><div><h3>Performance narrative</h3><span class="academy-edit-note">${write?'Editable for this printout only':'Built-in local narrative'}</span></div><div class="academy-narrative" data-academy-narrative="${e(item.trainee.id)}" contenteditable="${write?'true':'false'}" role="textbox" aria-label="Editable performance narrative for ${e(item.trainee.trainee_name)}">${e(item.narrative)}</div>${item.assessment?.instructor_comment?`<p class="academy-instructor-comment"><strong>Instructor comment:</strong> ${e(item.assessment.instructor_comment)}</p>`:''}${allowAi&&item.profile.complete?`<div class="academy-ai-row"><button type="button" class="btn small" data-academy-ai="${e(item.trainee.id)}">${icon('spark',14)}<span>Generate AI draft</span></button><span>Uses anonymized metrics only. Review before printing.</span></div>`:''}</section><footer><span>Internal company training record</span><span>Generated ${dateLabel(new Date().toISOString(),{year:'numeric',month:'long',day:'numeric'})}</span></footer></article>`;
 }
 
 function previewMarkup(report,write,allowAi){
  const company=report.company?.name||'All companies in this batch';
- return `<div id="academy-report-preview" class="academy-report-preview"><div class="academy-preview-actions"><button type="button" class="btn secondary" data-academy-back>${icon('arrow',16)}<span>Back to selection</span></button><span class="academy-preview-summary">${report.items.length} trainee${report.items.length===1?'':'s'} · ${report.assessed} assessed · ${report.pending} awaiting assessment${report.average===null?'':` · ${fmt(report.average,1)}% assessed average`}</span><button type="button" class="btn primary" data-academy-print disabled>${icon('external',16)}<span>Print / Save PDF</span></button></div><header class="academy-report-cover"><span class="academy-overline">INTERNAL TRAINING ACADEMY</span><h1>Trainee Performance Report</h1><p>${e(report.batch.batch_name)} · ${e(company)}</p><dl><div><dt>Selected trainees</dt><dd>${report.items.length}</dd></div><div><dt>Assessed</dt><dd>${report.assessed}</dd></div><div><dt>Assessment pending</dt><dd>${report.pending}</dd></div></dl><p class="academy-cover-note">Generated from the academy’s saved attendance, checklist, and assessment records. Missing data is shown as pending, not guessed.</p></header>${report.items.map(item=>reportSheet(item,write,allowAi)).join('')||'<div class="empty"><h3>No trainees selected</h3><p>Return to the selection screen and choose a company with enrolled trainees.</p></div>'}</div>`;
+ const completion=report.completionCounts||{total:report.items.length,completed:0,notCompleted:report.items.length};
+ return `<div id="academy-report-preview" class="academy-report-preview"><div class="academy-preview-actions"><button type="button" class="btn secondary" data-academy-back>${icon('arrow',16)}<span>Back to selection</span></button><span class="academy-preview-summary">${report.items.length} trainee${report.items.length===1?'':'s'} · ${report.assessed} assessed · ${report.pending} awaiting assessment${report.average===null?'':` · ${fmt(report.average,1)}% assessed average`}</span><button type="button" class="btn primary" data-academy-print disabled>${icon('external',16)}<span>Print / Save PDF</span></button></div><header class="academy-report-cover"><span class="academy-overline">INTERNAL TRAINING ACADEMY</span><h1>Trainee Performance Report</h1><p>${e(report.batch.batch_name)} · ${e(company)}</p><dl><div><dt>Number of trainees</dt><dd>${completion.total}</dd></div><div><dt>Completed training</dt><dd>${completion.completed}</dd></div><div><dt>Not completed</dt><dd>${completion.notCompleted}</dd></div></dl><p class="academy-cover-note">A trainee is counted as completed when the batch is marked Completed and their enrollment is Active. Not completed includes batches still in progress, Stopped Attending, and Never Started. Assessment status is reported separately.</p></header>${report.items.map(item=>reportSheet(item,write,allowAi)).join('')||'<div class="empty"><h3>No trainees selected</h3><p>Return to the selection screen and choose a company with enrolled trainees.</p></div>'}</div>`;
 }
 
 function openReportPreview(ctx,report,allowAi){
@@ -216,7 +258,7 @@ function openReportPreview(ctx,report,allowAi){
   if(note)note.textContent='This checklist is derived from scheduled batch dates and Daily Attendance. Present and Tour Day count as attended; Off Day is excluded, and an unrecorded date is not an absence.';
  });
  hydratePortraits(root,ctx.store,portraitUrls).then(()=>root.querySelector('[data-academy-print]')?.removeAttribute('disabled'));
- root.querySelector('[data-academy-back]').onclick=()=>{release(portraitUrls);academyReportModal(ctx,report.batch,report.companyId,report.traineeId);};
+  root.querySelector('[data-academy-back]').onclick=()=>{release(portraitUrls);academyReportModal(ctx,report.batch,report.companyId,report.traineeId,report.traineeIds);};
  root.querySelector('[data-academy-print]').onclick=()=>{
   document.body.classList.add('printing-academy');const clear=()=>document.body.classList.remove('printing-academy');window.addEventListener('afterprint',clear,{once:true});window.print();setTimeout(clear,0);
  };

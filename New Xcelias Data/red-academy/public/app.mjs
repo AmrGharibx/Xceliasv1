@@ -10,7 +10,7 @@ import {academyReportModal} from './modules/academy-reports.mjs';
 import {loadActivityAssignments,openActivityAssignment,openActivityProgress} from './modules/activities-page.mjs';
 const store=new AcademyStore();
 try{if(localStorage.getItem('internal-training-theme')==='light')document.body.classList.add('light');}catch{}
-const ctx={store,route:'dashboard',batchId:'',companyId:'',reportTraineeId:'',detailId:'',showArchivedBatches:false,search:'',sort:'name',traineeStatus:'',page:1,chartDays:14,batchView:'list',summaryView:'table',companySort:'headcount',calendarMonth:today().slice(0,7),date:today(),attendanceStatus:'',outcomeFilter:'',reviewStatus:'',bulkStatus:'Present',selection:new Set(),sidebarOpen:false,invitationToken:'',loginEmail:'',activityAssignments:null,activityLoadPromise:null,activityLoading:false,activityError:'',render,go};
+const ctx={store,route:'dashboard',batchId:'',companyId:'',reportTraineeId:'',reportTraineeIds:[],detailId:'',showArchivedBatches:false,search:'',sort:'name',traineeStatus:'',page:1,chartDays:14,batchView:'list',summaryView:'table',companySort:'headcount',calendarMonth:today().slice(0,7),date:today(),attendanceStatus:'',outcomeFilter:'',reviewStatus:'',bulkStatus:'Present',selection:new Set(),sidebarOpen:false,invitationToken:'',loginEmail:'',activityAssignments:null,activityLoadPromise:null,activityLoading:false,activityError:'',render,go};
 const routes=new Set([...NAV.map(n=>n[0]),'settings','login','join']);
 let firstPaint=true;
 function ensureContext(){if(ctx.batchId&&!store.data.batches.some(b=>b.id===ctx.batchId))ctx.batchId='';if(ctx.companyId&&!store.data.companies.some(c=>c.id===ctx.companyId))ctx.companyId='';if(ctx.route==='attendance'&&!ctx.batchId)ctx.batchId=store.data.batches.find(b=>b.status==='Active')?.id||store.data.batches[0]?.id||'';}
@@ -72,7 +72,7 @@ document.addEventListener('click',async event=>{const el=event.target.closest('[
  case 'batch-archive-view':ctx.showArchivedBatches=el.dataset.archived==='true';ctx.detailId='';ctx.batchId='';ctx.companyId='';ctx.search='';ctx.page=1;render();break;
  case 'archive-batch':{const batch=store.data.batches.find(b=>b.id===id);if(!store.canArchiveBatches()||!batch)throw new Error('Administrator access is required to archive batches.');confirmDialog(`Archive ${batch.batch_name}?`,'The batch and all linked records will be preserved and hidden from the regular batch list. You can restore it later from Archived batches.',async()=>{ctx.showArchivedBatches=true;ctx.detailId='';ctx.batchId='';ctx.companyId='';await store.setBatchArchived(batch,true);render();toast(`${batch.batch_name} archived. Its records were preserved.`);},{label:'Archive batch',danger:false});break;}
  case 'restore-batch':{const batch=store.data.batches.find(b=>b.id===id);if(!batch)throw new Error('Batch not found. Refresh and try again.');await store.setBatchArchived(batch,false);render();toast(`${batch.batch_name} restored to the regular batch list.`);break;}
- case 'batch-report':academyReportModal(ctx,store.data.batches.find(b=>b.id===id),el.dataset.company||'',el.dataset.trainee||'');break;
+  case 'batch-report':{let traineeIds=[];try{const parsed=JSON.parse(el.dataset.trainees||'[]');if(Array.isArray(parsed))traineeIds=parsed.filter(value=>typeof value==='string');}catch{throw new Error('The selected trainee list could not be read. Choose the trainees again.');}academyReportModal(ctx,store.data.batches.find(b=>b.id===id),el.dataset.company||'',el.dataset.trainee||'',traineeIds);break;}
  case 'batch-detail':go('batches',{detailId:id});break;
  case 'back-batches':go('batches');break;
  case 'batch-view':ctx.batchView=el.dataset.view;render();break;
@@ -106,7 +106,7 @@ document.addEventListener('click',async event=>{const el=event.target.closest('[
  case 'check-out':await quickAttendance(id,true);break;
  case 'bulk-attendance':await bulkAttendance();break;
  case 'clear-selection':ctx.selection.clear();render();break;
- case 'reset-filters':ctx.batchId='';ctx.companyId='';ctx.reportTraineeId='';ctx.search='';ctx.traineeStatus='';ctx.page=1;ctx.selection.clear();ensureContext();render();break;
+  case 'reset-filters':ctx.batchId='';ctx.companyId='';ctx.reportTraineeId='';ctx.reportTraineeIds=[];ctx.search='';ctx.traineeStatus='';ctx.page=1;ctx.selection.clear();ensureContext();render();break;
  case 'chart-days':ctx.chartDays=Number(el.dataset.days);render();break;
  case 'prev-page':ctx.page=Math.max(1,ctx.page-1);render();break;
  case 'next-page':ctx.page++;render();break;
@@ -118,7 +118,8 @@ document.addEventListener('click',async event=>{const el=event.target.closest('[
 function bestDate(batchId){const dates=store.data.batches.find(b=>b.id===batchId)?.session_dates||[];return dates.includes(today())?today():dates.filter(d=>d<=today()).at(-1)||dates[0]||today();}
 document.addEventListener('input',event=>{const el=event.target;if(el.dataset.field==='search'){ctx.search=el.value;ctx.page=1;render();}});
 document.addEventListener('change',async event=>{const el=event.target;try{
- if(el.dataset.field){const field=el.dataset.field;if(field==='search')return;if(Object.hasOwn(ctx,field)){ctx[field]=el.value;ctx.page=1;ctx.selection.clear();if(field==='batchId'||field==='companyId')ctx.reportTraineeId='';if(field==='batchId')ctx.date=bestDate(el.value);render();}return;}
+ if(el.dataset.reportTrainee){const id=el.dataset.reportTrainee;ctx.reportTraineeIds=el.checked?[...new Set([...ctx.reportTraineeIds,id])]:ctx.reportTraineeIds.filter(value=>value!==id);ctx.reportTraineeId='';render();return;}
+ if(el.dataset.field){const field=el.dataset.field;if(field==='search')return;if(Object.hasOwn(ctx,field)){ctx[field]=el.value;ctx.page=1;ctx.selection.clear();if(field==='batchId'||field==='companyId'){ctx.reportTraineeId='';ctx.reportTraineeIds=[];}if(field==='reportTraineeId')ctx.reportTraineeIds=[];if(field==='batchId')ctx.date=bestDate(el.value);render();}return;}
  if(el.id==='bulk-status'){ctx.bulkStatus=el.value;return;}
  if(el.hasAttribute('data-select-all')){document.querySelectorAll('[data-select]').forEach(input=>{if(el.checked)ctx.selection.add(input.dataset.select);else ctx.selection.delete(input.dataset.select);});render();return;}
  if(el.dataset.select){if(el.checked)ctx.selection.add(el.dataset.select);else ctx.selection.delete(el.dataset.select);render();return;}

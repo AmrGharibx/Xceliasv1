@@ -50,8 +50,21 @@ export function validate(table,input,{old=null}={}) {
  }
  else if(table==='assessments'){
   ref('trainee_id',legacy);ref('batch_id',legacy);text('assessment_title',160,true);
-  try{scores(input);if(!legacy&&['mapping','product_knowledge','presentability','soft_skills'].some(f=>input[f]===null))throw new Error();}catch{fail('Each skill score must be a number between 0 and 5.');}
-  for(const f of ['mapping','product_knowledge','presentability','soft_skills'])result[f]=input[f];choice('assessment_outcome',OUTCOMES,legacy);text('instructor_comment',5000);text('report',12000);choice('report_kind',['template','ai',...(legacy?['notion']:[])]);
+  const assessmentStatus=legacy?'scored':input.assessment_status??(old?.source_meta?.assessment_state==='assessment_missed'?'missed':old?.source_meta?.assessment_state==='assessment_excused'?'excused':'scored');
+  if(!['scored','missed','excused'].includes(assessmentStatus))fail('Choose a valid assessment status.');
+  const scoreFields=['mapping','product_knowledge','presentability','soft_skills'];
+  if(assessmentStatus==='scored'){
+   try{scores(input);if(!legacy&&scoreFields.some(f=>input[f]===null))throw new Error();}catch{fail('Each skill score must be a number between 0 and 5.');}
+  }else if(scoreFields.some(field=>input[field]!==null&&input[field]!==undefined))fail('An unassessed trainee cannot have skill marks.');
+  for(const f of scoreFields)result[f]=input[f]??null;
+  if(assessmentStatus==='scored')choice('assessment_outcome',OUTCOMES,legacy);
+  else{if(input.assessment_outcome!==null&&input.assessment_outcome!==undefined)fail('An unassessed trainee cannot have an outcome.');result.assessment_outcome=null;}
+  const sourceMeta=old?.source_meta&&typeof old.source_meta==='object'&&!Array.isArray(old.source_meta)?{...old.source_meta}:{};
+  if(assessmentStatus==='missed')sourceMeta.assessment_state='assessment_missed';
+  else if(assessmentStatus==='excused')sourceMeta.assessment_state='assessment_excused';
+  else if(['assessment_missed','assessment_excused'].includes(sourceMeta.assessment_state))delete sourceMeta.assessment_state;
+  result.source_meta=sourceMeta;
+  text('instructor_comment',5000);text('report',12000);choice('report_kind',['template','ai',...(legacy?['notion']:[])]);
   optionalCount('recorded_attendance');optionalCount('recorded_absence');
   if(input.company_id===undefined||input.company_id===null)result.company_id=null;else ref('company_id');
  }else fail('Unknown entity.');

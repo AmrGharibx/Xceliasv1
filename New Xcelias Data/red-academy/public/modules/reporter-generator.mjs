@@ -200,13 +200,19 @@ export function roundToTwo(value){
 export function standaloneReportItem(item,fallbackBatch){
   const assessment=item.assessment||{},profile=item.profile||{},attendance=item.attendance||{};
   const complete=profile.complete===true,overall=complete?profile.overall:null,present=Number(attendance.present||0),absent=Number(attendance.absent||0),hasAttendance=present+absent>0,rawOutcome=complete?String(assessment.assessment_outcome||''):'';
+  const sourceState=assessment.source_meta?.assessment_state,enrollmentStatus=item.trainee.enrollment_status||'Active';
+  const disposition=item.reportStatus?.code||(complete?'assessed':enrollmentStatus==='Never Started'?'never_started':enrollmentStatus==='Stopped Attending'?'stopped':sourceState==='assessment_missed'?'assessment_missed':sourceState==='assessment_excused'?'assessment_excused':'pending');
+  const dispositionLabel={stopped:'Stopped Attending',never_started:'Never Started',assessment_missed:'Assessment not attended',assessment_excused:'Excused - pending assessment',pending:'Assessment pending'}[disposition];
   const score=value=>complete?Number(value):'N/A';
-  const result=complete?normalOutcome(rawOutcome,overall):'Assessment pending';
+  const result=complete?normalOutcome(rawOutcome,overall):dispositionLabel;
   const trainee={
     name:item.trainee.trainee_name,
     company:item.company?.name||'Company not recorded',
     batch:item.batch?.batch_name||fallbackBatch?.batch_name||'Batch not recorded',
-    enrollmentStatus:item.trainee.enrollment_status||'Active',
+    enrollmentStatus,
+    reportStatusCode:disposition,
+    attendedDays:Number.isFinite(item.attendedDays)?item.attendedDays:null,
+    trainingCompleted:item.trainingCompleted===true,
     photo:item.photo||'',
     rawAssessmentOutcome:rawOutcome,
     overallScore:complete?roundToTwo(overall):'N/A',
@@ -223,7 +229,7 @@ export function standaloneReportItem(item,fallbackBatch){
       professionalConductRating:{score:complete?roundToTwo(Number(assessment.presentability)+Number(assessment.soft_skills)):'N/A',max:10}
     },
     attendance:{
-      attendanceDays:hasAttendance?present:'N/A',
+      attendanceDays:hasAttendance?(disposition==='stopped'&&Number.isFinite(item.attendedDays)?item.attendedDays:present):'N/A',
       late:hasAttendance?Number(attendance.late||0):'N/A',
       absent,
       missedContent:hasAttendance?roundToTwo((absent/(present+absent))*100):'N/A'
@@ -232,31 +238,34 @@ export function standaloneReportItem(item,fallbackBatch){
     comments:assessment.instructor_comment||''
   };
   const enrollmentNote=trainee.enrollmentStatus==='Never Started'?'Enrollment status: Never Started. This trainee was enrolled but never attended; ongoing attendance and session-progress counts exclude this enrollment. ':'';
-  trainee.overallAssessment=enrollmentNote+(complete?generatedAssessment(trainee):'Assessment pending. A complete four-skill assessment has not been saved, so no score band or result has been inferred.');
+  trainee.overallAssessment=item.narrative||(complete?generatedAssessment(trainee):enrollmentNote+'Assessment pending. A complete four-skill assessment has not been saved, so no score band or result has been inferred.');
   if(!trainee.comments&&complete)trainee.comments=generatedComments(trainee);
   return trainee;
 }
 
 function reportLogo(){return standaloneLogo||'<img src="./report-logo.svg" alt="Xcelias">';}
-function cover(report){
-  return '<div class="page"><div class="cover-layout"><div class="cover-sidebar"><h2>RED</h2></div><div class="cover-content"><div class="cover-logo">'+reportLogo()+'</div><div class="cover-title"><h1 class="text-dark">Trainee Performance</h1><h1 class="text-red">Report</h1></div><div class="cover-info"><div class="cover-info-row"><span class="cover-info-label">Company Name</span><span class="cover-info-value">'+esc(report.companyName)+'</span></div><div class="cover-info-row"><span class="cover-info-label">Batch Number</span><span class="cover-info-value">'+esc(report.batch.batch_name)+'</span></div><div class="cover-info-row"><span class="cover-info-label">Number of Trainees</span><span class="cover-info-value">'+report.items.length+'</span></div></div><div class="cover-footer"><p>Report Generated on: '+dateLabel()+'</p><p>'+copyright()+'</p></div></div></div></div>';
+export function renderReportCover(report){
+  const counts=report.completionCounts||{total:report.items.length,completed:report.items.filter(item=>item.trainingCompleted).length,notCompleted:report.items.filter(item=>!item.trainingCompleted).length};
+  return '<div class="page"><div class="cover-layout"><div class="cover-sidebar"><h2>RED</h2></div><div class="cover-content"><div class="cover-logo">'+reportLogo()+'</div><div class="cover-title"><h1 class="text-dark">Trainee Performance</h1><h1 class="text-red">Report</h1></div><div class="cover-info"><div class="cover-info-row"><span class="cover-info-label">Company Name</span><span class="cover-info-value">'+esc(report.companyName)+'</span></div><div class="cover-info-row"><span class="cover-info-label">Batch Number</span><span class="cover-info-value">'+esc(report.batch.batch_name)+'</span></div><div class="cover-info-row"><span class="cover-info-label">Number of Trainees</span><span class="cover-info-value">'+counts.total+'</span></div><div class="cover-info-row"><span class="cover-info-label">Completed Training</span><span class="cover-info-value">'+counts.completed+'</span></div><div class="cover-info-row"><span class="cover-info-label">Not Completed</span><span class="cover-info-value">'+counts.notCompleted+'</span></div></div><div class="cover-footer"><p>Completion means the batch is marked Completed and the trainee remains Active. Not completed includes trainees in batches still in progress, Stopped Attending, and Never Started.</p><p>Report Generated on: '+dateLabel()+'</p><p>'+copyright()+'</p></div></div></div></div>';
 }
 export function renderDetailPage(item){
   const outcomeLabel=displayAssessmentOutcome(item)||item.assessmentResult;
+  const isAssessed=item.overallScore!=='N/A';
   const lateDays=item.attendance.late==='N/A'||item.attendance.late==null?'N/A':item.attendance.late+' Days';
   const attendanceDays=item.attendance.attendanceDays==='N/A'||item.attendance.attendanceDays==null?'N/A':item.attendance.attendanceDays+' Day'+(item.attendance.attendanceDays!==1?'s':'');
   const missedContent=item.attendance.missedContent==='N/A'||item.attendance.missedContent==null?'N/A':item.attendance.missedContent+'%';
   const technicalMaximum=item.scores.mapping.max+item.scores.productKnowledge.max,conductMaximum=item.scores.presentability.max+item.scores.softSkills.max;
-  const scoreClass=item.assessmentResult==='Failed'?'score-red':item.assessmentResult==='Assessment pending'?'score-neutral':'score-green';
+  const scoreClass=item.assessmentResult==='Failed'?'score-red':!isAssessed?'score-neutral':'score-green';
   const attendanceClass=item.attendance.attendanceDays==='N/A'||item.attendance.attendanceDays==null?'text-na':'text-aok';
   const lateClass='text-alert';
   const absenceClass='text-alert';
   const missedClass='text-alert';
   const photo=item.photo?'<div class="report-photo-col"><img src="'+esc(item.photo)+'" alt="'+esc(item.name)+'"><span class="rph-lbl">'+esc(item.name.split(' ')[0])+'</span></div>':'';
-  return `<div class="page"><div class="report-header"><div class="report-header-logo">${reportLogo()}</div><div class="report-header-right"><h1>Trainee Performance Report</h1><p>${esc(item.batch)}</p></div></div><div class="report-body"><div class="details-card">${photo}<div class="details-card-info"><h3>Trainee Details</h3><p><span class="label">Name:</span> ${esc(item.name)}</p><p><span class="label">Company:</span> ${esc(item.company)}</p><p><span class="label">Batch:</span> ${esc(item.batch)}</p></div><div style="text-align:right"><h3>Overall Performance</h3><div class="score-big ${scoreClass}">${item.overallScore}<span>%</span></div><div class="badge ${item.badgeClass}">${esc(outcomeLabel)}</div></div></div><h3 class="section-title">Overall Assessment</h3><div class="assessment-box"><p>${esc(item.overallAssessment)}</p></div><div class="two-col"><div><h3 class="section-title">Detailed Score Breakdown</h3><table class="data-table"><thead><tr><th>Performance Area</th><th>Score</th></tr></thead><tbody><tr><td>Product Knowledge</td><td>${item.scores.productKnowledge.score} out of ${item.scores.productKnowledge.max}</td></tr><tr><td>Mapping</td><td>${item.scores.mapping.score} out of ${item.scores.mapping.max}</td></tr><tr class="row-total"><td>Total (Core Skills)</td><td>${item.scores.totalCore} out of ${technicalMaximum}</td></tr><tr class="row-pct row-pct-b"><td>Tech Score %</td><td>${item.scores.techScorePercent}%</td></tr><tr><td>Soft Skills</td><td>${item.scores.softSkills.score} out of ${item.scores.softSkills.max}</td></tr><tr><td>Presentability</td><td>${item.scores.presentability.score} out of ${item.scores.presentability.max}</td></tr><tr class="row-total"><td>Professional Conduct Rating</td><td>${item.scores.professionalConductRating.score} out of ${conductMaximum}</td></tr><tr class="row-pct"><td>Professionalism Score %</td><td>${item.scores.softScorePercent}%</td></tr></tbody></table></div><div><h3 class="section-title">Attendance &amp; Professionalism</h3><table class="data-table"><thead><tr><th>Metric</th><th>Record</th></tr></thead><tbody><tr><td>Attendance Days</td><td class="${attendanceClass}">${attendanceDays}</td></tr><tr><td>Late Arrivals</td><td class="${lateClass}">${lateDays}</td></tr><tr><td>Absent Days</td><td class="${absenceClass}">${item.attendance.absent} Day${item.attendance.absent!==1?'s':''}</td></tr><tr><td>Missed Content</td><td class="${missedClass}">${missedContent}</td></tr></tbody></table></div></div><h3 class="section-title">Trainer's Comments</h3><div class="comments-box"><p>"${esc(item.comments)}"</p></div></div><div class="report-footer"><p>Report Generated on: ${dateLabel()}</p><p>${copyright()}</p></div></div>`;
+  const scoreBreakdown=isAssessed?`<table class="data-table"><thead><tr><th>Performance Area</th><th>Score</th></tr></thead><tbody><tr><td>Product Knowledge</td><td>${item.scores.productKnowledge.score} out of ${item.scores.productKnowledge.max}</td></tr><tr><td>Mapping</td><td>${item.scores.mapping.score} out of ${item.scores.mapping.max}</td></tr><tr class="row-total"><td>Total (Core Skills)</td><td>${item.scores.totalCore} out of ${technicalMaximum}</td></tr><tr class="row-pct row-pct-b"><td>Tech Score %</td><td>${item.scores.techScorePercent}%</td></tr><tr><td>Soft Skills</td><td>${item.scores.softSkills.score} out of ${item.scores.softSkills.max}</td></tr><tr><td>Presentability</td><td>${item.scores.presentability.score} out of ${item.scores.presentability.max}</td></tr><tr class="row-total"><td>Professional Conduct Rating</td><td>${item.scores.professionalConductRating.score} out of ${conductMaximum}</td></tr><tr class="row-pct"><td>Professionalism Score %</td><td>${item.scores.softScorePercent}%</td></tr></tbody></table>`:`<div class="assessment-box"><p><strong>${esc(outcomeLabel)}.</strong> No assessment marks were recorded. This is not a Failed result.</p></div>`;
+  return `<div class="page"><div class="report-header"><div class="report-header-logo">${reportLogo()}</div><div class="report-header-right"><h1>Trainee Performance Report</h1><p>${esc(item.batch)}</p></div></div><div class="report-body"><div class="details-card">${photo}<div class="details-card-info"><h3>Trainee Details</h3><p><span class="label">Name:</span> ${esc(item.name)}</p><p><span class="label">Company:</span> ${esc(item.company)}</p><p><span class="label">Batch:</span> ${esc(item.batch)}</p></div><div style="text-align:right"><h3>Overall Performance</h3><div class="score-big ${scoreClass}">${isAssessed?`${item.overallScore}<span>%</span>`:'Not assessed'}</div><div class="badge ${item.badgeClass}">${esc(outcomeLabel)}</div></div></div><h3 class="section-title">Overall Assessment</h3><div class="assessment-box"><p>${esc(item.overallAssessment)}</p></div><div class="two-col"><div><h3 class="section-title">Detailed Score Breakdown</h3>${scoreBreakdown}</div><div><h3 class="section-title">Attendance &amp; Professionalism</h3><table class="data-table"><thead><tr><th>Metric</th><th>Record</th></tr></thead><tbody><tr><td>Attendance Days</td><td class="${attendanceClass}">${attendanceDays}</td></tr><tr><td>Late Arrivals</td><td class="${lateClass}">${lateDays}</td></tr><tr><td>Absent Days</td><td class="${absenceClass}">${item.attendance.absent} Day${item.attendance.absent!==1?'s':''}</td></tr><tr><td>Missed Content</td><td class="${missedClass}">${missedContent}</td></tr></tbody></table></div></div><h3 class="section-title">Trainer's Comments</h3><div class="comments-box"><p>"${esc(item.comments)}"</p></div></div><div class="report-footer"><p>Report Generated on: ${dateLabel()}</p><p>${copyright()}</p></div></div>`;
 }
 function conclusion(report,items){
-  const names=items.map(item=>item.name),nameList=listify(names),firstParagraph='This report concludes the performance evaluation for the '+(items.length>1?items.length+' trainees':'trainee')+': '+nameList+'.';
+  const names=items.map(item=>item.name),nameList=listify(names),firstParagraph='This report covers training performance and assessment status for '+(items.length>1?items.length+' trainees':'one trainee')+': '+nameList+'.';
   const tiers={Aced:[],Excellent:[],Good:[],Passed:[],Failed:[]};
   items.forEach(item=>{if(tiers[item.assessmentResult])tiers[item.assessmentResult].push(item);});
   const namesFor=rows=>listify(rows.map(item=>item.name)),scoresFor=rows=>listify(rows.map(item=>item.overallScore+'%')),paragraphs=[];
@@ -265,18 +274,28 @@ function conclusion(report,items){
   if(tiers.Good.length)paragraphs.push(namesFor(tiers.Good)+' received a \'Good\' assessment with '+(tiers.Good.length>1?'scores':'a score')+' of '+scoresFor(tiers.Good)+', showing solid foundational skills and readiness for practical application.');
   if(tiers.Passed.length)paragraphs.push(namesFor(tiers.Passed)+' achieved a \'Passed\' result with '+(tiers.Passed.length>1?'scores':'a score')+' of '+scoresFor(tiers.Passed)+', meeting the minimum competency requirements.');
   if(tiers.Failed.length)paragraphs.push('However, '+namesFor(tiers.Failed)+' did not meet the passing criteria and '+(tiers.Failed.length>1?'are':'is')+' required to re-attend the training program.');
+  const stopped=items.filter(item=>item.reportStatusCode==='stopped'),stoppedWithDuration=stopped.filter(item=>Number.isFinite(item.attendedDays)&&item.attendedDays>0),stoppedWithoutDuration=stopped.filter(item=>!Number.isFinite(item.attendedDays)||item.attendedDays===0),neverStarted=items.filter(item=>item.reportStatusCode==='never_started'),missed=items.filter(item=>item.reportStatusCode==='assessment_missed'),excused=items.filter(item=>item.reportStatusCode==='assessment_excused'),pending=items.filter(item=>item.reportStatusCode==='pending');
+  if(stoppedWithDuration.length)paragraphs.push(namesFor(stoppedWithDuration)+' stopped attending after '+listify(stoppedWithDuration.map(item=>item.name+' ('+item.attendedDays+' attended day'+(item.attendedDays===1?'':'s')+')'))+'; no assessment was completed for these trainees.');
+  if(stoppedWithoutDuration.length)paragraphs.push(namesFor(stoppedWithoutDuration)+' are marked Stopped Attending, but no attended days are recorded, so the duration cannot be confirmed.');
+  if(neverStarted.length)paragraphs.push(namesFor(neverStarted)+' never attended from the first day; no assessment was made.');
+  if(missed.length)paragraphs.push(namesFor(missed)+' did not attend the scheduled assessment; a make-up assessment is needed.');
+  if(excused.length)paragraphs.push(namesFor(excused)+' had an excused assessment absence and remain pending a make-up assessment.');
+  if(pending.length)paragraphs.push(namesFor(pending)+' have no complete assessment recorded; no marks or outcomes have been inferred.');
   return '<div class="page"><div class="cover-layout"><div class="cover-sidebar"><h2>RED</h2></div><div class="cover-content"><div class="cover-logo">'+reportLogo()+'</div><div class="cover-title"><h1 class="text-dark">Concluding</h1><h1 class="text-red">Remarks</h1></div><div class="outro-text"><p>'+esc(firstParagraph)+'</p><p>'+esc(paragraphs.join(' '))+'</p></div><div class="quote-section"><div class="quote-label">A Final Thought</div><div class="quote-text">"The only way to do great work is to love what you do."</div><div class="quote-author">&mdash; Steve Jobs</div></div><div class="cover-footer"><p>Report Generated on: '+dateLabel()+'</p><p>'+copyright()+'</p></div></div></div></div>';
 }
 
 export function companyReportJobs(report){
   const grouped=new Map();
   report.items.forEach(item=>{const key=item.company?.id||item.trainee.company_id||'__unassigned__';if(!grouped.has(key))grouped.set(key,{companyId:key,companyName:item.company?.name||'Company not recorded',items:[]});grouped.get(key).items.push(item);});
-  return [...grouped.values()].sort((a,b)=>a.companyName.localeCompare(b.companyName)).map(group=>({...group,batch:report.batch,traineeId:report.traineeId||''}));
+  const selectedIds=report.traineeIds?.length?report.traineeIds:report.traineeId?[report.traineeId]:[];
+  return [...grouped.values()].sort((a,b)=>a.companyName.localeCompare(b.companyName)).map(group=>{const completed=group.items.filter(item=>item.trainingCompleted).length;return {...group,batch:report.batch,traineeIds:selectedIds,traineeId:selectedIds.length===1?selectedIds[0]:'',completionCounts:{total:group.items.length,completed,notCompleted:group.items.length-completed}};});
 }
 export function reportFilename(report){
-  const trainee=report.traineeId?report.items.find(item=>item.trainee.id===report.traineeId)?.trainee:null;
+  const selectedIds=report.traineeIds?.length?report.traineeIds:report.traineeId?[report.traineeId]:[];
+  const trainee=selectedIds.length===1?report.items.find(item=>item.trainee.id===selectedIds[0])?.trainee:null;
   const traineeName=trainee?'_'+String(trainee.trainee_name).replace(/[<>:"/\\|?*\u0000-\u001f\s]+/g,'_').replace(/[. ]+$/g,''):'';
-  return 'Xcelias_Report_'+String(report.companyName||'Company not recorded').replace(/\s+/g,'_')+'_Batch'+String(report.batch?.batch_name||'')+traineeName+'.pdf';
+  const selectedLabel=selectedIds.length>1?'_Selected_'+selectedIds.length+'_Trainees':'';
+  return 'Xcelias_Report_'+String(report.companyName||'Company not recorded').replace(/\s+/g,'_')+'_Batch'+String(report.batch?.batch_name||'')+traineeName+selectedLabel+'.pdf';
 }
 function loadScript(src){
   return new Promise((resolve,reject)=>{
@@ -333,7 +352,7 @@ export async function downloadCompanyReport(report,store,onProgress=()=>{}){
   }));
   const render=document.createElement('div');
   render.id='reporter-render-root';
-  render.innerHTML='<style>'+REPORT_STYLE+'</style>'+cover({...report,items})+items.map(renderDetailPage).join('')+conclusion(report,items);
+  render.innerHTML='<style>'+REPORT_STYLE+'</style>'+renderReportCover({...report,items})+items.map(renderDetailPage).join('')+conclusion(report,items);
   document.body.appendChild(render);
   try{
     await Promise.all([waitFonts(),waitImages(render)]);

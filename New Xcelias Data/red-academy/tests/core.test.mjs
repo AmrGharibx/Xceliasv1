@@ -15,6 +15,38 @@ test('Invalid dates and time values are rejected',()=>{assert.equal(core.validDa
 test('Ten distinct default sessions exclude Friday and Saturday',()=>{const dates=core.sessionDates('2026-09-06');assert.equal(dates.length,10);assert.equal(new Set(dates).size,10);assert.ok(dates.every(d=>![5,6].includes(new Date(d+'T12:00Z').getUTCDay())));});
 test('Requested assessment example scores 100 / 95 / 97.5',()=>assert.deepEqual(core.scores(fixtures().assessment),{tech:100,soft:95,overall:97.5}));
 test('Explicit missing scores remain unknown; native write validation still rejects them',()=>{const f=fixtures().assessment;assert.deepEqual(core.scores({...f,mapping:null}),{tech:null,soft:95,overall:null});assert.throws(()=>validate('assessments',{...dataOnly(f),mapping:null}));});
+test('Explicit missed or excused assessment records save without marks and stay outside assessed averages',()=>{
+ const {state,trainee,assessment}=fixtureState();
+ for(const [status,expectedState] of [['missed','assessment_missed'],['excused','assessment_excused']]){
+  const data={...dataOnly(assessment),assessment_status:status,mapping:null,product_knowledge:null,presentability:null,soft_skills:null,assessment_outcome:null};
+  const [operation]=prepareOperations({table:'assessments',action:'create',data},state,actor);
+  assert.equal(operation.data.source_meta.assessment_state,expectedState);
+  assert.equal(operation.data.analytics_included,false);
+  assert.deepEqual(core.scores(operation.data),{tech:null,soft:null,overall:null});
+ }
+});
+test('Completing an excused assessment removes its pending marker while preserving other metadata',()=>{
+ const {state,assessment}=fixtureState();
+ const old={...assessment,source_meta:{assessment_state:'assessment_excused',review_note:'Retain this context.'}};
+ state.assessments=[old];
+ const data={...old,assessment_status:'scored',mapping:4,product_knowledge:4,presentability:4,soft_skills:4,assessment_outcome:'Good'};
+ const [operation]=prepareOperations({table:'assessments',action:'update',id:assessment.id,expectedVersion:assessment.version,data},state,actor);
+ assert.deepEqual(operation.data.source_meta,{review_note:'Retain this context.'});
+ assert.equal(operation.data.analytics_included,true);
+});
+test('Assessment absence states reject hidden marks and invalid status values',()=>{
+ const {state,assessment}=fixtureState();
+ for(const data of [
+  {...dataOnly(assessment),assessment_status:'excused',mapping:0,product_knowledge:null,presentability:null,soft_skills:null,assessment_outcome:null},
+  {...dataOnly(assessment),assessment_status:'unknown',mapping:null,product_knowledge:null,presentability:null,soft_skills:null,assessment_outcome:null}
+ ])assert.throws(()=>prepareOperations({table:'assessments',action:'create',data},state,actor));
+});
+test('Assessment status labels stay explicit when marks or outcomes are absent',()=>{
+ assert.equal(core.assessmentStatusLabel(null),'Not assessed');
+ assert.equal(core.assessmentStatusLabel({source_meta:{assessment_state:'assessment_missed'},mapping:null,product_knowledge:null,presentability:null,soft_skills:null,assessment_outcome:null}),'Did not attend');
+ assert.equal(core.assessmentStatusLabel({source_meta:{assessment_state:'assessment_excused'},mapping:null,product_knowledge:null,presentability:null,soft_skills:null,assessment_outcome:null}),'Excused - pending assessment');
+ assert.equal(core.assessmentStatusLabel({mapping:null,product_knowledge:null,presentability:null,soft_skills:null,assessment_outcome:null}),'Assessment pending');
+});
 test('Fractional score precision is preserved',()=>assert.equal(core.scores({mapping:3.125,product_knowledge:3.125,presentability:0,soft_skills:0}).tech,62.5));
 for(const value of [-1,5.01,NaN,Infinity,'5',undefined])test(`Reject invalid score ${String(value)}`,()=>assert.throws(()=>core.scores({...fixtures().assessment,mapping:value})));
 for(const [percent,result] of [[0,'Failed'],[49.9,'Failed'],[50,'Needs Improvement'],[65,'Good'],[75,'Very Good'],[85,'Excellent'],[95,'Aced'],[100,'Aced']])test(`Outcome threshold ${percent}`,()=>assert.equal(core.outcome(percent),result));

@@ -74,8 +74,8 @@ export function prepareOperations(body,state,user){
   if(table==='attendance_10day'&&!old?.source_id){const b=state.batches.find(b=>b.id===data.batch_id);if(data.period_start!==b.start_date||data.period_end!==b.end_date)throw new ApiError(400,'The checklist period must match the batch dates.');}
   if(table==='assessments'){
    if(!old&&!data.company_id)data.company_id=state.trainees.find(t=>t.id===data.trainee_id)?.company_id||null;
-   const complete=scores(data).overall!==null,notAssessed=/^\s*not\s+assess?ed\s*[.!]?\s*$/i.test(data.instructor_comment);
-   if(!old||!['duplicate','multiple_results','shared'].includes(old.source_meta?.assessment_state))data.analytics_included=complete&&!notAssessed&&!!data.trainee_id;
+   const complete=scores(data).overall!==null,notAssessed=/^\s*not\s+assess?ed\s*[.!]?\s*$/i.test(data.instructor_comment),assessmentPending=['assessment_missed','assessment_excused'].includes(data.source_meta?.assessment_state);
+   if(!old||!['duplicate','multiple_results','shared'].includes(old.source_meta?.assessment_state))data.analytics_included=complete&&!notAssessed&&!assessmentPending&&!!data.trainee_id;
   }
   const newId=old?.id||id();ops.push({table,action,id:newId,expectedVersion:old?.version,data});
   if(table==='trainees'&&!old&&data.enrollment_status!=='Never Started'){const b=state.batches.find(b=>b.id===data.batch_id);if(b?.start_date&&b?.end_date)ops.push({table:'attendance_10day',action:'create',id:id(),data:{trainee_id:newId,batch_id:b.id,period_start:b.start_date,period_end:b.end_date,days:Array(10).fill(false),report:'',report_kind:'template',source_id:null,source_meta:{}}});}

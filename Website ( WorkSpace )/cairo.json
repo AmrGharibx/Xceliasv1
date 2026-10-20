@@ -629,10 +629,10 @@
       "zone": "New Cairo",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 12500000,
+      "priceMin": 20460000,
       "unitTypes": [
-        "apartment",
-        "penthouse"
+        "Apartment",
+        "Penthouse"
       ],
       "areaMin": 92,
       "areaMax": 460,
@@ -644,21 +644,15 @@
         5
       ],
       "paymentPlan": "5% Down Payment",
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/la-vista-developments/el-patio-7",
-            "observedPrice": 12500000,
-            "sourceId": "property-finder:4cac3aa7-dcb5-4243-b873-86ae584792f2"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19043-el-patio-7",
@@ -666,7 +660,7 @@
             "sourceId": "red:19043"
           }
         ],
-        "updatedAt": "2026-10-18T02:53:55.899Z"
+        "updatedAt": "2026-10-20T01:01:26.625Z"
       }
     },
     {
@@ -895,7 +889,7 @@
       "zone": "New Cairo",
       "status": "Delivered",
       "type": "commercial",
-      "priceMin": 3198000,
+      "priceMin": 21651000,
       "unitTypes": [
         "Apartment"
       ],
@@ -903,21 +897,15 @@
       "areaMax": 442,
       "bedrooms": [],
       "paymentPlan": "10% Down Payment",
-      "downPayment": 10,
+      "downPayment": 0,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/al-ahly-sabbour-developments/green-square",
-            "observedPrice": 3198000,
-            "sourceId": "property-finder:d1ce08dd-ed33-4070-b50f-441549d2a197"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30832-green-square",
@@ -925,7 +913,7 @@
             "sourceId": "red:30832"
           }
         ],
-        "updatedAt": "2026-10-18T02:53:55.899Z"
+        "updatedAt": "2026-10-20T01:01:26.625Z"
       }
     },
     {
@@ -1065,7 +1053,7 @@
       "zone": "New Cairo",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 7623000,
+      "priceMin": 11960000,
       "unitTypes": [
         "Apartment",
         "Penthouse"
@@ -1088,14 +1076,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/saudi-egyptian-developers-sed/jayd",
-            "observedPrice": 7623000,
-            "sourceId": "property-finder:66b5a4f2-19c7-400c-908f-263e435b9c60"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/283-jayd",
@@ -1103,7 +1085,7 @@
             "sourceId": "nawy:283"
           }
         ],
-        "updatedAt": "2026-10-18T02:53:55.899Z"
+        "updatedAt": "2026-10-20T01:01:26.625Z"
       }
     },
     {
@@ -3512,7 +3494,7 @@
       "zone": "New Cairo",
       "status": "Under Construction",
       "type": "commercial",
-      "priceMin": 13100000,
+      "priceMin": 14289000,
       "unitTypes": [
         "Apartment",
         "Penthouse",
@@ -3531,14 +3513,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/al-marasem-real-estate-development-company/fifth-square",
-            "observedPrice": 13100000,
-            "sourceId": "property-finder:74f4ff89-5e2b-4158-b685-b4bde155dbcf"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19155-fifth-square",
@@ -3552,7 +3528,7 @@
             "sourceId": "nawy:192"
           }
         ],
-        "updatedAt": "2026-10-18T12:37:44.844Z"
+        "updatedAt": "2026-10-20T01:01:26.625Z"
       }
     },
     {
@@ -6503,13 +6479,11 @@
       "zone": "New Cairo",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 2230200,
+      "priceMin": 3717000,
       "unitTypes": [
-        "apartment",
-        "duplex",
-        "villa",
-        "townhouse",
-        "penthouse"
+        "Apartment",
+        "Villa",
+        "Duplex"
       ],
       "areaMin": 83,
       "areaMax": 416,
@@ -6522,21 +6496,15 @@
         6
       ],
       "paymentPlan": "5% Down Payment",
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/arab-developers-holding/nyoum-mostakbal-city",
-            "observedPrice": 2230200,
-            "sourceId": "property-finder:aabc4e68-5f19-4910-a807-044afc43feaa"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19020-nyoum-mostakbal-city",
@@ -6544,7 +6512,7 @@
             "sourceId": "red:19020"
           }
         ],
-        "updatedAt": "2026-10-18T02:53:55.899Z"
+        "updatedAt": "2026-10-20T01:01:26.625Z"
       }
     },
     {
@@ -10387,10 +10355,9 @@
       "zone": "New Capital",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 4955871,
+      "priceMin": 7881027,
       "unitTypes": [
-        "apartment",
-        "duplex"
+        "Apartment"
       ],
       "areaMin": 69,
       "areaMax": 298,
@@ -10401,21 +10368,15 @@
         4
       ],
       "paymentPlan": "10% Down Payment",
-      "downPayment": 10,
+      "downPayment": 0,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/living-yards-development/the-loft",
-            "observedPrice": 4955871,
-            "sourceId": "property-finder:1ec6c8a5-8c45-47cf-82d6-5c99cff609a0"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19034-the-loft",
@@ -10423,7 +10384,7 @@
             "sourceId": "red:19034"
           }
         ],
-        "updatedAt": "2026-10-18T02:53:55.899Z"
+        "updatedAt": "2026-10-20T01:01:26.625Z"
       }
     },
     {
@@ -10645,7 +10606,7 @@
       "zone": "New Capital",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 4315616,
+      "priceMin": 7471513,
       "unitTypes": [
         "Apartment",
         "Duplex",
@@ -10669,14 +10630,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/akam-developments/scenario-new-capital",
-            "observedPrice": 4315616,
-            "sourceId": "property-finder:fb7b6d88-f93d-4ba0-8f81-ddefb6126595"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/297-scenario",
@@ -10684,7 +10639,7 @@
             "sourceId": "nawy:297"
           }
         ],
-        "updatedAt": "2026-10-18T02:53:55.899Z"
+        "updatedAt": "2026-10-20T01:01:26.625Z"
       }
     },
     {
@@ -12041,10 +11996,9 @@
       "zone": "New Capital",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 4955871,
+      "priceMin": 7881027,
       "unitTypes": [
-        "apartment",
-        "duplex"
+        "Apartment"
       ],
       "areaMin": 74,
       "areaMax": 317,
@@ -12055,21 +12009,15 @@
         4
       ],
       "paymentPlan": "10% Down Payment",
-      "downPayment": 10,
+      "downPayment": 0,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/living-yards-development/the-loft",
-            "observedPrice": 4955871,
-            "sourceId": "property-finder:1ec6c8a5-8c45-47cf-82d6-5c99cff609a0"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19034-the-loft",
@@ -12077,7 +12025,7 @@
             "sourceId": "red:19034"
           }
         ],
-        "updatedAt": "2026-10-18T02:53:55.899Z"
+        "updatedAt": "2026-10-20T01:01:26.625Z"
       }
     },
     {
@@ -13139,10 +13087,10 @@
       "zone": "New Capital",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 3711507,
+      "priceMin": 5985000,
       "unitTypes": [
-        "duplex",
-        "apartment"
+        "Apartment",
+        "Duplex"
       ],
       "areaMin": 75,
       "areaMax": 323,
@@ -13155,21 +13103,15 @@
         6
       ],
       "paymentPlan": "10% Down Payment",
-      "downPayment": 10,
+      "downPayment": 0,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/capital-link-developments/kardia",
-            "observedPrice": 3711507,
-            "sourceId": "property-finder:ec1e07d1-f056-4bfc-9827-ea5a0fd8f72a"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30894-kardia",
@@ -13177,7 +13119,7 @@
             "sourceId": "red:30894"
           }
         ],
-        "updatedAt": "2026-10-18T02:53:55.899Z"
+        "updatedAt": "2026-10-20T01:01:26.625Z"
       }
     },
     {
@@ -13434,7 +13376,7 @@
       "zone": "New Capital",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 4407962,
+      "priceMin": 5008684,
       "unitTypes": [
         "Apartment",
         "Duplex",
@@ -13450,22 +13392,16 @@
         5,
         6
       ],
-      "paymentPlan": "2.5% Down Payment, 12 Years Installments",
-      "downPayment": 2.5,
-      "installmentYears": 12,
+      "paymentPlan": "10% Down Payment, 14 Years Installments",
+      "downPayment": 10,
+      "installmentYears": 14,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/erg-developments/ri8-residence",
-            "observedPrice": 4407962,
-            "sourceId": "property-finder:1482909c-950f-4284-9e50-267f3154851e"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30847-ri8",
@@ -13479,7 +13415,7 @@
             "sourceId": "nawy:768"
           }
         ],
-        "updatedAt": "2026-10-18T12:37:44.844Z"
+        "updatedAt": "2026-10-20T01:01:26.625Z"
       }
     },
     {
@@ -17015,7 +16951,7 @@
       "zone": "October",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 4900000,
+      "priceMin": 17784000,
       "unitTypes": [
         "Twin House",
         "Town House"
@@ -17031,21 +16967,15 @@
         6
       ],
       "paymentPlan": "30% Down Payment",
-      "downPayment": 30,
+      "downPayment": 0,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/al-rabwa-group/zayed-dunes",
-            "observedPrice": 4900000,
-            "sourceId": "property-finder:84a3a0a9-76e4-4d8b-9508-28e9cd1d6111"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19231-zayed-dunes",
@@ -17053,7 +16983,7 @@
             "sourceId": "red:19231"
           }
         ],
-        "updatedAt": "2026-10-18T02:53:55.899Z"
+        "updatedAt": "2026-10-20T01:01:26.625Z"
       }
     },
     {
@@ -17106,7 +17036,7 @@
       "zone": "October",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 16936000,
+      "priceMin": 46069000,
       "unitTypes": [
         "Apartment"
       ],
@@ -17121,21 +17051,15 @@
         6
       ],
       "paymentPlan": "10% Down Payment",
-      "downPayment": 10,
+      "downPayment": 0,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/sodic/allegria-residence",
-            "observedPrice": 16936000,
-            "sourceId": "property-finder:b7055f81-40c5-4081-bf88-fb6ebcff2fda"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19198-allegria",
@@ -17143,7 +17067,7 @@
             "sourceId": "red:19198"
           }
         ],
-        "updatedAt": "2026-10-18T02:53:55.899Z"
+        "updatedAt": "2026-10-20T01:01:26.625Z"
       }
     },
     {
@@ -21756,7 +21680,7 @@
       "zone": "Zayed",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 16936000,
+      "priceMin": 46069000,
       "unitTypes": [
         "Apartment"
       ],
@@ -21771,21 +21695,15 @@
         6
       ],
       "paymentPlan": "10% Down Payment",
-      "downPayment": 10,
+      "downPayment": 0,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/sodic/allegria-residence",
-            "observedPrice": 16936000,
-            "sourceId": "property-finder:b7055f81-40c5-4081-bf88-fb6ebcff2fda"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19198-allegria",
@@ -21793,7 +21711,7 @@
             "sourceId": "red:19198"
           }
         ],
-        "updatedAt": "2026-10-18T02:53:55.899Z"
+        "updatedAt": "2026-10-20T01:01:26.625Z"
       }
     },
     {
@@ -22000,7 +21918,7 @@
       "zone": "Zayed",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 7130000,
+      "priceMin": 37476476,
       "unitTypes": [
         "Townhouse",
         "Twinhouse",
@@ -22027,14 +21945,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/city-edge/etapa-compound",
-            "observedPrice": 7130000,
-            "sourceId": "property-finder:a2754439-b7d8-4cba-bc5b-a43a68bbdd4a"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/243-etapa",
@@ -22042,7 +21954,7 @@
             "sourceId": "nawy:243"
           }
         ],
-        "updatedAt": "2026-10-18T02:53:55.899Z"
+        "updatedAt": "2026-10-20T01:01:26.625Z"
       }
     },
     {
@@ -26369,11 +26281,9 @@
       "zone": "Zayed",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 3480000,
+      "priceMin": 8507000,
       "unitTypes": [
-        "apartment",
-        "townhouse",
-        "villa"
+        "Apartment"
       ],
       "areaMin": 92,
       "areaMax": 370,
@@ -26391,14 +26301,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/mabany-edris/ons",
-            "observedPrice": 3480000,
-            "sourceId": "property-finder:398bec33-b058-42db-8154-c12828aaaffe"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30879-ons",
@@ -26406,7 +26310,7 @@
             "sourceId": "red:30879"
           }
         ],
-        "updatedAt": "2026-10-18T02:53:55.899Z"
+        "updatedAt": "2026-10-20T01:01:26.625Z"
       }
     },
     {
@@ -31013,10 +30917,9 @@
       "zone": "New Cairo",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 3648636,
+      "priceMin": 6089000,
       "unitTypes": [
-        "apartment",
-        "villa"
+        "Apartment"
       ],
       "areaMin": 90,
       "areaMax": 449,
@@ -31029,21 +30932,15 @@
         6
       ],
       "paymentPlan": "5% Down Payment",
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/marquee-developments/shababeek",
-            "observedPrice": 3648636,
-            "sourceId": "property-finder:92c889a2-90df-4dd4-820f-e76cd0c4a745"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30863-shababeek-residence",
@@ -31051,7 +30948,7 @@
             "sourceId": "red:30863"
           }
         ],
-        "updatedAt": "2026-10-18T02:53:55.899Z"
+        "updatedAt": "2026-10-20T01:01:26.625Z"
       }
     },
     {
@@ -31973,10 +31870,9 @@
       "zone": "New Cairo",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 8471397,
+      "priceMin": 23055703,
       "unitTypes": [
-        "duplex",
-        "apartment"
+        "Apartment"
       ],
       "areaMin": 98,
       "areaMax": 488,
@@ -31989,21 +31885,15 @@
         6
       ],
       "paymentPlan": "10% Down Payment",
-      "downPayment": 10,
+      "downPayment": 0,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/tbk-developments/90-avenue",
-            "observedPrice": 8471397,
-            "sourceId": "property-finder:d685693e-db16-4478-a55f-30fd8a962c0d"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19033-90-avenue",
@@ -32011,7 +31901,7 @@
             "sourceId": "red:19033"
           }
         ],
-        "updatedAt": "2026-10-18T02:53:55.899Z"
+        "updatedAt": "2026-10-20T01:01:26.625Z"
       }
     },
     {
@@ -32071,10 +31961,9 @@
       "zone": "New Cairo",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 8471397,
+      "priceMin": 23055703,
       "unitTypes": [
-        "duplex",
-        "apartment"
+        "Apartment"
       ],
       "areaMin": 82,
       "areaMax": 408,
@@ -32087,21 +31976,15 @@
         6
       ],
       "paymentPlan": "10% Down Payment",
-      "downPayment": 10,
+      "downPayment": 0,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/tbk-developments/90-avenue",
-            "observedPrice": 8471397,
-            "sourceId": "property-finder:d685693e-db16-4478-a55f-30fd8a962c0d"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19033-90-avenue",
@@ -32109,7 +31992,7 @@
             "sourceId": "red:19033"
           }
         ],
-        "updatedAt": "2026-10-18T02:53:55.899Z"
+        "updatedAt": "2026-10-20T01:01:26.625Z"
       }
     },
     {
@@ -38051,7 +37934,7 @@
       "zone": "Zayed",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 8215000,
+      "priceMin": 15298000,
       "unitTypes": [
         "Villa",
         "Twinhouse",
@@ -38075,14 +37958,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/arabia-developments/elora",
-            "observedPrice": 8215000,
-            "sourceId": "property-finder:43fbef85-8d12-4c6c-a95e-1d9e76837ae8"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1122-elora",
@@ -38090,7 +37967,7 @@
             "sourceId": "nawy:1122"
           }
         ],
-        "updatedAt": "2026-10-18T02:53:55.899Z"
+        "updatedAt": "2026-10-20T01:01:26.625Z"
       }
     },
     {
@@ -49727,20 +49604,14 @@
         "sourceId": "nawy-inventory:1381",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 3943822,
+      "priceMin": 6127200,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/concrete-developments/elen-residence",
-            "observedPrice": 3943822,
-            "sourceId": "property-finder:f1c3094c-9de8-4e2d-aa12-22a7ce65f2cd"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1381-elen-new-cairo",
@@ -49748,7 +49619,7 @@
             "sourceId": "nawy:1381"
           }
         ],
-        "updatedAt": "2026-10-18T02:53:55.899Z"
+        "updatedAt": "2026-10-20T01:01:26.625Z"
       }
     },
     {
@@ -49983,10 +49854,10 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "apartment",
-        "penthouse"
+        "Apartment",
+        "Penthouse"
       ],
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 0,
       "paymentPlan": "5% Down Payment",
       "catalogMeta": {
@@ -49994,20 +49865,14 @@
         "sourceId": "nawy-inventory:1344",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 4708000,
+      "priceMin": 8170000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/al-masria-development/isola-centra",
-            "observedPrice": 4708000,
-            "sourceId": "property-finder:75179e5a-d801-4999-9260-1d5b7291a0ef"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30922-isola-centra",
@@ -50015,7 +49880,7 @@
             "sourceId": "red:30922"
           }
         ],
-        "updatedAt": "2026-10-18T02:53:55.899Z"
+        "updatedAt": "2026-10-20T01:01:26.625Z"
       }
     },
     {

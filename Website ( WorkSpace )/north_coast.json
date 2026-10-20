@@ -345,7 +345,7 @@
       "zone": "Ras El Hekma",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 11290510,
+      "priceMin": 12823500,
       "unitTypes": [
         "Townhouse",
         "Chalet",
@@ -370,14 +370,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/madaar-developments/azha-north-coast",
-            "observedPrice": 11290510,
-            "sourceId": "property-finder:af68447c-a30c-4fb7-983a-037b5cfef8f7"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/757-azha-north-coast",
@@ -391,7 +385,7 @@
             "sourceId": "red:19032"
           }
         ],
-        "updatedAt": "2026-10-18T12:37:44.844Z"
+        "updatedAt": "2026-10-20T01:01:26.625Z"
       }
     },
     {
@@ -4403,7 +4397,7 @@
       "layouts": [
         "https://cityedgedevelopments.com/project/downtown"
       ],
-      "priceMin": 3770600,
+      "priceMin": 6609000,
       "unitTypes": [
         "Apartment",
         "Chalet",
@@ -4428,14 +4422,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/modon-developments/lagoons-al-alamin",
-            "observedPrice": 3770600,
-            "sourceId": "property-finder:8a2b1bb1-e116-4155-96cb-0e5dc4e625d8"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1649-lagoons-al-alamin",
@@ -4443,7 +4431,7 @@
             "sourceId": "nawy:1649"
           }
         ],
-        "updatedAt": "2026-10-18T02:53:55.899Z"
+        "updatedAt": "2026-10-20T01:01:26.625Z"
       }
     },
     {
@@ -4460,7 +4448,7 @@
       "layouts": [
         "https://saudiegyptian.com/projects/il-latini"
       ],
-      "priceMin": 7635917,
+      "priceMin": 2293000,
       "unitTypes": [
         "Apartment",
         "Chalet",
@@ -4476,9 +4464,9 @@
         5,
         6
       ],
-      "paymentPlan": "10% Down Payment",
+      "paymentPlan": "10% Down Payment, 3 Years Installments",
       "downPayment": 10,
-      "installmentYears": 0,
+      "installmentYears": 3,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -4487,13 +4475,13 @@
         "sourceCount": 1,
         "sources": [
           {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/saudi-egyptian-developers-sed/il-latini",
-            "observedPrice": 7635917,
-            "sourceId": "property-finder:d75dde18-94a1-40ac-913f-d128714159cc"
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/493-il-latini-sed",
+            "observedPrice": 2293000,
+            "sourceId": "nawy:493"
           }
         ],
-        "updatedAt": "2026-10-14T02:54:14.505Z"
+        "updatedAt": "2026-10-20T01:01:26.625Z"
       }
     },
     {
@@ -5480,11 +5468,11 @@
       "layouts": [
         "https://cityedgedevelopments.com/project/north-edge-towers"
       ],
-      "priceMin": 15412000,
+      "priceMin": 35233000,
       "unitTypes": [
         "Apartment",
-        "Duplex",
-        "Chalet"
+        "Chalet",
+        "Duplex"
       ],
       "areaMin": 82,
       "areaMax": 359,
@@ -5504,14 +5492,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/city-edge/beachfront-towers",
-            "observedPrice": 15412000,
-            "sourceId": "property-finder:ce939b20-75e4-453d-b066-03714819d5d2"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1228-beach-front-towers",
@@ -5519,7 +5501,7 @@
             "sourceId": "nawy:1228"
           }
         ],
-        "updatedAt": "2026-10-18T02:53:55.899Z"
+        "updatedAt": "2026-10-20T01:01:26.625Z"
       }
     },
     {
@@ -10866,9 +10848,9 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 9900000,
+      "priceMin": 66000000,
       "unitTypes": [
-        "villa"
+        "Villa"
       ],
       "areaMin": 79,
       "areaMax": 344,
@@ -10881,21 +10863,15 @@
         6
       ],
       "paymentPlan": "5% Down Payment",
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/al-ahly-sabbour-developments/ten-islands",
-            "observedPrice": 9900000,
-            "sourceId": "property-finder:9d1b6b86-be6a-4018-a7b3-b9e0b30fa998"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30930-ten-islands",
@@ -10903,7 +10879,7 @@
             "sourceId": "red:30930"
           }
         ],
-        "updatedAt": "2026-10-18T02:53:55.899Z"
+        "updatedAt": "2026-10-20T01:01:26.625Z"
       }
     },
     {
@@ -14639,20 +14615,14 @@
         "sourceId": "nawy-inventory:2437",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 11290510,
+      "priceMin": 12823500,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/madaar-developments/azha-north-coast",
-            "observedPrice": 11290510,
-            "sourceId": "property-finder:af68447c-a30c-4fb7-983a-037b5cfef8f7"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/757-azha-north-coast",
@@ -14666,7 +14636,7 @@
             "sourceId": "red:19032"
           }
         ],
-        "updatedAt": "2026-10-18T12:37:44.844Z"
+        "updatedAt": "2026-10-20T01:01:26.625Z"
       }
     },
     {
@@ -14789,20 +14759,14 @@
         "sourceId": "nawy-inventory:2164",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 11290510,
+      "priceMin": 12823500,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/madaar-developments/azha-north-coast",
-            "observedPrice": 11290510,
-            "sourceId": "property-finder:af68447c-a30c-4fb7-983a-037b5cfef8f7"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/757-azha-north-coast",
@@ -14816,7 +14780,7 @@
             "sourceId": "red:19032"
           }
         ],
-        "updatedAt": "2026-10-18T12:37:44.844Z"
+        "updatedAt": "2026-10-20T01:01:26.625Z"
       }
     },
     {

@@ -169,6 +169,14 @@ test('stableBatchQrResolvesOnlyCurrentOpenSession', async () => {
   assert.equal((await request('qr-attendance/sessions/close', {method: 'POST', cookie: adminCookie, body: {id: opened.data.id}})).status, 200);
   const closed = await request('qr-attendance/public/info', {method: 'POST', body: {batchQrId: link.data.batchQrId}});
   assert.equal(closed.data.currentSession, null);
+
+  const reopened = await openSession(batch);
+  assert.equal(reopened.status, 201, JSON.stringify(reopened.data));
+  assert.notEqual(reopened.data.id, opened.data.id);
+  assert.equal(reopened.data.dayNumber, opened.data.dayNumber);
+  const currentAgain = await request('qr-attendance/public/info', {method: 'POST', body: {batchQrId: link.data.batchQrId}});
+  assert.equal(currentAgain.data.currentSession.date, today());
+  assert.equal(currentAgain.data.currentSession.dayNumber, 1);
 });
 
 test('qrSessionNumbersFollowTheFullBatchScheduleEvenForExistingSessions', async () => {

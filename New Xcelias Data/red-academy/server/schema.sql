@@ -329,4 +329,110 @@ CREATE INDEX IF NOT EXISTS ix_activity_session_plans_company_date ON activity_se
 CREATE UNIQUE INDEX IF NOT EXISTS ix_daily_native_unique ON daily_attendance(trainee_id,date) WHERE source_id IS NULL;
 CREATE UNIQUE INDEX IF NOT EXISTS ix_assessment_native_unique ON assessments(trainee_id,batch_id) WHERE source_id IS NULL;
 CREATE UNIQUE INDEX IF NOT EXISTS ix_checklist_native_unique ON attendance_10day(trainee_id,batch_id,period_start,period_end) WHERE source_id IS NULL;
-PRAGMA user_version = 18;
+CREATE TABLE IF NOT EXISTS qr_attendance_venues (
+ id TEXT PRIMARY KEY,
+ name TEXT NOT NULL CHECK(length(name) BETWEEN 2 AND 100),
+ latitude REAL NOT NULL CHECK(latitude BETWEEN -90 AND 90),
+ longitude REAL NOT NULL CHECK(longitude BETWEEN -180 AND 180),
+ radius_m INTEGER NOT NULL DEFAULT 200 CHECK(radius_m BETWEEN 50 AND 2000),
+ active INTEGER NOT NULL DEFAULT 1 CHECK(active IN (0,1)),
+ is_default INTEGER NOT NULL DEFAULT 0 CHECK(is_default IN (0,1)),
+ created_by TEXT NOT NULL DEFAULT 'system',
+ created_at TEXT NOT NULL,
+ updated_at TEXT NOT NULL
+);
+CREATE UNIQUE INDEX IF NOT EXISTS ix_qr_attendance_default_venue ON qr_attendance_venues(is_default) WHERE is_default=1;
+INSERT OR IGNORE INTO qr_attendance_venues(id,name,latitude,longitude,radius_m,active,is_default,created_by,created_at,updated_at)
+VALUES('academy-default','Red Training Academy',30.0076922,31.5332323,200,1,1,'system',datetime('now'),datetime('now'));
+
+CREATE TABLE IF NOT EXISTS qr_attendance_batch_links (
+ id TEXT PRIMARY KEY,
+ batch_id TEXT NOT NULL REFERENCES batches(id) ON DELETE CASCADE,
+ batch_qr_id TEXT NOT NULL UNIQUE CHECK(length(batch_qr_id) BETWEEN 16 AND 128),
+ active INTEGER NOT NULL DEFAULT 1 CHECK(active IN (0,1)),
+ created_by TEXT NOT NULL,
+ created_at TEXT NOT NULL,
+ revoked_at TEXT,
+ rotated_from TEXT REFERENCES qr_attendance_batch_links(id) ON DELETE SET NULL
+);
+CREATE UNIQUE INDEX IF NOT EXISTS ix_qr_attendance_active_batch_link ON qr_attendance_batch_links(batch_id) WHERE active=1;
+
+CREATE TABLE IF NOT EXISTS qr_attendance_sessions (
+ id TEXT PRIMARY KEY,
+ batch_id TEXT NOT NULL REFERENCES batches(id) ON DELETE CASCADE,
+ venue_id TEXT NOT NULL REFERENCES qr_attendance_venues(id) ON DELETE RESTRICT,
+ session_date TEXT NOT NULL CHECK(length(session_date)=10),
+ day_number INTEGER NOT NULL CHECK(day_number BETWEEN 1 AND 366),
+ venue_name TEXT NOT NULL,
+ venue_latitude REAL NOT NULL CHECK(venue_latitude BETWEEN -90 AND 90),
+ venue_longitude REAL NOT NULL CHECK(venue_longitude BETWEEN -180 AND 180),
+ radius_m INTEGER NOT NULL CHECK(radius_m BETWEEN 50 AND 2000),
+ created_by TEXT NOT NULL,
+ opened_at TEXT NOT NULL,
+ closed_at TEXT,
+ expires_at TEXT NOT NULL,
+ version INTEGER NOT NULL DEFAULT 1 CHECK(version>=1)
+);
+CREATE UNIQUE INDEX IF NOT EXISTS ix_qr_attendance_one_open_session_per_batch ON qr_attendance_sessions(batch_id) WHERE closed_at IS NULL;
+CREATE INDEX IF NOT EXISTS ix_qr_attendance_sessions_date ON qr_attendance_sessions(batch_id,session_date,opened_at DESC);
+
+CREATE TABLE IF NOT EXISTS qr_attendance_activation_codes (
+ id TEXT PRIMARY KEY,
+ trainee_id TEXT NOT NULL,
+ batch_id TEXT NOT NULL REFERENCES batches(id) ON DELETE CASCADE,
+ code_hash TEXT NOT NULL UNIQUE CHECK(length(code_hash)=64),
+ issued_by TEXT NOT NULL,
+ issued_at TEXT NOT NULL,
+ expires_at TEXT NOT NULL,
+ consumed_at TEXT,
+ revoked_at TEXT,
+ enrollment_id TEXT,
+ FOREIGN KEY(trainee_id,batch_id) REFERENCES trainees(id,batch_id) ON DELETE CASCADE
+);
+CREATE UNIQUE INDEX IF NOT EXISTS ix_qr_attendance_one_unused_code ON qr_attendance_activation_codes(trainee_id) WHERE consumed_at IS NULL AND revoked_at IS NULL;
+
+CREATE TABLE IF NOT EXISTS qr_attendance_enrollments (
+ id TEXT PRIMARY KEY,
+ trainee_id TEXT NOT NULL,
+ batch_id TEXT NOT NULL REFERENCES batches(id) ON DELETE CASCADE,
+ public_key TEXT NOT NULL CHECK(json_valid(public_key)),
+ created_at TEXT NOT NULL,
+ last_used_at TEXT,
+ revoked_at TEXT,
+ revoked_by TEXT,
+ FOREIGN KEY(trainee_id,batch_id) REFERENCES trainees(id,batch_id) ON DELETE CASCADE
+);
+CREATE UNIQUE INDEX IF NOT EXISTS ix_qr_attendance_one_active_enrollment ON qr_attendance_enrollments(trainee_id) WHERE revoked_at IS NULL;
+
+CREATE TABLE IF NOT EXISTS qr_attendance_challenges (
+ id TEXT PRIMARY KEY,
+ session_id TEXT NOT NULL REFERENCES qr_attendance_sessions(id) ON DELETE CASCADE,
+ enrollment_id TEXT NOT NULL REFERENCES qr_attendance_enrollments(id) ON DELETE CASCADE,
+ challenge_hash TEXT NOT NULL CHECK(length(challenge_hash)=64),
+ created_at TEXT NOT NULL,
+ expires_at TEXT NOT NULL,
+ consumed_at TEXT
+);
+CREATE INDEX IF NOT EXISTS ix_qr_attendance_challenges_expiry ON qr_attendance_challenges(expires_at,consumed_at);
+
+CREATE TABLE IF NOT EXISTS qr_attendance_location_reviews (
+ id TEXT PRIMARY KEY,
+ session_id TEXT NOT NULL REFERENCES qr_attendance_sessions(id) ON DELETE CASCADE,
+ batch_id TEXT NOT NULL REFERENCES batches(id) ON DELETE CASCADE,
+ trainee_id TEXT NOT NULL,
+ reason TEXT NOT NULL CHECK(reason IN ('outside_geofence','boundary_uncertain','permission_denied','location_unavailable','location_timeout')),
+ accuracy_band TEXT NOT NULL CHECK(accuracy_band IN ('unknown','0-25m','26-75m','76-150m','over-150m')),
+ distance_band TEXT NOT NULL CHECK(distance_band IN ('unknown','within-radius','up-to-500m-outside','over-500m-outside')),
+ attempt_count INTEGER NOT NULL DEFAULT 1 CHECK(attempt_count>=1),
+ status TEXT NOT NULL DEFAULT 'open' CHECK(status IN ('open','resolved')),
+ resolution TEXT,
+ resolved_by TEXT,
+ resolved_at TEXT,
+ created_at TEXT NOT NULL,
+ updated_at TEXT NOT NULL,
+ FOREIGN KEY(trainee_id,batch_id) REFERENCES trainees(id,batch_id) ON DELETE CASCADE
+);
+CREATE UNIQUE INDEX IF NOT EXISTS ix_qr_attendance_one_open_location_review ON qr_attendance_location_reviews(session_id,trainee_id) WHERE status='open';
+CREATE INDEX IF NOT EXISTS ix_qr_attendance_location_reviews_session ON qr_attendance_location_reviews(batch_id,session_id,status,created_at DESC);
+
+PRAGMA user_version = 19;

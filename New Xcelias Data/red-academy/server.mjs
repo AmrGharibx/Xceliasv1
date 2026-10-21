@@ -54,7 +54,12 @@ const server=http.createServer(async(req,res)=>{
  if(resolved.status===403){res.writeHead(403);res.end();return;}
  const filename=resolved.file;
  if(!fs.existsSync(filename)||!fs.statSync(filename).isFile()){res.writeHead(404);res.end('Not found');return;}
- res.setHeader('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; font-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'");
+ const isQrAttendancePage=pathname==='/qr-attendance/'||pathname.startsWith('/qr-attendance/');
+ res.setHeader('Content-Security-Policy',isQrAttendancePage
+  ? "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self' https://*.supabase.co; font-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+  : "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; font-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'");
+ res.setHeader('Permissions-Policy',isQrAttendancePage?'camera=(), microphone=(), geolocation=(self)':'camera=(), microphone=(), geolocation=()');
+ if(isQrAttendancePage)res.setHeader('Referrer-Policy','no-referrer');
  res.setHeader('Content-Type',types[path.extname(filename)]||'application/octet-stream');res.setHeader('Cache-Control','no-store');
  if(req.method==='HEAD'){res.end();return;}fs.createReadStream(filename).pipe(res);
  }catch(e){console.error(e);if(!res.headersSent)res.writeHead(500);res.end('Server error');}

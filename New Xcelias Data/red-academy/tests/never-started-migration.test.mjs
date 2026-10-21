@@ -22,7 +22,7 @@ test('SQLite upgrade adds Never Started without losing trainee-linked records',a
  const upgraded=new SQLiteRepository(filename);
  try{
   await upgraded.init();
-  assert.equal(upgraded.db.prepare('PRAGMA user_version').get().user_version,18);
+  assert.equal(upgraded.db.prepare('PRAGMA user_version').get().user_version,19);
   assert.equal(upgraded.db.prepare('SELECT enrollment_status FROM trainees WHERE id=?').get('trainee').enrollment_status,'Active');
   for(const table of ['daily_attendance','assessments','attendance_10day'])assert.equal(upgraded.db.prepare(`SELECT COUNT(*) n FROM ${table}`).get().n,1);
   upgraded.db.prepare("UPDATE trainees SET enrollment_status='Never Started' WHERE id='trainee'").run();

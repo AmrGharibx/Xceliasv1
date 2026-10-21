@@ -46,7 +46,7 @@ test('SQLite upgrades an existing session board additively and preserves every s
   const saved=repository.db.prepare('SELECT id,batch_id,title,status,version,linked_assignment_id FROM activity_session_plans WHERE id=?').get('plan-keep');
   assert.deepEqual({...saved},{id:'plan-keep',batch_id:'batch-keep',title:'Saved discovery class',status:'In Progress',version:4,linked_assignment_id:null});
   assert.ok(repository.db.prepare('PRAGMA table_info(activity_session_plans)').all().some(column=>column.name==='linked_assignment_id'));
-  assert.equal(repository.db.prepare('PRAGMA user_version').get().user_version,18);
+  assert.equal(repository.db.prepare('PRAGMA user_version').get().user_version,19);
   assert.deepEqual(repository.db.prepare('PRAGMA foreign_key_check').all(),[]);
  }finally{
   repository.close();

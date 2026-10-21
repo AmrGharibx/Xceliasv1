@@ -39,6 +39,6 @@ test('upgrading schema 15 preserves an existing batch, formal grade, player and 
   const player=upgraded.db.prepare('SELECT nickname,points,streak,trainee_id FROM activity_live_players').get();assert.deepEqual({...player},{nickname:'Orbit',points:125,streak:1,trainee_id:null});
   assert.equal(upgraded.db.prepare('SELECT profile_results_saved_at FROM activity_live_rooms').get().profile_results_saved_at,null);
   assert.equal(upgraded.db.prepare('SELECT COUNT(*) n FROM activity_live_profile_results').get().n,0);
-  assert.equal(upgraded.db.prepare('PRAGMA user_version').get().user_version,18);assert.deepEqual(upgraded.db.prepare('PRAGMA foreign_key_check').all(),[]);
+  assert.equal(upgraded.db.prepare('PRAGMA user_version').get().user_version,19);assert.deepEqual(upgraded.db.prepare('PRAGMA foreign_key_check').all(),[]);
  }finally{upgraded.close();fs.rmSync(directory,{recursive:true,force:true});}
 });

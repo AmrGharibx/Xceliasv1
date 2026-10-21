@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#090a0e">
+    <meta name="robots" content="noindex,nofollow,noarchive">
+    <meta name="referrer" content="no-referrer">
+    <title>Academy attendance | Red Training Academy</title>
+    <link rel="icon" href="../training-academy-logo.svg">
+    <link rel="stylesheet" href="./qr-attendance.css">
+    <link rel="stylesheet" href="./device.css">
+    <script type="module" src="../starfield.mjs"></script>
+    <script src="../cloud-config.js"></script>
+    <script type="module" src="./qr-attendance.mjs"></script>
+  </head>
+  <body>
+    <main class="participant-shell" id="participant-app" aria-live="polite">
+      <header class="participant-header">
+        <a class="academy-mark" href="#" aria-label="Red Training Academy">
+          <img src="../training-academy-logo.svg" alt="Red Training Academy">
+        </a>
+        <button class="language-switch" id="language-toggle" type="button" aria-label="Switch language">العربية</button>
+      </header>
+      <section class="participant-card" aria-labelledby="page-title">
+        <p class="eyebrow" id="eyebrow">RED TRAINING ACADEMY · ATTENDANCE</p>
+        <h1 id="page-title">Loading your batch…</h1>
+        <p class="intro" id="intro">Checking the active training session securely.</p>
+        <div class="session-pill" id="session-pill" hidden></div>
+        <div class="notice" id="location-notice" role="note"></div>
+        <form id="activation-form" hidden>
+          <label for="activation-code" id="code-label">Your private reception code</label>
+          <input id="activation-code" name="activationCode" inputmode="text" autocomplete="one-time-code" autocapitalize="characters" spellcheck="false" maxlength="19" required>
+          <p class="field-help" id="code-help">This one-time code links this phone to your name for this batch. Reception provides it in person.</p>
+          <button class="primary-button" id="activate-button" type="submit">Link this phone</button>
+        </form>
+        <section class="bound-state" id="bound-state" hidden>
+          <div class="identity-chip"><span class="identity-dot"></span><span id="trainee-name"></span></div>
+          <button class="primary-button check-in-button" id="check-in-button" type="button">I’m here</button>
+          <p class="field-help" id="bound-help">This phone is linked to your name. You can record yourself once for today.</p>
+          <button class="replacement-link" id="replace-device" type="button" hidden>Reception gave me a replacement code</button>
+        </section>
+        <div class="feedback" id="feedback" role="status" aria-live="polite" hidden></div>
+        <div class="loading-indicator" id="loading-indicator" hidden><span></span><span></span><span></span></div>
+      </section>
+      <footer class="participant-footer">
+        <span id="footer-copy">Attendance is private to your training batch.</span>
+        <span class="signature" aria-label="X Gh">X Gh</span>
+      </footer>
+    </main>
+  </body>
+</html>

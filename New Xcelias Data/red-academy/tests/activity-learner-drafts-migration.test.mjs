@@ -46,7 +46,7 @@ test('upgrading a schema-12 SQLite workspace adds the draft version without chan
  const repository=new SQLiteRepository(filename);
  try{
   await repository.init();
-  assert.equal(repository.db.prepare('PRAGMA user_version').get().user_version,18);
+  assert.equal(repository.db.prepare('PRAGMA user_version').get().user_version,19);
   assert.deepEqual({...repository.db.prepare('SELECT id,assignment_id,trainee_id,batch_id,status,version,learner_draft_version FROM activity_assignment_participants WHERE id=?').get('kept-participant')},{id:'kept-participant',assignment_id:'old-assignment',trainee_id:'old-trainee',batch_id:'old-batch',status:'In Progress',version:7,learner_draft_version:0});
  }finally{repository.close();fs.rmSync(directory,{recursive:true,force:true});}
 });

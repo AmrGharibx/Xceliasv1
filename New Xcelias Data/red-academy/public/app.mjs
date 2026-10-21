@@ -7,6 +7,7 @@ import {icon,e,openModal,closeModal,confirmDialog,toast,avatar} from './modules/
 import {batchForm,traineeForm,companyForm,attendanceForm,assessmentForm,traineeProfile,reportModal,assessmentHistory,activityModal,usersModal,helpModal,passwordModal} from './modules/forms.mjs';
 import {exportModal} from './modules/export.mjs';
 import {academyReportModal} from './modules/academy-reports.mjs';
+import {openBatchQrAttendance,openTraineeQrCode} from './modules/qr-attendance-trainer.mjs';
 import {loadActivityAssignments,openActivityAssignment,openActivityProgress} from './modules/activities-page.mjs';
 const store=new AcademyStore();
 try{if(localStorage.getItem('internal-training-theme')==='light')document.body.classList.add('light');}catch{}
@@ -47,6 +48,7 @@ function addProfileDeleteButton(trainee){if(!trainee||!store.canDelete('trainees
 function commandPalette(){if(!store.user)return;openModal('Find a record.','Search internal records.',`<div class="search-input" style="width:100%">${icon('search',17)}<input id="command-search" type="search" aria-label="Search internal records" placeholder="Search records..." style="width:100%;padding-top:12px;padding-bottom:12px"></div><div id="command-results" class="search-results"></div>`);const input=document.getElementById('command-search'),results=document.getElementById('command-results');const update=()=>{const q=input.value.toLowerCase().trim(),items=[];for(const[route,label,ico]of NAV)if(!q||label.toLowerCase().includes(q))items.push({kind:'page',id:route,title:label,subtitle:'Workspace page',ico});if(q){for(const t of store.data.trainees.filter(t=>t.trainee_name.toLowerCase().includes(q)).slice(0,5))items.push({kind:'trainee',id:t.id,title:t.trainee_name,subtitle:store.data.companies.find(c=>c.id===t.company_id)?.name,ico:'users'});for(const b of store.data.batches.filter(b=>b.batch_name.toLowerCase().includes(q)).slice(0,4))items.push({kind:'batch',id:b.id,title:b.batch_name,subtitle:b.status,ico:'cap'});for(const c of store.data.companies.filter(c=>c.name.toLowerCase().includes(q)).slice(0,3))items.push({kind:'company',id:c.id,title:c.name,subtitle:'Company directory',ico:'building'});}results.innerHTML=items.slice(0,10).map(r=>`<button class="search-result" data-action="command-select" data-kind="${r.kind}" data-id="${r.id}">${icon(r.ico,18)}<div><strong>${e(r.title)}</strong><small>${e(r.subtitle)}</small></div>${icon('arrow',14)}</button>`).join('')||'<p class="faint" style="font-size:12px;padding:15px">No matching results.</p>';};input.oninput=update;update();setTimeout(()=>input.focus(),30);}
 document.addEventListener('click',async event=>{const el=event.target.closest('[data-action]');if(!el||el.disabled)return;const action=el.dataset.action,id=el.dataset.id;if(!store.user&&!['login','retry-connection','theme','nav'].includes(action))return;try{switch(action){
  case 'nav':go(el.dataset.route);break;
+ case 'close-modal':closeModal();break;
  case 'toggle-sidebar':ctx.sidebarOpen=!ctx.sidebarOpen;render();break;
  case 'theme':document.body.classList.toggle('light');try{localStorage.setItem('internal-training-theme',document.body.classList.contains('light')?'light':'dark');}catch{}render();break;
  case 'login':go('login');break;
@@ -74,6 +76,7 @@ document.addEventListener('click',async event=>{const el=event.target.closest('[
  case 'restore-batch':{const batch=store.data.batches.find(b=>b.id===id);if(!batch)throw new Error('Batch not found. Refresh and try again.');await store.setBatchArchived(batch,false);render();toast(`${batch.batch_name} restored to the regular batch list.`);break;}
   case 'batch-report':{let traineeIds=[];try{const parsed=JSON.parse(el.dataset.trainees||'[]');if(Array.isArray(parsed))traineeIds=parsed.filter(value=>typeof value==='string');}catch{throw new Error('The selected trainee list could not be read. Choose the trainees again.');}academyReportModal(ctx,store.data.batches.find(b=>b.id===id),el.dataset.company||'',el.dataset.trainee||'',traineeIds);break;}
  case 'batch-detail':go('batches',{detailId:id});break;
+ case 'qr-attendance':await openBatchQrAttendance(ctx,store.data.batches.find(batch=>batch.id===id));break;
  case 'back-batches':go('batches');break;
  case 'batch-view':ctx.batchView=el.dataset.view;render();break;
  case 'summary-view':ctx.summaryView=el.dataset.view;ctx.page=1;render();break;
@@ -81,6 +84,7 @@ document.addEventListener('click',async event=>{const el=event.target.closest('[
  case 'edit-trainee':traineeForm(ctx,store.data.trainees.find(t=>t.id===id));break;
  case 'delete-trainee':deleteOperationalRecord('trainees',store.data.trainees.find(t=>t.id===id));break;
  case 'profile':{const trainee=store.data.trainees.find(t=>t.id===id);traineeProfile(ctx,trainee);addProfileDeleteButton(trainee);break;}
+ case 'qr-activation-code':await openTraineeQrCode(ctx,store.data.trainees.find(trainee=>trainee.id===id));break;
  case 'new-company':companyForm(ctx);break;
  case 'edit-company':companyForm(ctx,store.data.companies.find(c=>c.id===id));break;
  case 'company-trainees':ctx.companyId=id;go('trainees');break;

@@ -10,6 +10,7 @@ import {draftActivitySessionPromptsWithGemini,validateActivitySessionPlan,valida
 import {validateActivityLivePulse} from './activity-live-pulse.mjs';
 import {activityAssignmentAction} from './activity-outcomes.mjs';
 import {draftActivityRoleplayWithGemini,validateActivityRoleplayDraftRequest} from './activity-roleplay-draft.mjs';
+import {handleQrPublicRoute,handleQrStaffRoute} from './qr-attendance.mjs';
 export const events=new EventEmitter();events.setMaxListeners(200);
 let repositoryPromise;
 export function repository(){return repositoryPromise??=(async()=>{
@@ -222,9 +223,17 @@ export async function handleApi(request){
    const hash=tokenHash(body.seat_token);if(!await repo.rate('activity-live-public-answer',600,60)||!await repo.rate('activity-live-answer:'+hash,60,60))throw new ApiError(429,'Too many answer changes. Wait a moment and try again.');
    return json(await repo.submitActivityLiveAnswer(hash,body.choice,body.confidence??null));
   }
+  if(route.startsWith('qr-attendance/public/')&&method==='POST'){
+   const result=await handleQrPublicRoute(repo,route,method,await bodyOf(request));
+   if(result){if(result.changed)events.emit('change');return json(result.body,result.status,outgoing);}
+  }
   const user=await repo.authenticate(token);
   if(!user&&route==='session'&&method==='GET')return json({user:null,mode:'private',setupRequired:await repo.needsSetup(),aiEnabled:false,aiPolishEnabled:false});
   if(!user)throw new ApiError(401,'Sign in to access the internal training system.');
+  if(route.startsWith('qr-attendance/')){
+   const result=await handleQrStaffRoute(repo,route,method,method==='GET'?{}:await bodyOf(request),url,user);
+   if(result){if(result.changed)events.emit('change');return json(result.body,result.status,outgoing);}
+  }
   if(route==='session'&&method==='GET')return json({user,mode:'private',sync:'events',setupRequired:false,aiEnabled:aiReportsEnabled(),aiPolishEnabled:aiPolishEnabled()},200,outgoing);
   if(route==='auth/password'&&method==='POST'){
    if(!await repo.rate('password:'+user.id,5,900))throw new ApiError(429,'Too many password attempts. Try again in 15 minutes.');

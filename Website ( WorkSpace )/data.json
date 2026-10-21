@@ -85336,6 +85336,78 @@
         ],
         "updatedAt": "2026-10-21T02:56:19.761Z"
       }
+    },
+    {
+      "name": "The Estates Residence",
+      "dev": "SODIC",
+      "lat": 30.074697,
+      "lng": 30.87622,
+      "zone": "New Zayed",
+      "status": "Available",
+      "type": "residential",
+      "unitTypes": [
+        "Apartment",
+        "Townhouse",
+        "Duplex",
+        "Villa",
+        "Penthouse",
+        "Twinhouse"
+      ],
+      "downPayment": 5,
+      "installmentYears": 10,
+      "paymentPlan": "5% Down Payment, 10 Years Installments",
+      "catalogMeta": {
+        "status": "observed",
+        "sourceId": "nawy-inventory:664",
+        "observedAt": "2026-10-21T03:37:52.560Z"
+      },
+      "priceMin": 19135000
+    },
+    {
+      "name": "The Estates",
+      "dev": "SODIC",
+      "lat": 30.08172,
+      "lng": 30.878458,
+      "zone": "New Zayed",
+      "status": "Available",
+      "type": "residential",
+      "unitTypes": [
+        "Villa",
+        "Townhouse",
+        "Apartment",
+        "Twinhouse"
+      ],
+      "downPayment": 10,
+      "installmentYears": 10,
+      "paymentPlan": "10% Down Payment, 10 Years Installments",
+      "catalogMeta": {
+        "status": "observed",
+        "sourceId": "nawy-inventory:310",
+        "observedAt": "2026-10-21T03:37:52.560Z"
+      },
+      "priceMin": 77223960
+    },
+    {
+      "name": "ORB Towers",
+      "dev": "Nations Of Sky",
+      "lat": 29.9998746779374,
+      "lng": 30.96300149258721,
+      "zone": "El Sheikh Zayed",
+      "status": "Available",
+      "type": "residential",
+      "unitTypes": [
+        "Apartment",
+        "Loft"
+      ],
+      "downPayment": 5,
+      "installmentYears": 8,
+      "paymentPlan": "5% Down Payment, 8 Years Installments",
+      "catalogMeta": {
+        "status": "observed",
+        "sourceId": "nawy-inventory:2791",
+        "observedAt": "2026-10-21T03:37:52.560Z"
+      },
+      "priceMin": 8500000
     }
   ],
   "projectDetails": {
@@ -107763,7 +107835,7 @@
         "https://prod-images.nawy.com/processed/compound_image/image/1798/high.webp"
       ],
       "assetMeta": {
-        "lastEnrichedAt": "2026-10-20T03:37:17.776Z",
+        "lastEnrichedAt": "2026-10-21T03:38:06.141Z",
         "sourceId": "red-asset:20"
       }
     },
@@ -113085,6 +113157,19 @@
       "layouts": [],
       "images": [
         "https://prod-images.nawy.com/processed/inventory/compounds/2761/cover-images/Black_colour/high.webp"
+      ]
+    },
+    "ORB Towers": {
+      "unitTypes": "Apartment, Loft",
+      "areas": "",
+      "paymentPlan": "5% Down Payment, 8 Years Installments",
+      "status": "Available",
+      "amenities": "",
+      "description": "Project information is being verified.",
+      "masterplan": "",
+      "layouts": [],
+      "images": [
+        "https://prod-images.nawy.com/processed/inventory/compounds/2791/gallery/Luxury%20Blue-Gray%20Ribbed%20ORB%20Branding/high.webp"
       ]
     }
   }

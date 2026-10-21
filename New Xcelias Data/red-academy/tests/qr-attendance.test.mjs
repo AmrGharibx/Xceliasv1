@@ -171,6 +171,28 @@ test('stableBatchQrResolvesOnlyCurrentOpenSession', async () => {
   assert.equal(closed.data.currentSession, null);
 });
 
+test('qrSessionNumbersFollowTheFullBatchScheduleEvenForExistingSessions', async () => {
+  const dates = [addDays(today(), -2), addDays(today(), -1), today()];
+  const batch = await makeBatch({dates});
+  const opened = await openSession(batch);
+  assert.equal(opened.status, 201, JSON.stringify(opened.data));
+
+  // Existing records can retain a stale day number after a schedule is backfilled.
+  const repo = await repository();
+  repo.db.prepare('UPDATE qr_attendance_sessions SET day_number=1 WHERE id=?').run(opened.data.id);
+
+  const link = await ensureBatchQr(batch);
+  const publicInfo = await request('qr-attendance/public/info', {
+    method: 'POST', body: {batchQrId: link.data.batchQrId},
+  });
+  assert.equal(publicInfo.status, 200);
+  assert.equal(publicInfo.data.currentSession.dayNumber, 3);
+
+  const staffState = await request(`qr-attendance/sessions?batchId=${batch.id}&date=${today()}`, {cookie: adminCookie});
+  assert.equal(staffState.status, 200);
+  assert.equal(staffState.data.session.dayNumber, 3);
+});
+
 test('rotatingBatchQrRevokesPriorReference', async () => {
   const batch = await makeBatch();
   const first = await ensureBatchQr(batch);

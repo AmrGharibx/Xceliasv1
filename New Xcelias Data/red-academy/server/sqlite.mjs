@@ -213,6 +213,7 @@ export class SQLiteRepository {
   const now=new Date(),nowIso=now.toISOString();
   if(requireSession&&(!session||session.session_date!==today(now)||session.expires_at<=nowIso))throw new ApiError(409,'There is no open attendance session for this batch right now. Ask your trainer.');
   if(session&&(!cairoSessionDayNumber(batch.session_dates,session.session_date)||session.session_date!==today(now)||session.expires_at<=nowIso))return {link,batch,session:null};
+  if(session)session.day_number=cairoSessionDayNumber(batch.session_dates,session.session_date)||session.day_number;
   return {link,batch,session:session||null};
  }
  async qrEnsureBatchLink({batchId},user){
@@ -258,7 +259,7 @@ export class SQLiteRepository {
   const checkedIn=this.db.prepare("SELECT COUNT(*) count FROM daily_attendance WHERE batch_id=? AND date=? AND status IN ('Present','Tour Day')").get(batchId,date).count;
   const locationReviewCount=session?this.db.prepare("SELECT COUNT(*) count FROM qr_attendance_location_reviews WHERE session_id=? AND status='open'").get(session.id).count:0;
   const checkins=this.db.prepare('SELECT d.trainee_id,d.arrival_time,d.status,d.source_meta,t.trainee_name FROM daily_attendance d JOIN trainees t ON t.id=d.trainee_id WHERE d.batch_id=? AND d.date=? ORDER BY t.trainee_name COLLATE NOCASE').all(batchId,date).map(row=>({traineeName:row.trainee_name,status:row.status,arrivalTime:row.arrival_time,locationStatus:row.source_meta&&JSON.parse(row.source_meta).method==='qr'?'verified':'manual'}));
-  return {session:session?{id:session.id,batchName:batch.batch_name,dayNumber:session.day_number,date:session.session_date,expiresAt:session.expires_at,venueName:session.venue_name,closed:!!session.closed_at}:null,checkedIn,total,locationReviewCount,checkins};
+  return {session:session?{id:session.id,batchName:batch.batch_name,dayNumber:cairoSessionDayNumber(batch.session_dates,session.session_date)||session.day_number,date:session.session_date,expiresAt:session.expires_at,venueName:session.venue_name,closed:!!session.closed_at}:null,checkedIn,total,locationReviewCount,checkins};
  }
  async qrOpenSession({batchId,date,venueId},user){
   if(typeof date!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(date)||Number.isNaN(Date.parse(`${date}T12:00:00Z`))||new Date(`${date}T12:00:00Z`).toISOString().slice(0,10)!==date)throw new ApiError(400,'Choose a valid session date.');
@@ -350,10 +351,10 @@ export class SQLiteRepository {
   return result;
  }
  async qrLocationReviews({batchId,date}){
-  const rows=this.db.prepare(`SELECT r.id,r.session_id,r.reason,r.accuracy_band,r.distance_band,r.attempt_count,r.status,r.resolution,r.resolved_by,r.resolved_at,r.created_at,r.updated_at,t.trainee_name,b.batch_name,s.day_number,s.session_date
+  const rows=this.db.prepare(`SELECT r.id,r.session_id,r.reason,r.accuracy_band,r.distance_band,r.attempt_count,r.status,r.resolution,r.resolved_by,r.resolved_at,r.created_at,r.updated_at,t.trainee_name,b.batch_name,b.session_dates,s.day_number,s.session_date
    FROM qr_attendance_location_reviews r JOIN trainees t ON t.id=r.trainee_id JOIN batches b ON b.id=r.batch_id JOIN qr_attendance_sessions s ON s.id=r.session_id
    WHERE r.batch_id=? AND s.session_date=? AND r.status='open' ORDER BY r.created_at DESC`).all(batchId,date);
-  return {items:rows.map(row=>({id:row.id,traineeName:row.trainee_name,batchName:row.batch_name,dayNumber:row.day_number,date:row.session_date,attemptedAt:row.created_at,reason:row.reason,accuracyBand:row.accuracy_band,distanceBand:row.distance_band,attemptCount:row.attempt_count,status:row.status}))};
+  return {items:rows.map(row=>({id:row.id,traineeName:row.trainee_name,batchName:row.batch_name,dayNumber:cairoSessionDayNumber(row.session_dates,row.session_date)||row.day_number,date:row.session_date,attemptedAt:row.created_at,reason:row.reason,accuracyBand:row.accuracy_band,distanceBand:row.distance_band,attemptCount:row.attempt_count,status:row.status}))};
  }
  async qrResolveLocationReview({reviewId,outcome},user){
   const now=new Date().toISOString();this.db.exec('BEGIN IMMEDIATE');try{const review=this.db.prepare("SELECT r.id,r.trainee_id,r.batch_id,r.session_id,r.status,s.session_date FROM qr_attendance_location_reviews r JOIN qr_attendance_sessions s ON s.id=r.session_id WHERE r.id=?").get(reviewId);if(!review)throw new ApiError(404,'No location review was found.');if(review.status!=='open')throw new ApiError(409,'This location review was already resolved.');if(outcome==='manual_attendance_recorded'&&!this.db.prepare('SELECT 1 FROM daily_attendance WHERE trainee_id=? AND batch_id=? AND date=? AND source_id IS NULL').get(review.trainee_id,review.batch_id,review.session_date))throw new ApiError(409,'Record this trainee’s attendance manually before resolving the location review.');this.db.prepare("UPDATE qr_attendance_location_reviews SET status='resolved',resolution=?,resolved_by=?,resolved_at=?,updated_at=? WHERE id=? AND status='open'").run(outcome,user.email,now,now,reviewId);this.audit(user,'resolve-qr-location-review','qr_attendance_location_reviews',reviewId,outcome==='dismissed'?'Dismissed a location review.':'Resolved a location review after using the existing manual attendance workflow.');this.db.exec('COMMIT');return {ok:true,status:'resolved',resolution:outcome,resolvedAt:now};}catch(error){try{this.db.exec('ROLLBACK');}catch{}throw error;}

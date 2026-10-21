@@ -14,7 +14,7 @@ import {validateActivityLivePulse} from '../../../server/activity-live-pulse.mjs
 import {liveConfidenceSummary} from '../../../server/activity-live-confidence.mjs';
 import {draftActivityRoleplayWithGemini,validateActivityRoleplayDraftRequest} from '../../../server/activity-roleplay-draft.mjs';
 import {prepareCloudOperations} from './operations.ts';
-import {evaluateVenueLocation,isBatchQrReference,normalizeActivationCode,sanitizeP256PublicKey,verifyP256Challenge} from '../../../public/modules/qr-attendance-core.mjs';
+import {cairoSessionDayNumber,evaluateVenueLocation,isBatchQrReference,normalizeActivationCode,sanitizeP256PublicKey,verifyP256Challenge} from '../../../public/modules/qr-attendance-core.mjs';
 
 const scrypt=promisify(nodeScrypt);
 const MAX_BODY=150000;
@@ -140,6 +140,7 @@ async function qrContext(batchQrId,requireSession=false){
  const currentDate=today(),nowIso=new Date().toISOString();
  const session=await row('qr_attendance_sessions',{select:'id,batch_id,session_date,day_number,venue_name,venue_latitude,venue_longitude,radius_m,expires_at,closed_at',batch_id:`eq.${batch.id}`,session_date:`eq.${currentDate}`,closed_at:'is.null',expires_at:`gt.${nowIso}`,order:'opened_at.desc'});
  if(requireSession&&!session)throw new ApiError(409,'There is no open attendance session for this batch right now. Ask your trainer.');
+ if(session)session.day_number=cairoSessionDayNumber(batch.session_dates,session.session_date)||session.day_number;
  return {link,batch,session};
 }
 async function qrPublicRoute(request,route,method){
@@ -167,7 +168,9 @@ async function qrPublicRoute(request,route,method){
  if(action==='challenge'){
   if(!isId(body.credentialId))throw new ApiError(401,'This device is not enrolled. Ask reception to set it up.');
   const keyHash=tokenHash(body.credentialId);if(!await rate(`qr:challenge:${keyHash}`,20,60)||!await rate('qr:challenge:global',1200,60))throw new ApiError(429,'Too many check-in attempts. Wait a moment and try again.');
+  const {batch}=await qrContext(batchQrId,true);
   const challenge=safeToken(),result=await rpc('red_qr_public_challenge',{p_batch_qr_id:batchQrId,p_credential_id:body.credentialId,p_challenge_id:id(),p_challenge_hash:tokenHash(challenge),p_challenge:challenge});
+  if(result?.currentSession)result.currentSession.dayNumber=cairoSessionDayNumber(batch.session_dates,result.currentSession.date)||result.currentSession.dayNumber;
   return json(request,result);
  }
  if(!isId(body.credentialId)||!isId(body.challengeId)||typeof body.challenge!=='string'||!/^[A-Za-z0-9_-]{43}$/.test(body.challenge)||typeof body.signature!=='string'||!/^[A-Za-z0-9_-]{86}$/.test(body.signature))throw new ApiError(401,'Your device check could not be verified. Try again or ask reception for help.');
@@ -188,24 +191,28 @@ async function qrPublicRoute(request,route,method){
  return json(request,result,result?.reviewRequired?202:200);
 }
 async function qrTrainerState(batchId,date){
- const batch=await row('batches',{select:'id,batch_name',id:`eq.${batchId}`});if(!batch)throw new ApiError(404,'No batch was found.');
+ const batch=await row('batches',{select:'id,batch_name,session_dates',id:`eq.${batchId}`});if(!batch)throw new ApiError(404,'No batch was found.');
  const [session,trainees,attendance]=await Promise.all([
   row('qr_attendance_sessions',{select:'id,batch_id,session_date,day_number,venue_name,expires_at,closed_at',batch_id:`eq.${batchId}`,session_date:`eq.${date}`,order:'opened_at.desc'}),
   rows('trainees',{select:'id,trainee_name,enrollment_status',batch_id:`eq.${batchId}`,enrollment_status:'eq.Active',limit:1000}),
   rows('daily_attendance',{select:'id,trainee_id,arrival_time,status,source_meta',batch_id:`eq.${batchId}`,date:`eq.${date}`,limit:1000})
  ]);
+ if(session)session.day_number=cairoSessionDayNumber(batch.session_dates,session.session_date)||session.day_number;
  const nameById=new Map(trainees.map(person=>[person.id,person.trainee_name]));
  const reviews=session?await rows('qr_attendance_location_reviews',{select:'id',session_id:`eq.${session.id}`,status:'eq.open',limit:1000}):[];
  const checkins=attendance.map(item=>({traineeName:nameById.get(item.trainee_id)||'Trainee',status:item.status,arrivalTime:item.arrival_time,locationStatus:item.source_meta?.method==='qr'?'verified':'manual'}));
  return {session:session?{id:session.id,batchName:batch.batch_name,dayNumber:session.day_number,date:session.session_date,expiresAt:session.expires_at,venueName:session.venue_name,closed:!!session.closed_at}:null,checkedIn:attendance.filter(item=>['Present','Tour Day'].includes(item.status)).length,total:trainees.length,locationReviewCount:reviews.length,checkins};
 }
 async function qrTrainerReviews(batchId,date){
- const reviews=await rows('qr_attendance_location_reviews',{select:'id,session_id,trainee_id,reason,accuracy_band,distance_band,attempt_count,status,created_at',batch_id:`eq.${batchId}`,status:'eq.open',limit:1000});
- const sessions=await rows('qr_attendance_sessions',{select:'id,batch_id,session_date,day_number',batch_id:`eq.${batchId}`,session_date:`eq.${date}`,limit:100});
+ const [reviews,batch,sessions]=await Promise.all([
+  rows('qr_attendance_location_reviews',{select:'id,session_id,trainee_id,reason,accuracy_band,distance_band,attempt_count,status,created_at',batch_id:`eq.${batchId}`,status:'eq.open',limit:1000}),
+  row('batches',{select:'session_dates',id:`eq.${batchId}`}),
+  rows('qr_attendance_sessions',{select:'id,batch_id,session_date,day_number',batch_id:`eq.${batchId}`,session_date:`eq.${date}`,limit:100})
+ ]);
  const sessionById=new Map(sessions.map(session=>[session.id,session]));
  const matching=reviews.filter(item=>sessionById.has(item.session_id));
  const trainees=await rows('trainees',{select:'id,trainee_name',batch_id:`eq.${batchId}`,limit:1000}),names=new Map(trainees.map(person=>[person.id,person.trainee_name]));
- return {items:matching.map(item=>({id:item.id,traineeName:names.get(item.trainee_id)||'Trainee',batchName:'',dayNumber:sessionById.get(item.session_id).day_number,date,attemptedAt:item.created_at,reason:item.reason,accuracyBand:item.accuracy_band,distanceBand:item.distance_band,attemptCount:item.attempt_count,status:item.status}))};
+ return {items:matching.map(item=>({id:item.id,traineeName:names.get(item.trainee_id)||'Trainee',batchName:'',dayNumber:cairoSessionDayNumber(batch?.session_dates,sessionById.get(item.session_id).session_date)||sessionById.get(item.session_id).day_number,date,attemptedAt:item.created_at,reason:item.reason,accuracyBand:item.accuracy_band,distanceBand:item.distance_band,attemptCount:item.attempt_count,status:item.status}))};
 }
 async function qrTrainerRoute(request,route,method,user){
  if(!route.startsWith('qr-attendance/'))return null;

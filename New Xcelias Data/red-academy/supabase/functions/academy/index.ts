@@ -14,7 +14,7 @@ import {validateActivityLivePulse} from '../../../server/activity-live-pulse.mjs
 import {liveConfidenceSummary} from '../../../server/activity-live-confidence.mjs';
 import {draftActivityRoleplayWithGemini,validateActivityRoleplayDraftRequest} from '../../../server/activity-roleplay-draft.mjs';
 import {prepareCloudOperations} from './operations.ts';
-import {cairoSessionDayNumber,evaluateVenueLocation,isBatchQrReference,normalizeActivationCode,sanitizeP256PublicKey,verifyP256Challenge} from '../../../public/modules/qr-attendance-core.mjs';
+import {cairoSessionDayNumber,evaluateVenueLocation,isBatchQrReference,isQrBatchExpired,normalizeActivationCode,sanitizeP256PublicKey,verifyP256Challenge} from '../../../public/modules/qr-attendance-core.mjs';
 
 const scrypt=promisify(nodeScrypt);
 const MAX_BODY=150000;
@@ -91,7 +91,7 @@ function databaseError(error){
   RED_CONFLICT:[409,'This record changed in another session. Refresh and try again.'],RED_NOT_FOUND:[404,'Record not found.'],RED_DUPLICATE:[409,'A matching record already exists. Refresh the page before retrying.'],RED_LINKED:[409,'This record is linked to other data. Reassign the linked records first.'],RED_INVALID_RECORD:[400,'The record could not be saved. Check the supplied values.'],RED_INVALID_OPERATION:[400,'The requested change is not valid.'],RED_ACTIVITY_BATCH:[409,'This batch is no longer available. Refresh and choose an active batch.'],RED_ACTIVITY_TARGETS:[409,'The selected roster changed. Refresh and select active trainees from this batch.'],RED_ACTIVITY_CLOSED:[409,'This assignment is closed or past its due date.'],RED_ACTIVITY_SUBMITTED:[409,'This activity response was already submitted.'],RED_ACTIVITY_SESSION_EARLY:[409,'This session’s private quiz unlocks on its scheduled date.'],RED_ACTIVITY_SESSION_QUIZ_EXISTS:[409,'This session already has a linked follow-up quiz. Open that assignment from the shared session board.'],RED_ACTIVITY_SESSION_INVALID:[409,'This session plan changed. Refresh the shared board and try again.'],RED_ACTIVITY_LIVE_INVALID_CODE:[404,'That room code is invalid or expired. Ask your trainer for the current code.'],RED_ACTIVITY_LIVE_CLOSED:[409,'This live room has ended. Ask your trainer to start another round.'],RED_ACTIVITY_LIVE_FULL:[409,'This room has reached its participant limit. Ask your trainer to start another room.'],RED_ACTIVITY_LIVE_NICKNAME:[409,'That nickname is already in the room. Choose a different nickname.'],RED_ACTIVITY_LIVE_INVALID_JOIN:[400,'Choose a nickname and one of the teams shown on the join screen.'],RED_ACTIVITY_LIVE_NO_SEAT:[401,'Your room seat is no longer active. Rejoin with the current room code.'],RED_ACTIVITY_LIVE_ANSWER_CLOSED:[409,'This answer window has closed. Wait for the trainer to open the next round.'],RED_ACTIVITY_LIVE_BAD_ANSWER:[400,'Choose one of the answers shown on the screen.'],RED_ACTIVITY_LIVE_HOST:[403,'Only the trainer who started this room can control it.'],RED_ACTIVITY_LIVE_REVEAL:[409,'This round is already revealed or the room has ended.'],RED_ACTIVITY_LIVE_ADVANCE:[409,'Reveal the current answer before advancing the room.'],RED_ACTIVITY_LIVE_REPLAY:[409,'Finish the current live room before starting a replay.'],RED_ACTIVITY_LIVE_RESUME:[409,'This live room has ended or expired.'],RED_ACTIVITY_LIVE_TIMER:[409,'The room timer is unavailable for this question.'],RED_ACTIVITY_LIVE_INVALID_CREATE:[400,'Choose a valid challenge, team names, and timer.'],RED_ACTIVITY_LIVE_INVALID_ACTION:[400,'The requested live-room action is not valid.'],RED_ACTIVITY_LIVE_ROSTER:[400,'Choose your name from this batch.'],RED_ACTIVITY_LIVE_RESULTS_STATE:[409,'Finish a batch-linked game before saving results.'],RED_ACTIVITY_LIVE_RESULTS_MAPPING:[400,'Review every player and resolve duplicate name matches before saving results.'],RED_ACTIVITY_LIVE_RESULTS_SAVED:[409,'These results are saved. Start a new room to record another game.'],RED_EMAIL_EXISTS:[409,'This email already has an account. Manage its existing access instead.'],RED_INVITATION_INVALID:[400,'This invitation is invalid, expired, or already used. Ask your company administrator for a new invitation.'],RED_INVITATION_USED:[409,'This invitation can no longer be used.'],RED_LAST_ADMIN:[400,'You cannot deactivate or demote the last administrator.'],RED_PASSWORD_CONFLICT:[409,'Your password changed. Sign in again before changing account credentials.'],RED_SETUP_USED:[409,'This workspace is already configured. Sign in with your company account.'],RED_SETUP_INVALID:[403,'The setup code is invalid or expired. Ask the server owner for the current code.']
  };
  const qrMessages={
-  RED_QR_INVALID:[400,'The QR attendance request is invalid.'],RED_QR_BATCH:[409,'This batch is not accepting QR attendance. Ask your trainer for help.'],
+  RED_QR_INVALID:[400,'The QR attendance request is invalid.'],RED_QR_BATCH:[409,'This batch is not accepting QR attendance. Ask your trainer for help.'],RED_QR_BATCH_EXPIRED:[410,'This batch is no longer accepting QR attendance because its QR access period has ended. Ask your trainer for help.'],
   RED_QR_FUTURE:[409,'A QR attendance session can only open for today.'],RED_QR_PAST:[400,'Choose today’s scheduled training date.'],
   RED_QR_UNSCHEDULED:[400,'This date is not scheduled for the selected batch.'],RED_QR_VENUE:[400,'Choose an active configured training venue.'],
   RED_QR_SESSION:[404,'No open QR attendance session was found.'],RED_QR_NO_SESSION:[409,'There is no open attendance session for this batch right now. Ask your trainer.'],
@@ -135,8 +135,9 @@ function checkedQrLocation(value){
 async function qrContext(batchQrId,requireSession=false){
  const link=await row('qr_attendance_batch_links',{select:'id,batch_id,batch_qr_id,active',batch_qr_id:`eq.${batchQrId}`,active:'eq.true'});
  if(!link)throw new ApiError(404,'This batch QR is invalid or no longer active.');
- const batch=await row('batches',{select:'id,batch_name,status,archived_at,session_dates',id:`eq.${link.batch_id}`});
+ const batch=await row('batches',{select:'id,batch_name,status,archived_at,end_date,session_dates',id:`eq.${link.batch_id}`});
  if(!batch||batch.status!=='Active'||batch.archived_at)throw new ApiError(409,'This batch is not accepting QR attendance. Ask your trainer for help.');
+ if(isQrBatchExpired(batch))throw new ApiError(410,'This batch is no longer accepting QR attendance because its QR access period has ended. Ask your trainer for help.');
  const currentDate=today(),nowIso=new Date().toISOString();
  const session=await row('qr_attendance_sessions',{select:'id,batch_id,session_date,day_number,venue_name,venue_latitude,venue_longitude,radius_m,expires_at,closed_at',batch_id:`eq.${batch.id}`,session_date:`eq.${currentDate}`,closed_at:'is.null',expires_at:`gt.${nowIso}`,order:'opened_at.desc'});
  if(requireSession&&!session)throw new ApiError(409,'There is no open attendance session for this batch right now. Ask your trainer.');
@@ -160,6 +161,7 @@ async function qrPublicRoute(request,route,method){
   return json(request,{batchName:batch.batch_name,currentSession:session?{id:session.id,dayNumber:session.day_number,date:session.session_date,expiresAt:session.expires_at}:null,...(participant?{participant}:{}),locationNotice:'Your location is checked during check-in to confirm you are near the Academy. Check-ins attempted from outside the training area are flagged for staff review. If you are on-site but your location seems wrong, contact reception.'});
  }
  if(action==='enroll'){
+  await qrContext(batchQrId,true);
   const activationCode=normalizeActivationCode(body.activationCode),publicKey=sanitizeP256PublicKey(body.publicKey);if(!activationCode||!publicKey)throw new ApiError(400,'Enter the private activation code provided by reception.');
   const codeHash=tokenHash(activationCode);if(!await rate(`qr:enroll:${codeHash}`,12,900)||!await rate('qr:enroll:global',500,60))throw new ApiError(429,'Too many QR setup attempts. Wait a moment and try again.');
   const result=await rpc('red_qr_public_enroll',{p_batch_qr_id:batchQrId,p_code_hash:codeHash,p_public_key:publicKey,p_enrollment_id:id()});
@@ -191,7 +193,7 @@ async function qrPublicRoute(request,route,method){
  return json(request,result,result?.reviewRequired?202:200);
 }
 async function qrTrainerState(batchId,date){
- const batch=await row('batches',{select:'id,batch_name,session_dates',id:`eq.${batchId}`});if(!batch)throw new ApiError(404,'No batch was found.');
+ const batch=await row('batches',{select:'id,batch_name,end_date,session_dates',id:`eq.${batchId}`});if(!batch)throw new ApiError(404,'No batch was found.');
  const [session,trainees,attendance]=await Promise.all([
   row('qr_attendance_sessions',{select:'id,batch_id,session_date,day_number,venue_name,expires_at,closed_at',batch_id:`eq.${batchId}`,session_date:`eq.${date}`,order:'opened_at.desc'}),
   rows('trainees',{select:'id,trainee_name,enrollment_status',batch_id:`eq.${batchId}`,enrollment_status:'eq.Active',limit:1000}),
@@ -201,7 +203,7 @@ async function qrTrainerState(batchId,date){
  const nameById=new Map(trainees.map(person=>[person.id,person.trainee_name]));
  const reviews=session?await rows('qr_attendance_location_reviews',{select:'id',session_id:`eq.${session.id}`,status:'eq.open',limit:1000}):[];
  const checkins=attendance.map(item=>({traineeName:nameById.get(item.trainee_id)||'Trainee',status:item.status,arrivalTime:item.arrival_time,locationStatus:item.source_meta?.method==='qr'?'verified':'manual'}));
- return {session:session?{id:session.id,batchName:batch.batch_name,dayNumber:session.day_number,date:session.session_date,expiresAt:session.expires_at,venueName:session.venue_name,closed:!!session.closed_at}:null,checkedIn:attendance.filter(item=>['Present','Tour Day'].includes(item.status)).length,total:trainees.length,locationReviewCount:reviews.length,checkins};
+ return {session:session?{id:session.id,batchName:batch.batch_name,dayNumber:session.day_number,date:session.session_date,expiresAt:session.expires_at,venueName:session.venue_name,closed:!!session.closed_at||Date.parse(session.expires_at)<=Date.now()}:null,checkedIn:attendance.filter(item=>['Present','Tour Day'].includes(item.status)).length,total:trainees.length,locationReviewCount:reviews.length,checkins};
 }
 async function qrTrainerReviews(batchId,date){
  const [reviews,batch,sessions]=await Promise.all([
@@ -236,9 +238,13 @@ async function qrTrainerRoute(request,route,method,user){
  }
  if(path==='codes'&&method==='POST'){
   const body=await bodyOf(request);if(!isId(body.traineeId)||!['issue','reissue'].includes(body.action))throw new ApiError(400,'Choose a trainee and activation-code action.');
+  const trainee=await row('trainees',{select:'id,batch_id,enrollment_status',id:`eq.${body.traineeId}`}),batch=trainee?await row('batches',{select:'id,status,archived_at,end_date,session_dates',id:`eq.${trainee.batch_id}`}):null;
+  if(!trainee||trainee.enrollment_status!=='Active'||!batch||batch.status!=='Active'||batch.archived_at)throw new ApiError(404,'No active trainee enrollment was found.');
+  if(isQrBatchExpired(batch))throw new ApiError(410,'This batch is no longer accepting QR attendance because its QR access period has ended.');
   const rateKey=tokenHash(body.traineeId);if(!await rate(`qr:issue:${user.id}:${rateKey}`,30,3600))throw new ApiError(429,'Activation-code limit reached. Try again later.');
   const activationCode=qrActivationCode(),codeHash=tokenHash(activationCode),data=await rpc('red_qr_manage',{p_action:'issue_code',p_payload:{traineeId:body.traineeId,action:body.action,codeHash},p_actor:user.email});
-  return json(request,{activationCode:activationCode.match(/.{4}/g).join('-'),expiresAt:data.expiresAt},201);
+  const code=await row('qr_attendance_activation_codes',{select:'expires_at',trainee_id:`eq.${body.traineeId}`,batch_id:`eq.${batch.id}`,consumed_at:'is.null',revoked_at:'is.null',order:'issued_at.desc'});
+  return json(request,{activationCode:activationCode.match(/.{4}/g).join('-'),expiresAt:code?.expires_at||data.expiresAt},201);
  }
  if(path==='venues/upsert'&&method==='POST'){
   const body=await bodyOf(request);if(body.id!==undefined&&body.id!=='academy-default'&&!isId(body.id)||typeof body.name!=='string'||body.name.trim().length<2||body.name.length>100||/[\u0000-\u001f\u007f]/.test(body.name)||!Number.isFinite(body.latitude)||body.latitude< -90||body.latitude>90||!Number.isFinite(body.longitude)||body.longitude< -180||body.longitude>180||!Number.isInteger(body.radius_m)||body.radius_m<50||body.radius_m>2000||typeof body.active!=='boolean')throw new ApiError(400,'Enter a valid venue name, location, radius, and status.');
@@ -246,7 +252,10 @@ async function qrTrainerRoute(request,route,method,user){
  }
  if(path==='sessions/open'&&method==='POST'){
   const body=await bodyOf(request);if(!isId(body.batchId)||!validDate(body.date)||body.venueId!==undefined&&body.venueId!=='academy-default'&&!isId(body.venueId))throw new ApiError(400,'Choose a valid batch, session date, and venue.');
-  return await mutation('open_session',{batchId:body.batchId,date:body.date,...(body.venueId?{venueId:body.venueId}:{})},201);
+  const batch=await row('batches',{select:'id,status,archived_at,end_date,session_dates',id:`eq.${body.batchId}`});if(!batch||batch.status!=='Active'||batch.archived_at)throw new ApiError(409,'Only an active batch can take QR attendance.');if(isQrBatchExpired(batch))throw new ApiError(410,'This batch has reached the end of its QR attendance period.');
+  const opened=await rpc('red_qr_manage',{p_action:'open_session',p_payload:{batchId:body.batchId,date:body.date,...(body.venueId?{venueId:body.venueId}:{})},p_actor:user.email});
+  const saved=await row('qr_attendance_sessions',{select:'expires_at',id:`eq.${opened.id}`});
+  return json(request,{...opened,expiresAt:saved?.expires_at||opened.expiresAt},201);
  }
  if(path==='sessions/close'&&method==='POST'){
   const body=await bodyOf(request);if(!isId(body.id))throw new ApiError(400,'Choose a valid QR session.');return await mutation('close_session',{id:body.id});

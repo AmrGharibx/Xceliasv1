@@ -14,6 +14,15 @@ test('cloudQrPublicEndpointsUseNoStoreAndNeverExposeRosterOrWorkspaceState',()=>
  assert.match(publicHandler,/daily_attendance',\{select:'status,arrival_time,source_meta',trainee_id:`eq\.\$\{enrollment\.trainee_id\}`/);
  assert.match(source,/const qrPublicResponse=await qrPublicRoute\(request,route,request\.method\);if\(qrPublicResponse\)return qrPublicResponse;/);
  assert.match(publicHandler,/evaluateVenueLocation\(/);
+ assert.match(publicHandler,/await qrContext\(batchQrId,true\);[\s\S]+?rpc\('red_qr_public_enroll'/);
+});
+
+test('cloudQrExpiryIsAppliedToExistingAndNewPublicSessions',()=>{
+ assert.match(source,/isQrBatchExpired\(batch\)/);
+ assert.match(source,/end_date,session_dates/);
+ assert.match(source,/expiresAt:session\.expires_at/);
+ assert.match(source,/session\.expires_at\)<=Date\.now\(\)/);
+ assert.match(source,/expiresAt:saved\?\.expires_at\|\|opened\.expiresAt/);
 });
 
 test('cloudQrNeverSendsRawTraineeCoordinatesToDatabaseRpc',()=>{

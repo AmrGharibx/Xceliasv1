@@ -3,6 +3,9 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
 const migration=fs.readFileSync(new URL('../supabase/migrations/20261021093706_qr_attendance.sql',import.meta.url),'utf8');
+const migrationFiles=fs.readdirSync(new URL('../supabase/migrations/',import.meta.url));
+const expiryDdl=migrationFiles.filter(name=>/^\d+_qr_batch_expiry_ddl\.sql$/.test(name)).map(name=>fs.readFileSync(new URL(`../supabase/migrations/${name}`,import.meta.url),'utf8')).join('\n');
+const expiryBackfill=migrationFiles.filter(name=>/^\d+_qr_batch_expiry_backfill\.sql$/.test(name)).map(name=>fs.readFileSync(new URL(`../supabase/migrations/${name}`,import.meta.url),'utf8')).join('\n');
 
 test('qrAttendanceTablesArePrivateAndRlsEnabled',()=>{
  for(const table of ['qr_attendance_venues','qr_attendance_batch_links','qr_attendance_sessions','qr_attendance_activation_codes','qr_attendance_enrollments','qr_attendance_challenges','qr_attendance_location_reviews']){
@@ -60,4 +63,20 @@ test('qrAttendanceMigrationDoesNotRewriteExistingAttendanceOrTraineeData',()=>{
  assert.doesNotMatch(migration,/\bdelete\s+from\s+public\.(daily_attendance|assessments|batches|trainees)\b/i);
  assert.doesNotMatch(migration,/\btruncate\s+public\.(daily_attendance|assessments|batches|trainees)\b/i);
  assert.match(migration,/insert into public\.daily_attendance[\s\S]+?source_meta[\s\S]+?jsonb_build_object\('method','qr'/i);
+});
+
+test('qrBatchExpiryUsesCairoEndOfBatchAndTracksScheduleChanges',()=>{
+ assert.match(expiryDdl,/function public\.red_qr_batch_access_expires_at\(batch_id_value text\)/i);
+ assert.match(expiryDdl,/at time zone 'Africa\/Cairo'/i);
+ assert.match(expiryDdl,/time '20:00'/i);
+ assert.match(expiryDdl,/before insert or update of batch_id,\s*expires_at on public\.qr_attendance_activation_codes/i);
+ assert.match(expiryDdl,/before insert or update of batch_id,\s*session_date,\s*expires_at on public\.qr_attendance_sessions/i);
+ assert.match(expiryDdl,/after update of end_date,\s*session_dates on public\.batches/i);
+ assert.match(expiryDdl,/revoke all on function public\.red_qr_batch_access_expires_at\(text\) from public,\s*anon,\s*authenticated/i);
+});
+
+test('qrBatchExpiryBackfillTouchesOnlyQrActivationAndSessionRecords',()=>{
+ assert.match(expiryBackfill,/update public\.qr_attendance_activation_codes/i);
+ assert.match(expiryBackfill,/update public\.qr_attendance_sessions/i);
+ assert.doesNotMatch(expiryBackfill,/\b(update|delete\s+from|truncate)\s+public\.(daily_attendance|assessments|batches|trainees)\b/i);
 });

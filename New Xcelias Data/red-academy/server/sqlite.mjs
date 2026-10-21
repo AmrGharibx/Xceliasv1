@@ -10,7 +10,7 @@ import {livePlayerStandings} from './activity-live-competition.mjs';
 import {liveRoster,liveJoinIdentity,liveProfileReview,livePlayerProfile} from './activity-live-roster.mjs';
 import {activitySessionDate,recordActivityPresence} from './activity-outcomes.mjs';
 import {activityCohortPulse,activityPracticeInsights,studioLibrary,studioQuiz,studioFacilitatorDeck,publicQuiz,gradeStudioQuiz,validateStudioQuizDraft,liveRoomQuestionView} from './activity-studio.mjs';
-import {cairoSessionDayNumber,nextCairoMidnight,normalizeActivationCode,sanitizeP256PublicKey,isBatchQrReference,verifyP256Challenge,evaluateVenueLocation} from '../public/modules/qr-attendance-core.mjs';
+import {cairoSessionDayNumber,qrBatchExpiryAt,qrBatchSessionExpiryAt,isQrBatchExpired,normalizeActivationCode,sanitizeP256PublicKey,isBatchQrReference,verifyP256Challenge,evaluateVenueLocation} from '../public/modules/qr-attendance-core.mjs';
 const scrypt=promisify(crypto.scrypt);
 function secretMatches(token,hash) {if(typeof token!=='string'||token.length>256)return false;const actual=Buffer.from(tokenHash(token),'hex'),expected=Buffer.from(hash,'hex');return actual.length===expected.length&&crypto.timingSafeEqual(actual,expected);}
 export async function hashPassword(password){if(typeof password!=='string'||password.length<12||password.length>256)throw new ApiError(400,'Use a password between 12 and 256 characters.');const salt=crypto.randomBytes(16).toString('hex');const hash=await scrypt(password,salt,64);return `${salt}:${hash.toString('hex')}`;}
@@ -203,12 +203,20 @@ export class SQLiteRepository {
  insert(table,row){const keys=Object.keys(row);this.db.prepare(`INSERT INTO ${table} (${keys.join(',')}) VALUES (${keys.map(()=>'?').join(',')})`).run(...keys.map(k=>serialize(k,row[k])));return row;}
  async state(user){const s=emptyState();for(const table of TABLES)s[table]=this.db.prepare(`SELECT * FROM ${table} ORDER BY created_at,id`).all().map(decode);s.batches.sort((a,b)=>a.batch_name.localeCompare(b.batch_name,undefined,{numeric:true}));s.assessments.sort((a,b)=>Number(b.analytics_included)-Number(a.analytics_included));s.import_runs=this.db.prepare('SELECT * FROM import_runs ORDER BY imported_at DESC').all().map(decode);s.import_reviews=this.db.prepare('SELECT * FROM import_reviews ORDER BY code,id').all().map(decode);s.assessment_history=this.db.prepare('SELECT * FROM assessment_history ORDER BY created_at DESC LIMIT 200').all().map(decode);if(user.role==='admin')s.audit_log=this.db.prepare('SELECT * FROM audit_log ORDER BY created_at DESC LIMIT 100').all().map(decode);return s;}
  qrBatchQrRow(batchId){return this.db.prepare('SELECT * FROM qr_attendance_batch_links WHERE batch_id=? AND active=1').get(batchId)||null;}
+ qrSyncBatchExpiry(batch){
+  const batchId=batch.id||batch.batch_id,expiresAt=qrBatchExpiryAt(batch);if(!batchId||!expiresAt)return null;
+  this.db.prepare('UPDATE qr_attendance_activation_codes SET expires_at=? WHERE batch_id=? AND expires_at<>?').run(expiresAt,batchId,expiresAt);
+  const sessions=this.db.prepare('SELECT id,session_date,expires_at FROM qr_attendance_sessions WHERE batch_id=? AND closed_at IS NULL').all(batchId);
+  for(const session of sessions){const sessionExpiry=qrBatchSessionExpiryAt(batch,session.session_date);if(!sessionExpiry)continue;const expired=Date.parse(sessionExpiry)<=Date.now();if(session.expires_at!==sessionExpiry||expired)this.db.prepare('UPDATE qr_attendance_sessions SET expires_at=?,closed_at=CASE WHEN ? THEN COALESCE(closed_at,?) ELSE closed_at END,version=version+1 WHERE id=?').run(sessionExpiry,Number(expired),sessionExpiry,session.id);}
+  return expiresAt;
+ }
  qrBatchLinkContext(batchQrId,requireSession=true){
   if(!isBatchQrReference(batchQrId))throw new ApiError(404,'This batch QR is invalid or no longer active.');
   const link=this.db.prepare('SELECT * FROM qr_attendance_batch_links WHERE batch_qr_id=? AND active=1').get(batchQrId);
   if(!link)throw new ApiError(404,'This batch QR is invalid or no longer active.');
   const batch=this.db.prepare('SELECT * FROM batches WHERE id=?').get(link.batch_id);
   if(!batch||batch.status!=='Active'||batch.archived_at)throw new ApiError(409,'This batch is not accepting QR attendance. Ask the trainer for help.');
+  this.qrSyncBatchExpiry(batch);if(isQrBatchExpired(batch))throw new ApiError(410,'This batch is no longer accepting QR attendance because its QR access period has ended. Ask your trainer for help.');
   const session=this.db.prepare('SELECT * FROM qr_attendance_sessions WHERE batch_id=? AND closed_at IS NULL ORDER BY opened_at DESC LIMIT 1').get(batch.id);
   const now=new Date(),nowIso=now.toISOString();
   if(requireSession&&(!session||session.session_date!==today(now)||session.expires_at<=nowIso))throw new ApiError(409,'There is no open attendance session for this batch right now. Ask your trainer.');
@@ -239,10 +247,11 @@ export class SQLiteRepository {
   }catch(error){try{this.db.exec('ROLLBACK');}catch{}throw error;}
  }
  async qrIssueCode({traineeId,action},user){
-  const trainee=this.db.prepare('SELECT t.id,t.trainee_name,t.batch_id,t.enrollment_status,b.status batch_status,b.archived_at FROM trainees t JOIN batches b ON b.id=t.batch_id WHERE t.id=?').get(traineeId);
+  const trainee=this.db.prepare('SELECT t.id,t.trainee_name,t.batch_id,t.enrollment_status,b.status batch_status,b.archived_at,b.end_date,b.session_dates FROM trainees t JOIN batches b ON b.id=t.batch_id WHERE t.id=?').get(traineeId);
   if(!trainee||trainee.enrollment_status!=='Active'||trainee.batch_status!=='Active'||trainee.archived_at)throw new ApiError(404,'No active trainee enrollment was found.');
+  this.qrSyncBatchExpiry(trainee);const expiresAt=qrBatchExpiryAt(trainee);if(!expiresAt||Date.parse(expiresAt)<=Date.now())throw new ApiError(410,'This batch is no longer accepting QR attendance because its QR access period has ended.');
   const bytes=crypto.randomBytes(10);let value=BigInt(`0x${bytes.toString('hex')}`),plain='';const alphabet='0123456789ABCDEFGHJKMNPQRSTVWXYZ';for(let i=0;i<16;i++){plain=alphabet[Number(value&31n)]+plain;value>>=5n;}
-  const formatted=plain.match(/.{4}/g).join('-'),hash=tokenHash(plain),now=new Date(),issuedAt=now.toISOString(),expiresAt=new Date(now.getTime()+30*86400000).toISOString(),codeId=id();
+  const formatted=plain.match(/.{4}/g).join('-'),hash=tokenHash(plain),now=new Date(),issuedAt=now.toISOString(),codeId=id();
   this.db.exec('BEGIN IMMEDIATE');try{
    const current=this.db.prepare('SELECT * FROM qr_attendance_activation_codes WHERE trainee_id=? AND consumed_at IS NULL AND revoked_at IS NULL').get(traineeId);
    if(current&&action==='issue')throw new ApiError(409,'An unused activation code already exists. Reissue it only if the trainee needs a replacement.');
@@ -259,15 +268,16 @@ export class SQLiteRepository {
   const checkedIn=this.db.prepare("SELECT COUNT(*) count FROM daily_attendance WHERE batch_id=? AND date=? AND status IN ('Present','Tour Day')").get(batchId,date).count;
   const locationReviewCount=session?this.db.prepare("SELECT COUNT(*) count FROM qr_attendance_location_reviews WHERE session_id=? AND status='open'").get(session.id).count:0;
   const checkins=this.db.prepare('SELECT d.trainee_id,d.arrival_time,d.status,d.source_meta,t.trainee_name FROM daily_attendance d JOIN trainees t ON t.id=d.trainee_id WHERE d.batch_id=? AND d.date=? ORDER BY t.trainee_name COLLATE NOCASE').all(batchId,date).map(row=>({traineeName:row.trainee_name,status:row.status,arrivalTime:row.arrival_time,locationStatus:row.source_meta&&JSON.parse(row.source_meta).method==='qr'?'verified':'manual'}));
-  return {session:session?{id:session.id,batchName:batch.batch_name,dayNumber:cairoSessionDayNumber(batch.session_dates,session.session_date)||session.day_number,date:session.session_date,expiresAt:session.expires_at,venueName:session.venue_name,closed:!!session.closed_at}:null,checkedIn,total,locationReviewCount,checkins};
+  return {session:session?{id:session.id,batchName:batch.batch_name,dayNumber:cairoSessionDayNumber(batch.session_dates,session.session_date)||session.day_number,date:session.session_date,expiresAt:session.expires_at,venueName:session.venue_name,closed:!!session.closed_at||Date.parse(session.expires_at)<=Date.now()}:null,checkedIn,total,locationReviewCount,checkins};
  }
  async qrOpenSession({batchId,date,venueId},user){
   if(typeof date!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(date)||Number.isNaN(Date.parse(`${date}T12:00:00Z`))||new Date(`${date}T12:00:00Z`).toISOString().slice(0,10)!==date)throw new ApiError(400,'Choose a valid session date.');
   const batch=this.db.prepare('SELECT * FROM batches WHERE id=?').get(batchId);if(!batch||batch.archived_at||batch.status!=='Active')throw new ApiError(409,'Only an active batch can take QR attendance.');
   if(date!==today()){if(date>today())throw new ApiError(409,'A QR attendance session can only open for today.');throw new ApiError(400,'Choose today’s scheduled training date.');}
   const dayNumber=cairoSessionDayNumber(batch.session_dates,date);if(!dayNumber)throw new ApiError(400,'This date is not scheduled for the selected batch.');
+  this.qrSyncBatchExpiry(batch);const expiresAt=qrBatchSessionExpiryAt(batch,date);if(!expiresAt||Date.parse(expiresAt)<=Date.now())throw new ApiError(410,'This batch has reached the end of its QR attendance period.');
   const selectedId=venueId||'academy-default',venue=this.db.prepare('SELECT * FROM qr_attendance_venues WHERE id=? AND active=1').get(selectedId);if(!venue)throw new ApiError(400,'Choose an active configured training venue.');
-  const now=new Date().toISOString(),sessionId=id(),expiresAt=nextCairoMidnight(date);
+  const now=new Date().toISOString(),sessionId=id();
   this.db.exec('BEGIN IMMEDIATE');try{
    this.db.prepare("UPDATE qr_attendance_sessions SET closed_at=expires_at,version=version+1 WHERE batch_id=? AND closed_at IS NULL AND expires_at<=?").run(batchId,now);
    if(this.db.prepare('SELECT id FROM qr_attendance_sessions WHERE batch_id=? AND closed_at IS NULL').get(batchId))throw new ApiError(409,'Close the current QR attendance session before opening another.');

@@ -40,6 +40,37 @@ export function nextCairoMidnight(date) {
   return atCairo(addDays(date, 1), '00:00');
 }
 
+function scheduledDates(batch) {
+  let dates = batch?.session_dates;
+  if (typeof dates === 'string') {
+    try { dates = JSON.parse(dates); } catch { return []; }
+  }
+  return Array.isArray(dates) ? [...new Set(dates.filter(validDate))].sort() : [];
+}
+
+export function qrBatchEndDate(batch) {
+  if (validDate(batch?.end_date)) return batch.end_date;
+  return scheduledDates(batch).at(-1) || null;
+}
+
+export function qrBatchExpiryAt(batch) {
+  const endDate = qrBatchEndDate(batch);
+  return endDate ? atCairo(endDate, '20:00') : null;
+}
+
+export function qrBatchSessionExpiryAt(batch, date) {
+  if (!validDate(date)) return null;
+  const batchExpiry = qrBatchExpiryAt(batch);
+  if (!batchExpiry) return null;
+  return new Date(Math.min(Date.parse(nextCairoMidnight(date)), Date.parse(batchExpiry))).toISOString();
+}
+
+export function isQrBatchExpired(batch, now = new Date()) {
+  const expiry = qrBatchExpiryAt(batch);
+  const nowTime = now instanceof Date ? now.getTime() : Date.parse(now);
+  return !expiry || !Number.isFinite(nowTime) || Date.parse(expiry) <= nowTime;
+}
+
 export function sanitizeP256PublicKey(value) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
   if (value.kty !== 'EC' || value.crv !== 'P-256' ||

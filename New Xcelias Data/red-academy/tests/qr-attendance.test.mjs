@@ -5,6 +5,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import {id, today, addDays} from '../public/modules/core.mjs';
+import {qrBatchExpiryAt} from '../public/modules/qr-attendance-core.mjs';
 
 const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'red-academy-qr-'));
 process.env.DATABASE_MODE = 'sqlite';
@@ -38,7 +39,7 @@ async function request(route, {method = 'GET', body, cookie = '', origin = proce
   return {response, data, status: response.status, cookie: response.headers.getSetCookie().map(value => value.split(';')[0]).join('; ')};
 }
 
-async function makeBatch({name = `QR batch ${id()}`, status = 'Active', dates = [today()], capacity = 100} = {}) {
+async function makeBatch({name = `QR batch ${id()}`, status = 'Active', dates = [today(), addDays(today(), 1)], capacity = 100} = {}) {
   const sorted = [...dates].sort();
   const result = await request('mutate', {
     method: 'POST', cookie: adminCookie,
@@ -149,7 +150,7 @@ test('qrSessionRequiresActiveBatchAndTodaySchedule', async () => {
   const tomorrow = addDays(today(), 1);
   const future = await makeBatch({dates: [tomorrow]});
   assert.equal((await openSession(future, adminCookie, tomorrow)).status, 409);
-  const active = await makeBatch();
+  const active = await makeBatch({dates: [addDays(today(), -1), today(), addDays(today(), 1)]});
   assert.equal((await openSession(active, adminCookie, addDays(today(), -1))).status, 400);
 });
 
@@ -218,15 +219,38 @@ test('qrActivationCodeIsOneTimeAndHashed', async () => {
   await openSession(batch);
   const issued = await issueCode(trainee);
   assert.equal(issued.status, 201);
+  assert.equal(issued.data.expiresAt, qrBatchExpiryAt(batch));
   assert.match(issued.data.activationCode, /^[0-9A-HJKMNP-TV-Z]{4}-[0-9A-HJKMNP-TV-Z]{4}-[0-9A-HJKMNP-TV-Z]{4}-[0-9A-HJKMNP-TV-Z]{4}$/);
   const key = await makeBrowserKey();
   assert.equal((await enroll(link.data.batchQrId, issued.data.activationCode, key.publicKey)).status, 201);
   const repo = await repository();
-  const row = repo.db.prepare('SELECT code_hash, consumed_at FROM qr_attendance_activation_codes WHERE trainee_id=?').get(trainee.id);
+  const row = repo.db.prepare('SELECT code_hash, consumed_at, expires_at FROM qr_attendance_activation_codes WHERE trainee_id=?').get(trainee.id);
   assert.equal(row.code_hash.length, 64);
   assert.notEqual(row.code_hash, issued.data.activationCode);
+  assert.equal(row.expires_at, qrBatchExpiryAt(batch));
   assert.ok(row.consumed_at);
   assert.equal((await request('state', {cookie: adminCookie})).data.qr_attendance, undefined);
+});
+
+test('qrAccessAndActivationCodesExpireAtTheBatchEnd', async () => {
+  const batch = await makeBatch({dates: [addDays(today(), -1)]});
+  const trainee = await makeTrainee(batch);
+  const link = await ensureBatchQr(batch);
+  const repositoryInstance = await repository();
+  const enrollmentId = id();
+  repositoryInstance.insert('qr_attendance_enrollments', {
+    id: enrollmentId, trainee_id: trainee.id, batch_id: batch.id,
+    public_key: JSON.stringify({kty: 'EC', crv: 'P-256', x: 'x'.repeat(43), y: 'y'.repeat(43), ext: true, key_ops: ['verify']}),
+    created_at: new Date().toISOString(), last_used_at: null, revoked_at: null, revoked_by: null,
+  });
+
+  const activation = await issueCode(trainee);
+  const info = await request('qr-attendance/public/info', {method: 'POST', body: {batchQrId: link.data.batchQrId, credentialId: enrollmentId}});
+  const challenge = await getChallenge(link.data.batchQrId, enrollmentId);
+
+  assert.equal(activation.status, 410);
+  assert.equal(info.status, 410);
+  assert.equal(challenge.status, 410);
 });
 
 test('qrCodeDerivesTraineeFromActivationCode', async () => {

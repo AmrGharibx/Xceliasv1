@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {today} from '../public/modules/core.mjs';
-import {renderQrAttendanceActions} from '../public/modules/qr-attendance-trainer.mjs';
+import {qrExpiryLabel, renderQrAttendanceActions} from '../public/modules/qr-attendance-trainer.mjs';
 
 const batch = {id: 'batch-1', status: 'Active', session_dates: [today()]};
 
@@ -23,4 +23,12 @@ test('open attendance session can be closed but not opened twice', () => {
 
   assert.match(markup, /data-qr-action="close-session" data-session="session-1"/);
   assert.doesNotMatch(markup, /data-qr-action="open-session"/);
+});
+
+test('activationCodeExpiryLabelShowsDateAndCairoCutoffTime', () => {
+  const label = qrExpiryLabel('2026-10-30T18:00:00.000Z');
+
+  assert.match(label, /30 October 2026/i);
+  assert.match(label, /8:00 pm/i);
+  assert.match(label, /Cairo/i);
 });

@@ -34,17 +34,23 @@
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
-        "confidence": "high",
-        "sourceCount": 1,
+        "confidence": "verified",
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1198-southmed",
             "observedPrice": 9644590,
             "sourceId": "nawy:1198"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/talaat-moustafa-group/southmed-in-al-dabaa",
+            "observedPrice": 14500000,
+            "sourceId": "property-finder:724d7c4b-ea13-45c6-86c5-244b8584c941"
           }
         ],
-        "updatedAt": "2026-10-18T18:33:22.357Z"
+        "updatedAt": "2026-10-20T02:55:45.901Z"
       }
     },
     {
@@ -101,7 +107,7 @@
             "sourceId": "property-finder:123a2956-56dd-4204-b48a-c5bd80d4bf09"
           }
         ],
-        "updatedAt": "2026-10-18T02:53:55.899Z"
+        "updatedAt": "2026-10-20T02:55:45.901Z"
       }
     },
     {
@@ -593,7 +599,7 @@
       "zone": "Somabay",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 23500000,
+      "priceMin": 20900000,
       "unitTypes": [
         "Chalet",
         "Apartment"
@@ -616,8 +622,14 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/somabay-realestate/reef-town",
+            "observedPrice": 20900000,
+            "sourceId": "property-finder:1e6ef37d-ad96-42e2-929d-daf05041c69f"
+          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/136-reef-town",
@@ -625,7 +637,7 @@
             "sourceId": "nawy:136"
           }
         ],
-        "updatedAt": "2026-10-19T02:57:22.366Z"
+        "updatedAt": "2026-10-20T02:55:45.901Z"
       }
     },
     {
@@ -682,7 +694,7 @@
             "sourceId": "nawy:201"
           }
         ],
-        "updatedAt": "2026-10-19T02:57:22.366Z"
+        "updatedAt": "2026-10-21T02:56:19.761Z"
       }
     },
     {
@@ -760,7 +772,7 @@
             "sourceId": "nawy:325"
           }
         ],
-        "updatedAt": "2026-10-18T02:53:55.899Z"
+        "updatedAt": "2026-10-20T02:55:45.901Z"
       }
     },
     {
@@ -812,7 +824,7 @@
             "sourceId": "nawy:349"
           }
         ],
-        "updatedAt": "2026-10-18T02:53:55.899Z"
+        "updatedAt": "2026-10-20T02:55:45.901Z"
       }
     },
     {
@@ -1276,7 +1288,7 @@
             "sourceId": "nawy:1862"
           }
         ],
-        "updatedAt": "2026-10-18T02:53:55.899Z"
+        "updatedAt": "2026-10-20T02:55:45.901Z"
       }
     },
     {
@@ -1324,7 +1336,7 @@
             "sourceId": "property-finder:3a44d3a3-8bbd-4545-afd6-a4fd298e2fd2"
           }
         ],
-        "updatedAt": "2026-10-18T02:53:55.899Z"
+        "updatedAt": "2026-10-20T02:55:45.901Z"
       }
     },
     {
@@ -1429,7 +1441,7 @@
             "sourceId": "property-finder:4ddc1713-e037-44e4-acfc-900c033b6731"
           }
         ],
-        "updatedAt": "2026-10-18T02:53:55.899Z"
+        "updatedAt": "2026-10-20T02:55:45.901Z"
       }
     },
     {
@@ -1564,7 +1576,7 @@
             "sourceId": "property-finder:3f56c51a-b52c-445d-b6d5-4845d6552f4f"
           }
         ],
-        "updatedAt": "2026-10-18T02:53:55.899Z"
+        "updatedAt": "2026-10-20T02:55:45.901Z"
       }
     },
     {
@@ -2055,7 +2067,7 @@
             "sourceId": "nawy:1081"
           }
         ],
-        "updatedAt": "2026-10-18T02:53:55.899Z"
+        "updatedAt": "2026-10-20T02:55:45.901Z"
       }
     },
     {
@@ -2066,7 +2078,7 @@
       "zone": "Somabay",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 50000000,
+      "priceMin": 69000000,
       "unitTypes": [
         "Villa",
         "Twinhouse"
@@ -2089,14 +2101,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/somabay-realestate/wadi-soma",
-            "observedPrice": 50000000,
-            "sourceId": "property-finder:afd6390a-4f3d-4856-a6fa-a46add98ba12"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1097-wadi-soma",
@@ -2104,7 +2110,7 @@
             "sourceId": "nawy:1097"
           }
         ],
-        "updatedAt": "2026-10-18T02:53:55.899Z"
+        "updatedAt": "2026-10-21T02:56:19.761Z"
       }
     },
     {
@@ -2205,7 +2211,7 @@
             "sourceId": "property-finder:9e4e375f-5822-47f1-9cee-4fc1d43d23b2"
           }
         ],
-        "updatedAt": "2026-10-19T02:57:22.366Z"
+        "updatedAt": "2026-10-21T02:56:19.761Z"
       }
     },
     {
@@ -2471,7 +2477,7 @@
             "sourceId": "nawy:941"
           }
         ],
-        "updatedAt": "2026-10-18T02:53:55.899Z"
+        "updatedAt": "2026-10-20T02:55:45.901Z"
       }
     },
     {
@@ -2519,7 +2525,7 @@
             "sourceId": "nawy:941"
           }
         ],
-        "updatedAt": "2026-10-18T02:53:55.899Z"
+        "updatedAt": "2026-10-20T02:55:45.901Z"
       }
     },
     {
@@ -2567,7 +2573,7 @@
             "sourceId": "nawy:941"
           }
         ],
-        "updatedAt": "2026-10-18T02:53:55.899Z"
+        "updatedAt": "2026-10-20T02:55:45.901Z"
       }
     },
     {

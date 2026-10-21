@@ -8735,7 +8735,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
@@ -8748,15 +8748,9 @@
             "url": "https://redww.com/en/projects/19214-ever-new-cairo",
             "observedPrice": 14748211,
             "sourceId": "red:19214"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/cred-developments/ever-new-cairo",
-            "observedPrice": 33500000,
-            "sourceId": "property-finder:008b96a8-a159-49b8-9d70-ead802d3b607"
           }
         ],
-        "updatedAt": "2026-10-19T18:38:57.061Z"
+        "updatedAt": "2026-10-21T06:48:12.929Z"
       }
     },
     {
@@ -20124,7 +20118,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
@@ -20133,19 +20127,13 @@
             "sourceId": "nawy:1099"
           },
           {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/city-edge/new-garden-city-2",
-            "observedPrice": 3952500,
-            "sourceId": "property-finder:2c5ff09f-0afa-47dd-8100-ef190341a205"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/19161-new-garden-city",
             "observedPrice": 4998000,
             "sourceId": "red:19161"
           }
         ],
-        "updatedAt": "2026-10-19T18:38:57.061Z"
+        "updatedAt": "2026-10-21T06:48:12.929Z"
       }
     },
     {
@@ -26681,7 +26669,7 @@
       "layouts": [
         "https://lmd.com.eg/project/zoya/"
       ],
-      "priceMin": 7726320,
+      "priceMin": 11458788,
       "unitTypes": [
         "Apartment",
         "Chalet",
@@ -26708,14 +26696,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/landmark-developments/zoya-ghazala-bay",
-            "observedPrice": 7726320,
-            "sourceId": "property-finder:72d58cad-44a3-4b44-96d0-f1676dd6d5f5"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19039-zoya-ghazala-bay",
@@ -26729,7 +26711,7 @@
             "sourceId": "nawy:238"
           }
         ],
-        "updatedAt": "2026-10-19T18:38:57.061Z"
+        "updatedAt": "2026-10-21T06:48:12.929Z"
       }
     },
     {
@@ -43905,7 +43887,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
@@ -43918,15 +43900,9 @@
             "url": "https://redww.com/en/projects/19214-ever-new-cairo",
             "observedPrice": 14748211,
             "sourceId": "red:19214"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/cred-developments/ever-new-cairo",
-            "observedPrice": 33500000,
-            "sourceId": "property-finder:008b96a8-a159-49b8-9d70-ead802d3b607"
           }
         ],
-        "updatedAt": "2026-10-19T18:38:57.061Z"
+        "updatedAt": "2026-10-21T06:48:12.929Z"
       }
     },
     {
@@ -72810,20 +72786,14 @@
         "sourceId": "nawy-inventory:2108",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 3460500,
+      "priceMin": 4614000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/nakheel-developments/livyn",
-            "observedPrice": 3460500,
-            "sourceId": "property-finder:ee0a585b-2c2b-4a2a-b867-d017dac41009"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/2108-lyvin",
@@ -72831,7 +72801,7 @@
             "sourceId": "nawy:2108"
           }
         ],
-        "updatedAt": "2026-10-19T18:38:57.061Z"
+        "updatedAt": "2026-10-21T06:48:12.929Z"
       }
     },
     {
@@ -85346,22 +85316,36 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Apartment",
-        "Townhouse",
-        "Duplex",
         "Villa",
-        "Penthouse",
-        "Twinhouse"
+        "Twin House",
+        "Apartment",
+        "Town House"
       ],
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:664",
         "observedAt": "2026-10-21T03:37:52.560Z"
       },
-      "priceMin": 19135000
+      "priceMin": 22679000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/20-the-estates",
+            "observedPrice": 22679000,
+            "sourceId": "red:20"
+          }
+        ],
+        "updatedAt": "2026-10-21T06:48:12.929Z"
+      }
     },
     {
       "name": "The Estates",
@@ -85373,19 +85357,35 @@
       "type": "residential",
       "unitTypes": [
         "Villa",
-        "Townhouse",
+        "Twin House",
         "Apartment",
-        "Twinhouse"
+        "Town House"
       ],
-      "downPayment": 10,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "10% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:310",
         "observedAt": "2026-10-21T03:37:52.560Z"
       },
-      "priceMin": 77223960
+      "priceMin": 22679000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/20-the-estates",
+            "observedPrice": 22679000,
+            "sourceId": "red:20"
+          }
+        ],
+        "updatedAt": "2026-10-21T06:48:12.929Z"
+      }
     },
     {
       "name": "ORB Towers",
@@ -85407,7 +85407,23 @@
         "sourceId": "nawy-inventory:2791",
         "observedAt": "2026-10-21T03:37:52.560Z"
       },
-      "priceMin": 8500000
+      "priceMin": 8500000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2791-orb-towers",
+            "observedPrice": 8500000,
+            "sourceId": "nawy:2791"
+          }
+        ],
+        "updatedAt": "2026-10-21T06:48:12.929Z"
+      }
     }
   ],
   "projectDetails": {

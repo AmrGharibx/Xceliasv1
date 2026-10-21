@@ -6693,11 +6693,12 @@
       "amenities": "5-star Hotel, Shopping Mall, Panoramic Pools, Underground Parking",
       "masterplan": "https://njd.com.eg/projects/jamila",
       "layouts": "https://njd.com.eg/projects/jamila",
-      "priceMin": 5438000,
+      "priceMin": 4770984,
       "unitTypes": [
+        "Villa",
         "Chalet",
-        "Apartment",
         "Duplex",
+        "Apartment",
         "Studio"
       ],
       "areaMin": 82,
@@ -6710,9 +6711,9 @@
         5,
         6
       ],
-      "paymentPlan": "5% Down Payment, 12 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 12,
+      "paymentPlan": "0% Down Payment, 6 Years Installments",
+      "downPayment": 0,
+      "installmentYears": 6,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -6723,7 +6724,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1290-jamila",
-            "observedPrice": 5438000,
+            "observedPrice": 4770984,
             "sourceId": "nawy:1290"
           },
           {
@@ -6733,7 +6734,7 @@
             "sourceId": "property-finder:be835268-53e1-4587-835b-fb84832c8713"
           }
         ],
-        "updatedAt": "2026-10-21T02:56:19.761Z"
+        "updatedAt": "2026-10-21T12:43:33.120Z"
       }
     },
     {
@@ -14364,7 +14365,7 @@
         "sourceId": "nawy-inventory:2458",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 12900000,
+      "priceMin": 12300000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -14373,16 +14374,16 @@
         "sourceCount": 3,
         "sources": [
           {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2458-perla",
+            "observedPrice": 12300000,
+            "sourceId": "nawy:2458"
+          },
+          {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/nations-of-sky/perla",
             "observedPrice": 12900000,
             "sourceId": "property-finder:aa505dec-c1de-4d66-ba2a-315297a19a1d"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/2458-perla",
-            "observedPrice": 13139703,
-            "sourceId": "nawy:2458"
           },
           {
             "name": "RED",
@@ -14391,7 +14392,7 @@
             "sourceId": "red:30971"
           }
         ],
-        "updatedAt": "2026-10-20T02:55:45.901Z"
+        "updatedAt": "2026-10-21T12:43:33.120Z"
       }
     },
     {

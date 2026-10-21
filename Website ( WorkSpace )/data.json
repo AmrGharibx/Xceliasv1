@@ -4946,19 +4946,19 @@
         "sourceCount": 2,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1726-riverton",
-            "observedPrice": 5092200,
-            "sourceId": "nawy:1726"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/30899-riverton",
             "observedPrice": 5092200,
             "sourceId": "red:30899"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1726-riverton",
+            "observedPrice": 5473684,
+            "sourceId": "nawy:1726"
           }
         ],
-        "updatedAt": "2026-10-12T18:40:48.390Z"
+        "updatedAt": "2026-10-21T12:43:33.120Z"
       }
     },
     {
@@ -9757,7 +9757,7 @@
       "zone": "New Cairo",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 3869610,
+      "priceMin": 3368416,
       "unitTypes": [
         "Townhouse",
         "Administrative",
@@ -9765,7 +9765,8 @@
         "Duplex",
         "Loft",
         "Twinhouse",
-        "Medical"
+        "Medical",
+        "Studio"
       ],
       "areaMin": 92,
       "areaMax": 462,
@@ -9777,9 +9778,9 @@
         5,
         6
       ],
-      "paymentPlan": "5% Down Payment, 8 Years Installments",
+      "paymentPlan": "5% Down Payment, 10 Years Installments",
       "downPayment": 5,
-      "installmentYears": 8,
+      "installmentYears": 10,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -9790,7 +9791,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1348-solay",
-            "observedPrice": 3869610,
+            "observedPrice": 3368416,
             "sourceId": "nawy:1348"
           },
           {
@@ -9800,7 +9801,7 @@
             "sourceId": "red:30820"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-10-21T12:43:33.120Z"
       }
     },
     {
@@ -15188,13 +15189,13 @@
       "zone": "Port Zone",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 6082180,
+      "priceMin": 7427470,
       "unitTypes": [
         "Chalet",
-        "Townhouse",
-        "Villa",
         "Duplex",
-        "Penthouse"
+        "Penthouse",
+        "Villa",
+        "Townhouse"
       ],
       "areaMin": 86,
       "areaMax": 375,
@@ -15219,7 +15220,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1051-murano-wadi-degla",
-            "observedPrice": 6082180,
+            "observedPrice": 7427470,
             "sourceId": "nawy:1051"
           },
           {
@@ -15229,7 +15230,7 @@
             "sourceId": "red:19029"
           }
         ],
-        "updatedAt": "2026-10-12T18:40:48.390Z"
+        "updatedAt": "2026-10-21T12:43:33.120Z"
       }
     },
     {
@@ -23147,7 +23148,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/715-ever",
-            "observedPrice": 9605600,
+            "observedPrice": 9788900,
             "sourceId": "nawy:715"
           },
           {
@@ -23157,7 +23158,7 @@
             "sourceId": "red:19063"
           }
         ],
-        "updatedAt": "2026-10-20T02:55:45.901Z"
+        "updatedAt": "2026-10-21T12:43:33.120Z"
       }
     },
     {
@@ -31494,11 +31495,12 @@
       "amenities": "5-star Hotel, Shopping Mall, Panoramic Pools, Underground Parking",
       "masterplan": "https://njd.com.eg/projects/jamila",
       "layouts": "https://njd.com.eg/projects/jamila",
-      "priceMin": 5438000,
+      "priceMin": 4770984,
       "unitTypes": [
+        "Villa",
         "Chalet",
-        "Apartment",
         "Duplex",
+        "Apartment",
         "Studio"
       ],
       "areaMin": 82,
@@ -31511,9 +31513,9 @@
         5,
         6
       ],
-      "paymentPlan": "5% Down Payment, 12 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 12,
+      "paymentPlan": "0% Down Payment, 6 Years Installments",
+      "downPayment": 0,
+      "installmentYears": 6,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -31524,7 +31526,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1290-jamila",
-            "observedPrice": 5438000,
+            "observedPrice": 4770984,
             "sourceId": "nawy:1290"
           },
           {
@@ -31534,7 +31536,7 @@
             "sourceId": "property-finder:be835268-53e1-4587-835b-fb84832c8713"
           }
         ],
-        "updatedAt": "2026-10-21T02:56:19.761Z"
+        "updatedAt": "2026-10-21T12:43:33.120Z"
       }
     },
     {
@@ -32679,7 +32681,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1771-jirian-nations-of-sky",
-            "observedPrice": 22000000,
+            "observedPrice": 23100000,
             "sourceId": "nawy:1771"
           },
           {
@@ -32689,7 +32691,7 @@
             "sourceId": "red:30936"
           }
         ],
-        "updatedAt": "2026-10-20T02:55:45.901Z"
+        "updatedAt": "2026-10-21T12:43:33.120Z"
       }
     },
     {
@@ -48076,7 +48078,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1348-solay",
-            "observedPrice": 3869610,
+            "observedPrice": 3368416,
             "sourceId": "nawy:1348"
           },
           {
@@ -48086,7 +48088,7 @@
             "sourceId": "red:30820"
           }
         ],
-        "updatedAt": "2026-10-21T02:56:19.761Z"
+        "updatedAt": "2026-10-21T12:43:33.120Z"
       }
     },
     {
@@ -57073,13 +57075,13 @@
       "zone": "Sokhna",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 6082180,
+      "priceMin": 7427470,
       "unitTypes": [
         "Chalet",
-        "Townhouse",
-        "Villa",
         "Duplex",
-        "Penthouse"
+        "Penthouse",
+        "Villa",
+        "Townhouse"
       ],
       "areaMin": 58,
       "areaMax": 242,
@@ -57104,7 +57106,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1051-murano-wadi-degla",
-            "observedPrice": 6082180,
+            "observedPrice": 7427470,
             "sourceId": "nawy:1051"
           },
           {
@@ -57120,7 +57122,7 @@
             "sourceId": "red:19029"
           }
         ],
-        "updatedAt": "2026-10-20T02:55:45.901Z"
+        "updatedAt": "2026-10-21T12:43:33.120Z"
       }
     },
     {
@@ -67237,7 +67239,7 @@
         "sourceId": "nawy-inventory:2458",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 12900000,
+      "priceMin": 12300000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -67246,16 +67248,16 @@
         "sourceCount": 3,
         "sources": [
           {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2458-perla",
+            "observedPrice": 12300000,
+            "sourceId": "nawy:2458"
+          },
+          {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/nations-of-sky/perla",
             "observedPrice": 12900000,
             "sourceId": "property-finder:aa505dec-c1de-4d66-ba2a-315297a19a1d"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/2458-perla",
-            "observedPrice": 13139703,
-            "sourceId": "nawy:2458"
           },
           {
             "name": "RED",
@@ -67264,7 +67266,7 @@
             "sourceId": "red:30971"
           }
         ],
-        "updatedAt": "2026-10-20T02:55:45.901Z"
+        "updatedAt": "2026-10-21T12:43:33.120Z"
       }
     },
     {
@@ -69411,10 +69413,10 @@
       "type": "residential",
       "unitTypes": [
         "Chalet",
-        "Townhouse",
-        "Villa",
         "Duplex",
-        "Penthouse"
+        "Penthouse",
+        "Villa",
+        "Townhouse"
       ],
       "downPayment": 5,
       "installmentYears": 10,
@@ -69424,7 +69426,7 @@
         "sourceId": "nawy-inventory:2141",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 6082180,
+      "priceMin": 7427470,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -69435,7 +69437,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1051-murano-wadi-degla",
-            "observedPrice": 6082180,
+            "observedPrice": 7427470,
             "sourceId": "nawy:1051"
           },
           {
@@ -69445,7 +69447,7 @@
             "sourceId": "red:19029"
           }
         ],
-        "updatedAt": "2026-10-12T18:40:48.390Z"
+        "updatedAt": "2026-10-21T12:43:33.120Z"
       }
     },
     {

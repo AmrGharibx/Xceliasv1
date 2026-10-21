@@ -34,6 +34,9 @@ await fs.cp(path.join(root,'public'),output,{recursive:true,filter:source=>!sour
 const trainerIndex=path.join(output,'trainer-activities','index.html');
 const trainerHtml=await fs.readFile(trainerIndex,'utf8');
 await fs.writeFile(trainerIndex,withTrainerBaseHref(trainerHtml,'/red-academy/trainer-activities/'));
+const participantIndex=path.join(output,'qr-attendance','index.html');
+const participantHtml=await fs.readFile(participantIndex,'utf8');
+await fs.writeFile(participantIndex,withTrainerBaseHref(participantHtml,'/red-academy/qr-attendance/'));
 await fs.copyFile(path.join(root,'node_modules','@supabase','supabase-js','dist','umd','supabase.js'),path.join(output,'vendor','supabase.js'));
 await fs.copyFile(path.join(root,'node_modules','html2canvas','dist','html2canvas.min.js'),path.join(output,'vendor','html2canvas.min.js'));
 await fs.copyFile(path.join(root,'node_modules','jspdf','dist','jspdf.umd.min.js'),path.join(output,'vendor','jspdf.umd.min.js'));

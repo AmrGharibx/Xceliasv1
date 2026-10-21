@@ -12,7 +12,7 @@ test('qrAttendanceUrlUsesXceliasFromGithubMirror', async () => {
       configuredBase: 'https://xcelias.com/red-academy',
       batchQrId,
     }),
-    `https://xcelias.com/red-academy/qr-attendance/#/batch/${batchQrId}`,
+    `https://xcelias.com/red-academy/qr-attendance#/batch/${batchQrId}`,
   );
 });
 
@@ -25,7 +25,7 @@ test('qrAttendanceUrlStaysLocalForLoopback', async () => {
       configuredBase: 'https://xcelias.com/red-academy',
       batchQrId,
     }),
-    `http://127.0.0.1:4173/qr-attendance/#/batch/${batchQrId}`,
+    `http://127.0.0.1:4173/qr-attendance#/batch/${batchQrId}`,
   );
   assert.equal(
     qrAttendanceUrl({
@@ -33,7 +33,7 @@ test('qrAttendanceUrlStaysLocalForLoopback', async () => {
       configuredBase: '',
       batchQrId,
     }),
-    `http://localhost:4000/qr-attendance/#/batch/${batchQrId}`,
+    `http://localhost:4000/qr-attendance#/batch/${batchQrId}`,
   );
 });
 

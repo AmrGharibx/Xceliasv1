@@ -66,7 +66,7 @@ source control.
    `RED_ACADEMY_PARTICIPANT_ORIGIN` below. QR attendance passes are separate:
    `cloud/production.json` sets the non-secret `participantAppUrl` to
    `https://xcelias.com/red-academy`, and the attendance QR always resolves to
-   `/qr-attendance/` on that canonical domain, even when staff opened the
+   `/qr-attendance` on that canonical domain, even when staff opened the
    workspace through the GitHub Pages mirror. Do not point QR attendance at
    `join.xcelias.com` or put its base URL in the QR payload.
 

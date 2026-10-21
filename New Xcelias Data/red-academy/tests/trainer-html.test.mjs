@@ -22,3 +22,19 @@ test('cloud build replaces the local base and rejects unsafe base paths', () => 
   );
   assert.throws(() => withTrainerBaseHref('<head></head>', 'https://evil.example/'), /safe same-origin path/);
 });
+
+test('QR participant assets resolve after Vercel removes the trailing slash', async () => {
+  const source = await readFile(new URL('../public/qr-attendance/index.html', import.meta.url), 'utf8');
+  const deployed = withTrainerBaseHref(source, '/red-academy/qr-attendance/');
+  const baseHref = deployed.match(/<base href="([^"]+)"/)?.[1];
+  assert.equal(baseHref, '/red-academy/qr-attendance/');
+
+  const page = new URL('https://xcelias.com/red-academy/qr-attendance');
+  for (const asset of ['./qr-attendance.css', './device.css', '../cloud-config.js', '../starfield.mjs']) {
+    assert.equal(new URL(asset, new URL(baseHref, page)).origin, 'https://xcelias.com');
+  }
+  assert.equal(
+    new URL('./qr-attendance.css', new URL(baseHref, page)).pathname,
+    '/red-academy/qr-attendance/qr-attendance.css',
+  );
+});

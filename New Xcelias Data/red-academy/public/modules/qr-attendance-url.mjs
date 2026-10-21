@@ -52,5 +52,5 @@ export function qrAttendanceUrl({ currentHref, configuredBase, batchQrId } = {})
   const base = isLocal
     ? currentUrl.origin
     : normalizeParticipantAppUrl(configuredBase);
-  return `${base}/qr-attendance/#/batch/${batchQrId}`;
+  return `${base}/qr-attendance#/batch/${batchQrId}`;
 }

@@ -3,6 +3,7 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {participantOriginForBuild} from './participant-origin.mjs';
 import {withTrainerBaseHref} from './trainer-html.mjs';
+import {normalizeParticipantAppUrl} from '../public/modules/qr-attendance-url.mjs';
 
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const configPath=path.join(root,'cloud','production.json');
@@ -21,9 +22,11 @@ const apiUrl=validApiUrl(configured('RED_ACADEMY_CLOUD_API_URL','apiUrl'));
 const supabaseUrl=validSupabaseUrl(configured('RED_ACADEMY_SUPABASE_URL','supabaseUrl'));
 const publishableKey=validPublishableKey(configured('RED_ACADEMY_SUPABASE_PUBLISHABLE_KEY','publishableKey'));
 const participantOrigin=participantOriginForBuild(configured('RED_ACADEMY_PARTICIPANT_ORIGIN','participantOrigin'),config.participantOriginEnabled===true);
-const ready=!!apiUrl&&!!supabaseUrl&&!!publishableKey&&new URL(apiUrl).host===new URL(supabaseUrl).host;
+let participantAppUrl='';
+try{participantAppUrl=normalizeParticipantAppUrl(configured('RED_ACADEMY_PARTICIPANT_APP_URL','participantAppUrl'));}catch{}
+const ready=!!apiUrl&&!!supabaseUrl&&!!publishableKey&&!!participantAppUrl&&new URL(apiUrl).host===new URL(supabaseUrl).host;
 if(checkOnly){console.log(ready?'true':'false');process.exit(0);}
-if(!ready)throw new Error('Set cloud/production.json to the matching HTTPS Supabase project URL, academy Edge Function URL, and publishable key before publishing the cloud build.');
+if(!ready)throw new Error('Set cloud/production.json to the matching HTTPS Supabase project URL, academy Edge Function URL, publishable key, and canonical participant app URL before publishing the cloud build.');
 const output=path.resolve(root,'cloud-dist');
 if(path.relative(root,output).startsWith('..')||path.relative(root,output)==='')throw new Error('Cloud output path is invalid.');
 await fs.rm(output,{recursive:true,force:true});
@@ -65,6 +68,6 @@ const reporterSource=await fs.readFile(sourceReporter,'utf8');
 const logoMatch=reporterSource.match(/const LOGO = `([\s\S]*?)`;/);
 if(!logoMatch)throw new Error('The standalone Reporter Generator logo could not be found.');
 await fs.writeFile(path.join(output,'report-logo.svg'),logoMatch[1]);
-await fs.writeFile(path.join(output,'cloud-config.js'),`window.RED_ACADEMY_CLOUD=Object.freeze({apiUrl:${JSON.stringify(apiUrl)},supabaseUrl:${JSON.stringify(supabaseUrl)},publishableKey:${JSON.stringify(publishableKey)},participantOrigin:${JSON.stringify(participantOrigin)}});\n`,{mode:0o600});
+await fs.writeFile(path.join(output,'cloud-config.js'),`window.RED_ACADEMY_CLOUD=Object.freeze({apiUrl:${JSON.stringify(apiUrl)},supabaseUrl:${JSON.stringify(supabaseUrl)},publishableKey:${JSON.stringify(publishableKey)},participantOrigin:${JSON.stringify(participantOrigin)},participantAppUrl:${JSON.stringify(participantAppUrl)}});\n`,{mode:0o600});
 await fs.writeFile(path.join(output,'.nojekyll'),'');
 console.log(`Cloud build ready in ${output}`);

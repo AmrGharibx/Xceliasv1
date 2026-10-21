@@ -61,9 +61,17 @@ source control.
    JWT key only on the server side.
 
    Academy Studio participant-only quiz and live-room links can use
-   `https://join.xcelias.com` without moving staff or Academy Operations. For
-   now, `participantOriginEnabled` is absent/false in `cloud/production.json`,
-   so QR codes and learner links stay on the trainer's current (main-site) host;
+   `https://join.xcelias.com` without moving staff or Academy Operations. This
+   separate feature remains controlled by `participantOriginEnabled` and
+   `RED_ACADEMY_PARTICIPANT_ORIGIN` below. QR attendance passes are separate:
+   `cloud/production.json` sets the non-secret `participantAppUrl` to
+   `https://xcelias.com/red-academy`, and the attendance QR always resolves to
+   `/qr-attendance/` on that canonical domain, even when staff opened the
+   workspace through the GitHub Pages mirror. Do not point QR attendance at
+   `join.xcelias.com` or put its base URL in the QR payload.
+
+   For Academy Studio quiz/live-room links, `participantOriginEnabled` is
+   absent/false by default, so those links stay on the trainer's current host;
    this also overrides any stale `RED_ACADEMY_PARTICIPANT_ORIGIN` build variable.
    After the Vercel domain, DNS record, and sign-in access are ready, explicitly
    set `participantOriginEnabled` to `true` in that config and set

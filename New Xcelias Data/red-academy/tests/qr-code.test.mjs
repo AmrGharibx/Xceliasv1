@@ -22,6 +22,7 @@ test('rejects missing, credential-bearing, oversized or unsupported QR content',
   assert.throws(() => createQrDataUrl(`${input}${'x'.repeat(1200)}`, qrcode), /under 1,200 characters/);
   assert.throws(() => createQrDataUrl('https://user:secret@join.xcelias.com/private', qrcode), /must use HTTPS/);
   assert.throws(() => createQrDataUrl(input, null), /encoder is unavailable/);
+  assert.throws(() => createQrDataUrl(input, qrcode, 'X'), /error correction level is not supported/);
 });
 
 test('passes the full URL to a local encoder and does not make any network request', () => {
@@ -42,4 +43,20 @@ test('passes the full URL to a local encoder and does not make any network reque
   const link = 'https://join.xcelias.com/red-academy/trainer-activities/#/room/ABCDEFGHJK';
   assert.equal(createQrDataUrl(link, fakeEncoder), 'data:image/gif;base64,AA==');
   assert.deepEqual(captured, {value: link, mode: 'Byte'});
+});
+
+test('allows branded attendance QR images to request high error correction', () => {
+  let correctionLevel;
+  const localEncoder = (version, correction) => {
+    correctionLevel = correction;
+    return {
+      addData() {},
+      make() {},
+      createDataURL() { return 'data:image/gif;base64,AA=='; },
+    };
+  };
+
+  createQrDataUrl('https://xcelias.com/red-academy/qr-attendance/?batchQrId=test', localEncoder, 'H');
+
+  assert.equal(correctionLevel, 'H');
 });

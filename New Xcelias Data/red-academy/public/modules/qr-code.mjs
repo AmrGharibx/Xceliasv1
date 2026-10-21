@@ -1,9 +1,12 @@
-export function createQrDataUrl(value, qrFactory) {
+export function createQrDataUrl(value, qrFactory, errorCorrectionLevel = 'Q') {
   if (typeof value !== 'string' || !value.trim() || value.length > 1200) {
     throw new TypeError('QR content must be a non-empty URL under 1,200 characters.');
   }
   if (typeof qrFactory !== 'function') {
     throw new TypeError('The local QR encoder is unavailable.');
+  }
+  if (!['L', 'M', 'Q', 'H'].includes(errorCorrectionLevel)) {
+    throw new TypeError('The QR error correction level is not supported.');
   }
 
   let url;
@@ -17,7 +20,7 @@ export function createQrDataUrl(value, qrFactory) {
     throw new TypeError('QR links must use HTTPS, except on the local development server.');
   }
 
-  const qr = qrFactory(0, 'Q');
+  const qr = qrFactory(0, errorCorrectionLevel);
   qr.addData(url.href, 'Byte');
   qr.make();
   const dataUrl = qr.createDataURL(6, 4);

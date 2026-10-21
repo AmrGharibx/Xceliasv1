@@ -1,3 +1,50 @@
+.qr-pass-brand .qr-pass-logo {
+  filter: brightness(0) contrast(1.08);
+}
+
+.qr-pass-signature {
+  color: #111827;
+}
+
+.qr-pass-frame {
+  display: grid;
+  place-items: center;
+  padding: 6px;
+  border: 1px solid rgba(181, 35, 50, 0.72);
+  border-radius: 15px;
+  background: #fff;
+  box-shadow: 0 0 0 5px rgba(181, 35, 50, 0.07);
+}
+
+.qr-pass-code {
+  position: relative;
+}
+
+.qr-pass-mark {
+  position: absolute;
+  z-index: 1;
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid #b52332;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 0 0 3px #fff;
+}
+
+.qr-pass-mark img {
+  display: block;
+  width: 92px;
+  max-width: none;
+  height: 32px;
+  max-height: none;
+  object-fit: contain;
+  object-position: left center;
+  filter: brightness(0);
+}
+
 @media print {
   @page {
     size: A4 portrait;
@@ -103,19 +150,20 @@
     width: min(100%, 95mm) !important;
     min-height: 26mm !important;
     align-self: center;
-    border: 1px solid #303440 !important;
-    border-radius: 10px !important;
-    padding: 4mm 5mm !important;
-    background: #171922 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
   }
 
-  body.printing-qr-pass .qr-pass-brand img {
+  body.printing-qr-pass .qr-pass-brand .qr-pass-logo {
     width: 210px !important;
     max-height: 70px !important;
+    filter: brightness(0) contrast(1.08) !important;
   }
 
   body.printing-qr-pass .qr-pass-signature {
-    color: #f3b7ba !important;
+    color: #111827 !important;
   }
 
   body.printing-qr-pass .qr-pass-eyebrow {
@@ -142,7 +190,30 @@
     width: 66mm !important;
     height: 66mm !important;
     border-width: 4mm !important;
-    border-radius: 0 !important;
+    border-radius: 6px !important;
+  }
+
+  body.printing-qr-pass .qr-pass-frame {
+    padding: 3mm !important;
+    border: 1px solid #b52332 !important;
+    border-radius: 13px !important;
+    background: #fff !important;
+    box-shadow: none !important;
+  }
+
+  body.printing-qr-pass .qr-pass-mark {
+    width: 9mm !important;
+    height: 9mm !important;
+    border-width: .35mm !important;
+    border-radius: 2.3mm !important;
+    background: #fff !important;
+    box-shadow: 0 0 0 1mm #fff !important;
+  }
+
+  body.printing-qr-pass .qr-pass-mark img {
+    width: 24mm !important;
+    height: 8.4mm !important;
+    filter: brightness(0) !important;
   }
 
 }

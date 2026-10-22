@@ -24,6 +24,13 @@ export function normalizeActivationCode(value) {
   return ACTIVATION_CODE_PATTERN.test(normalized) ? normalized : null;
 }
 
+export function normalizeQrPhone(value) {
+  if (typeof value !== 'string' || value.length > 40 || !/^[+\d\s().-]+$/.test(value)) return null;
+  const digits = value.replace(/\D/g, '');
+  const national = digits.startsWith('0020') ? `0${digits.slice(4)}` : digits.startsWith('20') ? `0${digits.slice(2)}` : digits;
+  return /^01[0125]\d{8}$/.test(national) ? national : null;
+}
+
 export function cairoSessionDayNumber(sessionDates, date) {
   if (!validDate(date)) return null;
   let dates = sessionDates;

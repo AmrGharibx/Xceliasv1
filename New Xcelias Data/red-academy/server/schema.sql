@@ -403,6 +403,28 @@ CREATE TABLE IF NOT EXISTS qr_attendance_enrollments (
  FOREIGN KEY(trainee_id,batch_id) REFERENCES trainees(id,batch_id) ON DELETE CASCADE
 );
 CREATE UNIQUE INDEX IF NOT EXISTS ix_qr_attendance_one_active_enrollment ON qr_attendance_enrollments(trainee_id) WHERE revoked_at IS NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS ix_qr_attendance_active_public_key ON qr_attendance_enrollments(public_key) WHERE revoked_at IS NULL;
+
+CREATE TABLE IF NOT EXISTS qr_attendance_device_link_requests (
+ id TEXT PRIMARY KEY,
+ handle_hash TEXT NOT NULL UNIQUE CHECK(length(handle_hash)=64),
+ batch_id TEXT NOT NULL REFERENCES batches(id) ON DELETE CASCADE,
+ session_id TEXT NOT NULL REFERENCES qr_attendance_sessions(id) ON DELETE CASCADE,
+ candidate_trainee_id TEXT REFERENCES trainees(id) ON DELETE SET NULL,
+ public_key TEXT NOT NULL CHECK(json_valid(public_key)),
+ locator_kind TEXT NOT NULL CHECK(locator_kind IN ('phone','code')),
+ code_id TEXT REFERENCES qr_attendance_activation_codes(id) ON DELETE SET NULL,
+ status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','approved','rejected','expired')),
+ enrollment_id TEXT REFERENCES qr_attendance_enrollments(id) ON DELETE SET NULL,
+ created_at TEXT NOT NULL,
+ expires_at TEXT NOT NULL,
+ resolved_at TEXT,
+ resolved_by TEXT,
+ resolution TEXT
+);
+CREATE INDEX IF NOT EXISTS ix_qr_device_link_pending_batch ON qr_attendance_device_link_requests(batch_id,status,created_at DESC);
+CREATE INDEX IF NOT EXISTS ix_qr_device_link_expiry ON qr_attendance_device_link_requests(expires_at,status);
+CREATE UNIQUE INDEX IF NOT EXISTS ix_qr_device_link_pending_key ON qr_attendance_device_link_requests(public_key) WHERE status='pending';
 
 CREATE TABLE IF NOT EXISTS qr_attendance_challenges (
  id TEXT PRIMARY KEY,

@@ -1,6 +1,6 @@
 import crypto from 'node:crypto';
 import {isId, ApiError} from './validation.mjs';
-import {isBatchQrReference, normalizeActivationCode, sanitizeP256PublicKey} from '../public/modules/qr-attendance-core.mjs';
+import {isBatchQrReference, normalizeActivationCode, normalizeQrPhone, sanitizeP256PublicKey} from '../public/modules/qr-attendance-core.mjs';
 import {validDate} from '../public/modules/core.mjs';
 
 const fail = message => { throw new ApiError(400, message); };
@@ -30,22 +30,34 @@ function canWrite(user) {
 export async function handleQrPublicRoute(repo, route, method, body) {
   if (method !== 'POST' || !route.startsWith('qr-attendance/public/')) return null;
   const action = route.slice('qr-attendance/public/'.length);
-  if (!['info', 'enroll', 'challenge', 'check-in'].includes(action)) return null;
+  if (!['info', 'enroll', 'challenge', 'check-in', 'device-link-requests', 'device-link-status'].includes(action)) return null;
+  if (action === 'device-link-requests') {
+    const batchQrId = checkedQrId(body.batchQrId);
+    const publicKey = sanitizeP256PublicKey(body.publicKey);
+    const phoneProvided = body.phone !== undefined;
+    const codeProvided = body.activationCode !== undefined;
+    if (!publicKey || phoneProvided === codeProvided || phoneProvided && !normalizeQrPhone(body.phone) || codeProvided && !normalizeActivationCode(body.activationCode)) fail('Enter one valid phone number or recovery code and refresh the page.');
+    const locator = phoneProvided ? normalizeQrPhone(body.phone) : normalizeActivationCode(body.activationCode);
+    const locatorHash = crypto.createHash('sha256').update(locator).digest('hex');
+    await rate(repo, `link-request:${locatorHash}`, 12, 900, 'Too many device requests. Wait and ask your trainer for help.');
+    await rate(repo, 'link-request:global', 500, 60, 'Too many device requests. Wait a moment and try again.');
+    return {body: await repo.qrCreateDeviceLinkRequest({batchQrId, publicKey, ...(phoneProvided ? {phone: body.phone} : {activationCode: body.activationCode})}), status: 201};
+  }
+  if (action === 'device-link-status') {
+    const batchQrId = checkedQrId(body.batchQrId);
+    if (typeof body.requestHandle !== 'string' || !/^[A-Za-z0-9_-]{43}$/.test(body.requestHandle) || typeof body.signature !== 'string' || !/^[A-Za-z0-9_-]{86}$/.test(body.signature)) throw new ApiError(401, 'This device request could not be verified. Start again or ask your trainer.');
+    const handleHash = crypto.createHash('sha256').update(body.requestHandle).digest('hex');
+    await rate(repo, `link-status:${handleHash}`, 60, 60, 'Too many device checks. Wait a moment and try again.');
+    await rate(repo, 'link-status:global', 3000, 60, 'Too many device checks. Wait a moment and try again.');
+    return {body: await repo.qrDeviceLinkRequestStatus({batchQrId, requestHandle: body.requestHandle, signature: body.signature}), status: 200};
+  }
   if (action === 'info') {
     const batchQrId = checkedQrId(body.batchQrId);
     await rate(repo, `info:${crypto.createHash('sha256').update(batchQrId).digest('hex')}`, 240, 60, 'Too many QR checks. Wait a moment and try again.');
     return {body: await repo.qrSessionInfo({batchQrId,credentialId:body.credentialId}), status: 200};
   }
   if (action === 'enroll') {
-    const batchQrId = checkedQrId(body.batchQrId);
-    const activationCode = normalizeActivationCode(body.activationCode);
-    const publicKey = sanitizeP256PublicKey(body.publicKey);
-    if (!activationCode || !publicKey) fail('Enter the private activation code provided by reception.');
-    const codeKey = crypto.createHash('sha256').update(activationCode).digest('hex');
-    await rate(repo, `enroll:${codeKey}`, 12, 900, 'Too many setup attempts for this code. Ask reception for help.');
-    await rate(repo, 'enroll:global', 500, 60, 'Too many QR setup attempts. Wait a moment and try again.');
-    const result = await repo.qrEnroll({batchQrId, activationCode, publicKey});
-    return {body: result, status: result.alreadyEnrolled ? 200 : 201};
+    throw new ApiError(409, 'Refresh the QR page and ask your trainer to approve this device.');
   }
   if (action === 'challenge') {
     const batchQrId = checkedQrId(body.batchQrId);
@@ -90,6 +102,12 @@ export async function handleQrStaffRoute(repo, route, method, body, url, user) {
     canWrite(user);
     return {body: await repo.qrVenues(), status: 200};
   }
+  if (path === 'device-link-requests' && method === 'GET') {
+    canWrite(user);
+    const batchId = url.searchParams.get('batchId') || '';
+    if (!isId(batchId)) fail('Choose a valid batch.');
+    return {body: await repo.qrDeviceLinkRequests({batchId}), status: 200};
+  }
   if (path === 'location-reviews' && method === 'GET') {
     canWrite(user);
     const batchId = url.searchParams.get('batchId') || '';
@@ -113,6 +131,10 @@ export async function handleQrStaffRoute(repo, route, method, body, url, user) {
   if (path === 'codes' && method === 'POST') {
     if (!isId(body.traineeId) || !['issue', 'reissue'].includes(body.action)) fail('Choose a trainee and activation-code action.');
     return mutation(() => repo.qrIssueCode({traineeId: body.traineeId, action: body.action}, user), 201);
+  }
+  if (path === 'device-link-requests/resolve' && method === 'POST') {
+    if (!isId(body.requestId) || !['approve', 'approve_replace', 'reject'].includes(body.action) || body.traineeId !== undefined && !isId(body.traineeId)) fail('Choose a valid device request and action.');
+    return mutation(() => repo.qrResolveDeviceLinkRequest({requestId: body.requestId, action: body.action, traineeId: body.traineeId}, user));
   }
   if (path === 'venues/upsert' && method === 'POST') {
     const {id, name, latitude, longitude, radius_m, active} = body;

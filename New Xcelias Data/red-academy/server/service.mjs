@@ -388,5 +388,5 @@ export async function handleApi(request){
    return new Response(stream,{headers:{'Content-Type':'text/event-stream','Cache-Control':'no-cache, no-transform','Connection':'keep-alive','X-Accel-Buffering':'no'}});
   }
   throw new ApiError(404,'Endpoint not found.');
- }catch(e){if(!(e instanceof ApiError))console.error(`[${requestId}]`,e);return json({error:e instanceof ApiError?e.message:'An unexpected error occurred. No changes were confirmed.',requestId},e instanceof ApiError?e.status:500,outgoing);}
+ }catch(e){if(!(e instanceof ApiError))console.error(`[${requestId}]`,e);return json({error:e instanceof ApiError?e.message:'An unexpected error occurred. No changes were confirmed.',...(e instanceof ApiError&&e.errorCode?{errorCode:e.errorCode}:{}),requestId},e instanceof ApiError?e.status:500,outgoing);}
 }

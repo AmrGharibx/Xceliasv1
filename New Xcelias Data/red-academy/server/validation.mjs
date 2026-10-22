@@ -1,5 +1,5 @@
 import {STATUSES,ENROLLMENT_STATUSES,BATCH_STATUSES,OUTCOMES,validDate,scores,cairoDate} from '../public/modules/core.mjs';
-export class ApiError extends Error {constructor(status,message){super(message);this.status=status;}}
+export class ApiError extends Error {constructor(status,message,errorCode=''){super(message);this.status=status;this.errorCode=errorCode;}}
 const fail=message=>{throw new ApiError(400,message);};
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 export function isId(value){return typeof value==='string'&&uuid.test(value);}

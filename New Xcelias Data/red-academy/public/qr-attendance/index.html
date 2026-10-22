@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="./device.css">
     <script type="module" src="../starfield.mjs"></script>
     <script src="../cloud-config.js"></script>
-    <script type="module" src="./qr-attendance.mjs"></script>
+    <script type="module" src="./qr-attendance.mjs?v=qr-device-binding-20261022-r2"></script>
   </head>
   <body>
     <main class="participant-shell" id="participant-app" aria-live="polite">
@@ -28,12 +28,28 @@
         <p class="intro" id="intro">Checking the active training session securely.</p>
         <div class="session-pill" id="session-pill" hidden></div>
         <div class="notice" id="location-notice" role="note"></div>
-        <form id="activation-form" hidden>
-          <label for="activation-code" id="code-label">Your private reception code</label>
-          <input id="activation-code" name="activationCode" inputmode="text" autocomplete="one-time-code" autocapitalize="characters" spellcheck="false" maxlength="19" required>
-          <p class="field-help" id="code-help">This one-time code links this phone to your name for this batch. Reception provides it in person.</p>
-          <button class="primary-button" id="activate-button" type="submit">Link this phone</button>
+        <p class="privacy-note" id="connection-privacy-note" role="note">Hosting and security systems may process connection metadata to protect the service from abuse.</p>
+        <form id="link-form" hidden aria-labelledby="verification-label">
+          <label for="verification-kind" id="verification-mode-label">Choose how to verify your trainee record</label>
+          <select id="verification-kind" name="verificationKind" autocomplete="off">
+            <option value="phone">Phone number</option>
+            <option value="activationCode">Reception code</option>
+          </select>
+          <label for="verification-value" id="verification-label">Phone number saved with your trainee record</label>
+          <input id="verification-value" name="verificationValue" type="tel" inputmode="tel" autocomplete="tel" maxlength="32" required>
+          <p class="field-help" id="verification-help">Use the number you gave the Academy. Your number is used only to find a possible record and is not saved on this device.</p>
+          <button class="primary-button" id="link-device-button" type="submit">Link this phone</button>
         </form>
+        <section class="pending-state" id="pending-state" role="status" aria-live="polite" hidden>
+          <span class="pending-orbit" aria-hidden="true"></span>
+          <h2 id="pending-title">Waiting for trainer approval</h2>
+          <p id="pending-copy">Your request was sent. Keep this page open; your name and check-in stay private until your trainer approves the link.</p>
+        </section>
+        <section class="recovery-state" id="recovery-state" role="note" hidden>
+          <span class="recovery-mark" aria-hidden="true">!</span>
+          <h2 id="recovery-title">Reception can help secure this device</h2>
+          <p id="recovery-copy">This browser has older attendance links that cannot be safely matched automatically. Please show reception this screen; no name was selected and no attendance was recorded.</p>
+        </section>
         <section class="bound-state" id="bound-state" hidden>
           <div class="identity-chip"><span class="identity-dot"></span><span id="trainee-name"></span></div>
           <button class="primary-button check-in-button" id="check-in-button" type="button">I’m here</button>

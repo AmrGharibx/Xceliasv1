@@ -109,7 +109,8 @@ function databaseError(error){
   RED_QR_CHALLENGE_USED:[409,'This check-in attempt expired or was already used. Tap “I’m here” to try again.'],
   RED_QR_REVIEW_RESOLVED:[409,'This location review was already resolved.'],RED_QR_MANUAL_MISSING:[409,'Record this trainee’s attendance manually before resolving the location review.'],RED_DUPLICATE:[409,'A matching record already exists. Refresh the page before retrying.']
  }[error.code];
- const match=messages[error.code]||qrMessages;return match?new ApiError(match[0],match[1]):new ApiError(error.status===404?404:500,'The company workspace could not complete that request. Please try again.');
+ const match=messages[error.code]||qrMessages,clientCodes={RED_QR_ENROLLED:'QR_DEVICE_ALREADY_LINKED',RED_QR_LINK_PENDING:'QR_DEVICE_REQUEST_PENDING',RED_QR_HANDLE_CONFLICT:'QR_DEVICE_HANDLE_CONFLICT',RED_QR_HANDLE_USED:'QR_DEVICE_HANDLE_USED',RED_QR_NO_SESSION:'QR_DEVICE_NO_SESSION'};
+ return match?new ApiError(match[0],match[1],clientCodes[error.code]||''):new ApiError(error.status===404?404:500,'The company workspace could not complete that request. Please try again.');
 }
 async function backend(path,init={}){
  const {url,secretKey,legacySecret}=settings(),headers={apikey:secretKey,...(legacySecret?{Authorization:`Bearer ${secretKey}`}:{}),...(init.headers||{})};const response=await fetch(url+path,{...init,headers});
@@ -142,6 +143,9 @@ function qrClientRateHash(request){
  const address=normalizedClientIp(request.headers.get('cf-connecting-ip'))||normalizedClientIp(request.headers.get('x-real-ip'))||'unknown';
  const {secretKey}=settings();return createHmac('sha256',secretKey).update(`qr-device-link-client:v1\n${address}`).digest('hex');
 }
+function qrLocatorRateHash(value){
+ const {secretKey}=settings();return createHmac('sha256',secretKey).update(`qr-device-link-locator:v1\n${value}`).digest('hex');
+}
 function qrActivationCode(){const bytes=randomBytes(10);let value=BigInt(`0x${Buffer.from(bytes).toString('hex')}`),plain='',alphabet='0123456789ABCDEFGHJKMNPQRSTVWXYZ';for(let index=0;index<16;index++){plain=alphabet[Number(value&31n)]+plain;value>>=5n;}return plain;}
 function checkedQrLocation(value){
  if(!value||typeof value!=='object'||Array.isArray(value))throw new ApiError(400,'Location data is invalid.');
@@ -168,13 +172,21 @@ async function qrPublicRoute(request,route,method){
  if(action==='device-link-requests'){
   const publicKey=sanitizeP256PublicKey(body.publicKey),phoneProvided=body.phone!==undefined,codeProvided=body.activationCode!==undefined;
   const phone=phoneProvided?normalizeQrPhone(body.phone):null,activationCode=codeProvided?normalizeActivationCode(body.activationCode):null;
-  if(!publicKey||phoneProvided===codeProvided||phoneProvided&&!phone||codeProvided&&!activationCode)throw new ApiError(400,'Enter one valid phone number or recovery code and refresh the page.');
-  const locatorHash=tokenHash(phone||activationCode);
+  if(!publicKey||typeof body.requestHandle!=='string'||!/^[A-Za-z0-9_-]{43}$/.test(body.requestHandle)||phoneProvided===codeProvided||phoneProvided&&!phone||codeProvided&&!activationCode)throw new ApiError(400,'Enter one valid phone number or recovery code and refresh the page.');
+  const locatorHash=qrLocatorRateHash(phone||activationCode);
   const clientHash=qrClientRateHash(request);
   if(!await rate(`qr:link-client:${clientHash}`,60,900)||!await rate(`qr:link-request:${rateHash}:${locatorHash}`,12,900)||!await rate('qr:link-request:global',500,60))throw new ApiError(429,'Too many device requests. Wait a moment and ask your trainer for help.');
-  const data=await rpc('qr_create_device_link_request',{p_batch_qr_id:batchQrId,p_public_key:publicKey,p_phone:phone,p_code_hash:activationCode?tokenHash(activationCode):null});
-  if(typeof data?.requestHandle!=='string'||!/^[A-Za-z0-9_-]{43}$/.test(data.requestHandle))throw new ApiError(502,'A device request could not be started. Try again or ask your trainer.');
-  return json(request,{requestHandle:data.requestHandle,status:'pending'},201);
+  let candidateTraineeId=null;
+  if(phone){
+   const batchLink=await row('qr_attendance_batch_links',{batch_qr_id:`eq.${batchQrId}`,active:'eq.true',select:'batch_id'});
+   if(!batchLink?.batch_id)throw new ApiError(404,'This batch QR is invalid or no longer active.');
+   const candidates=await rows('trainees',{batch_id:`eq.${batchLink.batch_id}`,enrollment_status:'eq.Active',select:'id,phone',limit:1000});
+   const matches=candidates.filter(trainee=>normalizeQrPhone(trainee.phone)===phone);
+   if(matches.length===1)candidateTraineeId=matches[0].id;
+  }
+  const data=await rpc('qr_create_device_link_request',{p_batch_qr_id:batchQrId,p_request_handle:body.requestHandle,p_public_key:publicKey,p_locator_kind:phone?'phone':'code',p_candidate_trainee_id:candidateTraineeId,p_code_hash:activationCode?tokenHash(activationCode):null});
+  if(data?.requestHandle!==body.requestHandle||data?.status!=='pending')throw new ApiError(502,'A device request could not be started. Try again or ask your trainer.');
+  return json(request,{requestHandle:body.requestHandle,status:'pending'},201);
  }
  if(action==='device-link-status'){
   if(typeof body.requestHandle!=='string'||!/^[A-Za-z0-9_-]{43}$/.test(body.requestHandle)||typeof body.signature!=='string'||!/^[A-Za-z0-9_-]{86}$/.test(body.signature))throw new ApiError(401,'This device request could not be verified. Start again or ask your trainer.');
@@ -787,7 +799,7 @@ async function handle(request){
   if(route==='users'&&method==='PATCH'){requireAdmin(user);const body=await bodyOf(request);if(!isId(body.id)||!['admin','instructor','viewer'].includes(body.role)||typeof body.active!=='boolean')throw new ApiError(400,'Invalid user permissions.');await rpc('red_update_user_access',{p_target:body.id,p_role:body.role,p_active:body.active,p_actor:user.email});return json(request,{ok:true});}
   throw new ApiError(404,'Endpoint not found.');
  }catch(error){
-  const safe=databaseError(error);if(safe instanceof ApiError)return json(request,{error:safe.message},safe.status);
+  const safe=databaseError(error);if(safe instanceof ApiError)return json(request,{error:safe.message,...(safe.errorCode?{errorCode:safe.errorCode}:{})},safe.status);
   console.error(`Academy cloud request ${requestId} failed.`);return json(request,{error:'An unexpected error occurred. No changes were confirmed.',requestId},500);
  }
 }

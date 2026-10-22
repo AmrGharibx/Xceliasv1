@@ -219,7 +219,7 @@ export class SQLiteRepository {
   this.qrSyncBatchExpiry(batch);if(isQrBatchExpired(batch))throw new ApiError(410,'This batch is no longer accepting QR attendance because its QR access period has ended. Ask your trainer for help.');
   const session=this.db.prepare('SELECT * FROM qr_attendance_sessions WHERE batch_id=? AND closed_at IS NULL ORDER BY opened_at DESC LIMIT 1').get(batch.id);
   const now=new Date(),nowIso=now.toISOString();
-  if(requireSession&&(!session||session.session_date!==today(now)||session.expires_at<=nowIso))throw new ApiError(409,'There is no open attendance session for this batch right now. Ask your trainer.');
+  if(requireSession&&(!session||session.session_date!==today(now)||session.expires_at<=nowIso))throw new ApiError(409,'There is no open attendance session for this batch right now. Ask your trainer.','QR_DEVICE_NO_SESSION');
   if(session&&(!cairoSessionDayNumber(batch.session_dates,session.session_date)||session.session_date!==today(now)||session.expires_at<=nowIso))return {link,batch,session:null};
   if(session)session.day_number=cairoSessionDayNumber(batch.session_dates,session.session_date)||session.day_number;
   return {link,batch,session:session||null};
@@ -298,17 +298,24 @@ export class SQLiteRepository {
   }
   return {batchName:batch.batch_name,currentSession:session?{id:session.id,dayNumber:session.day_number,date:session.session_date,expiresAt:session.expires_at}:null,...(participant?{participant}:{}),locationNotice:'Your location is checked during check-in to confirm you are near the Academy. Check-ins attempted from outside the training area are flagged for staff review. If you are on-site but your location seems wrong, contact reception.'};
  }
- async qrCreateDeviceLinkRequest({batchQrId,publicKey,phone,activationCode}){
+ async qrCreateDeviceLinkRequest({batchQrId,requestHandle,publicKey,phone,activationCode}){
   const {batch,session}=this.qrBatchLinkContext(batchQrId,true);
   const key=sanitizeP256PublicKey(publicKey),keyJson=key&&JSON.stringify(key);
-  if(!key)throw new ApiError(400,'This browser identity is invalid. Refresh and try again.');
-  const now=new Date(),nowIso=now.toISOString(),expiresAt=new Date(Math.min(now.getTime()+30*60*1000,Date.parse(session.expires_at))).toISOString();
-  const handle=crypto.randomBytes(32).toString('base64url');
+  if(!key||typeof requestHandle!=='string'||!/^[A-Za-z0-9_-]{43}$/.test(requestHandle))throw new ApiError(400,'This browser identity is invalid. Refresh and try again.');
+  const handleHash=tokenHash(requestHandle);
   this.db.exec('BEGIN IMMEDIATE');try{
+   const currentBatch=this.db.prepare('SELECT * FROM batches WHERE id=?').get(batch.id);
+   if(!currentBatch||currentBatch.status!=='Active'||currentBatch.archived_at)throw new ApiError(409,'This batch is not accepting QR attendance. Ask the trainer for help.');
+   this.qrSyncBatchExpiry(currentBatch);
+   if(isQrBatchExpired(currentBatch))throw new ApiError(410,'This batch is no longer accepting QR attendance because its QR access period has ended. Ask your trainer for help.');
+   if(!this.db.prepare('SELECT 1 FROM qr_attendance_batch_links WHERE batch_qr_id=? AND batch_id=? AND active=1').get(batchQrId,batch.id))throw new ApiError(404,'This batch QR is invalid or no longer active.');
+   const liveSession=this.db.prepare('SELECT * FROM qr_attendance_sessions WHERE id=? AND batch_id=?').get(session.id,batch.id);
+   const now=new Date(),nowIso=now.toISOString();
+   if(!liveSession||liveSession.closed_at||liveSession.session_date!==today(now)||!cairoSessionDayNumber(currentBatch.session_dates,liveSession.session_date)||liveSession.expires_at<=nowIso)throw new ApiError(409,'There is no open attendance session for this batch right now. Ask your trainer.','QR_DEVICE_NO_SESSION');
+   const expiresAt=new Date(Math.min(now.getTime()+30*60*1000,Date.parse(liveSession.expires_at))).toISOString();
    this.db.prepare("UPDATE qr_attendance_device_link_requests SET status='expired' WHERE status='pending' AND (expires_at<=? OR EXISTS (SELECT 1 FROM qr_attendance_sessions s WHERE s.id=qr_attendance_device_link_requests.session_id AND (s.closed_at IS NOT NULL OR s.expires_at<=?)))").run(nowIso,nowIso);
-   if(this.db.prepare('SELECT 1 FROM qr_attendance_enrollments WHERE public_key=? AND revoked_at IS NULL').get(keyJson))throw new ApiError(409,'This browser is already linked. Ask your trainer for help.');
-   if(this.db.prepare("SELECT 1 FROM qr_attendance_device_link_requests WHERE public_key=? AND status='pending'").get(keyJson))throw new ApiError(409,'A device request is already waiting. Refresh and ask your trainer for help.');
    let candidateId=null,codeId=null;
+   const locatorKind=phone!==undefined?'phone':'code';
    if(phone!==undefined){
     const normalized=normalizeQrPhone(phone);
     const matches=this.db.prepare("SELECT id,phone FROM trainees WHERE batch_id=? AND enrollment_status='Active'").all(batch.id).filter(row=>normalizeQrPhone(row.phone)===normalized);
@@ -317,8 +324,18 @@ export class SQLiteRepository {
     const normalized=normalizeActivationCode(activationCode),code=normalized&&this.db.prepare('SELECT id,trainee_id FROM qr_attendance_activation_codes WHERE code_hash=? AND batch_id=? AND consumed_at IS NULL AND revoked_at IS NULL AND expires_at>?').get(tokenHash(normalized),batch.id,nowIso);
     if(code){candidateId=code.trainee_id;codeId=code.id;}
    }
-   this.insert('qr_attendance_device_link_requests',{id:id(),handle_hash:tokenHash(handle),batch_id:batch.id,session_id:session.id,candidate_trainee_id:candidateId,public_key:keyJson,locator_kind:phone!==undefined?'phone':'code',code_id:codeId,status:'pending',enrollment_id:null,created_at:nowIso,expires_at:expiresAt,resolved_at:null,resolved_by:null,resolution:null});
-   this.db.exec('COMMIT');return {requestHandle:handle,status:'pending'};
+   const pending=this.db.prepare("SELECT handle_hash,batch_id,session_id,locator_kind,candidate_trainee_id,code_id FROM qr_attendance_device_link_requests WHERE public_key=? AND status='pending'").get(keyJson);
+   if(pending){
+    if(pending.handle_hash===handleHash){
+     if(pending.batch_id===batch.id&&pending.session_id===liveSession.id&&pending.locator_kind===locatorKind&&pending.candidate_trainee_id===candidateId&&pending.code_id===codeId){this.db.exec('COMMIT');return {requestHandle,status:'pending'};}
+     throw new ApiError(409,'This browser already has a request waiting with different details. Keep this page open and ask your trainer to review it.', 'QR_DEVICE_HANDLE_CONFLICT');
+    }
+    throw new ApiError(409,'A device request from this browser is already waiting. Ask your trainer to resolve it.', 'QR_DEVICE_REQUEST_PENDING');
+   }
+   if(this.db.prepare('SELECT 1 FROM qr_attendance_enrollments WHERE public_key=? AND revoked_at IS NULL').get(keyJson))throw new ApiError(409,'This browser is already linked. Ask reception for help.', 'QR_DEVICE_ALREADY_LINKED');
+   if(this.db.prepare('SELECT 1 FROM qr_attendance_device_link_requests WHERE handle_hash=?').get(handleHash))throw new ApiError(409,'This request expired. Start a new device request.', 'QR_DEVICE_HANDLE_USED');
+   this.insert('qr_attendance_device_link_requests',{id:id(),handle_hash:handleHash,batch_id:batch.id,session_id:liveSession.id,candidate_trainee_id:candidateId,public_key:keyJson,locator_kind:locatorKind,code_id:codeId,status:'pending',enrollment_id:null,created_at:nowIso,expires_at:expiresAt,resolved_at:null,resolved_by:null,resolution:null});
+   this.db.exec('COMMIT');return {requestHandle,status:'pending'};
   }catch(error){try{this.db.exec('ROLLBACK');}catch{}throw error;}
  }
  async qrDeviceLinkRequestStatus({batchQrId,requestHandle,signature}){
@@ -362,7 +379,6 @@ export class SQLiteRepository {
    const targetId=traineeId||row.candidate_trainee_id;
    const trainee=targetId&&this.db.prepare("SELECT id,trainee_name FROM trainees WHERE id=? AND batch_id=? AND enrollment_status='Active'").get(targetId,row.batch_id);
    if(!trainee)throw new ApiError(409,'Choose an active trainee from this batch.');
-   if(row.locator_kind==='code'&&!row.code_id)throw new ApiError(409,'This recovery code is unavailable. Ask reception for help.');
    if(row.code_id){const code=this.db.prepare('SELECT * FROM qr_attendance_activation_codes WHERE id=?').get(row.code_id);if(!code||code.trainee_id!==trainee.id||code.consumed_at||code.revoked_at||code.expires_at<=now)throw new ApiError(409,'This recovery code is no longer available. Ask reception for help.');}
    if(this.db.prepare('SELECT 1 FROM qr_attendance_enrollments WHERE public_key=? AND revoked_at IS NULL').get(row.public_key))throw new ApiError(409,'This browser is already linked to a trainee.');
    const existing=this.db.prepare('SELECT id FROM qr_attendance_enrollments WHERE trainee_id=? AND revoked_at IS NULL').get(trainee.id);

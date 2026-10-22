@@ -107,6 +107,7 @@ test('qrDeviceBindingIndexesBoundPendingKeysAndKeepExistingActiveConstraints', (
  assert.match(binding, /create index \w+ on public\.qr_attendance_device_link_requests\(batch_id,status,created_at desc\)/i);
  assert.match(binding, /create index \w+ on public\.qr_attendance_device_link_requests\(expires_at,status\)/i);
  assert.match(binding, /create unique index \w+ on public\.qr_attendance_device_link_requests\(public_key\) where status='pending'/i);
+ assert.match(binding, /handle_hash text not null unique/i);
  assert.doesNotMatch(binding, /drop|alter index/i);
  assert.match(migration, /unique index ux_qr_attendance_one_active_enrollment_per_trainee[\s\S]*?where revoked_at is null/i);
  assert.match(migration, /unique index ux_qr_attendance_one_active_public_key[\s\S]*?where revoked_at is null/i);
@@ -114,7 +115,7 @@ test('qrDeviceBindingIndexesBoundPendingKeysAndKeepExistingActiveConstraints', (
 
 test('qrDeviceBindingEveryRpcIsServiceRoleOnlyWithFixedSearchPath', () => {
  const names = [...binding.matchAll(/create function public\.(\w+)\(([^)]*)\)[\s\S]*?as \$\$/gi)];
- assert.equal(names.length, 7, 'Six lifecycle RPCs and a private phone normalizer');
+ assert.equal(names.length, 6, 'Six service-role-only lifecycle RPCs');
  for (const [, name, parameters] of names) {
   const types = parameters.split(',').map(p => p.trim().split(/\s+/)[1]).join('\\s*,\\s*');
   assert.match(binding, new RegExp(`revoke all on function public\\.${name}\\(${types}\\) from public,\\s*anon,\\s*authenticated`, 'i'));
@@ -125,26 +126,31 @@ test('qrDeviceBindingEveryRpcIsServiceRoleOnlyWithFixedSearchPath', () => {
 
 test('qrDeviceBindingCreationRequiresOpenSessionAndCleansExpiredPendingKeys', () => {
  const body = rpc('qr_create_device_link_request');
+ assert.match(binding, /create function public\.qr_create_device_link_request\(p_batch_qr_id text\s*,\s*p_request_handle text\s*,\s*p_public_key jsonb\s*,\s*p_locator_kind text\s*,\s*p_candidate_trainee_id text default null\s*,\s*p_code_hash text default null/i);
+ assert.match(body, /p_request_handle !~ '\^\[A-Za-z0-9_-\]\{43\}\$'/i);
+ assert.match(body, /v_handle_hash:=encode\(extensions\.digest\(p_request_handle,'sha256'\),'hex'\)/i);
+ assert.match(body, /r\.locator_kind,r\.candidate_trainee_id,r\.code_id into v_existing_request/i);
+ assert.match(body, /v_existing_request\.handle_hash=v_handle_hash[\s\S]*?return jsonb_build_object\('requestHandle',p_request_handle,'status','pending'\)/i);
+ assert.match(body, /v_existing_request\.candidate_trainee_id is not distinct from v_candidate[\s\S]*?v_existing_request\.code_id is not distinct from v_code_id/i);
+ assert.match(body, /raise exception 'RED_QR_HANDLE_USED'/i);
+ assert.match(body, /raise exception 'RED_QR_HANDLE_CONFLICT'/i);
+ assert.match(body, /raise exception 'RED_QR_LINK_PENDING'/i);
  assert.match(body, /closed_at is null[\s\S]*?session_date=to_char\([\s\S]*?'Africa\/Cairo'/i);
  assert.match(body, /least\(v_now\+interval '30 minutes',v_session\.expires_at::timestamptz\)/i);
  assert.match(body, /set status='expired'[\s\S]*?status='pending'[\s\S]*?expires_at<=v_now[\s\S]*?s\.closed_at is not null[\s\S]*?s\.expires_at::timestamptz<=v_now/i);
- assert.match(body, /extensions\.gen_random_bytes\(32\)/i);
- assert.match(body, /extensions\.digest\(v_handle,'sha256'\)/i);
- assert.match(body, /return jsonb_build_object\('requestHandle',v_handle,'status','pending'\)/i);
+ assert.match(body, /return jsonb_build_object\('requestHandle',p_request_handle,'status','pending'\)/i);
  assert.doesNotMatch(body, /insert into public\.qr_attendance_enrollments|set consumed_at|traineeName/i);
 });
 
 test('qrDeviceBindingLocatorMatchingIsBatchLocalGenericAndDoesNotPersistPhone', () => {
  const body = rpc('qr_create_device_link_request');
- assert.match(body, /\(p_phone is null\)=\(p_code_hash is null\)/i);
- assert.match(body, /count\(\*\)=1[\s\S]*?batch_id=v_batch\.id and enrollment_status='Active'/i);
- assert.match(body, /public\.qr_normalize_phone\(t\.phone\)=v_phone/i);
- assert.match(body, /consumed_at is null and revoked_at is null and expires_at::timestamptz>v_now/i);
+ assert.match(body, /p_locator_kind not in \('phone','code'\)/i);
+ assert.match(body, /p_locator_kind='phone'[\s\S]*?p_candidate_trainee_id is not null[\s\S]*?batch_id=v_batch\.id and enrollment_status='Active'/i);
+ assert.match(body, /p_locator_kind='code'[\s\S]*?code_hash=p_code_hash[\s\S]*?batch_id=v_batch\.id/i);
+ assert.doesNotMatch(body, /p_phone|qr_normalize_phone/i);
+ assert.match(body, /consumed_at is null and revoked_at is null and expires_at::timestamptz>clock_timestamp\(\)/i);
  assert.match(body, /jsonb_build_object\('kty','EC','crv','P-256','x',[\s\S]*?'ext',true,'key_ops',jsonb_build_array\('verify'\)\)/i);
  assert.match(body, /p_public_key \? 'd'/i);
- const normalizer = rpc('qr_normalize_phone');
- assert.match(normalizer, /length\(p_value\)>40/);
- assert.match(normalizer, /0020[\s\S]*?20[\s\S]*?\^01\[0125\]/);
 });
 
 test('qrDeviceBindingProofLookupReturnsOnlyKeyBeforeIdentityStatusRpc', () => {
@@ -179,7 +185,7 @@ test('qrDeviceBindingResolutionLocksAndValidatesBeforeAtomicReplacement', () => 
  assert.match(body, /qr_attendance_sessions where id=v_request\.session_id for update/i);
  assert.match(body, /trainees[\s\S]*?batch_id=v_request\.batch_id[\s\S]*?for update/i);
  assert.match(body, /v_request\.status<>'pending'/);
- assert.match(body, /v_request\.locator_kind='code' and v_request\.code_id is null/);
+ assert.doesNotMatch(body, /v_request\.locator_kind='code' and v_request\.code_id is null/);
  assert.match(body, /v_code\.trainee_id<>v_trainee\.id[\s\S]*?v_code\.consumed_at is not null[\s\S]*?v_code\.revoked_at is not null[\s\S]*?v_code\.expires_at::timestamptz<=v_now/);
  assert.match(body, /public_key=v_request\.public_key and revoked_at is null/);
  assert.match(body, /v_existing is not null and p_action<>'approve_replace'/);

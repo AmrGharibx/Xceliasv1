@@ -4,6 +4,14 @@ import {isBatchQrReference, normalizeActivationCode, normalizeQrPhone, sanitizeP
 import {validDate} from '../public/modules/core.mjs';
 
 const fail = message => { throw new ApiError(400, message); };
+const configuredQrRateLimitSecret = process.env.QR_RATE_LIMIT_SECRET;
+if (configuredQrRateLimitSecret !== undefined && Buffer.byteLength(configuredQrRateLimitSecret, 'utf8') < 32) {
+  throw new Error('QR_RATE_LIMIT_SECRET must contain at least 32 bytes.');
+}
+const qrRateLimitSecret = configuredQrRateLimitSecret ?? crypto.randomBytes(32);
+function qrLocatorRateHash(locator) {
+  return crypto.createHmac('sha256', qrRateLimitSecret).update(`qr-device-link-locator:v1\n${locator}`).digest('hex');
+}
 const rate = async (repo, key, limit, seconds, message) => {
   if (!await repo.rate(`qr:${key}`, limit, seconds)) throw new ApiError(429, message);
 };
@@ -33,15 +41,16 @@ export async function handleQrPublicRoute(repo, route, method, body) {
   if (!['info', 'enroll', 'challenge', 'check-in', 'device-link-requests', 'device-link-status'].includes(action)) return null;
   if (action === 'device-link-requests') {
     const batchQrId = checkedQrId(body.batchQrId);
+    if(typeof body.requestHandle!=='string'||!/^[A-Za-z0-9_-]{43}$/.test(body.requestHandle))fail('This device request could not be verified. Refresh and try again.');
     const publicKey = sanitizeP256PublicKey(body.publicKey);
     const phoneProvided = body.phone !== undefined;
     const codeProvided = body.activationCode !== undefined;
     if (!publicKey || phoneProvided === codeProvided || phoneProvided && !normalizeQrPhone(body.phone) || codeProvided && !normalizeActivationCode(body.activationCode)) fail('Enter one valid phone number or recovery code and refresh the page.');
     const locator = phoneProvided ? normalizeQrPhone(body.phone) : normalizeActivationCode(body.activationCode);
-    const locatorHash = crypto.createHash('sha256').update(locator).digest('hex');
+    const locatorHash = qrLocatorRateHash(locator);
     await rate(repo, `link-request:${locatorHash}`, 12, 900, 'Too many device requests. Wait and ask your trainer for help.');
     await rate(repo, 'link-request:global', 500, 60, 'Too many device requests. Wait a moment and try again.');
-    return {body: await repo.qrCreateDeviceLinkRequest({batchQrId, publicKey, ...(phoneProvided ? {phone: body.phone} : {activationCode: body.activationCode})}), status: 201};
+    return {body: await repo.qrCreateDeviceLinkRequest({batchQrId,requestHandle:body.requestHandle,publicKey,...(phoneProvided?{phone:body.phone}:{activationCode:body.activationCode})}),status:201};
   }
   if (action === 'device-link-status') {
     const batchQrId = checkedQrId(body.batchQrId);

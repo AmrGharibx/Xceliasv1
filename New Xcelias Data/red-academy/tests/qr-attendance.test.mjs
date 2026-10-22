@@ -15,6 +15,7 @@ process.env.SEED_SAMPLE_DATA = 'false';
 process.env.BOOTSTRAP_ADMIN_EMAIL = 'qr-admin@example.test';
 process.env.BOOTSTRAP_ADMIN_PASSWORD = 'QR-Test-Admin-Password-123!';
 process.env.APP_URL = 'http://localhost:3000';
+process.env.QR_RATE_LIMIT_SECRET = 'QR-test-rate-limit-secret-with-more-than-32-bytes';
 delete process.env.APP_ENV;
 
 const {handleApi, repository} = await import('../server/service.mjs');
@@ -85,8 +86,8 @@ async function makeBrowserKey() {
   return {privateKey: pair.privateKey, publicKey: await crypto.webcrypto.subtle.exportKey('jwk', pair.publicKey)};
 }
 
-async function linkRequest(batchQrId, publicKey, locator) {
-  return request('qr-attendance/public/device-link-requests', {method: 'POST', body: {batchQrId, publicKey, ...locator}});
+async function linkRequest(batchQrId, publicKey, locator, requestHandle = crypto.randomBytes(32).toString('base64url')) {
+  return request('qr-attendance/public/device-link-requests', {method: 'POST', body: {batchQrId, publicKey, requestHandle, ...locator}});
 }
 
 async function linkStatus(batchQrId, requestHandle, privateKey) {
@@ -291,7 +292,8 @@ test('qrCodeSuggestsOnlyItsTraineeForTrainerApproval', async () => {
   const issued = await issueCode(first);
   const key = await makeBrowserKey();
   const result = await request('qr-attendance/public/device-link-requests', {method: 'POST', body: {
-    batchQrId: link.data.batchQrId, activationCode: issued.data.activationCode, publicKey: key.publicKey, traineeId: other.id,
+    batchQrId: link.data.batchQrId, activationCode: issued.data.activationCode, publicKey: key.publicKey,
+    requestHandle: crypto.randomBytes(32).toString('base64url'), traineeId: other.id,
   }});
   assert.equal(result.status, 201);
   assert.equal(result.data.status, 'pending');
@@ -312,6 +314,45 @@ test('qrRepeatedCodeRequestDoesNotEnrollBeforeApproval', async () => {
   assert.equal(first.status, 201);
   assert.equal(retry.status, 409);
   assert.equal((await repository()).db.prepare('SELECT COUNT(*) count FROM qr_attendance_enrollments WHERE trainee_id=?').get(trainee.id).count, 0);
+});
+
+test('qrDeviceLinkRequestRetryUsesTheSameClientHandleWithoutCreatingAnotherRequest', async () => {
+  const batch = await makeBatch();
+  await makeTrainee(batch, 'Idempotent phone', '010 1234 5678');
+  const link = await ensureBatchQr(batch);
+  await openSession(batch);
+  const key = await makeBrowserKey();
+  const requestHandle = crypto.randomBytes(32).toString('base64url');
+
+  const first = await linkRequest(link.data.batchQrId, key.publicKey, {phone: '01012345678'}, requestHandle);
+  const retry = await linkRequest(link.data.batchQrId, key.publicKey, {phone: '01012345678'}, requestHandle);
+
+  assert.equal(first.status, 201);
+  assert.equal(retry.status, 201);
+  assert.deepEqual(retry.data, first.data);
+  assert.equal(first.data.requestHandle, requestHandle);
+  const handleHash = crypto.createHash('sha256').update(requestHandle).digest('hex');
+  assert.equal((await repository()).db.prepare('SELECT COUNT(*) count FROM qr_attendance_device_link_requests WHERE handle_hash=?').get(handleHash).count, 1);
+});
+
+test('qrDeviceLinkRequestDoesNotReuseAHandleForADifferentMatchedTrainee', async () => {
+  const batch = await makeBatch();
+  await makeTrainee(batch, 'First phone candidate', '010 1234 5678');
+  await makeTrainee(batch, 'Different phone candidate', '010 8765 4321');
+  const link = await ensureBatchQr(batch);
+  await openSession(batch);
+  const key = await makeBrowserKey();
+  const requestHandle = crypto.randomBytes(32).toString('base64url');
+
+  const first = await linkRequest(link.data.batchQrId, key.publicKey, {phone: '01012345678'}, requestHandle);
+  const changed = await linkRequest(link.data.batchQrId, key.publicKey, {phone: '01087654321'}, requestHandle);
+
+  assert.equal(first.status, 201);
+  assert.equal(changed.status, 409);
+  assert.equal(changed.data.errorCode, 'QR_DEVICE_HANDLE_CONFLICT');
+  const queue = await pendingQueue(batch.id);
+  assert.equal(queue.data.items.length, 1);
+  assert.equal(queue.data.items[0].candidateTraineeName, 'First phone candidate');
 });
 
 test('qrRevokedKeyAndChallengeReplayAreRejected', async () => {
@@ -519,6 +560,26 @@ test('qrPhoneRequestIsGenericAndWaitsForStaffApproval', async () => {
   assert.ok(approved.data.credentialId);
 });
 
+test('qrPhoneRateLimitKeyIsHmacProtectedInLocalStorage', async () => {
+  const batch = await makeBatch();
+  const link = await ensureBatchQr(batch);
+  await openSession(batch);
+  const key = await makeBrowserKey();
+  const phone = '+20 10 9876 5432';
+  const pending = await linkRequest(link.data.batchQrId, key.publicKey, {phone});
+  assert.equal(pending.status, 201);
+
+  const normalized = qrCore.normalizeQrPhone(phone);
+  const keyedDigest = crypto.createHmac('sha256', process.env.QR_RATE_LIMIT_SECRET).update(`qr-device-link-locator:v1\n${normalized}`).digest('hex');
+  const plainDigest = crypto.createHash('sha256').update(normalized).digest('hex');
+  const repo = await repository();
+  const rateKeys = repo.db.prepare("SELECT key FROM rate_limits WHERE key LIKE 'qr:link-request:%' AND key!='qr:link-request:global'").all().map(row => row.key);
+
+  assert.ok(rateKeys.includes(`qr:link-request:${keyedDigest}`));
+  assert.equal(rateKeys.includes(`qr:link-request:${plainDigest}`), false);
+  assert.equal(rateKeys.some(rateKey => rateKey.includes(normalized)), false);
+});
+
 test('qrUnknownOrDuplicatePhoneDoesNotEnumerateRoster', async () => {
   const batch = await makeBatch();
   await makeTrainee(batch, 'One', '010 2222 3333');
@@ -555,6 +616,33 @@ test('qrLinkRequestNeedsOpenSessionAndExpires', async () => {
   assert.equal((await linkStatus(link.data.batchQrId, pending.data.requestHandle, key.privateKey)).data.status, 'expired');
   assert.equal((await resolveLink(row.id, 'approve', id())).status, 409);
   assert.equal((await request('qr-attendance/sessions/close', {method: 'POST', cookie: adminCookie, body: {id: opened.data.id}})).status, 200);
+});
+
+test('qrDeviceLinkRequestRechecksTheSessionAfterStartingItsWriteTransaction', async () => {
+  const batch = await makeBatch();
+  const link = await ensureBatchQr(batch);
+  await openSession(batch);
+  const repo = await repository();
+  const originalContext = repo.qrBatchLinkContext.bind(repo);
+  const requestHandle = crypto.randomBytes(32).toString('base64url');
+  const key = await makeBrowserKey();
+  repo.qrBatchLinkContext = (...args) => {
+    const context = originalContext(...args);
+    repo.db.prepare('UPDATE qr_attendance_sessions SET closed_at=? WHERE id=?').run(new Date().toISOString(), context.session.id);
+    return context;
+  };
+
+  let result;
+  try {
+    result = await linkRequest(link.data.batchQrId, key.publicKey, {phone: '01012345678'}, requestHandle);
+  } finally {
+    repo.qrBatchLinkContext = originalContext;
+  }
+
+  assert.equal(result.status, 409);
+  assert.equal(result.data.errorCode, 'QR_DEVICE_NO_SESSION');
+  const handleHash = crypto.createHash('sha256').update(requestHandle).digest('hex');
+  assert.equal(repo.db.prepare('SELECT COUNT(*) count FROM qr_attendance_device_link_requests WHERE handle_hash=?').get(handleHash).count, 0);
 });
 
 test('qrRecoveryCodeDoesNotConsumeUntilApproval', async () => {
@@ -649,7 +737,7 @@ test('qrApprovedStatusExpiresWhenSessionDeadlinePassesWithoutRevokingEnrollment'
   assert.equal(repo.db.prepare('SELECT revoked_at FROM qr_attendance_enrollments WHERE id=?').get(enrolled.credentialId).revoked_at, null);
 });
 
-test('qrInvalidRecoveryCodeIsGenericButCannotBeApproved', async () => {
+test('qrInvalidRecoveryCodeStaysGenericAndRequiresTrainerMatching', async () => {
   const batch = await makeBatch();
   const trainee = await makeTrainee(batch);
   const link = await ensureBatchQr(batch);
@@ -660,8 +748,8 @@ test('qrInvalidRecoveryCodeIsGenericButCannotBeApproved', async () => {
   assert.deepEqual(Object.keys(requestResult.data).sort(), ['requestHandle', 'status']);
   const queue = await pendingQueue(batch.id);
   assert.equal(queue.data.items[0].candidateTraineeId, null);
-  assert.equal((await resolveLink(queue.data.items[0].id, 'approve', trainee.id)).status, 409);
-  assert.equal((await linkStatus(link.data.batchQrId, requestResult.data.requestHandle, key.privateKey)).data.status, 'pending');
+  assert.equal((await resolveLink(queue.data.items[0].id, 'approve', trainee.id)).status, 200);
+  assert.equal((await linkStatus(link.data.batchQrId, requestResult.data.requestHandle, key.privateKey)).data.status, 'approved');
 });
 
 test('qrClosedSessionExpiresPendingRequestAndAllowsSameKeyRetry', async () => {

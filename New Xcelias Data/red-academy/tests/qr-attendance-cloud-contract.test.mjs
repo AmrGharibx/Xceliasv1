@@ -43,9 +43,23 @@ test('cloudQrStaffEndpointsRemainBehindRequireUser',()=>{
  assert.match(staffHandler,/red_qr_manage/);
 });
 
-test('participantPageLocalizesInvalidPassAndNetworkFeedbackInEgyptianArabic',()=>{
- assert.match(participantPage,/function localizeFeedbackMessage\(message\)\{if\(language!=='ar'\|\|typeof message!=='string'\)return message;if\(\/invalid\|no longer active\/i\.test\(message\)\)return strings\[language\]\.invalid;/);
- assert.match(participantPage,/page\.feedback\.textContent=localizeFeedbackMessage\(message\)/);
+test('participantPageUsesLanguageSpecificCopyForInvalidPassAndNetworkFeedback',()=>{
+ assert.match(participantPage,/invalid:\s*'[^']+'/);
+ assert.match(participantPage,/invalid:\s*'[^']*كود الـ QR/);
+ assert.match(participantPage,/error\.status\s*===\s*429\s*\?\s*strings\[language\]\.rateLimited[\s\S]*?strings\[language\]\.requestFailed/);
+ assert.match(participantPage,/page\.feedback\.textContent\s*=\s*message/);
+ assert.match(participantPage,/deviceLost:\s*'[^']*'/);
+ assert.match(participantPage,/deviceLost:\s*'[^']*الربط الآمن/);
+});
+
+test('participantPageAcceptsOnlyTheClouds32ByteBase64urlRequestHandleShape',()=>{
+ assert.match(participantPage,/result\.requestHandle !== requestHandle \|\| !\/\^\[A-Za-z0-9_-\]\{43\}\$\/\.test\(result\.requestHandle\)/);
+});
+
+test('participantPageCannotLetAStaleStatusPollOverwriteANewerRequest',()=>{
+ const compareAndSet=participantPage.slice(participantPage.indexOf('async function saveIdentityForPendingRequest'),participantPage.indexOf('async function acquireIdentityLock'));
+ assert.match(compareAndSet,/latest\?\.state === 'pending'[\s\S]*?latest\.pendingBatchQrId === record\.pendingBatchQrId[\s\S]*?latest\.requestHandle === record\.requestHandle/);
+ assert.match(participantPage,/const latestIdentity = await readIdentity\(\);[\s\S]*?latestIdentity\.requestHandle !== record\.requestHandle/);
 });
 
 test('cloudQrRateLimitsUseOpaqueOrHashedKeysAndNeverSendPlainActivationCode',()=>{
@@ -64,10 +78,32 @@ test('cloudQrDeviceLinkCreationIsGenericRateLimitedAndStoresOnlyCodeHash',()=>{
  assert.match(publicHandler,/p_code_hash:activationCode\?tokenHash\(activationCode\):null/);
  const creation=publicHandler.slice(publicHandler.indexOf("if(action==='device-link-requests')"),publicHandler.indexOf("if(action==='device-link-status')"));
  assert.doesNotMatch(creation,/p_activation_code|traineeName/);
+ assert.match(creation,/rows\('trainees',\{batch_id:/);
+ assert.match(creation,/p_locator_kind:phone\?'phone':'code'/);
+ assert.match(creation,/p_candidate_trainee_id:candidateTraineeId/);
+ assert.doesNotMatch(creation,/p_phone\s*:/);
  assert.match(publicHandler,/rate\(`qr:link-request:/);
  assert.match(publicHandler,/qr:link-client:/);
  assert.match(publicHandler,/qrClientRateHash\(request\)/);
+ assert.match(source,/function qrLocatorRateHash\(value\)[\s\S]*?createHmac\('sha256',secretKey\)\.update\(`qr-device-link-locator:v1\\n\$\{value\}`\)/);
+ assert.match(creation,/const locatorHash=qrLocatorRateHash\(phone\|\|activationCode\)/);
+ assert.doesNotMatch(creation,/p_phone\s*:/);
  assert.match(publicHandler,/status:'pending'/);
+});
+
+test('cloudQrCreateUsesTheClientPersistedHandleForSafeRequestRetries',()=>{
+ const creation=publicHandler.slice(publicHandler.indexOf("if(action==='device-link-requests')"),publicHandler.indexOf("if(action==='device-link-status')"));
+ assert.match(creation,/body\.requestHandle.*\{43\}/);
+ assert.match(creation,/p_request_handle:body\.requestHandle/);
+ assert.match(creation,/data\?\.requestHandle!==body\.requestHandle/);
+});
+
+test('cloudQrErrorsExposeOnlyNarrowDeviceRecoveryCodes',()=>{
+ assert.match(source,/QR_DEVICE_ALREADY_LINKED/);
+ assert.match(source,/QR_DEVICE_REQUEST_PENDING/);
+ assert.match(source,/QR_DEVICE_HANDLE_CONFLICT/);
+ assert.match(source,/QR_DEVICE_HANDLE_USED/);
+ assert.match(source,/errorCode:safe\.errorCode/);
 });
 
 test('cloudQrClientThrottleUsesGatewayAddressAndStoresOnlyHmac',()=>{

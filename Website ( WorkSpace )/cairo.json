@@ -2543,8 +2543,10 @@
       "zone": "New Cairo",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 5722056,
+      "priceMin": 5425000,
       "unitTypes": [
+        "Administrative",
+        "Medical",
         "Retail",
         "Apartment",
         "Studio",
@@ -2563,8 +2565,8 @@
         5,
         6
       ],
-      "paymentPlan": "5% Down Payment, 10 Years Installments",
-      "downPayment": 5,
+      "paymentPlan": "3% Down Payment, 10 Years Installments",
+      "downPayment": 3,
       "installmentYears": 10,
       "priceMeta": {
         "status": "verified",
@@ -2576,7 +2578,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/186-taj-city",
-            "observedPrice": 5722056,
+            "observedPrice": 5425000,
             "sourceId": "nawy:186"
           },
           {
@@ -2592,7 +2594,7 @@
             "sourceId": "property-finder:894abd49-21d3-4d6a-bca8-f83238fa6da8"
           }
         ],
-        "updatedAt": "2026-10-22T02:56:29.044Z"
+        "updatedAt": "2026-10-22T12:44:05.484Z"
       }
     },
     {
@@ -3425,10 +3427,10 @@
       "type": "residential",
       "priceMin": 9641467,
       "unitTypes": [
-        "Townhouse",
-        "Villa",
+        "Apartment",
         "Duplex",
-        "Apartment"
+        "Villa",
+        "Townhouse"
       ],
       "areaMin": 94,
       "areaMax": 469,
@@ -3465,11 +3467,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/996-aliva-mountain-view-mostakbal-city",
-            "observedPrice": 11302005,
+            "observedPrice": 11180910,
             "sourceId": "nawy:996"
           }
         ],
-        "updatedAt": "2026-10-21T02:56:19.761Z"
+        "updatedAt": "2026-10-22T12:44:05.484Z"
       }
     },
     {
@@ -8647,7 +8649,7 @@
       "zone": "New Cairo",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 5287752,
+      "priceMin": 9880000,
       "unitTypes": [
         "Office",
         "Medical",
@@ -8673,14 +8675,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/main-marks/moray",
-            "observedPrice": 5287752,
-            "sourceId": "property-finder:81fd95f0-0655-4f43-8257-5b7ed2af0eb4"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1119-moray",
@@ -8688,7 +8684,7 @@
             "sourceId": "nawy:1119"
           }
         ],
-        "updatedAt": "2026-10-20T18:36:56.430Z"
+        "updatedAt": "2026-10-22T12:44:05.484Z"
       }
     },
     {
@@ -15303,9 +15299,8 @@
       "zone": "New Capital",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 4042500,
+      "priceMin": 4240000,
       "unitTypes": [
-        "Administrative",
         "Retail"
       ],
       "areaMin": 73,
@@ -15331,11 +15326,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1217-5-business-hub-mall",
-            "observedPrice": 4042500,
+            "observedPrice": 4240000,
             "sourceId": "nawy:1217"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-10-22T12:44:05.484Z"
       }
     },
     {
@@ -16741,11 +16736,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/800-mountain-view-4",
-            "observedPrice": 24889070,
+            "observedPrice": 23978170,
             "sourceId": "nawy:800"
           }
         ],
-        "updatedAt": "2026-10-22T02:56:29.044Z"
+        "updatedAt": "2026-10-22T12:44:05.484Z"
       }
     },
     {
@@ -19563,7 +19558,7 @@
       "zone": "October",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 5300000,
+      "priceMin": 5384400,
       "unitTypes": [
         "Retail",
         "Administrative",
@@ -19581,9 +19576,9 @@
         5,
         6
       ],
-      "paymentPlan": "5% Down Payment, 7.6 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 7.6,
+      "paymentPlan": "10% Down Payment, 8 Years Installments",
+      "downPayment": 10,
+      "installmentYears": 8,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -19594,7 +19589,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1402-rafts",
-            "observedPrice": 5300000,
+            "observedPrice": 5384400,
             "sourceId": "nawy:1402"
           },
           {
@@ -19604,7 +19599,7 @@
             "sourceId": "property-finder:9e764c6d-efec-4d51-b206-37eee940a0e1"
           }
         ],
-        "updatedAt": "2026-10-21T02:56:19.761Z"
+        "updatedAt": "2026-10-22T12:44:05.484Z"
       }
     },
     {
@@ -26437,8 +26432,10 @@
       "zone": "New Cairo",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 5722056,
+      "priceMin": 5425000,
       "unitTypes": [
+        "Administrative",
+        "Medical",
         "Retail",
         "Apartment",
         "Studio",
@@ -26457,8 +26454,8 @@
         5,
         6
       ],
-      "paymentPlan": "5% Down Payment, 10 Years Installments",
-      "downPayment": 5,
+      "paymentPlan": "3% Down Payment, 10 Years Installments",
+      "downPayment": 3,
       "installmentYears": 10,
       "priceMeta": {
         "status": "verified",
@@ -26470,7 +26467,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/186-taj-city",
-            "observedPrice": 5722056,
+            "observedPrice": 5425000,
             "sourceId": "nawy:186"
           },
           {
@@ -26486,7 +26483,7 @@
             "sourceId": "property-finder:894abd49-21d3-4d6a-bca8-f83238fa6da8"
           }
         ],
-        "updatedAt": "2026-10-22T02:56:29.044Z"
+        "updatedAt": "2026-10-22T12:44:05.484Z"
       }
     },
     {
@@ -33853,7 +33850,7 @@
       "zone": "October",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 5300000,
+      "priceMin": 5384400,
       "unitTypes": [
         "Retail",
         "Administrative",
@@ -33871,9 +33868,9 @@
         5,
         6
       ],
-      "paymentPlan": "5% Down Payment, 7.6 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 7.6,
+      "paymentPlan": "10% Down Payment, 8 Years Installments",
+      "downPayment": 10,
+      "installmentYears": 8,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -33884,7 +33881,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1402-rafts",
-            "observedPrice": 5300000,
+            "observedPrice": 5384400,
             "sourceId": "nawy:1402"
           },
           {
@@ -33894,7 +33891,7 @@
             "sourceId": "property-finder:9e764c6d-efec-4d51-b206-37eee940a0e1"
           }
         ],
-        "updatedAt": "2026-10-21T02:56:19.761Z"
+        "updatedAt": "2026-10-22T12:44:05.484Z"
       }
     },
     {
@@ -35327,8 +35324,10 @@
       "zone": "New Cairo",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 5722056,
+      "priceMin": 5425000,
       "unitTypes": [
+        "Administrative",
+        "Medical",
         "Retail",
         "Apartment",
         "Studio",
@@ -35347,8 +35346,8 @@
         5,
         6
       ],
-      "paymentPlan": "5% Down Payment, 10 Years Installments",
-      "downPayment": 5,
+      "paymentPlan": "3% Down Payment, 10 Years Installments",
+      "downPayment": 3,
       "installmentYears": 10,
       "priceMeta": {
         "status": "verified",
@@ -35360,7 +35359,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/186-taj-city",
-            "observedPrice": 5722056,
+            "observedPrice": 5425000,
             "sourceId": "nawy:186"
           },
           {
@@ -35376,7 +35375,7 @@
             "sourceId": "property-finder:894abd49-21d3-4d6a-bca8-f83238fa6da8"
           }
         ],
-        "updatedAt": "2026-10-22T02:56:29.044Z"
+        "updatedAt": "2026-10-22T12:44:05.484Z"
       }
     },
     {
@@ -45235,6 +45234,8 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
+        "Administrative",
+        "Medical",
         "Retail",
         "Apartment",
         "Studio",
@@ -45243,15 +45244,15 @@
         "Villa",
         "Twinhouse"
       ],
-      "downPayment": 5,
+      "downPayment": 3,
       "installmentYears": 10,
-      "paymentPlan": "5% Down Payment, 10 Years Installments",
+      "paymentPlan": "3% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2700",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 5722056,
+      "priceMin": 5425000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -45262,7 +45263,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/186-taj-city",
-            "observedPrice": 5722056,
+            "observedPrice": 5425000,
             "sourceId": "nawy:186"
           },
           {
@@ -45278,7 +45279,7 @@
             "sourceId": "property-finder:894abd49-21d3-4d6a-bca8-f83238fa6da8"
           }
         ],
-        "updatedAt": "2026-10-22T02:56:29.044Z"
+        "updatedAt": "2026-10-22T12:44:05.484Z"
       }
     },
     {
@@ -54996,6 +54997,8 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
+        "Administrative",
+        "Medical",
         "Retail",
         "Apartment",
         "Studio",
@@ -55004,15 +55007,15 @@
         "Villa",
         "Twinhouse"
       ],
-      "downPayment": 5,
+      "downPayment": 3,
       "installmentYears": 10,
-      "paymentPlan": "5% Down Payment, 10 Years Installments",
+      "paymentPlan": "3% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2700",
         "observedAt": "2026-10-01T03:43:21.164Z"
       },
-      "priceMin": 5722056,
+      "priceMin": 5425000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -55023,7 +55026,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/186-taj-city",
-            "observedPrice": 5722056,
+            "observedPrice": 5425000,
             "sourceId": "nawy:186"
           },
           {
@@ -55033,7 +55036,7 @@
             "sourceId": "red:33"
           }
         ],
-        "updatedAt": "2026-10-18T02:53:55.899Z"
+        "updatedAt": "2026-10-22T12:44:05.484Z"
       }
     },
     {

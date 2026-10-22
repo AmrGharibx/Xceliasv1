@@ -10535,11 +10535,10 @@
       "type": "residential",
       "priceMin": 7017043,
       "unitTypes": [
+        "Twin House",
         "Apartment",
-        "Townhouse",
         "Villa",
-        "Twinhouse",
-        "Duplex"
+        "Town House"
       ],
       "areaMin": 64,
       "areaMax": 275,
@@ -10552,29 +10551,23 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 12 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 12,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/13-il-bosco-new-capital",
             "observedPrice": 7017043,
             "sourceId": "red:13"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/181-il-bosco-new-capital",
-            "observedPrice": 7677428,
-            "sourceId": "nawy:181"
           }
         ],
-        "updatedAt": "2026-10-22T01:00:16.665Z"
+        "updatedAt": "2026-10-22T06:48:19.673Z"
       }
     },
     {
@@ -25603,11 +25596,10 @@
       "type": "residential",
       "priceMin": 2450000,
       "unitTypes": [
+        "Twin House",
         "Apartment",
-        "Townhouse",
         "Villa",
-        "Twinhouse",
-        "Duplex"
+        "Town House"
       ],
       "areaMin": 74,
       "areaMax": 319,
@@ -25620,14 +25612,14 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 12 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 12,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Property Finder",
@@ -25640,15 +25632,9 @@
             "url": "https://redww.com/en/projects/13-il-bosco-new-capital",
             "observedPrice": 7017043,
             "sourceId": "red:13"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/181-il-bosco-new-capital",
-            "observedPrice": 7677428,
-            "sourceId": "nawy:181"
           }
         ],
-        "updatedAt": "2026-10-22T02:56:29.044Z"
+        "updatedAt": "2026-10-22T06:48:19.673Z"
       }
     },
     {
@@ -26030,11 +26016,10 @@
       "type": "residential",
       "priceMin": 7017043,
       "unitTypes": [
+        "Twin House",
         "Apartment",
-        "Townhouse",
         "Villa",
-        "Twinhouse",
-        "Duplex"
+        "Town House"
       ],
       "areaMin": 64,
       "areaMax": 273,
@@ -26047,14 +26032,14 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 12 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 12,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
@@ -26063,19 +26048,13 @@
             "sourceId": "red:13"
           },
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/181-il-bosco-new-capital",
-            "observedPrice": 7677428,
-            "sourceId": "nawy:181"
-          },
-          {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/misr-italia/il-bosco-the-cliff",
             "observedPrice": 27300000,
             "sourceId": "property-finder:0471ace6-c165-47e1-9c9e-96414a1f5f59"
           }
         ],
-        "updatedAt": "2026-10-22T02:56:29.044Z"
+        "updatedAt": "2026-10-22T06:48:19.673Z"
       }
     },
     {
@@ -60550,22 +60529,36 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Apartment",
-        "Townhouse",
-        "Duplex",
         "Villa",
-        "Penthouse",
-        "Twinhouse"
+        "Twin House",
+        "Apartment",
+        "Town House"
       ],
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:664",
         "observedAt": "2026-10-22T03:37:47.108Z"
       },
-      "priceMin": 19135000
+      "priceMin": 22679000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/20-the-estates",
+            "observedPrice": 22679000,
+            "sourceId": "red:20"
+          }
+        ],
+        "updatedAt": "2026-10-22T06:48:19.673Z"
+      }
     },
     {
       "name": "The Estates",
@@ -60577,19 +60570,35 @@
       "type": "residential",
       "unitTypes": [
         "Villa",
-        "Townhouse",
+        "Twin House",
         "Apartment",
-        "Twinhouse"
+        "Town House"
       ],
-      "downPayment": 10,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "10% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:310",
         "observedAt": "2026-10-22T03:37:47.108Z"
       },
-      "priceMin": 77223960
+      "priceMin": 22679000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/20-the-estates",
+            "observedPrice": 22679000,
+            "sourceId": "red:20"
+          }
+        ],
+        "updatedAt": "2026-10-22T06:48:19.673Z"
+      }
     },
     {
       "name": "Gardinn Solana East",
@@ -60600,17 +60609,38 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Apartment"
+        "Apartment",
+        "Duplex",
+        "Penthouse",
+        "Town House",
+        "Twin House",
+        "Villa"
       ],
-      "downPayment": 5,
-      "installmentYears": 9,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 9 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2785",
         "observedAt": "2026-10-22T03:37:47.108Z"
       },
-      "priceMin": 8975000
+      "priceMin": 13955000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/30830-solana-east",
+            "observedPrice": 13955000,
+            "sourceId": "red:30830"
+          }
+        ],
+        "updatedAt": "2026-10-22T06:48:19.673Z"
+      }
     },
     {
       "name": "Orchard villas",
@@ -60632,7 +60662,23 @@
         "sourceId": "nawy-inventory:2792",
         "observedAt": "2026-10-22T03:37:47.108Z"
       },
-      "priceMin": 11900000
+      "priceMin": 11900000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2792-orchard-villas-alburouj",
+            "observedPrice": 11900000,
+            "sourceId": "nawy:2792"
+          }
+        ],
+        "updatedAt": "2026-10-22T06:48:19.673Z"
+      }
     }
   ],
   "projectDetails": {

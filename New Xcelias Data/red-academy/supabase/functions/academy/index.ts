@@ -1,7 +1,7 @@
 // @ts-nocheck -- runtime validation is shared with the tested JavaScript app.
 import {liveCompetitionMode,livePlayerStandings} from '../../../server/activity-live-competition.mjs';
 import {liveRoster,liveJoinIdentity,checkedLiveMappings,liveProfileReview,livePlayerProfile} from '../../../server/activity-live-roster.mjs';
-import {createHash,randomBytes,scrypt as nodeScrypt,timingSafeEqual} from 'node:crypto';
+import {createHash,createHmac,randomBytes,scrypt as nodeScrypt,timingSafeEqual} from 'node:crypto';
 import {Buffer} from 'node:buffer';
 import {promisify} from 'node:util';
 import {assessmentFor,attendanceStats,emptyState,id,scores,sessionChecklistFor,today,validDate} from '../../../public/modules/core.mjs';
@@ -131,6 +131,17 @@ async function sessionStatus(token){
 }
 async function requireUser(request){const token=tokenOf(request);if(!token)throw new ApiError(401,'Sign in to access the internal training system.');const status=await sessionStatus(token);if(!status.user)throw new ApiError(401,'Sign in to access the internal training system.');return {...status,token};}
 function requireBatchQr(value){if(!isBatchQrReference(value))throw new ApiError(404,'This batch QR is invalid or no longer active.');return value;}
+function normalizedClientIp(value){
+ if(typeof value!=='string'||!value||value.length>64||value.trim()!==value||/[\s,]/.test(value))return null;
+ if(/^\d{1,3}(?:\.\d{1,3}){3}$/.test(value)){const octets=value.split('.').map(Number);return octets.every(octet=>octet>=0&&octet<=255)?octets.join('.'):null;}
+ if(!value.includes(':'))return null;
+ try{const host=new URL(`http://[${value}]/`).hostname;return host.startsWith('[')&&host.endsWith(']')?host.slice(1,-1).toLowerCase():null;}catch{return null;}
+}
+function qrClientRateHash(request){
+ // Use the platform-provided address headers, not client-controlled X-Forwarded-For; persist only a keyed digest.
+ const address=normalizedClientIp(request.headers.get('cf-connecting-ip'))||normalizedClientIp(request.headers.get('x-real-ip'))||'unknown';
+ const {secretKey}=settings();return createHmac('sha256',secretKey).update(`qr-device-link-client:v1\n${address}`).digest('hex');
+}
 function qrActivationCode(){const bytes=randomBytes(10);let value=BigInt(`0x${Buffer.from(bytes).toString('hex')}`),plain='',alphabet='0123456789ABCDEFGHJKMNPQRSTVWXYZ';for(let index=0;index<16;index++){plain=alphabet[Number(value&31n)]+plain;value>>=5n;}return plain;}
 function checkedQrLocation(value){
  if(!value||typeof value!=='object'||Array.isArray(value))throw new ApiError(400,'Location data is invalid.');
@@ -159,7 +170,8 @@ async function qrPublicRoute(request,route,method){
   const phone=phoneProvided?normalizeQrPhone(body.phone):null,activationCode=codeProvided?normalizeActivationCode(body.activationCode):null;
   if(!publicKey||phoneProvided===codeProvided||phoneProvided&&!phone||codeProvided&&!activationCode)throw new ApiError(400,'Enter one valid phone number or recovery code and refresh the page.');
   const locatorHash=tokenHash(phone||activationCode);
-  if(!await rate(`qr:link-request:${rateHash}:${locatorHash}`,12,900)||!await rate('qr:link-request:global',500,60))throw new ApiError(429,'Too many device requests. Wait a moment and ask your trainer for help.');
+  const clientHash=qrClientRateHash(request);
+  if(!await rate(`qr:link-client:${clientHash}`,60,900)||!await rate(`qr:link-request:${rateHash}:${locatorHash}`,12,900)||!await rate('qr:link-request:global',500,60))throw new ApiError(429,'Too many device requests. Wait a moment and ask your trainer for help.');
   const data=await rpc('qr_create_device_link_request',{p_batch_qr_id:batchQrId,p_public_key:publicKey,p_phone:phone,p_code_hash:activationCode?tokenHash(activationCode):null});
   if(typeof data?.requestHandle!=='string'||!/^[A-Za-z0-9_-]{43}$/.test(data.requestHandle))throw new ApiError(502,'A device request could not be started. Try again or ask your trainer.');
   return json(request,{requestHandle:data.requestHandle,status:'pending'},201);

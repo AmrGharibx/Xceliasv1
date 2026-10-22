@@ -65,7 +65,19 @@ test('cloudQrDeviceLinkCreationIsGenericRateLimitedAndStoresOnlyCodeHash',()=>{
  const creation=publicHandler.slice(publicHandler.indexOf("if(action==='device-link-requests')"),publicHandler.indexOf("if(action==='device-link-status')"));
  assert.doesNotMatch(creation,/p_activation_code|traineeName/);
  assert.match(publicHandler,/rate\(`qr:link-request:/);
+ assert.match(publicHandler,/qr:link-client:/);
+ assert.match(publicHandler,/qrClientRateHash\(request\)/);
  assert.match(publicHandler,/status:'pending'/);
+});
+
+test('cloudQrClientThrottleUsesGatewayAddressAndStoresOnlyHmac',()=>{
+ const helper=source.slice(source.indexOf('function normalizedClientIp'),source.indexOf('async function qrPublicRoute'));
+ assert.match(helper,/cf-connecting-ip/);
+ assert.match(helper,/x-real-ip/);
+ assert.doesNotMatch(helper,/x-forwarded-for/);
+ assert.match(helper,/createHmac\('sha256',secretKey\)/);
+ assert.match(helper,/\.digest\('hex'\)/);
+ assert.doesNotMatch(helper,/return address/);
 });
 
 test('cloudQrDeviceStatusVerifiesP256PossessionBeforeIdentityRpc',()=>{

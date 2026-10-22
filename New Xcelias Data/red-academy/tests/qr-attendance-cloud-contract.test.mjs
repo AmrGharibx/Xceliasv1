@@ -14,7 +14,7 @@ test('cloudQrPublicEndpointsUseNoStoreAndNeverExposeRosterOrWorkspaceState',()=>
  assert.match(publicHandler,/daily_attendance',\{select:'status,arrival_time,source_meta',trainee_id:`eq\.\$\{enrollment\.trainee_id\}`/);
  assert.match(source,/const qrPublicResponse=await qrPublicRoute\(request,route,request\.method\);if\(qrPublicResponse\)return qrPublicResponse;/);
  assert.match(publicHandler,/evaluateVenueLocation\(/);
- assert.match(publicHandler,/await qrContext\(batchQrId,true\);[\s\S]+?rpc\('red_qr_public_enroll'/);
+ assert.match(publicHandler,/if\(action==='enroll'\)\{\s*throw new ApiError\(409/);
 });
 
 test('cloudQrExpiryIsAppliedToExistingAndNewPublicSessions',()=>{
@@ -38,7 +38,7 @@ test('cloudQrNeverSendsRawTraineeCoordinatesToDatabaseRpc',()=>{
 
 test('cloudQrStaffEndpointsRemainBehindRequireUser',()=>{
  assert.match(source,/const session=await requireUser\(request\),user=session\.user;\s*const qrTrainerResponse=await qrTrainerRoute\(request,route,method,user\);/);
- for(const action of ['ensure_link','rotate_link','issue_code','upsert_venue','open_session','close_session','resolve_review'])assert.ok(staffHandler.includes(`'${action}'`));
+ for(const action of ['ensure_link','rotate_link','upsert_venue','open_session','close_session','resolve_review','qr_issue_device_recovery_code'])assert.ok(staffHandler.includes(`'${action}'`));
  assert.match(staffHandler,/canWrite\(user\)/);
  assert.match(staffHandler,/red_qr_manage/);
 });
@@ -49,9 +49,55 @@ test('participantPageLocalizesInvalidPassAndNetworkFeedbackInEgyptianArabic',()=
 });
 
 test('cloudQrRateLimitsUseOpaqueOrHashedKeysAndNeverSendPlainActivationCode',()=>{
- assert.match(publicHandler,/const codeHash=tokenHash\(activationCode\)/);
+ assert.match(publicHandler,/p_code_hash:activationCode\?tokenHash\(activationCode\):null/);
  assert.match(publicHandler,/tokenHash\(body\.credentialId\)/);
  assert.doesNotMatch(publicHandler,/p_activation_code|activationCode:\s*activationCode/);
  assert.match(staffHandler,/const activationCode=qrActivationCode\(\),codeHash=tokenHash\(activationCode\)/);
  assert.match(staffHandler,/rate\(`qr:issue:/);
+});
+
+test('cloudQrDeviceLinkCreationIsGenericRateLimitedAndStoresOnlyCodeHash',()=>{
+ assert.match(publicHandler,/device-link-requests/);
+ assert.match(publicHandler,/normalizeQrPhone\(body\.phone\)/);
+ assert.match(publicHandler,/normalizeActivationCode\(body\.activationCode\)/);
+ assert.match(publicHandler,/qr_create_device_link_request/);
+ assert.match(publicHandler,/p_code_hash:activationCode\?tokenHash\(activationCode\):null/);
+ const creation=publicHandler.slice(publicHandler.indexOf("if(action==='device-link-requests')"),publicHandler.indexOf("if(action==='device-link-status')"));
+ assert.doesNotMatch(creation,/p_activation_code|traineeName/);
+ assert.match(publicHandler,/rate\(`qr:link-request:/);
+ assert.match(publicHandler,/status:'pending'/);
+});
+
+test('cloudQrDeviceStatusVerifiesP256PossessionBeforeIdentityRpc',()=>{
+ const proofLookup=publicHandler.indexOf("rpc('qr_device_link_request_proof_key'");
+ const verify=publicHandler.indexOf('verifyP256Challenge(');
+ const identityStatus=publicHandler.indexOf("rpc('qr_device_link_request_status'");
+ assert.ok(proofLookup>=0&&verify>proofLookup&&identityStatus>verify,'verify the request signature before asking for identity-bearing status');
+ assert.match(publicHandler,/xcelias-qr-link-status:v1\\n\$\{batchQrId\}\\n\$\{body\.requestHandle\}/);
+ assert.match(publicHandler,/p_handle_hash:handleHash/);
+ assert.match(publicHandler,/status==='approved'/);
+ assert.doesNotMatch(publicHandler,/return json\(request,statusResult\)/);
+ assert.match(publicHandler,/rate\(`qr:link-status:/);
+});
+
+test('cloudQrLegacyDirectEnrollmentFailsClosedWithoutEnrollmentRpc',()=>{
+ const enroll=publicHandler.slice(publicHandler.indexOf("if(action==='enroll')"),publicHandler.indexOf("if(action==='challenge')"));
+ assert.match(enroll,/throw new ApiError\(409/);
+ assert.doesNotMatch(enroll,/red_qr_public_enroll|qr_attendance_enrollments/);
+});
+
+test('cloudQrDeviceApprovalQueueAndResolutionAreStaffOnly',()=>{
+ assert.match(source,/const session=await requireUser\(request\),user=session\.user;\s*const qrTrainerResponse=await qrTrainerRoute\(request,route,method,user\);/);
+ assert.match(staffHandler,/path==='device-link-requests'&&method==='GET'[\s\S]+?canWrite\(user\)[\s\S]+?qr_device_link_requests/);
+ const resolveIndex=staffHandler.indexOf("if(path==='device-link-requests/resolve'");
+ assert.ok(staffHandler.lastIndexOf('canWrite(user);',resolveIndex)>=0&&staffHandler.indexOf('qr_resolve_device_link_request',resolveIndex)>resolveIndex);
+ assert.match(staffHandler,/p_actor:user\.email/);
+ assert.match(staffHandler,/p_trainee_id:body\.traineeId\|\|null/);
+});
+
+test('cloudQrRecoveryCodeUsesNarrowRpcAndDoesNotRevokeEnrollmentAtIssueTime',()=>{
+ assert.match(staffHandler,/qr_issue_device_recovery_code/);
+ assert.doesNotMatch(staffHandler,/rpc\('red_qr_manage',\{p_action:'issue_code'/);
+ assert.doesNotMatch(staffHandler,/qr_attendance_activation_codes'.*order:'issued_at\.desc'/);
+ assert.match(staffHandler,/expiresAt:data\?\.expiresAt/);
 });

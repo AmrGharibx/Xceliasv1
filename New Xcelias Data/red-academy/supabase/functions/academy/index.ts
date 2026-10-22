@@ -14,7 +14,7 @@ import {validateActivityLivePulse} from '../../../server/activity-live-pulse.mjs
 import {liveConfidenceSummary} from '../../../server/activity-live-confidence.mjs';
 import {draftActivityRoleplayWithGemini,validateActivityRoleplayDraftRequest} from '../../../server/activity-roleplay-draft.mjs';
 import {prepareCloudOperations} from './operations.ts';
-import {cairoSessionDayNumber,evaluateVenueLocation,isBatchQrReference,isQrBatchExpired,normalizeActivationCode,sanitizeP256PublicKey,verifyP256Challenge} from '../../../public/modules/qr-attendance-core.mjs';
+import {cairoSessionDayNumber,evaluateVenueLocation,isBatchQrReference,isQrBatchExpired,normalizeActivationCode,normalizeQrPhone,sanitizeP256PublicKey,verifyP256Challenge} from '../../../public/modules/qr-attendance-core.mjs';
 
 const scrypt=promisify(nodeScrypt);
 const MAX_BODY=150000;
@@ -99,6 +99,12 @@ function databaseError(error){
   RED_QR_CODE_INVALID:[401,'The private code is invalid, expired, or belongs to a different batch. Ask reception for help.'],
   RED_QR_CODE_USED:[409,'This code has already been used on another device. Ask reception for a replacement.'],
   RED_QR_ENROLLED:[409,'This trainee already has an enrolled device. Reception must issue a replacement code first.'],
+  RED_QR_LINK_PENDING:[409,'A device request from this browser is already waiting. Return to the open QR page and ask your trainer for help.'],
+  RED_QR_LINK_RESOLVED:[409,'This device request has already been resolved. Start a new request if you still need help.'],
+  RED_QR_LINK_EXPIRED:[409,'This device request has expired. Ask your trainer to start a new request.'],
+  RED_QR_REPLACE_REQUIRED:[409,'This trainee already has an active device. Confirm replacement with the trainer first.'],
+  RED_QR_REPLACE_MISSING:[409,'There is no active device to replace. Approve this request normally.'],
+  RED_QR_TRAINEE:[409,'Choose an active trainee from this batch.'],
   RED_QR_ENROLLMENT:[401,'This device is not enrolled. Ask reception to set it up.'],RED_QR_PROOF_INVALID:[401,'Your device check could not be verified. Try again or ask reception for help.'],
   RED_QR_CHALLENGE_USED:[409,'This check-in attempt expired or was already used. Tap “I’m here” to try again.'],
   RED_QR_REVIEW_RESOLVED:[409,'This location review was already resolved.'],RED_QR_MANUAL_MISSING:[409,'Record this trainee’s attendance manually before resolving the location review.'],RED_DUPLICATE:[409,'A matching record already exists. Refresh the page before retrying.']
@@ -146,8 +152,30 @@ async function qrContext(batchQrId,requireSession=false){
 }
 async function qrPublicRoute(request,route,method){
  if(method!=='POST'||!route.startsWith('qr-attendance/public/'))return null;
- const action=route.slice('qr-attendance/public/'.length);if(!['info','enroll','challenge','check-in'].includes(action))return null;
+ const action=route.slice('qr-attendance/public/'.length);if(!['info','enroll','challenge','check-in','device-link-requests','device-link-status'].includes(action))return null;
  const body=await bodyOf(request),batchQrId=requireBatchQr(body.batchQrId),rateHash=tokenHash(batchQrId);
+ if(action==='device-link-requests'){
+  const publicKey=sanitizeP256PublicKey(body.publicKey),phoneProvided=body.phone!==undefined,codeProvided=body.activationCode!==undefined;
+  const phone=phoneProvided?normalizeQrPhone(body.phone):null,activationCode=codeProvided?normalizeActivationCode(body.activationCode):null;
+  if(!publicKey||phoneProvided===codeProvided||phoneProvided&&!phone||codeProvided&&!activationCode)throw new ApiError(400,'Enter one valid phone number or recovery code and refresh the page.');
+  const locatorHash=tokenHash(phone||activationCode);
+  if(!await rate(`qr:link-request:${rateHash}:${locatorHash}`,12,900)||!await rate('qr:link-request:global',500,60))throw new ApiError(429,'Too many device requests. Wait a moment and ask your trainer for help.');
+  const data=await rpc('qr_create_device_link_request',{p_batch_qr_id:batchQrId,p_public_key:publicKey,p_phone:phone,p_code_hash:activationCode?tokenHash(activationCode):null});
+  if(typeof data?.requestHandle!=='string'||!/^[A-Za-z0-9_-]{43}$/.test(data.requestHandle))throw new ApiError(502,'A device request could not be started. Try again or ask your trainer.');
+  return json(request,{requestHandle:data.requestHandle,status:'pending'},201);
+ }
+ if(action==='device-link-status'){
+  if(typeof body.requestHandle!=='string'||!/^[A-Za-z0-9_-]{43}$/.test(body.requestHandle)||typeof body.signature!=='string'||!/^[A-Za-z0-9_-]{86}$/.test(body.signature))throw new ApiError(401,'This device request could not be verified. Start again or ask your trainer.');
+  const handleHash=tokenHash(body.requestHandle);
+  if(!await rate(`qr:link-status:${handleHash}`,60,60)||!await rate('qr:link-status:global',3000,60))throw new ApiError(429,'Too many device checks. Wait a moment and try again.');
+  const proof=await rpc('qr_device_link_request_proof_key',{p_batch_qr_id:batchQrId,p_handle_hash:handleHash});
+  const message=`xcelias-qr-link-status:v1\n${batchQrId}\n${body.requestHandle}`;
+  if(!await verifyP256Challenge(proof?.publicKey,message,body.signature))throw new ApiError(401,'This device request could not be verified. Start again or ask your trainer.');
+  const result=await rpc('qr_device_link_request_status',{p_batch_qr_id:batchQrId,p_handle_hash:handleHash});
+  if(result?.status==='approved'&&isId(result.credentialId)&&typeof result.traineeName==='string'&&result.traineeName.length<=160&&!/[\u0000-\u001f\u007f]/.test(result.traineeName))return json(request,{status:'approved',credentialId:result.credentialId,traineeName:result.traineeName});
+  if(['pending','rejected','expired'].includes(result?.status))return json(request,{status:result.status});
+  throw new ApiError(401,'This device request could not be verified. Start again or ask your trainer.');
+ }
  if(action==='info'){
   if(!await rate(`qr:info:${rateHash}`,240,60))throw new ApiError(429,'Too many QR checks. Wait a moment and try again.');
   const {batch,session}=await qrContext(batchQrId,false);
@@ -161,11 +189,7 @@ async function qrPublicRoute(request,route,method){
   return json(request,{batchName:batch.batch_name,currentSession:session?{id:session.id,dayNumber:session.day_number,date:session.session_date,expiresAt:session.expires_at}:null,...(participant?{participant}:{}),locationNotice:'Your location is checked during check-in to confirm you are near the Academy. Check-ins attempted from outside the training area are flagged for staff review. If you are on-site but your location seems wrong, contact reception.'});
  }
  if(action==='enroll'){
-  await qrContext(batchQrId,true);
-  const activationCode=normalizeActivationCode(body.activationCode),publicKey=sanitizeP256PublicKey(body.publicKey);if(!activationCode||!publicKey)throw new ApiError(400,'Enter the private activation code provided by reception.');
-  const codeHash=tokenHash(activationCode);if(!await rate(`qr:enroll:${codeHash}`,12,900)||!await rate('qr:enroll:global',500,60))throw new ApiError(429,'Too many QR setup attempts. Wait a moment and try again.');
-  const result=await rpc('red_qr_public_enroll',{p_batch_qr_id:batchQrId,p_code_hash:codeHash,p_public_key:publicKey,p_enrollment_id:id()});
-  return json(request,result,result?.alreadyEnrolled?200:201);
+  throw new ApiError(409,'Refresh the QR page and ask your trainer to approve this device.');
  }
  if(action==='challenge'){
   if(!isId(body.credentialId))throw new ApiError(401,'This device is not enrolled. Ask reception to set it up.');
@@ -228,6 +252,15 @@ async function qrTrainerRoute(request,route,method,user){
   canWrite(user);const batchId=url.searchParams.get('batchId')||'',date=url.searchParams.get('date')||'';if(!isId(batchId)||!validDate(date))throw new ApiError(400,'Choose a valid batch and session date.');
   const data=await qrTrainerReviews(batchId,date),batch=await row('batches',{select:'batch_name',id:`eq.${batchId}`});data.items=data.items.map(item=>({...item,batchName:batch?.batch_name||''}));return json(request,data);
  }
+ if(path==='device-link-requests'&&method==='GET'){
+  canWrite(user);const batchId=url.searchParams.get('batchId')||'';if(!isId(batchId))throw new ApiError(400,'Choose a valid batch.');
+  const result=await rpc('qr_device_link_requests',{p_batch_id:batchId});
+  const items=Array.isArray(result?.items)?result.items.map(item=>({
+   id:item.id,candidateTraineeId:item.candidateTraineeId||null,candidateTraineeName:item.candidateTraineeName||null,status:'pending',
+   createdAt:item.createdAt,expiresAt:item.expiresAt,hasActiveDevice:item.hasActiveDevice===true,usedRecoveryCode:item.usedRecoveryCode===true,
+  })):[];
+  return json(request,{items});
+ }
  canWrite(user);
  const mutation=async(action,payload,status=200)=>json(request,await rpc('red_qr_manage',{p_action:action,p_payload:payload,p_actor:user.email}),status);
  if(path==='batch-qr/ensure'&&method==='POST'){
@@ -242,9 +275,13 @@ async function qrTrainerRoute(request,route,method,user){
   if(!trainee||trainee.enrollment_status!=='Active'||!batch||batch.status!=='Active'||batch.archived_at)throw new ApiError(404,'No active trainee enrollment was found.');
   if(isQrBatchExpired(batch))throw new ApiError(410,'This batch is no longer accepting QR attendance because its QR access period has ended.');
   const rateKey=tokenHash(body.traineeId);if(!await rate(`qr:issue:${user.id}:${rateKey}`,30,3600))throw new ApiError(429,'Activation-code limit reached. Try again later.');
-  const activationCode=qrActivationCode(),codeHash=tokenHash(activationCode),data=await rpc('red_qr_manage',{p_action:'issue_code',p_payload:{traineeId:body.traineeId,action:body.action,codeHash},p_actor:user.email});
-  const code=await row('qr_attendance_activation_codes',{select:'expires_at',trainee_id:`eq.${body.traineeId}`,batch_id:`eq.${batch.id}`,consumed_at:'is.null',revoked_at:'is.null',order:'issued_at.desc'});
-  return json(request,{activationCode:activationCode.match(/.{4}/g).join('-'),expiresAt:code?.expires_at||data.expiresAt},201);
+  const activationCode=qrActivationCode(),codeHash=tokenHash(activationCode),data=await rpc('qr_issue_device_recovery_code',{p_trainee_id:body.traineeId,p_action:body.action,p_code_hash:codeHash,p_actor:user.email});
+  return json(request,{activationCode:activationCode.match(/.{4}/g).join('-'),expiresAt:data?.expiresAt},201);
+ }
+ if(path==='device-link-requests/resolve'&&method==='POST'){
+  const body=await bodyOf(request);
+  if(!isId(body.requestId)||!['approve','approve_replace','reject'].includes(body.action)||body.traineeId!==undefined&&!isId(body.traineeId))throw new ApiError(400,'Choose a valid device request and action.');
+  return json(request,await rpc('qr_resolve_device_link_request',{p_request_id:body.requestId,p_action:body.action,p_actor:user.email,p_trainee_id:body.traineeId||null}));
  }
  if(path==='venues/upsert'&&method==='POST'){
   const body=await bodyOf(request);if(body.id!==undefined&&body.id!=='academy-default'&&!isId(body.id)||typeof body.name!=='string'||body.name.trim().length<2||body.name.length>100||/[\u0000-\u001f\u007f]/.test(body.name)||!Number.isFinite(body.latitude)||body.latitude< -90||body.latitude>90||!Number.isFinite(body.longitude)||body.longitude< -180||body.longitude>180||!Number.isInteger(body.radius_m)||body.radius_m<50||body.radius_m>2000||typeof body.active!=='boolean')throw new ApiError(400,'Enter a valid venue name, location, radius, and status.');

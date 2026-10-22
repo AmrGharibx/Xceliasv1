@@ -143,7 +143,7 @@ async function enrolledTrainee(batch, trainee) {
   assert.equal(code.status, 201, JSON.stringify(code.data));
   const key = await makeBrowserKey();
   const enrollment = await approvedLink(batch, ensured.data.batchQrId, key.privateKey, key.publicKey, {activationCode: code.data.activationCode}, trainee.id);
-  return {batch, trainee, batchQrId: ensured.data.batchQrId, credentialId: enrollment.credentialId, privateKey: key.privateKey};
+  return {batch, trainee, batchQrId: ensured.data.batchQrId, credentialId: enrollment.credentialId, requestHandle: enrollment.requestHandle, privateKey: key.privateKey};
 }
 
 const academyLocation = {status: 'ok', latitude: 30.0076922, longitude: 31.5332323, accuracy: 8};
@@ -608,6 +608,45 @@ test('qrLinkStatusRequiresRequestKeyProof', async () => {
   const second = await linkRequest(link.data.batchQrId, secondKey.publicKey, {phone: '01099998888'});
   assert.equal((await linkStatus(link.data.batchQrId, second.data.requestHandle, key.privateKey)).status, 401);
   assert.equal((await linkStatus(link.data.batchQrId, second.data.requestHandle, null)).status, 401);
+});
+
+test('qrApprovedStatusExpiresAfterRequestDeadlineWithoutRevokingEnrollment', async () => {
+  const batch = await makeBatch();
+  const trainee = await makeTrainee(batch);
+  const enrolled = await enrolledTrainee(batch, trainee);
+  const repo = await repository();
+  const requestRow = repo.db.prepare('SELECT id FROM qr_attendance_device_link_requests WHERE enrollment_id=?').get(enrolled.credentialId);
+  repo.db.prepare('UPDATE qr_attendance_device_link_requests SET expires_at=? WHERE id=?').run(new Date(Date.now() - 1000).toISOString(), requestRow.id);
+  const status = await linkStatus(enrolled.batchQrId, enrolled.requestHandle, enrolled.privateKey);
+  assert.equal(status.status, 200);
+  assert.deepEqual(status.data, {status: 'expired'});
+  assert.equal(repo.db.prepare('SELECT revoked_at FROM qr_attendance_enrollments WHERE id=?').get(enrolled.credentialId).revoked_at, null);
+  assert.equal((await getChallenge(enrolled.batchQrId, enrolled.credentialId)).status, 200);
+});
+
+test('qrApprovedStatusExpiresWhenSessionClosesWithoutRevokingEnrollment', async () => {
+  const batch = await makeBatch();
+  const trainee = await makeTrainee(batch);
+  const enrolled = await enrolledTrainee(batch, trainee);
+  const repo = await repository();
+  const session = repo.db.prepare('SELECT id FROM qr_attendance_sessions WHERE batch_id=? AND closed_at IS NULL').get(batch.id);
+  assert.equal((await request('qr-attendance/sessions/close', {method: 'POST', cookie: adminCookie, body: {id: session.id}})).status, 200);
+  const status = await linkStatus(enrolled.batchQrId, enrolled.requestHandle, enrolled.privateKey);
+  assert.equal(status.status, 200);
+  assert.deepEqual(status.data, {status: 'expired'});
+  assert.equal(repo.db.prepare('SELECT revoked_at FROM qr_attendance_enrollments WHERE id=?').get(enrolled.credentialId).revoked_at, null);
+});
+
+test('qrApprovedStatusExpiresWhenSessionDeadlinePassesWithoutRevokingEnrollment', async () => {
+  const batch = await makeBatch();
+  const trainee = await makeTrainee(batch);
+  const enrolled = await enrolledTrainee(batch, trainee);
+  const repo = await repository();
+  repo.db.prepare('UPDATE qr_attendance_sessions SET expires_at=? WHERE batch_id=? AND closed_at IS NULL').run(new Date(Date.now() - 1000).toISOString(), batch.id);
+  const status = await linkStatus(enrolled.batchQrId, enrolled.requestHandle, enrolled.privateKey);
+  assert.equal(status.status, 200);
+  assert.deepEqual(status.data, {status: 'expired'});
+  assert.equal(repo.db.prepare('SELECT revoked_at FROM qr_attendance_enrollments WHERE id=?').get(enrolled.credentialId).revoked_at, null);
 });
 
 test('qrInvalidRecoveryCodeIsGenericButCannotBeApproved', async () => {

@@ -327,12 +327,13 @@ export class SQLiteRepository {
   if(!row)throw new ApiError(404,'This device request is unavailable. Start again or ask your trainer.');
   const message=`xcelias-qr-link-status:v1\n${batchQrId}\n${requestHandle}`;
   if(!await verifyP256Challenge(JSON.parse(row.public_key),message,signature))throw new ApiError(401,'This device request could not be verified. Start again or ask your trainer.');
+  if(row.status==='rejected')return {status:'rejected'};
+  const now=new Date().toISOString();
+  if(row.status==='expired'||row.expires_at<=now||row.closed_at||row.session_expires_at<=now)return {status:'expired'};
   if(row.status==='approved'){
    const enrollment=this.db.prepare('SELECT e.id,t.trainee_name FROM qr_attendance_enrollments e JOIN trainees t ON t.id=e.trainee_id WHERE e.id=? AND e.batch_id=? AND e.revoked_at IS NULL').get(row.enrollment_id,row.batch_id);
    return enrollment?{status:'approved',credentialId:enrollment.id,traineeName:enrollment.trainee_name}:{status:'expired'};
   }
-  if(row.status==='rejected')return {status:'rejected'};
-  if(row.status==='expired'||row.expires_at<=new Date().toISOString()||row.closed_at||row.session_expires_at<=new Date().toISOString())return {status:'expired'};
   return {status:'pending'};
  }
  async qrDeviceLinkRequests({batchId}){

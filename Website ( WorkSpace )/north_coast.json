@@ -369,9 +369,9 @@
         3,
         4
       ],
-      "paymentPlan": "5% Down Payment, 10 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 10,
+      "paymentPlan": "0% Down Payment, 9 Years Installments",
+      "downPayment": 0,
+      "installmentYears": 9,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -388,7 +388,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/757-azha-north-coast",
-            "observedPrice": 12823500,
+            "observedPrice": 14461000,
             "sourceId": "nawy:757"
           },
           {
@@ -398,7 +398,7 @@
             "sourceId": "red:19032"
           }
         ],
-        "updatedAt": "2026-10-20T02:55:45.901Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -576,7 +576,7 @@
             "sourceId": "red:19092"
           }
         ],
-        "updatedAt": "2026-10-20T02:55:45.901Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -786,7 +786,7 @@
             "sourceId": "nawy:522"
           }
         ],
-        "updatedAt": "2026-10-20T02:55:45.901Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -952,7 +952,7 @@
             "sourceId": "property-finder:101d5a43-b8d8-4b35-a48a-7244df690f5c"
           }
         ],
-        "updatedAt": "2026-10-20T02:55:45.901Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -1258,7 +1258,7 @@
             "sourceId": "red:19217"
           }
         ],
-        "updatedAt": "2026-10-20T02:55:45.901Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -1456,7 +1456,7 @@
             "sourceId": "nawy:935"
           }
         ],
-        "updatedAt": "2026-10-20T02:55:45.901Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -1943,7 +1943,7 @@
             "sourceId": "red:30816"
           }
         ],
-        "updatedAt": "2026-10-20T02:55:45.901Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -2010,7 +2010,7 @@
       "zone": "Marina - Alamein",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 3662100,
+      "priceMin": 7203717,
       "unitTypes": [
         "apartment",
         "townhouse"
@@ -2038,11 +2038,11 @@
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/retal-development/retal-south",
-            "observedPrice": 3662100,
+            "observedPrice": 7203717,
             "sourceId": "property-finder:33142ef5-7bbd-4e33-b220-dcccb60e8e50"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -2737,7 +2737,7 @@
             "sourceId": "property-finder:92a099b7-964f-4ada-80b4-acc318e3328e"
           }
         ],
-        "updatedAt": "2026-10-20T02:55:45.901Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -3159,11 +3159,7 @@
       ],
       "priceMin": 8472000,
       "unitTypes": [
-        "Apartment",
-        "Town House",
-        "Duplex",
-        "Chalet",
-        "Villa"
+        "villa"
       ],
       "areaMin": 86,
       "areaMax": 375,
@@ -3174,23 +3170,29 @@
         4
       ],
       "paymentPlan": "5% Down Payment",
-      "downPayment": 0,
+      "downPayment": 5,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19160-mazarine",
             "observedPrice": 8472000,
             "sourceId": "red:19160"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/city-edge/mazarine-islands",
+            "observedPrice": 9770000,
+            "sourceId": "property-finder:4acf3c2b-80d7-4e73-ac40-f67e5665d75c"
           }
         ],
-        "updatedAt": "2026-10-21T02:56:19.761Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -3365,7 +3367,7 @@
             "sourceId": "red:48"
           }
         ],
-        "updatedAt": "2026-10-20T02:55:45.901Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -4054,7 +4056,7 @@
       "layouts": [
         "https://lmd.com.eg/project/zoya/"
       ],
-      "priceMin": 11458788,
+      "priceMin": 7726320,
       "unitTypes": [
         "Apartment",
         "Chalet",
@@ -4081,8 +4083,14 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 3,
         "sources": [
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/landmark-developments/zoya-ghazala-bay",
+            "observedPrice": 7726320,
+            "sourceId": "property-finder:72d58cad-44a3-4b44-96d0-f1676dd6d5f5"
+          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19039-zoya-ghazala-bay",
@@ -4096,7 +4104,7 @@
             "sourceId": "nawy:238"
           }
         ],
-        "updatedAt": "2026-10-21T06:48:12.929Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -4216,7 +4224,7 @@
             "sourceId": "red:30816"
           }
         ],
-        "updatedAt": "2026-10-20T02:55:45.901Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -4492,7 +4500,7 @@
             "sourceId": "nawy:1649"
           }
         ],
-        "updatedAt": "2026-10-20T02:55:45.901Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -4548,7 +4556,7 @@
             "sourceId": "property-finder:d75dde18-94a1-40ac-913f-d128714159cc"
           }
         ],
-        "updatedAt": "2026-10-20T02:55:45.901Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -4764,7 +4772,7 @@
             "sourceId": "property-finder:92a099b7-964f-4ada-80b4-acc318e3328e"
           }
         ],
-        "updatedAt": "2026-10-20T02:55:45.901Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -4822,7 +4830,7 @@
             "sourceId": "property-finder:47e13c1b-e53c-418e-81f2-f2986c6d59e6"
           }
         ],
-        "updatedAt": "2026-10-20T02:55:45.901Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -4898,16 +4906,22 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/734-lasirena-north-coast",
             "observedPrice": 3890000,
             "sourceId": "nawy:734"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/lasirena-group/lasirena-north-coast",
+            "observedPrice": 12000000,
+            "sourceId": "property-finder:b73de620-10f5-4568-9c72-bb02e751a392"
           }
         ],
-        "updatedAt": "2026-10-20T18:36:56.430Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -4960,8 +4974,11 @@
       ],
       "priceMin": 5312000,
       "unitTypes": [
-        "villa",
-        "apartment"
+        "Villa",
+        "Chalet",
+        "Twin House",
+        "Apartment",
+        "Town House"
       ],
       "areaMin": 87,
       "areaMax": 381,
@@ -4974,29 +4991,23 @@
         6
       ],
       "paymentPlan": "5% Down Payment",
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19230-sea-view",
             "observedPrice": 5312000,
             "sourceId": "red:19230"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/jdar-development/sea-view-phase-2-at-north-coast",
-            "observedPrice": 8780000,
-            "sourceId": "property-finder:dcf4fa78-3414-4bea-ac96-6cb64f1a4716"
           }
         ],
-        "updatedAt": "2026-10-21T02:56:19.761Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -5253,7 +5264,7 @@
             "sourceId": "red:19044"
           }
         ],
-        "updatedAt": "2026-10-20T02:55:45.901Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -5304,7 +5315,7 @@
       "layouts": [
         "https://cityedgedevelopments.com/project/il-latini"
       ],
-      "priceMin": 3778080,
+      "priceMin": 3088613,
       "unitTypes": [
         "Apartment",
         "Chalet",
@@ -5333,7 +5344,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1001-il-latini-city-edge",
-            "observedPrice": 3778080,
+            "observedPrice": 3088613,
             "sourceId": "nawy:1001"
           },
           {
@@ -5343,7 +5354,7 @@
             "sourceId": "property-finder:d75dde18-94a1-40ac-913f-d128714159cc"
           }
         ],
-        "updatedAt": "2026-10-20T02:55:45.901Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -5592,7 +5603,7 @@
             "sourceId": "nawy:1228"
           }
         ],
-        "updatedAt": "2026-10-20T02:55:45.901Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -5756,7 +5767,7 @@
             "sourceId": "property-finder:8271c06c-5fdc-4543-83f0-dd0950b14a21"
           }
         ],
-        "updatedAt": "2026-10-20T02:55:45.901Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -5999,7 +6010,7 @@
             "sourceId": "property-finder:b151e71b-e439-4809-8a34-5a6b7d7a2ece"
           }
         ],
-        "updatedAt": "2026-10-20T02:55:45.901Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -6157,7 +6168,7 @@
       "amenities": "Exclusive Clubhouse, Lagoon Pools, Beach Bar, Concierge Services",
       "masterplan": "https://www.palmhillsdevelopments.com/en/Projects/Hacienda-Red",
       "layouts": "https://www.palmhillsdevelopments.com/en/Projects/Hacienda-Red",
-      "priceMin": 12000000,
+      "priceMin": 12032000,
       "unitTypes": [
         "Apartment",
         "Chalet",
@@ -6183,14 +6194,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/palm-hills/hacienda-ras-el-hekma",
-            "observedPrice": 12000000,
-            "sourceId": "property-finder:797a38f4-0686-4977-8f94-9ac81b2d8204"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/2310-hacienda-ras-el-hekma",
@@ -6198,7 +6203,7 @@
             "sourceId": "nawy:2310"
           }
         ],
-        "updatedAt": "2026-10-21T02:56:19.761Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -6213,7 +6218,7 @@
       "amenities": "Tanoak Hotel, Crystal Lagoons, Sports Club, Community Centers",
       "masterplan": "https://madaar.com/azha-north/",
       "layouts": "https://madaar.com/azha-north/",
-      "priceMin": 12823500,
+      "priceMin": 14461000,
       "unitTypes": [
         "Townhouse",
         "Chalet",
@@ -6230,8 +6235,8 @@
         3,
         4
       ],
-      "paymentPlan": "5% Down Payment, 10 Years Installments",
-      "downPayment": 5,
+      "paymentPlan": "0% Down Payment, 10 Years Installments",
+      "downPayment": 0,
       "installmentYears": 10,
       "priceMeta": {
         "status": "verified",
@@ -6243,7 +6248,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/757-azha-north-coast",
-            "observedPrice": 12823500,
+            "observedPrice": 14461000,
             "sourceId": "nawy:757"
           },
           {
@@ -6253,7 +6258,7 @@
             "sourceId": "red:19032"
           }
         ],
-        "updatedAt": "2026-10-18T12:37:44.844Z"
+        "updatedAt": "2026-10-21T18:37:12.859Z"
       }
     },
     {
@@ -6331,8 +6336,9 @@
       "amenities": "40,000 sqm Crystal Lagoon, Boutique Hotel, Beach Club, Commercial Strip",
       "masterplan": "https://naiadevelopments.com/naia-bay/",
       "layouts": "https://naiadevelopments.com/naia-bay/",
-      "priceMin": 17000000,
+      "priceMin": 12750000,
       "unitTypes": [
+        "Apartment",
         "Townhouse",
         "Twinhouse",
         "Chalet",
@@ -6348,9 +6354,9 @@
         5,
         6
       ],
-      "paymentPlan": "5% Down Payment, 10 Years Installments",
+      "paymentPlan": "5% Down Payment, 8 Years Installments",
       "downPayment": 5,
-      "installmentYears": 10,
+      "installmentYears": 8,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -6358,6 +6364,12 @@
         "confidence": "high",
         "sourceCount": 3,
         "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/930-naia-bay",
+            "observedPrice": 12750000,
+            "sourceId": "nawy:930"
+          },
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/naia-developments/naia-bay",
@@ -6369,15 +6381,9 @@
             "url": "https://redww.com/en/projects/19023-naia-bay",
             "observedPrice": 26050000,
             "sourceId": "red:19023"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/930-naia-bay",
-            "observedPrice": 28294000,
-            "sourceId": "nawy:930"
           }
         ],
-        "updatedAt": "2026-10-21T02:56:19.761Z"
+        "updatedAt": "2026-10-21T18:37:12.859Z"
       }
     },
     {
@@ -6566,7 +6572,7 @@
             "sourceId": "red:19092"
           }
         ],
-        "updatedAt": "2026-10-20T02:55:45.901Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -6693,11 +6699,12 @@
       "amenities": "5-star Hotel, Shopping Mall, Panoramic Pools, Underground Parking",
       "masterplan": "https://njd.com.eg/projects/jamila",
       "layouts": "https://njd.com.eg/projects/jamila",
-      "priceMin": 5438000,
+      "priceMin": 4770984,
       "unitTypes": [
+        "Villa",
         "Chalet",
-        "Apartment",
         "Duplex",
+        "Apartment",
         "Studio"
       ],
       "areaMin": 82,
@@ -6710,9 +6717,9 @@
         5,
         6
       ],
-      "paymentPlan": "5% Down Payment, 12 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 12,
+      "paymentPlan": "0% Down Payment, 6 Years Installments",
+      "downPayment": 0,
+      "installmentYears": 6,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -6723,7 +6730,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1290-jamila",
-            "observedPrice": 5438000,
+            "observedPrice": 4770984,
             "sourceId": "nawy:1290"
           },
           {
@@ -6733,7 +6740,7 @@
             "sourceId": "property-finder:be835268-53e1-4587-835b-fb84832c8713"
           }
         ],
-        "updatedAt": "2026-10-21T02:56:19.761Z"
+        "updatedAt": "2026-10-21T12:43:33.120Z"
       }
     },
     {
@@ -7476,7 +7483,7 @@
             "sourceId": "property-finder:6bbaf1e7-8a6e-46bc-babe-c6520f7bc2e8"
           }
         ],
-        "updatedAt": "2026-10-20T02:55:45.901Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -8626,33 +8633,35 @@
       "type": "commercial",
       "priceMin": 8472000,
       "unitTypes": [
-        "Apartment",
-        "Town House",
-        "Duplex",
-        "Chalet",
-        "Villa"
+        "villa"
       ],
       "areaMin": 84,
       "areaMax": 366,
       "bedrooms": [],
       "paymentPlan": "5% Down Payment",
-      "downPayment": 0,
+      "downPayment": 5,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19160-mazarine",
             "observedPrice": 8472000,
             "sourceId": "red:19160"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/city-edge/mazarine-islands",
+            "observedPrice": 9770000,
+            "sourceId": "property-finder:4acf3c2b-80d7-4e73-ac40-f67e5665d75c"
           }
         ],
-        "updatedAt": "2026-10-20T18:36:56.430Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -8963,7 +8972,7 @@
             "sourceId": "property-finder:f9363bca-25a3-4872-803d-7d8c008d5193"
           }
         ],
-        "updatedAt": "2026-10-20T02:55:45.901Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -9362,7 +9371,7 @@
             "sourceId": "nawy:510"
           }
         ],
-        "updatedAt": "2026-10-20T02:55:45.901Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -10156,33 +10165,35 @@
       "type": "commercial",
       "priceMin": 8472000,
       "unitTypes": [
-        "Apartment",
-        "Town House",
-        "Duplex",
-        "Chalet",
-        "Villa"
+        "villa"
       ],
       "areaMin": 73,
       "areaMax": 320,
       "bedrooms": [],
       "paymentPlan": "5% Down Payment",
-      "downPayment": 0,
+      "downPayment": 5,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19160-mazarine",
             "observedPrice": 8472000,
             "sourceId": "red:19160"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/city-edge/mazarine-islands",
+            "observedPrice": 9770000,
+            "sourceId": "property-finder:4acf3c2b-80d7-4e73-ac40-f67e5665d75c"
           }
         ],
-        "updatedAt": "2026-10-21T02:56:19.761Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -10241,7 +10252,7 @@
             "sourceId": "red:30917"
           }
         ],
-        "updatedAt": "2026-10-20T02:55:45.901Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -10300,7 +10311,7 @@
             "sourceId": "red:30917"
           }
         ],
-        "updatedAt": "2026-10-20T02:55:45.901Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -10359,7 +10370,7 @@
             "sourceId": "red:30917"
           }
         ],
-        "updatedAt": "2026-10-20T02:55:45.901Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -10418,7 +10429,7 @@
             "sourceId": "red:30917"
           }
         ],
-        "updatedAt": "2026-10-20T02:55:45.901Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -10568,7 +10579,7 @@
             "sourceId": "red:19092"
           }
         ],
-        "updatedAt": "2026-10-20T02:55:45.901Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -11004,7 +11015,7 @@
             "sourceId": "property-finder:123a2956-56dd-4204-b48a-c5bd80d4bf09"
           }
         ],
-        "updatedAt": "2026-10-20T02:55:45.901Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -11052,7 +11063,7 @@
             "sourceId": "red:30930"
           }
         ],
-        "updatedAt": "2026-10-20T02:55:45.901Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -11142,7 +11153,7 @@
             "sourceId": "nawy:1822"
           }
         ],
-        "updatedAt": "2026-10-20T02:55:45.901Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -11195,7 +11206,7 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 39341656,
+      "priceMin": 7020000,
       "unitTypes": [
         "townhouse"
       ],
@@ -11222,11 +11233,11 @@
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/mountain-view/crete-island",
-            "observedPrice": 39341656,
+            "observedPrice": 7020000,
             "sourceId": "property-finder:620fd1c4-db90-41af-bdfd-d18e51a47d4e"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -11314,7 +11325,7 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 17220000,
+      "priceMin": 7820000,
       "unitTypes": [
         "apartment"
       ],
@@ -11341,11 +11352,11 @@
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/modon-ras-el-hekma/yemm-beach-plaza-ras-el-hekma",
-            "observedPrice": 17220000,
+            "observedPrice": 7820000,
             "sourceId": "property-finder:646809eb-9fa7-4835-bf5c-6b6857988859"
           }
         ],
-        "updatedAt": "2026-10-15T02:55:00.372Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -11457,11 +11468,7 @@
       "type": "residential",
       "priceMin": 8472000,
       "unitTypes": [
-        "Apartment",
-        "Town House",
-        "Duplex",
-        "Chalet",
-        "Villa"
+        "villa"
       ],
       "areaMin": 80,
       "areaMax": 350,
@@ -11472,23 +11479,29 @@
         4
       ],
       "paymentPlan": "5% Down Payment",
-      "downPayment": 0,
+      "downPayment": 5,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19160-mazarine",
             "observedPrice": 8472000,
             "sourceId": "red:19160"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/city-edge/mazarine-islands",
+            "observedPrice": 9770000,
+            "sourceId": "property-finder:4acf3c2b-80d7-4e73-ac40-f67e5665d75c"
           }
         ],
-        "updatedAt": "2026-10-20T18:36:56.430Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -11580,7 +11593,7 @@
             "sourceId": "red:19089"
           }
         ],
-        "updatedAt": "2026-10-20T02:55:45.901Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -11716,7 +11729,7 @@
             "sourceId": "property-finder:47e13c1b-e53c-418e-81f2-f2986c6d59e6"
           }
         ],
-        "updatedAt": "2026-10-20T02:55:45.901Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -12174,7 +12187,7 @@
             "sourceId": "red:40"
           }
         ],
-        "updatedAt": "2026-10-20T02:55:45.901Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -12393,11 +12406,7 @@
       "type": "residential",
       "priceMin": 8472000,
       "unitTypes": [
-        "Apartment",
-        "Town House",
-        "Duplex",
-        "Chalet",
-        "Villa"
+        "villa"
       ],
       "areaMin": 75,
       "areaMax": 329,
@@ -12408,23 +12417,29 @@
         4
       ],
       "paymentPlan": "5% Down Payment",
-      "downPayment": 0,
+      "downPayment": 5,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19160-mazarine",
             "observedPrice": 8472000,
             "sourceId": "red:19160"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/city-edge/mazarine-islands",
+            "observedPrice": 9770000,
+            "sourceId": "property-finder:4acf3c2b-80d7-4e73-ac40-f67e5665d75c"
           }
         ],
-        "updatedAt": "2026-10-20T18:36:56.430Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -12465,11 +12480,7 @@
       "type": "residential",
       "priceMin": 8472000,
       "unitTypes": [
-        "Apartment",
-        "Town House",
-        "Duplex",
-        "Chalet",
-        "Villa"
+        "villa"
       ],
       "areaMin": 81,
       "areaMax": 355,
@@ -12480,23 +12491,29 @@
         4
       ],
       "paymentPlan": "5% Down Payment",
-      "downPayment": 0,
+      "downPayment": 5,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19160-mazarine",
             "observedPrice": 8472000,
             "sourceId": "red:19160"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/city-edge/mazarine-islands",
+            "observedPrice": 9770000,
+            "sourceId": "property-finder:4acf3c2b-80d7-4e73-ac40-f67e5665d75c"
           }
         ],
-        "updatedAt": "2026-10-20T18:36:56.430Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -12686,7 +12703,7 @@
         "sourceId": "nawy-inventory:2691",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 165500000,
+      "priceMin": 1764000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -12697,11 +12714,11 @@
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/modon-ras-el-hekma/yemm-views",
-            "observedPrice": 165500000,
+            "observedPrice": 1764000,
             "sourceId": "property-finder:15a14f51-486d-42bc-a938-d7b1e628ab6b"
           }
         ],
-        "updatedAt": "2026-10-19T02:57:22.366Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -12746,7 +12763,7 @@
             "sourceId": "property-finder:bbc2c885-d5c2-4b8d-97cc-6e42abc946b9"
           }
         ],
-        "updatedAt": "2026-10-20T02:55:45.901Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -13656,7 +13673,7 @@
         "sourceId": "nawy-inventory:2721",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 31300000,
+      "priceMin": 3574200,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -13667,11 +13684,11 @@
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/qatari-diar/sandside-lagoons",
-            "observedPrice": 31300000,
+            "observedPrice": 3574200,
             "sourceId": "property-finder:6b23fb5b-71a9-4b60-b068-eb646b06705e"
           }
         ],
-        "updatedAt": "2026-10-13T03:04:10.844Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -13829,7 +13846,7 @@
         "sourceId": "nawy-inventory:2591",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 32000000,
+      "priceMin": 5530644,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -13840,11 +13857,11 @@
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/misr-italia/amare-sea-front",
-            "observedPrice": 32000000,
+            "observedPrice": 5530644,
             "sourceId": "property-finder:8ee24e3d-7c73-4fba-bb07-82d97ca1496d"
           }
         ],
-        "updatedAt": "2026-10-13T03:04:10.844Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -14364,7 +14381,7 @@
         "sourceId": "nawy-inventory:2458",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 12900000,
+      "priceMin": 12300000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -14373,16 +14390,16 @@
         "sourceCount": 3,
         "sources": [
           {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2458-perla",
+            "observedPrice": 12300000,
+            "sourceId": "nawy:2458"
+          },
+          {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/nations-of-sky/perla",
             "observedPrice": 12900000,
             "sourceId": "property-finder:aa505dec-c1de-4d66-ba2a-315297a19a1d"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/2458-perla",
-            "observedPrice": 13139703,
-            "sourceId": "nawy:2458"
           },
           {
             "name": "RED",
@@ -14391,7 +14408,7 @@
             "sourceId": "red:30971"
           }
         ],
-        "updatedAt": "2026-10-20T02:55:45.901Z"
+        "updatedAt": "2026-10-21T12:43:33.120Z"
       }
     },
     {
@@ -14403,20 +14420,21 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
+        "Apartment",
         "Townhouse",
         "Twinhouse",
         "Chalet",
         "Studio"
       ],
       "downPayment": 5,
-      "installmentYears": 10,
-      "paymentPlan": "5% Down Payment, 10 Years Installments",
+      "installmentYears": 8,
+      "paymentPlan": "5% Down Payment, 8 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2509",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 26050000,
+      "priceMin": 12750000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -14425,19 +14443,19 @@
         "sourceCount": 2,
         "sources": [
           {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/930-naia-bay",
+            "observedPrice": 12750000,
+            "sourceId": "nawy:930"
+          },
+          {
             "name": "RED",
             "url": "https://redww.com/en/projects/19023-naia-bay",
             "observedPrice": 26050000,
             "sourceId": "red:19023"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/930-naia-bay",
-            "observedPrice": 28294000,
-            "sourceId": "nawy:930"
           }
         ],
-        "updatedAt": "2026-09-27T18:34:43.461Z"
+        "updatedAt": "2026-10-21T18:37:12.859Z"
       }
     },
     {
@@ -14449,20 +14467,21 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
+        "Apartment",
         "Townhouse",
         "Twinhouse",
         "Chalet",
         "Studio"
       ],
       "downPayment": 5,
-      "installmentYears": 10,
-      "paymentPlan": "5% Down Payment, 10 Years Installments",
+      "installmentYears": 8,
+      "paymentPlan": "5% Down Payment, 8 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2175",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 17000000,
+      "priceMin": 12750000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -14470,6 +14489,12 @@
         "confidence": "high",
         "sourceCount": 3,
         "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/930-naia-bay",
+            "observedPrice": 12750000,
+            "sourceId": "nawy:930"
+          },
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/naia-developments/naia-bay",
@@ -14481,15 +14506,9 @@
             "url": "https://redww.com/en/projects/19023-naia-bay",
             "observedPrice": 26050000,
             "sourceId": "red:19023"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/930-naia-bay",
-            "observedPrice": 28294000,
-            "sourceId": "nawy:930"
           }
         ],
-        "updatedAt": "2026-10-21T02:56:19.761Z"
+        "updatedAt": "2026-10-21T18:37:12.859Z"
       }
     },
     {
@@ -14501,20 +14520,21 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
+        "Apartment",
         "Townhouse",
         "Twinhouse",
         "Chalet",
         "Studio"
       ],
       "downPayment": 5,
-      "installmentYears": 10,
-      "paymentPlan": "5% Down Payment, 10 Years Installments",
+      "installmentYears": 8,
+      "paymentPlan": "5% Down Payment, 8 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2174",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 17000000,
+      "priceMin": 12750000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -14522,6 +14542,12 @@
         "confidence": "high",
         "sourceCount": 3,
         "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/930-naia-bay",
+            "observedPrice": 12750000,
+            "sourceId": "nawy:930"
+          },
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/naia-developments/naia-bay",
@@ -14533,15 +14559,9 @@
             "url": "https://redww.com/en/projects/19023-naia-bay",
             "observedPrice": 26050000,
             "sourceId": "red:19023"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/930-naia-bay",
-            "observedPrice": 28294000,
-            "sourceId": "nawy:930"
           }
         ],
-        "updatedAt": "2026-10-21T02:56:19.761Z"
+        "updatedAt": "2026-10-21T18:37:12.859Z"
       }
     },
     {
@@ -14601,13 +14621,9 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Apartment",
-        "Town House",
-        "Duplex",
-        "Chalet",
-        "Villa"
+        "villa"
       ],
-      "downPayment": 0,
+      "downPayment": 5,
       "installmentYears": 0,
       "paymentPlan": "5% Down Payment",
       "catalogMeta": {
@@ -14621,16 +14637,22 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19160-mazarine",
             "observedPrice": 8472000,
             "sourceId": "red:19160"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/city-edge/mazarine-islands",
+            "observedPrice": 9770000,
+            "sourceId": "property-finder:4acf3c2b-80d7-4e73-ac40-f67e5665d75c"
           }
         ],
-        "updatedAt": "2026-10-20T18:36:56.430Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -14805,9 +14827,9 @@
         "Villa",
         "Penthouse"
       ],
-      "downPayment": 5,
-      "installmentYears": 10,
-      "paymentPlan": "5% Down Payment, 10 Years Installments",
+      "downPayment": 0,
+      "installmentYears": 9,
+      "paymentPlan": "0% Down Payment, 9 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2437",
@@ -14830,7 +14852,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/757-azha-north-coast",
-            "observedPrice": 12823500,
+            "observedPrice": 14461000,
             "sourceId": "nawy:757"
           },
           {
@@ -14840,7 +14862,7 @@
             "sourceId": "red:19032"
           }
         ],
-        "updatedAt": "2026-10-20T02:55:45.901Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -14859,15 +14881,15 @@
         "Villa",
         "Penthouse"
       ],
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 10,
-      "paymentPlan": "5% Down Payment, 10 Years Installments",
+      "paymentPlan": "0% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2166",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 12823500,
+      "priceMin": 14461000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -14878,7 +14900,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/757-azha-north-coast",
-            "observedPrice": 12823500,
+            "observedPrice": 14461000,
             "sourceId": "nawy:757"
           },
           {
@@ -14888,7 +14910,7 @@
             "sourceId": "red:19032"
           }
         ],
-        "updatedAt": "2026-10-18T12:37:44.844Z"
+        "updatedAt": "2026-10-21T18:37:12.859Z"
       }
     },
     {
@@ -14907,15 +14929,15 @@
         "Villa",
         "Penthouse"
       ],
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 10,
-      "paymentPlan": "5% Down Payment, 10 Years Installments",
+      "paymentPlan": "0% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2165",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 12823500,
+      "priceMin": 14461000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -14926,7 +14948,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/757-azha-north-coast",
-            "observedPrice": 12823500,
+            "observedPrice": 14461000,
             "sourceId": "nawy:757"
           },
           {
@@ -14936,7 +14958,7 @@
             "sourceId": "red:19032"
           }
         ],
-        "updatedAt": "2026-10-18T12:37:44.844Z"
+        "updatedAt": "2026-10-21T18:37:12.859Z"
       }
     },
     {
@@ -14955,9 +14977,9 @@
         "Villa",
         "Penthouse"
       ],
-      "downPayment": 5,
-      "installmentYears": 10,
-      "paymentPlan": "5% Down Payment, 10 Years Installments",
+      "downPayment": 0,
+      "installmentYears": 9,
+      "paymentPlan": "0% Down Payment, 9 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2164",
@@ -14980,7 +15002,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/757-azha-north-coast",
-            "observedPrice": 12823500,
+            "observedPrice": 14461000,
             "sourceId": "nawy:757"
           },
           {
@@ -14990,7 +15012,7 @@
             "sourceId": "red:19032"
           }
         ],
-        "updatedAt": "2026-10-20T02:55:45.901Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -15009,15 +15031,15 @@
         "Villa",
         "Penthouse"
       ],
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 10,
-      "paymentPlan": "5% Down Payment, 10 Years Installments",
+      "paymentPlan": "0% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2030",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 12823500,
+      "priceMin": 14461000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -15028,7 +15050,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/757-azha-north-coast",
-            "observedPrice": 12823500,
+            "observedPrice": 14461000,
             "sourceId": "nawy:757"
           },
           {
@@ -15038,7 +15060,7 @@
             "sourceId": "red:19032"
           }
         ],
-        "updatedAt": "2026-10-18T12:37:44.844Z"
+        "updatedAt": "2026-10-21T18:37:12.859Z"
       }
     },
     {
@@ -15378,7 +15400,7 @@
         "sourceId": "nawy-inventory:2722",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 28155000,
+      "priceMin": 6337277,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -15389,11 +15411,11 @@
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/starlight-developments/lagoon-chalets",
-            "observedPrice": 28155000,
+            "observedPrice": 6337277,
             "sourceId": "property-finder:feb8a504-b950-4c4c-9dcc-704f8870d79f"
           }
         ],
-        "updatedAt": "2026-10-13T03:04:10.844Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -15424,22 +15446,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/734-lasirena-north-coast",
             "observedPrice": 3890000,
             "sourceId": "nawy:734"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/lasirena-group/mawj",
-            "observedPrice": 8225000,
-            "sourceId": "property-finder:9587a4a0-294c-4198-93a7-d2b89d1cbcc4"
           }
         ],
-        "updatedAt": "2026-10-21T02:56:19.761Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -15470,16 +15486,22 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/734-lasirena-north-coast",
             "observedPrice": 3890000,
             "sourceId": "nawy:734"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/lasirena-group/lasirena-north-coast",
+            "observedPrice": 12000000,
+            "sourceId": "property-finder:b73de620-10f5-4568-9c72-bb02e751a392"
           }
         ],
-        "updatedAt": "2026-10-20T18:36:56.430Z"
+        "updatedAt": "2026-10-22T02:56:29.044Z"
       }
     },
     {
@@ -15958,15 +15980,15 @@
         "Villa",
         "Penthouse"
       ],
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 10,
-      "paymentPlan": "5% Down Payment, 10 Years Installments",
+      "paymentPlan": "0% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2749",
         "observedAt": "2026-09-30T03:39:20.077Z"
       },
-      "priceMin": 12823500,
+      "priceMin": 14461000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -15977,7 +15999,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/757-azha-north-coast",
-            "observedPrice": 12823500,
+            "observedPrice": 14461000,
             "sourceId": "nawy:757"
           },
           {
@@ -15987,7 +16009,7 @@
             "sourceId": "red:19032"
           }
         ],
-        "updatedAt": "2026-10-18T12:37:44.844Z"
+        "updatedAt": "2026-10-21T18:37:12.859Z"
       }
     }
   ],

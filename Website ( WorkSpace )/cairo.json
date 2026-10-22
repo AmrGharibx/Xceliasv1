@@ -60540,6 +60540,99 @@
         ],
         "updatedAt": "2026-10-21T06:48:12.929Z"
       }
+    },
+    {
+      "name": "The Estates Residence",
+      "dev": "SODIC",
+      "lat": 30.074697,
+      "lng": 30.87622,
+      "zone": "New Zayed",
+      "status": "Available",
+      "type": "residential",
+      "unitTypes": [
+        "Apartment",
+        "Townhouse",
+        "Duplex",
+        "Villa",
+        "Penthouse",
+        "Twinhouse"
+      ],
+      "downPayment": 5,
+      "installmentYears": 10,
+      "paymentPlan": "5% Down Payment, 10 Years Installments",
+      "catalogMeta": {
+        "status": "observed",
+        "sourceId": "nawy-inventory:664",
+        "observedAt": "2026-10-22T03:37:47.108Z"
+      },
+      "priceMin": 19135000
+    },
+    {
+      "name": "The Estates",
+      "dev": "SODIC",
+      "lat": 30.08172,
+      "lng": 30.878458,
+      "zone": "New Zayed",
+      "status": "Available",
+      "type": "residential",
+      "unitTypes": [
+        "Villa",
+        "Townhouse",
+        "Apartment",
+        "Twinhouse"
+      ],
+      "downPayment": 10,
+      "installmentYears": 10,
+      "paymentPlan": "10% Down Payment, 10 Years Installments",
+      "catalogMeta": {
+        "status": "observed",
+        "sourceId": "nawy-inventory:310",
+        "observedAt": "2026-10-22T03:37:47.108Z"
+      },
+      "priceMin": 77223960
+    },
+    {
+      "name": "Gardinn Solana East",
+      "dev": "Ora Developers",
+      "lat": 29.975177678466522,
+      "lng": 31.535127681367356,
+      "zone": "New Cairo",
+      "status": "Available",
+      "type": "residential",
+      "unitTypes": [
+        "Apartment"
+      ],
+      "downPayment": 5,
+      "installmentYears": 9,
+      "paymentPlan": "5% Down Payment, 9 Years Installments",
+      "catalogMeta": {
+        "status": "observed",
+        "sourceId": "nawy-inventory:2785",
+        "observedAt": "2026-10-22T03:37:47.108Z"
+      },
+      "priceMin": 8975000
+    },
+    {
+      "name": "Orchard villas",
+      "dev": "Imkan Misr",
+      "lat": 30.20070437554469,
+      "lng": 31.679044588904986,
+      "zone": "El Shorouk",
+      "status": "Available",
+      "type": "residential",
+      "unitTypes": [
+        "Townhouse",
+        "Villa"
+      ],
+      "downPayment": 5,
+      "installmentYears": 4,
+      "paymentPlan": "5% Down Payment, 4 Years Installments",
+      "catalogMeta": {
+        "status": "observed",
+        "sourceId": "nawy-inventory:2792",
+        "observedAt": "2026-10-22T03:37:47.108Z"
+      },
+      "priceMin": 11900000
     }
   ],
   "projectDetails": {
@@ -74866,7 +74959,7 @@
         "https://prod-images.nawy.com/processed/compound_image/image/1798/high.webp"
       ],
       "assetMeta": {
-        "lastEnrichedAt": "2026-10-21T03:38:06.141Z",
+        "lastEnrichedAt": "2026-10-22T03:37:59.371Z",
         "sourceId": "red-asset:20"
       }
     },
@@ -78449,6 +78542,32 @@
       "layouts": [],
       "images": [
         "https://prod-images.nawy.com/processed/inventory/compounds/2791/gallery/Luxury%20Blue-Gray%20Ribbed%20ORB%20Branding/high.webp"
+      ]
+    },
+    "Gardinn Solana East": {
+      "unitTypes": "Apartment",
+      "areas": "",
+      "paymentPlan": "5% Down Payment, 9 Years Installments",
+      "status": "Available",
+      "amenities": "",
+      "description": "Project information is being verified.",
+      "masterplan": "",
+      "layouts": [],
+      "images": [
+        "https://prod-images.nawy.com/processed/inventory/compounds/2785/cover-images/Gardinn/high.webp"
+      ]
+    },
+    "Orchard villas": {
+      "unitTypes": "Townhouse, Villa",
+      "areas": "",
+      "paymentPlan": "5% Down Payment, 4 Years Installments",
+      "status": "Available",
+      "amenities": "",
+      "description": "Project information is being verified.",
+      "masterplan": "",
+      "layouts": [],
+      "images": [
+        "https://s3.eu-central-1.amazonaws.com/prod.images.cooingestate.com/launches/cover_images/6ace39624b52fbba2a66e5f0/Orchard_16x9.jpg"
       ]
     }
   }

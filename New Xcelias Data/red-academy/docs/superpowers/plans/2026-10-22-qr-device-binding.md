@@ -129,7 +129,7 @@
 **Files:**
 - Verify: all files from Tasks 1–5
 
-- [ ] **Step 1: Run** `npm test` and `npm run check` in `New Xcelias Data/red-academy`; run browser tests and the root build as relevant. Review the final diff against the security checklist (input validation, parameterized SQL, authorization/RLS, CSRF/origin controls, XSS, rate limits, secret/log redaction, and generic errors). Fix regressions before deployment.
+- [x] **Step 1: Run** `npm test` and `npm run check` in `New Xcelias Data/red-academy`; run browser tests and the root build as relevant. Review the final diff against the security checklist (input validation, parameterized SQL, authorization/RLS, CSRF/origin controls, XSS, rate limits, secret/log redaction, and generic errors). Fix regressions before deployment.
 - [x] **Step 2: Build** with `npm run cloud:build`; inspect the generated QR page and Edge bundle to confirm current Xcelias URLs, no secrets, and updated participant asset cache version.
 - [x] **Step 3: Inspect the remote migration plan** with `supabase db push --dry-run --skip-vault --project-ref …`. Stop unless the dry run shows only the new device-link migration; do not run any data import or mutation against batches, trainees, or attendance.
 - [ ] **Step 4: Apply** only the reviewed additive migration, then deploy the Academy Edge Function and the website build in migration-before-code order. Verify the new table/RPCs exist and existing batches/attendance are unchanged.

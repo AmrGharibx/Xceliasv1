@@ -3152,10 +3152,10 @@
       "priceMin": 7427470,
       "unitTypes": [
         "Chalet",
-        "Duplex",
-        "Penthouse",
+        "Townhouse",
         "Villa",
-        "Townhouse"
+        "Duplex",
+        "Penthouse"
       ],
       "areaMin": 58,
       "areaMax": 242,
@@ -3175,7 +3175,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
@@ -3184,19 +3184,13 @@
             "sourceId": "nawy:1051"
           },
           {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/wadi-degla/murano-wadi-degla",
-            "observedPrice": 8036600,
-            "sourceId": "property-finder:39b44706-3901-437f-bde2-699ec54675f2"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/19029-murano",
             "observedPrice": 15759090,
             "sourceId": "red:19029"
           }
         ],
-        "updatedAt": "2026-10-21T12:43:33.120Z"
+        "updatedAt": "2026-10-23T01:03:26.399Z"
       }
     },
     {

@@ -6580,10 +6580,10 @@
       "layouts": "https://njd.com.eg/projects/jamila",
       "priceMin": 4770984,
       "unitTypes": [
-        "Villa",
         "Chalet",
-        "Duplex",
+        "Villa",
         "Apartment",
+        "Duplex",
         "Studio"
       ],
       "areaMin": 82,
@@ -6604,22 +6604,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1290-jamila",
             "observedPrice": 4770984,
             "sourceId": "nawy:1290"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/new-jersey-developments/jamila",
-            "observedPrice": 5961000,
-            "sourceId": "property-finder:be835268-53e1-4587-835b-fb84832c8713"
           }
         ],
-        "updatedAt": "2026-10-21T12:43:33.120Z"
+        "updatedAt": "2026-10-23T01:03:26.399Z"
       }
     },
     {
@@ -11150,7 +11144,7 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 15600000,
+      "priceMin": 29830000,
       "unitTypes": [
         "Townhouse",
         "Villa",
@@ -11174,14 +11168,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/qatari-diar/alam-al-roum",
-            "observedPrice": 15600000,
-            "sourceId": "property-finder:02b76736-bc16-4eba-9968-6b6166ed7dad"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1891-alam-al-roum",
@@ -11189,7 +11177,7 @@
             "sourceId": "nawy:1891"
           }
         ],
-        "updatedAt": "2026-10-21T02:56:19.761Z"
+        "updatedAt": "2026-10-23T01:03:26.399Z"
       }
     },
     {
@@ -14126,7 +14114,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
@@ -14135,19 +14123,13 @@
             "sourceId": "nawy:2458"
           },
           {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/nations-of-sky/perla",
-            "observedPrice": 12900000,
-            "sourceId": "property-finder:aa505dec-c1de-4d66-ba2a-315297a19a1d"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/30971-perla",
             "observedPrice": 16600000,
             "sourceId": "red:30971"
           }
         ],
-        "updatedAt": "2026-10-21T12:43:33.120Z"
+        "updatedAt": "2026-10-23T01:03:26.399Z"
       }
     },
     {

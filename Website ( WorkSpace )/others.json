@@ -673,7 +673,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 3,
         "sources": [
           {
             "name": "RED",
@@ -682,13 +682,19 @@
             "sourceId": "red:19101"
           },
           {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/palm-hills/palm-hills-alexandria",
+            "observedPrice": 9418000,
+            "sourceId": "property-finder:32791fee-4182-4ae1-8a60-39c97256919c"
+          },
+          {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/201-palm-hills-alexandria",
             "observedPrice": 11122000,
             "sourceId": "nawy:201"
           }
         ],
-        "updatedAt": "2026-10-22T18:36:38.055Z"
+        "updatedAt": "2026-10-23T02:57:17.001Z"
       }
     },
     {
@@ -2197,16 +2203,22 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/2239-coral-coves",
             "observedPrice": 20800000,
             "sourceId": "nawy:2239"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/somabay-realestate/soma-coves",
+            "observedPrice": 22100000,
+            "sourceId": "property-finder:9e4e375f-5822-47f1-9cee-4fc1d43d23b2"
           }
         ],
-        "updatedAt": "2026-10-22T18:36:38.055Z"
+        "updatedAt": "2026-10-23T02:57:17.001Z"
       }
     },
     {

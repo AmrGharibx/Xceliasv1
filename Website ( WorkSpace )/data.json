@@ -72696,20 +72696,14 @@
         "sourceId": "nawy-inventory:2179",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 6702494,
+      "priceMin": 11321000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
-        "confidence": "verified",
-        "sourceCount": 2,
+        "confidence": "high",
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/zayard-developments/zayard-memora",
-            "observedPrice": 6702494,
-            "sourceId": "property-finder:cfdc64bd-8cec-4e2b-a606-79e4b1aa3d72"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/2179-zayard-memora",
@@ -72717,7 +72711,7 @@
             "sourceId": "nawy:2179"
           }
         ],
-        "updatedAt": "2026-10-21T18:37:12.859Z"
+        "updatedAt": "2026-10-23T12:41:45.374Z"
       }
     },
     {

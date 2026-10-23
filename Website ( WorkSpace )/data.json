@@ -24293,7 +24293,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
@@ -24306,15 +24306,9 @@
             "url": "https://redww.com/en/projects/19075-nmq",
             "observedPrice": 8898000,
             "sourceId": "red:19075"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/melee-development/nmq",
-            "observedPrice": 11635000,
-            "sourceId": "property-finder:4d95571f-9f50-4f18-b5a0-9116d2c3b6bb"
           }
         ],
-        "updatedAt": "2026-10-21T18:37:12.859Z"
+        "updatedAt": "2026-10-23T06:48:15.711Z"
       }
     },
     {
@@ -31154,9 +31148,9 @@
       "layouts": "https://naiadevelopments.com/naia-bay/",
       "priceMin": 12750000,
       "unitTypes": [
-        "Apartment",
         "Townhouse",
         "Twinhouse",
+        "Apartment",
         "Chalet",
         "Studio"
       ],
@@ -31178,7 +31172,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
@@ -31187,19 +31181,13 @@
             "sourceId": "nawy:930"
           },
           {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/naia-developments/naia-bay",
-            "observedPrice": 17000000,
-            "sourceId": "property-finder:764debd9-6a2e-4eea-8867-c373ea5d54a8"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/19023-naia-bay",
             "observedPrice": 26050000,
             "sourceId": "red:19023"
           }
         ],
-        "updatedAt": "2026-10-21T18:37:12.859Z"
+        "updatedAt": "2026-10-23T06:48:15.711Z"
       }
     },
     {
@@ -67853,9 +67841,9 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Apartment",
         "Townhouse",
         "Twinhouse",
+        "Apartment",
         "Chalet",
         "Studio"
       ],
@@ -67873,7 +67861,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
@@ -67882,19 +67870,13 @@
             "sourceId": "nawy:930"
           },
           {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/naia-developments/naia-bay",
-            "observedPrice": 17000000,
-            "sourceId": "property-finder:764debd9-6a2e-4eea-8867-c373ea5d54a8"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/19023-naia-bay",
             "observedPrice": 26050000,
             "sourceId": "red:19023"
           }
         ],
-        "updatedAt": "2026-10-21T18:37:12.859Z"
+        "updatedAt": "2026-10-23T06:48:15.711Z"
       }
     },
     {
@@ -67906,9 +67888,9 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Apartment",
         "Townhouse",
         "Twinhouse",
+        "Apartment",
         "Chalet",
         "Studio"
       ],
@@ -67926,7 +67908,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
@@ -67935,19 +67917,13 @@
             "sourceId": "nawy:930"
           },
           {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/naia-developments/naia-bay",
-            "observedPrice": 17000000,
-            "sourceId": "property-finder:764debd9-6a2e-4eea-8867-c373ea5d54a8"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/19023-naia-bay",
             "observedPrice": 26050000,
             "sourceId": "red:19023"
           }
         ],
-        "updatedAt": "2026-10-21T18:37:12.859Z"
+        "updatedAt": "2026-10-23T06:48:15.711Z"
       }
     },
     {
@@ -85689,22 +85665,36 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Apartment",
-        "Townhouse",
-        "Duplex",
         "Villa",
-        "Penthouse",
-        "Twinhouse"
+        "Twin House",
+        "Apartment",
+        "Town House"
       ],
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:664",
         "observedAt": "2026-10-23T03:37:58.853Z"
       },
-      "priceMin": 19135000
+      "priceMin": 22679000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/20-the-estates",
+            "observedPrice": 22679000,
+            "sourceId": "red:20"
+          }
+        ],
+        "updatedAt": "2026-10-23T06:48:15.711Z"
+      }
     },
     {
       "name": "The Estates",
@@ -85716,19 +85706,35 @@
       "type": "residential",
       "unitTypes": [
         "Villa",
-        "Townhouse",
+        "Twin House",
         "Apartment",
-        "Twinhouse"
+        "Town House"
       ],
-      "downPayment": 10,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "10% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:310",
         "observedAt": "2026-10-23T03:37:58.853Z"
       },
-      "priceMin": 77223960
+      "priceMin": 22679000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/20-the-estates",
+            "observedPrice": 22679000,
+            "sourceId": "red:20"
+          }
+        ],
+        "updatedAt": "2026-10-23T06:48:15.711Z"
+      }
     }
   ],
   "projectDetails": {

@@ -849,7 +849,7 @@
       "zone": "Hurghada",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 13654075,
+      "priceMin": 12000000,
       "unitTypes": [
         "Chalet",
         "Townhouse"
@@ -872,8 +872,14 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/the-land-developers/il-bayou",
+            "observedPrice": 12000000,
+            "sourceId": "property-finder:9150aa0f-8aa4-4c3c-9760-eb1b2152a1a5"
+          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/978-il-bayou",
@@ -881,7 +887,7 @@
             "sourceId": "nawy:978"
           }
         ],
-        "updatedAt": "2026-10-23T18:38:09.477Z"
+        "updatedAt": "2026-10-24T02:54:50.731Z"
       }
     },
     {
@@ -1652,8 +1658,7 @@
       "type": "residential",
       "priceMin": 15405000,
       "unitTypes": [
-        "Apartment",
-        "Loft"
+        "apartment"
       ],
       "areaMin": 55,
       "areaMax": 230,
@@ -1665,9 +1670,9 @@
         5,
         6
       ],
-      "paymentPlan": "15% Down Payment, 8 Years Installments",
-      "downPayment": 15,
-      "installmentYears": 8,
+      "paymentPlan": "10% Down Payment",
+      "downPayment": 10,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -1676,13 +1681,13 @@
         "sourceCount": 1,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/2557-aden-parks",
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/orascom-development/aden-parks",
             "observedPrice": 15405000,
-            "sourceId": "nawy:2557"
+            "sourceId": "property-finder:3e0424d4-5dc0-427c-83bc-461053c89412"
           }
         ],
-        "updatedAt": "2026-09-24T02:54:29.356Z"
+        "updatedAt": "2026-10-24T02:54:50.731Z"
       }
     },
     {

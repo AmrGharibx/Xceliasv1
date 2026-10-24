@@ -800,7 +800,7 @@
       "zone": "Hurghada",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 12000000,
+      "priceMin": 13654075,
       "unitTypes": [
         "Chalet",
         "Townhouse"
@@ -823,14 +823,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/the-land-developers/il-bayou",
-            "observedPrice": 12000000,
-            "sourceId": "property-finder:9150aa0f-8aa4-4c3c-9760-eb1b2152a1a5"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/978-il-bayou",
@@ -838,7 +832,7 @@
             "sourceId": "nawy:978"
           }
         ],
-        "updatedAt": "2026-10-23T02:57:17.001Z"
+        "updatedAt": "2026-10-24T18:33:46.522Z"
       }
     },
     {
@@ -1453,7 +1447,7 @@
       "zone": "Hurghada",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 12000000,
+      "priceMin": 13654075,
       "unitTypes": [
         "Chalet",
         "Townhouse"
@@ -1476,14 +1470,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/the-land-developers/il-bayou",
-            "observedPrice": 12000000,
-            "sourceId": "property-finder:9150aa0f-8aa4-4c3c-9760-eb1b2152a1a5"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/978-il-bayou",
@@ -1491,7 +1479,7 @@
             "sourceId": "nawy:978"
           }
         ],
-        "updatedAt": "2026-10-23T02:57:17.001Z"
+        "updatedAt": "2026-10-24T18:33:46.522Z"
       }
     },
     {
@@ -1920,11 +1908,9 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "apartment",
-        "townhouse",
-        "villa"
+        "Town House"
       ],
-      "downPayment": 10,
+      "downPayment": 0,
       "installmentYears": 0,
       "paymentPlan": "10% Down Payment",
       "catalogMeta": {
@@ -1938,22 +1924,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30949-siyal",
             "observedPrice": 22000000,
             "sourceId": "red:30949"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/orascom-development/siyal-makadi-heights",
-            "observedPrice": 22695000,
-            "sourceId": "property-finder:e5e8e6a6-eb17-4a83-a28d-8ad5ea97f773"
           }
         ],
-        "updatedAt": "2026-10-23T02:57:17.001Z"
+        "updatedAt": "2026-10-24T18:33:46.522Z"
       }
     },
     {
@@ -2007,8 +1987,8 @@
       "unitTypes": [
         "Apartment",
         "Townhouse",
-        "Villa",
-        "Twinhouse"
+        "Twinhouse",
+        "Villa"
       ],
       "downPayment": 10,
       "installmentYears": 8,
@@ -2024,7 +2004,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
@@ -2033,19 +2013,13 @@
             "sourceId": "red:30963"
           },
           {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/travco-properties/makadina",
-            "observedPrice": 7400000,
-            "sourceId": "property-finder:6f94f94b-9809-4220-9620-aa5688b81f76"
-          },
-          {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/2025-makadina",
             "observedPrice": 7750000,
             "sourceId": "nawy:2025"
           }
         ],
-        "updatedAt": "2026-10-23T02:57:17.001Z"
+        "updatedAt": "2026-10-24T18:33:46.522Z"
       }
     },
     {
@@ -2078,11 +2052,11 @@
         "Townhouse",
         "Apartment",
         "Loft",
-        "Chalet",
         "Villa",
         "Twinhouse",
-        "Penthouse",
-        "Duplex"
+        "Chalet",
+        "Duplex",
+        "Penthouse"
       ],
       "downPayment": 25,
       "installmentYears": 3,
@@ -2098,7 +2072,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
@@ -2107,19 +2081,13 @@
             "sourceId": "red:52"
           },
           {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/orascom-development/makadi-heights",
-            "observedPrice": 11000000,
-            "sourceId": "property-finder:6e9a4054-9bf0-4a4d-926a-2c73e79f84eb"
-          },
-          {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/454-makadi-heights",
             "observedPrice": 14150000,
             "sourceId": "nawy:454"
           }
         ],
-        "updatedAt": "2026-10-23T02:57:17.001Z"
+        "updatedAt": "2026-10-24T18:33:46.522Z"
       }
     }
   ],

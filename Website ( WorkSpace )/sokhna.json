@@ -173,11 +173,11 @@
       "zone": "Zaafarana",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 14277123,
-      "priceMax": 34861493,
+      "priceMin": 4387500,
       "unitTypes": [
-        "Villa",
-        "Apartment"
+        "apartment",
+        "duplex",
+        "villa"
       ],
       "areaMin": 78,
       "areaMax": 340,
@@ -189,9 +189,25 @@
         5,
         6
       ],
-      "paymentPlan": "10% Down Payment, 8 Years Installments",
+      "paymentPlan": "10% Down Payment",
       "downPayment": 10,
-      "installmentYears": 8
+      "installmentYears": 0,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/mgdevelopment/blue-blue",
+            "observedPrice": 4387500,
+            "sourceId": "property-finder:cc6b28a5-6bb2-42a2-a75f-06dd5a325620"
+          }
+        ],
+        "updatedAt": "2026-10-25T02:55:58.934Z"
+      }
     },
     {
       "name": "Malibu",
@@ -559,16 +575,22 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/599-la-vista-6",
             "observedPrice": 9300000,
             "sourceId": "nawy:599"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/la-vista-developments/la-vista-6",
+            "observedPrice": 21690000,
+            "sourceId": "property-finder:c01ccd91-6140-4733-8c46-253cfb115a2a"
           }
         ],
-        "updatedAt": "2026-10-24T18:33:46.522Z"
+        "updatedAt": "2026-10-25T02:55:58.934Z"
       }
     },
     {
@@ -1150,16 +1172,22 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/392-the-groove",
             "observedPrice": 5257000,
             "sourceId": "nawy:392"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/dm-developments/the-groove-resort",
+            "observedPrice": 6400000,
+            "sourceId": "property-finder:e453bd30-4a43-4266-8cde-75e8a0e39225"
           }
         ],
-        "updatedAt": "2026-10-24T18:33:46.522Z"
+        "updatedAt": "2026-10-25T02:55:58.934Z"
       }
     },
     {
@@ -3175,7 +3203,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 3,
         "sources": [
           {
             "name": "Nawy",
@@ -3184,13 +3212,19 @@
             "sourceId": "nawy:1051"
           },
           {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/wadi-degla/murano-wadi-degla",
+            "observedPrice": 8036600,
+            "sourceId": "property-finder:39b44706-3901-437f-bde2-699ec54675f2"
+          },
+          {
             "name": "RED",
             "url": "https://redww.com/en/projects/19029-murano",
             "observedPrice": 15759090,
             "sourceId": "red:19029"
           }
         ],
-        "updatedAt": "2026-10-24T18:33:46.522Z"
+        "updatedAt": "2026-10-25T02:55:58.934Z"
       }
     },
     {
@@ -3248,16 +3282,22 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/599-la-vista-6",
             "observedPrice": 9300000,
             "sourceId": "nawy:599"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/la-vista-developments/la-vista-6",
+            "observedPrice": 21690000,
+            "sourceId": "property-finder:c01ccd91-6140-4733-8c46-253cfb115a2a"
           }
         ],
-        "updatedAt": "2026-10-24T18:33:46.522Z"
+        "updatedAt": "2026-10-25T02:55:58.934Z"
       }
     },
     {
@@ -3580,7 +3620,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 3,
         "sources": [
           {
             "name": "RED",
@@ -3593,9 +3633,15 @@
             "url": "https://www.nawy.com/compound/90-il-monte-galala",
             "observedPrice": 7392000,
             "sourceId": "nawy:90"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/tatweer-misr/maesta",
+            "observedPrice": 7392000,
+            "sourceId": "property-finder:1fb1d027-148e-45db-848f-379b55305325"
           }
         ],
-        "updatedAt": "2026-10-24T18:33:46.522Z"
+        "updatedAt": "2026-10-25T02:55:58.934Z"
       }
     },
     {

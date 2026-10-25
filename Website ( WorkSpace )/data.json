@@ -3512,14 +3512,14 @@
       "priceMin": 9309947,
       "unitTypes": [
         "Villa",
+        "Duplex",
         "Apartment",
         "Office",
         "Retail",
         "Building",
-        "Duplex",
         "Townhouse",
-        "Twinhouse",
         "Penthouse",
+        "Twinhouse",
         "Studio",
         "Family House"
       ],
@@ -3533,9 +3533,9 @@
         5,
         6
       ],
-      "paymentPlan": "2.5% Down Payment, 9 Years Installments",
-      "downPayment": 2.5,
-      "installmentYears": 9,
+      "paymentPlan": "5% Down Payment, 8 Years Installments",
+      "downPayment": 5,
+      "installmentYears": 8,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -3552,11 +3552,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/195-mountain-view-icity-new-cairo",
-            "observedPrice": 12369394,
+            "observedPrice": 15593030,
             "sourceId": "nawy:195"
           }
         ],
-        "updatedAt": "2026-10-18T18:33:22.357Z"
+        "updatedAt": "2026-10-25T12:38:31.861Z"
       }
     },
     {
@@ -19715,10 +19715,10 @@
       "zone": "New Capital",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 4102496,
+      "priceMin": 4086103,
       "unitTypes": [
-        "Retail",
-        "Administrative"
+        "Administrative",
+        "Retail"
       ],
       "areaMin": 68,
       "areaMax": 292,
@@ -19743,11 +19743,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/895-paragon-2",
-            "observedPrice": 4102496,
+            "observedPrice": 4086103,
             "sourceId": "nawy:895"
           }
         ],
-        "updatedAt": "2026-10-14T18:38:58.329Z"
+        "updatedAt": "2026-10-25T12:38:31.861Z"
       }
     },
     {
@@ -68246,10 +68246,8 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Apartment",
-        "Villa",
-        "Duplex",
-        "Loft"
+        "Studio",
+        "Service Apartment"
       ],
       "downPayment": 0,
       "installmentYears": 0,
@@ -68265,7 +68263,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
@@ -68278,15 +68276,9 @@
             "url": "https://www.propertyfinder.eg/en/new-projects/city-edge/lush-valley",
             "observedPrice": 6306000,
             "sourceId": "property-finder:a922077b-0682-4f89-af52-a0eb59ee145a"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1962-lush-valley",
-            "observedPrice": 10510000,
-            "sourceId": "nawy:1962"
           }
         ],
-        "updatedAt": "2026-10-25T02:55:58.934Z"
+        "updatedAt": "2026-10-25T12:38:31.861Z"
       }
     },
     {

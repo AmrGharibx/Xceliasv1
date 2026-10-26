@@ -1816,9 +1816,11 @@
       "type": "residential",
       "priceMin": 16586259,
       "unitTypes": [
-        "duplex",
-        "apartment",
-        "villa"
+        "Villa",
+        "Townhouse",
+        "Duplex",
+        "Apartment",
+        "Penthouse"
       ],
       "areaMin": 92,
       "areaMax": 458,
@@ -1830,9 +1832,9 @@
         5,
         6
       ],
-      "paymentPlan": "10% Down Payment",
+      "paymentPlan": "10% Down Payment, 8 Years Installments",
       "downPayment": 10,
-      "installmentYears": 0,
+      "installmentYears": 8,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -1841,13 +1843,13 @@
         "sourceCount": 1,
         "sources": [
           {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/mountain-view/mountain-view-1-1-phase-2",
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/655-mountain-view-1.1",
             "observedPrice": 16586259,
-            "sourceId": "property-finder:b87232fa-8292-43ce-87f8-dd130b01bdb9"
+            "sourceId": "nawy:655"
           }
         ],
-        "updatedAt": "2026-10-17T02:54:09.889Z"
+        "updatedAt": "2026-10-26T14:11:09.178Z"
       }
     },
     {
@@ -2266,13 +2268,13 @@
       "zone": "New Cairo",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 3672058,
+      "priceMin": 3659267,
       "unitTypes": [
-        "Villa",
-        "Apartment",
-        "Duplex",
-        "Studio",
         "Townhouse",
+        "Villa",
+        "Duplex",
+        "Apartment",
+        "Studio",
         "Retail",
         "Medical",
         "Administrative",
@@ -2302,7 +2304,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/147-sarai",
-            "observedPrice": 3672058,
+            "observedPrice": 3659267,
             "sourceId": "nawy:147"
           },
           {
@@ -2312,7 +2314,7 @@
             "sourceId": "red:34"
           }
         ],
-        "updatedAt": "2026-10-15T18:37:23.865Z"
+        "updatedAt": "2026-10-26T14:11:09.178Z"
       }
     },
     {
@@ -5053,11 +5055,11 @@
       "zone": "New Cairo",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 7900920,
+      "priceMin": 8216957,
       "unitTypes": [
         "Apartment",
-        "Duplex",
-        "Townhouse"
+        "Townhouse",
+        "Duplex"
       ],
       "areaMin": 94,
       "areaMax": 472,
@@ -5082,7 +5084,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1782-acasa-alma",
-            "observedPrice": 7900920,
+            "observedPrice": 8216957,
             "sourceId": "nawy:1782"
           },
           {
@@ -5092,7 +5094,7 @@
             "sourceId": "red:30924"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-10-26T14:11:09.178Z"
       }
     },
     {
@@ -7659,7 +7661,7 @@
       "zone": "New Cairo",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 7826625,
+      "priceMin": 8054417,
       "unitTypes": [
         "Apartment"
       ],
@@ -7686,7 +7688,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1037-acasa-mia",
-            "observedPrice": 7826625,
+            "observedPrice": 8054417,
             "sourceId": "nawy:1037"
           },
           {
@@ -7696,7 +7698,7 @@
             "sourceId": "red:19221"
           }
         ],
-        "updatedAt": "2026-10-20T02:55:45.901Z"
+        "updatedAt": "2026-10-26T14:11:09.178Z"
       }
     },
     {
@@ -9319,11 +9321,12 @@
       "zone": "New Cairo",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 7326000,
+      "priceMin": 2500000,
       "unitTypes": [
         "Apartment",
         "Townhouse",
-        "Villa"
+        "Villa",
+        "Studio"
       ],
       "areaMin": 93,
       "areaMax": 467,
@@ -9346,6 +9349,12 @@
         "sourceCount": 3,
         "sources": [
           {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1223-the-101",
+            "observedPrice": 2500000,
+            "sourceId": "nawy:1223"
+          },
+          {
             "name": "RED",
             "url": "https://redww.com/en/projects/30882-the-101",
             "observedPrice": 7326000,
@@ -9356,15 +9365,9 @@
             "url": "https://www.propertyfinder.eg/en/new-projects/el-attal-holding-properties/the-101",
             "observedPrice": 12700000,
             "sourceId": "property-finder:e317e546-f625-4503-94bc-18aa05f98751"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1223-the-101",
-            "observedPrice": 20200000,
-            "sourceId": "nawy:1223"
           }
         ],
-        "updatedAt": "2026-10-26T03:01:14.243Z"
+        "updatedAt": "2026-10-26T14:11:09.178Z"
       }
     },
     {
@@ -9604,13 +9607,13 @@
       "zone": "New Cairo",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 5574537,
+      "priceMin": 3009322,
       "unitTypes": [
-        "Apartment",
-        "Townhouse",
-        "Villa",
         "Duplex",
-        "Studio"
+        "Apartment",
+        "Studio",
+        "Townhouse",
+        "Villa"
       ],
       "areaMin": 96,
       "areaMax": 482,
@@ -9633,16 +9636,16 @@
         "sourceCount": 3,
         "sources": [
           {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1287-the-butterfly",
+            "observedPrice": 3009322,
+            "sourceId": "nawy:1287"
+          },
+          {
             "name": "RED",
             "url": "https://redww.com/en/projects/30819-the-butterfly",
             "observedPrice": 5574537,
             "sourceId": "red:30819"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1287-the-butterfly",
-            "observedPrice": 6357330,
-            "sourceId": "nawy:1287"
           },
           {
             "name": "Property Finder",
@@ -9651,7 +9654,7 @@
             "sourceId": "property-finder:165f714b-e618-4794-a1da-260561e08bc9"
           }
         ],
-        "updatedAt": "2026-10-26T03:01:14.243Z"
+        "updatedAt": "2026-10-26T14:11:09.178Z"
       }
     },
     {
@@ -20183,7 +20186,7 @@
       "zone": "New Capital",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 3883000,
+      "priceMin": 3932000,
       "unitTypes": [
         "Apartment"
       ],
@@ -20208,7 +20211,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1099-new-garden-city",
-            "observedPrice": 3883000,
+            "observedPrice": 3932000,
             "sourceId": "nawy:1099"
           },
           {
@@ -20224,7 +20227,7 @@
             "sourceId": "red:19161"
           }
         ],
-        "updatedAt": "2026-10-26T03:01:14.243Z"
+        "updatedAt": "2026-10-26T14:11:09.178Z"
       }
     },
     {
@@ -31157,12 +31160,12 @@
       "layouts": "https://egodevelopments.com/project/masaya",
       "priceMin": 6081075,
       "unitTypes": [
-        "Apartment",
         "Chalet",
+        "Studio",
+        "Apartment",
         "Villa",
         "Duplex",
-        "Twinhouse",
-        "Studio"
+        "Twinhouse"
       ],
       "areaMin": 79,
       "areaMax": 344,
@@ -31199,11 +31202,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/788-masaya",
-            "observedPrice": 11197000,
+            "observedPrice": 10895000,
             "sourceId": "nawy:788"
           }
         ],
-        "updatedAt": "2026-10-25T02:55:58.934Z"
+        "updatedAt": "2026-10-26T14:11:09.178Z"
       }
     },
     {
@@ -32186,14 +32189,14 @@
         6
       ],
       "paymentPlan": "10% Down Payment, 10 Years Installments",
-      "downPayment": 10,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Property Finder",
@@ -32206,15 +32209,9 @@
             "url": "https://redww.com/en/projects/19204-six-west",
             "observedPrice": 28874720,
             "sourceId": "red:19204"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/233-six-west",
-            "observedPrice": 44275000,
-            "sourceId": "nawy:233"
           }
         ],
-        "updatedAt": "2026-10-25T02:55:58.934Z"
+        "updatedAt": "2026-10-26T14:11:09.178Z"
       }
     },
     {
@@ -32400,13 +32397,11 @@
       "zone": "Zayed",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 6161846,
+      "priceMin": 5853754,
       "unitTypes": [
         "Apartment",
         "Duplex",
-        "Medical",
-        "Retail",
-        "Administrative"
+        "Medical"
       ],
       "areaMin": 105,
       "areaMax": 418,
@@ -32418,9 +32413,9 @@
         5,
         6
       ],
-      "paymentPlan": "10% Down Payment, 6 Years Installments",
+      "paymentPlan": "10% Down Payment, 4 Years Installments",
       "downPayment": 10,
-      "installmentYears": 6,
+      "installmentYears": 4,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -32431,7 +32426,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/825-terrace",
-            "observedPrice": 6161846,
+            "observedPrice": 5853754,
             "sourceId": "nawy:825"
           },
           {
@@ -32447,7 +32442,7 @@
             "sourceId": "red:19079"
           }
         ],
-        "updatedAt": "2026-10-26T03:01:14.243Z"
+        "updatedAt": "2026-10-26T14:11:09.178Z"
       }
     },
     {
@@ -35174,13 +35169,13 @@
       "zone": "New Cairo",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 3672058,
+      "priceMin": 3659267,
       "unitTypes": [
-        "Apartment",
+        "Townhouse",
         "Villa",
         "Duplex",
+        "Apartment",
         "Studio",
-        "Townhouse",
         "Retail",
         "Medical",
         "Administrative",
@@ -35210,7 +35205,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/147-sarai",
-            "observedPrice": 3672058,
+            "observedPrice": 3659267,
             "sourceId": "nawy:147"
           },
           {
@@ -35220,7 +35215,7 @@
             "sourceId": "red:34"
           }
         ],
-        "updatedAt": "2026-10-18T02:53:55.899Z"
+        "updatedAt": "2026-10-26T14:11:09.178Z"
       }
     },
     {
@@ -49077,13 +49072,13 @@
       "zone": "New Cairo",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 3672058,
+      "priceMin": 3659267,
       "unitTypes": [
+        "Townhouse",
+        "Villa",
         "Duplex",
         "Apartment",
         "Studio",
-        "Villa",
-        "Townhouse",
         "Retail",
         "Medical",
         "Administrative",
@@ -49113,7 +49108,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/147-sarai",
-            "observedPrice": 3672058,
+            "observedPrice": 3659267,
             "sourceId": "nawy:147"
           },
           {
@@ -49129,7 +49124,7 @@
             "sourceId": "property-finder:7f84ab0a-97b0-4e6c-9d78-4645c1f5a243"
           }
         ],
-        "updatedAt": "2026-10-26T03:01:14.243Z"
+        "updatedAt": "2026-10-26T14:11:09.178Z"
       }
     },
     {
@@ -50805,14 +50800,14 @@
       "type": "residential",
       "priceMin": 8020000,
       "unitTypes": [
-        "Townhouse",
-        "Apartment",
-        "Loft",
         "Chalet",
-        "Villa",
-        "Twinhouse",
+        "Apartment",
         "Penthouse",
-        "Duplex"
+        "Duplex",
+        "Townhouse",
+        "Loft",
+        "Villa",
+        "Twinhouse"
       ],
       "areaMin": 65,
       "areaMax": 273,
@@ -50824,9 +50819,9 @@
         5,
         6
       ],
-      "paymentPlan": "25% Down Payment, 3 Years Installments",
-      "downPayment": 25,
-      "installmentYears": 3,
+      "paymentPlan": "0% Down Payment, 7 Years Installments",
+      "downPayment": 0,
+      "installmentYears": 7,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -50843,11 +50838,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/454-makadi-heights",
-            "observedPrice": 14150000,
+            "observedPrice": 11800000,
             "sourceId": "nawy:454"
           }
         ],
-        "updatedAt": "2026-10-18T02:53:55.899Z"
+        "updatedAt": "2026-10-26T14:11:09.178Z"
       }
     },
     {
@@ -61113,7 +61108,7 @@
       "zone": "Zayed",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 6003984,
+      "priceMin": 6800000,
       "unitTypes": [
         "Apartment"
       ],
@@ -61138,19 +61133,19 @@
         "sourceCount": 2,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1375-westview-residence",
-            "observedPrice": 6003984,
-            "sourceId": "nawy:1375"
-          },
-          {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/housing-and-development-company-for-real-estate/westview-residence",
             "observedPrice": 6800000,
             "sourceId": "property-finder:4bbc04c9-3b7e-476b-bb0e-7099db7cbefe"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1375-westview-residence",
+            "observedPrice": 7638426,
+            "sourceId": "nawy:1375"
           }
         ],
-        "updatedAt": "2026-10-25T02:55:58.934Z"
+        "updatedAt": "2026-10-26T14:11:09.178Z"
       }
     },
     {
@@ -61344,13 +61339,13 @@
       "zone": "New Cairo",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 3672058,
+      "priceMin": 3659267,
       "unitTypes": [
-        "Apartment",
+        "Townhouse",
         "Villa",
         "Duplex",
+        "Apartment",
         "Studio",
-        "Townhouse",
         "Retail",
         "Medical",
         "Administrative",
@@ -61380,7 +61375,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/147-sarai",
-            "observedPrice": 3672058,
+            "observedPrice": 3659267,
             "sourceId": "nawy:147"
           },
           {
@@ -61390,7 +61385,7 @@
             "sourceId": "red:34"
           }
         ],
-        "updatedAt": "2026-10-18T02:53:55.899Z"
+        "updatedAt": "2026-10-26T14:11:09.178Z"
       }
     },
     {
@@ -64781,17 +64776,17 @@
       "type": "residential",
       "unitTypes": [
         "Chalet",
-        "Duplex",
-        "Loft",
-        "Townhouse",
         "Apartment",
+        "Penthouse",
+        "Duplex",
+        "Townhouse",
+        "Loft",
         "Villa",
-        "Twinhouse",
-        "Penthouse"
+        "Twinhouse"
       ],
-      "downPayment": 25,
-      "installmentYears": 3,
-      "paymentPlan": "25% Down Payment, 3 Years Installments",
+      "downPayment": 0,
+      "installmentYears": 7,
+      "paymentPlan": "0% Down Payment, 7 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2047",
@@ -64814,11 +64809,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/454-makadi-heights",
-            "observedPrice": 14150000,
+            "observedPrice": 11800000,
             "sourceId": "nawy:454"
           }
         ],
-        "updatedAt": "2026-10-13T12:49:10.344Z"
+        "updatedAt": "2026-10-26T14:11:09.178Z"
       }
     },
     {
@@ -67548,11 +67543,11 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Villa",
-        "Apartment",
-        "Duplex",
-        "Studio",
         "Townhouse",
+        "Villa",
+        "Duplex",
+        "Apartment",
+        "Studio",
         "Retail",
         "Medical",
         "Administrative",
@@ -67567,7 +67562,7 @@
         "sourceId": "nawy-inventory:2562",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 3672058,
+      "priceMin": 3659267,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -67578,7 +67573,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/147-sarai",
-            "observedPrice": 3672058,
+            "observedPrice": 3659267,
             "sourceId": "nawy:147"
           },
           {
@@ -67588,7 +67583,7 @@
             "sourceId": "red:34"
           }
         ],
-        "updatedAt": "2026-10-15T18:37:23.865Z"
+        "updatedAt": "2026-10-26T14:11:09.178Z"
       }
     },
     {
@@ -67600,11 +67595,11 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Villa",
-        "Apartment",
-        "Duplex",
-        "Studio",
         "Townhouse",
+        "Villa",
+        "Duplex",
+        "Apartment",
+        "Studio",
         "Retail",
         "Medical",
         "Administrative",
@@ -67619,7 +67614,7 @@
         "sourceId": "nawy-inventory:2481",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 3672058,
+      "priceMin": 3659267,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -67630,7 +67625,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/147-sarai",
-            "observedPrice": 3672058,
+            "observedPrice": 3659267,
             "sourceId": "nawy:147"
           },
           {
@@ -67640,7 +67635,7 @@
             "sourceId": "red:34"
           }
         ],
-        "updatedAt": "2026-10-15T18:37:23.865Z"
+        "updatedAt": "2026-10-26T14:11:09.178Z"
       }
     },
     {
@@ -67652,11 +67647,11 @@
       "status": "Available",
       "type": "commercial",
       "unitTypes": [
+        "Townhouse",
+        "Villa",
         "Duplex",
         "Apartment",
         "Studio",
-        "Villa",
-        "Townhouse",
         "Retail",
         "Medical",
         "Administrative",
@@ -67671,7 +67666,7 @@
         "sourceId": "nawy-inventory:2028",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 3672058,
+      "priceMin": 3659267,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -67682,7 +67677,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/147-sarai",
-            "observedPrice": 3672058,
+            "observedPrice": 3659267,
             "sourceId": "nawy:147"
           },
           {
@@ -67698,7 +67693,7 @@
             "sourceId": "property-finder:7f84ab0a-97b0-4e6c-9d78-4645c1f5a243"
           }
         ],
-        "updatedAt": "2026-10-26T03:01:14.243Z"
+        "updatedAt": "2026-10-26T14:11:09.178Z"
       }
     },
     {
@@ -74444,14 +74439,35 @@
       "zone": "6th of October City",
       "status": "Available",
       "type": "residential",
-      "unitTypes": [],
-      "downPayment": 0,
-      "installmentYears": 0,
-      "paymentPlan": "0% Down Payment, 0 Years Installments",
+      "unitTypes": [
+        "Retail",
+        "Administrative",
+        "Medical"
+      ],
+      "downPayment": 30,
+      "installmentYears": 4,
+      "paymentPlan": "30% Down Payment, 4 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:1414",
         "observedAt": "2026-09-22T10:02:00.468Z"
+      },
+      "priceMin": 4250000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1414-il-mondo-mall",
+            "observedPrice": 4250000,
+            "sourceId": "nawy:1414"
+          }
+        ],
+        "updatedAt": "2026-10-26T14:11:09.178Z"
       }
     },
     {
@@ -79470,18 +79486,18 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Townhouse",
+        "Chalet",
         "Apartment",
+        "Penthouse",
+        "Duplex",
+        "Townhouse",
         "Loft",
         "Villa",
-        "Twinhouse",
-        "Chalet",
-        "Duplex",
-        "Penthouse"
+        "Twinhouse"
       ],
-      "downPayment": 25,
-      "installmentYears": 3,
-      "paymentPlan": "25% Down Payment, 3 Years Installments",
+      "downPayment": 0,
+      "installmentYears": 7,
+      "paymentPlan": "0% Down Payment, 7 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2747",
@@ -79510,11 +79526,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/454-makadi-heights",
-            "observedPrice": 14150000,
+            "observedPrice": 11800000,
             "sourceId": "nawy:454"
           }
         ],
-        "updatedAt": "2026-10-25T02:55:58.934Z"
+        "updatedAt": "2026-10-26T14:11:09.178Z"
       }
     },
     {

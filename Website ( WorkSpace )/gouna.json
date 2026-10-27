@@ -997,7 +997,7 @@
       "zone": "Hurghada",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 11800000,
+      "priceMin": 8020000,
       "unitTypes": [
         "Townhouse",
         "Apartment",
@@ -1026,8 +1026,14 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/52-makadi-heights",
+            "observedPrice": 8020000,
+            "sourceId": "red:52"
+          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/454-makadi-heights",
@@ -1035,7 +1041,7 @@
             "sourceId": "nawy:454"
           }
         ],
-        "updatedAt": "2026-10-27T02:58:35.483Z"
+        "updatedAt": "2026-10-27T06:49:48.379Z"
       }
     },
     {
@@ -1881,14 +1887,20 @@
         "sourceId": "nawy-inventory:2047",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 11800000,
+      "priceMin": 8020000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/52-makadi-heights",
+            "observedPrice": 8020000,
+            "sourceId": "red:52"
+          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/454-makadi-heights",
@@ -1896,7 +1908,7 @@
             "sourceId": "nawy:454"
           }
         ],
-        "updatedAt": "2026-10-27T02:58:35.483Z"
+        "updatedAt": "2026-10-27T06:49:48.379Z"
       }
     },
     {
@@ -1908,11 +1920,9 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "apartment",
-        "townhouse",
-        "villa"
+        "Town House"
       ],
-      "downPayment": 10,
+      "downPayment": 0,
       "installmentYears": 0,
       "paymentPlan": "10% Down Payment",
       "catalogMeta": {
@@ -1920,14 +1930,20 @@
         "sourceId": "nawy-inventory:1965",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 22695000,
+      "priceMin": 22000000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/30949-siyal",
+            "observedPrice": 22000000,
+            "sourceId": "red:30949"
+          },
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/orascom-development/siyal-makadi-heights",
@@ -1935,7 +1951,7 @@
             "sourceId": "property-finder:e5e8e6a6-eb17-4a83-a28d-8ad5ea97f773"
           }
         ],
-        "updatedAt": "2026-10-27T02:58:35.483Z"
+        "updatedAt": "2026-10-27T06:49:48.379Z"
       }
     },
     {
@@ -2006,8 +2022,14 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 3,
         "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/30963-makadina",
+            "observedPrice": 7400000,
+            "sourceId": "red:30963"
+          },
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/travco-properties/makadina",
@@ -2021,7 +2043,7 @@
             "sourceId": "nawy:2025"
           }
         ],
-        "updatedAt": "2026-10-27T02:58:35.483Z"
+        "updatedAt": "2026-10-27T06:49:48.379Z"
       }
     },
     {
@@ -2068,14 +2090,20 @@
         "sourceId": "nawy-inventory:2747",
         "observedAt": "2026-09-30T03:39:20.077Z"
       },
-      "priceMin": 11800000,
+      "priceMin": 8020000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/52-makadi-heights",
+            "observedPrice": 8020000,
+            "sourceId": "red:52"
+          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/454-makadi-heights",
@@ -2083,7 +2111,7 @@
             "sourceId": "nawy:454"
           }
         ],
-        "updatedAt": "2026-10-27T02:58:35.483Z"
+        "updatedAt": "2026-10-27T06:49:48.379Z"
       }
     }
   ],

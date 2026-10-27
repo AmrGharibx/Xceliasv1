@@ -1,26 +1,26 @@
 {
   "schemaVersion": 1,
-  "lastPublishedAt": "2026-10-26T03:42:47.291Z",
+  "lastPublishedAt": "2026-10-27T03:39:10.385Z",
   "inventory": {
     "source": "public project-asset inventory",
-    "usableRecords": 1802,
+    "usableRecords": 1472,
     "sources": [
       {
         "source": "red-assets",
-        "ok": true,
-        "observations": 336
+        "ok": false,
+        "observations": 0
       },
       {
         "source": "property-finder-assets",
         "ok": true,
-        "observations": 1466
+        "observations": 1472
       }
     ]
   },
   "publication": {
-    "matchedProjects": 932,
+    "matchedProjects": 654,
     "imagesAdded": 0,
-    "masterplansAdded": 1,
+    "masterplansAdded": 0,
     "layoutsAdded": 0,
     "detailsCreated": 0,
     "aliasImagesInherited": 0,
@@ -29,9 +29,9 @@
     "applied": true
   },
   "health": {
-    "totalProjects": 2171,
-    "projectsWithImages": 2106,
-    "projectsWithDirectMasterplans": 317,
+    "totalProjects": 2173,
+    "projectsWithImages": 2108,
+    "projectsWithDirectMasterplans": 282,
     "projectsWithDirectLayouts": 0
   },
   "note": "Only direct image assets from a strongly matched project are displayed. Source pages remain internal references until a specific masterplan or layout file can be verified."

@@ -59218,6 +59218,56 @@
         ],
         "updatedAt": "2026-10-27T02:58:35.483Z"
       }
+    },
+    {
+      "name": "The Estates Residence",
+      "dev": "SODIC",
+      "lat": 30.074697,
+      "lng": 30.87622,
+      "zone": "New Zayed",
+      "status": "Available",
+      "type": "residential",
+      "unitTypes": [
+        "Apartment",
+        "Townhouse",
+        "Duplex",
+        "Villa",
+        "Twinhouse",
+        "Penthouse"
+      ],
+      "downPayment": 5,
+      "installmentYears": 10,
+      "paymentPlan": "5% Down Payment, 10 Years Installments",
+      "catalogMeta": {
+        "status": "observed",
+        "sourceId": "nawy-inventory:664",
+        "observedAt": "2026-10-27T03:38:57.810Z"
+      },
+      "priceMin": 10460000
+    },
+    {
+      "name": "The Estates",
+      "dev": "SODIC",
+      "lat": 30.08172,
+      "lng": 30.878458,
+      "zone": "New Zayed",
+      "status": "Available",
+      "type": "residential",
+      "unitTypes": [
+        "Villa",
+        "Townhouse",
+        "Apartment",
+        "Twinhouse"
+      ],
+      "downPayment": 10,
+      "installmentYears": 10,
+      "paymentPlan": "10% Down Payment, 10 Years Installments",
+      "catalogMeta": {
+        "status": "observed",
+        "sourceId": "nawy-inventory:310",
+        "observedAt": "2026-10-27T03:38:57.810Z"
+      },
+      "priceMin": 77223960
     }
   ],
   "projectDetails": {
@@ -73489,7 +73539,7 @@
       ]
     },
     "The Estates Residence": {
-      "unitTypes": "Apartment, Townhouse, Duplex, Villa, Penthouse, Twinhouse",
+      "unitTypes": "Apartment, Townhouse, Duplex, Villa, Twinhouse, Penthouse",
       "areas": "",
       "paymentPlan": "5% Down Payment, 10 Years Installments",
       "status": "Available",
@@ -73538,15 +73588,11 @@
       "status": "Available",
       "amenities": "",
       "description": "Project information is being verified.",
-      "masterplan": "https://red-prod.s3.eu-central-1.amazonaws.com/red/media/projectapp/master_plan/f5a4bbdf-78e4-49a2-8366-e1dd54e80008.png",
+      "masterplan": "",
       "layouts": [],
       "images": [
         "https://prod-images.nawy.com/processed/compound_image/image/1798/high.webp"
-      ],
-      "assetMeta": {
-        "lastEnrichedAt": "2026-10-26T03:42:47.291Z",
-        "sourceId": "red-asset:20"
-      }
+      ]
     },
     "Forty West Phase II": {
       "unitTypes": "",

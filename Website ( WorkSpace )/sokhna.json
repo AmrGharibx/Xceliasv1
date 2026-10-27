@@ -759,22 +759,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/434-jebal-el-sokhna",
             "observedPrice": 5483100,
             "sourceId": "nawy:434"
-          },
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/19064-jebal-el-sokhna",
-            "observedPrice": 8980000,
-            "sourceId": "red:19064"
           }
         ],
-        "updatedAt": "2026-10-14T01:00:42.557Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -1191,16 +1185,16 @@
       "zone": "Galala",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 6642000,
+      "priceMin": 7392000,
       "unitTypes": [
-        "Chalet",
         "Apartment",
+        "Chalet",
         "Studio",
-        "Duplex",
-        "Loft",
         "Townhouse",
         "Villa",
+        "Loft",
         "Twinhouse",
+        "Duplex",
         "Penthouse",
         "Cabin"
       ],
@@ -1222,14 +1216,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/28-il-monte-galala",
-            "observedPrice": 6642000,
-            "sourceId": "red:28"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/90-il-monte-galala",
@@ -1237,7 +1225,7 @@
             "sourceId": "nawy:90"
           }
         ],
-        "updatedAt": "2026-10-14T01:00:42.557Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -1319,7 +1307,7 @@
       "zone": "Sokhna",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 17724000,
+      "priceMin": 25533900,
       "unitTypes": [
         "Chalet",
         "Townhouse",
@@ -1343,15 +1331,9 @@
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
-        "confidence": "verified",
-        "sourceCount": 2,
+        "confidence": "high",
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/19032-azha",
-            "observedPrice": 17724000,
-            "sourceId": "red:19032"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/88-azha",
@@ -1359,7 +1341,7 @@
             "sourceId": "nawy:88"
           }
         ],
-        "updatedAt": "2026-10-18T12:37:44.844Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -1889,22 +1871,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/191-kai-sokhna",
             "observedPrice": 9500000,
             "sourceId": "nawy:191"
-          },
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/50-kai-sokhna",
-            "observedPrice": 11265766,
-            "sourceId": "red:50"
           }
         ],
-        "updatedAt": "2026-10-13T01:14:50.719Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -2702,16 +2678,16 @@
       "zone": "Sokhna",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 6642000,
+      "priceMin": 7392000,
       "unitTypes": [
-        "Chalet",
         "Apartment",
+        "Chalet",
         "Studio",
-        "Duplex",
-        "Loft",
         "Townhouse",
         "Villa",
+        "Loft",
         "Twinhouse",
+        "Duplex",
         "Penthouse",
         "Cabin"
       ],
@@ -2733,14 +2709,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/28-il-monte-galala",
-            "observedPrice": 6642000,
-            "sourceId": "red:28"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/90-il-monte-galala",
@@ -2748,7 +2718,7 @@
             "sourceId": "nawy:90"
           }
         ],
-        "updatedAt": "2026-10-14T01:00:42.557Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -3523,14 +3493,14 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Chalet",
         "Apartment",
+        "Chalet",
         "Studio",
-        "Duplex",
-        "Loft",
         "Townhouse",
         "Villa",
+        "Loft",
         "Twinhouse",
+        "Duplex",
         "Penthouse",
         "Cabin"
       ],
@@ -3542,20 +3512,14 @@
         "sourceId": "nawy-inventory:396",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 6642000,
+      "priceMin": 7392000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/28-il-monte-galala",
-            "observedPrice": 6642000,
-            "sourceId": "red:28"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/90-il-monte-galala",
@@ -3563,7 +3527,7 @@
             "sourceId": "nawy:90"
           }
         ],
-        "updatedAt": "2026-10-14T01:00:42.557Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -3698,22 +3662,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/434-jebal-el-sokhna",
             "observedPrice": 5483100,
             "sourceId": "nawy:434"
-          },
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/19064-jebal-el-sokhna",
-            "observedPrice": 8980000,
-            "sourceId": "red:19064"
           }
         ],
-        "updatedAt": "2026-10-14T01:00:42.557Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -3743,22 +3701,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/434-jebal-el-sokhna",
             "observedPrice": 5483100,
             "sourceId": "nawy:434"
-          },
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/19064-jebal-el-sokhna",
-            "observedPrice": 8980000,
-            "sourceId": "red:19064"
           }
         ],
-        "updatedAt": "2026-10-14T01:00:42.557Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -3773,8 +3725,8 @@
         "Chalet",
         "Duplex",
         "Penthouse",
-        "Villa",
-        "Townhouse"
+        "Townhouse",
+        "Villa"
       ],
       "downPayment": 5,
       "installmentYears": 10,
@@ -3790,22 +3742,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1051-murano-wadi-degla",
             "observedPrice": 7427470,
             "sourceId": "nawy:1051"
-          },
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/19029-murano",
-            "observedPrice": 15759090,
-            "sourceId": "red:19029"
           }
         ],
-        "updatedAt": "2026-10-21T12:43:33.120Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {

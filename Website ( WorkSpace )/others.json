@@ -283,8 +283,8 @@
         "Chalet",
         "Duplex",
         "Penthouse",
-        "Villa",
-        "Townhouse"
+        "Townhouse",
+        "Villa"
       ],
       "areaMin": 86,
       "areaMax": 375,
@@ -304,22 +304,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1051-murano-wadi-degla",
             "observedPrice": 7427470,
             "sourceId": "nawy:1051"
-          },
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/19029-murano",
-            "observedPrice": 15759090,
-            "sourceId": "red:19029"
           }
         ],
-        "updatedAt": "2026-10-21T12:43:33.120Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {

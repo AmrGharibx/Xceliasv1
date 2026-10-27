@@ -468,22 +468,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/222-district-5",
             "observedPrice": 11285000,
             "sourceId": "nawy:222"
-          },
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/35-district-5",
-            "observedPrice": 25773000,
-            "sourceId": "red:35"
           }
         ],
-        "updatedAt": "2026-10-12T18:40:48.390Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -550,7 +544,7 @@
       "zone": "New Cairo",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 13500000,
+      "priceMin": 56267000,
       "unitTypes": [
         "Administrative",
         "Apartment",
@@ -575,14 +569,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/sodic/eastown-residence",
-            "observedPrice": 13500000,
-            "sourceId": "property-finder:f12e4fc3-2710-4c11-b6ef-d0e08e9d018b"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/925-eastown",
@@ -590,7 +578,7 @@
             "sourceId": "nawy:925"
           }
         ],
-        "updatedAt": "2026-10-25T02:55:58.934Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -2016,7 +2004,7 @@
       "zone": "New Cairo",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 9283000,
+      "priceMin": 10285000,
       "unitTypes": [
         "Apartment",
         "Studio",
@@ -2046,14 +2034,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/17-palm-hills-new-cairo",
-            "observedPrice": 9283000,
-            "sourceId": "red:17"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/148-palm-hills-new-cairo",
@@ -2061,7 +2043,7 @@
             "sourceId": "nawy:148"
           }
         ],
-        "updatedAt": "2026-10-12T18:40:48.390Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -2506,10 +2488,10 @@
       "zone": "New Cairo",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 13327465,
+      "priceMin": 15700000,
       "unitTypes": [
-        "Twinhouse",
         "Apartment",
+        "Twinhouse",
         "Administrative",
         "Villa",
         "Office",
@@ -2533,14 +2515,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/19113-swanlake-residence",
-            "observedPrice": 13327465,
-            "sourceId": "red:19113"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/278-swanlake-residences",
@@ -2548,7 +2524,7 @@
             "sourceId": "nawy:278"
           }
         ],
-        "updatedAt": "2026-10-12T18:40:48.390Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -2867,22 +2843,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/204-trio",
             "observedPrice": 11637891,
             "sourceId": "nawy:204"
-          },
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/19019-trio",
-            "observedPrice": 14282964,
-            "sourceId": "red:19019"
           }
         ],
-        "updatedAt": "2026-10-22T02:56:29.044Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -4876,7 +4846,7 @@
       "zone": "New Cairo",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 5092200,
+      "priceMin": 5473684,
       "unitTypes": [
         "Apartment",
         "Townhouse"
@@ -4899,14 +4869,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/30899-riverton",
-            "observedPrice": 5092200,
-            "sourceId": "red:30899"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1726-riverton",
@@ -4914,7 +4878,7 @@
             "sourceId": "nawy:1726"
           }
         ],
-        "updatedAt": "2026-10-21T12:43:33.120Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -6389,30 +6353,24 @@
         5,
         6
       ],
-      "paymentPlan": "10% Down Payment, 8 Years Installments",
-      "downPayment": 10,
-      "installmentYears": 8,
+      "paymentPlan": "5.3% Down Payment, 10 Years Installments",
+      "downPayment": 5.3,
+      "installmentYears": 10,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/868-bluetree",
             "observedPrice": 4290000,
             "sourceId": "nawy:868"
-          },
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/19222-bluetree-new-cairo",
-            "observedPrice": 5828000,
-            "sourceId": "red:19222"
           }
         ],
-        "updatedAt": "2026-09-21T18:35:45.164Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -8538,7 +8496,7 @@
       "zone": "New Cairo",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 5287752,
+      "priceMin": 9880000,
       "unitTypes": [
         "Retail",
         "Medical",
@@ -8564,14 +8522,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/main-marks/moray",
-            "observedPrice": 5287752,
-            "sourceId": "property-finder:81fd95f0-0655-4f43-8257-5b7ed2af0eb4"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1119-moray",
@@ -8579,7 +8531,7 @@
             "sourceId": "nawy:1119"
           }
         ],
-        "updatedAt": "2026-10-25T02:55:58.934Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -8796,8 +8748,8 @@
       "type": "residential",
       "priceMin": 10336200,
       "unitTypes": [
-        "Apartment",
         "Chalet",
+        "Apartment",
         "Duplex"
       ],
       "areaMin": 86,
@@ -8816,22 +8768,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1152-sq1",
             "observedPrice": 10336200,
             "sourceId": "nawy:1152"
-          },
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/19192-sq1",
-            "observedPrice": 10792072,
-            "sourceId": "red:19192"
           }
         ],
-        "updatedAt": "2026-09-29T12:46:23.142Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -9634,7 +9580,8 @@
         "Loft",
         "Twinhouse",
         "Medical",
-        "Studio"
+        "Studio",
+        "Villa"
       ],
       "areaMin": 92,
       "areaMax": 462,
@@ -9646,30 +9593,24 @@
         5,
         6
       ],
-      "paymentPlan": "5% Down Payment, 10 Years Installments",
+      "paymentPlan": "5% Down Payment, 8 Years Installments",
       "downPayment": 5,
-      "installmentYears": 10,
+      "installmentYears": 8,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1348-solay",
             "observedPrice": 3368416,
             "sourceId": "nawy:1348"
-          },
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/30820-solay",
-            "observedPrice": 17326000,
-            "sourceId": "red:30820"
           }
         ],
-        "updatedAt": "2026-10-21T12:43:33.120Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -10932,22 +10873,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/408-parklane",
             "observedPrice": 3517500,
             "sourceId": "nawy:408"
-          },
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/19082-parklane",
-            "observedPrice": 9500000,
-            "sourceId": "red:19082"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -11395,12 +11330,12 @@
       "zone": "New Capital",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 2277739,
+      "priceMin": 4840145,
       "unitTypes": [
         "Apartment",
         "Townhouse",
-        "Retail",
         "Twinhouse",
+        "Retail",
         "Studio",
         "Administrative"
       ],
@@ -11422,14 +11357,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/better-home-development/midtown-sky-new-capital",
-            "observedPrice": 2277739,
-            "sourceId": "property-finder:e0212a46-fd4e-4897-ad51-c0f454149d28"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/440-midtown-sky",
@@ -11437,7 +11366,7 @@
             "sourceId": "nawy:440"
           }
         ],
-        "updatedAt": "2026-10-25T02:55:58.934Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -11448,12 +11377,12 @@
       "zone": "New Capital",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 2277739,
+      "priceMin": 4840145,
       "unitTypes": [
         "Apartment",
         "Townhouse",
-        "Retail",
         "Twinhouse",
+        "Retail",
         "Studio",
         "Administrative"
       ],
@@ -11475,14 +11404,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/better-home-development/midtown-sky-new-capital",
-            "observedPrice": 2277739,
-            "sourceId": "property-finder:e0212a46-fd4e-4897-ad51-c0f454149d28"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/440-midtown-sky",
@@ -11490,7 +11413,7 @@
             "sourceId": "nawy:440"
           }
         ],
-        "updatedAt": "2026-10-25T02:55:58.934Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -11501,7 +11424,7 @@
       "zone": "New Capital",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 8550000,
+      "priceMin": 27615203,
       "unitTypes": [
         "Townhouse",
         "Retail",
@@ -11525,14 +11448,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/better-home-development/midtown-villa",
-            "observedPrice": 8550000,
-            "sourceId": "property-finder:a26d143e-64cd-4e71-9bb7-f8225b5d1637"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/443-midtown-new-capital-villa",
@@ -11540,7 +11457,7 @@
             "sourceId": "nawy:443"
           }
         ],
-        "updatedAt": "2026-10-25T02:55:58.934Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -15946,22 +15863,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1249-club-hills-residence",
             "observedPrice": 7080765,
             "sourceId": "nawy:1249"
-          },
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/30843-club-hills",
-            "observedPrice": 7080765,
-            "sourceId": "red:30843"
           }
         ],
-        "updatedAt": "2026-10-12T18:40:48.390Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -17414,7 +17325,7 @@
       "zone": "October",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 6205300,
+      "priceMin": 6892600,
       "unitTypes": [
         "Townhouse",
         "Apartment",
@@ -17441,14 +17352,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/16-badya",
-            "observedPrice": 6205300,
-            "sourceId": "red:16"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/223-badya",
@@ -17456,7 +17361,7 @@
             "sourceId": "nawy:223"
           }
         ],
-        "updatedAt": "2026-10-19T01:06:02.498Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -17467,7 +17372,7 @@
       "zone": "October",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 3822000,
+      "priceMin": 6225000,
       "unitTypes": [
         "Apartment"
       ],
@@ -17489,14 +17394,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/beta-egypt/beta-residence",
-            "observedPrice": 3822000,
-            "sourceId": "property-finder:7fe4dc84-ab0c-4703-9594-e1233194f5cb"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1434-beta-residence",
@@ -17504,7 +17403,7 @@
             "sourceId": "nawy:1434"
           }
         ],
-        "updatedAt": "2026-10-25T02:55:58.934Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -19960,14 +19859,14 @@
       "zone": "October",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 6953000,
+      "priceMin": 7685000,
       "unitTypes": [
-        "Villa",
         "Apartment",
-        "Office",
         "Townhouse",
+        "Villa",
         "Duplex",
         "Loft",
+        "Office",
         "Twinhouse",
         "Penthouse",
         "Studio",
@@ -19991,14 +19890,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/19197-o-west-orascom",
-            "observedPrice": 6953000,
-            "sourceId": "red:19197"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/258-o-west-orascom",
@@ -20006,7 +19899,7 @@
             "sourceId": "nawy:258"
           }
         ],
-        "updatedAt": "2026-10-21T18:37:12.859Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -21787,14 +21680,14 @@
       "zone": "October",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 6953000,
+      "priceMin": 7685000,
       "unitTypes": [
-        "Villa",
         "Apartment",
-        "Office",
         "Townhouse",
+        "Villa",
         "Duplex",
         "Loft",
+        "Office",
         "Twinhouse",
         "Penthouse",
         "Studio",
@@ -21818,14 +21711,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/19197-o-west-orascom",
-            "observedPrice": 6953000,
-            "sourceId": "red:19197"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/258-o-west-orascom",
@@ -21833,7 +21720,7 @@
             "sourceId": "nawy:258"
           }
         ],
-        "updatedAt": "2026-10-21T18:37:12.859Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -21888,7 +21775,7 @@
       "zone": "Zayed",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 8372000,
+      "priceMin": 10269000,
       "unitTypes": [
         "Apartment",
         "Villa",
@@ -21914,14 +21801,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/30823-ivoire-west",
-            "observedPrice": 8372000,
-            "sourceId": "red:30823"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1003-ivoire-west",
@@ -21929,7 +21810,7 @@
             "sourceId": "nawy:1003"
           }
         ],
-        "updatedAt": "2026-10-13T03:04:10.844Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -22327,22 +22208,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/686-al-karma-kay",
             "observedPrice": 7630000,
             "sourceId": "nawy:686"
-          },
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/19118-al-karma-kay",
-            "observedPrice": 8560000,
-            "sourceId": "red:19118"
           }
         ],
-        "updatedAt": "2026-10-12T18:40:48.390Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -22555,11 +22430,11 @@
       "zone": "Zayed",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 3792600,
+      "priceMin": 4072100,
       "unitTypes": [
         "Apartment",
-        "Studio",
-        "Duplex"
+        "Duplex",
+        "Studio"
       ],
       "areaMin": 107,
       "areaMax": 427,
@@ -22579,14 +22454,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/19220-belva",
-            "observedPrice": 3792600,
-            "sourceId": "red:19220"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1210-belva",
@@ -22594,7 +22463,7 @@
             "sourceId": "nawy:1210"
           }
         ],
-        "updatedAt": "2026-09-21T14:54:37.284Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -22824,14 +22693,14 @@
       "zone": "Zayed",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 9434000,
+      "priceMin": 9871000,
       "unitTypes": [
         "Villa",
-        "Townhouse",
         "Apartment",
+        "Townhouse",
+        "Duplex",
         "Studio",
-        "Loft",
-        "Duplex"
+        "Loft"
       ],
       "areaMin": 94,
       "areaMax": 378,
@@ -22851,14 +22720,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/19074-hills-of-one",
-            "observedPrice": 9434000,
-            "sourceId": "red:19074"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1032-hills-of-one",
@@ -22866,7 +22729,7 @@
             "sourceId": "nawy:1032"
           }
         ],
-        "updatedAt": "2026-10-12T18:40:48.390Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -23005,22 +22868,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/877-solana",
             "observedPrice": 15800000,
             "sourceId": "nawy:877"
-          },
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/37-solana-west",
-            "observedPrice": 20900000,
-            "sourceId": "red:37"
           }
         ],
-        "updatedAt": "2026-10-12T18:40:48.390Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -24497,14 +24354,14 @@
       "zone": "New Cairo",
       "status": "Delivered",
       "type": "commercial",
-      "priceMin": 13327465,
+      "priceMin": 15700000,
       "unitTypes": [
         "Apartment",
-        "Villa",
         "Twinhouse",
-        "Duplex",
         "Administrative",
-        "Office"
+        "Villa",
+        "Office",
+        "Duplex"
       ],
       "areaMin": 89,
       "areaMax": 445,
@@ -24517,14 +24374,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/19113-swanlake-residence",
-            "observedPrice": 13327465,
-            "sourceId": "red:19113"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/278-swanlake-residences",
@@ -24532,7 +24383,7 @@
             "sourceId": "nawy:278"
           }
         ],
-        "updatedAt": "2026-09-21T14:54:37.284Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -24929,10 +24780,10 @@
       "zone": "New Cairo",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 13327465,
+      "priceMin": 15700000,
       "unitTypes": [
-        "Twinhouse",
         "Apartment",
+        "Twinhouse",
         "Administrative",
         "Villa",
         "Office",
@@ -24956,14 +24807,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/19113-swanlake-residence",
-            "observedPrice": 13327465,
-            "sourceId": "red:19113"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/278-swanlake-residences",
@@ -24971,7 +24816,7 @@
             "sourceId": "nawy:278"
           }
         ],
-        "updatedAt": "2026-10-12T18:40:48.390Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -25347,22 +25192,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/222-district-5",
             "observedPrice": 11285000,
             "sourceId": "nawy:222"
-          },
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/35-district-5",
-            "observedPrice": 25773000,
-            "sourceId": "red:35"
           }
         ],
-        "updatedAt": "2026-10-12T18:40:48.390Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -25911,8 +25750,8 @@
       "priceMin": 4552200,
       "unitTypes": [
         "Apartment",
-        "Penthouse",
         "Villa",
+        "Penthouse",
         "Studio"
       ],
       "areaMin": 90,
@@ -25933,22 +25772,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1078-peerage-residence",
             "observedPrice": 4552200,
             "sourceId": "nawy:1078"
-          },
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/19077-peerage",
-            "observedPrice": 8820000,
-            "sourceId": "red:19077"
           }
         ],
-        "updatedAt": "2026-10-08T06:52:23.114Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -30401,22 +30234,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/686-al-karma-kay",
             "observedPrice": 7630000,
             "sourceId": "nawy:686"
-          },
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/19118-al-karma-kay",
-            "observedPrice": 8560000,
-            "sourceId": "red:19118"
           }
         ],
-        "updatedAt": "2026-10-12T18:40:48.390Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -30452,22 +30279,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/686-al-karma-kay",
             "observedPrice": 7630000,
             "sourceId": "nawy:686"
-          },
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/19118-al-karma-kay",
-            "observedPrice": 8560000,
-            "sourceId": "red:19118"
           }
         ],
-        "updatedAt": "2026-10-12T18:40:48.390Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -31803,7 +31624,7 @@
       "zone": "October",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 6205300,
+      "priceMin": 6892600,
       "unitTypes": [
         "Townhouse",
         "Apartment",
@@ -31830,14 +31651,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/16-badya",
-            "observedPrice": 6205300,
-            "sourceId": "red:16"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/223-badya",
@@ -31845,7 +31660,7 @@
             "sourceId": "nawy:223"
           }
         ],
-        "updatedAt": "2026-10-19T01:06:02.498Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -32341,14 +32156,14 @@
       "zone": "Zayed",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 9434000,
+      "priceMin": 9871000,
       "unitTypes": [
         "Villa",
-        "Townhouse",
         "Apartment",
+        "Townhouse",
+        "Duplex",
         "Studio",
-        "Loft",
-        "Duplex"
+        "Loft"
       ],
       "areaMin": 99,
       "areaMax": 396,
@@ -32368,14 +32183,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/19074-hills-of-one",
-            "observedPrice": 9434000,
-            "sourceId": "red:19074"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1032-hills-of-one",
@@ -32383,7 +32192,7 @@
             "sourceId": "nawy:1032"
           }
         ],
-        "updatedAt": "2026-10-18T02:53:55.899Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -32885,22 +32694,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1249-club-hills-residence",
             "observedPrice": 7080765,
             "sourceId": "nawy:1249"
-          },
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/30843-club-hills",
-            "observedPrice": 7080765,
-            "sourceId": "red:30843"
           }
         ],
-        "updatedAt": "2026-10-22T02:56:29.044Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -32983,22 +32786,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1059-talda",
             "observedPrice": 4546734,
             "sourceId": "nawy:1059"
-          },
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/19078-talda",
-            "observedPrice": 5332868,
-            "sourceId": "red:19078"
           }
         ],
-        "updatedAt": "2026-10-12T18:40:48.390Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -34022,15 +33819,15 @@
       "zone": "New Cairo",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 6180000,
+      "priceMin": 6870000,
       "unitTypes": [
         "Medical",
         "Apartment",
         "Townhouse",
         "Villa",
         "Duplex",
-        "Office",
         "Twinhouse",
+        "Office",
         "Administrative",
         "Studio",
         "Penthouse",
@@ -34055,14 +33852,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/39-hyde-park-new-cairo",
-            "observedPrice": 6180000,
-            "sourceId": "red:39"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/38-hyde-park",
@@ -34070,7 +33861,7 @@
             "sourceId": "nawy:38"
           }
         ],
-        "updatedAt": "2026-10-07T12:47:00.190Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -42426,8 +42217,8 @@
         "Townhouse",
         "Villa",
         "Duplex",
-        "Office",
         "Twinhouse",
+        "Office",
         "Administrative",
         "Studio",
         "Penthouse",
@@ -42442,20 +42233,14 @@
         "sourceId": "nawy-inventory:2583",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 6180000,
+      "priceMin": 6870000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/39-hyde-park-new-cairo",
-            "observedPrice": 6180000,
-            "sourceId": "red:39"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/38-hyde-park",
@@ -42463,7 +42248,7 @@
             "sourceId": "nawy:38"
           }
         ],
-        "updatedAt": "2026-10-18T02:53:55.899Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -43005,22 +42790,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/877-solana",
             "observedPrice": 15800000,
             "sourceId": "nawy:877"
-          },
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/37-solana-west",
-            "observedPrice": 20900000,
-            "sourceId": "red:37"
           }
         ],
-        "updatedAt": "2026-10-18T02:53:55.899Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -44209,11 +43988,11 @@
       "type": "residential",
       "unitTypes": [
         "Villa",
-        "Townhouse",
         "Apartment",
+        "Townhouse",
+        "Duplex",
         "Studio",
-        "Loft",
-        "Duplex"
+        "Loft"
       ],
       "downPayment": 5,
       "installmentYears": 8,
@@ -44223,20 +44002,14 @@
         "sourceId": "nawy-inventory:1982",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 9434000,
+      "priceMin": 9871000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/19074-hills-of-one",
-            "observedPrice": 9434000,
-            "sourceId": "red:19074"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1032-hills-of-one",
@@ -44244,7 +44017,7 @@
             "sourceId": "nawy:1032"
           }
         ],
-        "updatedAt": "2026-10-12T18:40:48.390Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -45272,20 +45045,14 @@
         "sourceId": "nawy-inventory:2139",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 7700000,
+      "priceMin": 17065000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/madaar/the-hillage",
-            "observedPrice": 7700000,
-            "sourceId": "property-finder:3ccbc007-0070-4d55-b59d-4682bef034f3"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/2139-the-hillage",
@@ -45293,7 +45060,7 @@
             "sourceId": "nawy:2139"
           }
         ],
-        "updatedAt": "2026-10-25T02:55:58.934Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -46754,20 +46521,14 @@
         "sourceId": "nawy-inventory:1927",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 10934369,
+      "priceMin": 17084952,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/torec-developments/t-pearl",
-            "observedPrice": 10934369,
-            "sourceId": "property-finder:41cd50bf-7ad6-4382-b788-9f8427adb98d"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1927-t-pearl",
@@ -46775,7 +46536,7 @@
             "sourceId": "nawy:1927"
           }
         ],
-        "updatedAt": "2026-10-25T02:55:58.934Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {
@@ -54194,13 +53955,14 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Retail",
         "Apartment",
         "Studio",
+        "Retail",
         "Duplex",
         "Townhouse",
         "Villa",
-        "Twinhouse"
+        "Twinhouse",
+        "Penthouse"
       ],
       "downPayment": 5,
       "installmentYears": 10,
@@ -54216,22 +53978,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/186-taj-city",
             "observedPrice": 5722056,
             "sourceId": "nawy:186"
-          },
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/33-taj-city",
-            "observedPrice": 9561725,
-            "sourceId": "red:33"
           }
         ],
-        "updatedAt": "2026-10-22T18:36:38.055Z"
+        "updatedAt": "2026-10-27T01:04:33.765Z"
       }
     },
     {

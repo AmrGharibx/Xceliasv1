@@ -178,15 +178,11 @@
       "type": "residential",
       "priceMin": 5666000,
       "unitTypes": [
-        "Medical",
         "Apartment",
         "Duplex",
-        "Villa",
-        "Chalet",
-        "Townhouse",
-        "Penthouse",
-        "Twinhouse",
-        "Studio"
+        "Town House",
+        "Twin House",
+        "Villa"
       ],
       "areaMin": 92,
       "areaMax": 460,
@@ -199,14 +195,14 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 10 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
@@ -215,19 +211,13 @@
             "sourceId": "red:25"
           },
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/202-bloomfields",
-            "observedPrice": 5846000,
-            "sourceId": "nawy:202"
-          },
-          {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/tatweer-misr/bloomfields",
             "observedPrice": 6370000,
             "sourceId": "property-finder:09405d00-0ca9-4653-b546-cb682bb4a5e2"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-10-28T12:33:23.515Z"
       }
     },
     {
@@ -7597,7 +7587,7 @@
       "zone": "New Cairo",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 3381840,
+      "priceMin": 4693920,
       "unitTypes": [
         "Retail",
         "Apartment",
@@ -7626,7 +7616,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1030-white-residence",
-            "observedPrice": 3381840,
+            "observedPrice": 4693920,
             "sourceId": "nawy:1030"
           },
           {
@@ -7636,7 +7626,7 @@
             "sourceId": "property-finder:e74f7851-98ef-497b-87e0-e59d031839b9"
           }
         ],
-        "updatedAt": "2026-10-27T02:58:35.483Z"
+        "updatedAt": "2026-10-28T12:33:23.515Z"
       }
     },
     {
@@ -22428,8 +22418,7 @@
       "priceMin": 28503000,
       "unitTypes": [
         "Villa",
-        "Townhouse",
-        "Twinhouse"
+        "Apartment"
       ],
       "areaMin": 85,
       "areaMax": 371,
@@ -22442,29 +22431,23 @@
         6
       ],
       "paymentPlan": "10% Down Payment, 6 Years Installments",
-      "downPayment": 10,
-      "installmentYears": 6,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/264-the-crown",
             "observedPrice": 28503000,
             "sourceId": "red:264"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/166-the-crown",
-            "observedPrice": 56947000,
-            "sourceId": "nawy:166"
           }
         ],
-        "updatedAt": "2026-10-26T18:47:01.717Z"
+        "updatedAt": "2026-10-28T12:33:23.515Z"
       }
     },
     {
@@ -23895,10 +23878,8 @@
       "type": "residential",
       "priceMin": 13800000,
       "unitTypes": [
-        "Townhouse",
-        "Apartment",
-        "Villa",
-        "Twinhouse"
+        "Town House",
+        "Twin House"
       ],
       "areaMin": 79,
       "areaMax": 344,
@@ -23911,14 +23892,14 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 8 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Property Finder",
@@ -23927,19 +23908,13 @@
             "sourceId": "property-finder:a5ae8d77-8a6a-4c91-8263-d82caa5c6ed8"
           },
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/356-keeva",
-            "observedPrice": 22900000,
-            "sourceId": "nawy:356"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/44-keeva",
             "observedPrice": 41268000,
             "sourceId": "red:44"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-10-28T12:33:23.515Z"
       }
     },
     {
@@ -25399,11 +25374,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/258-o-west-orascom",
-            "observedPrice": 7685000,
+            "observedPrice": 7891000,
             "sourceId": "nawy:258"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-10-28T12:33:23.515Z"
       }
     },
     {
@@ -30619,11 +30594,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/258-o-west-orascom",
-            "observedPrice": 7685000,
+            "observedPrice": 7891000,
             "sourceId": "nawy:258"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-10-28T12:33:23.515Z"
       }
     },
     {
@@ -37075,15 +37050,11 @@
       "type": "residential",
       "priceMin": 5666000,
       "unitTypes": [
-        "Medical",
         "Apartment",
         "Duplex",
-        "Villa",
-        "Chalet",
-        "Townhouse",
-        "Penthouse",
-        "Twinhouse",
-        "Studio"
+        "Town House",
+        "Twin House",
+        "Villa"
       ],
       "areaMin": 90,
       "areaMax": 449,
@@ -37096,14 +37067,14 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 10 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
@@ -37112,19 +37083,13 @@
             "sourceId": "red:25"
           },
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/202-bloomfields",
-            "observedPrice": 5846000,
-            "sourceId": "nawy:202"
-          },
-          {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/tatweer-misr/bloomfields",
             "observedPrice": 6370000,
             "sourceId": "property-finder:09405d00-0ca9-4653-b546-cb682bb4a5e2"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-10-28T12:33:23.515Z"
       }
     },
     {
@@ -45847,15 +45812,11 @@
       "type": "residential",
       "priceMin": 5666000,
       "unitTypes": [
-        "Medical",
         "Apartment",
         "Duplex",
-        "Villa",
-        "Chalet",
-        "Townhouse",
-        "Penthouse",
-        "Twinhouse",
-        "Studio"
+        "Town House",
+        "Twin House",
+        "Villa"
       ],
       "areaMin": 96,
       "areaMax": 480,
@@ -45868,14 +45829,14 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 10 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
@@ -45884,19 +45845,13 @@
             "sourceId": "red:25"
           },
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/202-bloomfields",
-            "observedPrice": 5846000,
-            "sourceId": "nawy:202"
-          },
-          {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/tatweer-misr/bloomfields",
             "observedPrice": 6370000,
             "sourceId": "property-finder:09405d00-0ca9-4653-b546-cb682bb4a5e2"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-10-28T12:33:23.515Z"
       }
     },
     {
@@ -45909,15 +45864,11 @@
       "type": "residential",
       "priceMin": 5666000,
       "unitTypes": [
-        "Medical",
         "Apartment",
         "Duplex",
-        "Villa",
-        "Chalet",
-        "Townhouse",
-        "Penthouse",
-        "Twinhouse",
-        "Studio"
+        "Town House",
+        "Twin House",
+        "Villa"
       ],
       "areaMin": 99,
       "areaMax": 493,
@@ -45930,14 +45881,14 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 10 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
@@ -45946,19 +45897,13 @@
             "sourceId": "red:25"
           },
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/202-bloomfields",
-            "observedPrice": 5846000,
-            "sourceId": "nawy:202"
-          },
-          {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/tatweer-misr/bloomfields",
             "observedPrice": 6370000,
             "sourceId": "property-finder:09405d00-0ca9-4653-b546-cb682bb4a5e2"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-10-28T12:33:23.515Z"
       }
     },
     {
@@ -45971,15 +45916,11 @@
       "type": "residential",
       "priceMin": 5666000,
       "unitTypes": [
-        "Medical",
         "Apartment",
         "Duplex",
-        "Villa",
-        "Chalet",
-        "Townhouse",
-        "Penthouse",
-        "Twinhouse",
-        "Studio"
+        "Town House",
+        "Twin House",
+        "Villa"
       ],
       "areaMin": 90,
       "areaMax": 452,
@@ -45992,14 +45933,14 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 10 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
@@ -46008,19 +45949,13 @@
             "sourceId": "red:25"
           },
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/202-bloomfields",
-            "observedPrice": 5846000,
-            "sourceId": "nawy:202"
-          },
-          {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/tatweer-misr/bloomfields",
             "observedPrice": 6370000,
             "sourceId": "property-finder:09405d00-0ca9-4653-b546-cb682bb4a5e2"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-10-28T12:33:23.515Z"
       }
     },
     {
@@ -57850,7 +57785,7 @@
       "zone": "New Cairo",
       "status": "Delivered",
       "type": "commercial",
-      "priceMin": 3381840,
+      "priceMin": 4693920,
       "unitTypes": [
         "Retail",
         "Apartment",
@@ -57874,7 +57809,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1030-white-residence",
-            "observedPrice": 3381840,
+            "observedPrice": 4693920,
             "sourceId": "nawy:1030"
           },
           {
@@ -57884,7 +57819,7 @@
             "sourceId": "property-finder:e74f7851-98ef-497b-87e0-e59d031839b9"
           }
         ],
-        "updatedAt": "2026-10-27T02:58:35.483Z"
+        "updatedAt": "2026-10-28T12:33:23.515Z"
       }
     },
     {
@@ -66220,18 +66155,14 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Medical",
         "Apartment",
         "Duplex",
-        "Villa",
-        "Chalet",
-        "Townhouse",
-        "Penthouse",
-        "Twinhouse",
-        "Studio"
+        "Town House",
+        "Twin House",
+        "Villa"
       ],
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
@@ -66244,7 +66175,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
@@ -66253,19 +66184,13 @@
             "sourceId": "red:25"
           },
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/202-bloomfields",
-            "observedPrice": 5846000,
-            "sourceId": "nawy:202"
-          },
-          {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/tatweer-misr/bloomfields",
             "observedPrice": 6370000,
             "sourceId": "property-finder:09405d00-0ca9-4653-b546-cb682bb4a5e2"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-10-28T12:33:23.515Z"
       }
     },
     {
@@ -74585,8 +74510,8 @@
       "type": "residential",
       "unitTypes": [
         "Retail",
-        "Administrative",
-        "Medical"
+        "Medical",
+        "Administrative"
       ],
       "downPayment": 30,
       "installmentYears": 4,
@@ -74596,7 +74521,7 @@
         "sourceId": "nawy-inventory:1414",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 4250000,
+      "priceMin": 3995000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -74607,11 +74532,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1414-il-mondo-mall",
-            "observedPrice": 4250000,
+            "observedPrice": 3995000,
             "sourceId": "nawy:1414"
           }
         ],
-        "updatedAt": "2026-10-26T14:11:09.178Z"
+        "updatedAt": "2026-10-28T12:33:23.515Z"
       }
     },
     {
@@ -74966,8 +74891,8 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Duplex",
-        "Apartment"
+        "Apartment",
+        "Duplex"
       ],
       "downPayment": 15,
       "installmentYears": 8,
@@ -74977,7 +74902,7 @@
         "sourceId": "nawy-inventory:1381",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 6127000,
+      "priceMin": 5217000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -74986,19 +74911,19 @@
         "sourceCount": 2,
         "sources": [
           {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1381-elen-new-cairo",
+            "observedPrice": 5217000,
+            "sourceId": "nawy:1381"
+          },
+          {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/concrete-developments/elen-residence",
             "observedPrice": 6127000,
             "sourceId": "property-finder:f1c3094c-9de8-4e2d-aa12-22a7ce65f2cd"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1381-elen-new-cairo",
-            "observedPrice": 6127200,
-            "sourceId": "nawy:1381"
           }
         ],
-        "updatedAt": "2026-10-27T02:58:35.483Z"
+        "updatedAt": "2026-10-28T12:33:23.515Z"
       }
     },
     {

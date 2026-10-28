@@ -41386,7 +41386,7 @@
       "zone": "Zayed",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 6800000,
+      "priceMin": 7638426,
       "unitTypes": [
         "Apartment"
       ],
@@ -41408,14 +41408,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/housing-and-development-company-for-real-estate/westview-residence",
-            "observedPrice": 6800000,
-            "sourceId": "property-finder:4bbc04c9-3b7e-476b-bb0e-7099db7cbefe"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1375-westview-residence",
@@ -41423,7 +41417,7 @@
             "sourceId": "nawy:1375"
           }
         ],
-        "updatedAt": "2026-10-26T14:11:09.178Z"
+        "updatedAt": "2026-10-28T06:36:56.958Z"
       }
     },
     {
@@ -55163,33 +55157,24 @@
       "type": "residential",
       "unitTypes": [
         "Apartment",
-        "Retail",
-        "Medical",
-        "Studio",
-        "Administrative"
+        "Villa"
       ],
-      "downPayment": 3,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "3% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2700",
         "observedAt": "2026-10-01T03:43:21.164Z"
       },
-      "priceMin": 5425000,
+      "priceMin": 9561725,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/2700-etaje-madinet-misr",
-            "observedPrice": 5425000,
-            "sourceId": "nawy:2700"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/33-taj-city",
@@ -55197,7 +55182,7 @@
             "sourceId": "red:33"
           }
         ],
-        "updatedAt": "2026-10-28T00:49:28.413Z"
+        "updatedAt": "2026-10-28T06:36:56.958Z"
       }
     },
     {
@@ -61381,22 +61366,36 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Apartment",
-        "Townhouse",
-        "Duplex",
         "Villa",
-        "Penthouse",
-        "Twinhouse"
+        "Twin House",
+        "Apartment",
+        "Town House"
       ],
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:664",
         "observedAt": "2026-10-28T03:30:10.491Z"
       },
-      "priceMin": 10460000
+      "priceMin": 22679000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/20-the-estates",
+            "observedPrice": 22679000,
+            "sourceId": "red:20"
+          }
+        ],
+        "updatedAt": "2026-10-28T06:36:56.958Z"
+      }
     },
     {
       "name": "The Estates",
@@ -61408,19 +61407,35 @@
       "type": "residential",
       "unitTypes": [
         "Villa",
-        "Townhouse",
+        "Twin House",
         "Apartment",
-        "Twinhouse"
+        "Town House"
       ],
-      "downPayment": 10,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "10% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:310",
         "observedAt": "2026-10-28T03:30:10.491Z"
       },
-      "priceMin": 77223960
+      "priceMin": 22679000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/20-the-estates",
+            "observedPrice": 22679000,
+            "sourceId": "red:20"
+          }
+        ],
+        "updatedAt": "2026-10-28T06:36:56.958Z"
+      }
     }
   ],
   "projectDetails": {

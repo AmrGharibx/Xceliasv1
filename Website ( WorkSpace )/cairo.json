@@ -1083,7 +1083,7 @@
       "zone": "New Cairo",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 7623000,
+      "priceMin": 11960000,
       "unitTypes": [
         "Apartment",
         "Penthouse"
@@ -1106,14 +1106,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/saudi-egyptian-developers-sed/jayd",
-            "observedPrice": 7623000,
-            "sourceId": "property-finder:66b5a4f2-19c7-400c-908f-263e435b9c60"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/283-jayd",
@@ -1121,7 +1115,7 @@
             "sourceId": "nawy:283"
           }
         ],
-        "updatedAt": "2026-10-26T03:01:14.243Z"
+        "updatedAt": "2026-10-28T00:49:28.413Z"
       }
     },
     {
@@ -2575,16 +2569,10 @@
       "zone": "New Cairo",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 5722056,
+      "priceMin": 9561725,
       "unitTypes": [
         "Apartment",
-        "Studio",
-        "Retail",
-        "Duplex",
-        "Townhouse",
-        "Villa",
-        "Twinhouse",
-        "Penthouse"
+        "Villa"
       ],
       "areaMin": 89,
       "areaMax": 445,
@@ -2597,21 +2585,15 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 10 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/186-taj-city",
-            "observedPrice": 5722056,
-            "sourceId": "nawy:186"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/33-taj-city",
@@ -2625,7 +2607,7 @@
             "sourceId": "property-finder:894abd49-21d3-4d6a-bca8-f83238fa6da8"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-10-28T00:49:28.413Z"
       }
     },
     {
@@ -10832,7 +10814,7 @@
       "zone": "New Capital",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 4315616,
+      "priceMin": 7419500,
       "unitTypes": [
         "Apartment",
         "Duplex",
@@ -10856,22 +10838,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/akam-developments/scenario-new-capital",
-            "observedPrice": 4315616,
-            "sourceId": "property-finder:fb7b6d88-f93d-4ba0-8f81-ddefb6126595"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/297-scenario",
-            "observedPrice": 7471513,
+            "observedPrice": 7419500,
             "sourceId": "nawy:297"
           }
         ],
-        "updatedAt": "2026-10-26T03:01:14.243Z"
+        "updatedAt": "2026-10-28T00:49:28.413Z"
       }
     },
     {
@@ -22284,7 +22260,7 @@
       "zone": "Zayed",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 7130000,
+      "priceMin": 37476476,
       "unitTypes": [
         "Villa",
         "Townhouse",
@@ -22311,14 +22287,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/city-edge/etapa-compound",
-            "observedPrice": 7130000,
-            "sourceId": "property-finder:a2754439-b7d8-4cba-bc5b-a43a68bbdd4a"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/243-etapa",
@@ -22326,7 +22296,7 @@
             "sourceId": "nawy:243"
           }
         ],
-        "updatedAt": "2026-10-26T03:01:14.243Z"
+        "updatedAt": "2026-10-28T00:49:28.413Z"
       }
     },
     {
@@ -26154,7 +26124,7 @@
       "zone": "Zayed",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 9800000,
+      "priceMin": 15800000,
       "unitTypes": [
         "Townhouse",
         "Villa",
@@ -26182,14 +26152,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/ora-developers/solana",
-            "observedPrice": 9800000,
-            "sourceId": "property-finder:101c2f10-3bee-4921-a90f-f85b7276c733"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/877-solana",
@@ -26197,7 +26161,7 @@
             "sourceId": "nawy:877"
           }
         ],
-        "updatedAt": "2026-10-26T03:01:14.243Z"
+        "updatedAt": "2026-10-28T00:49:28.413Z"
       }
     },
     {
@@ -38525,7 +38489,7 @@
       "zone": "Zayed",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 8215000,
+      "priceMin": 15298000,
       "unitTypes": [
         "Villa",
         "Twinhouse",
@@ -38549,14 +38513,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/arabia-developments/elora",
-            "observedPrice": 8215000,
-            "sourceId": "property-finder:43fbef85-8d12-4c6c-a95e-1d9e76837ae8"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1122-elora",
@@ -38564,7 +38522,7 @@
             "sourceId": "nawy:1122"
           }
         ],
-        "updatedAt": "2026-10-26T03:01:14.243Z"
+        "updatedAt": "2026-10-28T00:49:28.413Z"
       }
     },
     {
@@ -48156,20 +48114,14 @@
         "sourceId": "nawy-inventory:2179",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 6702494,
+      "priceMin": 11321000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
-        "confidence": "verified",
-        "sourceCount": 2,
+        "confidence": "high",
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/zayard-developments/zayard-memora",
-            "observedPrice": 6702494,
-            "sourceId": "property-finder:cfdc64bd-8cec-4e2b-a606-79e4b1aa3d72"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/2179-zayard-memora",
@@ -48177,7 +48129,7 @@
             "sourceId": "nawy:2179"
           }
         ],
-        "updatedAt": "2026-10-26T03:01:14.243Z"
+        "updatedAt": "2026-10-28T00:49:28.413Z"
       }
     },
     {
@@ -54685,23 +54637,20 @@
       "type": "residential",
       "unitTypes": [
         "Apartment",
-        "Studio",
         "Retail",
-        "Duplex",
-        "Townhouse",
-        "Villa",
-        "Twinhouse",
-        "Penthouse"
+        "Medical",
+        "Studio",
+        "Administrative"
       ],
-      "downPayment": 5,
+      "downPayment": 3,
       "installmentYears": 10,
-      "paymentPlan": "5% Down Payment, 10 Years Installments",
+      "paymentPlan": "3% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2700",
         "observedAt": "2026-10-01T03:43:21.164Z"
       },
-      "priceMin": 5722056,
+      "priceMin": 5425000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -54711,9 +54660,9 @@
         "sources": [
           {
             "name": "Nawy",
-            "url": "https://www.nawy.com/compound/186-taj-city",
-            "observedPrice": 5722056,
-            "sourceId": "nawy:186"
+            "url": "https://www.nawy.com/compound/2700-etaje-madinet-misr",
+            "observedPrice": 5425000,
+            "sourceId": "nawy:2700"
           },
           {
             "name": "RED",
@@ -54722,7 +54671,7 @@
             "sourceId": "red:33"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-10-28T00:49:28.413Z"
       }
     },
     {

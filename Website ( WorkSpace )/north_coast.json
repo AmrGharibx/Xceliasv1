@@ -143,7 +143,7 @@
       "zone": "Ras El Hekma",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 6612000,
+      "priceMin": 5850000,
       "unitTypes": [
         "Chalet",
         "Villa",
@@ -170,8 +170,14 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 3,
         "sources": [
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/al-ahly-sabbour-developments/youd",
+            "observedPrice": 5850000,
+            "sourceId": "property-finder:4bdd7f1f-8cc6-4501-9981-554af694535f"
+          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1671-youd",
@@ -185,7 +191,7 @@
             "sourceId": "red:30917"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-10-28T02:51:47.096Z"
       }
     },
     {
@@ -226,10 +232,11 @@
       "type": "residential",
       "priceMin": 12737554,
       "unitTypes": [
-        "Chalet",
-        "Villa",
-        "Town House",
-        "Twin House"
+        "duplex",
+        "apartment",
+        "villa",
+        "penthouse",
+        "townhouse"
       ],
       "areaMin": 98,
       "areaMax": 390,
@@ -242,23 +249,29 @@
         6
       ],
       "paymentPlan": "5% Down Payment",
-      "downPayment": 0,
+      "downPayment": 5,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/266-masyaf",
             "observedPrice": 12737554,
             "sourceId": "red:266"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/m-squared/el-masyaf",
+            "observedPrice": 29720330,
+            "sourceId": "property-finder:d4223390-cb3b-4c7b-b968-35ec15127d11"
           }
         ],
-        "updatedAt": "2026-10-26T18:47:01.717Z"
+        "updatedAt": "2026-10-28T02:51:47.096Z"
       }
     },
     {
@@ -1415,7 +1428,7 @@
       "zone": "Ras El Hekma",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 9232134,
+      "priceMin": 8300000,
       "unitTypes": [
         "Chalet",
         "Penthouse",
@@ -1439,8 +1452,14 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/mabany-edris/koun",
+            "observedPrice": 8300000,
+            "sourceId": "property-finder:fc35c78f-4f6b-44ab-8980-4027e67b06ec"
+          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/935-koun",
@@ -1448,7 +1467,7 @@
             "sourceId": "nawy:935"
           }
         ],
-        "updatedAt": "2026-10-27T18:28:31.660Z"
+        "updatedAt": "2026-10-28T02:51:47.096Z"
       }
     },
     {
@@ -1463,8 +1482,8 @@
       "unitTypes": [
         "Chalet",
         "Villa",
-        "Twinhouse",
         "Penthouse",
+        "Twinhouse",
         "Townhouse",
         "Duplex"
       ],
@@ -1486,7 +1505,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 3,
         "sources": [
           {
             "name": "Nawy",
@@ -1495,13 +1514,19 @@
             "sourceId": "nawy:692"
           },
           {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/arabella/water-creek-direction-white",
+            "observedPrice": 8800000,
+            "sourceId": "property-finder:b562a266-c61c-4105-af5f-1f83aae11092"
+          },
+          {
             "name": "RED",
             "url": "https://redww.com/en/projects/19054-direction-white",
             "observedPrice": 14600000,
             "sourceId": "red:19054"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-10-28T02:51:47.096Z"
       }
     },
     {
@@ -2694,7 +2719,7 @@
       ],
       "priceMin": 3078000,
       "unitTypes": [
-        "Apartment"
+        "apartment"
       ],
       "areaMin": 79,
       "areaMax": 347,
@@ -2707,23 +2732,29 @@
         6
       ],
       "paymentPlan": "20% Down Payment",
-      "downPayment": 0,
+      "downPayment": 20,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30850-golf-porto-marina",
             "observedPrice": 3078000,
             "sourceId": "red:30850"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/amer-group-company/golf-porto-marina",
+            "observedPrice": 7000000,
+            "sourceId": "property-finder:92a099b7-964f-4ada-80b4-acc318e3328e"
           }
         ],
-        "updatedAt": "2026-10-27T18:28:31.660Z"
+        "updatedAt": "2026-10-28T02:51:47.096Z"
       }
     },
     {
@@ -3250,7 +3281,7 @@
       "layouts": [
         "https://www.enjazproperty.com/en/project/youd-north-coast/"
       ],
-      "priceMin": 6612000,
+      "priceMin": 5850000,
       "unitTypes": [
         "Chalet",
         "Villa",
@@ -3277,8 +3308,14 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 3,
         "sources": [
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/al-ahly-sabbour-developments/youd",
+            "observedPrice": 5850000,
+            "sourceId": "property-finder:4bdd7f1f-8cc6-4501-9981-554af694535f"
+          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1671-youd",
@@ -3292,7 +3329,7 @@
             "sourceId": "red:30917"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-10-28T02:51:47.096Z"
       }
     },
     {
@@ -3397,22 +3434,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19042-la-vista-cascada",
             "observedPrice": 24800000,
             "sourceId": "red:19042"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/la-vista-developments/la-vista-ras-el-hekma",
-            "observedPrice": 24800000,
-            "sourceId": "property-finder:75e44164-bb08-4ead-836d-a81f9d09a3a5"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-10-28T02:51:47.096Z"
       }
     },
     {
@@ -3907,22 +3938,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/221-the-waterway-north-coast",
             "observedPrice": 15606000,
             "sourceId": "nawy:221"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/waterway-developments/the-waterway-north-coast",
-            "observedPrice": 37454400,
-            "sourceId": "property-finder:7e946f6b-23f6-47d3-820b-3b9db23a3119"
           }
         ],
-        "updatedAt": "2026-10-27T02:58:35.483Z"
+        "updatedAt": "2026-10-28T02:51:47.096Z"
       }
     },
     {
@@ -4457,7 +4482,7 @@
       "layouts": [
         "https://cityedgedevelopments.com/project/downtown"
       ],
-      "priceMin": 6609000,
+      "priceMin": 3770600,
       "unitTypes": [
         "Apartment",
         "Chalet",
@@ -4482,8 +4507,14 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/modon-developments/lagoons-al-alamin",
+            "observedPrice": 3770600,
+            "sourceId": "property-finder:8a2b1bb1-e116-4155-96cb-0e5dc4e625d8"
+          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1649-lagoons-al-alamin",
@@ -4491,7 +4522,7 @@
             "sourceId": "nawy:1649"
           }
         ],
-        "updatedAt": "2026-10-28T00:49:28.413Z"
+        "updatedAt": "2026-10-28T02:51:47.096Z"
       }
     },
     {
@@ -4532,16 +4563,22 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/493-il-latini-sed",
             "observedPrice": 2293000,
             "sourceId": "nawy:493"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/saudi-egyptian-developers-sed/il-latini",
+            "observedPrice": 7635917,
+            "sourceId": "property-finder:d75dde18-94a1-40ac-913f-d128714159cc"
           }
         ],
-        "updatedAt": "2026-10-27T18:28:31.660Z"
+        "updatedAt": "2026-10-28T02:51:47.096Z"
       }
     },
     {
@@ -4722,7 +4759,7 @@
       ],
       "priceMin": 3078000,
       "unitTypes": [
-        "Apartment"
+        "apartment"
       ],
       "areaMin": 84,
       "areaMax": 367,
@@ -4735,23 +4772,29 @@
         6
       ],
       "paymentPlan": "20% Down Payment",
-      "downPayment": 0,
+      "downPayment": 20,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30850-golf-porto-marina",
             "observedPrice": 3078000,
             "sourceId": "red:30850"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/amer-group-company/golf-porto-marina",
+            "observedPrice": 7000000,
+            "sourceId": "property-finder:92a099b7-964f-4ada-80b4-acc318e3328e"
           }
         ],
-        "updatedAt": "2026-10-27T18:28:31.660Z"
+        "updatedAt": "2026-10-28T02:51:47.096Z"
       }
     },
     {
@@ -4770,10 +4813,10 @@
       ],
       "priceMin": 6100000,
       "unitTypes": [
-        "Apartment",
-        "Townhouse",
         "Villa",
+        "Townhouse",
         "Studio",
+        "Apartment",
         "Loft"
       ],
       "areaMin": 75,
@@ -4794,16 +4837,22 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/716-azzar--island",
             "observedPrice": 6100000,
             "sourceId": "nawy:716"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/reedy-group-development/azzar-islands",
+            "observedPrice": 12900000,
+            "sourceId": "property-finder:47e13c1b-e53c-418e-81f2-f2986c6d59e6"
           }
         ],
-        "updatedAt": "2026-10-27T18:28:31.660Z"
+        "updatedAt": "2026-10-28T02:51:47.096Z"
       }
     },
     {
@@ -4879,16 +4928,22 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/734-lasirena-north-coast",
             "observedPrice": 3890000,
             "sourceId": "nawy:734"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/lasirena-group/lasirena-north-coast",
+            "observedPrice": 12000000,
+            "sourceId": "property-finder:b73de620-10f5-4568-9c72-bb02e751a392"
           }
         ],
-        "updatedAt": "2026-10-27T18:28:31.660Z"
+        "updatedAt": "2026-10-28T02:51:47.096Z"
       }
     },
     {
@@ -4941,11 +4996,8 @@
       ],
       "priceMin": 5312000,
       "unitTypes": [
-        "Villa",
-        "Chalet",
-        "Twin House",
-        "Apartment",
-        "Town House"
+        "villa",
+        "apartment"
       ],
       "areaMin": 87,
       "areaMax": 381,
@@ -4957,24 +5009,30 @@
         5,
         6
       ],
-      "paymentPlan": "10% Down Payment",
-      "downPayment": 0,
+      "paymentPlan": "5% Down Payment",
+      "downPayment": 5,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19230-sea-view",
             "observedPrice": 5312000,
             "sourceId": "red:19230"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/jdar-development/sea-view-phase-2-at-north-coast",
+            "observedPrice": 8780000,
+            "sourceId": "property-finder:dcf4fa78-3414-4bea-ac96-6cb64f1a4716"
           }
         ],
-        "updatedAt": "2026-10-26T03:01:14.243Z"
+        "updatedAt": "2026-10-28T02:51:47.096Z"
       }
     },
     {
@@ -5306,16 +5364,22 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1001-il-latini-city-edge",
             "observedPrice": 3088613,
             "sourceId": "nawy:1001"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/saudi-egyptian-developers-sed/il-latini",
+            "observedPrice": 7635917,
+            "sourceId": "property-finder:d75dde18-94a1-40ac-913f-d128714159cc"
           }
         ],
-        "updatedAt": "2026-10-27T18:28:31.660Z"
+        "updatedAt": "2026-10-28T02:51:47.096Z"
       }
     },
     {
@@ -5525,7 +5589,7 @@
       "layouts": [
         "https://cityedgedevelopments.com/project/north-edge-towers"
       ],
-      "priceMin": 35233000,
+      "priceMin": 15412000,
       "unitTypes": [
         "Apartment",
         "Chalet",
@@ -5549,8 +5613,14 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/city-edge/beachfront-towers",
+            "observedPrice": 15412000,
+            "sourceId": "property-finder:ce939b20-75e4-453d-b066-03714819d5d2"
+          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1228-beach-front-towers",
@@ -5558,7 +5628,7 @@
             "sourceId": "nawy:1228"
           }
         ],
-        "updatedAt": "2026-10-28T00:49:28.413Z"
+        "updatedAt": "2026-10-28T02:51:47.096Z"
       }
     },
     {
@@ -5707,16 +5777,22 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1468-rivette-amwaj",
             "observedPrice": 9299990,
             "sourceId": "nawy:1468"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/al-ahly-sabbour-developments/mwj",
+            "observedPrice": 24400000,
+            "sourceId": "property-finder:8271c06c-5fdc-4543-83f0-dd0950b14a21"
           }
         ],
-        "updatedAt": "2026-10-27T18:28:31.660Z"
+        "updatedAt": "2026-10-28T02:51:47.096Z"
       }
     },
     {
@@ -6069,7 +6145,7 @@
       "amenities": "Swimming Pools, Hotel, Shopping Mall, Sports Courts",
       "masterplan": "http://www.coralhills.com.eg/NorthCoast/En_Default.aspx",
       "layouts": "http://www.coralhills.com.eg/NorthCoast/En_Default.aspx",
-      "priceMin": 8750000,
+      "priceMin": 6630000,
       "unitTypes": [
         "apartment",
         "villa"
@@ -6097,11 +6173,11 @@
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/new-star-development/coral-hills",
-            "observedPrice": 8750000,
+            "observedPrice": 6630000,
             "sourceId": "property-finder:32bcf635-7554-4f92-8ef6-2f416bebc8e7"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-10-28T02:51:47.096Z"
       }
     },
     {
@@ -6142,16 +6218,22 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/2310-hacienda-ras-el-hekma",
             "observedPrice": 12032000,
             "sourceId": "nawy:2310"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/palm-hills/hacienda-red",
+            "observedPrice": 24000000,
+            "sourceId": "property-finder:b8cbd9f7-58a6-4eca-809d-f78c3d1e17ec"
           }
         ],
-        "updatedAt": "2026-10-22T02:56:29.044Z"
+        "updatedAt": "2026-10-28T02:51:47.096Z"
       }
     },
     {
@@ -6310,7 +6392,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
@@ -6319,19 +6401,13 @@
             "sourceId": "nawy:930"
           },
           {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/naia-developments/naia-bay",
-            "observedPrice": 17000000,
-            "sourceId": "property-finder:764debd9-6a2e-4eea-8867-c373ea5d54a8"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/19023-naia-bay",
             "observedPrice": 26050000,
             "sourceId": "red:19023"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-10-28T02:51:47.096Z"
       }
     },
     {
@@ -6759,12 +6835,11 @@
       "amenities": "18-Hole Golf Course, Lake Yard, Multiple Hotels, Cabanas",
       "masterplan": "https://www.palmhillsdevelopments.com/en/Projects/Hacienda-Bay",
       "layouts": "https://www.palmhillsdevelopments.com/en/Projects/Hacienda-Bay",
-      "priceMin": 10480873,
-      "priceMax": 26058030,
+      "priceMin": 12000000,
       "unitTypes": [
-        "Villa",
-        "Chalet",
-        "Townhouse"
+        "apartment",
+        "townhouse",
+        "villa"
       ],
       "areaMin": 75,
       "areaMax": 326,
@@ -6776,9 +6851,25 @@
         5,
         6
       ],
-      "paymentPlan": "10% Down Payment, 8 Years Installments",
-      "downPayment": 10,
-      "installmentYears": 8
+      "paymentPlan": "5% Down Payment",
+      "downPayment": 5,
+      "installmentYears": 0,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/palm-hills/hacienda-ras-el-hekma",
+            "observedPrice": 12000000,
+            "sourceId": "property-finder:797a38f4-0686-4977-8f94-9ac81b2d8204"
+          }
+        ],
+        "updatedAt": "2026-10-28T02:51:47.096Z"
+      }
     },
     {
       "name": "La Vista Ras El Hekma",
@@ -7749,8 +7840,8 @@
       "unitTypes": [
         "Chalet",
         "Villa",
-        "Twinhouse",
         "Penthouse",
+        "Twinhouse",
         "Townhouse",
         "Duplex"
       ],
@@ -7772,7 +7863,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 3,
         "sources": [
           {
             "name": "Nawy",
@@ -7781,13 +7872,19 @@
             "sourceId": "nawy:692"
           },
           {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/arabella/water-creek-direction-white",
+            "observedPrice": 8800000,
+            "sourceId": "property-finder:b562a266-c61c-4105-af5f-1f83aae11092"
+          },
+          {
             "name": "RED",
             "url": "https://redww.com/en/projects/19054-direction-white",
             "observedPrice": 14600000,
             "sourceId": "red:19054"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-10-28T02:51:47.096Z"
       }
     },
     {
@@ -7993,7 +8090,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
@@ -8002,19 +8099,13 @@
             "sourceId": "nawy:929"
           },
           {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/misr-italia/solare",
-            "observedPrice": 9501750,
-            "sourceId": "property-finder:7b87a992-f7ae-440e-9043-59716a213b5d"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/260-solare",
             "observedPrice": 12366703,
             "sourceId": "red:260"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-10-28T02:51:47.096Z"
       }
     },
     {
@@ -9125,7 +9216,7 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 19051200,
+      "priceMin": 19692000,
       "unitTypes": [
         "Twinhouse",
         "Loft",
@@ -9155,14 +9246,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/sodic/june",
-            "observedPrice": 19051200,
-            "sourceId": "property-finder:f45feeee-cf54-44e3-8357-820f000cef82"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19027-june",
@@ -9176,7 +9261,7 @@
             "sourceId": "nawy:510"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-10-28T02:51:47.096Z"
       }
     },
     {
@@ -9291,7 +9376,7 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 19051200,
+      "priceMin": 19692000,
       "unitTypes": [
         "Twinhouse",
         "Loft",
@@ -9321,14 +9406,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/sodic/june",
-            "observedPrice": 19051200,
-            "sourceId": "property-finder:f45feeee-cf54-44e3-8357-820f000cef82"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19027-june",
@@ -9342,7 +9421,7 @@
             "sourceId": "nawy:510"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-10-28T02:51:47.096Z"
       }
     },
     {
@@ -11090,7 +11169,7 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 22700000,
+      "priceMin": 14840000,
       "unitTypes": [
         "Apartment"
       ],
@@ -11112,8 +11191,14 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/modon-ras-el-hekma/yemm-boulevard",
+            "observedPrice": 14840000,
+            "sourceId": "property-finder:aecf33d6-6671-4824-bcdd-00d789f38a92"
+          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1822-yemm-boulevard-ras-el-hekma",
@@ -11121,7 +11206,7 @@
             "sourceId": "nawy:1822"
           }
         ],
-        "updatedAt": "2026-10-28T00:49:28.413Z"
+        "updatedAt": "2026-10-28T02:51:47.096Z"
       }
     },
     {
@@ -11665,10 +11750,10 @@
       "type": "residential",
       "priceMin": 6100000,
       "unitTypes": [
-        "Apartment",
-        "Townhouse",
         "Villa",
+        "Townhouse",
         "Studio",
+        "Apartment",
         "Loft"
       ],
       "areaMin": 81,
@@ -11689,16 +11774,22 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/716-azzar--island",
             "observedPrice": 6100000,
             "sourceId": "nawy:716"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/reedy-group-development/azzar-islands",
+            "observedPrice": 12900000,
+            "sourceId": "property-finder:47e13c1b-e53c-418e-81f2-f2986c6d59e6"
           }
         ],
-        "updatedAt": "2026-10-27T18:28:31.660Z"
+        "updatedAt": "2026-10-28T02:51:47.096Z"
       }
     },
     {
@@ -12708,13 +12799,13 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Apartment",
-        "Townhouse",
-        "Duplex"
+        "apartment",
+        "townhouse",
+        "duplex"
       ],
       "downPayment": 5,
-      "installmentYears": 8,
-      "paymentPlan": "5% Down Payment, 8 Years Installments",
+      "installmentYears": 0,
+      "paymentPlan": "5% Down Payment",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2688",
@@ -12726,14 +12817,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/2688-marina-waterfront-residences",
-            "observedPrice": 18500000,
-            "sourceId": "nawy:2688"
-          },
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/modon-ras-el-hekma/marina-waterfront-residences",
@@ -12741,7 +12826,7 @@
             "sourceId": "property-finder:bbc2c885-d5c2-4b8d-97cc-6e42abc946b9"
           }
         ],
-        "updatedAt": "2026-10-26T03:01:14.243Z"
+        "updatedAt": "2026-10-28T02:51:47.096Z"
       }
     },
     {
@@ -13526,15 +13611,11 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Twin House",
-        "Villa",
-        "Town House",
-        "Chalet",
-        "Apartment",
-        "Duplex",
-        "Studio"
+        "apartment",
+        "townhouse",
+        "villa"
       ],
-      "downPayment": 0,
+      "downPayment": 5,
       "installmentYears": 0,
       "paymentPlan": "5% Down Payment",
       "catalogMeta": {
@@ -13542,14 +13623,20 @@
         "sourceId": "nawy-inventory:717",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 24031000,
+      "priceMin": 24000000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/ora-developers/silvertown-in-silversands",
+            "observedPrice": 24000000,
+            "sourceId": "property-finder:9ac5707e-bc47-490f-8fa9-b1e5a30fdff1"
+          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/11-silversands",
@@ -13557,7 +13644,7 @@
             "sourceId": "red:11"
           }
         ],
-        "updatedAt": "2026-10-27T18:28:31.660Z"
+        "updatedAt": "2026-10-28T02:51:47.096Z"
       }
     },
     {
@@ -14224,14 +14311,20 @@
         "sourceId": "nawy-inventory:2180",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 6612000,
+      "priceMin": 5850000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 3,
         "sources": [
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/al-ahly-sabbour-developments/youd",
+            "observedPrice": 5850000,
+            "sourceId": "property-finder:4bdd7f1f-8cc6-4501-9981-554af694535f"
+          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1671-youd",
@@ -14245,7 +14338,7 @@
             "sourceId": "red:30917"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-10-28T02:51:47.096Z"
       }
     },
     {
@@ -14272,14 +14365,20 @@
         "sourceId": "nawy-inventory:1671",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 6612000,
+      "priceMin": 5850000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 3,
         "sources": [
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/al-ahly-sabbour-developments/youd",
+            "observedPrice": 5850000,
+            "sourceId": "property-finder:4bdd7f1f-8cc6-4501-9981-554af694535f"
+          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1671-youd",
@@ -14293,7 +14392,7 @@
             "sourceId": "red:30917"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-10-28T02:51:47.096Z"
       }
     },
     {
@@ -14422,7 +14521,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 3,
         "sources": [
           {
             "name": "Nawy",
@@ -14431,13 +14530,19 @@
             "sourceId": "nawy:930"
           },
           {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/naia-developments/swissotel-residences",
+            "observedPrice": 12750000,
+            "sourceId": "property-finder:2018968d-8e80-44fc-a68a-95cd4fe12e4e"
+          },
+          {
             "name": "RED",
             "url": "https://redww.com/en/projects/19023-naia-bay",
             "observedPrice": 26050000,
             "sourceId": "red:19023"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-10-28T02:51:47.096Z"
       }
     },
     {
@@ -14469,7 +14574,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
@@ -14478,19 +14583,13 @@
             "sourceId": "nawy:930"
           },
           {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/naia-developments/naia-bay",
-            "observedPrice": 17000000,
-            "sourceId": "property-finder:764debd9-6a2e-4eea-8867-c373ea5d54a8"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/19023-naia-bay",
             "observedPrice": 26050000,
             "sourceId": "red:19023"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-10-28T02:51:47.096Z"
       }
     },
     {
@@ -14522,7 +14621,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
@@ -14531,19 +14630,13 @@
             "sourceId": "nawy:930"
           },
           {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/naia-developments/naia-bay",
-            "observedPrice": 17000000,
-            "sourceId": "property-finder:764debd9-6a2e-4eea-8867-c373ea5d54a8"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/19023-naia-bay",
             "observedPrice": 26050000,
             "sourceId": "red:19023"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-10-28T02:51:47.096Z"
       }
     },
     {
@@ -15472,16 +15565,22 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/734-lasirena-north-coast",
             "observedPrice": 3890000,
             "sourceId": "nawy:734"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/lasirena-group/lasirena-north-coast",
+            "observedPrice": 12000000,
+            "sourceId": "property-finder:b73de620-10f5-4568-9c72-bb02e751a392"
           }
         ],
-        "updatedAt": "2026-10-27T18:28:31.660Z"
+        "updatedAt": "2026-10-28T02:51:47.096Z"
       }
     },
     {
@@ -15918,14 +16017,20 @@
         "sourceId": "nawy-inventory:1671",
         "observedAt": "2026-09-23T03:36:30.920Z"
       },
-      "priceMin": 6612000,
+      "priceMin": 5850000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 3,
         "sources": [
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/al-ahly-sabbour-developments/youd",
+            "observedPrice": 5850000,
+            "sourceId": "property-finder:4bdd7f1f-8cc6-4501-9981-554af694535f"
+          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1671-youd",
@@ -15939,7 +16044,7 @@
             "sourceId": "red:30917"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-10-28T02:51:47.096Z"
       }
     },
     {

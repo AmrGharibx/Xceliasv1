@@ -448,11 +448,10 @@
       "zone": "Gouna",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 14969298,
-      "priceMax": 34746201,
+      "priceMin": 21540000,
       "unitTypes": [
-        "Villa",
-        "Apartment"
+        "apartment",
+        "villa"
       ],
       "areaMin": 110,
       "areaMax": 550,
@@ -464,9 +463,25 @@
         5,
         6
       ],
-      "paymentPlan": "10% Down Payment, 5 Years Installments",
-      "downPayment": 10,
-      "installmentYears": 5
+      "paymentPlan": "15% Down Payment",
+      "downPayment": 15,
+      "installmentYears": 0,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/orascom-development/ancient-sands",
+            "observedPrice": 21540000,
+            "sourceId": "property-finder:9cedef01-6bd5-4c79-b32c-57b9d8f5a07b"
+          }
+        ],
+        "updatedAt": "2026-10-28T02:51:47.096Z"
+      }
     },
     {
       "name": "Steigenberger Golf Resort",
@@ -560,7 +575,7 @@
       "zone": "Gouna",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 30000000,
+      "priceMin": 32885321,
       "unitTypes": [
         "Villa",
         "Apartment"
@@ -588,11 +603,11 @@
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/orascom-development/cyan",
-            "observedPrice": 30000000,
+            "observedPrice": 32885321,
             "sourceId": "property-finder:fcb7dcff-3042-4eff-b368-de5236520367"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-10-28T02:51:47.096Z"
       }
     },
     {
@@ -849,7 +864,7 @@
       "zone": "Hurghada",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 13654075,
+      "priceMin": 12000000,
       "unitTypes": [
         "Chalet",
         "Townhouse"
@@ -872,8 +887,14 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/the-land-developers/il-bayou",
+            "observedPrice": 12000000,
+            "sourceId": "property-finder:9150aa0f-8aa4-4c3c-9760-eb1b2152a1a5"
+          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/978-il-bayou",
@@ -881,7 +902,7 @@
             "sourceId": "nawy:978"
           }
         ],
-        "updatedAt": "2026-10-27T18:28:31.660Z"
+        "updatedAt": "2026-10-28T02:51:47.096Z"
       }
     },
     {

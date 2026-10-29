@@ -500,7 +500,7 @@
       "zone": "Zaafarana",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 9000000,
+      "priceMin": 13500000,
       "unitTypes": [
         "Chalet",
         "Townhouse",
@@ -517,22 +517,16 @@
         5,
         6
       ],
-      "paymentPlan": "5% Down Payment, 8 Years Installments",
+      "paymentPlan": "5% Down Payment, 7 Years Installments",
       "downPayment": 5,
-      "installmentYears": 8,
+      "installmentYears": 7,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/la-vista-developments/la-vista-topaz-resort",
-            "observedPrice": 9000000,
-            "sourceId": "property-finder:a73ea1ae-9c9a-4df1-a670-fdff66e2e55f"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/225-la-vista-topaz",
@@ -540,7 +534,7 @@
             "sourceId": "nawy:225"
           }
         ],
-        "updatedAt": "2026-10-28T02:51:47.096Z"
+        "updatedAt": "2026-10-29T18:30:03.701Z"
       }
     },
     {
@@ -785,12 +779,11 @@
       "zone": "Galala",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 4285033,
+      "priceMin": 6121475,
       "unitTypes": [
-        "apartment",
-        "villa",
-        "duplex",
-        "townhouse"
+        "Twin House",
+        "Town House",
+        "Chalet"
       ],
       "areaMin": 78,
       "areaMax": 342,
@@ -810,14 +803,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/iwan-developments-company/majada",
-            "observedPrice": 4285033,
-            "sourceId": "property-finder:1999bbf3-0157-4647-bdab-52325148fbd6"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19026-majada",
@@ -825,7 +812,7 @@
             "sourceId": "red:19026"
           }
         ],
-        "updatedAt": "2026-10-28T02:51:47.096Z"
+        "updatedAt": "2026-10-29T18:30:03.701Z"
       }
     },
     {
@@ -878,7 +865,7 @@
       "zone": "Galala",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 5010200,
+      "priceMin": 7708000,
       "unitTypes": [
         "Apartment"
       ],
@@ -900,14 +887,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/new-jersey-developments/jura-el-galala",
-            "observedPrice": 5010200,
-            "sourceId": "property-finder:ad5b79e6-e7d5-4d7d-a59e-a6589141d41a"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1342-jura",
@@ -915,7 +896,7 @@
             "sourceId": "nawy:1342"
           }
         ],
-        "updatedAt": "2026-10-28T02:51:47.096Z"
+        "updatedAt": "2026-10-29T18:30:03.701Z"
       }
     },
     {
@@ -1095,7 +1076,7 @@
       "zone": "Galala",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 6236000,
+      "priceMin": 8332000,
       "unitTypes": [
         "Chalet",
         "Townhouse",
@@ -1121,14 +1102,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/maven-developments/baymount",
-            "observedPrice": 6236000,
-            "sourceId": "property-finder:7952cf7d-a34a-432d-b5ae-85a58b4f849e"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/355-baymount",
@@ -1136,7 +1111,7 @@
             "sourceId": "nawy:355"
           }
         ],
-        "updatedAt": "2026-10-28T02:51:47.096Z"
+        "updatedAt": "2026-10-29T18:30:03.701Z"
       }
     },
     {
@@ -1557,22 +1532,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/728-lasirena-palm-beach",
             "observedPrice": 4000000,
             "sourceId": "nawy:728"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/lasirena-group/lasirena-palm-beach",
-            "observedPrice": 4875000,
-            "sourceId": "property-finder:2d810769-f1f9-4eaf-acc6-56d081602cb1"
           }
         ],
-        "updatedAt": "2026-10-28T02:51:47.096Z"
+        "updatedAt": "2026-10-29T18:30:03.701Z"
       }
     },
     {
@@ -2116,22 +2085,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/728-lasirena-palm-beach",
             "observedPrice": 4000000,
             "sourceId": "nawy:728"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/lasirena-group/lasirena-palm-beach",
-            "observedPrice": 4875000,
-            "sourceId": "property-finder:2d810769-f1f9-4eaf-acc6-56d081602cb1"
           }
         ],
-        "updatedAt": "2026-10-28T02:51:47.096Z"
+        "updatedAt": "2026-10-29T18:30:03.701Z"
       }
     },
     {
@@ -2142,7 +2105,7 @@
       "zone": "Sokhna",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 6372240,
+      "priceMin": 9103200,
       "unitTypes": [
         "Duplex",
         "Townhouse",
@@ -2168,14 +2131,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/atric-developments/boho-el-sokhna",
-            "observedPrice": 6372240,
-            "sourceId": "property-finder:47db6ec4-5fbc-475e-96a2-0ad7bd0a62f8"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/864-boho-el-sokhna",
@@ -2183,7 +2140,7 @@
             "sourceId": "nawy:864"
           }
         ],
-        "updatedAt": "2026-10-28T02:51:47.096Z"
+        "updatedAt": "2026-10-29T18:30:03.701Z"
       }
     },
     {

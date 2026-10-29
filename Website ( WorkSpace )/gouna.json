@@ -815,7 +815,7 @@
       "zone": "Hurghada",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 13654075,
+      "priceMin": 12000000,
       "unitTypes": [
         "Chalet",
         "Townhouse"
@@ -838,8 +838,14 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/the-land-developers/il-bayou",
+            "observedPrice": 12000000,
+            "sourceId": "property-finder:9150aa0f-8aa4-4c3c-9760-eb1b2152a1a5"
+          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/978-il-bayou",
@@ -847,7 +853,7 @@
             "sourceId": "nawy:978"
           }
         ],
-        "updatedAt": "2026-10-28T18:30:00.211Z"
+        "updatedAt": "2026-10-29T02:51:43.562Z"
       }
     },
     {
@@ -1462,7 +1468,7 @@
       "zone": "Hurghada",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 13654075,
+      "priceMin": 12000000,
       "unitTypes": [
         "Chalet",
         "Townhouse"
@@ -1485,8 +1491,14 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/the-land-developers/il-bayou",
+            "observedPrice": 12000000,
+            "sourceId": "property-finder:9150aa0f-8aa4-4c3c-9760-eb1b2152a1a5"
+          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/978-il-bayou",
@@ -1494,7 +1506,7 @@
             "sourceId": "nawy:978"
           }
         ],
-        "updatedAt": "2026-10-28T18:30:00.211Z"
+        "updatedAt": "2026-10-29T02:51:43.562Z"
       }
     },
     {
@@ -1923,9 +1935,11 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Town House"
+        "apartment",
+        "townhouse",
+        "villa"
       ],
-      "downPayment": 0,
+      "downPayment": 10,
       "installmentYears": 0,
       "paymentPlan": "10% Down Payment",
       "catalogMeta": {
@@ -1939,16 +1953,22 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30949-siyal",
             "observedPrice": 22000000,
             "sourceId": "red:30949"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/orascom-development/siyal-makadi-heights",
+            "observedPrice": 22695000,
+            "sourceId": "property-finder:e5e8e6a6-eb17-4a83-a28d-8ad5ea97f773"
           }
         ],
-        "updatedAt": "2026-10-29T00:49:01.704Z"
+        "updatedAt": "2026-10-29T02:51:43.562Z"
       }
     },
     {
@@ -2019,7 +2039,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 3,
         "sources": [
           {
             "name": "RED",
@@ -2028,13 +2048,19 @@
             "sourceId": "red:30963"
           },
           {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/travco-properties/makadina",
+            "observedPrice": 7400000,
+            "sourceId": "property-finder:6f94f94b-9809-4220-9620-aa5688b81f76"
+          },
+          {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/2025-makadina",
             "observedPrice": 7750000,
             "sourceId": "nawy:2025"
           }
         ],
-        "updatedAt": "2026-10-29T00:49:01.704Z"
+        "updatedAt": "2026-10-29T02:51:43.562Z"
       }
     },
     {

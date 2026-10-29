@@ -38772,10 +38772,10 @@
       "priceMin": 5425000,
       "unitTypes": [
         "Apartment",
+        "Retail",
+        "Medical",
         "Studio",
         "Administrative",
-        "Medical",
-        "Retail",
         "Duplex",
         "Townhouse",
         "Villa",
@@ -38800,7 +38800,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
@@ -38813,15 +38813,9 @@
             "url": "https://redww.com/en/projects/33-taj-city",
             "observedPrice": 9561725,
             "sourceId": "red:33"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/madinet-masr/taj-city",
-            "observedPrice": 53000000,
-            "sourceId": "property-finder:894abd49-21d3-4d6a-bca8-f83238fa6da8"
           }
         ],
-        "updatedAt": "2026-10-27T18:28:31.660Z"
+        "updatedAt": "2026-10-29T06:37:02.612Z"
       }
     },
     {
@@ -52799,10 +52793,10 @@
       "priceMin": 5425000,
       "unitTypes": [
         "Apartment",
+        "Retail",
+        "Medical",
         "Studio",
         "Administrative",
-        "Medical",
-        "Retail",
         "Duplex",
         "Townhouse",
         "Villa",
@@ -52827,7 +52821,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
@@ -52840,15 +52834,9 @@
             "url": "https://redww.com/en/projects/33-taj-city",
             "observedPrice": 9561725,
             "sourceId": "red:33"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/madinet-masr/taj-city",
-            "observedPrice": 53000000,
-            "sourceId": "property-finder:894abd49-21d3-4d6a-bca8-f83238fa6da8"
           }
         ],
-        "updatedAt": "2026-10-27T18:28:31.660Z"
+        "updatedAt": "2026-10-29T06:37:02.612Z"
       }
     },
     {
@@ -57181,7 +57169,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
@@ -57190,19 +57178,13 @@
             "sourceId": "nawy:1051"
           },
           {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/wadi-degla/murano-wadi-degla",
-            "observedPrice": 8036600,
-            "sourceId": "property-finder:39b44706-3901-437f-bde2-699ec54675f2"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/19029-murano",
             "observedPrice": 15759090,
             "sourceId": "red:19029"
           }
         ],
-        "updatedAt": "2026-10-27T18:28:31.660Z"
+        "updatedAt": "2026-10-29T06:37:02.612Z"
       }
     },
     {
@@ -67487,10 +67469,10 @@
       "type": "residential",
       "unitTypes": [
         "Apartment",
+        "Retail",
+        "Medical",
         "Studio",
         "Administrative",
-        "Medical",
-        "Retail",
         "Duplex",
         "Townhouse",
         "Villa",
@@ -67511,7 +67493,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
@@ -67524,15 +67506,9 @@
             "url": "https://redww.com/en/projects/33-taj-city",
             "observedPrice": 9561725,
             "sourceId": "red:33"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/madinet-masr/taj-city",
-            "observedPrice": 53000000,
-            "sourceId": "property-finder:894abd49-21d3-4d6a-bca8-f83238fa6da8"
           }
         ],
-        "updatedAt": "2026-10-27T18:28:31.660Z"
+        "updatedAt": "2026-10-29T06:37:02.612Z"
       }
     },
     {
@@ -72827,22 +72803,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/2134-westrict",
             "observedPrice": 9765000,
             "sourceId": "nawy:2134"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/the-land-developers/westrict",
-            "observedPrice": 10800000,
-            "sourceId": "property-finder:0b10022d-0c3c-4bae-8385-7794415ec9a8"
           }
         ],
-        "updatedAt": "2026-10-27T18:28:31.660Z"
+        "updatedAt": "2026-10-29T06:37:02.612Z"
       }
     },
     {
@@ -86255,22 +86225,36 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Apartment",
-        "Townhouse",
-        "Duplex",
         "Villa",
-        "Penthouse",
-        "Twinhouse"
+        "Twin House",
+        "Apartment",
+        "Town House"
       ],
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:664",
         "observedAt": "2026-10-29T03:30:46.202Z"
       },
-      "priceMin": 10460000
+      "priceMin": 22679000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/20-the-estates",
+            "observedPrice": 22679000,
+            "sourceId": "red:20"
+          }
+        ],
+        "updatedAt": "2026-10-29T06:37:02.612Z"
+      }
     },
     {
       "name": "The Estates",
@@ -86282,19 +86266,35 @@
       "type": "residential",
       "unitTypes": [
         "Villa",
-        "Townhouse",
+        "Twin House",
         "Apartment",
-        "Twinhouse"
+        "Town House"
       ],
-      "downPayment": 10,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "10% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:310",
         "observedAt": "2026-10-29T03:30:46.202Z"
       },
-      "priceMin": 77223960
+      "priceMin": 22679000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/20-the-estates",
+            "observedPrice": 22679000,
+            "sourceId": "red:20"
+          }
+        ],
+        "updatedAt": "2026-10-29T06:37:02.612Z"
+      }
     }
   ],
   "projectDetails": {

@@ -69,9 +69,10 @@
       ],
       "priceMin": 11467036,
       "unitTypes": [
-        "Chalet",
-        "Apartment",
-        "Town House"
+        "villa",
+        "townhouse",
+        "penthouse",
+        "apartment"
       ],
       "areaMin": 79,
       "areaMax": 344,
@@ -84,23 +85,29 @@
         6
       ],
       "paymentPlan": "5% Down Payment",
-      "downPayment": 0,
+      "downPayment": 5,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19238-plage",
             "observedPrice": 11467036,
             "sourceId": "red:19238"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/mountain-view/plage",
+            "observedPrice": 12000000,
+            "sourceId": "property-finder:123a2956-56dd-4204-b48a-c5bd80d4bf09"
           }
         ],
-        "updatedAt": "2026-10-30T18:26:46.378Z"
+        "updatedAt": "2026-10-31T02:51:26.990Z"
       }
     },
     {
@@ -666,7 +673,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 3,
         "sources": [
           {
             "name": "RED",
@@ -675,13 +682,19 @@
             "sourceId": "red:19101"
           },
           {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/palm-hills/palm-hills-alexandria",
+            "observedPrice": 9418000,
+            "sourceId": "property-finder:32791fee-4182-4ae1-8a60-39c97256919c"
+          },
+          {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/201-palm-hills-alexandria",
             "observedPrice": 11122000,
             "sourceId": "nawy:201"
           }
         ],
-        "updatedAt": "2026-10-30T18:26:46.378Z"
+        "updatedAt": "2026-10-31T02:51:26.990Z"
       }
     },
     {
@@ -1289,8 +1302,7 @@
       "type": "residential",
       "priceMin": 4976000,
       "unitTypes": [
-        "Apartment",
-        "Studio"
+        "apartment"
       ],
       "areaMin": 86,
       "areaMax": 376,
@@ -1303,23 +1315,29 @@
         6
       ],
       "paymentPlan": "15% Down Payment",
-      "downPayment": 0,
+      "downPayment": 15,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30821-bayside",
             "observedPrice": 4976000,
             "sourceId": "red:30821"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/elattal-holding-company/bayside",
+            "observedPrice": 5073000,
+            "sourceId": "property-finder:3a44d3a3-8bbd-4545-afd6-a4fd298e2fd2"
           }
         ],
-        "updatedAt": "2026-10-30T18:26:46.378Z"
+        "updatedAt": "2026-10-31T02:51:26.990Z"
       }
     },
     {
@@ -2185,16 +2203,22 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/2239-coral-coves",
             "observedPrice": 20800000,
             "sourceId": "nawy:2239"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/somabay-realestate/soma-coves",
+            "observedPrice": 22100000,
+            "sourceId": "property-finder:9e4e375f-5822-47f1-9cee-4fc1d43d23b2"
           }
         ],
-        "updatedAt": "2026-10-30T18:26:46.378Z"
+        "updatedAt": "2026-10-31T02:51:26.990Z"
       }
     },
     {

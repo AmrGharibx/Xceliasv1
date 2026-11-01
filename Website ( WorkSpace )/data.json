@@ -2568,9 +2568,18 @@
       "zone": "New Cairo",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 9561725,
+      "priceMin": 5425000,
       "unitTypes": [
-        "apartment"
+        "Apartment",
+        "Retail",
+        "Medical",
+        "Studio",
+        "Administrative",
+        "Duplex",
+        "Townhouse",
+        "Villa",
+        "Twinhouse",
+        "Penthouse"
       ],
       "areaMin": 89,
       "areaMax": 445,
@@ -2582,16 +2591,22 @@
         5,
         6
       ],
-      "paymentPlan": "0% Down Payment",
-      "downPayment": 0,
-      "installmentYears": 0,
+      "paymentPlan": "3% Down Payment, 10 Years Installments",
+      "downPayment": 3,
+      "installmentYears": 10,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 3,
         "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/186-taj-city",
+            "observedPrice": 5425000,
+            "sourceId": "nawy:186"
+          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/33-taj-city",
@@ -2605,7 +2620,7 @@
             "sourceId": "property-finder:894abd49-21d3-4d6a-bca8-f83238fa6da8"
           }
         ],
-        "updatedAt": "2026-11-01T02:51:55.154Z"
+        "updatedAt": "2026-11-01T12:26:59.676Z"
       }
     },
     {
@@ -3420,10 +3435,11 @@
       "type": "residential",
       "priceMin": 9641467,
       "unitTypes": [
-        "Townhouse",
-        "Villa",
+        "Apartment",
+        "Town House",
         "Duplex",
-        "Apartment"
+        "Villa",
+        "Penthouse"
       ],
       "areaMin": 94,
       "areaMax": 469,
@@ -3437,13 +3453,13 @@
       ],
       "paymentPlan": "0% Down Payment, 10 Years Installments",
       "downPayment": 0,
-      "installmentYears": 10,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
@@ -3456,15 +3472,9 @@
             "url": "https://www.propertyfinder.eg/en/new-projects/mountain-view/aliva",
             "observedPrice": 10631210,
             "sourceId": "property-finder:ae1dae39-d2ee-44da-874c-5a2440d8c991"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/996-aliva-mountain-view-mostakbal-city",
-            "observedPrice": 11180910,
-            "sourceId": "nawy:996"
           }
         ],
-        "updatedAt": "2026-10-31T02:51:26.990Z"
+        "updatedAt": "2026-11-01T12:26:59.676Z"
       }
     },
     {
@@ -11178,7 +11188,7 @@
       "zone": "Ras El Hekma",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 10180453,
+      "priceMin": 10637076,
       "unitTypes": [
         "Chalet",
         "Apartment",
@@ -11211,11 +11221,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/232-el-masyaf",
-            "observedPrice": 10180453,
+            "observedPrice": 10637076,
             "sourceId": "nawy:232"
           }
         ],
-        "updatedAt": "2026-10-25T18:34:06.281Z"
+        "updatedAt": "2026-11-01T12:26:59.676Z"
       }
     },
     {
@@ -19771,7 +19781,7 @@
       "zone": "New Capital",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 4102496,
+      "priceMin": 3651199,
       "unitTypes": [
         "Administrative",
         "Retail"
@@ -19799,11 +19809,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/895-paragon-2",
-            "observedPrice": 4102496,
+            "observedPrice": 3651199,
             "sourceId": "nawy:895"
           }
         ],
-        "updatedAt": "2026-10-27T12:45:32.390Z"
+        "updatedAt": "2026-11-01T12:26:59.676Z"
       }
     },
     {
@@ -21877,8 +21887,8 @@
       "type": "residential",
       "priceMin": 18974959,
       "unitTypes": [
-        "Townhouse",
-        "Villa"
+        "Villa",
+        "Townhouse"
       ],
       "areaMin": 72,
       "areaMax": 315,
@@ -21915,11 +21925,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/800-mountain-view-4",
-            "observedPrice": 23984225,
+            "observedPrice": 24315239,
             "sourceId": "nawy:800"
           }
         ],
-        "updatedAt": "2026-11-01T02:51:55.154Z"
+        "updatedAt": "2026-11-01T12:26:59.676Z"
       }
     },
     {
@@ -22796,9 +22806,9 @@
         5,
         6
       ],
-      "paymentPlan": "1.5% Down Payment, 5.6 Years Installments",
+      "paymentPlan": "1.5% Down Payment, 5.5 Years Installments",
       "downPayment": 1.5,
-      "installmentYears": 5.6,
+      "installmentYears": 5.5,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -22815,11 +22825,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/223-badya",
-            "observedPrice": 6892600,
+            "observedPrice": 6842600,
             "sourceId": "nawy:223"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-11-01T12:26:59.676Z"
       }
     },
     {
@@ -24299,9 +24309,9 @@
         5,
         6
       ],
-      "paymentPlan": "0% Down Payment, 10 Years Installments",
-      "downPayment": 0,
-      "installmentYears": 10,
+      "paymentPlan": "1.5% Down Payment, 12 Years Installments",
+      "downPayment": 1.5,
+      "installmentYears": 12,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -24318,7 +24328,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/422-mountain-view-icity-october",
-            "observedPrice": 11329868,
+            "observedPrice": 12770829,
             "sourceId": "nawy:422"
           },
           {
@@ -24328,7 +24338,7 @@
             "sourceId": "property-finder:608c56cf-216a-4415-b177-b7859e1e88cb"
           }
         ],
-        "updatedAt": "2026-10-31T02:51:26.990Z"
+        "updatedAt": "2026-11-01T12:26:59.676Z"
       }
     },
     {
@@ -25175,10 +25185,8 @@
       "type": "residential",
       "priceMin": 7710600,
       "unitTypes": [
-        "Townhouse",
-        "Penthouse",
-        "Apartment",
-        "Twinhouse"
+        "Town House",
+        "Twin House"
       ],
       "areaMin": 87,
       "areaMax": 381,
@@ -25191,14 +25199,14 @@
         6
       ],
       "paymentPlan": "50% Down Payment, 4 Years Installments",
-      "downPayment": 50,
-      "installmentYears": 4,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Property Finder",
@@ -25207,19 +25215,13 @@
             "sourceId": "property-finder:d6704f6a-7915-4aa7-ba31-7a8ef7595f79"
           },
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/909-v-levels",
-            "observedPrice": 13273000,
-            "sourceId": "nawy:909"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/30905-v-levels",
             "observedPrice": 17784000,
             "sourceId": "red:30905"
           }
         ],
-        "updatedAt": "2026-10-31T02:51:26.990Z"
+        "updatedAt": "2026-11-01T12:26:59.676Z"
       }
     },
     {
@@ -48580,9 +48582,9 @@
         5,
         6
       ],
-      "paymentPlan": "1.5% Down Payment, 5.6 Years Installments",
+      "paymentPlan": "1.5% Down Payment, 5.5 Years Installments",
       "downPayment": 1.5,
-      "installmentYears": 5.6,
+      "installmentYears": 5.5,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -48599,11 +48601,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/223-badya",
-            "observedPrice": 6892600,
+            "observedPrice": 6842600,
             "sourceId": "nawy:223"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-11-01T12:26:59.676Z"
       }
     },
     {
@@ -49903,13 +49905,14 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 16798706,
+      "priceMin": 16798712,
       "unitTypes": [
         "Chalet",
-        "Loft",
         "Penthouse",
-        "Townhouse",
+        "Studio",
+        "Loft",
         "Twinhouse",
+        "Townhouse",
         "Villa",
         "Apartment",
         "Cabin"
@@ -49937,11 +49940,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/45-mountain-view-ras-el-hekma",
-            "observedPrice": 16798706,
+            "observedPrice": 16798712,
             "sourceId": "nawy:45"
           }
         ],
-        "updatedAt": "2026-10-14T12:42:19.758Z"
+        "updatedAt": "2026-11-01T12:26:59.676Z"
       }
     },
     {
@@ -53379,11 +53382,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/45-mountain-view-ras-el-hekma",
-            "observedPrice": 16798706,
+            "observedPrice": 16798712,
             "sourceId": "nawy:45"
           }
         ],
-        "updatedAt": "2026-10-31T02:51:26.990Z"
+        "updatedAt": "2026-11-01T12:26:59.676Z"
       }
     },
     {
@@ -57039,7 +57042,7 @@
       "zone": "Zayed",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 5640410,
+      "priceMin": 6526696,
       "unitTypes": [
         "Apartment",
         "Townhouse",
@@ -57066,16 +57069,16 @@
         "sourceCount": 3,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1041-lugar",
-            "observedPrice": 5640410,
-            "sourceId": "nawy:1041"
-          },
-          {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/gates-developments/lugar-compound",
             "observedPrice": 6526696,
             "sourceId": "property-finder:1077ba38-42e7-4571-b334-dc5e50c4c5bf"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1041-lugar",
+            "observedPrice": 6645880,
+            "sourceId": "nawy:1041"
           },
           {
             "name": "RED",
@@ -57084,7 +57087,7 @@
             "sourceId": "red:19216"
           }
         ],
-        "updatedAt": "2026-11-01T02:51:55.154Z"
+        "updatedAt": "2026-11-01T12:26:59.676Z"
       }
     },
     {
@@ -73299,13 +73302,11 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Townhouse",
-        "Penthouse",
-        "Apartment",
-        "Twinhouse"
+        "Town House",
+        "Twin House"
       ],
-      "downPayment": 50,
-      "installmentYears": 4,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "50% Down Payment, 4 Years Installments",
       "catalogMeta": {
         "status": "observed",
@@ -73318,7 +73319,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Property Finder",
@@ -73327,19 +73328,13 @@
             "sourceId": "property-finder:d6704f6a-7915-4aa7-ba31-7a8ef7595f79"
           },
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/909-v-levels",
-            "observedPrice": 13273000,
-            "sourceId": "nawy:909"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/30905-v-levels",
             "observedPrice": 17784000,
             "sourceId": "red:30905"
           }
         ],
-        "updatedAt": "2026-10-31T02:51:26.990Z"
+        "updatedAt": "2026-11-01T12:26:59.676Z"
       }
     },
     {
@@ -73351,13 +73346,11 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Townhouse",
-        "Penthouse",
-        "Apartment",
-        "Twinhouse"
+        "Town House",
+        "Twin House"
       ],
-      "downPayment": 50,
-      "installmentYears": 4,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "50% Down Payment, 4 Years Installments",
       "catalogMeta": {
         "status": "observed",
@@ -73370,7 +73363,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Property Finder",
@@ -73379,19 +73372,13 @@
             "sourceId": "property-finder:d6704f6a-7915-4aa7-ba31-7a8ef7595f79"
           },
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/909-v-levels",
-            "observedPrice": 13273000,
-            "sourceId": "nawy:909"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/30905-v-levels",
             "observedPrice": 17784000,
             "sourceId": "red:30905"
           }
         ],
-        "updatedAt": "2026-10-31T02:51:26.990Z"
+        "updatedAt": "2026-11-01T12:26:59.676Z"
       }
     },
     {
@@ -80151,24 +80138,38 @@
       "type": "residential",
       "unitTypes": [
         "Apartment",
-        "Villa"
+        "Retail",
+        "Medical",
+        "Studio",
+        "Administrative",
+        "Duplex",
+        "Townhouse",
+        "Villa",
+        "Twinhouse",
+        "Penthouse"
       ],
-      "downPayment": 0,
-      "installmentYears": 0,
+      "downPayment": 3,
+      "installmentYears": 10,
       "paymentPlan": "3% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2700",
         "observedAt": "2026-10-01T03:43:21.164Z"
       },
-      "priceMin": 9561725,
+      "priceMin": 5425000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/186-taj-city",
+            "observedPrice": 5425000,
+            "sourceId": "nawy:186"
+          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/33-taj-city",
@@ -80176,7 +80177,7 @@
             "sourceId": "red:33"
           }
         ],
-        "updatedAt": "2026-10-28T06:36:56.958Z"
+        "updatedAt": "2026-11-01T12:26:59.676Z"
       }
     },
     {

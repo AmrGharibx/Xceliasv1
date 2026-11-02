@@ -942,15 +942,10 @@
       "zone": "New Cairo",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 10560000,
+      "priceMin": 11200000,
       "unitTypes": [
-        "Administrative",
-        "Villa",
-        "Apartment",
         "Penthouse",
-        "Townhouse",
-        "Duplex",
-        "Twinhouse"
+        "Apartment"
       ],
       "areaMin": 91,
       "areaMax": 456,
@@ -963,21 +958,15 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 9 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 9,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/196-haptown",
-            "observedPrice": 10560000,
-            "sourceId": "nawy:196"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/257-haptown",
@@ -985,7 +974,7 @@
             "sourceId": "red:257"
           }
         ],
-        "updatedAt": "2026-11-01T02:51:55.154Z"
+        "updatedAt": "2026-11-02T12:29:49.949Z"
       }
     },
     {
@@ -6469,7 +6458,7 @@
       "zone": "New Cairo",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 4290000,
+      "priceMin": 4355000,
       "unitTypes": [
         "Apartment",
         "Studio"
@@ -6484,9 +6473,9 @@
         5,
         6
       ],
-      "paymentPlan": "5.3% Down Payment, 10 Years Installments",
-      "downPayment": 5.3,
-      "installmentYears": 10,
+      "paymentPlan": "5% Down Payment, 12 Years Installments",
+      "downPayment": 5,
+      "installmentYears": 12,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -6497,7 +6486,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/868-bluetree",
-            "observedPrice": 4290000,
+            "observedPrice": 4355000,
             "sourceId": "nawy:868"
           },
           {
@@ -6507,7 +6496,7 @@
             "sourceId": "red:19222"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-11-02T12:29:49.949Z"
       }
     },
     {
@@ -10677,9 +10666,9 @@
         3,
         4
       ],
-      "paymentPlan": "0% Down Payment, 2 Years Installments",
-      "downPayment": 0,
-      "installmentYears": 2,
+      "paymentPlan": "10% Down Payment, 10 Years Installments",
+      "downPayment": 10,
+      "installmentYears": 10,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -10702,11 +10691,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/237-the-loft",
-            "observedPrice": 9576670,
+            "observedPrice": 9274222,
             "sourceId": "nawy:237"
           }
         ],
-        "updatedAt": "2026-11-02T02:51:32.388Z"
+        "updatedAt": "2026-11-02T12:29:49.949Z"
       }
     },
     {
@@ -11896,7 +11885,7 @@
       "zone": "New Capital",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 5609000,
+      "priceMin": 5694000,
       "unitTypes": [
         "Apartment",
         "Medical"
@@ -11924,11 +11913,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/449-residence-eight-sky-abu-dhabi",
-            "observedPrice": 5609000,
+            "observedPrice": 5694000,
             "sourceId": "nawy:449"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-11-02T12:29:49.949Z"
       }
     },
     {
@@ -12389,9 +12378,9 @@
         3,
         4
       ],
-      "paymentPlan": "0% Down Payment, 2 Years Installments",
-      "downPayment": 0,
-      "installmentYears": 2,
+      "paymentPlan": "10% Down Payment, 10 Years Installments",
+      "downPayment": 10,
+      "installmentYears": 10,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -12414,11 +12403,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/237-the-loft",
-            "observedPrice": 9576670,
+            "observedPrice": 9274222,
             "sourceId": "nawy:237"
           }
         ],
-        "updatedAt": "2026-11-02T02:51:32.388Z"
+        "updatedAt": "2026-11-02T12:29:49.949Z"
       }
     },
     {
@@ -14221,7 +14210,7 @@
       "zone": "New Capital",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 4545000,
+      "priceMin": 4614000,
       "unitTypes": [
         "Retail",
         "Medical",
@@ -14250,11 +14239,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/807-capital-avenue",
-            "observedPrice": 4545000,
+            "observedPrice": 4614000,
             "sourceId": "nawy:807"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-11-02T12:29:49.949Z"
       }
     },
     {
@@ -18192,7 +18181,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/715-ever",
-            "observedPrice": 9788900,
+            "observedPrice": 9988900,
             "sourceId": "nawy:715"
           },
           {
@@ -18202,7 +18191,7 @@
             "sourceId": "red:19063"
           }
         ],
-        "updatedAt": "2026-11-02T02:51:32.388Z"
+        "updatedAt": "2026-11-02T12:29:49.949Z"
       }
     },
     {
@@ -23935,15 +23924,10 @@
       "zone": "New Cairo",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 10560000,
+      "priceMin": 11200000,
       "unitTypes": [
-        "Administrative",
-        "Villa",
-        "Apartment",
         "Penthouse",
-        "Townhouse",
-        "Duplex",
-        "Twinhouse"
+        "Apartment"
       ],
       "areaMin": 98,
       "areaMax": 489,
@@ -23955,21 +23939,15 @@
         5
       ],
       "paymentPlan": "5% Down Payment, 9 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 9,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/196-haptown",
-            "observedPrice": 10560000,
-            "sourceId": "nawy:196"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/257-haptown",
@@ -23977,7 +23955,7 @@
             "sourceId": "red:257"
           }
         ],
-        "updatedAt": "2026-11-01T02:51:55.154Z"
+        "updatedAt": "2026-11-02T12:29:49.949Z"
       }
     },
     {
@@ -24465,9 +24443,9 @@
       "areaMin": 77,
       "areaMax": 330,
       "bedrooms": [],
-      "paymentPlan": "0% Down Payment, 2 Years Installments",
-      "downPayment": 0,
-      "installmentYears": 2,
+      "paymentPlan": "10% Down Payment, 10 Years Installments",
+      "downPayment": 10,
+      "installmentYears": 10,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -24490,11 +24468,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/237-the-loft",
-            "observedPrice": 9576670,
+            "observedPrice": 9274222,
             "sourceId": "nawy:237"
           }
         ],
-        "updatedAt": "2026-11-02T02:51:32.388Z"
+        "updatedAt": "2026-11-02T12:29:49.949Z"
       }
     },
     {
@@ -38687,13 +38665,8 @@
       "type": "residential",
       "priceMin": 7952000,
       "unitTypes": [
-        "Administrative",
-        "Villa",
-        "Apartment",
         "Penthouse",
-        "Townhouse",
-        "Duplex",
-        "Twinhouse"
+        "Apartment"
       ],
       "areaMin": 90,
       "areaMax": 451,
@@ -38706,14 +38679,14 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 9 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 9,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Property Finder",
@@ -38722,19 +38695,13 @@
             "sourceId": "property-finder:d9e0c7f4-66c8-44fd-92c0-9fc6fa483ab4"
           },
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/196-haptown",
-            "observedPrice": 10560000,
-            "sourceId": "nawy:196"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/257-haptown",
             "observedPrice": 11200000,
             "sourceId": "red:257"
           }
         ],
-        "updatedAt": "2026-11-02T02:51:32.388Z"
+        "updatedAt": "2026-11-02T12:29:49.949Z"
       }
     },
     {
@@ -40173,13 +40140,8 @@
       "type": "residential",
       "priceMin": 7952000,
       "unitTypes": [
-        "Administrative",
-        "Villa",
-        "Apartment",
         "Penthouse",
-        "Townhouse",
-        "Duplex",
-        "Twinhouse"
+        "Apartment"
       ],
       "areaMin": 94,
       "areaMax": 472,
@@ -40192,14 +40154,14 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 9 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 9,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Property Finder",
@@ -40208,19 +40170,13 @@
             "sourceId": "property-finder:d9e0c7f4-66c8-44fd-92c0-9fc6fa483ab4"
           },
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/196-haptown",
-            "observedPrice": 10560000,
-            "sourceId": "nawy:196"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/257-haptown",
             "observedPrice": 11200000,
             "sourceId": "red:257"
           }
         ],
-        "updatedAt": "2026-11-02T02:51:32.388Z"
+        "updatedAt": "2026-11-02T12:29:49.949Z"
       }
     },
     {
@@ -45786,7 +45742,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/2138-vallis",
-            "observedPrice": 3641000,
+            "observedPrice": 3696000,
             "sourceId": "nawy:2138"
           },
           {
@@ -45796,7 +45752,7 @@
             "sourceId": "red:30970"
           }
         ],
-        "updatedAt": "2026-11-02T02:51:32.388Z"
+        "updatedAt": "2026-11-02T12:29:49.949Z"
       }
     },
     {
@@ -60663,12 +60619,12 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "townhouse",
-        "villa"
+        "Villa",
+        "Townhouse"
       ],
-      "downPayment": 0,
-      "installmentYears": 0,
-      "paymentPlan": "0% Down Payment",
+      "downPayment": 5,
+      "installmentYears": 4,
+      "paymentPlan": "5% Down Payment, 4 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2792",
@@ -60680,8 +60636,14 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2792-orchard-villas-alburouj",
+            "observedPrice": 11900000,
+            "sourceId": "nawy:2792"
+          },
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/imkan-misr/orchard-villas",
@@ -60689,7 +60651,7 @@
             "sourceId": "property-finder:3ae2970f-64cb-4f22-8aaa-22cccc89db25"
           }
         ],
-        "updatedAt": "2026-11-02T02:51:32.388Z"
+        "updatedAt": "2026-11-02T12:29:49.949Z"
       }
     },
     {

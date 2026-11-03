@@ -2560,6 +2560,7 @@
       "unitTypes": [
         "Apartment",
         "Studio",
+        "Administrative",
         "Retail",
         "Duplex",
         "Townhouse",
@@ -2585,7 +2586,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
@@ -2598,15 +2599,9 @@
             "url": "https://redww.com/en/projects/33-taj-city",
             "observedPrice": 9561725,
             "sourceId": "red:33"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/madinet-masr/taj-city",
-            "observedPrice": 53000000,
-            "sourceId": "property-finder:894abd49-21d3-4d6a-bca8-f83238fa6da8"
           }
         ],
-        "updatedAt": "2026-11-01T18:25:13.117Z"
+        "updatedAt": "2026-11-03T06:32:28.330Z"
       }
     },
     {
@@ -19243,7 +19238,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
@@ -19256,15 +19251,9 @@
             "url": "https://www.nawy.com/compound/422-mountain-view-icity-october",
             "observedPrice": 22865210,
             "sourceId": "nawy:422"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/mountain-view/mountain-view-icity",
-            "observedPrice": 25866000,
-            "sourceId": "property-finder:608c56cf-216a-4415-b177-b7859e1e88cb"
           }
         ],
-        "updatedAt": "2026-11-01T18:25:13.117Z"
+        "updatedAt": "2026-11-03T06:32:28.330Z"
       }
     },
     {
@@ -26568,6 +26557,7 @@
       "unitTypes": [
         "Apartment",
         "Studio",
+        "Administrative",
         "Retail",
         "Duplex",
         "Townhouse",
@@ -26593,7 +26583,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
@@ -26606,15 +26596,9 @@
             "url": "https://redww.com/en/projects/33-taj-city",
             "observedPrice": 9561725,
             "sourceId": "red:33"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/madinet-masr/taj-city",
-            "observedPrice": 53000000,
-            "sourceId": "property-finder:894abd49-21d3-4d6a-bca8-f83238fa6da8"
           }
         ],
-        "updatedAt": "2026-11-01T18:25:13.117Z"
+        "updatedAt": "2026-11-03T06:32:28.330Z"
       }
     },
     {
@@ -35424,6 +35408,7 @@
       "unitTypes": [
         "Apartment",
         "Studio",
+        "Administrative",
         "Retail",
         "Duplex",
         "Townhouse",
@@ -35449,7 +35434,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
@@ -35462,15 +35447,9 @@
             "url": "https://redww.com/en/projects/33-taj-city",
             "observedPrice": 9561725,
             "sourceId": "red:33"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/madinet-masr/taj-city",
-            "observedPrice": 53000000,
-            "sourceId": "property-finder:894abd49-21d3-4d6a-bca8-f83238fa6da8"
           }
         ],
-        "updatedAt": "2026-11-01T18:25:13.117Z"
+        "updatedAt": "2026-11-03T06:32:28.330Z"
       }
     },
     {
@@ -45315,6 +45294,7 @@
       "unitTypes": [
         "Apartment",
         "Studio",
+        "Administrative",
         "Retail",
         "Duplex",
         "Townhouse",
@@ -45336,7 +45316,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
@@ -45349,15 +45329,9 @@
             "url": "https://redww.com/en/projects/33-taj-city",
             "observedPrice": 9561725,
             "sourceId": "red:33"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/madinet-masr/taj-city",
-            "observedPrice": 53000000,
-            "sourceId": "property-finder:894abd49-21d3-4d6a-bca8-f83238fa6da8"
           }
         ],
-        "updatedAt": "2026-11-01T18:25:13.117Z"
+        "updatedAt": "2026-11-03T06:32:28.330Z"
       }
     },
     {
@@ -61732,22 +61706,36 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Apartment",
-        "Townhouse",
-        "Duplex",
         "Villa",
-        "Penthouse",
-        "Twinhouse"
+        "Twin House",
+        "Apartment",
+        "Town House"
       ],
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:664",
         "observedAt": "2026-11-03T03:27:05.753Z"
       },
-      "priceMin": 11020000
+      "priceMin": 22679000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/20-the-estates",
+            "observedPrice": 22679000,
+            "sourceId": "red:20"
+          }
+        ],
+        "updatedAt": "2026-11-03T06:32:28.330Z"
+      }
     },
     {
       "name": "The Estates",
@@ -61759,19 +61747,35 @@
       "type": "residential",
       "unitTypes": [
         "Villa",
-        "Townhouse",
+        "Twin House",
         "Apartment",
-        "Twinhouse"
+        "Town House"
       ],
-      "downPayment": 10,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "10% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:310",
         "observedAt": "2026-11-03T03:27:05.753Z"
       },
-      "priceMin": 77223960
+      "priceMin": 22679000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/20-the-estates",
+            "observedPrice": 22679000,
+            "sourceId": "red:20"
+          }
+        ],
+        "updatedAt": "2026-11-03T06:32:28.330Z"
+      }
     }
   ],
   "projectDetails": {

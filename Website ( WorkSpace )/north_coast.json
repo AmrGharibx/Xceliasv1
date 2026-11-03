@@ -3196,10 +3196,11 @@
       "layouts": [
         "https://www.modon.com/en/our-projects"
       ],
-      "priceMin": 22700000,
+      "priceMin": 18500000,
       "unitTypes": [
-        "Townhouse",
         "Apartment",
+        "Townhouse",
+        "Duplex",
         "Villa",
         "Chalet"
       ],
@@ -3226,11 +3227,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1493-ras-el-hekma-egypt",
-            "observedPrice": 22700000,
+            "observedPrice": 18500000,
             "sourceId": "nawy:1493"
           }
         ],
-        "updatedAt": "2026-10-28T00:49:28.413Z"
+        "updatedAt": "2026-11-03T00:41:44.237Z"
       }
     },
     {
@@ -4442,7 +4443,7 @@
       "layouts": [
         "https://cityedgedevelopments.com/project/downtown"
       ],
-      "priceMin": 3770600,
+      "priceMin": 6609000,
       "unitTypes": [
         "Apartment",
         "Chalet",
@@ -4467,14 +4468,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/modon-developments/lagoons-al-alamin",
-            "observedPrice": 3770600,
-            "sourceId": "property-finder:8a2b1bb1-e116-4155-96cb-0e5dc4e625d8"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1649-lagoons-al-alamin",
@@ -4482,7 +4477,7 @@
             "sourceId": "nawy:1649"
           }
         ],
-        "updatedAt": "2026-11-01T02:51:55.154Z"
+        "updatedAt": "2026-11-03T00:41:44.237Z"
       }
     },
     {
@@ -5509,7 +5504,7 @@
       "layouts": [
         "https://cityedgedevelopments.com/project/north-edge-towers"
       ],
-      "priceMin": 15412000,
+      "priceMin": 35233000,
       "unitTypes": [
         "Apartment",
         "Chalet",
@@ -5533,14 +5528,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/city-edge/beachfront-towers",
-            "observedPrice": 15412000,
-            "sourceId": "property-finder:ce939b20-75e4-453d-b066-03714819d5d2"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1228-beach-front-towers",
@@ -5548,7 +5537,7 @@
             "sourceId": "nawy:1228"
           }
         ],
-        "updatedAt": "2026-11-01T02:51:55.154Z"
+        "updatedAt": "2026-11-03T00:41:44.237Z"
       }
     },
     {
@@ -10975,9 +10964,9 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 9900000,
+      "priceMin": 66000000,
       "unitTypes": [
-        "villa"
+        "Villa"
       ],
       "areaMin": 79,
       "areaMax": 344,
@@ -10990,21 +10979,15 @@
         6
       ],
       "paymentPlan": "5% Down Payment",
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/al-ahly-sabbour-developments/ten-islands",
-            "observedPrice": 9900000,
-            "sourceId": "property-finder:9d1b6b86-be6a-4018-a7b3-b9e0b30fa998"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30930-ten-islands",
@@ -11012,7 +10995,7 @@
             "sourceId": "red:30930"
           }
         ],
-        "updatedAt": "2026-11-01T02:51:55.154Z"
+        "updatedAt": "2026-11-03T00:41:44.237Z"
       }
     },
     {
@@ -11262,9 +11245,9 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 7820000,
+      "priceMin": 27000000,
       "unitTypes": [
-        "apartment"
+        "Apartment"
       ],
       "areaMin": 79,
       "areaMax": 347,
@@ -11276,9 +11259,9 @@
         5,
         6
       ],
-      "paymentPlan": "5% Down Payment",
+      "paymentPlan": "5% Down Payment, 8 Years Installments",
       "downPayment": 5,
-      "installmentYears": 0,
+      "installmentYears": 8,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -11287,13 +11270,13 @@
         "sourceCount": 1,
         "sources": [
           {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/modon-ras-el-hekma/yemm-beach-plaza-ras-el-hekma",
-            "observedPrice": 7820000,
-            "sourceId": "property-finder:646809eb-9fa7-4835-bf5c-6b6857988859"
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1880-yemm-beach-plaza-ras-el-hekma",
+            "observedPrice": 27000000,
+            "sourceId": "nawy:1880"
           }
         ],
-        "updatedAt": "2026-10-22T02:56:29.044Z"
+        "updatedAt": "2026-11-03T00:41:44.237Z"
       }
     },
     {
@@ -11304,7 +11287,7 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 15600000,
+      "priceMin": 30000000,
       "unitTypes": [
         "Townhouse",
         "Villa",
@@ -11328,14 +11311,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/qatari-diar/alam-al-roum",
-            "observedPrice": 15600000,
-            "sourceId": "property-finder:02b76736-bc16-4eba-9968-6b6166ed7dad"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1891-alam-al-roum",
@@ -11343,7 +11320,7 @@
             "sourceId": "nawy:1891"
           }
         ],
-        "updatedAt": "2026-11-01T02:51:55.154Z"
+        "updatedAt": "2026-11-03T00:41:44.237Z"
       }
     },
     {
@@ -11716,14 +11693,14 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 9545233,
+      "priceMin": 15621507,
       "unitTypes": [
+        "Townhouse",
         "Chalet",
         "Penthouse",
         "Studio",
-        "Loft",
         "Twinhouse",
-        "Townhouse",
+        "Loft",
         "Villa",
         "Apartment",
         "Cabin"
@@ -11746,14 +11723,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/mountain-view/evia",
-            "observedPrice": 9545233,
-            "sourceId": "property-finder:200275ff-0708-4dee-b23d-8bf100a7c765"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30814-evia",
@@ -11767,7 +11738,7 @@
             "sourceId": "nawy:45"
           }
         ],
-        "updatedAt": "2026-11-01T12:26:59.676Z"
+        "updatedAt": "2026-11-03T00:41:44.237Z"
       }
     },
     {
@@ -12662,13 +12633,13 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "apartment",
-        "townhouse",
-        "duplex"
+        "Apartment",
+        "Townhouse",
+        "Duplex"
       ],
       "downPayment": 5,
-      "installmentYears": 0,
-      "paymentPlan": "5% Down Payment",
+      "installmentYears": 8,
+      "paymentPlan": "5% Down Payment, 8 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2688",
@@ -12683,13 +12654,13 @@
         "sourceCount": 1,
         "sources": [
           {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/modon-ras-el-hekma/marina-waterfront-residences",
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2688-marina-waterfront-residences",
             "observedPrice": 18500000,
-            "sourceId": "property-finder:bbc2c885-d5c2-4b8d-97cc-6e42abc946b9"
+            "sourceId": "nawy:2688"
           }
         ],
-        "updatedAt": "2026-10-28T02:51:47.096Z"
+        "updatedAt": "2026-11-03T00:41:44.237Z"
       }
     },
     {
@@ -13513,17 +13484,17 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "apartment"
+        "Apartment"
       ],
       "downPayment": 5,
-      "installmentYears": 0,
-      "paymentPlan": "5% Down Payment",
+      "installmentYears": 8,
+      "paymentPlan": "5% Down Payment, 8 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2455",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 20000000,
+      "priceMin": 38800000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -13532,13 +13503,13 @@
         "sourceCount": 1,
         "sources": [
           {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/modon-ras-el-hekma/the-lighthouse-village",
-            "observedPrice": 20000000,
-            "sourceId": "property-finder:b1facad7-8b7e-484a-a11f-78e444c67457"
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2455-the-lighthouse-village",
+            "observedPrice": 38800000,
+            "sourceId": "nawy:2455"
           }
         ],
-        "updatedAt": "2026-10-13T03:04:10.844Z"
+        "updatedAt": "2026-11-03T00:41:44.237Z"
       }
     },
     {

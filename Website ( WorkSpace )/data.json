@@ -9794,16 +9794,16 @@
       "zone": "New Cairo",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 3368416,
+      "priceMin": 4303357,
       "unitTypes": [
         "Townhouse",
         "Administrative",
-        "Apartment",
         "Duplex",
         "Loft",
         "Twinhouse",
         "Medical",
         "Studio",
+        "Apartment",
         "Villa"
       ],
       "areaMin": 92,
@@ -9816,9 +9816,9 @@
         5,
         6
       ],
-      "paymentPlan": "5% Down Payment, 8 Years Installments",
+      "paymentPlan": "5% Down Payment, 10 Years Installments",
       "downPayment": 5,
-      "installmentYears": 8,
+      "installmentYears": 10,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -9829,7 +9829,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1348-solay",
-            "observedPrice": 3368416,
+            "observedPrice": 4303357,
             "sourceId": "nawy:1348"
           },
           {
@@ -9839,7 +9839,7 @@
             "sourceId": "red:30820"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-11-04T12:28:55.316Z"
       }
     },
     {
@@ -16147,10 +16147,9 @@
       "zone": "New Capital",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 5791500,
+      "priceMin": 7309122,
       "unitTypes": [
-        "Apartment",
-        "Duplex"
+        "Apartment"
       ],
       "areaMin": 68,
       "areaMax": 292,
@@ -16163,21 +16162,15 @@
         6
       ],
       "paymentPlan": "10% Down Payment, 1 Years Installments",
-      "downPayment": 10,
-      "installmentYears": 1,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/388-scene-7",
-            "observedPrice": 5791500,
-            "sourceId": "nawy:388"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30881-scene-7",
@@ -16191,7 +16184,7 @@
             "sourceId": "property-finder:95566800-f9a1-415f-aa63-3757824c3d7f"
           }
         ],
-        "updatedAt": "2026-11-04T02:51:18.637Z"
+        "updatedAt": "2026-11-04T12:28:55.316Z"
       }
     },
     {
@@ -48209,12 +48202,13 @@
       "unitTypes": [
         "Townhouse",
         "Administrative",
-        "Apartment",
         "Duplex",
         "Loft",
         "Twinhouse",
         "Medical",
-        "Studio"
+        "Studio",
+        "Apartment",
+        "Villa"
       ],
       "areaMin": 95,
       "areaMax": 473,
@@ -48226,9 +48220,9 @@
         5,
         6
       ],
-      "paymentPlan": "5% Down Payment, 8 Years Installments",
+      "paymentPlan": "5% Down Payment, 10 Years Installments",
       "downPayment": 5,
-      "installmentYears": 8,
+      "installmentYears": 10,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -48245,7 +48239,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1348-solay",
-            "observedPrice": 3368416,
+            "observedPrice": 4303357,
             "sourceId": "nawy:1348"
           },
           {
@@ -48255,7 +48249,7 @@
             "sourceId": "red:30820"
           }
         ],
-        "updatedAt": "2026-11-04T02:51:18.637Z"
+        "updatedAt": "2026-11-04T12:28:55.316Z"
       }
     },
     {
@@ -49833,11 +49827,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1891-alam-al-roum",
-            "observedPrice": 30000000,
+            "observedPrice": 29830000,
             "sourceId": "nawy:1891"
           }
         ],
-        "updatedAt": "2026-11-03T02:51:27.755Z"
+        "updatedAt": "2026-11-04T12:28:55.316Z"
       }
     },
     {
@@ -85546,11 +85540,12 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "apartment"
+        "Apartment",
+        "Loft"
       ],
       "downPayment": 5,
-      "installmentYears": 0,
-      "paymentPlan": "5% Down Payment",
+      "installmentYears": 8,
+      "paymentPlan": "5% Down Payment, 8 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2791",
@@ -85562,8 +85557,14 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2791-orb-towers",
+            "observedPrice": 8500000,
+            "sourceId": "nawy:2791"
+          },
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/nations-of-sky/orb-towers",
@@ -85571,7 +85572,7 @@
             "sourceId": "property-finder:51adcf2d-0595-4107-b63d-5b7a0becf165"
           }
         ],
-        "updatedAt": "2026-11-04T02:51:18.637Z"
+        "updatedAt": "2026-11-04T12:28:55.316Z"
       }
     },
     {

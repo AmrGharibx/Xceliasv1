@@ -11343,7 +11343,7 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 7820000,
+      "priceMin": 21400000,
       "unitTypes": [
         "Apartment"
       ],
@@ -11365,14 +11365,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/modon-ras-el-hekma/yemm-beach-plaza-ras-el-hekma",
-            "observedPrice": 7820000,
-            "sourceId": "property-finder:646809eb-9fa7-4835-bf5c-6b6857988859"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1880-yemm-beach-plaza-ras-el-hekma",
@@ -11380,7 +11374,7 @@
             "sourceId": "nawy:1880"
           }
         ],
-        "updatedAt": "2026-11-03T18:26:38.567Z"
+        "updatedAt": "2026-11-05T12:30:26.073Z"
       }
     },
     {
@@ -13629,20 +13623,14 @@
         "sourceId": "nawy-inventory:2455",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 20000000,
+      "priceMin": 37000000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/modon-ras-el-hekma/the-lighthouse-village",
-            "observedPrice": 20000000,
-            "sourceId": "property-finder:b1facad7-8b7e-484a-a11f-78e444c67457"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/2455-the-lighthouse-village",
@@ -13650,7 +13638,7 @@
             "sourceId": "nawy:2455"
           }
         ],
-        "updatedAt": "2026-11-03T12:29:20.099Z"
+        "updatedAt": "2026-11-05T12:30:26.073Z"
       }
     },
     {

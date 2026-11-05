@@ -14527,11 +14527,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/874-boardwalk",
-            "observedPrice": 6794400,
+            "observedPrice": 6700000,
             "sourceId": "nawy:874"
           }
         ],
-        "updatedAt": "2026-11-04T02:51:18.637Z"
+        "updatedAt": "2026-11-05T12:30:26.073Z"
       }
     },
     {
@@ -17406,11 +17406,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/792-the-8",
-            "observedPrice": 19870000,
+            "observedPrice": 20098000,
             "sourceId": "nawy:792"
           }
         ],
-        "updatedAt": "2026-11-05T02:51:09.092Z"
+        "updatedAt": "2026-11-05T12:30:26.073Z"
       }
     },
     {
@@ -17724,14 +17724,14 @@
       "zone": "October",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 4300720,
+      "priceMin": 6205300,
       "unitTypes": [
         "Apartment",
-        "Studio",
         "Townhouse",
         "Villa",
         "Penthouse",
-        "Twinhouse"
+        "Twinhouse",
+        "Studio"
       ],
       "areaMin": 87,
       "areaMax": 379,
@@ -17754,19 +17754,19 @@
         "sourceCount": 2,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/223-badya",
-            "observedPrice": 4300720,
-            "sourceId": "nawy:223"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/16-badya",
             "observedPrice": 6205300,
             "sourceId": "red:16"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/223-badya",
+            "observedPrice": 7090120,
+            "sourceId": "nawy:223"
           }
         ],
-        "updatedAt": "2026-11-03T12:29:20.099Z"
+        "updatedAt": "2026-11-05T12:30:26.073Z"
       }
     },
     {
@@ -20341,10 +20341,10 @@
         "Apartment",
         "Townhouse",
         "Villa",
+        "Twinhouse",
         "Duplex",
         "Loft",
         "Office",
-        "Twinhouse",
         "Penthouse",
         "Studio",
         "Building"
@@ -20378,11 +20378,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/258-o-west-orascom",
-            "observedPrice": 7891000,
+            "observedPrice": 7945000,
             "sourceId": "nawy:258"
           }
         ],
-        "updatedAt": "2026-10-28T12:33:23.515Z"
+        "updatedAt": "2026-11-05T12:30:26.073Z"
       }
     },
     {
@@ -22182,10 +22182,10 @@
         "Apartment",
         "Townhouse",
         "Villa",
+        "Twinhouse",
         "Duplex",
         "Loft",
         "Office",
-        "Twinhouse",
         "Penthouse",
         "Studio",
         "Building"
@@ -22219,11 +22219,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/258-o-west-orascom",
-            "observedPrice": 7891000,
+            "observedPrice": 7945000,
             "sourceId": "nawy:258"
           }
         ],
-        "updatedAt": "2026-10-28T12:33:23.515Z"
+        "updatedAt": "2026-11-05T12:30:26.073Z"
       }
     },
     {
@@ -29427,10 +29427,11 @@
       "zone": "October",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 19870000,
+      "priceMin": 20098000,
       "unitTypes": [
         "Villa",
-        "Retail"
+        "Retail",
+        "Townhouse"
       ],
       "areaMin": 81,
       "areaMax": 353,
@@ -29455,11 +29456,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/792-the-8",
-            "observedPrice": 19870000,
+            "observedPrice": 20098000,
             "sourceId": "nawy:792"
           }
         ],
-        "updatedAt": "2026-10-29T18:30:03.701Z"
+        "updatedAt": "2026-11-05T12:30:26.073Z"
       }
     },
     {
@@ -32358,14 +32359,14 @@
       "zone": "October",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 4300720,
+      "priceMin": 6205300,
       "unitTypes": [
         "Apartment",
-        "Studio",
         "Townhouse",
         "Villa",
         "Penthouse",
-        "Twinhouse"
+        "Twinhouse",
+        "Studio"
       ],
       "areaMin": 77,
       "areaMax": 337,
@@ -32388,19 +32389,19 @@
         "sourceCount": 2,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/223-badya",
-            "observedPrice": 4300720,
-            "sourceId": "nawy:223"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/16-badya",
             "observedPrice": 6205300,
             "sourceId": "red:16"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/223-badya",
+            "observedPrice": 7090120,
+            "sourceId": "nawy:223"
           }
         ],
-        "updatedAt": "2026-11-03T12:29:20.099Z"
+        "updatedAt": "2026-11-05T12:30:26.073Z"
       }
     },
     {
@@ -46989,11 +46990,12 @@
         "Apartment",
         "Administrative",
         "Retail",
-        "Office"
+        "Office",
+        "Medical"
       ],
-      "downPayment": 5,
+      "downPayment": 1.5,
       "installmentYears": 12,
-      "paymentPlan": "5% Down Payment, 12 Years Installments",
+      "paymentPlan": "1.5% Down Payment, 12 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2146",
@@ -47016,11 +47018,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/2146-the-spine",
-            "observedPrice": 14649150,
+            "observedPrice": 12797700,
             "sourceId": "nawy:2146"
           }
         ],
-        "updatedAt": "2026-11-05T02:51:09.092Z"
+        "updatedAt": "2026-11-05T12:30:26.073Z"
       }
     },
     {

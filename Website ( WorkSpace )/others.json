@@ -661,7 +661,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
@@ -670,19 +670,13 @@
             "sourceId": "red:19101"
           },
           {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/palm-hills/palm-hills-alexandria",
-            "observedPrice": 9418000,
-            "sourceId": "property-finder:32791fee-4182-4ae1-8a60-39c97256919c"
-          },
-          {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/201-palm-hills-alexandria",
             "observedPrice": 11317000,
             "sourceId": "nawy:201"
           }
         ],
-        "updatedAt": "2026-11-03T12:29:20.099Z"
+        "updatedAt": "2026-11-05T00:41:41.990Z"
       }
     },
     {
@@ -721,7 +715,7 @@
       "zone": "Alexandria",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 4000000,
+      "priceMin": 8421000,
       "unitTypes": [
         "Apartment",
         "Duplex",
@@ -745,14 +739,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/saudi-egyptian-developers-sed/sawary",
-            "observedPrice": 4000000,
-            "sourceId": "property-finder:37f1f18d-928d-474f-8032-42d4bc7c9792"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/325-sawary",
@@ -760,7 +748,7 @@
             "sourceId": "nawy:325"
           }
         ],
-        "updatedAt": "2026-11-03T02:51:27.755Z"
+        "updatedAt": "2026-11-05T00:41:41.990Z"
       }
     },
     {
@@ -2037,7 +2025,7 @@
       "zone": "Somabay",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 41400000,
+      "priceMin": 69000000,
       "unitTypes": [
         "Villa",
         "Twinhouse"
@@ -2060,14 +2048,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/somabay-realestate/wadi-soma",
-            "observedPrice": 41400000,
-            "sourceId": "property-finder:afd6390a-4f3d-4856-a6fa-a46add98ba12"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1097-wadi-soma",
@@ -2075,7 +2057,7 @@
             "sourceId": "nawy:1097"
           }
         ],
-        "updatedAt": "2026-11-03T02:51:27.755Z"
+        "updatedAt": "2026-11-05T00:41:41.990Z"
       }
     },
     {
@@ -2371,15 +2353,15 @@
       "unitTypes": [
         "Studio"
       ],
-      "downPayment": 30,
-      "installmentYears": 6,
-      "paymentPlan": "30% Down Payment, 6 Years Installments",
+      "downPayment": 25,
+      "installmentYears": 5,
+      "paymentPlan": "25% Down Payment, 5 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:1267",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 14832000,
+      "priceMin": 18000000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -2390,11 +2372,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1267-reve-du-nil",
-            "observedPrice": 14832000,
+            "observedPrice": 18000000,
             "sourceId": "nawy:1267"
           }
         ],
-        "updatedAt": "2026-10-05T18:40:53.952Z"
+        "updatedAt": "2026-11-05T00:41:41.990Z"
       }
     },
     {

@@ -61977,6 +61977,113 @@
         ],
         "updatedAt": "2026-11-05T02:51:09.092Z"
       }
+    },
+    {
+      "name": "O Riva",
+      "dev": "Orascom Development Egypt",
+      "lat": 29.959627398958844,
+      "lng": 30.99272577536425,
+      "zone": "6th of October City",
+      "status": "Available",
+      "type": "residential",
+      "unitTypes": [
+        "Apartment"
+      ],
+      "downPayment": 5,
+      "installmentYears": 9,
+      "paymentPlan": "5% Down Payment, 9 Years Installments",
+      "catalogMeta": {
+        "status": "observed",
+        "sourceId": "nawy-inventory:2808",
+        "observedAt": "2026-11-05T03:27:33.236Z"
+      },
+      "priceMin": 8200000
+    },
+    {
+      "name": "The Estates Residence",
+      "dev": "SODIC",
+      "lat": 30.074697,
+      "lng": 30.87622,
+      "zone": "New Zayed",
+      "status": "Available",
+      "type": "residential",
+      "unitTypes": [
+        "Apartment",
+        "Townhouse",
+        "Duplex",
+        "Villa",
+        "Penthouse",
+        "Twinhouse"
+      ],
+      "downPayment": 5,
+      "installmentYears": 10,
+      "paymentPlan": "5% Down Payment, 10 Years Installments",
+      "catalogMeta": {
+        "status": "observed",
+        "sourceId": "nawy-inventory:664",
+        "observedAt": "2026-11-05T03:27:33.236Z"
+      },
+      "priceMin": 11020000
+    },
+    {
+      "name": "The Estates",
+      "dev": "SODIC",
+      "lat": 30.08172,
+      "lng": 30.878458,
+      "zone": "New Zayed",
+      "status": "Available",
+      "type": "residential",
+      "unitTypes": [
+        "Villa",
+        "Townhouse",
+        "Apartment",
+        "Twinhouse"
+      ],
+      "downPayment": 10,
+      "installmentYears": 10,
+      "paymentPlan": "10% Down Payment, 10 Years Installments",
+      "catalogMeta": {
+        "status": "observed",
+        "sourceId": "nawy-inventory:310",
+        "observedAt": "2026-11-05T03:27:33.236Z"
+      },
+      "priceMin": 77223960
+    },
+    {
+      "name": "Junction Business Park",
+      "dev": "Majid Al Futtaim",
+      "lat": 29.97078923235948,
+      "lng": 31.02082038627205,
+      "zone": "6th of October City",
+      "status": "Available",
+      "type": "residential",
+      "unitTypes": [],
+      "downPayment": 0,
+      "installmentYears": 0,
+      "paymentPlan": "0% Down Payment, 0 Years Installments",
+      "catalogMeta": {
+        "status": "observed",
+        "sourceId": "nawy-inventory:2807",
+        "observedAt": "2026-11-05T03:27:33.236Z"
+      }
+    },
+    {
+      "name": "Trophy Office Collection",
+      "dev": "Nile Developments",
+      "lat": 29.98994078839661,
+      "lng": 31.740481349905707,
+      "zone": "New Capital City",
+      "status": "Available",
+      "type": "residential",
+      "unitTypes": [],
+      "downPayment": 0,
+      "installmentYears": 0,
+      "paymentPlan": "0% Down Payment, 0 Years Installments",
+      "catalogMeta": {
+        "status": "observed",
+        "sourceId": "nawy-inventory:2801",
+        "observedAt": "2026-11-05T03:27:33.236Z"
+      }
     }
   ],
   "projectDetails": {
@@ -76303,7 +76410,7 @@
         "https://prod-images.nawy.com/processed/compound_image/image/1798/high.webp"
       ],
       "assetMeta": {
-        "lastEnrichedAt": "2026-11-04T03:26:54.405Z",
+        "lastEnrichedAt": "2026-11-05T03:27:45.884Z",
         "sourceId": "red-asset:20"
       }
     },
@@ -79912,6 +80019,45 @@
       "layouts": [],
       "images": [
         "https://s3.eu-central-1.amazonaws.com/prod.images.cooingestate.com/launches/cover_images/6ace39624b52fbba2a66e5f0/Orchard_16x9.jpg"
+      ]
+    },
+    "O Riva": {
+      "unitTypes": "Apartment",
+      "areas": "",
+      "paymentPlan": "5% Down Payment, 9 Years Installments",
+      "status": "Available",
+      "amenities": "",
+      "description": "Project information is being verified.",
+      "masterplan": "",
+      "layouts": [],
+      "images": [
+        "https://prod-images.nawy.com/processed/inventory/compounds/2808/gallery/O%20RIVA/high.webp"
+      ]
+    },
+    "Junction Business Park": {
+      "unitTypes": "",
+      "areas": "",
+      "paymentPlan": "0% Down Payment, 0 Years Installments",
+      "status": "Available",
+      "amenities": "",
+      "description": "Project information is being verified.",
+      "masterplan": "",
+      "layouts": [],
+      "images": [
+        "https://s3.eu-central-1.amazonaws.com/prod.images.cooingestate.com/launches/cover_images/6ad4e8c5116ba9a54e6447bd/JUNCTION.jpg"
+      ]
+    },
+    "Trophy Office Collection": {
+      "unitTypes": "",
+      "areas": "",
+      "paymentPlan": "0% Down Payment, 0 Years Installments",
+      "status": "Available",
+      "amenities": "",
+      "description": "Project information is being verified.",
+      "masterplan": "",
+      "layouts": [],
+      "images": [
+        "https://s3.eu-central-1.amazonaws.com/prod.images.cooingestate.com/launches/cover_images/6ad0e1a0193ebfddc199b4c3/Cover.png"
       ]
     }
   }

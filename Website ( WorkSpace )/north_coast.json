@@ -1155,11 +1155,11 @@
       "type": "residential",
       "priceMin": 12403000,
       "unitTypes": [
-        "Chalet",
-        "Apartment",
-        "Townhouse",
         "Villa",
+        "Chalet",
+        "Townhouse",
         "Twinhouse",
+        "Apartment",
         "Penthouse"
       ],
       "areaMin": 96,
@@ -1180,7 +1180,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
@@ -1189,19 +1189,13 @@
             "sourceId": "nawy:1212"
           },
           {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/al-marasem-real-estate-development-company/mar-bay-ras-el-hekma",
-            "observedPrice": 14028000,
-            "sourceId": "property-finder:cf7aff4c-df2e-4824-87f1-2cbd70fa0184"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/19229-mar-bay",
             "observedPrice": 17200000,
             "sourceId": "red:19229"
           }
         ],
-        "updatedAt": "2026-11-04T18:26:55.180Z"
+        "updatedAt": "2026-11-06T06:33:27.824Z"
       }
     },
     {

@@ -2699,7 +2699,23 @@
         "sourceId": "nawy-inventory:2816",
         "observedAt": "2026-11-06T03:27:32.389Z"
       },
-      "priceMin": 3500000
+      "priceMin": 3500000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2816-club-walk",
+            "observedPrice": 3500000,
+            "sourceId": "nawy:2816"
+          }
+        ],
+        "updatedAt": "2026-11-06T06:33:27.824Z"
+      }
     }
   ],
   "projectDetails": {

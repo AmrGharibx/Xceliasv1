@@ -2679,6 +2679,27 @@
         "sourceId": "nawy-inventory:1304",
         "observedAt": "2026-09-22T10:02:00.468Z"
       }
+    },
+    {
+      "name": "Club walk",
+      "dev": "AlKarma Developments",
+      "lat": 30.01156666708448,
+      "lng": 31.010491506491377,
+      "zone": "New Sphinx",
+      "status": "Available",
+      "type": "residential",
+      "unitTypes": [
+        "Apartment"
+      ],
+      "downPayment": 10,
+      "installmentYears": 10,
+      "paymentPlan": "10% Down Payment, 10 Years Installments",
+      "catalogMeta": {
+        "status": "observed",
+        "sourceId": "nawy-inventory:2816",
+        "observedAt": "2026-11-06T03:27:32.389Z"
+      },
+      "priceMin": 3500000
     }
   ],
   "projectDetails": {
@@ -3579,6 +3600,19 @@
       "layouts": [],
       "images": [
         "https://prod-images.nawy.com/processed/inventory/compounds/1304/gallery/nada%20compound/high.webp"
+      ]
+    },
+    "Club walk": {
+      "unitTypes": "Apartment",
+      "areas": "",
+      "paymentPlan": "10% Down Payment, 10 Years Installments",
+      "status": "Available",
+      "amenities": "",
+      "description": "Project information is being verified.",
+      "masterplan": "",
+      "layouts": [],
+      "images": [
+        "https://s3.eu-central-1.amazonaws.com/prod.images.cooingestate.com/launches/cover_images/6ad8c65d7358d722b6426c22/La%20Manga%20Luxury%20Homecoming.png"
       ]
     }
   }

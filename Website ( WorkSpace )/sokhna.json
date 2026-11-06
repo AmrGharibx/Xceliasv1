@@ -4120,6 +4120,27 @@
         "sourceId": "nawy-inventory:1167",
         "observedAt": "2026-09-22T10:02:00.468Z"
       }
+    },
+    {
+      "name": "Island 3 Azha Sokhna",
+      "dev": "Madaar Development",
+      "lat": 29.713967454860764,
+      "lng": 32.37880445950586,
+      "zone": "Ain Sokhna",
+      "status": "Available",
+      "type": "residential",
+      "unitTypes": [
+        "Villa"
+      ],
+      "downPayment": 5,
+      "installmentYears": 8,
+      "paymentPlan": "5% Down Payment, 8 Years Installments",
+      "catalogMeta": {
+        "status": "observed",
+        "sourceId": "nawy-inventory:2815",
+        "observedAt": "2026-11-06T03:27:32.389Z"
+      },
+      "priceMin": 39200000
     }
   ],
   "projectDetails": {
@@ -5416,6 +5437,19 @@
       "layouts": [],
       "images": [
         "https://prod-images.nawy.com/processed/compound/cover_image/1167/high.webp"
+      ]
+    },
+    "Island 3 Azha Sokhna": {
+      "unitTypes": "Villa",
+      "areas": "",
+      "paymentPlan": "5% Down Payment, 8 Years Installments",
+      "status": "Available",
+      "amenities": "",
+      "description": "Project information is being verified.",
+      "masterplan": "",
+      "layouts": [],
+      "images": [
+        "https://s3.eu-central-1.amazonaws.com/prod.images.cooingestate.com/launches/cover_images/6ad9d5937358d722b644bab1/Azha%20Sokhna%20Lagoon%20Resort.png"
       ]
     }
   }

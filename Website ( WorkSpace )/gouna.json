@@ -864,7 +864,7 @@
       "zone": "Hurghada",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 13654075,
+      "priceMin": 12000000,
       "unitTypes": [
         "Chalet",
         "Townhouse"
@@ -887,8 +887,14 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/the-land-developers/il-bayou",
+            "observedPrice": 12000000,
+            "sourceId": "property-finder:9150aa0f-8aa4-4c3c-9760-eb1b2152a1a5"
+          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/978-il-bayou",
@@ -896,7 +902,7 @@
             "sourceId": "nawy:978"
           }
         ],
-        "updatedAt": "2026-11-06T18:27:24.561Z"
+        "updatedAt": "2026-11-07T02:51:08.178Z"
       }
     },
     {
@@ -2035,7 +2041,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 3,
         "sources": [
           {
             "name": "RED",
@@ -2044,13 +2050,19 @@
             "sourceId": "red:30963"
           },
           {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/travco-properties/makadina",
+            "observedPrice": 7400000,
+            "sourceId": "property-finder:6f94f94b-9809-4220-9620-aa5688b81f76"
+          },
+          {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/2025-makadina",
             "observedPrice": 8000000,
             "sourceId": "nawy:2025"
           }
         ],
-        "updatedAt": "2026-11-06T18:27:24.561Z"
+        "updatedAt": "2026-11-07T02:51:08.178Z"
       }
     },
     {

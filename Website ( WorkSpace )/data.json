@@ -1996,11 +1996,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/344-one-ninety",
-            "observedPrice": 27776000,
+            "observedPrice": 27700000,
             "sourceId": "nawy:344"
           }
         ],
-        "updatedAt": "2026-11-08T02:51:43.884Z"
+        "updatedAt": "2026-11-08T12:27:05.588Z"
       }
     },
     {
@@ -3493,14 +3493,14 @@
       "type": "residential",
       "priceMin": 9309947,
       "unitTypes": [
-        "Apartment",
         "Villa",
+        "Apartment",
         "Duplex",
-        "Twinhouse",
         "Office",
         "Retail",
         "Building",
         "Townhouse",
+        "Twinhouse",
         "Penthouse",
         "Studio",
         "Family House"
@@ -3515,9 +3515,9 @@
         5,
         6
       ],
-      "paymentPlan": "5% Down Payment, 8 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 8,
+      "paymentPlan": "2.5% Down Payment, 9 Years Installments",
+      "downPayment": 2.5,
+      "installmentYears": 9,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -3534,11 +3534,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/195-mountain-view-icity-new-cairo",
-            "observedPrice": 10542560,
+            "observedPrice": 12369394,
             "sourceId": "nawy:195"
           }
         ],
-        "updatedAt": "2026-11-03T18:26:38.567Z"
+        "updatedAt": "2026-11-08T12:27:05.588Z"
       }
     },
     {
@@ -4192,11 +4192,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/344-one-ninety",
-            "observedPrice": 27776000,
+            "observedPrice": 27700000,
             "sourceId": "nawy:344"
           }
         ],
-        "updatedAt": "2026-11-08T02:51:43.884Z"
+        "updatedAt": "2026-11-08T12:27:05.588Z"
       }
     },
     {
@@ -25443,11 +25443,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/258-o-west-orascom",
-            "observedPrice": 7945000,
+            "observedPrice": 7891000,
             "sourceId": "nawy:258"
           }
         ],
-        "updatedAt": "2026-11-05T12:30:26.073Z"
+        "updatedAt": "2026-11-08T12:27:05.588Z"
       }
     },
     {
@@ -30657,11 +30657,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/258-o-west-orascom",
-            "observedPrice": 7945000,
+            "observedPrice": 7891000,
             "sourceId": "nawy:258"
           }
         ],
-        "updatedAt": "2026-11-05T12:30:26.073Z"
+        "updatedAt": "2026-11-08T12:27:05.588Z"
       }
     },
     {
@@ -68406,26 +68406,31 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "apartment",
-        "duplex",
-        "villa"
+        "Studio",
+        "Apartment"
       ],
       "downPayment": 5,
-      "installmentYears": 0,
-      "paymentPlan": "5% Down Payment",
+      "installmentYears": 10,
+      "paymentPlan": "5% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:1962",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 5679000,
+      "priceMin": 4703664,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 3,
         "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1962-lush-valley",
+            "observedPrice": 4703664,
+            "sourceId": "nawy:1962"
+          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30951-lush-valley",
@@ -68439,7 +68444,7 @@
             "sourceId": "property-finder:a922077b-0682-4f89-af52-a0eb59ee145a"
           }
         ],
-        "updatedAt": "2026-11-08T02:51:43.884Z"
+        "updatedAt": "2026-11-08T12:27:05.588Z"
       }
     },
     {
@@ -70627,15 +70632,15 @@
         "Office",
         "Medical"
       ],
-      "downPayment": 10,
-      "installmentYears": 0,
-      "paymentPlan": "10% Down Payment",
+      "downPayment": 1.5,
+      "installmentYears": 12,
+      "paymentPlan": "1.5% Down Payment, 12 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2146",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 7891000,
+      "priceMin": 12797700,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -70644,13 +70649,13 @@
         "sourceCount": 1,
         "sources": [
           {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/talaat-moustafa-group/the-spine",
-            "observedPrice": 7891000,
-            "sourceId": "property-finder:639db443-812b-47bf-80c0-f40c28ab86d9"
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2146-the-spine",
+            "observedPrice": 12797700,
+            "sourceId": "nawy:2146"
           }
         ],
-        "updatedAt": "2026-11-06T02:51:22.052Z"
+        "updatedAt": "2026-11-08T12:27:05.588Z"
       }
     },
     {

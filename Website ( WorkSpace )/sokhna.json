@@ -413,7 +413,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
@@ -422,19 +422,13 @@
             "sourceId": "nawy:16"
           },
           {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/la-vista-developments/la-vista-gardens",
-            "observedPrice": 12400000,
-            "sourceId": "property-finder:554807a6-0456-467e-ac17-92967e27397a"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/19046-la-vista-gardens",
             "observedPrice": 16000000,
             "sourceId": "red:19046"
           }
         ],
-        "updatedAt": "2026-11-07T02:51:08.178Z"
+        "updatedAt": "2026-11-08T18:24:59.435Z"
       }
     },
     {
@@ -501,7 +495,7 @@
       "zone": "Zaafarana",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 9000000,
+      "priceMin": 13500000,
       "unitTypes": [
         "Chalet",
         "Townhouse",
@@ -526,14 +520,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/la-vista-developments/la-vista-topaz-resort",
-            "observedPrice": 9000000,
-            "sourceId": "property-finder:a73ea1ae-9c9a-4df1-a670-fdff66e2e55f"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/225-la-vista-topaz",
@@ -541,7 +529,7 @@
             "sourceId": "nawy:225"
           }
         ],
-        "updatedAt": "2026-11-07T02:51:08.178Z"
+        "updatedAt": "2026-11-08T18:24:59.435Z"
       }
     },
     {
@@ -575,22 +563,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/599-la-vista-6",
             "observedPrice": 9300000,
             "sourceId": "nawy:599"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/la-vista-developments/la-vista-6",
-            "observedPrice": 21690000,
-            "sourceId": "property-finder:c01ccd91-6140-4733-8c46-253cfb115a2a"
           }
         ],
-        "updatedAt": "2026-11-07T02:51:08.178Z"
+        "updatedAt": "2026-11-08T18:24:59.435Z"
       }
     },
     {
@@ -786,12 +768,11 @@
       "zone": "Galala",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 4285033,
+      "priceMin": 6121475,
       "unitTypes": [
-        "apartment",
-        "villa",
-        "duplex",
-        "townhouse"
+        "Twin House",
+        "Town House",
+        "Chalet"
       ],
       "areaMin": 78,
       "areaMax": 342,
@@ -811,14 +792,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/iwan-developments-company/majada",
-            "observedPrice": 4285033,
-            "sourceId": "property-finder:1999bbf3-0157-4647-bdab-52325148fbd6"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19026-majada",
@@ -826,7 +801,7 @@
             "sourceId": "red:19026"
           }
         ],
-        "updatedAt": "2026-11-07T02:51:08.178Z"
+        "updatedAt": "2026-11-08T18:24:59.435Z"
       }
     },
     {
@@ -879,7 +854,7 @@
       "zone": "Galala",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 5010200,
+      "priceMin": 7091360,
       "unitTypes": [
         "Apartment"
       ],
@@ -901,14 +876,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/new-jersey-developments/jura-el-galala",
-            "observedPrice": 5010200,
-            "sourceId": "property-finder:ad5b79e6-e7d5-4d7d-a59e-a6589141d41a"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1342-jura",
@@ -916,7 +885,7 @@
             "sourceId": "nawy:1342"
           }
         ],
-        "updatedAt": "2026-11-07T02:51:08.178Z"
+        "updatedAt": "2026-11-08T18:24:59.435Z"
       }
     },
     {
@@ -1096,7 +1065,7 @@
       "zone": "Galala",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 6236000,
+      "priceMin": 8332000,
       "unitTypes": [
         "Chalet",
         "Townhouse",
@@ -1122,14 +1091,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/maven-developments/baymount",
-            "observedPrice": 6236000,
-            "sourceId": "property-finder:7952cf7d-a34a-432d-b5ae-85a58b4f849e"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/355-baymount",
@@ -1137,7 +1100,7 @@
             "sourceId": "nawy:355"
           }
         ],
-        "updatedAt": "2026-11-07T02:51:08.178Z"
+        "updatedAt": "2026-11-08T18:24:59.435Z"
       }
     },
     {
@@ -3156,12 +3119,12 @@
       "zone": "Sokhna",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 5334170,
+      "priceMin": 6016780,
       "unitTypes": [
         "Chalet",
+        "Townhouse",
         "Duplex",
         "Penthouse",
-        "Townhouse",
         "Villa"
       ],
       "areaMin": 58,
@@ -3182,19 +3145,13 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1051-murano-wadi-degla",
-            "observedPrice": 5334170,
+            "observedPrice": 6016780,
             "sourceId": "nawy:1051"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/wadi-degla/murano-wadi-degla",
-            "observedPrice": 8036600,
-            "sourceId": "property-finder:39b44706-3901-437f-bde2-699ec54675f2"
           },
           {
             "name": "RED",
@@ -3203,7 +3160,7 @@
             "sourceId": "red:19029"
           }
         ],
-        "updatedAt": "2026-11-07T02:51:08.178Z"
+        "updatedAt": "2026-11-08T18:24:59.435Z"
       }
     },
     {
@@ -3261,22 +3218,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/599-la-vista-6",
             "observedPrice": 9300000,
             "sourceId": "nawy:599"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/la-vista-developments/la-vista-6",
-            "observedPrice": 21690000,
-            "sourceId": "property-finder:c01ccd91-6140-4733-8c46-253cfb115a2a"
           }
         ],
-        "updatedAt": "2026-11-07T02:51:08.178Z"
+        "updatedAt": "2026-11-08T18:24:59.435Z"
       }
     },
     {
@@ -3770,9 +3721,9 @@
       "type": "residential",
       "unitTypes": [
         "Chalet",
+        "Townhouse",
         "Duplex",
         "Penthouse",
-        "Townhouse",
         "Villa"
       ],
       "downPayment": 5,
@@ -3783,7 +3734,7 @@
         "sourceId": "nawy-inventory:2141",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 5334170,
+      "priceMin": 6016780,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -3794,7 +3745,7 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1051-murano-wadi-degla",
-            "observedPrice": 5334170,
+            "observedPrice": 6016780,
             "sourceId": "nawy:1051"
           },
           {
@@ -3804,7 +3755,7 @@
             "sourceId": "red:19029"
           }
         ],
-        "updatedAt": "2026-10-27T18:28:31.660Z"
+        "updatedAt": "2026-11-08T18:24:59.435Z"
       }
     },
     {

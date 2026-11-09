@@ -34,17 +34,23 @@
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
-        "confidence": "high",
-        "sourceCount": 1,
+        "confidence": "verified",
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1198-southmed",
             "observedPrice": 9644590,
             "sourceId": "nawy:1198"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/talaat-moustafa-group/southmed-in-al-dabaa",
+            "observedPrice": 14500000,
+            "sourceId": "property-finder:724d7c4b-ea13-45c6-86c5-244b8584c941"
           }
         ],
-        "updatedAt": "2026-11-08T18:24:59.435Z"
+        "updatedAt": "2026-11-09T02:51:25.534Z"
       }
     },
     {
@@ -593,7 +599,7 @@
       "zone": "Somabay",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 23500000,
+      "priceMin": 16450000,
       "unitTypes": [
         "Chalet",
         "Apartment"
@@ -616,8 +622,14 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/somabay-realestate/reef-town",
+            "observedPrice": 16450000,
+            "sourceId": "property-finder:1e6ef37d-ad96-42e2-929d-daf05041c69f"
+          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/136-reef-town",
@@ -625,7 +637,7 @@
             "sourceId": "nawy:136"
           }
         ],
-        "updatedAt": "2026-11-08T18:24:59.435Z"
+        "updatedAt": "2026-11-09T02:51:25.534Z"
       }
     },
     {
@@ -661,7 +673,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 3,
         "sources": [
           {
             "name": "RED",
@@ -670,13 +682,19 @@
             "sourceId": "red:19101"
           },
           {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/palm-hills/palm-hills-alexandria",
+            "observedPrice": 9418000,
+            "sourceId": "property-finder:32791fee-4182-4ae1-8a60-39c97256919c"
+          },
+          {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/201-palm-hills-alexandria",
             "observedPrice": 11317000,
             "sourceId": "nawy:201"
           }
         ],
-        "updatedAt": "2026-11-08T18:24:59.435Z"
+        "updatedAt": "2026-11-09T02:51:25.534Z"
       }
     },
     {
@@ -715,7 +733,7 @@
       "zone": "Alexandria",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 8421000,
+      "priceMin": 4000000,
       "unitTypes": [
         "Apartment",
         "Duplex",
@@ -739,8 +757,14 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/saudi-egyptian-developers-sed/sawary",
+            "observedPrice": 4000000,
+            "sourceId": "property-finder:37f1f18d-928d-474f-8032-42d4bc7c9792"
+          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/325-sawary",
@@ -748,7 +772,7 @@
             "sourceId": "nawy:325"
           }
         ],
-        "updatedAt": "2026-11-09T00:45:07.884Z"
+        "updatedAt": "2026-11-09T02:51:25.534Z"
       }
     },
     {
@@ -759,7 +783,7 @@
       "zone": "Somabay",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 28200000,
+      "priceMin": 28160000,
       "unitTypes": [
         "Villa",
         "Apartment",
@@ -785,8 +809,14 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/somabay-realestate/mesca-soma-bay",
+            "observedPrice": 28160000,
+            "sourceId": "property-finder:2b8d7403-d77c-4ef5-aa10-8b8a823ea76c"
+          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/349-mesca--somabay",
@@ -794,7 +824,7 @@
             "sourceId": "nawy:349"
           }
         ],
-        "updatedAt": "2026-11-08T18:24:59.435Z"
+        "updatedAt": "2026-11-09T02:51:25.534Z"
       }
     },
     {
@@ -1243,17 +1273,23 @@
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
-        "confidence": "high",
-        "sourceCount": 1,
+        "confidence": "verified",
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1862-lamanga",
             "observedPrice": 3500000,
             "sourceId": "nawy:1862"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/al-karma-developments/lamanga",
+            "observedPrice": 14000000,
+            "sourceId": "property-finder:d9106935-26f9-4051-8af6-040b7dfb9e17"
           }
         ],
-        "updatedAt": "2026-11-08T18:24:59.435Z"
+        "updatedAt": "2026-11-09T02:51:25.534Z"
       }
     },
     {
@@ -1370,8 +1406,8 @@
       "type": "residential",
       "priceMin": 2274000,
       "unitTypes": [
-        "Chalet",
-        "Apartment"
+        "apartment",
+        "duplex"
       ],
       "areaMin": 76,
       "areaMax": 332,
@@ -1384,23 +1420,29 @@
         6
       ],
       "paymentPlan": "25% Down Payment",
-      "downPayment": 0,
+      "downPayment": 25,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30856-eclat",
             "observedPrice": 2274000,
             "sourceId": "red:30856"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/new-plan-developments/eclat",
+            "observedPrice": 8000000,
+            "sourceId": "property-finder:4ddc1713-e037-44e4-acfc-900c033b6731"
           }
         ],
-        "updatedAt": "2026-11-08T18:24:59.435Z"
+        "updatedAt": "2026-11-09T02:51:25.534Z"
       }
     },
     {
@@ -1520,16 +1562,22 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/660-lasirena-bay",
             "observedPrice": 3325000,
             "sourceId": "nawy:660"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/lasirena-group/lasirena-bay",
+            "observedPrice": 3325000,
+            "sourceId": "property-finder:3f56c51a-b52c-445d-b6d5-4845d6552f4f"
           }
         ],
-        "updatedAt": "2026-11-08T18:24:59.435Z"
+        "updatedAt": "2026-11-09T02:51:25.534Z"
       }
     },
     {
@@ -1983,7 +2031,7 @@
       "zone": "Somabay",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 109000000,
+      "priceMin": 76300000,
       "unitTypes": [
         "Villa"
       ],
@@ -2005,8 +2053,14 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/somabay-realestate/nautilus",
+            "observedPrice": 76300000,
+            "sourceId": "property-finder:f4850cf2-3d53-473a-a089-addad50b7738"
+          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1081-nautilus",
@@ -2014,7 +2068,7 @@
             "sourceId": "nawy:1081"
           }
         ],
-        "updatedAt": "2026-11-08T18:24:59.435Z"
+        "updatedAt": "2026-11-09T02:51:25.534Z"
       }
     },
     {
@@ -2025,7 +2079,7 @@
       "zone": "Somabay",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 69000000,
+      "priceMin": 41400000,
       "unitTypes": [
         "Villa",
         "Twinhouse"
@@ -2048,8 +2102,14 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/somabay-realestate/wadi-soma",
+            "observedPrice": 41400000,
+            "sourceId": "property-finder:afd6390a-4f3d-4856-a6fa-a46add98ba12"
+          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1097-wadi-soma",
@@ -2057,7 +2117,7 @@
             "sourceId": "nawy:1097"
           }
         ],
-        "updatedAt": "2026-11-09T00:45:07.884Z"
+        "updatedAt": "2026-11-09T02:51:25.534Z"
       }
     },
     {
@@ -2391,8 +2451,8 @@
         "Apartment",
         "Villa",
         "Townhouse",
-        "Chalet",
         "Duplex",
+        "Chalet",
         "Twinhouse",
         "Penthouse",
         "Studio"
@@ -2411,16 +2471,22 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/941-ras-soma",
             "observedPrice": 12000000,
             "sourceId": "nawy:941"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/travco-properties/ras-soma",
+            "observedPrice": 12700000,
+            "sourceId": "property-finder:c129378a-e139-48a4-a3c5-8bbaec67e41e"
           }
         ],
-        "updatedAt": "2026-11-08T18:24:59.435Z"
+        "updatedAt": "2026-11-09T02:51:25.534Z"
       }
     },
     {
@@ -2435,8 +2501,8 @@
         "Apartment",
         "Villa",
         "Townhouse",
-        "Chalet",
         "Duplex",
+        "Chalet",
         "Twinhouse",
         "Penthouse",
         "Studio"
@@ -2455,16 +2521,22 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/941-ras-soma",
             "observedPrice": 12000000,
             "sourceId": "nawy:941"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/travco-properties/ras-soma",
+            "observedPrice": 12700000,
+            "sourceId": "property-finder:c129378a-e139-48a4-a3c5-8bbaec67e41e"
           }
         ],
-        "updatedAt": "2026-11-08T18:24:59.435Z"
+        "updatedAt": "2026-11-09T02:51:25.534Z"
       }
     },
     {
@@ -2479,8 +2551,8 @@
         "Apartment",
         "Villa",
         "Townhouse",
-        "Chalet",
         "Duplex",
+        "Chalet",
         "Twinhouse",
         "Penthouse",
         "Studio"
@@ -2499,16 +2571,22 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/941-ras-soma",
             "observedPrice": 12000000,
             "sourceId": "nawy:941"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/travco-properties/ras-soma",
+            "observedPrice": 12700000,
+            "sourceId": "property-finder:c129378a-e139-48a4-a3c5-8bbaec67e41e"
           }
         ],
-        "updatedAt": "2026-11-08T18:24:59.435Z"
+        "updatedAt": "2026-11-09T02:51:25.534Z"
       }
     },
     {
@@ -2626,17 +2704,23 @@
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
-        "confidence": "high",
-        "sourceCount": 1,
+        "confidence": "verified",
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/2816-club-walk",
             "observedPrice": 3500000,
             "sourceId": "nawy:2816"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/al-karma-developments/club-walk",
+            "observedPrice": 3500000,
+            "sourceId": "property-finder:20a6b16e-3bd6-4c00-8dce-07d780c045a5"
           }
         ],
-        "updatedAt": "2026-11-08T18:24:59.435Z"
+        "updatedAt": "2026-11-09T02:51:25.534Z"
       }
     }
   ],

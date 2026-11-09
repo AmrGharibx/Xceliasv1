@@ -62485,6 +62485,98 @@
         ],
         "updatedAt": "2026-11-09T02:51:25.534Z"
       }
+    },
+    {
+      "name": "The Estates Residence",
+      "dev": "SODIC",
+      "lat": 30.074697,
+      "lng": 30.87622,
+      "zone": "New Zayed",
+      "status": "Available",
+      "type": "residential",
+      "unitTypes": [
+        "Apartment",
+        "Townhouse",
+        "Duplex",
+        "Villa",
+        "Twinhouse",
+        "Penthouse"
+      ],
+      "downPayment": 5,
+      "installmentYears": 10,
+      "paymentPlan": "5% Down Payment, 10 Years Installments",
+      "catalogMeta": {
+        "status": "observed",
+        "sourceId": "nawy-inventory:664",
+        "observedAt": "2026-11-09T03:29:39.883Z"
+      },
+      "priceMin": 11020000
+    },
+    {
+      "name": "The Estates",
+      "dev": "SODIC",
+      "lat": 30.08172,
+      "lng": 30.878458,
+      "zone": "New Zayed",
+      "status": "Available",
+      "type": "residential",
+      "unitTypes": [
+        "Villa",
+        "Townhouse",
+        "Apartment",
+        "Twinhouse"
+      ],
+      "downPayment": 10,
+      "installmentYears": 10,
+      "paymentPlan": "10% Down Payment, 10 Years Installments",
+      "catalogMeta": {
+        "status": "observed",
+        "sourceId": "nawy-inventory:310",
+        "observedAt": "2026-11-09T03:29:39.883Z"
+      },
+      "priceMin": 77223960
+    },
+    {
+      "name": "ZAYED YARD",
+      "dev": "Madinet Masr",
+      "lat": 30.041169824762846,
+      "lng": 31.040413421479514,
+      "zone": "El Sheikh Zayed",
+      "status": "Available",
+      "type": "commercial",
+      "unitTypes": [
+        "Retail",
+        "Medical"
+      ],
+      "downPayment": 10,
+      "installmentYears": 10,
+      "paymentPlan": "10% Down Payment, 10 Years Installments",
+      "catalogMeta": {
+        "status": "observed",
+        "sourceId": "nawy-inventory:2757",
+        "observedAt": "2026-11-09T03:29:39.883Z"
+      },
+      "priceMin": 6182000
+    },
+    {
+      "name": "West Town",
+      "dev": "Arabia Holding",
+      "lat": 29.890810619771628,
+      "lng": 31.073382417402627,
+      "zone": "6th of October City",
+      "status": "Available",
+      "type": "residential",
+      "unitTypes": [
+        "Townhouse"
+      ],
+      "downPayment": 0,
+      "installmentYears": 0,
+      "paymentPlan": "0% Down Payment, 0 Years Installments",
+      "catalogMeta": {
+        "status": "observed",
+        "sourceId": "nawy-inventory:2558",
+        "observedAt": "2026-11-09T03:29:39.883Z"
+      }
     }
   ],
   "projectDetails": {
@@ -76756,7 +76848,7 @@
       ]
     },
     "The Estates Residence": {
-      "unitTypes": "Apartment, Townhouse, Duplex, Villa, Penthouse, Twinhouse",
+      "unitTypes": "Apartment, Townhouse, Duplex, Villa, Twinhouse, Penthouse",
       "areas": "",
       "paymentPlan": "5% Down Payment, 10 Years Installments",
       "status": "Available",
@@ -76811,7 +76903,7 @@
         "https://prod-images.nawy.com/processed/compound_image/image/1798/high.webp"
       ],
       "assetMeta": {
-        "lastEnrichedAt": "2026-11-08T03:27:41.566Z",
+        "lastEnrichedAt": "2026-11-09T03:29:53.809Z",
         "sourceId": "red-asset:20"
       }
     },
@@ -80459,6 +80551,32 @@
       "layouts": [],
       "images": [
         "https://s3.eu-central-1.amazonaws.com/prod.images.cooingestate.com/launches/cover_images/6ad0e1a0193ebfddc199b4c3/Cover.png"
+      ]
+    },
+    "ZAYED YARD": {
+      "unitTypes": "Retail, Medical",
+      "areas": "",
+      "paymentPlan": "10% Down Payment, 10 Years Installments",
+      "status": "Available",
+      "amenities": "",
+      "description": "Project information is being verified.",
+      "masterplan": "",
+      "layouts": [],
+      "images": [
+        "https://prod-images.nawy.com/processed/inventory/compounds/2757/cover-images/Zayed%20Yards/high.webp"
+      ]
+    },
+    "West Town": {
+      "unitTypes": "Townhouse",
+      "areas": "",
+      "paymentPlan": "0% Down Payment, 0 Years Installments",
+      "status": "Available",
+      "amenities": "",
+      "description": "Project information is being verified.",
+      "masterplan": "",
+      "layouts": [],
+      "images": [
+        "https://prod-images.nawy.com/processed/inventory/compounds/2558/gallery/WhatsApp%20Image%202026-07-30%20at%205.11.13%20PM/high.webp"
       ]
     }
   }

@@ -13809,7 +13809,7 @@
       "zone": "New Capital",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 4407962,
+      "priceMin": 4150000,
       "unitTypes": [
         "Apartment",
         "Duplex",
@@ -13836,6 +13836,12 @@
         "sourceCount": 3,
         "sources": [
           {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/768-ri8",
+            "observedPrice": 4150000,
+            "sourceId": "nawy:768"
+          },
+          {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/erg-developments/ri8-residence",
             "observedPrice": 4407962,
@@ -13846,15 +13852,9 @@
             "url": "https://redww.com/en/projects/30847-ri8",
             "observedPrice": 5008684,
             "sourceId": "red:30847"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/768-ri8",
-            "observedPrice": 5259003,
-            "sourceId": "nawy:768"
           }
         ],
-        "updatedAt": "2026-11-08T02:51:43.884Z"
+        "updatedAt": "2026-11-09T12:29:42.624Z"
       }
     },
     {

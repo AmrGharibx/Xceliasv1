@@ -322,7 +322,6 @@
       "unitTypes": [
         "Apartment",
         "Duplex",
-        "Penthouse",
         "Chalet",
         "Family House"
       ],
@@ -344,22 +343,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/123-swanlake-el-gouna",
             "observedPrice": 25000000,
             "sourceId": "nawy:123"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/hassan-allam-holding/swanlake-el-gouna",
-            "observedPrice": 25000000,
-            "sourceId": "property-finder:b364916e-d443-47af-b26c-c3857eab37f9"
           }
         ],
-        "updatedAt": "2026-11-09T02:51:25.534Z"
+        "updatedAt": "2026-11-10T18:26:23.229Z"
       }
     },
     {
@@ -870,7 +863,7 @@
       "zone": "Hurghada",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 12000000,
+      "priceMin": 13654075,
       "unitTypes": [
         "Chalet",
         "Townhouse"
@@ -893,14 +886,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/the-land-developers/il-bayou",
-            "observedPrice": 12000000,
-            "sourceId": "property-finder:9150aa0f-8aa4-4c3c-9760-eb1b2152a1a5"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/978-il-bayou",
@@ -908,7 +895,7 @@
             "sourceId": "nawy:978"
           }
         ],
-        "updatedAt": "2026-11-09T02:51:25.534Z"
+        "updatedAt": "2026-11-10T18:26:23.229Z"
       }
     },
     {
@@ -1020,14 +1007,14 @@
       "type": "residential",
       "priceMin": 8020000,
       "unitTypes": [
-        "Villa",
+        "Penthouse",
+        "Chalet",
         "Townhouse",
         "Apartment",
+        "Duplex",
+        "Villa",
         "Loft",
-        "Chalet",
-        "Twinhouse",
-        "Penthouse",
-        "Duplex"
+        "Twinhouse"
       ],
       "areaMin": 65,
       "areaMax": 273,
@@ -1039,8 +1026,8 @@
         5,
         6
       ],
-      "paymentPlan": "0% Down Payment, 7 Years Installments",
-      "downPayment": 0,
+      "paymentPlan": "10% Down Payment, 7 Years Installments",
+      "downPayment": 10,
       "installmentYears": 7,
       "priceMeta": {
         "status": "verified",
@@ -1058,11 +1045,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/454-makadi-heights",
-            "observedPrice": 13225000,
+            "observedPrice": 11270000,
             "sourceId": "nawy:454"
           }
         ],
-        "updatedAt": "2026-11-08T18:24:59.435Z"
+        "updatedAt": "2026-11-10T18:26:23.229Z"
       }
     },
     {
@@ -1899,18 +1886,18 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Villa",
+        "Penthouse",
+        "Chalet",
         "Townhouse",
         "Apartment",
+        "Duplex",
+        "Villa",
         "Loft",
-        "Chalet",
-        "Twinhouse",
-        "Penthouse",
-        "Duplex"
+        "Twinhouse"
       ],
-      "downPayment": 0,
+      "downPayment": 10,
       "installmentYears": 7,
-      "paymentPlan": "0% Down Payment, 7 Years Installments",
+      "paymentPlan": "10% Down Payment, 7 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2047",
@@ -1933,11 +1920,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/454-makadi-heights",
-            "observedPrice": 13225000,
+            "observedPrice": 11270000,
             "sourceId": "nawy:454"
           }
         ],
-        "updatedAt": "2026-11-08T18:24:59.435Z"
+        "updatedAt": "2026-11-10T18:26:23.229Z"
       }
     },
     {
@@ -2053,7 +2040,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
@@ -2062,19 +2049,13 @@
             "sourceId": "red:30963"
           },
           {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/travco-properties/makadina",
-            "observedPrice": 7400000,
-            "sourceId": "property-finder:6f94f94b-9809-4220-9620-aa5688b81f76"
-          },
-          {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/2025-makadina",
             "observedPrice": 8000000,
             "sourceId": "nawy:2025"
           }
         ],
-        "updatedAt": "2026-11-09T02:51:25.534Z"
+        "updatedAt": "2026-11-10T18:26:23.229Z"
       }
     },
     {
@@ -2104,18 +2085,18 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Villa",
+        "Penthouse",
+        "Chalet",
         "Townhouse",
         "Apartment",
+        "Duplex",
+        "Villa",
         "Loft",
-        "Chalet",
-        "Twinhouse",
-        "Penthouse",
-        "Duplex"
+        "Twinhouse"
       ],
-      "downPayment": 0,
+      "downPayment": 10,
       "installmentYears": 7,
-      "paymentPlan": "0% Down Payment, 7 Years Installments",
+      "paymentPlan": "10% Down Payment, 7 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2747",
@@ -2138,11 +2119,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/454-makadi-heights",
-            "observedPrice": 13225000,
+            "observedPrice": 11270000,
             "sourceId": "nawy:454"
           }
         ],
-        "updatedAt": "2026-11-08T18:24:59.435Z"
+        "updatedAt": "2026-11-10T18:26:23.229Z"
       }
     }
   ],

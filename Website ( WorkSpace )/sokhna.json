@@ -1321,7 +1321,11 @@
       "priceMin": 17724000,
       "unitTypes": [
         "Chalet",
-        "Villa"
+        "Townhouse",
+        "Villa",
+        "Apartment",
+        "Penthouse",
+        "Twinhouse"
       ],
       "areaMin": 64,
       "areaMax": 267,
@@ -1332,23 +1336,29 @@
         4
       ],
       "paymentPlan": "10% Down Payment, 7 Years Installments",
-      "downPayment": 0,
-      "installmentYears": 0,
+      "downPayment": 10,
+      "installmentYears": 7,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19032-azha",
             "observedPrice": 17724000,
             "sourceId": "red:19032"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/88-azha",
+            "observedPrice": 25533900,
+            "sourceId": "nawy:88"
           }
         ],
-        "updatedAt": "2026-11-05T18:28:01.254Z"
+        "updatedAt": "2026-11-10T12:28:47.792Z"
       }
     },
     {
@@ -4134,24 +4144,35 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "villa"
+        "Chalet",
+        "Townhouse",
+        "Villa",
+        "Apartment",
+        "Penthouse",
+        "Twinhouse"
       ],
-      "downPayment": 5,
-      "installmentYears": 0,
-      "paymentPlan": "5% Down Payment",
+      "downPayment": 10,
+      "installmentYears": 7,
+      "paymentPlan": "10% Down Payment, 7 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2815",
         "observedAt": "2026-11-06T03:27:32.389Z"
       },
-      "priceMin": 39200000,
+      "priceMin": 25533900,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/88-azha",
+            "observedPrice": 25533900,
+            "sourceId": "nawy:88"
+          },
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/madaar/island-3",
@@ -4159,7 +4180,7 @@
             "sourceId": "property-finder:a655b021-d473-43ce-b398-55f69130bb22"
           }
         ],
-        "updatedAt": "2026-11-10T02:51:19.080Z"
+        "updatedAt": "2026-11-10T12:28:47.792Z"
       }
     }
   ],

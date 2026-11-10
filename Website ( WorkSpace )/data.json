@@ -2373,14 +2373,14 @@
       "type": "residential",
       "priceMin": 9000000,
       "unitTypes": [
-        "Administrative",
-        "Retail",
-        "Twinhouse",
         "Medical",
+        "Retail",
+        "Administrative",
         "Apartment",
         "Office",
         "Villa",
-        "Townhouse"
+        "Townhouse",
+        "Twinhouse"
       ],
       "areaMin": 89,
       "areaMax": 447,
@@ -2400,7 +2400,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
@@ -2413,15 +2413,9 @@
             "url": "https://redww.com/en/projects/30-stei8ht",
             "observedPrice": 9886806,
             "sourceId": "red:30"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/landmark-sabbour/stei8ht",
-            "observedPrice": 36583939,
-            "sourceId": "property-finder:96c99623-97a7-4c2d-9957-f6c082b31309"
           }
         ],
-        "updatedAt": "2026-11-08T18:24:59.435Z"
+        "updatedAt": "2026-11-10T06:32:09.159Z"
       }
     },
     {
@@ -3548,7 +3542,8 @@
       "type": "residential",
       "priceMin": 6336000,
       "unitTypes": [
-        "villa"
+        "Apartment",
+        "Penthouse"
       ],
       "areaMin": 88,
       "areaMax": 439,
@@ -3560,24 +3555,30 @@
         5,
         6
       ],
-      "paymentPlan": "5% Down Payment",
-      "downPayment": 5,
-      "installmentYears": 0,
+      "paymentPlan": "2.5% Down Payment, 10 Years Installments",
+      "downPayment": 2.5,
+      "installmentYears": 10,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/il-cazar-developments/glen",
             "observedPrice": 6336000,
             "sourceId": "property-finder:41453441-1602-4a83-b04a-ba7740b951cf"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1426-glen",
+            "observedPrice": 8303412,
+            "sourceId": "nawy:1426"
           }
         ],
-        "updatedAt": "2026-11-10T02:51:19.080Z"
+        "updatedAt": "2026-11-10T06:32:09.159Z"
       }
     },
     {
@@ -9607,7 +9608,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
@@ -9620,15 +9621,9 @@
             "url": "https://www.nawy.com/compound/1287-the-butterfly",
             "observedPrice": 6357330,
             "sourceId": "nawy:1287"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/madinet-masr/the-butterfly",
-            "observedPrice": 8777582,
-            "sourceId": "property-finder:165f714b-e618-4794-a1da-260561e08bc9"
           }
         ],
-        "updatedAt": "2026-11-08T18:24:59.435Z"
+        "updatedAt": "2026-11-10T06:32:09.159Z"
       }
     },
     {
@@ -25202,7 +25197,7 @@
       "zone": "October",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 3645000,
+      "priceMin": 3750000,
       "unitTypes": [
         "Apartment",
         "Studio"
@@ -25225,14 +25220,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/remal-developments/west-clay",
-            "observedPrice": 3645000,
-            "sourceId": "property-finder:be113bb3-f676-4995-966b-168a19f25f4f"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1415-west-clay",
@@ -25240,7 +25229,7 @@
             "sourceId": "nawy:1415"
           }
         ],
-        "updatedAt": "2026-11-08T18:24:59.435Z"
+        "updatedAt": "2026-11-10T06:32:09.159Z"
       }
     },
     {
@@ -26056,7 +26045,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
@@ -26065,19 +26054,13 @@
             "sourceId": "nawy:84"
           },
           {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/tatweer-misr/fouka-bay",
-            "observedPrice": 13258120,
-            "sourceId": "property-finder:57a63654-ebfc-47e8-b345-c1b1f0eb16d5"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/48-fouka-bay",
             "observedPrice": 13535000,
             "sourceId": "red:48"
           }
         ],
-        "updatedAt": "2026-11-08T18:24:59.435Z"
+        "updatedAt": "2026-11-10T06:32:09.159Z"
       }
     },
     {
@@ -26754,14 +26737,14 @@
       "layouts": [
         "https://lmd.com.eg/project/zoya/"
       ],
-      "priceMin": 7726320,
+      "priceMin": 11458788,
       "unitTypes": [
         "Apartment",
         "Chalet",
         "Townhouse",
         "Villa",
-        "Cabin",
-        "Twinhouse"
+        "Twinhouse",
+        "Cabin"
       ],
       "areaMin": 74,
       "areaMax": 325,
@@ -26781,14 +26764,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/landmark-developments/zoya-ghazala-bay",
-            "observedPrice": 7726320,
-            "sourceId": "property-finder:72d58cad-44a3-4b44-96d0-f1676dd6d5f5"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19039-zoya-ghazala-bay",
@@ -26802,7 +26779,7 @@
             "sourceId": "nawy:238"
           }
         ],
-        "updatedAt": "2026-11-08T18:24:59.435Z"
+        "updatedAt": "2026-11-10T06:32:09.159Z"
       }
     },
     {
@@ -42673,7 +42650,8 @@
       "type": "residential",
       "priceMin": 6336000,
       "unitTypes": [
-        "villa"
+        "Apartment",
+        "Penthouse"
       ],
       "areaMin": 95,
       "areaMax": 474,
@@ -42685,24 +42663,30 @@
         5,
         6
       ],
-      "paymentPlan": "5% Down Payment",
-      "downPayment": 5,
-      "installmentYears": 0,
+      "paymentPlan": "2.5% Down Payment, 10 Years Installments",
+      "downPayment": 2.5,
+      "installmentYears": 10,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/il-cazar-developments/glen",
             "observedPrice": 6336000,
             "sourceId": "property-finder:41453441-1602-4a83-b04a-ba7740b951cf"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1426-glen",
+            "observedPrice": 8303412,
+            "sourceId": "nawy:1426"
           }
         ],
-        "updatedAt": "2026-11-10T02:51:19.080Z"
+        "updatedAt": "2026-11-10T06:32:09.159Z"
       }
     },
     {
@@ -87686,22 +87670,36 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Apartment",
-        "Townhouse",
-        "Duplex",
         "Villa",
-        "Twinhouse",
-        "Penthouse"
+        "Twin House",
+        "Apartment",
+        "Town House"
       ],
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:664",
         "observedAt": "2026-11-10T03:27:01.231Z"
       },
-      "priceMin": 11020000
+      "priceMin": 22679000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/20-the-estates",
+            "observedPrice": 22679000,
+            "sourceId": "red:20"
+          }
+        ],
+        "updatedAt": "2026-11-10T06:32:09.159Z"
+      }
     },
     {
       "name": "NAVY 26",
@@ -87723,7 +87721,23 @@
         "sourceId": "nawy-inventory:2824",
         "observedAt": "2026-11-10T03:27:01.231Z"
       },
-      "priceMin": 1986000
+      "priceMin": 1986000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2824-navy-26-mall",
+            "observedPrice": 1986000,
+            "sourceId": "nawy:2824"
+          }
+        ],
+        "updatedAt": "2026-11-10T06:32:09.159Z"
+      }
     },
     {
       "name": "The Estates",
@@ -87735,19 +87749,35 @@
       "type": "residential",
       "unitTypes": [
         "Villa",
-        "Townhouse",
+        "Twin House",
         "Apartment",
-        "Twinhouse"
+        "Town House"
       ],
-      "downPayment": 10,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "10% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:310",
         "observedAt": "2026-11-10T03:27:01.231Z"
       },
-      "priceMin": 77223960
+      "priceMin": 22679000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/20-the-estates",
+            "observedPrice": 22679000,
+            "sourceId": "red:20"
+          }
+        ],
+        "updatedAt": "2026-11-10T06:32:09.159Z"
+      }
     },
     {
       "name": "Katameya 40",
@@ -87768,7 +87798,23 @@
         "sourceId": "nawy-inventory:2827",
         "observedAt": "2026-11-10T03:27:01.231Z"
       },
-      "priceMin": 11250000
+      "priceMin": 11250000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2827-katameya-40",
+            "observedPrice": 11250000,
+            "sourceId": "nawy:2827"
+          }
+        ],
+        "updatedAt": "2026-11-10T06:32:09.159Z"
+      }
     }
   ],
   "projectDetails": {

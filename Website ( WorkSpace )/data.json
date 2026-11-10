@@ -87676,6 +87676,99 @@
         "sourceId": "nawy-inventory:2558",
         "observedAt": "2026-11-09T03:29:39.883Z"
       }
+    },
+    {
+      "name": "The Estates Residence",
+      "dev": "SODIC",
+      "lat": 30.074697,
+      "lng": 30.87622,
+      "zone": "New Zayed",
+      "status": "Available",
+      "type": "residential",
+      "unitTypes": [
+        "Apartment",
+        "Townhouse",
+        "Duplex",
+        "Villa",
+        "Twinhouse",
+        "Penthouse"
+      ],
+      "downPayment": 5,
+      "installmentYears": 10,
+      "paymentPlan": "5% Down Payment, 10 Years Installments",
+      "catalogMeta": {
+        "status": "observed",
+        "sourceId": "nawy-inventory:664",
+        "observedAt": "2026-11-10T03:27:01.231Z"
+      },
+      "priceMin": 11020000
+    },
+    {
+      "name": "NAVY 26",
+      "dev": "Housing and Development Properties HDP",
+      "lat": 30.022724374740335,
+      "lng": 30.942991689046437,
+      "zone": "El Sheikh Zayed",
+      "status": "Available",
+      "type": "commercial",
+      "unitTypes": [
+        "Medical",
+        "Administrative"
+      ],
+      "downPayment": 4,
+      "installmentYears": 4,
+      "paymentPlan": "4% Down Payment, 4 Years Installments",
+      "catalogMeta": {
+        "status": "observed",
+        "sourceId": "nawy-inventory:2824",
+        "observedAt": "2026-11-10T03:27:01.231Z"
+      },
+      "priceMin": 1986000
+    },
+    {
+      "name": "The Estates",
+      "dev": "SODIC",
+      "lat": 30.08172,
+      "lng": 30.878458,
+      "zone": "New Zayed",
+      "status": "Available",
+      "type": "residential",
+      "unitTypes": [
+        "Villa",
+        "Townhouse",
+        "Apartment",
+        "Twinhouse"
+      ],
+      "downPayment": 10,
+      "installmentYears": 10,
+      "paymentPlan": "10% Down Payment, 10 Years Installments",
+      "catalogMeta": {
+        "status": "observed",
+        "sourceId": "nawy-inventory:310",
+        "observedAt": "2026-11-10T03:27:01.231Z"
+      },
+      "priceMin": 77223960
+    },
+    {
+      "name": "Katameya 40",
+      "dev": "Katameya Group",
+      "lat": 30.047233609981348,
+      "lng": 31.506527162729554,
+      "zone": "New Cairo",
+      "status": "Available",
+      "type": "residential",
+      "unitTypes": [
+        "Apartment"
+      ],
+      "downPayment": 10,
+      "installmentYears": 9,
+      "paymentPlan": "10% Down Payment, 9 Years Installments",
+      "catalogMeta": {
+        "status": "observed",
+        "sourceId": "nawy-inventory:2827",
+        "observedAt": "2026-11-10T03:27:01.231Z"
+      },
+      "priceMin": 11250000
     }
   ],
   "projectDetails": {
@@ -110103,7 +110196,7 @@
         "https://prod-images.nawy.com/processed/compound_image/image/1798/high.webp"
       ],
       "assetMeta": {
-        "lastEnrichedAt": "2026-11-09T03:29:53.809Z",
+        "lastEnrichedAt": "2026-11-10T03:27:15.095Z",
         "sourceId": "red-asset:20"
       }
     },
@@ -115555,6 +115648,32 @@
       "layouts": [],
       "images": [
         "https://prod-images.nawy.com/processed/inventory/compounds/2558/gallery/WhatsApp%20Image%202026-07-30%20at%205.11.13%20PM/high.webp"
+      ]
+    },
+    "NAVY 26": {
+      "unitTypes": "Medical, Administrative",
+      "areas": "",
+      "paymentPlan": "4% Down Payment, 4 Years Installments",
+      "status": "Available",
+      "amenities": "",
+      "description": "Project information is being verified.",
+      "masterplan": "",
+      "layouts": [],
+      "images": [
+        "https://s3.eu-central-1.amazonaws.com/prod.images.cooingestate.com/launches/cover_images/6addda2eed41140720ecacaf/Minimalist%20NNVY%2026%20Branding%20Poster.png"
+      ]
+    },
+    "Katameya 40": {
+      "unitTypes": "Apartment",
+      "areas": "",
+      "paymentPlan": "10% Down Payment, 9 Years Installments",
+      "status": "Available",
+      "amenities": "",
+      "description": "Project information is being verified.",
+      "masterplan": "",
+      "layouts": [],
+      "images": [
+        "https://s3.eu-central-1.amazonaws.com/prod.images.cooingestate.com/launches/cover_images/6adf276eed41140720ef7fa6/Katameya%2040.jpg"
       ]
     }
   }

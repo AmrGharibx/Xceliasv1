@@ -544,7 +544,7 @@
       "zone": "New Cairo",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 13500000,
+      "priceMin": 56267000,
       "unitTypes": [
         "Administrative",
         "Apartment",
@@ -569,14 +569,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/sodic/eastown-residence",
-            "observedPrice": 13500000,
-            "sourceId": "property-finder:f12e4fc3-2710-4c11-b6ef-d0e08e9d018b"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/925-eastown",
@@ -584,7 +578,7 @@
             "sourceId": "nawy:925"
           }
         ],
-        "updatedAt": "2026-11-08T02:51:43.884Z"
+        "updatedAt": "2026-11-10T00:40:50.165Z"
       }
     },
     {
@@ -1942,7 +1936,7 @@
       "zone": "New Cairo",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 23250000,
+      "priceMin": 27700000,
       "unitTypes": [
         "Apartment",
         "Retail",
@@ -1967,14 +1961,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/landmark-sabbour/one-ninety",
-            "observedPrice": 23250000,
-            "sourceId": "property-finder:6e99a2b9-dba5-4ee1-ba4f-dce25f739da4"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/344-one-ninety",
@@ -1982,7 +1970,7 @@
             "sourceId": "nawy:344"
           }
         ],
-        "updatedAt": "2026-11-08T12:27:05.588Z"
+        "updatedAt": "2026-11-10T00:40:50.165Z"
       }
     },
     {
@@ -3209,7 +3197,7 @@
       "zone": "New Cairo",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 9803950,
+      "priceMin": 15593000,
       "unitTypes": [
         "Townhouse",
         "Villa",
@@ -3233,14 +3221,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/tatweer-misr/scenes",
-            "observedPrice": 9803950,
-            "sourceId": "property-finder:554c5b50-9ae5-40a0-a2fe-2562f2504f66"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1391-scenes",
@@ -3248,7 +3230,7 @@
             "sourceId": "nawy:1391"
           }
         ],
-        "updatedAt": "2026-11-08T02:51:43.884Z"
+        "updatedAt": "2026-11-10T00:40:50.165Z"
       }
     },
     {
@@ -4070,7 +4052,7 @@
       "zone": "New Cairo",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 23250000,
+      "priceMin": 27700000,
       "unitTypes": [
         "Apartment",
         "Retail",
@@ -4095,14 +4077,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/landmark-sabbour/one-ninety",
-            "observedPrice": 23250000,
-            "sourceId": "property-finder:6e99a2b9-dba5-4ee1-ba4f-dce25f739da4"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/344-one-ninety",
@@ -4110,7 +4086,7 @@
             "sourceId": "nawy:344"
           }
         ],
-        "updatedAt": "2026-11-08T12:27:05.588Z"
+        "updatedAt": "2026-11-10T00:40:50.165Z"
       }
     },
     {
@@ -8382,12 +8358,12 @@
       "zone": "New Cairo",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 3679578,
+      "priceMin": 6124560,
       "unitTypes": [
         "Apartment",
         "Duplex",
-        "Studio",
         "Medical",
+        "Studio",
         "Administrative"
       ],
       "areaMin": 84,
@@ -8400,30 +8376,24 @@
         5,
         6
       ],
-      "paymentPlan": "5% Down Payment, 10 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 10,
+      "paymentPlan": "10% Down Payment, 8 Years Installments",
+      "downPayment": 10,
+      "installmentYears": 8,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1112-garnet",
-            "observedPrice": 3679578,
+            "observedPrice": 6124560,
             "sourceId": "nawy:1112"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/jadeer-realestate/garnet",
-            "observedPrice": 5240169,
-            "sourceId": "property-finder:94352baf-aef6-487c-a41d-713bc21b0a61"
           }
         ],
-        "updatedAt": "2026-11-08T02:51:43.884Z"
+        "updatedAt": "2026-11-10T00:40:50.165Z"
       }
     },
     {
@@ -8528,7 +8498,7 @@
       "zone": "New Cairo",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 5287752,
+      "priceMin": 9880000,
       "unitTypes": [
         "Retail",
         "Medical",
@@ -8554,14 +8524,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/main-marks/moray",
-            "observedPrice": 5287752,
-            "sourceId": "property-finder:81fd95f0-0655-4f43-8257-5b7ed2af0eb4"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1119-moray",
@@ -8569,7 +8533,7 @@
             "sourceId": "nawy:1119"
           }
         ],
-        "updatedAt": "2026-11-08T02:51:43.884Z"
+        "updatedAt": "2026-11-10T00:40:50.165Z"
       }
     },
     {
@@ -16331,12 +16295,12 @@
       "zone": "New Capital",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 2277739,
+      "priceMin": 4840145,
       "unitTypes": [
         "Apartment",
         "Townhouse",
-        "Retail",
         "Twinhouse",
+        "Retail",
         "Studio",
         "Administrative"
       ],
@@ -16358,14 +16322,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/better-home-development/midtown-sky-new-capital",
-            "observedPrice": 2277739,
-            "sourceId": "property-finder:e0212a46-fd4e-4897-ad51-c0f454149d28"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/440-midtown-sky",
@@ -16373,7 +16331,7 @@
             "sourceId": "nawy:440"
           }
         ],
-        "updatedAt": "2026-11-08T02:51:43.884Z"
+        "updatedAt": "2026-11-10T00:40:50.165Z"
       }
     },
     {
@@ -16384,12 +16342,12 @@
       "zone": "New Capital",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 2277739,
+      "priceMin": 4840145,
       "unitTypes": [
         "Apartment",
         "Townhouse",
-        "Retail",
         "Twinhouse",
+        "Retail",
         "Studio",
         "Administrative"
       ],
@@ -16411,14 +16369,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/better-home-development/midtown-sky-new-capital",
-            "observedPrice": 2277739,
-            "sourceId": "property-finder:e0212a46-fd4e-4897-ad51-c0f454149d28"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/440-midtown-sky",
@@ -16426,7 +16378,7 @@
             "sourceId": "nawy:440"
           }
         ],
-        "updatedAt": "2026-11-08T02:51:43.884Z"
+        "updatedAt": "2026-11-10T00:40:50.165Z"
       }
     },
     {
@@ -16437,7 +16389,7 @@
       "zone": "New Capital",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 8550000,
+      "priceMin": 27615203,
       "unitTypes": [
         "Townhouse",
         "Retail",
@@ -16461,14 +16413,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/better-home-development/midtown-villa",
-            "observedPrice": 8550000,
-            "sourceId": "property-finder:a26d143e-64cd-4e71-9bb7-f8225b5d1637"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/443-midtown-new-capital-villa",
@@ -16476,7 +16422,7 @@
             "sourceId": "nawy:443"
           }
         ],
-        "updatedAt": "2026-11-08T02:51:43.884Z"
+        "updatedAt": "2026-11-10T00:40:50.165Z"
       }
     },
     {
@@ -22093,7 +22039,7 @@
       "zone": "October",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 4900000,
+      "priceMin": 17784000,
       "unitTypes": [
         "Twin House",
         "Town House"
@@ -22109,21 +22055,15 @@
         6
       ],
       "paymentPlan": "30% Down Payment",
-      "downPayment": 30,
+      "downPayment": 0,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/al-rabwa-group/zayed-dunes",
-            "observedPrice": 4900000,
-            "sourceId": "property-finder:84a3a0a9-76e4-4d8b-9508-28e9cd1d6111"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19231-zayed-dunes",
@@ -22131,7 +22071,7 @@
             "sourceId": "red:19231"
           }
         ],
-        "updatedAt": "2026-11-08T02:51:43.884Z"
+        "updatedAt": "2026-11-10T00:40:50.165Z"
       }
     },
     {
@@ -22406,7 +22346,7 @@
       "zone": "October",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 3822000,
+      "priceMin": 6225000,
       "unitTypes": [
         "Apartment"
       ],
@@ -22428,14 +22368,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/beta-egypt/beta-residence",
-            "observedPrice": 3822000,
-            "sourceId": "property-finder:7fe4dc84-ab0c-4703-9594-e1233194f5cb"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1434-beta-residence",
@@ -22443,7 +22377,7 @@
             "sourceId": "nawy:1434"
           }
         ],
-        "updatedAt": "2026-11-08T02:51:43.884Z"
+        "updatedAt": "2026-11-10T00:40:50.165Z"
       }
     },
     {
@@ -25467,10 +25401,11 @@
       "layouts": [
         "https://www.modon.com/en/our-projects"
       ],
-      "priceMin": 14800000,
+      "priceMin": 18500000,
       "unitTypes": [
-        "Townhouse",
         "Apartment",
+        "Townhouse",
+        "Duplex",
         "Villa",
         "Chalet"
       ],
@@ -25497,11 +25432,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1493-ras-el-hekma-egypt",
-            "observedPrice": 14800000,
+            "observedPrice": 18500000,
             "sourceId": "nawy:1493"
           }
         ],
-        "updatedAt": "2026-11-03T18:26:38.567Z"
+        "updatedAt": "2026-11-10T00:40:50.165Z"
       }
     },
     {
@@ -40316,41 +40251,35 @@
       "zone": "New Cairo",
       "status": "Delivered",
       "type": "commercial",
-      "priceMin": 3679578,
+      "priceMin": 6124560,
       "unitTypes": [
         "Apartment",
         "Duplex",
-        "Studio",
         "Medical",
+        "Studio",
         "Administrative"
       ],
       "areaMin": 96,
       "areaMax": 481,
       "bedrooms": [],
-      "paymentPlan": "5% Down Payment, 10 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 10,
+      "paymentPlan": "10% Down Payment, 8 Years Installments",
+      "downPayment": 10,
+      "installmentYears": 8,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1112-garnet",
-            "observedPrice": 3679578,
+            "observedPrice": 6124560,
             "sourceId": "nawy:1112"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/jadeer-realestate/garnet",
-            "observedPrice": 5240169,
-            "sourceId": "property-finder:94352baf-aef6-487c-a41d-713bc21b0a61"
           }
         ],
-        "updatedAt": "2026-11-08T02:51:43.884Z"
+        "updatedAt": "2026-11-10T00:40:50.165Z"
       }
     },
     {
@@ -60711,7 +60640,7 @@
       "zone": "Zayed",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 10280120,
+      "priceMin": 23656869,
       "unitTypes": [
         "Townhouse",
         "Twinhouse"
@@ -60734,14 +60663,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/better-home-development/midtown-west",
-            "observedPrice": 10280120,
-            "sourceId": "property-finder:a780b002-117e-41ad-9c95-ffbced6a9b0c"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1432-midtown-new-zayed-west",
@@ -60749,7 +60672,7 @@
             "sourceId": "nawy:1432"
           }
         ],
-        "updatedAt": "2026-11-08T02:51:43.884Z"
+        "updatedAt": "2026-11-10T00:40:50.165Z"
       }
     },
     {
@@ -61574,7 +61497,9 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Apartment"
+        "Apartment",
+        "Townhouse",
+        "Duplex"
       ],
       "downPayment": 5,
       "installmentYears": 8,
@@ -61584,7 +61509,7 @@
         "sourceId": "nawy-inventory:2688",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 22700000,
+      "priceMin": 18500000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -61595,11 +61520,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/2688-marina-waterfront-residences",
-            "observedPrice": 22700000,
+            "observedPrice": 18500000,
             "sourceId": "nawy:2688"
           }
         ],
-        "updatedAt": "2026-11-09T18:27:27.921Z"
+        "updatedAt": "2026-11-10T00:40:50.165Z"
       }
     },
     {
@@ -66196,14 +66121,14 @@
         "Villa"
       ],
       "downPayment": 5,
-      "installmentYears": 9,
-      "paymentPlan": "5% Down Payment, 9 Years Installments",
+      "installmentYears": 6,
+      "paymentPlan": "5% Down Payment, 6 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:1953",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 3700000,
+      "priceMin": 4900000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -66212,19 +66137,19 @@
         "sourceCount": 2,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1953-al-qamzi-mostakbal-city",
-            "observedPrice": 3700000,
-            "sourceId": "nawy:1953"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/30954-cityzen",
             "observedPrice": 4900000,
             "sourceId": "red:30954"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1953-al-qamzi-mostakbal-city",
+            "observedPrice": 6101000,
+            "sourceId": "nawy:1953"
           }
         ],
-        "updatedAt": "2026-11-09T18:27:27.921Z"
+        "updatedAt": "2026-11-10T00:40:50.165Z"
       }
     },
     {
@@ -67105,8 +67030,8 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Studio",
-        "Apartment"
+        "Apartment",
+        "Studio"
       ],
       "downPayment": 5,
       "installmentYears": 10,
@@ -67122,7 +67047,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
@@ -67135,15 +67060,9 @@
             "url": "https://redww.com/en/projects/30951-lush-valley",
             "observedPrice": 5679000,
             "sourceId": "red:30951"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/city-edge/lush-valley",
-            "observedPrice": 6306000,
-            "sourceId": "property-finder:a922077b-0682-4f89-af52-a0eb59ee145a"
           }
         ],
-        "updatedAt": "2026-11-08T12:27:05.588Z"
+        "updatedAt": "2026-11-10T00:40:50.165Z"
       }
     },
     {
@@ -67833,7 +67752,8 @@
         "Twinhouse",
         "Villa",
         "Penthouse",
-        "Apartment"
+        "Apartment",
+        "Townhouse"
       ],
       "downPayment": 5,
       "installmentYears": 10,
@@ -67843,20 +67763,14 @@
         "sourceId": "nawy-inventory:2139",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 7700000,
+      "priceMin": 17065000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/madaar/the-hillage",
-            "observedPrice": 7700000,
-            "sourceId": "property-finder:3ccbc007-0070-4d55-b59d-4682bef034f3"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/2139-the-hillage",
@@ -67864,7 +67778,7 @@
             "sourceId": "nawy:2139"
           }
         ],
-        "updatedAt": "2026-11-08T02:51:43.884Z"
+        "updatedAt": "2026-11-10T00:40:50.165Z"
       }
     },
     {
@@ -69443,20 +69357,14 @@
         "sourceId": "nawy-inventory:2053",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 10280120,
+      "priceMin": 23656869,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/better-home-development/midtown-west",
-            "observedPrice": 10280120,
-            "sourceId": "property-finder:a780b002-117e-41ad-9c95-ffbced6a9b0c"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1432-midtown-new-zayed-west",
@@ -69464,7 +69372,7 @@
             "sourceId": "nawy:1432"
           }
         ],
-        "updatedAt": "2026-11-08T02:51:43.884Z"
+        "updatedAt": "2026-11-10T00:40:50.165Z"
       }
     },
     {
@@ -69487,20 +69395,14 @@
         "sourceId": "nawy-inventory:2052",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 10280120,
+      "priceMin": 23656869,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/better-home-development/midtown-west",
-            "observedPrice": 10280120,
-            "sourceId": "property-finder:a780b002-117e-41ad-9c95-ffbced6a9b0c"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1432-midtown-new-zayed-west",
@@ -69508,7 +69410,7 @@
             "sourceId": "nawy:1432"
           }
         ],
-        "updatedAt": "2026-11-08T02:51:43.884Z"
+        "updatedAt": "2026-11-10T00:40:50.165Z"
       }
     },
     {
@@ -78174,20 +78076,14 @@
         "sourceId": "nawy-inventory:2748",
         "observedAt": "2026-09-30T03:39:20.077Z"
       },
-      "priceMin": 9803950,
+      "priceMin": 15593000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/tatweer-misr/scenes",
-            "observedPrice": 9803950,
-            "sourceId": "property-finder:554c5b50-9ae5-40a0-a2fe-2562f2504f66"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1391-scenes",
@@ -78195,7 +78091,7 @@
             "sourceId": "nawy:1391"
           }
         ],
-        "updatedAt": "2026-11-08T02:51:43.884Z"
+        "updatedAt": "2026-11-10T00:40:50.165Z"
       }
     },
     {

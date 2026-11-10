@@ -3158,10 +3158,11 @@
       "layouts": [
         "https://www.modon.com/en/our-projects"
       ],
-      "priceMin": 14800000,
+      "priceMin": 18500000,
       "unitTypes": [
-        "Townhouse",
         "Apartment",
+        "Townhouse",
+        "Duplex",
         "Villa",
         "Chalet"
       ],
@@ -3188,11 +3189,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1493-ras-el-hekma-egypt",
-            "observedPrice": 14800000,
+            "observedPrice": 18500000,
             "sourceId": "nawy:1493"
           }
         ],
-        "updatedAt": "2026-11-03T18:26:38.567Z"
+        "updatedAt": "2026-11-10T00:40:50.165Z"
       }
     },
     {
@@ -12514,7 +12515,9 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Apartment"
+        "Apartment",
+        "Townhouse",
+        "Duplex"
       ],
       "downPayment": 5,
       "installmentYears": 8,
@@ -12524,7 +12527,7 @@
         "sourceId": "nawy-inventory:2688",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 22700000,
+      "priceMin": 18500000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -12535,11 +12538,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/2688-marina-waterfront-residences",
-            "observedPrice": 22700000,
+            "observedPrice": 18500000,
             "sourceId": "nawy:2688"
           }
         ],
-        "updatedAt": "2026-11-09T18:27:27.921Z"
+        "updatedAt": "2026-11-10T00:40:50.165Z"
       }
     },
     {

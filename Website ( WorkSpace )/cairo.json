@@ -2635,14 +2635,13 @@
       "zone": "New Cairo",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 9152000,
+      "priceMin": 18864000,
       "unitTypes": [
+        "Townhouse",
         "Villa",
         "Duplex",
         "Apartment",
-        "Penthouse",
-        "Townhouse",
-        "Loft"
+        "Penthouse"
       ],
       "areaMin": 90,
       "areaMax": 449,
@@ -2667,11 +2666,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/939-telal-east",
-            "observedPrice": 9152000,
+            "observedPrice": 18864000,
             "sourceId": "nawy:939"
           }
         ],
-        "updatedAt": "2026-10-14T01:00:42.557Z"
+        "updatedAt": "2026-11-12T06:33:40.993Z"
       }
     },
     {
@@ -3555,7 +3554,7 @@
       "zone": "New Cairo",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 6336000,
+      "priceMin": 8303412,
       "unitTypes": [
         "Apartment",
         "Penthouse"
@@ -3578,14 +3577,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/il-cazar-developments/glen",
-            "observedPrice": 6336000,
-            "sourceId": "property-finder:41453441-1602-4a83-b04a-ba7740b951cf"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1426-glen",
@@ -3593,7 +3586,7 @@
             "sourceId": "nawy:1426"
           }
         ],
-        "updatedAt": "2026-11-10T06:32:09.159Z"
+        "updatedAt": "2026-11-12T06:33:40.993Z"
       }
     },
     {
@@ -10369,12 +10362,12 @@
       "zone": "New Cairo",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 2089262,
+      "priceMin": 3257250,
       "unitTypes": [
-        "Apartment",
         "Retail",
         "Medical",
         "Administrative",
+        "Apartment",
         "Studio"
       ],
       "areaMin": 83,
@@ -10395,14 +10388,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/kulture-developments/maliv",
-            "observedPrice": 2089262,
-            "sourceId": "property-finder:182c6e97-9ab8-43be-a81a-272a798fea97"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30864-maliv",
@@ -10416,7 +10403,7 @@
             "sourceId": "nawy:1449"
           }
         ],
-        "updatedAt": "2026-11-10T18:26:23.229Z"
+        "updatedAt": "2026-11-12T06:33:40.993Z"
       }
     },
     {
@@ -26724,12 +26711,12 @@
       "zone": "New Cairo",
       "status": "Delivered",
       "type": "commercial",
-      "priceMin": 2089262,
+      "priceMin": 3257250,
       "unitTypes": [
-        "Apartment",
         "Retail",
         "Medical",
         "Administrative",
+        "Apartment",
         "Studio"
       ],
       "areaMin": 90,
@@ -26743,14 +26730,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/kulture-developments/maliv",
-            "observedPrice": 2089262,
-            "sourceId": "property-finder:182c6e97-9ab8-43be-a81a-272a798fea97"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30864-maliv",
@@ -26764,7 +26745,7 @@
             "sourceId": "nawy:1449"
           }
         ],
-        "updatedAt": "2026-11-10T18:26:23.229Z"
+        "updatedAt": "2026-11-12T06:33:40.993Z"
       }
     },
     {
@@ -28733,22 +28714,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/655-mountain-view-1.1",
             "observedPrice": 16586259,
             "sourceId": "nawy:655"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/mountain-view/mountain-view-1-1",
-            "observedPrice": 19398829,
-            "sourceId": "property-finder:4b1cf5c7-5324-4857-8eeb-233c309af232"
           }
         ],
-        "updatedAt": "2026-11-10T12:28:47.792Z"
+        "updatedAt": "2026-11-12T06:33:40.993Z"
       }
     },
     {
@@ -29560,7 +29535,7 @@
       "zone": "New Cairo",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 6336000,
+      "priceMin": 8303412,
       "unitTypes": [
         "Apartment",
         "Penthouse"
@@ -29583,14 +29558,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/il-cazar-developments/glen",
-            "observedPrice": 6336000,
-            "sourceId": "property-finder:41453441-1602-4a83-b04a-ba7740b951cf"
-          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1426-glen",
@@ -29598,7 +29567,7 @@
             "sourceId": "nawy:1426"
           }
         ],
-        "updatedAt": "2026-11-10T06:32:09.159Z"
+        "updatedAt": "2026-11-12T06:33:40.993Z"
       }
     },
     {
@@ -62976,22 +62945,36 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
+        "Villa",
+        "Twin House",
         "Apartment",
-        "Townhouse",
-        "Duplex",
-        "Twinhouse",
-        "Penthouse",
-        "Villa"
+        "Town House"
       ],
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:664",
         "observedAt": "2026-11-12T03:27:50.194Z"
       },
-      "priceMin": 9880000
+      "priceMin": 22679000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/20-the-estates",
+            "observedPrice": 22679000,
+            "sourceId": "red:20"
+          }
+        ],
+        "updatedAt": "2026-11-12T06:33:40.993Z"
+      }
     },
     {
       "name": "The Estates",
@@ -63003,19 +62986,35 @@
       "type": "residential",
       "unitTypes": [
         "Villa",
-        "Townhouse",
+        "Twin House",
         "Apartment",
-        "Twinhouse"
+        "Town House"
       ],
-      "downPayment": 10,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "10% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:310",
         "observedAt": "2026-11-12T03:27:50.194Z"
       },
-      "priceMin": 77223960
+      "priceMin": 22679000,
+      "priceMeta": {
+        "status": "verified",
+        "kind": "starting-price",
+        "currency": "EGP",
+        "confidence": "high",
+        "sourceCount": 1,
+        "sources": [
+          {
+            "name": "RED",
+            "url": "https://redww.com/en/projects/20-the-estates",
+            "observedPrice": 22679000,
+            "sourceId": "red:20"
+          }
+        ],
+        "updatedAt": "2026-11-12T06:33:40.993Z"
+      }
     }
   ],
   "projectDetails": {

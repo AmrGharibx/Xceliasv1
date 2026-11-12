@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "lastPublishedAt": "2026-11-12T02:51:13.393Z",
-  "mode": "daily",
-  "verifiedProjects": 1559,
-  "totalProjects": 2213,
+  "lastPublishedAt": "2026-11-12T06:33:40.993Z",
+  "mode": "hourly",
+  "verifiedProjects": 1561,
+  "totalProjects": 2215,
   "sourceCoverage": [
     {
       "source": "nawy",
@@ -14,17 +14,12 @@
       "source": "red",
       "ok": true,
       "observations": 303
-    },
-    {
-      "source": "property-finder",
-      "ok": true,
-      "observations": 1436
     }
   ],
   "lastPublication": {
-    "updatedProjects": 459,
-    "quarantinedProjects": 5,
-    "unmatchedProjects": 811
+    "updatedProjects": 9,
+    "quarantinedProjects": 10,
+    "unmatchedProjects": 1160
   },
   "note": "Prices are verified starting prices from public source inventories. A missing verification is never treated as a current price."
 }

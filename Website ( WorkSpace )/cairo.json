@@ -1990,14 +1990,9 @@
       "priceMin": 9283000,
       "unitTypes": [
         "Apartment",
-        "Studio",
-        "Townhouse",
         "Villa",
-        "Office",
-        "Twinhouse",
-        "Penthouse",
-        "Duplex",
-        "Family House"
+        "Twin House",
+        "Town House"
       ],
       "areaMin": 94,
       "areaMax": 468,
@@ -2010,29 +2005,23 @@
         6
       ],
       "paymentPlan": "3% Down Payment, 5 Years Installments",
-      "downPayment": 3,
-      "installmentYears": 5,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/17-palm-hills-new-cairo",
             "observedPrice": 9283000,
             "sourceId": "red:17"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/148-palm-hills-new-cairo",
-            "observedPrice": 10465000,
-            "sourceId": "nawy:148"
           }
         ],
-        "updatedAt": "2026-11-03T12:29:20.099Z"
+        "updatedAt": "2026-11-12T00:43:18.542Z"
       }
     },
     {
@@ -2227,18 +2216,10 @@
       "zone": "New Cairo",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 3659267,
+      "priceMin": 4150178,
       "unitTypes": [
-        "Duplex",
         "Apartment",
-        "Studio",
-        "Villa",
-        "Townhouse",
-        "Retail",
-        "Medical",
-        "Administrative",
-        "Penthouse",
-        "Twinhouse"
+        "Villa"
       ],
       "areaMin": 86,
       "areaMax": 429,
@@ -2251,21 +2232,15 @@
         6
       ],
       "paymentPlan": "1.5% Down Payment, 12 Years Installments",
-      "downPayment": 1.5,
-      "installmentYears": 12,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/147-sarai",
-            "observedPrice": 3659267,
-            "sourceId": "nawy:147"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/34-sarai",
@@ -2273,7 +2248,7 @@
             "sourceId": "red:34"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-11-12T00:43:18.542Z"
       }
     },
     {
@@ -2489,12 +2464,9 @@
       "type": "residential",
       "priceMin": 13327465,
       "unitTypes": [
-        "Twinhouse",
         "Apartment",
-        "Administrative",
-        "Office",
-        "Villa",
-        "Duplex"
+        "Penthouse",
+        "Villa"
       ],
       "areaMin": 89,
       "areaMax": 447,
@@ -2507,29 +2479,23 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 10 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19113-swanlake-residence",
             "observedPrice": 13327465,
             "sourceId": "red:19113"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/278-swanlake-residences",
-            "observedPrice": 15700000,
-            "sourceId": "nawy:278"
           }
         ],
-        "updatedAt": "2026-10-29T02:51:43.562Z"
+        "updatedAt": "2026-11-12T00:43:18.542Z"
       }
     },
     {
@@ -3425,17 +3391,14 @@
       "type": "residential",
       "priceMin": 9309947,
       "unitTypes": [
-        "Villa",
         "Apartment",
+        "Loft",
         "Duplex",
-        "Office",
-        "Retail",
-        "Building",
-        "Townhouse",
-        "Twinhouse",
+        "Villa",
         "Penthouse",
-        "Studio",
-        "Family House"
+        "Town House",
+        "Palace",
+        "Twin House"
       ],
       "areaMin": 85,
       "areaMax": 425,
@@ -3448,29 +3411,23 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 8 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/8-mountain-view-icity-new-cairo",
             "observedPrice": 9309947,
             "sourceId": "red:8"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/195-mountain-view-icity-new-cairo",
-            "observedPrice": 10542560,
-            "sourceId": "nawy:195"
           }
         ],
-        "updatedAt": "2026-11-10T12:28:47.792Z"
+        "updatedAt": "2026-11-12T00:43:18.542Z"
       }
     },
     {
@@ -4840,8 +4797,8 @@
       "type": "residential",
       "priceMin": 5092200,
       "unitTypes": [
-        "Apartment",
-        "Townhouse"
+        "Studio",
+        "Town House"
       ],
       "areaMin": 82,
       "areaMax": 412,
@@ -4854,29 +4811,23 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 8 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30899-riverton",
             "observedPrice": 5092200,
             "sourceId": "red:30899"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1726-riverton",
-            "observedPrice": 5100000,
-            "sourceId": "nawy:1726"
           }
         ],
-        "updatedAt": "2026-11-03T02:51:27.755Z"
+        "updatedAt": "2026-11-12T00:43:18.542Z"
       }
     },
     {
@@ -4931,11 +4882,9 @@
       "zone": "New Cairo",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 8216957,
+      "priceMin": 8616000,
       "unitTypes": [
-        "Apartment",
-        "Townhouse",
-        "Duplex"
+        "Apartment"
       ],
       "areaMin": 94,
       "areaMax": 472,
@@ -4948,21 +4897,15 @@
         6
       ],
       "paymentPlan": "1% Down Payment, 8.4 Years Installments",
-      "downPayment": 1,
-      "installmentYears": 8.4,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1782-acasa-alma",
-            "observedPrice": 8216957,
-            "sourceId": "nawy:1782"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30924-acasa-alma",
@@ -4970,7 +4913,7 @@
             "sourceId": "red:30924"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-11-12T00:43:18.542Z"
       }
     },
     {
@@ -6357,10 +6300,9 @@
       "zone": "New Cairo",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 4355000,
+      "priceMin": 5828000,
       "unitTypes": [
-        "Apartment",
-        "Studio"
+        "Apartment"
       ],
       "areaMin": 94,
       "areaMax": 469,
@@ -6373,21 +6315,15 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 12 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 12,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/868-bluetree",
-            "observedPrice": 4355000,
-            "sourceId": "nawy:868"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19222-bluetree-new-cairo",
@@ -6395,7 +6331,7 @@
             "sourceId": "red:19222"
           }
         ],
-        "updatedAt": "2026-11-02T12:29:49.949Z"
+        "updatedAt": "2026-11-12T00:43:18.542Z"
       }
     },
     {
@@ -7531,7 +7467,7 @@
       "zone": "New Cairo",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 8054417,
+      "priceMin": 11798000,
       "unitTypes": [
         "Apartment"
       ],
@@ -7546,21 +7482,15 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 10 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1037-acasa-mia",
-            "observedPrice": 8054417,
-            "sourceId": "nawy:1037"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19221-acasa-mia",
@@ -7568,7 +7498,7 @@
             "sourceId": "red:19221"
           }
         ],
-        "updatedAt": "2026-11-01T02:51:55.154Z"
+        "updatedAt": "2026-11-12T00:43:18.542Z"
       }
     },
     {
@@ -7581,9 +7511,9 @@
       "type": "residential",
       "priceMin": 22700043,
       "unitTypes": [
-        "Townhouse",
+        "Twin House",
         "Villa",
-        "Twinhouse"
+        "Town House"
       ],
       "areaMin": 96,
       "areaMax": 481,
@@ -7596,29 +7526,23 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 9 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 9,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19115-the-valleys",
             "observedPrice": 22700043,
             "sourceId": "red:19115"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1040-the-valleys",
-            "observedPrice": 27300000,
-            "sourceId": "nawy:1040"
           }
         ],
-        "updatedAt": "2026-11-10T02:51:19.080Z"
+        "updatedAt": "2026-11-12T00:43:18.542Z"
       }
     },
     {
@@ -8790,9 +8714,8 @@
       "zone": "New Cairo",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 10336200,
+      "priceMin": 10792072,
       "unitTypes": [
-        "Chalet",
         "Apartment",
         "Duplex"
       ],
@@ -8805,21 +8728,15 @@
         4
       ],
       "paymentPlan": "10% Down Payment, 8 Years Installments",
-      "downPayment": 10,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1152-sq1",
-            "observedPrice": 10336200,
-            "sourceId": "nawy:1152"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19192-sq1",
@@ -8827,7 +8744,7 @@
             "sourceId": "red:19192"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-11-12T00:43:18.542Z"
       }
     },
     {
@@ -8868,12 +8785,12 @@
       "type": "residential",
       "priceMin": 4945000,
       "unitTypes": [
-        "Apartment",
-        "Duplex",
-        "Townhouse",
-        "Penthouse",
+        "Town House",
+        "Twin House",
         "Villa",
-        "Twinhouse"
+        "Apartment",
+        "Penthouse",
+        "Duplex"
       ],
       "areaMin": 96,
       "areaMax": 482,
@@ -8886,8 +8803,8 @@
         6
       ],
       "paymentPlan": "22.5% Down Payment, 8 Years Installments",
-      "downPayment": 22.5,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -8896,16 +8813,16 @@
         "sourceCount": 3,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1155-at-east",
-            "observedPrice": 4945000,
-            "sourceId": "nawy:1155"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/30815-at-east",
             "observedPrice": 4945000,
             "sourceId": "red:30815"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1155-at-east",
+            "observedPrice": 4945000,
+            "sourceId": "nawy:1155"
           },
           {
             "name": "Property Finder",
@@ -8914,7 +8831,7 @@
             "sourceId": "property-finder:83039de6-b53b-4345-9a66-a709615e4905"
           }
         ],
-        "updatedAt": "2026-11-11T02:51:13.555Z"
+        "updatedAt": "2026-11-12T00:43:18.542Z"
       }
     },
     {
@@ -10685,9 +10602,8 @@
       "priceMin": 4061000,
       "unitTypes": [
         "Apartment",
-        "Townhouse",
-        "Twinhouse",
-        "Studio"
+        "Town House",
+        "Twin House"
       ],
       "areaMin": 77,
       "areaMax": 329,
@@ -10700,8 +10616,8 @@
         6
       ],
       "paymentPlan": "10% Down Payment, 5 Years Installments",
-      "downPayment": 10,
-      "installmentYears": 5,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -10710,16 +10626,16 @@
         "sourceCount": 3,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/296-bleu-vert",
-            "observedPrice": 4061000,
-            "sourceId": "nawy:296"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/19068-bleu-vert",
             "observedPrice": 4061000,
             "sourceId": "red:19068"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/296-bleu-vert",
+            "observedPrice": 4061000,
+            "sourceId": "nawy:296"
           },
           {
             "name": "Property Finder",
@@ -10728,7 +10644,7 @@
             "sourceId": "property-finder:e7ada002-f0cc-4a78-bde8-860bd23fbeb6"
           }
         ],
-        "updatedAt": "2026-11-11T02:51:13.555Z"
+        "updatedAt": "2026-11-12T00:43:18.542Z"
       }
     },
     {
@@ -15471,10 +15387,8 @@
       "type": "residential",
       "priceMin": 13462000,
       "unitTypes": [
-        "Apartment",
-        "Duplex",
-        "Townhouse",
-        "Twinhouse",
+        "Town House",
+        "Twin House",
         "Villa"
       ],
       "areaMin": 65,
@@ -15488,8 +15402,8 @@
         6
       ],
       "paymentPlan": "20% Down Payment, 14 Years Installments",
-      "downPayment": 20,
-      "installmentYears": 14,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -15498,19 +15412,19 @@
         "sourceCount": 2,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1410-rosevil",
-            "observedPrice": 13462000,
-            "sourceId": "nawy:1410"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/30842-rosevil",
             "observedPrice": 13462000,
             "sourceId": "red:30842"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1410-rosevil",
+            "observedPrice": 13462000,
+            "sourceId": "nawy:1410"
           }
         ],
-        "updatedAt": "2026-11-11T18:26:00.022Z"
+        "updatedAt": "2026-11-12T00:43:18.542Z"
       }
     },
     {
@@ -15922,8 +15836,8 @@
       "priceMin": 7080765,
       "unitTypes": [
         "Apartment",
-        "Townhouse",
-        "Duplex"
+        "Duplex",
+        "Town House"
       ],
       "areaMin": 88,
       "areaMax": 385,
@@ -15936,21 +15850,15 @@
         6
       ],
       "paymentPlan": "10% Down Payment, 8 Years Installments",
-      "downPayment": 10,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1249-club-hills-residence",
-            "observedPrice": 7080765,
-            "sourceId": "nawy:1249"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30843-club-hills",
@@ -15958,7 +15866,7 @@
             "sourceId": "red:30843"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-11-12T00:43:18.542Z"
       }
     },
     {
@@ -17150,7 +17058,7 @@
       "zone": "October",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 4900000,
+      "priceMin": 17784000,
       "unitTypes": [
         "Twin House",
         "Town House"
@@ -17166,21 +17074,15 @@
         6
       ],
       "paymentPlan": "30% Down Payment",
-      "downPayment": 30,
+      "downPayment": 0,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/al-rabwa-group/zayed-dunes",
-            "observedPrice": 4900000,
-            "sourceId": "property-finder:84a3a0a9-76e4-4d8b-9508-28e9cd1d6111"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19231-zayed-dunes",
@@ -17188,7 +17090,7 @@
             "sourceId": "red:19231"
           }
         ],
-        "updatedAt": "2026-11-10T02:51:19.080Z"
+        "updatedAt": "2026-11-12T00:43:18.542Z"
       }
     },
     {
@@ -17413,11 +17315,8 @@
       "priceMin": 6205300,
       "unitTypes": [
         "Apartment",
-        "Townhouse",
         "Villa",
-        "Penthouse",
-        "Twinhouse",
-        "Studio"
+        "Town House"
       ],
       "areaMin": 87,
       "areaMax": 379,
@@ -17430,29 +17329,23 @@
         6
       ],
       "paymentPlan": "1.5% Down Payment, 5.5 Years Installments",
-      "downPayment": 1.5,
-      "installmentYears": 5.5,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/16-badya",
             "observedPrice": 6205300,
             "sourceId": "red:16"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/223-badya",
-            "observedPrice": 7090120,
-            "sourceId": "nawy:223"
           }
         ],
-        "updatedAt": "2026-11-05T12:30:26.073Z"
+        "updatedAt": "2026-11-12T00:43:18.542Z"
       }
     },
     {
@@ -17915,12 +17808,10 @@
       "type": "residential",
       "priceMin": 6800000,
       "unitTypes": [
-        "Villa",
-        "Twinhouse",
         "Apartment",
-        "Townhouse",
-        "Penthouse",
-        "Studio"
+        "Town House",
+        "Twin House",
+        "Villa"
       ],
       "areaMin": 78,
       "areaMax": 340,
@@ -17933,8 +17824,8 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 8 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -17943,16 +17834,16 @@
         "sourceCount": 3,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/798-garden-lakes",
-            "observedPrice": 6800000,
-            "sourceId": "nawy:798"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/38-garden-lakes",
             "observedPrice": 6800000,
             "sourceId": "red:38"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/798-garden-lakes",
+            "observedPrice": 6800000,
+            "sourceId": "nawy:798"
           },
           {
             "name": "Property Finder",
@@ -17961,7 +17852,7 @@
             "sourceId": "property-finder:4b310e23-9d81-47d8-8b89-521470e253bc"
           }
         ],
-        "updatedAt": "2026-11-11T02:51:13.555Z"
+        "updatedAt": "2026-11-12T00:43:18.542Z"
       }
     },
     {
@@ -19420,8 +19311,7 @@
       "priceMin": 5010000,
       "unitTypes": [
         "Apartment",
-        "Penthouse",
-        "Townhouse",
+        "Villa",
         "Duplex"
       ],
       "areaMin": 79,
@@ -19435,29 +19325,23 @@
         6
       ],
       "paymentPlan": "15% Down Payment, 10 Years Installments",
-      "downPayment": 15,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30851-rock-eden",
             "observedPrice": 5010000,
             "sourceId": "red:30851"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1148-rock-eden",
-            "observedPrice": 11522321,
-            "sourceId": "nawy:1148"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-11-12T00:43:18.542Z"
       }
     },
     {
@@ -19971,15 +19855,12 @@
       "priceMin": 6953000,
       "unitTypes": [
         "Apartment",
-        "Townhouse",
         "Villa",
-        "Twinhouse",
+        "Twin House",
+        "Town House",
         "Duplex",
-        "Loft",
-        "Office",
         "Penthouse",
-        "Studio",
-        "Building"
+        "Loft"
       ],
       "areaMin": 85,
       "areaMax": 372,
@@ -19992,29 +19873,23 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 9 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 9,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19197-o-west-orascom",
             "observedPrice": 6953000,
             "sourceId": "red:19197"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/258-o-west-orascom",
-            "observedPrice": 7891000,
-            "sourceId": "nawy:258"
           }
         ],
-        "updatedAt": "2026-11-08T12:27:05.588Z"
+        "updatedAt": "2026-11-12T00:43:18.542Z"
       }
     },
     {
@@ -21794,15 +21669,12 @@
       "priceMin": 6953000,
       "unitTypes": [
         "Apartment",
-        "Townhouse",
         "Villa",
-        "Twinhouse",
+        "Twin House",
+        "Town House",
         "Duplex",
-        "Loft",
-        "Office",
         "Penthouse",
-        "Studio",
-        "Building"
+        "Loft"
       ],
       "areaMin": 77,
       "areaMax": 338,
@@ -21815,29 +21687,23 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 9 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 9,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19197-o-west-orascom",
             "observedPrice": 6953000,
             "sourceId": "red:19197"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/258-o-west-orascom",
-            "observedPrice": 7891000,
-            "sourceId": "nawy:258"
           }
         ],
-        "updatedAt": "2026-11-08T12:27:05.588Z"
+        "updatedAt": "2026-11-12T00:43:18.542Z"
       }
     },
     {
@@ -21894,11 +21760,7 @@
       "type": "residential",
       "priceMin": 8372000,
       "unitTypes": [
-        "Apartment",
-        "Villa",
-        "Duplex",
-        "Penthouse",
-        "Loft"
+        "Apartment"
       ],
       "areaMin": 98,
       "areaMax": 391,
@@ -21911,29 +21773,23 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 12 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 12,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30823-ivoire-west",
             "observedPrice": 8372000,
             "sourceId": "red:30823"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1003-ivoire-west",
-            "observedPrice": 10269000,
-            "sourceId": "nawy:1003"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-11-12T00:43:18.542Z"
       }
     },
     {
@@ -22569,9 +22425,7 @@
       "type": "residential",
       "priceMin": 3792600,
       "unitTypes": [
-        "Apartment",
-        "Duplex",
-        "Studio"
+        "Apartment"
       ],
       "areaMin": 107,
       "areaMax": 427,
@@ -22584,29 +22438,23 @@
         6
       ],
       "paymentPlan": "1% Down Payment, 8 Years Installments",
-      "downPayment": 1,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19220-belva",
             "observedPrice": 3792600,
             "sourceId": "red:19220"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1210-belva",
-            "observedPrice": 4072100,
-            "sourceId": "nawy:1210"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-11-12T00:43:18.542Z"
       }
     },
     {
@@ -22857,11 +22705,12 @@
       "priceMin": 9434000,
       "unitTypes": [
         "Villa",
-        "Apartment",
-        "Townhouse",
-        "Duplex",
         "Studio",
-        "Loft"
+        "Apartment",
+        "Duplex",
+        "Town House",
+        "Loft",
+        "Penthouse"
       ],
       "areaMin": 94,
       "areaMax": 378,
@@ -22874,29 +22723,23 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 8 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19074-hills-of-one",
             "observedPrice": 9434000,
             "sourceId": "red:19074"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1032-hills-of-one",
-            "observedPrice": 9871000,
-            "sourceId": "nawy:1032"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-11-12T00:43:18.542Z"
       }
     },
     {
@@ -23003,15 +22846,15 @@
       "zone": "Zayed",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 15800000,
+      "priceMin": 20900000,
       "unitTypes": [
-        "Townhouse",
         "Villa",
-        "Twinhouse",
+        "Town House",
+        "Twin House",
         "Apartment",
+        "Loft",
         "Duplex",
-        "Penthouse",
-        "Loft"
+        "Penthouse"
       ],
       "areaMin": 99,
       "areaMax": 395,
@@ -23022,21 +22865,15 @@
         4
       ],
       "paymentPlan": "2.5% Down Payment, 10 Years Installments",
-      "downPayment": 2.5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/877-solana",
-            "observedPrice": 15800000,
-            "sourceId": "nawy:877"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/37-solana-west",
@@ -23044,7 +22881,7 @@
             "sourceId": "red:37"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-11-12T00:43:18.542Z"
       }
     },
     {
@@ -23221,11 +23058,8 @@
       "type": "residential",
       "priceMin": 22800000,
       "unitTypes": [
-        "Apartment",
-        "Villa",
-        "Twinhouse",
-        "Duplex",
-        "Penthouse"
+        "Twin House",
+        "Apartment"
       ],
       "areaMin": 76,
       "areaMax": 284,
@@ -23238,8 +23072,8 @@
         6
       ],
       "paymentPlan": "20% Down Payment, 4 Years Installments",
-      "downPayment": 20,
-      "installmentYears": 4,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -23248,16 +23082,16 @@
         "sourceCount": 3,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/156-el-patio-casa",
-            "observedPrice": 22800000,
-            "sourceId": "nawy:156"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/19049-el-patio-casa",
             "observedPrice": 22800000,
             "sourceId": "red:19049"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/156-el-patio-casa",
+            "observedPrice": 22800000,
+            "sourceId": "nawy:156"
           },
           {
             "name": "Property Finder",
@@ -23266,7 +23100,7 @@
             "sourceId": "property-finder:bad9ccdc-2e99-4389-a2ef-39f4cfa58eb5"
           }
         ],
-        "updatedAt": "2026-11-11T02:51:13.555Z"
+        "updatedAt": "2026-11-12T00:43:18.542Z"
       }
     },
     {
@@ -23820,18 +23654,10 @@
       "zone": "New Cairo",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 3659267,
+      "priceMin": 4150178,
       "unitTypes": [
-        "Duplex",
         "Apartment",
-        "Studio",
-        "Villa",
-        "Townhouse",
-        "Retail",
-        "Medical",
-        "Administrative",
-        "Penthouse",
-        "Twinhouse"
+        "Villa"
       ],
       "areaMin": 85,
       "areaMax": 423,
@@ -23844,21 +23670,15 @@
         6
       ],
       "paymentPlan": "1.5% Down Payment, 12 Years Installments",
-      "downPayment": 1.5,
-      "installmentYears": 12,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/147-sarai",
-            "observedPrice": 3659267,
-            "sourceId": "nawy:147"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/34-sarai",
@@ -23866,7 +23686,7 @@
             "sourceId": "red:34"
           }
         ],
-        "updatedAt": "2026-10-29T02:51:43.562Z"
+        "updatedAt": "2026-11-12T00:43:18.542Z"
       }
     },
     {
@@ -24498,39 +24318,30 @@
       "priceMin": 13327465,
       "unitTypes": [
         "Apartment",
-        "Twinhouse",
-        "Administrative",
-        "Villa",
-        "Office",
-        "Duplex"
+        "Penthouse",
+        "Villa"
       ],
       "areaMin": 89,
       "areaMax": 445,
       "bedrooms": [],
       "paymentPlan": "5% Down Payment, 10 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19113-swanlake-residence",
             "observedPrice": 13327465,
             "sourceId": "red:19113"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/278-swanlake-residences",
-            "observedPrice": 15700000,
-            "sourceId": "nawy:278"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-11-12T00:43:18.542Z"
       }
     },
     {
@@ -24925,11 +24736,8 @@
       "priceMin": 13327465,
       "unitTypes": [
         "Apartment",
-        "Twinhouse",
-        "Administrative",
-        "Villa",
-        "Office",
-        "Duplex"
+        "Penthouse",
+        "Villa"
       ],
       "areaMin": 85,
       "areaMax": 424,
@@ -24942,29 +24750,23 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 10 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19113-swanlake-residence",
             "observedPrice": 13327465,
             "sourceId": "red:19113"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/278-swanlake-residences",
-            "observedPrice": 15700000,
-            "sourceId": "nawy:278"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-11-12T00:43:18.542Z"
       }
     },
     {
@@ -28742,12 +28544,10 @@
       "type": "residential",
       "priceMin": 6800000,
       "unitTypes": [
-        "Villa",
-        "Twinhouse",
         "Apartment",
-        "Townhouse",
-        "Penthouse",
-        "Studio"
+        "Town House",
+        "Twin House",
+        "Villa"
       ],
       "areaMin": 85,
       "areaMax": 371,
@@ -28760,8 +28560,8 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 8 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -28770,19 +28570,19 @@
         "sourceCount": 2,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/798-garden-lakes",
-            "observedPrice": 6800000,
-            "sourceId": "nawy:798"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/38-garden-lakes",
             "observedPrice": 6800000,
             "sourceId": "red:38"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/798-garden-lakes",
+            "observedPrice": 6800000,
+            "sourceId": "nawy:798"
           }
         ],
-        "updatedAt": "2026-11-11T18:26:00.022Z"
+        "updatedAt": "2026-11-12T00:43:18.542Z"
       }
     },
     {
@@ -31817,11 +31617,8 @@
       "priceMin": 6205300,
       "unitTypes": [
         "Apartment",
-        "Townhouse",
         "Villa",
-        "Penthouse",
-        "Twinhouse",
-        "Studio"
+        "Town House"
       ],
       "areaMin": 77,
       "areaMax": 337,
@@ -31834,29 +31631,23 @@
         6
       ],
       "paymentPlan": "1.5% Down Payment, 5.5 Years Installments",
-      "downPayment": 1.5,
-      "installmentYears": 5.5,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/16-badya",
             "observedPrice": 6205300,
             "sourceId": "red:16"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/223-badya",
-            "observedPrice": 7090120,
-            "sourceId": "nawy:223"
           }
         ],
-        "updatedAt": "2026-11-05T12:30:26.073Z"
+        "updatedAt": "2026-11-12T00:43:18.542Z"
       }
     },
     {
@@ -32349,11 +32140,12 @@
       "priceMin": 9434000,
       "unitTypes": [
         "Villa",
-        "Apartment",
-        "Townhouse",
-        "Duplex",
         "Studio",
-        "Loft"
+        "Apartment",
+        "Duplex",
+        "Town House",
+        "Loft",
+        "Penthouse"
       ],
       "areaMin": 99,
       "areaMax": 396,
@@ -32366,29 +32158,23 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 8 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19074-hills-of-one",
             "observedPrice": 9434000,
             "sourceId": "red:19074"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1032-hills-of-one",
-            "observedPrice": 9871000,
-            "sourceId": "nawy:1032"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-11-12T00:43:18.542Z"
       }
     },
     {
@@ -32868,8 +32654,8 @@
       "priceMin": 7080765,
       "unitTypes": [
         "Apartment",
-        "Townhouse",
-        "Duplex"
+        "Duplex",
+        "Town House"
       ],
       "areaMin": 78,
       "areaMax": 340,
@@ -32882,21 +32668,15 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 10 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1249-club-hills-residence",
-            "observedPrice": 7080765,
-            "sourceId": "nawy:1249"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30843-club-hills",
@@ -32904,7 +32684,7 @@
             "sourceId": "red:30843"
           }
         ],
-        "updatedAt": "2026-10-29T02:51:43.562Z"
+        "updatedAt": "2026-11-12T00:43:18.542Z"
       }
     },
     {
@@ -32964,10 +32744,10 @@
       "zone": "New Cairo",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 4546734,
+      "priceMin": 5332868,
       "unitTypes": [
         "Apartment",
-        "Townhouse"
+        "Town House"
       ],
       "areaMin": 88,
       "areaMax": 441,
@@ -32980,21 +32760,15 @@
         6
       ],
       "paymentPlan": "15% Down Payment, 4 Years Installments",
-      "downPayment": 15,
-      "installmentYears": 4,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1059-talda",
-            "observedPrice": 4546734,
-            "sourceId": "nawy:1059"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19078-talda",
@@ -33002,7 +32776,7 @@
             "sourceId": "red:19078"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-11-12T00:43:18.542Z"
       }
     },
     {
@@ -37760,9 +37534,9 @@
       "type": "residential",
       "priceMin": 22000000,
       "unitTypes": [
-        "Townhouse",
-        "Villa",
-        "Twinhouse"
+        "Twin House",
+        "Town House",
+        "Villa"
       ],
       "areaMin": 102,
       "areaMax": 408,
@@ -37775,8 +37549,8 @@
         6
       ],
       "paymentPlan": "10% Down Payment, 7 Years Installments",
-      "downPayment": 10,
-      "installmentYears": 7,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -37791,19 +37565,19 @@
             "sourceId": "property-finder:90f37388-2bf9-4e8e-8d80-b0ee9d04297a"
           },
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1061-vaha",
-            "observedPrice": 22050000,
-            "sourceId": "nawy:1061"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/30831-vaha",
             "observedPrice": 22050000,
             "sourceId": "red:30831"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1061-vaha",
+            "observedPrice": 22050000,
+            "sourceId": "nawy:1061"
           }
         ],
-        "updatedAt": "2026-11-11T02:51:13.555Z"
+        "updatedAt": "2026-11-12T00:43:18.542Z"
       }
     },
     {
@@ -40990,18 +40764,10 @@
       "zone": "New Cairo",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 3659267,
+      "priceMin": 4150178,
       "unitTypes": [
-        "Duplex",
         "Apartment",
-        "Studio",
-        "Villa",
-        "Townhouse",
-        "Retail",
-        "Medical",
-        "Administrative",
-        "Penthouse",
-        "Twinhouse"
+        "Villa"
       ],
       "areaMin": 83,
       "areaMax": 415,
@@ -41014,21 +40780,15 @@
         6
       ],
       "paymentPlan": "1.5% Down Payment, 12 Years Installments",
-      "downPayment": 1.5,
-      "installmentYears": 12,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/147-sarai",
-            "observedPrice": 3659267,
-            "sourceId": "nawy:147"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/34-sarai",
@@ -41036,7 +40796,7 @@
             "sourceId": "red:34"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-11-12T00:43:18.542Z"
       }
     },
     {
@@ -41576,12 +41336,12 @@
       "type": "residential",
       "priceMin": 4945000,
       "unitTypes": [
-        "Apartment",
-        "Duplex",
-        "Townhouse",
-        "Penthouse",
+        "Town House",
+        "Twin House",
         "Villa",
-        "Twinhouse"
+        "Apartment",
+        "Penthouse",
+        "Duplex"
       ],
       "areaMin": 95,
       "areaMax": 474,
@@ -41594,8 +41354,8 @@
         6
       ],
       "paymentPlan": "22.5% Down Payment, 8 Years Installments",
-      "downPayment": 22.5,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -41604,16 +41364,16 @@
         "sourceCount": 3,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1155-at-east",
-            "observedPrice": 4945000,
-            "sourceId": "nawy:1155"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/30815-at-east",
             "observedPrice": 4945000,
             "sourceId": "red:30815"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1155-at-east",
+            "observedPrice": 4945000,
+            "sourceId": "nawy:1155"
           },
           {
             "name": "Property Finder",
@@ -41622,7 +41382,7 @@
             "sourceId": "property-finder:83039de6-b53b-4345-9a66-a709615e4905"
           }
         ],
-        "updatedAt": "2026-11-11T02:51:13.555Z"
+        "updatedAt": "2026-11-12T00:43:18.542Z"
       }
     },
     {
@@ -43011,36 +42771,30 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Townhouse",
         "Villa",
-        "Twinhouse",
+        "Town House",
+        "Twin House",
         "Apartment",
+        "Loft",
         "Duplex",
-        "Penthouse",
-        "Loft"
+        "Penthouse"
       ],
-      "downPayment": 2.5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "2.5% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2228",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 15800000,
+      "priceMin": 20900000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/877-solana",
-            "observedPrice": 15800000,
-            "sourceId": "nawy:877"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/37-solana-west",
@@ -43048,7 +42802,7 @@
             "sourceId": "red:37"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-11-12T00:43:18.542Z"
       }
     },
     {
@@ -44004,12 +43758,12 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Townhouse",
+        "Twin House",
         "Villa",
-        "Twinhouse"
+        "Town House"
       ],
-      "downPayment": 5,
-      "installmentYears": 9,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 9 Years Installments",
       "catalogMeta": {
         "status": "observed",
@@ -44022,22 +43776,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19115-the-valleys",
             "observedPrice": 22700043,
             "sourceId": "red:19115"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1040-the-valleys",
-            "observedPrice": 27300000,
-            "sourceId": "nawy:1040"
           }
         ],
-        "updatedAt": "2026-11-10T02:51:19.080Z"
+        "updatedAt": "2026-11-12T00:43:18.542Z"
       }
     },
     {
@@ -44231,14 +43979,15 @@
       "type": "residential",
       "unitTypes": [
         "Villa",
-        "Apartment",
-        "Townhouse",
-        "Duplex",
         "Studio",
-        "Loft"
+        "Apartment",
+        "Duplex",
+        "Town House",
+        "Loft",
+        "Penthouse"
       ],
-      "downPayment": 5,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 8 Years Installments",
       "catalogMeta": {
         "status": "observed",
@@ -44251,22 +44000,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19074-hills-of-one",
             "observedPrice": 9434000,
             "sourceId": "red:19074"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1032-hills-of-one",
-            "observedPrice": 9871000,
-            "sourceId": "nawy:1032"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-11-12T00:43:18.542Z"
       }
     },
     {
@@ -44678,39 +44421,25 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Duplex",
         "Apartment",
-        "Studio",
-        "Villa",
-        "Townhouse",
-        "Retail",
-        "Medical",
-        "Administrative",
-        "Penthouse",
-        "Twinhouse"
+        "Villa"
       ],
-      "downPayment": 1.5,
-      "installmentYears": 12,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "1.5% Down Payment, 12 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2562",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 3659267,
+      "priceMin": 4150178,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/147-sarai",
-            "observedPrice": 3659267,
-            "sourceId": "nawy:147"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/34-sarai",
@@ -44718,7 +44447,7 @@
             "sourceId": "red:34"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-11-12T00:43:18.542Z"
       }
     },
     {
@@ -44730,39 +44459,25 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Duplex",
         "Apartment",
-        "Studio",
-        "Villa",
-        "Townhouse",
-        "Retail",
-        "Medical",
-        "Administrative",
-        "Penthouse",
-        "Twinhouse"
+        "Villa"
       ],
-      "downPayment": 1.5,
-      "installmentYears": 12,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "1.5% Down Payment, 12 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2481",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 3659267,
+      "priceMin": 4150178,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/147-sarai",
-            "observedPrice": 3659267,
-            "sourceId": "nawy:147"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/34-sarai",
@@ -44770,7 +44485,7 @@
             "sourceId": "red:34"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-11-12T00:43:18.542Z"
       }
     },
     {
@@ -59599,34 +59314,29 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Administrative",
         "Apartment",
-        "Townhouse",
-        "Villa",
-        "Twinhouse"
+        "Duplex",
+        "Penthouse",
+        "Town House",
+        "Twin House",
+        "Villa"
       ],
-      "downPayment": 5,
-      "installmentYears": 9,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 9 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2785",
         "observedAt": "2026-10-22T03:37:47.108Z"
       },
-      "priceMin": 13900000,
+      "priceMin": 13955000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1077-solana-east",
-            "observedPrice": 13900000,
-            "sourceId": "nawy:1077"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30830-solana-east",
@@ -59634,7 +59344,7 @@
             "sourceId": "red:30830"
           }
         ],
-        "updatedAt": "2026-10-29T18:30:03.701Z"
+        "updatedAt": "2026-11-12T00:43:18.542Z"
       }
     },
     {

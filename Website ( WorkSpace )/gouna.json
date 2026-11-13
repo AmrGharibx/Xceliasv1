@@ -335,16 +335,22 @@
         5,
         6
       ],
-      "paymentPlan": "5% Down Payment",
+      "paymentPlan": "5% Down Payment, 6 Years Installments",
       "downPayment": 5,
-      "installmentYears": 0,
+      "installmentYears": 6,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/123-swanlake-el-gouna",
+            "observedPrice": 25000000,
+            "sourceId": "nawy:123"
+          },
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/hassan-allam-holding/swanlake-el-gouna",
@@ -352,7 +358,7 @@
             "sourceId": "property-finder:b364916e-d443-47af-b26c-c3857eab37f9"
           }
         ],
-        "updatedAt": "2026-11-13T02:51:36.792Z"
+        "updatedAt": "2026-11-13T12:29:26.382Z"
       }
     },
     {
@@ -816,8 +822,8 @@
       "type": "residential",
       "priceMin": 12000000,
       "unitTypes": [
-        "townhouse",
-        "apartment"
+        "Chalet",
+        "Townhouse"
       ],
       "areaMin": 64,
       "areaMax": 268,
@@ -829,24 +835,30 @@
         5,
         6
       ],
-      "paymentPlan": "15% Down Payment",
+      "paymentPlan": "15% Down Payment, 6 Years Installments",
       "downPayment": 15,
-      "installmentYears": 0,
+      "installmentYears": 6,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/the-land-developers/il-bayou",
             "observedPrice": 12000000,
             "sourceId": "property-finder:9150aa0f-8aa4-4c3c-9760-eb1b2152a1a5"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/978-il-bayou",
+            "observedPrice": 13654075,
+            "sourceId": "nawy:978"
           }
         ],
-        "updatedAt": "2026-11-13T02:51:36.792Z"
+        "updatedAt": "2026-11-13T12:29:26.382Z"
       }
     },
     {
@@ -859,8 +871,8 @@
       "type": "residential",
       "priceMin": 12000000,
       "unitTypes": [
-        "townhouse",
-        "apartment"
+        "Chalet",
+        "Townhouse"
       ],
       "areaMin": 56,
       "areaMax": 233,
@@ -872,24 +884,30 @@
         5,
         6
       ],
-      "paymentPlan": "15% Down Payment",
+      "paymentPlan": "15% Down Payment, 6 Years Installments",
       "downPayment": 15,
-      "installmentYears": 0,
+      "installmentYears": 6,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/the-land-developers/il-bayou",
             "observedPrice": 12000000,
             "sourceId": "property-finder:9150aa0f-8aa4-4c3c-9760-eb1b2152a1a5"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/978-il-bayou",
+            "observedPrice": 13654075,
+            "sourceId": "nawy:978"
           }
         ],
-        "updatedAt": "2026-11-13T02:51:36.792Z"
+        "updatedAt": "2026-11-13T12:29:26.382Z"
       }
     },
     {
@@ -1001,12 +1019,14 @@
       "type": "residential",
       "priceMin": 8020000,
       "unitTypes": [
+        "Townhouse",
         "Villa",
-        "Twin House",
-        "Duplex",
+        "Apartment",
+        "Loft",
         "Penthouse",
         "Chalet",
-        "Town House"
+        "Duplex",
+        "Twinhouse"
       ],
       "areaMin": 65,
       "areaMax": 273,
@@ -1019,23 +1039,29 @@
         6
       ],
       "paymentPlan": "10% Down Payment, 7 Years Installments",
-      "downPayment": 0,
-      "installmentYears": 0,
+      "downPayment": 10,
+      "installmentYears": 7,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/52-makadi-heights",
             "observedPrice": 8020000,
             "sourceId": "red:52"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/454-makadi-heights",
+            "observedPrice": 11270000,
+            "sourceId": "nawy:454"
           }
         ],
-        "updatedAt": "2026-11-13T02:51:36.792Z"
+        "updatedAt": "2026-11-13T12:29:26.382Z"
       }
     },
     {
@@ -1451,8 +1477,8 @@
       "type": "residential",
       "priceMin": 12000000,
       "unitTypes": [
-        "townhouse",
-        "apartment"
+        "Chalet",
+        "Townhouse"
       ],
       "areaMin": 65,
       "areaMax": 273,
@@ -1464,24 +1490,30 @@
         5,
         6
       ],
-      "paymentPlan": "15% Down Payment",
+      "paymentPlan": "15% Down Payment, 6 Years Installments",
       "downPayment": 15,
-      "installmentYears": 0,
+      "installmentYears": 6,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/the-land-developers/il-bayou",
             "observedPrice": 12000000,
             "sourceId": "property-finder:9150aa0f-8aa4-4c3c-9760-eb1b2152a1a5"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/978-il-bayou",
+            "observedPrice": 13654075,
+            "sourceId": "nawy:978"
           }
         ],
-        "updatedAt": "2026-11-13T02:51:36.792Z"
+        "updatedAt": "2026-11-13T12:29:26.382Z"
       }
     },
     {
@@ -1860,15 +1892,17 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
+        "Townhouse",
         "Villa",
-        "Twin House",
-        "Duplex",
+        "Apartment",
+        "Loft",
         "Penthouse",
         "Chalet",
-        "Town House"
+        "Duplex",
+        "Twinhouse"
       ],
-      "downPayment": 0,
-      "installmentYears": 0,
+      "downPayment": 10,
+      "installmentYears": 7,
       "paymentPlan": "10% Down Payment, 7 Years Installments",
       "catalogMeta": {
         "status": "observed",
@@ -1881,16 +1915,22 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/52-makadi-heights",
             "observedPrice": 8020000,
             "sourceId": "red:52"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/454-makadi-heights",
+            "observedPrice": 11270000,
+            "sourceId": "nawy:454"
           }
         ],
-        "updatedAt": "2026-11-13T02:51:36.792Z"
+        "updatedAt": "2026-11-13T12:29:26.382Z"
       }
     },
     {
@@ -1987,13 +2027,14 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "villa",
-        "townhouse",
-        "apartment"
+        "Apartment",
+        "Townhouse",
+        "Twinhouse",
+        "Villa"
       ],
       "downPayment": 10,
-      "installmentYears": 0,
-      "paymentPlan": "10% Down Payment",
+      "installmentYears": 8,
+      "paymentPlan": "10% Down Payment, 8 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2025",
@@ -2005,7 +2046,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 3,
         "sources": [
           {
             "name": "RED",
@@ -2018,9 +2059,15 @@
             "url": "https://www.propertyfinder.eg/en/new-projects/travco-properties/makadina",
             "observedPrice": 7400000,
             "sourceId": "property-finder:6f94f94b-9809-4220-9620-aa5688b81f76"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2025-makadina",
+            "observedPrice": 8000000,
+            "sourceId": "nawy:2025"
           }
         ],
-        "updatedAt": "2026-11-13T02:51:36.792Z"
+        "updatedAt": "2026-11-13T12:29:26.382Z"
       }
     },
     {
@@ -2050,15 +2097,17 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
+        "Townhouse",
         "Villa",
-        "Twin House",
-        "Duplex",
+        "Apartment",
+        "Loft",
         "Penthouse",
         "Chalet",
-        "Town House"
+        "Duplex",
+        "Twinhouse"
       ],
-      "downPayment": 0,
-      "installmentYears": 0,
+      "downPayment": 10,
+      "installmentYears": 7,
       "paymentPlan": "10% Down Payment, 7 Years Installments",
       "catalogMeta": {
         "status": "observed",
@@ -2071,16 +2120,22 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/52-makadi-heights",
             "observedPrice": 8020000,
             "sourceId": "red:52"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/454-makadi-heights",
+            "observedPrice": 11270000,
+            "sourceId": "nawy:454"
           }
         ],
-        "updatedAt": "2026-11-13T02:51:36.792Z"
+        "updatedAt": "2026-11-13T12:29:26.382Z"
       }
     }
   ],

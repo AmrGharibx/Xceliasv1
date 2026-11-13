@@ -3554,33 +3554,25 @@
       "type": "residential",
       "unitTypes": [
         "Chalet",
-        "Townhouse",
         "Duplex",
-        "Penthouse",
-        "Villa"
+        "Apartment"
       ],
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2141",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 6016780,
+      "priceMin": 15759090,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1051-murano-wadi-degla",
-            "observedPrice": 6016780,
-            "sourceId": "nawy:1051"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19029-murano",
@@ -3588,7 +3580,7 @@
             "sourceId": "red:19029"
           }
         ],
-        "updatedAt": "2026-11-08T18:24:59.435Z"
+        "updatedAt": "2026-11-13T06:32:57.158Z"
       }
     },
     {

@@ -431,37 +431,23 @@
       "zone": "New Cairo",
       "status": "Delivered",
       "type": "commercial",
-      "priceMin": 11285000,
+      "priceMin": 25773000,
       "unitTypes": [
-        "Apartment",
-        "Administrative",
-        "Duplex",
-        "Loft",
-        "Townhouse",
-        "Office",
-        "Twinhouse",
-        "Penthouse",
-        "Studio"
+        "Apartment"
       ],
       "areaMin": 88,
       "areaMax": 439,
       "bedrooms": [],
       "paymentPlan": "10% Down Payment, 7 Years Installments",
-      "downPayment": 10,
-      "installmentYears": 7,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/222-district-5",
-            "observedPrice": 11285000,
-            "sourceId": "nawy:222"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/35-district-5",
@@ -469,7 +455,7 @@
             "sourceId": "red:35"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-11-13T06:32:57.158Z"
       }
     },
     {
@@ -9214,16 +9200,10 @@
       "zone": "New Cairo",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 3368416,
+      "priceMin": 17326000,
       "unitTypes": [
-        "Townhouse",
-        "Administrative",
-        "Duplex",
-        "Loft",
-        "Twinhouse",
-        "Medical",
-        "Studio",
-        "Apartment",
+        "Town House",
+        "Twin House",
         "Villa"
       ],
       "areaMin": 92,
@@ -9237,21 +9217,15 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 8 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1348-solay",
-            "observedPrice": 3368416,
-            "sourceId": "nawy:1348"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30820-solay",
@@ -9259,7 +9233,7 @@
             "sourceId": "red:30820"
           }
         ],
-        "updatedAt": "2026-11-09T18:27:27.921Z"
+        "updatedAt": "2026-11-13T06:32:57.158Z"
       }
     },
     {
@@ -11157,13 +11131,11 @@
       "zone": "Ras El Hekma",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 12243000,
+      "priceMin": 23252880,
       "unitTypes": [
-        "Apartment",
         "Chalet",
-        "Villa",
-        "Twinhouse",
-        "Penthouse"
+        "Cabin",
+        "Villa"
       ],
       "areaMin": 108,
       "areaMax": 432,
@@ -11176,21 +11148,15 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 10 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/2310-hacienda-ras-el-hekma",
-            "observedPrice": 12243000,
-            "sourceId": "nawy:2310"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/262-hacienda-west",
@@ -11198,7 +11164,7 @@
             "sourceId": "red:262"
           }
         ],
-        "updatedAt": "2026-11-11T02:51:13.555Z"
+        "updatedAt": "2026-11-13T06:32:57.158Z"
       }
     },
     {
@@ -11251,14 +11217,10 @@
       "zone": "Ras El Hekma",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 8200000,
+      "priceMin": 14600000,
       "unitTypes": [
         "Chalet",
-        "Villa",
-        "Twinhouse",
-        "Penthouse",
-        "Townhouse",
-        "Duplex"
+        "Penthouse"
       ],
       "areaMin": 92,
       "areaMax": 369,
@@ -11271,21 +11233,15 @@
         6
       ],
       "paymentPlan": "10% Down Payment, 8 Years Installments",
-      "downPayment": 10,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/692-direction-white",
-            "observedPrice": 8200000,
-            "sourceId": "nawy:692"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19054-direction-white",
@@ -11293,7 +11249,7 @@
             "sourceId": "red:19054"
           }
         ],
-        "updatedAt": "2026-11-11T02:51:13.555Z"
+        "updatedAt": "2026-11-13T06:32:57.158Z"
       }
     },
     {
@@ -11489,13 +11445,10 @@
       "zone": "Sidi Abdel Rahman",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 12243000,
+      "priceMin": 90219000,
       "unitTypes": [
-        "Apartment",
-        "Chalet",
         "Villa",
-        "Twinhouse",
-        "Penthouse"
+        "Chalet"
       ],
       "areaMin": 64,
       "areaMax": 275,
@@ -11508,21 +11461,15 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 10 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/2310-hacienda-ras-el-hekma",
-            "observedPrice": 12243000,
-            "sourceId": "nawy:2310"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19099-hacienda-bay",
@@ -11530,7 +11477,7 @@
             "sourceId": "red:19099"
           }
         ],
-        "updatedAt": "2026-11-03T12:29:20.099Z"
+        "updatedAt": "2026-11-13T06:32:57.158Z"
       }
     },
     {
@@ -15294,11 +15241,10 @@
       "zone": "New Capital",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 3517500,
+      "priceMin": 9500000,
       "unitTypes": [
         "Apartment",
-        "Duplex",
-        "Office"
+        "Duplex"
       ],
       "areaMin": 67,
       "areaMax": 286,
@@ -15312,20 +15258,14 @@
       ],
       "paymentPlan": "0% Down Payment, 5 Years Installments",
       "downPayment": 0,
-      "installmentYears": 5,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/408-parklane",
-            "observedPrice": 3517500,
-            "sourceId": "nawy:408"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19082-parklane",
@@ -15333,7 +15273,7 @@
             "sourceId": "red:19082"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-11-13T06:32:57.158Z"
       }
     },
     {
@@ -36011,17 +35951,9 @@
       "zone": "New Cairo",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 11285000,
+      "priceMin": 25773000,
       "unitTypes": [
-        "Apartment",
-        "Administrative",
-        "Duplex",
-        "Loft",
-        "Townhouse",
-        "Office",
-        "Twinhouse",
-        "Penthouse",
-        "Studio"
+        "Apartment"
       ],
       "areaMin": 93,
       "areaMax": 466,
@@ -36034,21 +35966,15 @@
         6
       ],
       "paymentPlan": "10% Down Payment, 7 Years Installments",
-      "downPayment": 10,
-      "installmentYears": 7,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/222-district-5",
-            "observedPrice": 11285000,
-            "sourceId": "nawy:222"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/35-district-5",
@@ -36056,7 +35982,7 @@
             "sourceId": "red:35"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-11-13T06:32:57.158Z"
       }
     },
     {
@@ -36721,12 +36647,9 @@
       "zone": "New Cairo",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 4552200,
+      "priceMin": 8820000,
       "unitTypes": [
-        "Apartment",
-        "Villa",
-        "Penthouse",
-        "Studio"
+        "Apartment"
       ],
       "areaMin": 90,
       "areaMax": 452,
@@ -36739,21 +36662,15 @@
         6
       ],
       "paymentPlan": "2.5% Down Payment, 10 Years Installments",
-      "downPayment": 2.5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1078-peerage-residence",
-            "observedPrice": 4552200,
-            "sourceId": "nawy:1078"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19077-peerage",
@@ -36761,7 +36678,7 @@
             "sourceId": "red:19077"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-11-13T06:32:57.158Z"
       }
     },
     {
@@ -37448,14 +37365,10 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 8200000,
+      "priceMin": 14600000,
       "unitTypes": [
         "Chalet",
-        "Villa",
-        "Twinhouse",
-        "Penthouse",
-        "Townhouse",
-        "Duplex"
+        "Penthouse"
       ],
       "areaMin": 87,
       "areaMax": 379,
@@ -37468,21 +37381,15 @@
         6
       ],
       "paymentPlan": "10% Down Payment, 8 Years Installments",
-      "downPayment": 10,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/692-direction-white",
-            "observedPrice": 8200000,
-            "sourceId": "nawy:692"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19054-direction-white",
@@ -37490,7 +37397,7 @@
             "sourceId": "red:19054"
           }
         ],
-        "updatedAt": "2026-11-11T02:51:13.555Z"
+        "updatedAt": "2026-11-13T06:32:57.158Z"
       }
     },
     {
@@ -59006,19 +58913,14 @@
       "zone": "New Cairo",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 8900000,
+      "priceMin": 14011000,
       "unitTypes": [
-        "Townhouse",
-        "Villa",
-        "Duplex",
         "Apartment",
-        "Studio",
         "Loft",
-        "Office",
-        "Chalet",
-        "Penthouse",
-        "Twinhouse",
-        "Retail"
+        "Duplex",
+        "Studio",
+        "Town House",
+        "Villa"
       ],
       "areaMin": 81,
       "areaMax": 406,
@@ -59031,21 +58933,15 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 10 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/345-zed-east",
-            "observedPrice": 8900000,
-            "sourceId": "nawy:345"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/9-zed-east",
@@ -59053,7 +58949,7 @@
             "sourceId": "red:9"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-11-13T06:32:57.158Z"
       }
     },
     {
@@ -62198,33 +62094,24 @@
       "type": "residential",
       "unitTypes": [
         "Apartment",
-        "Penthouse",
-        "Retail",
-        "Administrative",
-        "Twinhouse"
+        "Penthouse"
       ],
-      "downPayment": 15,
-      "installmentYears": 6,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "15% Down Payment, 6 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2321",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 9800000,
+      "priceMin": 16110000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/207-el-patio-oro",
-            "observedPrice": 9800000,
-            "sourceId": "nawy:207"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19045-el-patio-oro",
@@ -62232,7 +62119,7 @@
             "sourceId": "red:19045"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-11-13T06:32:57.158Z"
       }
     },
     {
@@ -64307,34 +64194,27 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Chalet",
-        "Studio",
         "Villa",
-        "Townhouse",
-        "Twinhouse"
+        "Town House",
+        "Chalet",
+        "Twin House"
       ],
-      "downPayment": 5,
-      "installmentYears": 8.6,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 8.6 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2238",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 6894000,
+      "priceMin": 12185000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/752-seazen",
-            "observedPrice": 6894000,
-            "sourceId": "nawy:752"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/46-seazen",
@@ -64342,7 +64222,7 @@
             "sourceId": "red:46"
           }
         ],
-        "updatedAt": "2026-10-27T06:49:48.379Z"
+        "updatedAt": "2026-11-13T06:32:57.158Z"
       }
     },
     {
@@ -64995,35 +64875,24 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Chalet",
-        "Townhouse",
-        "Villa",
-        "Duplex",
-        "Twinhouse",
-        "Penthouse"
+        "Chalet"
       ],
-      "downPayment": 5,
-      "installmentYears": 9,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 9 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2207",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 6590000,
+      "priceMin": 15500000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/505-cali-coast-ras-el-hekma",
-            "observedPrice": 6590000,
-            "sourceId": "nawy:505"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19035-cali-coast",
@@ -65031,7 +64900,7 @@
             "sourceId": "red:19035"
           }
         ],
-        "updatedAt": "2026-10-30T02:51:44.040Z"
+        "updatedAt": "2026-11-13T06:32:57.158Z"
       }
     },
     {
@@ -66414,33 +66283,25 @@
       "type": "residential",
       "unitTypes": [
         "Chalet",
-        "Townhouse",
         "Duplex",
-        "Penthouse",
-        "Villa"
+        "Apartment"
       ],
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2141",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 6016780,
+      "priceMin": 15759090,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1051-murano-wadi-degla",
-            "observedPrice": 6016780,
-            "sourceId": "nawy:1051"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19029-murano",
@@ -66448,7 +66309,7 @@
             "sourceId": "red:19029"
           }
         ],
-        "updatedAt": "2026-11-08T18:24:59.435Z"
+        "updatedAt": "2026-11-13T06:32:57.158Z"
       }
     },
     {
@@ -76617,36 +76478,24 @@
       "type": "residential",
       "unitTypes": [
         "Apartment",
-        "Studio",
-        "Retail",
-        "Duplex",
-        "Townhouse",
-        "Villa",
-        "Twinhouse",
-        "Penthouse"
+        "Villa"
       ],
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2700",
         "observedAt": "2026-10-01T03:43:21.164Z"
       },
-      "priceMin": 5722056,
+      "priceMin": 9561725,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/186-taj-city",
-            "observedPrice": 5722056,
-            "sourceId": "nawy:186"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/33-taj-city",
@@ -76654,7 +76503,7 @@
             "sourceId": "red:33"
           }
         ],
-        "updatedAt": "2026-11-01T18:25:13.117Z"
+        "updatedAt": "2026-11-13T06:32:57.158Z"
       }
     },
     {

@@ -1942,11 +1942,9 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "apartment",
-        "townhouse",
-        "villa"
+        "Town House"
       ],
-      "downPayment": 10,
+      "downPayment": 0,
       "installmentYears": 0,
       "paymentPlan": "10% Down Payment",
       "catalogMeta": {
@@ -1960,22 +1958,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30949-siyal",
             "observedPrice": 22000000,
             "sourceId": "red:30949"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/orascom-development/siyal-makadi-heights",
-            "observedPrice": 22695000,
-            "sourceId": "property-finder:e5e8e6a6-eb17-4a83-a28d-8ad5ea97f773"
           }
         ],
-        "updatedAt": "2026-11-12T02:51:13.393Z"
+        "updatedAt": "2026-11-13T18:25:22.792Z"
       }
     },
     {

@@ -642,10 +642,11 @@
       "zone": "Galala",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 6403320,
+      "priceMin": 8537760,
       "unitTypes": [
-        "apartment",
-        "duplex"
+        "Apartment",
+        "Duplex",
+        "Studio"
       ],
       "areaMin": 73,
       "areaMax": 321,
@@ -658,21 +659,15 @@
         6
       ],
       "paymentPlan": "10% Down Payment",
-      "downPayment": 10,
+      "downPayment": 0,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/orbit-alliance/marina-hills",
-            "observedPrice": 6403320,
-            "sourceId": "property-finder:c2620092-5abe-4bd1-aaf0-59dc4deac587"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30844-marina-hills",
@@ -680,7 +675,7 @@
             "sourceId": "red:30844"
           }
         ],
-        "updatedAt": "2026-11-12T02:51:13.393Z"
+        "updatedAt": "2026-11-13T18:25:22.792Z"
       }
     },
     {

@@ -17377,7 +17377,7 @@
       "zone": "October",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 4900000,
+      "priceMin": 17784000,
       "unitTypes": [
         "Twin House",
         "Town House"
@@ -17393,21 +17393,15 @@
         6
       ],
       "paymentPlan": "30% Down Payment",
-      "downPayment": 30,
+      "downPayment": 0,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/al-rabwa-group/zayed-dunes",
-            "observedPrice": 4900000,
-            "sourceId": "property-finder:84a3a0a9-76e4-4d8b-9508-28e9cd1d6111"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19231-zayed-dunes",
@@ -17415,7 +17409,7 @@
             "sourceId": "red:19231"
           }
         ],
-        "updatedAt": "2026-11-12T02:51:13.393Z"
+        "updatedAt": "2026-11-14T00:40:17.014Z"
       }
     },
     {
@@ -23324,15 +23318,15 @@
       "zone": "Zayed",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 9800000,
+      "priceMin": 20900000,
       "unitTypes": [
-        "Townhouse",
         "Villa",
-        "Twinhouse",
+        "Town House",
+        "Twin House",
         "Apartment",
+        "Loft",
         "Duplex",
-        "Penthouse",
-        "Loft"
+        "Penthouse"
       ],
       "areaMin": 99,
       "areaMax": 395,
@@ -23343,27 +23337,15 @@
         4
       ],
       "paymentPlan": "5% Down Payment, 10 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/ora-developers/solana",
-            "observedPrice": 9800000,
-            "sourceId": "property-finder:101c2f10-3bee-4921-a90f-f85b7276c733"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/877-solana",
-            "observedPrice": 15800000,
-            "sourceId": "nawy:877"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/37-solana-west",
@@ -23371,7 +23353,7 @@
             "sourceId": "red:37"
           }
         ],
-        "updatedAt": "2026-11-12T02:51:13.393Z"
+        "updatedAt": "2026-11-14T00:40:17.014Z"
       }
     },
     {
@@ -43543,42 +43525,30 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Townhouse",
         "Villa",
-        "Twinhouse",
+        "Town House",
+        "Twin House",
         "Apartment",
+        "Loft",
         "Duplex",
-        "Penthouse",
-        "Loft"
+        "Penthouse"
       ],
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2228",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 9800000,
+      "priceMin": 20900000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/ora-developers/solana",
-            "observedPrice": 9800000,
-            "sourceId": "property-finder:101c2f10-3bee-4921-a90f-f85b7276c733"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/877-solana",
-            "observedPrice": 15800000,
-            "sourceId": "nawy:877"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/37-solana-west",
@@ -43586,7 +43556,7 @@
             "sourceId": "red:37"
           }
         ],
-        "updatedAt": "2026-11-12T02:51:13.393Z"
+        "updatedAt": "2026-11-14T00:40:17.014Z"
       }
     },
     {

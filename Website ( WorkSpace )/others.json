@@ -272,13 +272,11 @@
       "zone": "Port Zone",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 6016780,
+      "priceMin": 15759090,
       "unitTypes": [
         "Chalet",
         "Duplex",
-        "Penthouse",
-        "Townhouse",
-        "Villa"
+        "Apartment"
       ],
       "areaMin": 86,
       "areaMax": 375,
@@ -291,21 +289,15 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 10 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1051-murano-wadi-degla",
-            "observedPrice": 6016780,
-            "sourceId": "nawy:1051"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19029-murano",
@@ -313,7 +305,7 @@
             "sourceId": "red:19029"
           }
         ],
-        "updatedAt": "2026-11-12T18:26:49.515Z"
+        "updatedAt": "2026-11-14T06:30:10.567Z"
       }
     },
     {

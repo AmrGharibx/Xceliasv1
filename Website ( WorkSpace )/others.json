@@ -733,7 +733,7 @@
       "zone": "Alexandria",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 8421000,
+      "priceMin": 4000000,
       "unitTypes": [
         "Apartment",
         "Duplex",
@@ -757,8 +757,14 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/saudi-egyptian-developers-sed/sawary",
+            "observedPrice": 4000000,
+            "sourceId": "property-finder:37f1f18d-928d-474f-8032-42d4bc7c9792"
+          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/325-sawary",
@@ -766,7 +772,7 @@
             "sourceId": "nawy:325"
           }
         ],
-        "updatedAt": "2026-11-13T00:43:04.001Z"
+        "updatedAt": "2026-11-15T02:51:28.764Z"
       }
     },
     {
@@ -1282,17 +1288,23 @@
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
-        "confidence": "high",
-        "sourceCount": 1,
+        "confidence": "verified",
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1862-lamanga",
             "observedPrice": 3500000,
             "sourceId": "nawy:1862"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/al-karma-developments/lamanga",
+            "observedPrice": 14000000,
+            "sourceId": "property-finder:d9106935-26f9-4051-8af6-040b7dfb9e17"
           }
         ],
-        "updatedAt": "2026-11-12T18:26:49.515Z"
+        "updatedAt": "2026-11-15T02:51:28.764Z"
       }
     },
     {
@@ -1409,8 +1421,8 @@
       "type": "residential",
       "priceMin": 2274000,
       "unitTypes": [
-        "Chalet",
-        "Apartment"
+        "apartment",
+        "duplex"
       ],
       "areaMin": 76,
       "areaMax": 332,
@@ -1423,23 +1435,29 @@
         6
       ],
       "paymentPlan": "25% Down Payment",
-      "downPayment": 0,
+      "downPayment": 25,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30856-eclat",
             "observedPrice": 2274000,
             "sourceId": "red:30856"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/new-plan-developments/eclat",
+            "observedPrice": 8000000,
+            "sourceId": "property-finder:4ddc1713-e037-44e4-acfc-900c033b6731"
           }
         ],
-        "updatedAt": "2026-11-14T18:24:59.439Z"
+        "updatedAt": "2026-11-15T02:51:28.764Z"
       }
     },
     {
@@ -2076,7 +2094,7 @@
       "zone": "Somabay",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 69000000,
+      "priceMin": 41400000,
       "unitTypes": [
         "Villa",
         "Twinhouse"
@@ -2099,8 +2117,14 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/somabay-realestate/wadi-soma",
+            "observedPrice": 41400000,
+            "sourceId": "property-finder:afd6390a-4f3d-4856-a6fa-a46add98ba12"
+          },
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1097-wadi-soma",
@@ -2108,7 +2132,7 @@
             "sourceId": "nawy:1097"
           }
         ],
-        "updatedAt": "2026-11-13T00:43:04.001Z"
+        "updatedAt": "2026-11-15T02:51:28.764Z"
       }
     },
     {

@@ -573,16 +573,22 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/599-la-vista-6",
             "observedPrice": 9450000,
             "sourceId": "nawy:599"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/la-vista-developments/la-vista-6",
+            "observedPrice": 21690000,
+            "sourceId": "property-finder:c01ccd91-6140-4733-8c46-253cfb115a2a"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-15T02:51:28.764Z"
       }
     },
     {
@@ -770,11 +776,12 @@
       "zone": "Galala",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 6121475,
+      "priceMin": 4285033,
       "unitTypes": [
-        "Twin House",
-        "Town House",
-        "Chalet"
+        "apartment",
+        "villa",
+        "duplex",
+        "townhouse"
       ],
       "areaMin": 78,
       "areaMax": 342,
@@ -794,8 +801,14 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/iwan-developments-company/majada",
+            "observedPrice": 4285033,
+            "sourceId": "property-finder:1999bbf3-0157-4647-bdab-52325148fbd6"
+          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19026-majada",
@@ -803,7 +816,7 @@
             "sourceId": "red:19026"
           }
         ],
-        "updatedAt": "2026-11-14T18:24:59.439Z"
+        "updatedAt": "2026-11-15T02:51:28.764Z"
       }
     },
     {
@@ -3252,16 +3265,22 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/599-la-vista-6",
             "observedPrice": 9450000,
             "sourceId": "nawy:599"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/la-vista-developments/la-vista-6",
+            "observedPrice": 21690000,
+            "sourceId": "property-finder:c01ccd91-6140-4733-8c46-253cfb115a2a"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-15T02:51:28.764Z"
       }
     },
     {

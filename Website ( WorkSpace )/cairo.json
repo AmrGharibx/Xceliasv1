@@ -9047,12 +9047,12 @@
       "type": "residential",
       "priceMin": 4945000,
       "unitTypes": [
-        "Apartment",
-        "Townhouse",
-        "Duplex",
-        "Penthouse",
+        "Town House",
+        "Twin House",
         "Villa",
-        "Twinhouse"
+        "Apartment",
+        "Penthouse",
+        "Duplex"
       ],
       "areaMin": 96,
       "areaMax": 482,
@@ -9065,8 +9065,8 @@
         6
       ],
       "paymentPlan": "22.5% Down Payment, 8 Years Installments",
-      "downPayment": 22.5,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -9075,16 +9075,16 @@
         "sourceCount": 3,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1155-at-east",
-            "observedPrice": 4945000,
-            "sourceId": "nawy:1155"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/30815-at-east",
             "observedPrice": 4945000,
             "sourceId": "red:30815"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1155-at-east",
+            "observedPrice": 4945000,
+            "sourceId": "nawy:1155"
           },
           {
             "name": "Property Finder",
@@ -9093,7 +9093,7 @@
             "sourceId": "property-finder:83039de6-b53b-4345-9a66-a709615e4905"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-15T06:31:30.279Z"
       }
     },
     {
@@ -10905,9 +10905,8 @@
       "priceMin": 4061000,
       "unitTypes": [
         "Apartment",
-        "Townhouse",
-        "Twinhouse",
-        "Studio"
+        "Town House",
+        "Twin House"
       ],
       "areaMin": 77,
       "areaMax": 329,
@@ -10920,8 +10919,8 @@
         6
       ],
       "paymentPlan": "10% Down Payment, 5 Years Installments",
-      "downPayment": 10,
-      "installmentYears": 5,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -10930,16 +10929,16 @@
         "sourceCount": 3,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/296-bleu-vert",
-            "observedPrice": 4061000,
-            "sourceId": "nawy:296"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/19068-bleu-vert",
             "observedPrice": 4061000,
             "sourceId": "red:19068"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/296-bleu-vert",
+            "observedPrice": 4061000,
+            "sourceId": "nawy:296"
           },
           {
             "name": "Property Finder",
@@ -10948,7 +10947,7 @@
             "sourceId": "property-finder:e7ada002-f0cc-4a78-bde8-860bd23fbeb6"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-15T06:31:30.279Z"
       }
     },
     {
@@ -15788,10 +15787,8 @@
       "type": "residential",
       "priceMin": 8077200,
       "unitTypes": [
-        "Apartment",
-        "Duplex",
-        "Townhouse",
-        "Twinhouse",
+        "Town House",
+        "Twin House",
         "Villa"
       ],
       "areaMin": 65,
@@ -15805,8 +15802,8 @@
         6
       ],
       "paymentPlan": "20% Down Payment, 14 Years Installments",
-      "downPayment": 20,
-      "installmentYears": 14,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -15821,19 +15818,19 @@
             "sourceId": "property-finder:f6c0d51e-ae47-40cc-9f77-b9879969f1d4"
           },
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1410-rosevil",
-            "observedPrice": 13462000,
-            "sourceId": "nawy:1410"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/30842-rosevil",
             "observedPrice": 13462000,
             "sourceId": "red:30842"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1410-rosevil",
+            "observedPrice": 13462000,
+            "sourceId": "nawy:1410"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-15T06:31:30.279Z"
       }
     },
     {
@@ -16251,8 +16248,8 @@
       "priceMin": 7080765,
       "unitTypes": [
         "Apartment",
-        "Townhouse",
-        "Duplex"
+        "Duplex",
+        "Town House"
       ],
       "areaMin": 88,
       "areaMax": 385,
@@ -16265,8 +16262,8 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 10 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -16275,19 +16272,19 @@
         "sourceCount": 2,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1249-club-hills-residence",
-            "observedPrice": 7080765,
-            "sourceId": "nawy:1249"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/30843-club-hills",
             "observedPrice": 7080765,
             "sourceId": "red:30843"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1249-club-hills-residence",
+            "observedPrice": 7080765,
+            "sourceId": "nawy:1249"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-15T06:31:30.279Z"
       }
     },
     {
@@ -18274,12 +18271,10 @@
       "type": "residential",
       "priceMin": 6800000,
       "unitTypes": [
-        "Villa",
-        "Twinhouse",
         "Apartment",
-        "Townhouse",
-        "Penthouse",
-        "Studio"
+        "Town House",
+        "Twin House",
+        "Villa"
       ],
       "areaMin": 78,
       "areaMax": 340,
@@ -18292,8 +18287,8 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 8 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -18302,19 +18297,19 @@
         "sourceCount": 2,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/798-garden-lakes",
-            "observedPrice": 6800000,
-            "sourceId": "nawy:798"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/38-garden-lakes",
             "observedPrice": 6800000,
             "sourceId": "red:38"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/798-garden-lakes",
+            "observedPrice": 6800000,
+            "sourceId": "nawy:798"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-15T06:31:30.279Z"
       }
     },
     {
@@ -23674,11 +23669,8 @@
       "type": "residential",
       "priceMin": 22800000,
       "unitTypes": [
-        "Apartment",
-        "Twinhouse",
-        "Villa",
-        "Duplex",
-        "Penthouse"
+        "Twin House",
+        "Apartment"
       ],
       "areaMin": 76,
       "areaMax": 284,
@@ -23691,8 +23683,8 @@
         6
       ],
       "paymentPlan": "20% Down Payment, 4 Years Installments",
-      "downPayment": 20,
-      "installmentYears": 4,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -23701,16 +23693,16 @@
         "sourceCount": 3,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/156-el-patio-casa",
-            "observedPrice": 22800000,
-            "sourceId": "nawy:156"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/19049-el-patio-casa",
             "observedPrice": 22800000,
             "sourceId": "red:19049"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/156-el-patio-casa",
+            "observedPrice": 22800000,
+            "sourceId": "nawy:156"
           },
           {
             "name": "Property Finder",
@@ -23719,7 +23711,7 @@
             "sourceId": "property-finder:bad9ccdc-2e99-4389-a2ef-39f4cfa58eb5"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-15T06:31:30.279Z"
       }
     },
     {
@@ -29323,12 +29315,10 @@
       "type": "residential",
       "priceMin": 6800000,
       "unitTypes": [
-        "Villa",
-        "Twinhouse",
         "Apartment",
-        "Townhouse",
-        "Penthouse",
-        "Studio"
+        "Town House",
+        "Twin House",
+        "Villa"
       ],
       "areaMin": 85,
       "areaMax": 371,
@@ -29341,8 +29331,8 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 8 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -29351,16 +29341,16 @@
         "sourceCount": 3,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/798-garden-lakes",
-            "observedPrice": 6800000,
-            "sourceId": "nawy:798"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/38-garden-lakes",
             "observedPrice": 6800000,
             "sourceId": "red:38"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/798-garden-lakes",
+            "observedPrice": 6800000,
+            "sourceId": "nawy:798"
           },
           {
             "name": "Property Finder",
@@ -29369,7 +29359,7 @@
             "sourceId": "property-finder:cf2b5e90-d90c-43f7-b895-802d9b80cb1c"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-15T06:31:30.279Z"
       }
     },
     {
@@ -33535,8 +33525,8 @@
       "priceMin": 7080765,
       "unitTypes": [
         "Apartment",
-        "Townhouse",
-        "Duplex"
+        "Duplex",
+        "Town House"
       ],
       "areaMin": 78,
       "areaMax": 340,
@@ -33549,8 +33539,8 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 10 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -33559,19 +33549,19 @@
         "sourceCount": 2,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1249-club-hills-residence",
-            "observedPrice": 7080765,
-            "sourceId": "nawy:1249"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/30843-club-hills",
             "observedPrice": 7080765,
             "sourceId": "red:30843"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1249-club-hills-residence",
+            "observedPrice": 7080765,
+            "sourceId": "nawy:1249"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-15T06:31:30.279Z"
       }
     },
     {
@@ -38456,9 +38446,9 @@
       "type": "residential",
       "priceMin": 22000000,
       "unitTypes": [
-        "Townhouse",
-        "Villa",
-        "Twinhouse"
+        "Twin House",
+        "Town House",
+        "Villa"
       ],
       "areaMin": 102,
       "areaMax": 408,
@@ -38471,8 +38461,8 @@
         6
       ],
       "paymentPlan": "10% Down Payment, 7 Years Installments",
-      "downPayment": 10,
-      "installmentYears": 7,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -38487,19 +38477,19 @@
             "sourceId": "property-finder:90f37388-2bf9-4e8e-8d80-b0ee9d04297a"
           },
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1061-vaha",
-            "observedPrice": 22050000,
-            "sourceId": "nawy:1061"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/30831-vaha",
             "observedPrice": 22050000,
             "sourceId": "red:30831"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1061-vaha",
+            "observedPrice": 22050000,
+            "sourceId": "nawy:1061"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-15T06:31:30.279Z"
       }
     },
     {
@@ -42320,12 +42310,12 @@
       "type": "residential",
       "priceMin": 4945000,
       "unitTypes": [
-        "Apartment",
-        "Townhouse",
-        "Duplex",
-        "Penthouse",
+        "Town House",
+        "Twin House",
         "Villa",
-        "Twinhouse"
+        "Apartment",
+        "Penthouse",
+        "Duplex"
       ],
       "areaMin": 95,
       "areaMax": 474,
@@ -42338,8 +42328,8 @@
         6
       ],
       "paymentPlan": "22.5% Down Payment, 8 Years Installments",
-      "downPayment": 22.5,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -42348,16 +42338,16 @@
         "sourceCount": 3,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1155-at-east",
-            "observedPrice": 4945000,
-            "sourceId": "nawy:1155"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/30815-at-east",
             "observedPrice": 4945000,
             "sourceId": "red:30815"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1155-at-east",
+            "observedPrice": 4945000,
+            "sourceId": "nawy:1155"
           },
           {
             "name": "Property Finder",
@@ -42366,7 +42356,7 @@
             "sourceId": "property-finder:83039de6-b53b-4345-9a66-a709615e4905"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-15T06:31:30.279Z"
       }
     },
     {

@@ -6686,22 +6686,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/1290-jamila",
             "observedPrice": 4770984,
             "sourceId": "nawy:1290"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/new-jersey-developments/jamila",
-            "observedPrice": 5961000,
-            "sourceId": "property-finder:be835268-53e1-4587-835b-fb84832c8713"
           }
         ],
-        "updatedAt": "2026-11-13T12:29:26.382Z"
+        "updatedAt": "2026-11-15T00:45:41.013Z"
       }
     },
     {
@@ -11021,9 +11015,9 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 9900000,
+      "priceMin": 66000000,
       "unitTypes": [
-        "villa"
+        "Villa"
       ],
       "areaMin": 79,
       "areaMax": 344,
@@ -11036,21 +11030,15 @@
         6
       ],
       "paymentPlan": "5% Down Payment",
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/al-ahly-sabbour-developments/ten-islands",
-            "observedPrice": 9900000,
-            "sourceId": "property-finder:9d1b6b86-be6a-4018-a7b3-b9e0b30fa998"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30930-ten-islands",
@@ -11058,7 +11046,7 @@
             "sourceId": "red:30930"
           }
         ],
-        "updatedAt": "2026-11-13T02:51:36.792Z"
+        "updatedAt": "2026-11-15T00:45:41.013Z"
       }
     },
     {

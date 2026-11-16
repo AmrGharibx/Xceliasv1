@@ -335,22 +335,16 @@
         5,
         6
       ],
-      "paymentPlan": "5% Down Payment, 6 Years Installments",
+      "paymentPlan": "5% Down Payment",
       "downPayment": 5,
-      "installmentYears": 6,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/123-swanlake-el-gouna",
-            "observedPrice": 25000000,
-            "sourceId": "nawy:123"
-          },
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/hassan-allam-holding/swanlake-el-gouna",
@@ -358,7 +352,7 @@
             "sourceId": "property-finder:b364916e-d443-47af-b26c-c3857eab37f9"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T02:52:53.607Z"
       }
     },
     {
@@ -822,8 +816,8 @@
       "type": "residential",
       "priceMin": 12000000,
       "unitTypes": [
-        "Chalet",
-        "Townhouse"
+        "townhouse",
+        "apartment"
       ],
       "areaMin": 64,
       "areaMax": 268,
@@ -835,30 +829,24 @@
         5,
         6
       ],
-      "paymentPlan": "15% Down Payment, 6 Years Installments",
+      "paymentPlan": "15% Down Payment",
       "downPayment": 15,
-      "installmentYears": 6,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/the-land-developers/il-bayou",
             "observedPrice": 12000000,
             "sourceId": "property-finder:9150aa0f-8aa4-4c3c-9760-eb1b2152a1a5"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/978-il-bayou",
-            "observedPrice": 13654075,
-            "sourceId": "nawy:978"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T02:52:53.607Z"
       }
     },
     {
@@ -871,8 +859,8 @@
       "type": "residential",
       "priceMin": 12000000,
       "unitTypes": [
-        "Chalet",
-        "Townhouse"
+        "townhouse",
+        "apartment"
       ],
       "areaMin": 56,
       "areaMax": 233,
@@ -884,30 +872,24 @@
         5,
         6
       ],
-      "paymentPlan": "15% Down Payment, 6 Years Installments",
+      "paymentPlan": "15% Down Payment",
       "downPayment": 15,
-      "installmentYears": 6,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/the-land-developers/il-bayou",
             "observedPrice": 12000000,
             "sourceId": "property-finder:9150aa0f-8aa4-4c3c-9760-eb1b2152a1a5"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/978-il-bayou",
-            "observedPrice": 13654075,
-            "sourceId": "nawy:978"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T02:52:53.607Z"
       }
     },
     {
@@ -1469,8 +1451,8 @@
       "type": "residential",
       "priceMin": 12000000,
       "unitTypes": [
-        "Chalet",
-        "Townhouse"
+        "townhouse",
+        "apartment"
       ],
       "areaMin": 65,
       "areaMax": 273,
@@ -1482,30 +1464,24 @@
         5,
         6
       ],
-      "paymentPlan": "15% Down Payment, 6 Years Installments",
+      "paymentPlan": "15% Down Payment",
       "downPayment": 15,
-      "installmentYears": 6,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/the-land-developers/il-bayou",
             "observedPrice": 12000000,
             "sourceId": "property-finder:9150aa0f-8aa4-4c3c-9760-eb1b2152a1a5"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/978-il-bayou",
-            "observedPrice": 13654075,
-            "sourceId": "nawy:978"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T02:52:53.607Z"
       }
     },
     {
@@ -1926,9 +1902,11 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Town House"
+        "apartment",
+        "townhouse",
+        "villa"
       ],
-      "downPayment": 0,
+      "downPayment": 10,
       "installmentYears": 0,
       "paymentPlan": "10% Down Payment",
       "catalogMeta": {
@@ -1942,16 +1920,22 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30949-siyal",
             "observedPrice": 22000000,
             "sourceId": "red:30949"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/orascom-development/siyal-makadi-heights",
+            "observedPrice": 22695000,
+            "sourceId": "property-finder:e5e8e6a6-eb17-4a83-a28d-8ad5ea97f773"
           }
         ],
-        "updatedAt": "2026-11-15T18:24:59.767Z"
+        "updatedAt": "2026-11-16T02:52:53.607Z"
       }
     },
     {
@@ -2003,14 +1987,13 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Studio",
-        "Apartment",
-        "Town House",
-        "Villa"
+        "villa",
+        "townhouse",
+        "apartment"
       ],
-      "downPayment": 0,
+      "downPayment": 10,
       "installmentYears": 0,
-      "paymentPlan": "10% Down Payment, 8 Years Installments",
+      "paymentPlan": "10% Down Payment",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2025",
@@ -2022,16 +2005,22 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30963-makadina",
             "observedPrice": 7400000,
             "sourceId": "red:30963"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/travco-properties/makadina",
+            "observedPrice": 7400000,
+            "sourceId": "property-finder:6f94f94b-9809-4220-9620-aa5688b81f76"
           }
         ],
-        "updatedAt": "2026-11-16T00:49:02.709Z"
+        "updatedAt": "2026-11-16T02:52:53.607Z"
       }
     },
     {

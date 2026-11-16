@@ -209,11 +209,10 @@
       "type": "residential",
       "priceMin": 12737554,
       "unitTypes": [
-        "duplex",
-        "apartment",
-        "villa",
-        "penthouse",
-        "townhouse"
+        "Chalet",
+        "Villa",
+        "Town House",
+        "Twin House"
       ],
       "areaMin": 98,
       "areaMax": 390,
@@ -226,29 +225,23 @@
         6
       ],
       "paymentPlan": "5% Down Payment",
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/266-masyaf",
             "observedPrice": 12737554,
             "sourceId": "red:266"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/m-squared/el-masyaf",
-            "observedPrice": 29720330,
-            "sourceId": "property-finder:d4223390-cb3b-4c7b-b968-35ec15127d11"
           }
         ],
-        "updatedAt": "2026-11-15T02:51:28.764Z"
+        "updatedAt": "2026-11-16T18:28:12.346Z"
       }
     },
     {
@@ -2536,7 +2529,7 @@
       ],
       "priceMin": 3078000,
       "unitTypes": [
-        "apartment"
+        "Apartment"
       ],
       "areaMin": 79,
       "areaMax": 347,
@@ -2549,29 +2542,23 @@
         6
       ],
       "paymentPlan": "20% Down Payment",
-      "downPayment": 20,
+      "downPayment": 0,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30850-golf-porto-marina",
             "observedPrice": 3078000,
             "sourceId": "red:30850"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/amer-group-company/golf-porto-marina",
-            "observedPrice": 7000000,
-            "sourceId": "property-finder:92a099b7-964f-4ada-80b4-acc318e3328e"
           }
         ],
-        "updatedAt": "2026-11-15T02:51:28.764Z"
+        "updatedAt": "2026-11-16T18:28:12.346Z"
       }
     },
     {
@@ -4467,7 +4454,7 @@
       ],
       "priceMin": 3078000,
       "unitTypes": [
-        "apartment"
+        "Apartment"
       ],
       "areaMin": 84,
       "areaMax": 367,
@@ -4480,29 +4467,23 @@
         6
       ],
       "paymentPlan": "20% Down Payment",
-      "downPayment": 20,
+      "downPayment": 0,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30850-golf-porto-marina",
             "observedPrice": 3078000,
             "sourceId": "red:30850"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/amer-group-company/golf-porto-marina",
-            "observedPrice": 7000000,
-            "sourceId": "property-finder:92a099b7-964f-4ada-80b4-acc318e3328e"
           }
         ],
-        "updatedAt": "2026-11-15T02:51:28.764Z"
+        "updatedAt": "2026-11-16T18:28:12.346Z"
       }
     },
     {

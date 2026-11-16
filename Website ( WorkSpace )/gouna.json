@@ -1019,14 +1019,12 @@
       "type": "residential",
       "priceMin": 8020000,
       "unitTypes": [
-        "Townhouse",
         "Villa",
-        "Apartment",
-        "Loft",
+        "Twin House",
+        "Duplex",
         "Penthouse",
         "Chalet",
-        "Duplex",
-        "Twinhouse"
+        "Town House"
       ],
       "areaMin": 65,
       "areaMax": 273,
@@ -1039,29 +1037,23 @@
         6
       ],
       "paymentPlan": "10% Down Payment, 7 Years Installments",
-      "downPayment": 10,
-      "installmentYears": 7,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/52-makadi-heights",
             "observedPrice": 8020000,
             "sourceId": "red:52"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/454-makadi-heights",
-            "observedPrice": 11270000,
-            "sourceId": "nawy:454"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -1892,17 +1884,15 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Townhouse",
         "Villa",
-        "Apartment",
-        "Loft",
+        "Twin House",
+        "Duplex",
         "Penthouse",
         "Chalet",
-        "Duplex",
-        "Twinhouse"
+        "Town House"
       ],
-      "downPayment": 10,
-      "installmentYears": 7,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "10% Down Payment, 7 Years Installments",
       "catalogMeta": {
         "status": "observed",
@@ -1915,22 +1905,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/52-makadi-heights",
             "observedPrice": 8020000,
             "sourceId": "red:52"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/454-makadi-heights",
-            "observedPrice": 11270000,
-            "sourceId": "nawy:454"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -2019,13 +2003,13 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
+        "Studio",
         "Apartment",
-        "Townhouse",
-        "Twinhouse",
+        "Town House",
         "Villa"
       ],
-      "downPayment": 10,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "10% Down Payment, 8 Years Installments",
       "catalogMeta": {
         "status": "observed",
@@ -2038,28 +2022,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30963-makadina",
             "observedPrice": 7400000,
             "sourceId": "red:30963"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/travco-properties/makadina",
-            "observedPrice": 7400000,
-            "sourceId": "property-finder:6f94f94b-9809-4220-9620-aa5688b81f76"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/2025-makadina",
-            "observedPrice": 8000000,
-            "sourceId": "nawy:2025"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -2089,17 +2061,15 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Townhouse",
         "Villa",
-        "Apartment",
-        "Loft",
+        "Twin House",
+        "Duplex",
         "Penthouse",
         "Chalet",
-        "Duplex",
-        "Twinhouse"
+        "Town House"
       ],
-      "downPayment": 10,
-      "installmentYears": 7,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "10% Down Payment, 7 Years Installments",
       "catalogMeta": {
         "status": "observed",
@@ -2112,22 +2082,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/52-makadi-heights",
             "observedPrice": 8020000,
             "sourceId": "red:52"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/454-makadi-heights",
-            "observedPrice": 11270000,
-            "sourceId": "nawy:454"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     }
   ],

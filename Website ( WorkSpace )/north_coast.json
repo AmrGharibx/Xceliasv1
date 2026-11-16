@@ -52,12 +52,10 @@
       "zone": "Ras El Hekma",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 14980000,
+      "priceMin": 16800000,
       "unitTypes": [
         "Chalet",
-        "Twinhouse",
-        "Townhouse",
-        "Villa"
+        "Twin House"
       ],
       "areaMin": 92,
       "areaMax": 369,
@@ -70,35 +68,23 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 7 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 7,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/175-la-vista-ras-el-hekma",
-            "observedPrice": 14980000,
-            "sourceId": "nawy:175"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19041-la-vista-ras-el-hikma",
             "observedPrice": 16800000,
             "sourceId": "red:19041"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/la-vista-developments/la-vista-ras-el-hekma",
-            "observedPrice": 24800000,
-            "sourceId": "property-finder:75e44164-bb08-4ead-836d-a81f9d09a3a5"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -137,14 +123,11 @@
       "zone": "Ras El Hekma",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 6612000,
+      "priceMin": 7405778,
       "unitTypes": [
-        "Chalet",
         "Villa",
-        "Twinhouse",
-        "Apartment",
-        "Duplex",
-        "Studio"
+        "Chalet",
+        "Twin House"
       ],
       "areaMin": 105,
       "areaMax": 422,
@@ -157,21 +140,15 @@
         6
       ],
       "paymentPlan": "20% Down Payment, 8 Years Installments",
-      "downPayment": 20,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1671-youd",
-            "observedPrice": 6612000,
-            "sourceId": "nawy:1671"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30917-youd",
@@ -179,7 +156,7 @@
             "sourceId": "red:30917"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -480,12 +457,10 @@
       "type": "residential",
       "priceMin": 21465000,
       "unitTypes": [
-        "Apartment",
         "Villa",
-        "Chalet",
-        "Studio",
-        "Townhouse",
-        "Twinhouse"
+        "Twin House",
+        "Town House",
+        "Chalet"
       ],
       "areaMin": 105,
       "areaMax": 422,
@@ -498,29 +473,23 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 8 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19203-ogami",
             "observedPrice": 21465000,
             "sourceId": "red:19203"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1237-ogami-ras-el-hekma",
-            "observedPrice": 22753000,
-            "sourceId": "nawy:1237"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -674,14 +643,13 @@
       "type": "residential",
       "priceMin": 11264000,
       "unitTypes": [
-        "Cabin",
-        "Loft",
         "Chalet",
+        "Apartment",
+        "Town House",
         "Villa",
-        "Twinhouse",
-        "Townhouse",
-        "Penthouse",
-        "Duplex"
+        "Loft",
+        "Studio",
+        "Penthouse"
       ],
       "areaMin": 109,
       "areaMax": 438,
@@ -693,29 +661,23 @@
         5
       ],
       "paymentPlan": "5% Down Payment, 8 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19025-the-med",
             "observedPrice": 11264000,
             "sourceId": "red:19025"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/761-the-med",
-            "observedPrice": 13243000,
-            "sourceId": "nawy:761"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -726,16 +688,11 @@
       "zone": "Ras El Hekma",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 6437200,
+      "priceMin": 7930000,
       "unitTypes": [
-        "Townhouse",
-        "Villa",
-        "Apartment",
-        "Twinhouse",
+        "Town House",
         "Chalet",
-        "Duplex",
-        "Studio",
-        "Penthouse"
+        "Apartment"
       ],
       "areaMin": 97,
       "areaMax": 390,
@@ -748,35 +705,23 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 8 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/hyde-park-developments/seashore",
-            "observedPrice": 6437200,
-            "sourceId": "property-finder:0ad87751-8a94-4eb6-ae88-bf4fcd245a39"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/40-seashore",
             "observedPrice": 7930000,
             "sourceId": "red:40"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/522-hyde-park-north-seashore",
-            "observedPrice": 9060000,
-            "sourceId": "nawy:522"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -787,17 +732,15 @@
       "zone": "Ras El Hekma",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 19051200,
+      "priceMin": 19692000,
       "unitTypes": [
-        "Twinhouse",
-        "Loft",
-        "Chalet",
-        "Penthouse",
         "Apartment",
-        "Townhouse",
         "Villa",
+        "Twin House",
         "Duplex",
-        "Family House"
+        "Chalet",
+        "Loft",
+        "Town House"
       ],
       "areaMin": 109,
       "areaMax": 434,
@@ -810,35 +753,23 @@
         6
       ],
       "paymentPlan": "3% Down Payment, 8 Years Installments",
-      "downPayment": 3,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/sodic/june",
-            "observedPrice": 19051200,
-            "sourceId": "property-finder:f45feeee-cf54-44e3-8357-820f000cef82"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19027-june",
             "observedPrice": 19692000,
             "sourceId": "red:19027"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/510-june",
-            "observedPrice": 25204000,
-            "sourceId": "nawy:510"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -951,12 +882,12 @@
       "zone": "Ras El Hekma",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 6910000,
+      "priceMin": 8500000,
       "unitTypes": [
-        "Chalet",
-        "Townhouse",
-        "Apartment",
-        "Studio"
+        "Villa",
+        "Twin House",
+        "Town House",
+        "Chalet"
       ],
       "areaMin": 109,
       "areaMax": 434,
@@ -969,27 +900,15 @@
         6
       ],
       "paymentPlan": "2.5% Down Payment, 10 Years Installments",
-      "downPayment": 2.5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/il-cazar-developments/safia-ras-el-hekma",
-            "observedPrice": 6910000,
-            "sourceId": "property-finder:29d777ae-b220-4700-8484-b6dde7a22dec"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1199-safia-ras-el-hekma",
-            "observedPrice": 6913764,
-            "sourceId": "nawy:1199"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19193-safia",
@@ -997,7 +916,7 @@
             "sourceId": "red:19193"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -1079,15 +998,14 @@
       "zone": "Ras El Hekma",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 7722000,
+      "priceMin": 8479000,
       "unitTypes": [
-        "Chalet",
-        "Townhouse",
         "Villa",
-        "Twinhouse",
+        "Twin House",
+        "Chalet",
+        "Town House",
         "Apartment",
-        "Cabin",
-        "Duplex"
+        "Loft"
       ],
       "areaMin": 99,
       "areaMax": 397,
@@ -1100,35 +1018,23 @@
         6
       ],
       "paymentPlan": "10% Down Payment, 9 Years Installments",
-      "downPayment": 10,
-      "installmentYears": 9,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/927-salt",
-            "observedPrice": 7722000,
-            "sourceId": "nawy:927"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/259-salt",
             "observedPrice": 8479000,
             "sourceId": "red:259"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/tatweer-misr/salt",
-            "observedPrice": 35000000,
-            "sourceId": "property-finder:51ece1b0-f3de-48e9-934c-9ab5f69231e7"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -1139,14 +1045,13 @@
       "zone": "Ras El Hekma",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 12403000,
+      "priceMin": 17200000,
       "unitTypes": [
-        "Chalet",
-        "Townhouse",
         "Villa",
-        "Apartment",
-        "Twinhouse",
-        "Penthouse"
+        "Twin House",
+        "Chalet",
+        "Penthouse",
+        "Town House"
       ],
       "areaMin": 96,
       "areaMax": 382,
@@ -1159,27 +1064,15 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 8 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1212-mar-bay-ras-el-hekma",
-            "observedPrice": 12403000,
-            "sourceId": "nawy:1212"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/al-marasem-real-estate-development-company/mar-bay-ras-el-hekma",
-            "observedPrice": 14028000,
-            "sourceId": "property-finder:cf7aff4c-df2e-4824-87f1-2cbd70fa0184"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19229-mar-bay",
@@ -1187,7 +1080,7 @@
             "sourceId": "red:19229"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -1198,12 +1091,12 @@
       "zone": "Ras El Hekma",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 7164902,
+      "priceMin": 10235575,
       "unitTypes": [
-        "Chalet",
-        "Townhouse",
         "Villa",
-        "Twinhouse"
+        "Chalet",
+        "Town House",
+        "Twin House"
       ],
       "areaMin": 108,
       "areaMax": 432,
@@ -1216,27 +1109,15 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 8 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/gates-developments/lyv-caesar",
-            "observedPrice": 7164902,
-            "sourceId": "property-finder:996985ed-43e7-4a12-a2b5-f6013f1bdae3"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1159-lyv-caesar-ras-el-hekma",
-            "observedPrice": 7909175,
-            "sourceId": "nawy:1159"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19217-lyv-caesar",
@@ -1244,7 +1125,7 @@
             "sourceId": "red:19217"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -1255,13 +1136,11 @@
       "zone": "Ras El Hekma",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 33584100,
+      "priceMin": 36823000,
       "unitTypes": [
-        "Apartment",
-        "Chalet",
-        "Townhouse",
+        "Twin House",
         "Villa",
-        "Twinhouse"
+        "Town House"
       ],
       "areaMin": 92,
       "areaMax": 370,
@@ -1274,21 +1153,15 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 8 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/21-caesar",
-            "observedPrice": 33584100,
-            "sourceId": "nawy:21"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19200-caesar",
@@ -1296,7 +1169,7 @@
             "sourceId": "red:19200"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -1490,10 +1363,9 @@
       "type": "residential",
       "priceMin": 12000000,
       "unitTypes": [
-        "Villa",
         "Chalet",
-        "Twinhouse",
-        "Penthouse"
+        "Twin House",
+        "Villa"
       ],
       "areaMin": 66,
       "areaMax": 283,
@@ -1506,29 +1378,23 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 10 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
-        "confidence": "verified",
-        "sourceCount": 2,
+        "confidence": "high",
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30927-telal-soul",
             "observedPrice": 12000000,
             "sourceId": "red:30927"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/74-telal-north-coast",
-            "observedPrice": 42184000,
-            "sourceId": "nawy:74"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -1581,16 +1447,11 @@
       "zone": "Sidi Abdel Rahman",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 8500000,
+      "priceMin": 12366703,
       "unitTypes": [
         "Chalet",
-        "Townhouse",
-        "Villa",
-        "Twinhouse",
-        "Penthouse",
-        "Loft",
-        "Apartment",
-        "Cabin"
+        "Twin House",
+        "Villa"
       ],
       "areaMin": 66,
       "areaMax": 284,
@@ -1603,21 +1464,15 @@
         6
       ],
       "paymentPlan": "10% Down Payment, 6 Years Installments",
-      "downPayment": 10,
-      "installmentYears": 6,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/929-solare",
-            "observedPrice": 8500000,
-            "sourceId": "nawy:929"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/260-solare",
@@ -1625,7 +1480,7 @@
             "sourceId": "red:260"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -3076,7 +2931,7 @@
       "layouts": [
         "https://cityedgedevelopments.com/project/downtown"
       ],
-      "priceMin": 6179000,
+      "priceMin": 7083000,
       "unitTypes": [
         "Apartment"
       ],
@@ -3091,21 +2946,15 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 3 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 3,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1335-downtown-extension",
-            "observedPrice": 6179000,
-            "sourceId": "nawy:1335"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19158-downtown-new-alamein",
@@ -3113,7 +2962,7 @@
             "sourceId": "red:19158"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -3232,14 +3081,11 @@
       "layouts": [
         "https://www.enjazproperty.com/en/project/youd-north-coast/"
       ],
-      "priceMin": 6612000,
+      "priceMin": 7405778,
       "unitTypes": [
-        "Chalet",
         "Villa",
-        "Twinhouse",
-        "Apartment",
-        "Duplex",
-        "Studio"
+        "Chalet",
+        "Twin House"
       ],
       "areaMin": 80,
       "areaMax": 349,
@@ -3252,21 +3098,15 @@
         6
       ],
       "paymentPlan": "20% Down Payment, 8 Years Installments",
-      "downPayment": 20,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1671-youd",
-            "observedPrice": 6612000,
-            "sourceId": "nawy:1671"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30917-youd",
@@ -3274,7 +3114,7 @@
             "sourceId": "red:30917"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -3291,15 +3131,13 @@
       "layouts": [
         "https://tatweermisr.com/project/fouka-bay"
       ],
-      "priceMin": 9180000,
+      "priceMin": 13535000,
       "unitTypes": [
-        "Apartment",
-        "Chalet",
         "Villa",
-        "Townhouse",
-        "Duplex",
-        "Twinhouse",
-        "Penthouse"
+        "Chalet",
+        "Service Apartment",
+        "Town House",
+        "Twin House"
       ],
       "areaMin": 74,
       "areaMax": 324,
@@ -3312,27 +3150,15 @@
         6
       ],
       "paymentPlan": "10% Down Payment, 9 Years Installments",
-      "downPayment": 10,
-      "installmentYears": 9,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/84-fouka-bay",
-            "observedPrice": 9180000,
-            "sourceId": "nawy:84"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/tatweer-misr/fouka-bay",
-            "observedPrice": 13258120,
-            "sourceId": "property-finder:57a63654-ebfc-47e8-b345-c1b1f0eb16d5"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/48-fouka-bay",
@@ -3340,7 +3166,7 @@
             "sourceId": "red:48"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -4023,14 +3849,14 @@
       "layouts": [
         "https://lmd.com.eg/project/zoya/"
       ],
-      "priceMin": 7726320,
+      "priceMin": 11458788,
       "unitTypes": [
+        "Hotel Apartment",
+        "Cabin",
         "Chalet",
-        "Townhouse",
-        "Villa",
-        "Apartment",
-        "Twinhouse",
-        "Cabin"
+        "Twin House",
+        "Town House",
+        "Villa"
       ],
       "areaMin": 74,
       "areaMax": 325,
@@ -4043,35 +3869,23 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 8 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/landmark-developments/zoya-ghazala-bay",
-            "observedPrice": 7726320,
-            "sourceId": "property-finder:72d58cad-44a3-4b44-96d0-f1676dd6d5f5"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19039-zoya-ghazala-bay",
             "observedPrice": 11458788,
             "sourceId": "red:19039"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/238-zoya-ghazala-bay",
-            "observedPrice": 11500000,
-            "sourceId": "nawy:238"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -4300,11 +4114,9 @@
       "layouts": [
         "http://www.newcities.gov.eg/english/New_Communities/Marina_El_Alamein/default.aspx"
       ],
-      "priceMin": 10125000,
+      "priceMin": 15282000,
       "unitTypes": [
-        "Chalet",
-        "Studio",
-        "Apartment"
+        "Chalet"
       ],
       "areaMin": 87,
       "areaMax": 380,
@@ -4317,21 +4129,15 @@
         6
       ],
       "paymentPlan": "15% Down Payment, 4 Years Installments",
-      "downPayment": 15,
-      "installmentYears": 4,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1624-the-island-marina-5",
-            "observedPrice": 10125000,
-            "sourceId": "nawy:1624"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30925-the-island-marina-5",
@@ -4339,7 +4145,7 @@
             "sourceId": "red:30925"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -4356,13 +4162,8 @@
       "layouts": [
         "https://maximdevelopments.com/project/bo-islands"
       ],
-      "priceMin": 9429168,
+      "priceMin": 9560129,
       "unitTypes": [
-        "Chalet",
-        "Townhouse",
-        "Duplex",
-        "Penthouse",
-        "Villa",
         "Cabin"
       ],
       "areaMin": 78,
@@ -4376,35 +4177,23 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 9 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 9,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 3,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/mountain-view/crysta",
-            "observedPrice": 9429168,
-            "sourceId": "property-finder:dec69b8b-deab-4106-8c25-3605dcf886e6"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30946-crysta",
             "observedPrice": 9560129,
             "sourceId": "red:30946"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1648-crysta",
-            "observedPrice": 9757007,
-            "sourceId": "nawy:1648"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -4602,10 +4391,8 @@
       ],
       "priceMin": 4999680,
       "unitTypes": [
-        "Chalet",
-        "Apartment",
-        "Studio",
-        "Twinhouse"
+        "Cabin",
+        "Town House"
       ],
       "areaMin": 87,
       "areaMax": 383,
@@ -4618,35 +4405,23 @@
         6
       ],
       "paymentPlan": "10% Down Payment, 10 Years Installments",
-      "downPayment": 10,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 3,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30909-bianchi-ilios",
             "observedPrice": 4999680,
             "sourceId": "red:30909"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/528-bianchi-ilios",
-            "observedPrice": 6858000,
-            "sourceId": "nawy:528"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/developer-x/bianchi-ilios",
-            "observedPrice": 26200000,
-            "sourceId": "property-finder:1cffe0b1-c6b9-4676-84de-cab0af7e01f8"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -4985,14 +4760,13 @@
       "layouts": [
         "https://www.facebook.com/MarsaBaghush/"
       ],
-      "priceMin": 15703000,
+      "priceMin": 19065000,
       "unitTypes": [
-        "Chalet",
-        "Penthouse",
         "Villa",
-        "Twinhouse",
-        "Townhouse",
-        "Duplex"
+        "Apartment",
+        "Chalet",
+        "Town House",
+        "Twin House"
       ],
       "areaMin": 85,
       "areaMax": 370,
@@ -5005,35 +4779,23 @@
         6
       ],
       "paymentPlan": "10% Down Payment, 9 Years Installments",
-      "downPayment": 10,
-      "installmentYears": 9,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/shehab-a-mazhar/marsa-baghush",
-            "observedPrice": 15703000,
-            "sourceId": "property-finder:a49de7a8-f3e7-4786-9bb6-c8583e3dda6d"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30862-marsa-baghush",
             "observedPrice": 19065000,
             "sourceId": "red:30862"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/789-marsa-baghush",
-            "observedPrice": 19800000,
-            "sourceId": "nawy:789"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -5575,9 +5337,8 @@
       "layouts": [
         "https://arabia-holding.com/project/bungalows/"
       ],
-      "priceMin": 2304806,
+      "priceMin": 3299670,
       "unitTypes": [
-        "Chalet",
         "Studio"
       ],
       "areaMin": 78,
@@ -5591,35 +5352,23 @@
         6
       ],
       "paymentPlan": "10% Down Payment, 6 Years Installments",
-      "downPayment": 10,
-      "installmentYears": 6,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/arabia-developments/bungalows",
-            "observedPrice": 2304806,
-            "sourceId": "property-finder:6ff7f232-f3db-4523-b799-0608a813bdbf"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30958-bungalows",
             "observedPrice": 3299670,
             "sourceId": "red:30958"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1231-bungalows",
-            "observedPrice": 4280000,
-            "sourceId": "nawy:1231"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -6167,14 +5916,10 @@
       "amenities": "Tanoak Hotel, Crystal Lagoons, Sports Club, Community Centers",
       "masterplan": "https://madaar.com/azha-north/",
       "layouts": "https://madaar.com/azha-north/",
-      "priceMin": 14461000,
+      "priceMin": 17724000,
       "unitTypes": [
         "Chalet",
-        "Townhouse",
-        "Villa",
-        "Twinhouse",
-        "Duplex",
-        "Penthouse"
+        "Villa"
       ],
       "areaMin": 85,
       "areaMax": 371,
@@ -6186,20 +5931,14 @@
       ],
       "paymentPlan": "0% Down Payment, 10 Years Installments",
       "downPayment": 0,
-      "installmentYears": 10,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/757-azha-north-coast",
-            "observedPrice": 14461000,
-            "sourceId": "nawy:757"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19032-azha",
@@ -6207,7 +5946,7 @@
             "sourceId": "red:19032"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -6222,13 +5961,14 @@
       "amenities": "Private Beach, Clubhouse, Kids Area, Pharmacy & Mini Market",
       "masterplan": "https://egodevelopments.com/project/masaya",
       "layouts": "https://egodevelopments.com/project/masaya",
-      "priceMin": 6081075,
+      "priceMin": 8951000,
       "unitTypes": [
-        "Apartment",
-        "Chalet",
         "Villa",
         "Duplex",
-        "Twinhouse",
+        "Chalet",
+        "Twin House",
+        "Service Apartment",
+        "Apartment",
         "Studio"
       ],
       "areaMin": 79,
@@ -6242,35 +5982,23 @@
         6
       ],
       "paymentPlan": "10% Down Payment, 8 Years Installments",
-      "downPayment": 10,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 3,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/egygab/masaya",
-            "observedPrice": 6081075,
-            "sourceId": "property-finder:93cba741-760b-4ab3-b5da-1957064b1482"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19021-masaya",
             "observedPrice": 8951000,
             "sourceId": "red:19021"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/788-masaya",
-            "observedPrice": 10895000,
-            "sourceId": "nawy:788"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -7700,14 +7428,13 @@
       "type": "residential",
       "priceMin": 11264000,
       "unitTypes": [
-        "Cabin",
-        "Loft",
         "Chalet",
+        "Apartment",
+        "Town House",
         "Villa",
-        "Twinhouse",
-        "Townhouse",
-        "Penthouse",
-        "Duplex"
+        "Loft",
+        "Studio",
+        "Penthouse"
       ],
       "areaMin": 79,
       "areaMax": 345,
@@ -7719,29 +7446,23 @@
         5
       ],
       "paymentPlan": "5% Down Payment, 8 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19025-the-med",
             "observedPrice": 11264000,
             "sourceId": "red:19025"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/761-the-med",
-            "observedPrice": 13243000,
-            "sourceId": "nawy:761"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -8002,16 +7723,11 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 8500000,
+      "priceMin": 12366703,
       "unitTypes": [
         "Chalet",
-        "Townhouse",
-        "Villa",
-        "Twinhouse",
-        "Penthouse",
-        "Loft",
-        "Apartment",
-        "Cabin"
+        "Twin House",
+        "Villa"
       ],
       "areaMin": 74,
       "areaMax": 322,
@@ -8024,21 +7740,15 @@
         6
       ],
       "paymentPlan": "10% Down Payment, 6 Years Installments",
-      "downPayment": 10,
-      "installmentYears": 6,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/929-solare",
-            "observedPrice": 8500000,
-            "sourceId": "nawy:929"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/260-solare",
@@ -8046,7 +7756,7 @@
             "sourceId": "red:260"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -8513,14 +8223,13 @@
       "type": "residential",
       "priceMin": 11264000,
       "unitTypes": [
-        "Cabin",
-        "Loft",
         "Chalet",
+        "Apartment",
+        "Town House",
         "Villa",
-        "Twinhouse",
-        "Townhouse",
-        "Penthouse",
-        "Duplex"
+        "Loft",
+        "Studio",
+        "Penthouse"
       ],
       "areaMin": 79,
       "areaMax": 346,
@@ -8532,29 +8241,23 @@
         5
       ],
       "paymentPlan": "5% Down Payment, 8 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19025-the-med",
             "observedPrice": 11264000,
             "sourceId": "red:19025"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/761-the-med",
-            "observedPrice": 13243000,
-            "sourceId": "nawy:761"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -8565,15 +8268,14 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 7722000,
+      "priceMin": 8479000,
       "unitTypes": [
-        "Chalet",
-        "Townhouse",
         "Villa",
-        "Twinhouse",
+        "Twin House",
+        "Chalet",
+        "Town House",
         "Apartment",
-        "Cabin",
-        "Duplex"
+        "Loft"
       ],
       "areaMin": 86,
       "areaMax": 378,
@@ -8586,35 +8288,23 @@
         6
       ],
       "paymentPlan": "10% Down Payment, 9 Years Installments",
-      "downPayment": 10,
-      "installmentYears": 9,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/927-salt",
-            "observedPrice": 7722000,
-            "sourceId": "nawy:927"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/259-salt",
             "observedPrice": 8479000,
             "sourceId": "red:259"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/tatweer-misr/salt",
-            "observedPrice": 35000000,
-            "sourceId": "property-finder:51ece1b0-f3de-48e9-934c-9ab5f69231e7"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -9090,15 +8780,13 @@
       "type": "residential",
       "priceMin": 19692000,
       "unitTypes": [
-        "Twinhouse",
-        "Loft",
-        "Chalet",
-        "Penthouse",
         "Apartment",
-        "Townhouse",
         "Villa",
+        "Twin House",
         "Duplex",
-        "Family House"
+        "Chalet",
+        "Loft",
+        "Town House"
       ],
       "areaMin": 74,
       "areaMax": 323,
@@ -9111,29 +8799,23 @@
         6
       ],
       "paymentPlan": "3% Down Payment, 8 Years Installments",
-      "downPayment": 3,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19027-june",
             "observedPrice": 19692000,
             "sourceId": "red:19027"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/510-june",
-            "observedPrice": 25204000,
-            "sourceId": "nawy:510"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -9146,15 +8828,13 @@
       "type": "residential",
       "priceMin": 19692000,
       "unitTypes": [
-        "Twinhouse",
-        "Loft",
-        "Chalet",
-        "Penthouse",
         "Apartment",
-        "Townhouse",
         "Villa",
+        "Twin House",
         "Duplex",
-        "Family House"
+        "Chalet",
+        "Loft",
+        "Town House"
       ],
       "areaMin": 83,
       "areaMax": 361,
@@ -9167,29 +8847,23 @@
         6
       ],
       "paymentPlan": "3% Down Payment, 8 Years Installments",
-      "downPayment": 3,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19027-june",
             "observedPrice": 19692000,
             "sourceId": "red:19027"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/510-june",
-            "observedPrice": 25204000,
-            "sourceId": "nawy:510"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -9200,17 +8874,15 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 19051200,
+      "priceMin": 19692000,
       "unitTypes": [
-        "Twinhouse",
-        "Loft",
-        "Chalet",
-        "Penthouse",
         "Apartment",
-        "Townhouse",
         "Villa",
+        "Twin House",
         "Duplex",
-        "Family House"
+        "Chalet",
+        "Loft",
+        "Town House"
       ],
       "areaMin": 78,
       "areaMax": 343,
@@ -9223,35 +8895,23 @@
         6
       ],
       "paymentPlan": "3% Down Payment, 8 Years Installments",
-      "downPayment": 3,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/sodic/june",
-            "observedPrice": 19051200,
-            "sourceId": "property-finder:f45feeee-cf54-44e3-8357-820f000cef82"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19027-june",
             "observedPrice": 19692000,
             "sourceId": "red:19027"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/510-june",
-            "observedPrice": 25204000,
-            "sourceId": "nawy:510"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -9306,15 +8966,13 @@
       "type": "residential",
       "priceMin": 19692000,
       "unitTypes": [
-        "Twinhouse",
-        "Loft",
-        "Chalet",
-        "Penthouse",
         "Apartment",
-        "Townhouse",
         "Villa",
+        "Twin House",
         "Duplex",
-        "Family House"
+        "Chalet",
+        "Loft",
+        "Town House"
       ],
       "areaMin": 74,
       "areaMax": 323,
@@ -9327,29 +8985,23 @@
         6
       ],
       "paymentPlan": "3% Down Payment, 8 Years Installments",
-      "downPayment": 3,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19027-june",
             "observedPrice": 19692000,
             "sourceId": "red:19027"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/510-june",
-            "observedPrice": 25204000,
-            "sourceId": "nawy:510"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -9362,12 +9014,10 @@
       "type": "residential",
       "priceMin": 21465000,
       "unitTypes": [
-        "Apartment",
         "Villa",
-        "Chalet",
-        "Studio",
-        "Townhouse",
-        "Twinhouse"
+        "Twin House",
+        "Town House",
+        "Chalet"
       ],
       "areaMin": 74,
       "areaMax": 324,
@@ -9380,29 +9030,23 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 8 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19203-ogami",
             "observedPrice": 21465000,
             "sourceId": "red:19203"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1237-ogami-ras-el-hekma",
-            "observedPrice": 22753000,
-            "sourceId": "nawy:1237"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -9415,14 +9059,13 @@
       "type": "residential",
       "priceMin": 11264000,
       "unitTypes": [
-        "Cabin",
-        "Loft",
         "Chalet",
+        "Apartment",
+        "Town House",
         "Villa",
-        "Twinhouse",
-        "Townhouse",
-        "Penthouse",
-        "Duplex"
+        "Loft",
+        "Studio",
+        "Penthouse"
       ],
       "areaMin": 79,
       "areaMax": 347,
@@ -9434,29 +9077,23 @@
         5
       ],
       "paymentPlan": "5% Down Payment, 8 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19025-the-med",
             "observedPrice": 11264000,
             "sourceId": "red:19025"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/761-the-med",
-            "observedPrice": 13243000,
-            "sourceId": "nawy:761"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -9467,16 +9104,11 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 8500000,
+      "priceMin": 12366703,
       "unitTypes": [
         "Chalet",
-        "Townhouse",
-        "Villa",
-        "Twinhouse",
-        "Penthouse",
-        "Loft",
-        "Apartment",
-        "Cabin"
+        "Twin House",
+        "Villa"
       ],
       "areaMin": 81,
       "areaMax": 356,
@@ -9489,21 +9121,15 @@
         6
       ],
       "paymentPlan": "10% Down Payment, 6 Years Installments",
-      "downPayment": 10,
-      "installmentYears": 6,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/929-solare",
-            "observedPrice": 8500000,
-            "sourceId": "nawy:929"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/260-solare",
@@ -9511,7 +9137,7 @@
             "sourceId": "red:260"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -9522,13 +9148,11 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 33584100,
+      "priceMin": 36823000,
       "unitTypes": [
-        "Apartment",
-        "Chalet",
-        "Townhouse",
+        "Twin House",
         "Villa",
-        "Twinhouse"
+        "Town House"
       ],
       "areaMin": 81,
       "areaMax": 353,
@@ -9541,21 +9165,15 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 8 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/21-caesar",
-            "observedPrice": 33584100,
-            "sourceId": "nawy:21"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19200-caesar",
@@ -9563,7 +9181,7 @@
             "sourceId": "red:19200"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -10180,14 +9798,11 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 5850000,
+      "priceMin": 7405778,
       "unitTypes": [
-        "Chalet",
         "Villa",
-        "Twinhouse",
-        "Apartment",
-        "Duplex",
-        "Studio"
+        "Chalet",
+        "Twin House"
       ],
       "areaMin": 83,
       "areaMax": 362,
@@ -10200,27 +9815,15 @@
         6
       ],
       "paymentPlan": "20% Down Payment, 8 Years Installments",
-      "downPayment": 20,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/al-ahly-sabbour-developments/youd",
-            "observedPrice": 5850000,
-            "sourceId": "property-finder:4bdd7f1f-8cc6-4501-9981-554af694535f"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1671-youd",
-            "observedPrice": 6612000,
-            "sourceId": "nawy:1671"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30917-youd",
@@ -10228,7 +9831,7 @@
             "sourceId": "red:30917"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -10239,14 +9842,11 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 5850000,
+      "priceMin": 7405778,
       "unitTypes": [
-        "Chalet",
         "Villa",
-        "Twinhouse",
-        "Apartment",
-        "Duplex",
-        "Studio"
+        "Chalet",
+        "Twin House"
       ],
       "areaMin": 88,
       "areaMax": 385,
@@ -10259,27 +9859,15 @@
         6
       ],
       "paymentPlan": "20% Down Payment, 8 Years Installments",
-      "downPayment": 20,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/al-ahly-sabbour-developments/youd",
-            "observedPrice": 5850000,
-            "sourceId": "property-finder:4bdd7f1f-8cc6-4501-9981-554af694535f"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1671-youd",
-            "observedPrice": 6612000,
-            "sourceId": "nawy:1671"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30917-youd",
@@ -10287,7 +9875,7 @@
             "sourceId": "red:30917"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -10298,14 +9886,11 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 5850000,
+      "priceMin": 7405778,
       "unitTypes": [
-        "Chalet",
         "Villa",
-        "Twinhouse",
-        "Apartment",
-        "Duplex",
-        "Studio"
+        "Chalet",
+        "Twin House"
       ],
       "areaMin": 75,
       "areaMax": 330,
@@ -10318,27 +9903,15 @@
         6
       ],
       "paymentPlan": "20% Down Payment, 8 Years Installments",
-      "downPayment": 20,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/al-ahly-sabbour-developments/youd",
-            "observedPrice": 5850000,
-            "sourceId": "property-finder:4bdd7f1f-8cc6-4501-9981-554af694535f"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1671-youd",
-            "observedPrice": 6612000,
-            "sourceId": "nawy:1671"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30917-youd",
@@ -10346,7 +9919,7 @@
             "sourceId": "red:30917"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -10357,14 +9930,11 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 5850000,
+      "priceMin": 7405778,
       "unitTypes": [
-        "Chalet",
         "Villa",
-        "Twinhouse",
-        "Apartment",
-        "Duplex",
-        "Studio"
+        "Chalet",
+        "Twin House"
       ],
       "areaMin": 83,
       "areaMax": 364,
@@ -10377,27 +9947,15 @@
         6
       ],
       "paymentPlan": "20% Down Payment, 8 Years Installments",
-      "downPayment": 20,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/al-ahly-sabbour-developments/youd",
-            "observedPrice": 5850000,
-            "sourceId": "property-finder:4bdd7f1f-8cc6-4501-9981-554af694535f"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1671-youd",
-            "observedPrice": 6612000,
-            "sourceId": "nawy:1671"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30917-youd",
@@ -10405,7 +9963,7 @@
             "sourceId": "red:30917"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -10720,12 +10278,10 @@
       "type": "residential",
       "priceMin": 21465000,
       "unitTypes": [
-        "Apartment",
         "Villa",
-        "Chalet",
-        "Studio",
-        "Townhouse",
-        "Twinhouse"
+        "Twin House",
+        "Town House",
+        "Chalet"
       ],
       "areaMin": 81,
       "areaMax": 352,
@@ -10738,29 +10294,23 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 8 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19203-ogami",
             "observedPrice": 21465000,
             "sourceId": "red:19203"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1237-ogami-ras-el-hekma",
-            "observedPrice": 22753000,
-            "sourceId": "nawy:1237"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -10883,13 +10433,11 @@
       "zone": "North Coast",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 33584100,
+      "priceMin": 36823000,
       "unitTypes": [
-        "Apartment",
-        "Chalet",
-        "Townhouse",
+        "Twin House",
         "Villa",
-        "Twinhouse"
+        "Town House"
       ],
       "areaMin": 84,
       "areaMax": 369,
@@ -10902,21 +10450,15 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 8 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/21-caesar",
-            "observedPrice": 33584100,
-            "sourceId": "nawy:21"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19200-caesar",
@@ -10924,7 +10466,7 @@
             "sourceId": "red:19200"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -12754,15 +12296,13 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Apartment",
         "Villa",
-        "Chalet",
-        "Studio",
-        "Townhouse",
-        "Twinhouse"
+        "Twin House",
+        "Town House",
+        "Chalet"
       ],
-      "downPayment": 5,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 8 Years Installments",
       "catalogMeta": {
         "status": "observed",
@@ -12775,22 +12315,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19203-ogami",
             "observedPrice": 21465000,
             "sourceId": "red:19203"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1237-ogami-ras-el-hekma",
-            "observedPrice": 22753000,
-            "sourceId": "nawy:1237"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -12802,18 +12336,16 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Twinhouse",
-        "Loft",
-        "Chalet",
-        "Penthouse",
         "Apartment",
-        "Townhouse",
         "Villa",
+        "Twin House",
         "Duplex",
-        "Family House"
+        "Chalet",
+        "Loft",
+        "Town House"
       ],
-      "downPayment": 3,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "3% Down Payment, 8 Years Installments",
       "catalogMeta": {
         "status": "observed",
@@ -12826,22 +12358,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19027-june",
             "observedPrice": 19692000,
             "sourceId": "red:19027"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/510-june",
-            "observedPrice": 25204000,
-            "sourceId": "nawy:510"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -12853,15 +12379,13 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Apartment",
         "Villa",
-        "Chalet",
-        "Studio",
-        "Townhouse",
-        "Twinhouse"
+        "Twin House",
+        "Town House",
+        "Chalet"
       ],
-      "downPayment": 5,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 8 Years Installments",
       "catalogMeta": {
         "status": "observed",
@@ -12874,22 +12398,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19203-ogami",
             "observedPrice": 21465000,
             "sourceId": "red:19203"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1237-ogami-ras-el-hekma",
-            "observedPrice": 22753000,
-            "sourceId": "nawy:1237"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -13707,50 +13225,37 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Chalet",
-        "Townhouse",
         "Villa",
-        "Twinhouse",
+        "Twin House",
+        "Chalet",
+        "Town House",
         "Apartment",
-        "Cabin",
-        "Duplex"
+        "Loft"
       ],
-      "downPayment": 10,
-      "installmentYears": 9,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "10% Down Payment, 9 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2494",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 7722000,
+      "priceMin": 8479000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/927-salt",
-            "observedPrice": 7722000,
-            "sourceId": "nawy:927"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/259-salt",
             "observedPrice": 8479000,
             "sourceId": "red:259"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/tatweer-misr/salt",
-            "observedPrice": 35000000,
-            "sourceId": "property-finder:51ece1b0-f3de-48e9-934c-9ab5f69231e7"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -13800,36 +13305,25 @@
       "type": "residential",
       "unitTypes": [
         "Chalet",
-        "Townhouse",
-        "Villa",
-        "Twinhouse",
-        "Penthouse",
-        "Loft",
-        "Apartment",
-        "Cabin"
+        "Twin House",
+        "Villa"
       ],
-      "downPayment": 10,
-      "installmentYears": 6,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "10% Down Payment, 6 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2376",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 8500000,
+      "priceMin": 12366703,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/929-solare",
-            "observedPrice": 8500000,
-            "sourceId": "nawy:929"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/260-solare",
@@ -13837,7 +13331,7 @@
             "sourceId": "red:260"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -13850,36 +13344,25 @@
       "type": "residential",
       "unitTypes": [
         "Chalet",
-        "Townhouse",
-        "Villa",
-        "Twinhouse",
-        "Penthouse",
-        "Loft",
-        "Apartment",
-        "Cabin"
+        "Twin House",
+        "Villa"
       ],
-      "downPayment": 10,
-      "installmentYears": 6,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "10% Down Payment, 6 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2335",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 8500000,
+      "priceMin": 12366703,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/929-solare",
-            "observedPrice": 8500000,
-            "sourceId": "nawy:929"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/260-solare",
@@ -13887,7 +13370,7 @@
             "sourceId": "red:260"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -13900,36 +13383,25 @@
       "type": "residential",
       "unitTypes": [
         "Chalet",
-        "Townhouse",
-        "Villa",
-        "Twinhouse",
-        "Penthouse",
-        "Loft",
-        "Apartment",
-        "Cabin"
+        "Twin House",
+        "Villa"
       ],
-      "downPayment": 10,
-      "installmentYears": 6,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "10% Down Payment, 6 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2116",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 8500000,
+      "priceMin": 12366703,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/929-solare",
-            "observedPrice": 8500000,
-            "sourceId": "nawy:929"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/260-solare",
@@ -13937,7 +13409,7 @@
             "sourceId": "red:260"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -14153,35 +13625,26 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Chalet",
         "Villa",
-        "Twinhouse",
-        "Apartment",
-        "Duplex",
-        "Studio"
+        "Chalet",
+        "Twin House"
       ],
-      "downPayment": 20,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "20% Down Payment, 8 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2180",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 6612000,
+      "priceMin": 7405778,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1671-youd",
-            "observedPrice": 6612000,
-            "sourceId": "nawy:1671"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30917-youd",
@@ -14189,7 +13652,7 @@
             "sourceId": "red:30917"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -14201,35 +13664,26 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Chalet",
         "Villa",
-        "Twinhouse",
-        "Apartment",
-        "Duplex",
-        "Studio"
+        "Chalet",
+        "Twin House"
       ],
-      "downPayment": 20,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "20% Down Payment, 8 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:1671",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 6612000,
+      "priceMin": 7405778,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1671-youd",
-            "observedPrice": 6612000,
-            "sourceId": "nawy:1671"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30917-youd",
@@ -14237,7 +13691,7 @@
             "sourceId": "red:30917"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -14289,37 +13743,24 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Chalet",
-        "Villa"
+        "Chalet"
       ],
-      "downPayment": 5,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 8 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2458",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 12300000,
+      "priceMin": 16600000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/2458-perla",
-            "observedPrice": 12300000,
-            "sourceId": "nawy:2458"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/nations-of-sky/perla",
-            "observedPrice": 12900000,
-            "sourceId": "property-finder:aa505dec-c1de-4d66-ba2a-315297a19a1d"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30971-perla",
@@ -14327,7 +13768,7 @@
             "sourceId": "red:30971"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -14575,28 +14016,22 @@
       "unitTypes": [
         "Apartment"
       ],
-      "downPayment": 5,
-      "installmentYears": 3,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 3 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:1335",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 6179000,
+      "priceMin": 7083000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1335-downtown-extension",
-            "observedPrice": 6179000,
-            "sourceId": "nawy:1335"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19158-downtown-new-alamein",
@@ -14604,7 +14039,7 @@
             "sourceId": "red:19158"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -14784,34 +14219,24 @@
       "type": "residential",
       "unitTypes": [
         "Chalet",
-        "Townhouse",
-        "Villa",
-        "Twinhouse",
-        "Duplex",
-        "Penthouse"
+        "Villa"
       ],
       "downPayment": 0,
-      "installmentYears": 10,
+      "installmentYears": 0,
       "paymentPlan": "0% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2166",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 14461000,
+      "priceMin": 17724000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/757-azha-north-coast",
-            "observedPrice": 14461000,
-            "sourceId": "nawy:757"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19032-azha",
@@ -14819,7 +14244,7 @@
             "sourceId": "red:19032"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -14832,34 +14257,24 @@
       "type": "residential",
       "unitTypes": [
         "Chalet",
-        "Townhouse",
-        "Villa",
-        "Twinhouse",
-        "Duplex",
-        "Penthouse"
+        "Villa"
       ],
       "downPayment": 0,
-      "installmentYears": 10,
+      "installmentYears": 0,
       "paymentPlan": "0% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2165",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 14461000,
+      "priceMin": 17724000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/757-azha-north-coast",
-            "observedPrice": 14461000,
-            "sourceId": "nawy:757"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19032-azha",
@@ -14867,7 +14282,7 @@
             "sourceId": "red:19032"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -14934,34 +14349,24 @@
       "type": "residential",
       "unitTypes": [
         "Chalet",
-        "Townhouse",
-        "Villa",
-        "Twinhouse",
-        "Duplex",
-        "Penthouse"
+        "Villa"
       ],
       "downPayment": 0,
-      "installmentYears": 10,
+      "installmentYears": 0,
       "paymentPlan": "0% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2030",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 14461000,
+      "priceMin": 17724000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/757-azha-north-coast",
-            "observedPrice": 14461000,
-            "sourceId": "nawy:757"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19032-azha",
@@ -14969,7 +14374,7 @@
             "sourceId": "red:19032"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -15519,11 +14924,12 @@
       "type": "residential",
       "unitTypes": [
         "Chalet",
-        "Villa",
-        "Townhouse"
+        "Studio",
+        "Town House",
+        "Villa"
       ],
-      "downPayment": 10,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "10% Down Payment, 8 Years Installments",
       "catalogMeta": {
         "status": "observed",
@@ -15535,29 +14941,17 @@
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
-        "confidence": "verified",
-        "sourceCount": 3,
+        "confidence": "high",
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30964-q-bay",
             "observedPrice": 5700000,
             "sourceId": "red:30964"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/q-developments/q-bay",
-            "observedPrice": 6880000,
-            "sourceId": "property-finder:d6a9f4c4-2c0d-4f81-aed6-4e70e796b67f"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/2013-q-bay",
-            "observedPrice": 10600000,
-            "sourceId": "nawy:2013"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -15833,35 +15227,26 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Chalet",
         "Villa",
-        "Twinhouse",
-        "Apartment",
-        "Duplex",
-        "Studio"
+        "Chalet",
+        "Twin House"
       ],
-      "downPayment": 20,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "20% Down Payment, 8 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:1671",
         "observedAt": "2026-09-23T03:36:30.920Z"
       },
-      "priceMin": 6612000,
+      "priceMin": 7405778,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1671-youd",
-            "observedPrice": 6612000,
-            "sourceId": "nawy:1671"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30917-youd",
@@ -15869,7 +15254,7 @@
             "sourceId": "red:30917"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     },
     {
@@ -15882,34 +15267,24 @@
       "type": "residential",
       "unitTypes": [
         "Chalet",
-        "Townhouse",
-        "Villa",
-        "Twinhouse",
-        "Duplex",
-        "Penthouse"
+        "Villa"
       ],
       "downPayment": 0,
-      "installmentYears": 10,
+      "installmentYears": 0,
       "paymentPlan": "0% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2749",
         "observedAt": "2026-09-30T03:39:20.077Z"
       },
-      "priceMin": 14461000,
+      "priceMin": 17724000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/757-azha-north-coast",
-            "observedPrice": 14461000,
-            "sourceId": "nawy:757"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19032-azha",
@@ -15917,7 +15292,7 @@
             "sourceId": "red:19032"
           }
         ],
-        "updatedAt": "2026-11-14T12:27:18.197Z"
+        "updatedAt": "2026-11-16T00:49:02.709Z"
       }
     }
   ],

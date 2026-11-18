@@ -9067,12 +9067,12 @@
       "type": "residential",
       "priceMin": 4945000,
       "unitTypes": [
-        "Apartment",
-        "Townhouse",
-        "Duplex",
+        "Town House",
+        "Twin House",
         "Villa",
+        "Apartment",
         "Penthouse",
-        "Twinhouse"
+        "Duplex"
       ],
       "areaMin": 96,
       "areaMax": 482,
@@ -9085,8 +9085,8 @@
         6
       ],
       "paymentPlan": "22.5% Down Payment, 8 Years Installments",
-      "downPayment": 22.5,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -9095,16 +9095,16 @@
         "sourceCount": 3,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1155-at-east",
-            "observedPrice": 4945000,
-            "sourceId": "nawy:1155"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/30815-at-east",
             "observedPrice": 4945000,
             "sourceId": "red:30815"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1155-at-east",
+            "observedPrice": 4945000,
+            "sourceId": "nawy:1155"
           },
           {
             "name": "Property Finder",
@@ -9113,7 +9113,7 @@
             "sourceId": "property-finder:83039de6-b53b-4345-9a66-a709615e4905"
           }
         ],
-        "updatedAt": "2026-11-18T12:30:07.639Z"
+        "updatedAt": "2026-11-18T18:26:10.704Z"
       }
     },
     {
@@ -15797,10 +15797,8 @@
       "type": "residential",
       "priceMin": 13462000,
       "unitTypes": [
-        "Apartment",
-        "Duplex",
-        "Townhouse",
-        "Twinhouse",
+        "Town House",
+        "Twin House",
         "Villa"
       ],
       "areaMin": 65,
@@ -15814,8 +15812,8 @@
         6
       ],
       "paymentPlan": "20% Down Payment, 14 Years Installments",
-      "downPayment": 20,
-      "installmentYears": 14,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -15824,16 +15822,16 @@
         "sourceCount": 3,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1410-rosevil",
-            "observedPrice": 13462000,
-            "sourceId": "nawy:1410"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/30842-rosevil",
             "observedPrice": 13462000,
             "sourceId": "red:30842"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1410-rosevil",
+            "observedPrice": 13462000,
+            "sourceId": "nawy:1410"
           },
           {
             "name": "Property Finder",
@@ -15842,7 +15840,7 @@
             "sourceId": "property-finder:f6c0d51e-ae47-40cc-9f77-b9879969f1d4"
           }
         ],
-        "updatedAt": "2026-11-18T12:30:07.639Z"
+        "updatedAt": "2026-11-18T18:26:10.704Z"
       }
     },
     {
@@ -16260,8 +16258,8 @@
       "priceMin": 7080765,
       "unitTypes": [
         "Apartment",
-        "Townhouse",
-        "Duplex"
+        "Duplex",
+        "Town House"
       ],
       "areaMin": 88,
       "areaMax": 385,
@@ -16274,8 +16272,8 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 10 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -16284,19 +16282,19 @@
         "sourceCount": 2,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1249-club-hills-residence",
-            "observedPrice": 7080765,
-            "sourceId": "nawy:1249"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/30843-club-hills",
             "observedPrice": 7080765,
             "sourceId": "red:30843"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1249-club-hills-residence",
+            "observedPrice": 7080765,
+            "sourceId": "nawy:1249"
           }
         ],
-        "updatedAt": "2026-11-18T12:30:07.639Z"
+        "updatedAt": "2026-11-18T18:26:10.704Z"
       }
     },
     {
@@ -18284,11 +18282,9 @@
       "priceMin": 6800000,
       "unitTypes": [
         "Apartment",
-        "Villa",
-        "Twinhouse",
-        "Townhouse",
-        "Penthouse",
-        "Studio"
+        "Town House",
+        "Twin House",
+        "Villa"
       ],
       "areaMin": 78,
       "areaMax": 340,
@@ -18301,8 +18297,8 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 8 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -18311,19 +18307,19 @@
         "sourceCount": 2,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/798-garden-lakes",
-            "observedPrice": 6800000,
-            "sourceId": "nawy:798"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/38-garden-lakes",
             "observedPrice": 6800000,
             "sourceId": "red:38"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/798-garden-lakes",
+            "observedPrice": 6800000,
+            "sourceId": "nawy:798"
           }
         ],
-        "updatedAt": "2026-11-18T12:30:07.639Z"
+        "updatedAt": "2026-11-18T18:26:10.704Z"
       }
     },
     {
@@ -18871,7 +18867,7 @@
       "type": "residential",
       "priceMin": 9119038,
       "unitTypes": [
-        "apartment"
+        "Apartment"
       ],
       "areaMin": 83,
       "areaMax": 362,
@@ -18884,29 +18880,23 @@
         6
       ],
       "paymentPlan": "30% Down Payment",
-      "downPayment": 30,
+      "downPayment": 0,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19211-kayan",
             "observedPrice": 9119038,
             "sourceId": "red:19211"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/badreldin-developments/kayan",
-            "observedPrice": 10500000,
-            "sourceId": "property-finder:7b442ec1-565e-4ae8-afdc-012b4c49665a"
           }
         ],
-        "updatedAt": "2026-11-17T02:51:32.624Z"
+        "updatedAt": "2026-11-18T18:26:10.704Z"
       }
     },
     {
@@ -19332,8 +19322,9 @@
       "type": "residential",
       "priceMin": 24533388,
       "unitTypes": [
-        "villa",
-        "townhouse"
+        "Villa",
+        "Duplex",
+        "Town House"
       ],
       "areaMin": 78,
       "areaMax": 342,
@@ -19346,29 +19337,23 @@
         6
       ],
       "paymentPlan": "10% Down Payment",
-      "downPayment": 10,
+      "downPayment": 0,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19090-october-park",
             "observedPrice": 24533388,
             "sourceId": "red:19090"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/mountain-view/mountain-view-october-park",
-            "observedPrice": 41227942,
-            "sourceId": "property-finder:c72b4866-1507-419d-a0c9-c1fa11e29c29"
           }
         ],
-        "updatedAt": "2026-11-17T02:51:32.624Z"
+        "updatedAt": "2026-11-18T18:26:10.704Z"
       }
     },
     {
@@ -19443,7 +19428,8 @@
       "type": "residential",
       "priceMin": 4176000,
       "unitTypes": [
-        "apartment"
+        "Apartment",
+        "Villa"
       ],
       "areaMin": 76,
       "areaMax": 334,
@@ -19456,29 +19442,23 @@
         6
       ],
       "paymentPlan": "10% Down Payment",
-      "downPayment": 10,
+      "downPayment": 0,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19061-nyoum-october",
             "observedPrice": 4176000,
             "sourceId": "red:19061"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/arab-developers-holding/nyoum-pyramids-october",
-            "observedPrice": 9450000,
-            "sourceId": "property-finder:a4ac0b11-76ad-44be-93cb-6ebb902b3555"
           }
         ],
-        "updatedAt": "2026-11-17T02:51:32.624Z"
+        "updatedAt": "2026-11-18T18:26:10.704Z"
       }
     },
     {
@@ -19638,29 +19618,23 @@
         6
       ],
       "paymentPlan": "10% Down Payment",
-      "downPayment": 10,
+      "downPayment": 0,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19100-golf-views",
             "observedPrice": 112482000,
             "sourceId": "red:19100"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/palm-hills/palm-hills-golf-views",
-            "observedPrice": 116853000,
-            "sourceId": "property-finder:94e96f64-4d86-4167-86c5-c6e899008d50"
           }
         ],
-        "updatedAt": "2026-11-17T02:51:32.624Z"
+        "updatedAt": "2026-11-18T18:26:10.704Z"
       }
     },
     {
@@ -20080,10 +20054,11 @@
       "zone": "October",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 20312600,
+      "priceMin": 26380000,
       "unitTypes": [
-        "villa",
-        "townhouse"
+        "Villa",
+        "Town House",
+        "Twin House"
       ],
       "areaMin": 80,
       "areaMax": 348,
@@ -20096,21 +20071,15 @@
         6
       ],
       "paymentPlan": "5% Down Payment",
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/hyde-park-developments/tawny",
-            "observedPrice": 20312600,
-            "sourceId": "property-finder:255cc4b2-bf9f-4e90-b252-519b58870e32"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/47-tawny",
@@ -20118,7 +20087,7 @@
             "sourceId": "red:47"
           }
         ],
-        "updatedAt": "2026-11-17T02:51:32.624Z"
+        "updatedAt": "2026-11-18T18:26:10.704Z"
       }
     },
     {
@@ -23369,29 +23338,23 @@
       "areaMax": 370,
       "bedrooms": [],
       "paymentPlan": "5% Down Payment",
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/18-sodic-east",
             "observedPrice": 12382000,
             "sourceId": "red:18"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/sodic/sodic-east",
-            "observedPrice": 28040000,
-            "sourceId": "property-finder:ba8f3a62-5fba-480a-95af-22786d712b06"
           }
         ],
-        "updatedAt": "2026-11-17T02:51:32.624Z"
+        "updatedAt": "2026-11-18T18:26:10.704Z"
       }
     },
     {
@@ -23689,11 +23652,8 @@
       "type": "residential",
       "priceMin": 22800000,
       "unitTypes": [
-        "Apartment",
-        "Twinhouse",
-        "Villa",
-        "Duplex",
-        "Penthouse"
+        "Twin House",
+        "Apartment"
       ],
       "areaMin": 76,
       "areaMax": 284,
@@ -23706,8 +23666,8 @@
         6
       ],
       "paymentPlan": "20% Down Payment, 4 Years Installments",
-      "downPayment": 20,
-      "installmentYears": 4,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -23716,16 +23676,16 @@
         "sourceCount": 3,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/156-el-patio-casa",
-            "observedPrice": 22800000,
-            "sourceId": "nawy:156"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/19049-el-patio-casa",
             "observedPrice": 22800000,
             "sourceId": "red:19049"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/156-el-patio-casa",
+            "observedPrice": 22800000,
+            "sourceId": "nawy:156"
           },
           {
             "name": "Property Finder",
@@ -23734,7 +23694,7 @@
             "sourceId": "property-finder:bad9ccdc-2e99-4389-a2ef-39f4cfa58eb5"
           }
         ],
-        "updatedAt": "2026-11-18T12:30:07.639Z"
+        "updatedAt": "2026-11-18T18:26:10.704Z"
       }
     },
     {
@@ -23949,29 +23909,23 @@
         6
       ],
       "paymentPlan": "10% Down Payment",
-      "downPayment": 10,
+      "downPayment": 0,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19100-golf-views",
             "observedPrice": 112482000,
             "sourceId": "red:19100"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/palm-hills/palm-hills-golf-views",
-            "observedPrice": 116853000,
-            "sourceId": "property-finder:94e96f64-4d86-4167-86c5-c6e899008d50"
           }
         ],
-        "updatedAt": "2026-11-17T02:51:32.624Z"
+        "updatedAt": "2026-11-18T18:26:10.704Z"
       }
     },
     {
@@ -26254,8 +26208,10 @@
       "type": "residential",
       "priceMin": 7017043,
       "unitTypes": [
-        "villa",
-        "townhouse"
+        "Twin House",
+        "Apartment",
+        "Villa",
+        "Town House"
       ],
       "areaMin": 64,
       "areaMax": 273,
@@ -26268,29 +26224,23 @@
         6
       ],
       "paymentPlan": "5% Down Payment",
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/13-il-bosco-new-capital",
             "observedPrice": 7017043,
             "sourceId": "red:13"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/misr-italia/il-bosco-the-cliff",
-            "observedPrice": 27300000,
-            "sourceId": "property-finder:0471ace6-c165-47e1-9c9e-96414a1f5f59"
           }
         ],
-        "updatedAt": "2026-11-17T02:51:32.624Z"
+        "updatedAt": "2026-11-18T18:26:10.704Z"
       }
     },
     {
@@ -29347,11 +29297,9 @@
       "priceMin": 6800000,
       "unitTypes": [
         "Apartment",
-        "Villa",
-        "Twinhouse",
-        "Townhouse",
-        "Penthouse",
-        "Studio"
+        "Town House",
+        "Twin House",
+        "Villa"
       ],
       "areaMin": 85,
       "areaMax": 371,
@@ -29364,8 +29312,8 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 8 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -29374,16 +29322,16 @@
         "sourceCount": 3,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/798-garden-lakes",
-            "observedPrice": 6800000,
-            "sourceId": "nawy:798"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/38-garden-lakes",
             "observedPrice": 6800000,
             "sourceId": "red:38"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/798-garden-lakes",
+            "observedPrice": 6800000,
+            "sourceId": "nawy:798"
           },
           {
             "name": "Property Finder",
@@ -29392,7 +29340,7 @@
             "sourceId": "property-finder:cf2b5e90-d90c-43f7-b895-802d9b80cb1c"
           }
         ],
-        "updatedAt": "2026-11-18T12:30:07.639Z"
+        "updatedAt": "2026-11-18T18:26:10.704Z"
       }
     },
     {
@@ -33560,8 +33508,8 @@
       "priceMin": 7080765,
       "unitTypes": [
         "Apartment",
-        "Townhouse",
-        "Duplex"
+        "Duplex",
+        "Town House"
       ],
       "areaMin": 78,
       "areaMax": 340,
@@ -33574,8 +33522,8 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 10 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -33584,19 +33532,19 @@
         "sourceCount": 2,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1249-club-hills-residence",
-            "observedPrice": 7080765,
-            "sourceId": "nawy:1249"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/30843-club-hills",
             "observedPrice": 7080765,
             "sourceId": "red:30843"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1249-club-hills-residence",
+            "observedPrice": 7080765,
+            "sourceId": "nawy:1249"
           }
         ],
-        "updatedAt": "2026-11-18T12:30:07.639Z"
+        "updatedAt": "2026-11-18T18:26:10.704Z"
       }
     },
     {
@@ -34351,9 +34299,9 @@
       "zone": "New Cairo",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 16825600,
+      "priceMin": 25467000,
       "unitTypes": [
-        "townhouse"
+        "Town House"
       ],
       "areaMin": 94,
       "areaMax": 470,
@@ -34366,21 +34314,15 @@
         6
       ],
       "paymentPlan": "5% Down Payment",
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/al-ahly-sabbour-developments/rare",
-            "observedPrice": 16825600,
-            "sourceId": "property-finder:6e1af761-ce93-44d9-9c65-21f38addb03c"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30835-rare",
@@ -34388,7 +34330,7 @@
             "sourceId": "red:30835"
           }
         ],
-        "updatedAt": "2026-11-17T02:51:32.624Z"
+        "updatedAt": "2026-11-18T18:26:10.704Z"
       }
     },
     {
@@ -35658,8 +35600,9 @@
       "type": "residential",
       "priceMin": 24533388,
       "unitTypes": [
-        "villa",
-        "townhouse"
+        "Villa",
+        "Duplex",
+        "Town House"
       ],
       "areaMin": 82,
       "areaMax": 357,
@@ -35672,29 +35615,23 @@
         6
       ],
       "paymentPlan": "10% Down Payment",
-      "downPayment": 10,
+      "downPayment": 0,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19090-october-park",
             "observedPrice": 24533388,
             "sourceId": "red:19090"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/mountain-view/mountain-view-october-park",
-            "observedPrice": 41227942,
-            "sourceId": "property-finder:c72b4866-1507-419d-a0c9-c1fa11e29c29"
           }
         ],
-        "updatedAt": "2026-11-17T02:51:32.624Z"
+        "updatedAt": "2026-11-18T18:26:10.704Z"
       }
     },
     {
@@ -38480,9 +38417,9 @@
       "type": "residential",
       "priceMin": 22000000,
       "unitTypes": [
-        "Townhouse",
-        "Villa",
-        "Twinhouse"
+        "Twin House",
+        "Town House",
+        "Villa"
       ],
       "areaMin": 102,
       "areaMax": 408,
@@ -38495,8 +38432,8 @@
         6
       ],
       "paymentPlan": "10% Down Payment, 7 Years Installments",
-      "downPayment": 10,
-      "installmentYears": 7,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -38511,19 +38448,19 @@
             "sourceId": "property-finder:90f37388-2bf9-4e8e-8d80-b0ee9d04297a"
           },
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1061-vaha",
-            "observedPrice": 22050000,
-            "sourceId": "nawy:1061"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/30831-vaha",
             "observedPrice": 22050000,
             "sourceId": "red:30831"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1061-vaha",
+            "observedPrice": 22050000,
+            "sourceId": "nawy:1061"
           }
         ],
-        "updatedAt": "2026-11-18T12:30:07.639Z"
+        "updatedAt": "2026-11-18T18:26:10.704Z"
       }
     },
     {
@@ -41374,8 +41311,10 @@
       "type": "residential",
       "priceMin": 7717000,
       "unitTypes": [
-        "apartment",
-        "penthouse"
+        "Apartment",
+        "Duplex",
+        "Penthouse",
+        "Studio"
       ],
       "areaMin": 92,
       "areaMax": 461,
@@ -41388,29 +41327,23 @@
         6
       ],
       "paymentPlan": "10% Down Payment",
-      "downPayment": 10,
+      "downPayment": 0,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30867-edge",
             "observedPrice": 7717000,
             "sourceId": "red:30867"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/the-ark-development/edge",
-            "observedPrice": 31900000,
-            "sourceId": "property-finder:05df47a6-a060-4b47-9831-f727d219715c"
           }
         ],
-        "updatedAt": "2026-11-17T02:51:32.624Z"
+        "updatedAt": "2026-11-18T18:26:10.704Z"
       }
     },
     {
@@ -42344,12 +42277,12 @@
       "type": "residential",
       "priceMin": 4945000,
       "unitTypes": [
-        "Apartment",
-        "Townhouse",
-        "Duplex",
+        "Town House",
+        "Twin House",
         "Villa",
+        "Apartment",
         "Penthouse",
-        "Twinhouse"
+        "Duplex"
       ],
       "areaMin": 95,
       "areaMax": 474,
@@ -42362,8 +42295,8 @@
         6
       ],
       "paymentPlan": "22.5% Down Payment, 8 Years Installments",
-      "downPayment": 22.5,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
@@ -42372,16 +42305,16 @@
         "sourceCount": 3,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1155-at-east",
-            "observedPrice": 4945000,
-            "sourceId": "nawy:1155"
-          },
-          {
             "name": "RED",
             "url": "https://redww.com/en/projects/30815-at-east",
             "observedPrice": 4945000,
             "sourceId": "red:30815"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1155-at-east",
+            "observedPrice": 4945000,
+            "sourceId": "nawy:1155"
           },
           {
             "name": "Property Finder",
@@ -42390,7 +42323,7 @@
             "sourceId": "property-finder:83039de6-b53b-4345-9a66-a709615e4905"
           }
         ],
-        "updatedAt": "2026-11-18T12:30:07.639Z"
+        "updatedAt": "2026-11-18T18:26:10.704Z"
       }
     },
     {
@@ -61160,11 +61093,12 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "duplex",
-        "penthouse",
-        "apartment"
+        "Villa",
+        "Twin House",
+        "Apartment",
+        "Town House"
       ],
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 0,
       "paymentPlan": "5% Down Payment",
       "catalogMeta": {
@@ -61178,22 +61112,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/20-the-estates",
             "observedPrice": 22679000,
             "sourceId": "red:20"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/sodic/the-estates-phase-two",
-            "observedPrice": 22680000,
-            "sourceId": "property-finder:eb5daf32-2a15-466e-9d24-96bcd0c14733"
           }
         ],
-        "updatedAt": "2026-11-17T02:51:32.624Z"
+        "updatedAt": "2026-11-18T18:26:10.704Z"
       }
     },
     {
@@ -61205,11 +61133,12 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "duplex",
-        "penthouse",
-        "apartment"
+        "Villa",
+        "Twin House",
+        "Apartment",
+        "Town House"
       ],
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 0,
       "paymentPlan": "5% Down Payment",
       "catalogMeta": {
@@ -61223,22 +61152,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/20-the-estates",
             "observedPrice": 22679000,
             "sourceId": "red:20"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/sodic/the-estates-phase-two",
-            "observedPrice": 22680000,
-            "sourceId": "property-finder:eb5daf32-2a15-466e-9d24-96bcd0c14733"
           }
         ],
-        "updatedAt": "2026-11-17T02:51:32.624Z"
+        "updatedAt": "2026-11-18T18:26:10.704Z"
       }
     },
     {
@@ -61340,11 +61263,12 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "duplex",
-        "penthouse",
-        "apartment"
+        "Villa",
+        "Twin House",
+        "Apartment",
+        "Town House"
       ],
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 0,
       "paymentPlan": "5% Down Payment",
       "catalogMeta": {
@@ -61358,22 +61282,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/20-the-estates",
             "observedPrice": 22679000,
             "sourceId": "red:20"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/sodic/the-estates-phase-two",
-            "observedPrice": 22680000,
-            "sourceId": "property-finder:eb5daf32-2a15-466e-9d24-96bcd0c14733"
           }
         ],
-        "updatedAt": "2026-11-17T02:51:32.624Z"
+        "updatedAt": "2026-11-18T18:26:10.704Z"
       }
     },
     {
@@ -61385,11 +61303,12 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "duplex",
-        "penthouse",
-        "apartment"
+        "Villa",
+        "Twin House",
+        "Apartment",
+        "Town House"
       ],
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 0,
       "paymentPlan": "5% Down Payment",
       "catalogMeta": {
@@ -61403,22 +61322,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/20-the-estates",
             "observedPrice": 22679000,
             "sourceId": "red:20"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/sodic/the-estates-phase-two",
-            "observedPrice": 22680000,
-            "sourceId": "property-finder:eb5daf32-2a15-466e-9d24-96bcd0c14733"
           }
         ],
-        "updatedAt": "2026-11-17T02:51:32.624Z"
+        "updatedAt": "2026-11-18T18:26:10.704Z"
       }
     },
     {
@@ -61520,11 +61433,12 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "duplex",
-        "penthouse",
-        "apartment"
+        "Villa",
+        "Twin House",
+        "Apartment",
+        "Town House"
       ],
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 0,
       "paymentPlan": "5% Down Payment",
       "catalogMeta": {
@@ -61538,22 +61452,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/20-the-estates",
             "observedPrice": 22679000,
             "sourceId": "red:20"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/sodic/the-estates-phase-two",
-            "observedPrice": 22680000,
-            "sourceId": "property-finder:eb5daf32-2a15-466e-9d24-96bcd0c14733"
           }
         ],
-        "updatedAt": "2026-11-17T02:51:32.624Z"
+        "updatedAt": "2026-11-18T18:26:10.704Z"
       }
     },
     {
@@ -61565,11 +61473,12 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "duplex",
-        "penthouse",
-        "apartment"
+        "Villa",
+        "Twin House",
+        "Apartment",
+        "Town House"
       ],
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 0,
       "paymentPlan": "5% Down Payment",
       "catalogMeta": {
@@ -61583,22 +61492,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/20-the-estates",
             "observedPrice": 22679000,
             "sourceId": "red:20"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/sodic/the-estates-phase-two",
-            "observedPrice": 22680000,
-            "sourceId": "property-finder:eb5daf32-2a15-466e-9d24-96bcd0c14733"
           }
         ],
-        "updatedAt": "2026-11-17T02:51:32.624Z"
+        "updatedAt": "2026-11-18T18:26:10.704Z"
       }
     },
     {
@@ -61700,11 +61603,12 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "duplex",
-        "penthouse",
-        "apartment"
+        "Villa",
+        "Twin House",
+        "Apartment",
+        "Town House"
       ],
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 0,
       "paymentPlan": "5% Down Payment",
       "catalogMeta": {
@@ -61718,22 +61622,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/20-the-estates",
             "observedPrice": 22679000,
             "sourceId": "red:20"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/sodic/the-estates-phase-two",
-            "observedPrice": 22680000,
-            "sourceId": "property-finder:eb5daf32-2a15-466e-9d24-96bcd0c14733"
           }
         ],
-        "updatedAt": "2026-11-17T02:51:32.624Z"
+        "updatedAt": "2026-11-18T18:26:10.704Z"
       }
     },
     {
@@ -61745,11 +61643,12 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "duplex",
-        "penthouse",
-        "apartment"
+        "Villa",
+        "Twin House",
+        "Apartment",
+        "Town House"
       ],
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 0,
       "paymentPlan": "5% Down Payment",
       "catalogMeta": {
@@ -61763,22 +61662,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/20-the-estates",
             "observedPrice": 22679000,
             "sourceId": "red:20"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/sodic/the-estates-phase-two",
-            "observedPrice": 22680000,
-            "sourceId": "property-finder:eb5daf32-2a15-466e-9d24-96bcd0c14733"
           }
         ],
-        "updatedAt": "2026-11-17T02:51:32.624Z"
+        "updatedAt": "2026-11-18T18:26:10.704Z"
       }
     },
     {
@@ -61880,11 +61773,12 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "duplex",
-        "penthouse",
-        "apartment"
+        "Villa",
+        "Twin House",
+        "Apartment",
+        "Town House"
       ],
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 0,
       "paymentPlan": "5% Down Payment",
       "catalogMeta": {
@@ -61898,22 +61792,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/20-the-estates",
             "observedPrice": 22679000,
             "sourceId": "red:20"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/sodic/the-estates-phase-two",
-            "observedPrice": 22680000,
-            "sourceId": "property-finder:eb5daf32-2a15-466e-9d24-96bcd0c14733"
           }
         ],
-        "updatedAt": "2026-11-17T02:51:32.624Z"
+        "updatedAt": "2026-11-18T18:26:10.704Z"
       }
     },
     {
@@ -61925,11 +61813,12 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "duplex",
-        "penthouse",
-        "apartment"
+        "Villa",
+        "Twin House",
+        "Apartment",
+        "Town House"
       ],
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 0,
       "paymentPlan": "5% Down Payment",
       "catalogMeta": {
@@ -61943,22 +61832,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/20-the-estates",
             "observedPrice": 22679000,
             "sourceId": "red:20"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/sodic/the-estates-phase-two",
-            "observedPrice": 22680000,
-            "sourceId": "property-finder:eb5daf32-2a15-466e-9d24-96bcd0c14733"
           }
         ],
-        "updatedAt": "2026-11-17T02:51:32.624Z"
+        "updatedAt": "2026-11-18T18:26:10.704Z"
       }
     },
     {
@@ -62153,11 +62036,12 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "duplex",
-        "penthouse",
-        "apartment"
+        "Villa",
+        "Twin House",
+        "Apartment",
+        "Town House"
       ],
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 0,
       "paymentPlan": "5% Down Payment",
       "catalogMeta": {
@@ -62171,22 +62055,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/20-the-estates",
             "observedPrice": 22679000,
             "sourceId": "red:20"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/sodic/the-estates-phase-two",
-            "observedPrice": 22680000,
-            "sourceId": "property-finder:eb5daf32-2a15-466e-9d24-96bcd0c14733"
           }
         ],
-        "updatedAt": "2026-11-17T02:51:32.624Z"
+        "updatedAt": "2026-11-18T18:26:10.704Z"
       }
     },
     {
@@ -62198,11 +62076,12 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "duplex",
-        "penthouse",
-        "apartment"
+        "Villa",
+        "Twin House",
+        "Apartment",
+        "Town House"
       ],
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 0,
       "paymentPlan": "5% Down Payment",
       "catalogMeta": {
@@ -62216,22 +62095,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/20-the-estates",
             "observedPrice": 22679000,
             "sourceId": "red:20"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/sodic/the-estates-phase-two",
-            "observedPrice": 22680000,
-            "sourceId": "property-finder:eb5daf32-2a15-466e-9d24-96bcd0c14733"
           }
         ],
-        "updatedAt": "2026-11-17T02:51:32.624Z"
+        "updatedAt": "2026-11-18T18:26:10.704Z"
       }
     },
     {
@@ -62333,11 +62206,12 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "duplex",
-        "penthouse",
-        "apartment"
+        "Villa",
+        "Twin House",
+        "Apartment",
+        "Town House"
       ],
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 0,
       "paymentPlan": "5% Down Payment",
       "catalogMeta": {
@@ -62351,22 +62225,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/20-the-estates",
             "observedPrice": 22679000,
             "sourceId": "red:20"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/sodic/the-estates-phase-two",
-            "observedPrice": 22680000,
-            "sourceId": "property-finder:eb5daf32-2a15-466e-9d24-96bcd0c14733"
           }
         ],
-        "updatedAt": "2026-11-17T02:51:32.624Z"
+        "updatedAt": "2026-11-18T18:26:10.704Z"
       }
     },
     {
@@ -62378,11 +62246,12 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "duplex",
-        "penthouse",
-        "apartment"
+        "Villa",
+        "Twin House",
+        "Apartment",
+        "Town House"
       ],
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 0,
       "paymentPlan": "5% Down Payment",
       "catalogMeta": {
@@ -62396,22 +62265,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/20-the-estates",
             "observedPrice": 22679000,
             "sourceId": "red:20"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/sodic/the-estates-phase-two",
-            "observedPrice": 22680000,
-            "sourceId": "property-finder:eb5daf32-2a15-466e-9d24-96bcd0c14733"
           }
         ],
-        "updatedAt": "2026-11-17T02:51:32.624Z"
+        "updatedAt": "2026-11-18T18:26:10.704Z"
       }
     },
     {
@@ -62571,11 +62434,12 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "duplex",
-        "penthouse",
-        "apartment"
+        "Villa",
+        "Twin House",
+        "Apartment",
+        "Town House"
       ],
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 0,
       "paymentPlan": "5% Down Payment",
       "catalogMeta": {
@@ -62589,22 +62453,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/20-the-estates",
             "observedPrice": 22679000,
             "sourceId": "red:20"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/sodic/the-estates-phase-two",
-            "observedPrice": 22680000,
-            "sourceId": "property-finder:eb5daf32-2a15-466e-9d24-96bcd0c14733"
           }
         ],
-        "updatedAt": "2026-11-17T02:51:32.624Z"
+        "updatedAt": "2026-11-18T18:26:10.704Z"
       }
     },
     {
@@ -62654,11 +62512,12 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "duplex",
-        "penthouse",
-        "apartment"
+        "Villa",
+        "Twin House",
+        "Apartment",
+        "Town House"
       ],
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 0,
       "paymentPlan": "5% Down Payment",
       "catalogMeta": {
@@ -62672,22 +62531,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/20-the-estates",
             "observedPrice": 22679000,
             "sourceId": "red:20"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/sodic/the-estates-phase-two",
-            "observedPrice": 22680000,
-            "sourceId": "property-finder:eb5daf32-2a15-466e-9d24-96bcd0c14733"
           }
         ],
-        "updatedAt": "2026-11-17T02:51:32.624Z"
+        "updatedAt": "2026-11-18T18:26:10.704Z"
       }
     },
     {
@@ -62847,11 +62700,12 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "duplex",
-        "penthouse",
-        "apartment"
+        "Villa",
+        "Twin House",
+        "Apartment",
+        "Town House"
       ],
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 0,
       "paymentPlan": "5% Down Payment",
       "catalogMeta": {
@@ -62865,22 +62719,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/20-the-estates",
             "observedPrice": 22679000,
             "sourceId": "red:20"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/sodic/the-estates-phase-two",
-            "observedPrice": 22680000,
-            "sourceId": "property-finder:eb5daf32-2a15-466e-9d24-96bcd0c14733"
           }
         ],
-        "updatedAt": "2026-11-17T02:51:32.624Z"
+        "updatedAt": "2026-11-18T18:26:10.704Z"
       }
     },
     {
@@ -62892,11 +62740,12 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "duplex",
-        "penthouse",
-        "apartment"
+        "Villa",
+        "Twin House",
+        "Apartment",
+        "Town House"
       ],
-      "downPayment": 5,
+      "downPayment": 0,
       "installmentYears": 0,
       "paymentPlan": "5% Down Payment",
       "catalogMeta": {
@@ -62910,22 +62759,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/20-the-estates",
             "observedPrice": 22679000,
             "sourceId": "red:20"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/sodic/the-estates-phase-two",
-            "observedPrice": 22680000,
-            "sourceId": "property-finder:eb5daf32-2a15-466e-9d24-96bcd0c14733"
           }
         ],
-        "updatedAt": "2026-11-17T02:51:32.624Z"
+        "updatedAt": "2026-11-18T18:26:10.704Z"
       }
     }
   ],

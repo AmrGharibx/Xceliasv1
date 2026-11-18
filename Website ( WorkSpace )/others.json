@@ -8,7 +8,7 @@
       "zone": "Al Dabaa",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 14500000,
+      "priceMin": 9644590,
       "unitTypes": [
         "Apartment",
         "Chalet",
@@ -27,16 +27,22 @@
         4,
         5
       ],
-      "paymentPlan": "4% Down Payment",
-      "downPayment": 4,
-      "installmentYears": 0,
+      "paymentPlan": "1.5% Down Payment, 15 Years Installments",
+      "downPayment": 1.5,
+      "installmentYears": 15,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1198-southmed",
+            "observedPrice": 9644590,
+            "sourceId": "nawy:1198"
+          },
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/talaat-moustafa-group/southmed-in-al-dabaa",
@@ -44,7 +50,7 @@
             "sourceId": "property-finder:724d7c4b-ea13-45c6-86c5-244b8584c941"
           }
         ],
-        "updatedAt": "2026-11-18T02:51:13.862Z"
+        "updatedAt": "2026-11-18T12:30:07.639Z"
       }
     },
     {
@@ -595,7 +601,8 @@
       "type": "residential",
       "priceMin": 23500000,
       "unitTypes": [
-        "apartment"
+        "Chalet",
+        "Apartment"
       ],
       "areaMin": 76,
       "areaMax": 330,
@@ -607,16 +614,22 @@
         5,
         6
       ],
-      "paymentPlan": "5% Down Payment",
+      "paymentPlan": "5% Down Payment, 8 Years Installments",
       "downPayment": 5,
-      "installmentYears": 0,
+      "installmentYears": 8,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/136-reef-town",
+            "observedPrice": 23500000,
+            "sourceId": "nawy:136"
+          },
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/somabay-realestate/reef-town",
@@ -624,7 +637,7 @@
             "sourceId": "property-finder:1e6ef37d-ad96-42e2-929d-daf05041c69f"
           }
         ],
-        "updatedAt": "2026-11-18T02:51:13.862Z"
+        "updatedAt": "2026-11-18T12:30:07.639Z"
       }
     },
     {
@@ -652,15 +665,15 @@
         5,
         6
       ],
-      "paymentPlan": "5% Down Payment",
+      "paymentPlan": "5% Down Payment, 10 Years Installments",
       "downPayment": 5,
-      "installmentYears": 0,
+      "installmentYears": 10,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 3,
         "sources": [
           {
             "name": "RED",
@@ -669,13 +682,19 @@
             "sourceId": "red:19101"
           },
           {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/201-palm-hills-alexandria",
+            "observedPrice": 11317000,
+            "sourceId": "nawy:201"
+          },
+          {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/palm-hills/palm-hills-alexandria",
             "observedPrice": 11317000,
             "sourceId": "property-finder:32791fee-4182-4ae1-8a60-39c97256919c"
           }
         ],
-        "updatedAt": "2026-11-18T02:51:13.862Z"
+        "updatedAt": "2026-11-18T12:30:07.639Z"
       }
     },
     {
@@ -766,7 +785,11 @@
       "type": "residential",
       "priceMin": 28200000,
       "unitTypes": [
-        "villa"
+        "Villa",
+        "Apartment",
+        "Cabin",
+        "Penthouse",
+        "Chalet"
       ],
       "areaMin": 79,
       "areaMax": 344,
@@ -778,16 +801,22 @@
         5,
         6
       ],
-      "paymentPlan": "5% Down Payment",
+      "paymentPlan": "5% Down Payment, 8 Years Installments",
       "downPayment": 5,
-      "installmentYears": 0,
+      "installmentYears": 8,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/349-mesca--somabay",
+            "observedPrice": 28200000,
+            "sourceId": "nawy:349"
+          },
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/somabay-realestate/mesca-soma-bay",
@@ -795,7 +824,7 @@
             "sourceId": "property-finder:2b8d7403-d77c-4ef5-aa10-8b8a823ea76c"
           }
         ],
-        "updatedAt": "2026-11-18T02:51:13.862Z"
+        "updatedAt": "2026-11-18T12:30:07.639Z"
       }
     },
     {
@@ -1526,7 +1555,8 @@
       "type": "residential",
       "priceMin": 3325000,
       "unitTypes": [
-        "apartment"
+        "Chalet",
+        "Twinhouse"
       ],
       "areaMin": 82,
       "areaMax": 358,
@@ -1538,16 +1568,22 @@
         5,
         6
       ],
-      "paymentPlan": "10% Down Payment",
-      "downPayment": 10,
-      "installmentYears": 0,
+      "paymentPlan": "20% Down Payment, 8 Years Installments",
+      "downPayment": 20,
+      "installmentYears": 8,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/660-lasirena-bay",
+            "observedPrice": 3325000,
+            "sourceId": "nawy:660"
+          },
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/lasirena-group/lasirena-bay",
@@ -1555,7 +1591,7 @@
             "sourceId": "property-finder:3f56c51a-b52c-445d-b6d5-4845d6552f4f"
           }
         ],
-        "updatedAt": "2026-11-18T02:51:13.862Z"
+        "updatedAt": "2026-11-18T12:30:07.639Z"
       }
     },
     {
@@ -2011,7 +2047,7 @@
       "type": "residential",
       "priceMin": 109000000,
       "unitTypes": [
-        "villa"
+        "Villa"
       ],
       "areaMin": 77,
       "areaMax": 339,
@@ -2023,16 +2059,22 @@
         5,
         6
       ],
-      "paymentPlan": "5% Down Payment",
+      "paymentPlan": "5% Down Payment, 8 Years Installments",
       "downPayment": 5,
-      "installmentYears": 0,
+      "installmentYears": 8,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/1081-nautilus",
+            "observedPrice": 109000000,
+            "sourceId": "nawy:1081"
+          },
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/somabay-realestate/nautilus",
@@ -2040,7 +2082,7 @@
             "sourceId": "property-finder:f4850cf2-3d53-473a-a089-addad50b7738"
           }
         ],
-        "updatedAt": "2026-11-18T02:51:13.862Z"
+        "updatedAt": "2026-11-18T12:30:07.639Z"
       }
     },
     {
@@ -2157,25 +2199,32 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "villa",
-        "apartment"
+        "Apartment",
+        "Villa",
+        "Chalet"
       ],
-      "downPayment": 10,
-      "installmentYears": 0,
-      "paymentPlan": "10% Down Payment",
+      "downPayment": 5,
+      "installmentYears": 8,
+      "paymentPlan": "5% Down Payment, 8 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2239",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 22100000,
+      "priceMin": 20800000,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2239-coral-coves",
+            "observedPrice": 20800000,
+            "sourceId": "nawy:2239"
+          },
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/somabay-realestate/soma-coves",
@@ -2183,7 +2232,7 @@
             "sourceId": "property-finder:9e4e375f-5822-47f1-9cee-4fc1d43d23b2"
           }
         ],
-        "updatedAt": "2026-11-18T02:51:13.862Z"
+        "updatedAt": "2026-11-18T12:30:07.639Z"
       }
     },
     {
@@ -2413,12 +2462,18 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "villa",
-        "apartment"
+        "Apartment",
+        "Villa",
+        "Chalet",
+        "Townhouse",
+        "Duplex",
+        "Twinhouse",
+        "Penthouse",
+        "Studio"
       ],
-      "downPayment": 10,
-      "installmentYears": 0,
-      "paymentPlan": "10% Down Payment",
+      "downPayment": 5,
+      "installmentYears": 7,
+      "paymentPlan": "5% Down Payment, 7 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2257",
@@ -2430,8 +2485,14 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/941-ras-soma",
+            "observedPrice": 12000000,
+            "sourceId": "nawy:941"
+          },
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/travco-properties/ras-soma",
@@ -2439,7 +2500,7 @@
             "sourceId": "property-finder:c129378a-e139-48a4-a3c5-8bbaec67e41e"
           }
         ],
-        "updatedAt": "2026-11-18T02:51:13.862Z"
+        "updatedAt": "2026-11-18T12:30:07.639Z"
       }
     },
     {
@@ -2451,12 +2512,18 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "villa",
-        "apartment"
+        "Apartment",
+        "Villa",
+        "Chalet",
+        "Townhouse",
+        "Duplex",
+        "Twinhouse",
+        "Penthouse",
+        "Studio"
       ],
-      "downPayment": 10,
-      "installmentYears": 0,
-      "paymentPlan": "10% Down Payment",
+      "downPayment": 5,
+      "installmentYears": 7,
+      "paymentPlan": "5% Down Payment, 7 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2256",
@@ -2468,8 +2535,14 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/941-ras-soma",
+            "observedPrice": 12000000,
+            "sourceId": "nawy:941"
+          },
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/travco-properties/ras-soma",
@@ -2477,7 +2550,7 @@
             "sourceId": "property-finder:c129378a-e139-48a4-a3c5-8bbaec67e41e"
           }
         ],
-        "updatedAt": "2026-11-18T02:51:13.862Z"
+        "updatedAt": "2026-11-18T12:30:07.639Z"
       }
     },
     {
@@ -2489,12 +2562,18 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "villa",
-        "apartment"
+        "Apartment",
+        "Villa",
+        "Chalet",
+        "Townhouse",
+        "Duplex",
+        "Twinhouse",
+        "Penthouse",
+        "Studio"
       ],
-      "downPayment": 10,
-      "installmentYears": 0,
-      "paymentPlan": "10% Down Payment",
+      "downPayment": 5,
+      "installmentYears": 7,
+      "paymentPlan": "5% Down Payment, 7 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2251",
@@ -2506,8 +2585,14 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/941-ras-soma",
+            "observedPrice": 12000000,
+            "sourceId": "nawy:941"
+          },
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/travco-properties/ras-soma",
@@ -2515,7 +2600,7 @@
             "sourceId": "property-finder:c129378a-e139-48a4-a3c5-8bbaec67e41e"
           }
         ],
-        "updatedAt": "2026-11-18T02:51:13.862Z"
+        "updatedAt": "2026-11-18T12:30:07.639Z"
       }
     },
     {

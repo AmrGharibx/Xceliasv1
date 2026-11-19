@@ -335,22 +335,16 @@
         5,
         6
       ],
-      "paymentPlan": "5% Down Payment, 6 Years Installments",
+      "paymentPlan": "5% Down Payment",
       "downPayment": 5,
-      "installmentYears": 6,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/123-swanlake-el-gouna",
-            "observedPrice": 25000000,
-            "sourceId": "nawy:123"
-          },
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/hassan-allam-holding/swanlake-el-gouna",
@@ -358,7 +352,7 @@
             "sourceId": "property-finder:b364916e-d443-47af-b26c-c3857eab37f9"
           }
         ],
-        "updatedAt": "2026-11-18T12:30:07.639Z"
+        "updatedAt": "2026-11-19T02:51:02.097Z"
       }
     },
     {
@@ -722,7 +716,7 @@
       "zone": "Gouna",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 34874118,
+      "priceMin": 362355,
       "unitTypes": [
         "villa"
       ],
@@ -749,11 +743,11 @@
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/orascom-development/shedwan",
-            "observedPrice": 34874118,
+            "observedPrice": 362355,
             "sourceId": "property-finder:533338e4-5a79-4f5e-8f97-150eb8d488c5"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-11-19T02:51:02.097Z"
       }
     },
     {
@@ -822,8 +816,8 @@
       "type": "residential",
       "priceMin": 13654075,
       "unitTypes": [
-        "Chalet",
-        "Townhouse"
+        "townhouse",
+        "apartment"
       ],
       "areaMin": 64,
       "areaMax": 268,
@@ -835,22 +829,16 @@
         5,
         6
       ],
-      "paymentPlan": "15% Down Payment, 6 Years Installments",
+      "paymentPlan": "15% Down Payment",
       "downPayment": 15,
-      "installmentYears": 6,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/978-il-bayou",
-            "observedPrice": 13654075,
-            "sourceId": "nawy:978"
-          },
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/the-land-developers/il-bayou",
@@ -858,7 +846,7 @@
             "sourceId": "property-finder:9150aa0f-8aa4-4c3c-9760-eb1b2152a1a5"
           }
         ],
-        "updatedAt": "2026-11-18T12:30:07.639Z"
+        "updatedAt": "2026-11-19T02:51:02.097Z"
       }
     },
     {
@@ -871,8 +859,8 @@
       "type": "residential",
       "priceMin": 13654075,
       "unitTypes": [
-        "Chalet",
-        "Townhouse"
+        "townhouse",
+        "apartment"
       ],
       "areaMin": 56,
       "areaMax": 233,
@@ -884,22 +872,16 @@
         5,
         6
       ],
-      "paymentPlan": "15% Down Payment, 6 Years Installments",
+      "paymentPlan": "15% Down Payment",
       "downPayment": 15,
-      "installmentYears": 6,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/978-il-bayou",
-            "observedPrice": 13654075,
-            "sourceId": "nawy:978"
-          },
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/the-land-developers/il-bayou",
@@ -907,7 +889,7 @@
             "sourceId": "property-finder:9150aa0f-8aa4-4c3c-9760-eb1b2152a1a5"
           }
         ],
-        "updatedAt": "2026-11-18T12:30:07.639Z"
+        "updatedAt": "2026-11-19T02:51:02.097Z"
       }
     },
     {
@@ -1019,14 +1001,12 @@
       "type": "residential",
       "priceMin": 8020000,
       "unitTypes": [
-        "Apartment",
-        "Townhouse",
-        "Chalet",
         "Villa",
-        "Penthouse",
+        "Twin House",
         "Duplex",
-        "Twinhouse",
-        "Loft"
+        "Penthouse",
+        "Chalet",
+        "Town House"
       ],
       "areaMin": 65,
       "areaMax": 273,
@@ -1039,29 +1019,23 @@
         6
       ],
       "paymentPlan": "10% Down Payment, 7 Years Installments",
-      "downPayment": 10,
-      "installmentYears": 7,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/52-makadi-heights",
             "observedPrice": 8020000,
             "sourceId": "red:52"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/454-makadi-heights",
-            "observedPrice": 11270000,
-            "sourceId": "nawy:454"
           }
         ],
-        "updatedAt": "2026-11-18T12:30:07.639Z"
+        "updatedAt": "2026-11-19T02:51:02.097Z"
       }
     },
     {
@@ -1184,7 +1158,7 @@
       "zone": "Gouna",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 19800000,
+      "priceMin": 423000,
       "unitTypes": [
         "apartment"
       ],
@@ -1211,11 +1185,11 @@
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/orascom-development/kamaran",
-            "observedPrice": 19800000,
+            "observedPrice": 423000,
             "sourceId": "property-finder:e60c3a16-7d1e-46ea-b16c-ef15e2ea773d"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-11-19T02:51:02.097Z"
       }
     },
     {
@@ -1312,7 +1286,7 @@
       "zone": "Gouna",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 59300000,
+      "priceMin": 1264383,
       "unitTypes": [
         "villa",
         "townhouse"
@@ -1340,11 +1314,11 @@
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/orascom-development/the-nines",
-            "observedPrice": 59300000,
+            "observedPrice": 1264383,
             "sourceId": "property-finder:4b48b7da-0ae7-411b-b1cc-edd60d53b1fd"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-11-19T02:51:02.097Z"
       }
     },
     {
@@ -1477,8 +1451,8 @@
       "type": "residential",
       "priceMin": 13654075,
       "unitTypes": [
-        "Chalet",
-        "Townhouse"
+        "townhouse",
+        "apartment"
       ],
       "areaMin": 65,
       "areaMax": 273,
@@ -1490,22 +1464,16 @@
         5,
         6
       ],
-      "paymentPlan": "15% Down Payment, 6 Years Installments",
+      "paymentPlan": "15% Down Payment",
       "downPayment": 15,
-      "installmentYears": 6,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/978-il-bayou",
-            "observedPrice": 13654075,
-            "sourceId": "nawy:978"
-          },
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/the-land-developers/il-bayou",
@@ -1513,7 +1481,7 @@
             "sourceId": "property-finder:9150aa0f-8aa4-4c3c-9760-eb1b2152a1a5"
           }
         ],
-        "updatedAt": "2026-11-18T12:30:07.639Z"
+        "updatedAt": "2026-11-19T02:51:02.097Z"
       }
     },
     {
@@ -1552,7 +1520,7 @@
       "zone": "Gouna",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 50600000,
+      "priceMin": 965000,
       "unitTypes": [
         "apartment"
       ],
@@ -1579,11 +1547,11 @@
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/orascom-development/north-bay-el-gouna",
-            "observedPrice": 50600000,
+            "observedPrice": 965000,
             "sourceId": "property-finder:f5400c9c-ef83-4b79-9095-04a72d9eeeb1"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-11-19T02:51:02.097Z"
       }
     },
     {
@@ -1806,7 +1774,7 @@
       "zone": "Gouna",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 24200000,
+      "priceMin": 540000,
       "unitTypes": [
         "apartment",
         "villa",
@@ -1835,11 +1803,11 @@
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/orascom-development/tuban-el-gouna",
-            "observedPrice": 24200000,
+            "observedPrice": 540000,
             "sourceId": "property-finder:9e6b37c5-ff80-4a59-91b5-08edac6c1772"
           }
         ],
-        "updatedAt": "2026-09-21T14:51:00.924Z"
+        "updatedAt": "2026-11-19T02:51:02.097Z"
       }
     },
     {
@@ -1892,17 +1860,15 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Apartment",
-        "Townhouse",
-        "Chalet",
         "Villa",
-        "Penthouse",
+        "Twin House",
         "Duplex",
-        "Twinhouse",
-        "Loft"
+        "Penthouse",
+        "Chalet",
+        "Town House"
       ],
-      "downPayment": 10,
-      "installmentYears": 7,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "10% Down Payment, 7 Years Installments",
       "catalogMeta": {
         "status": "observed",
@@ -1915,22 +1881,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/52-makadi-heights",
             "observedPrice": 8020000,
             "sourceId": "red:52"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/454-makadi-heights",
-            "observedPrice": 11270000,
-            "sourceId": "nawy:454"
           }
         ],
-        "updatedAt": "2026-11-18T12:30:07.639Z"
+        "updatedAt": "2026-11-19T02:51:02.097Z"
       }
     },
     {
@@ -2027,14 +1987,13 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Apartment",
-        "Townhouse",
-        "Twinhouse",
-        "Villa"
+        "villa",
+        "townhouse",
+        "apartment"
       ],
       "downPayment": 10,
-      "installmentYears": 8,
-      "paymentPlan": "10% Down Payment, 8 Years Installments",
+      "installmentYears": 0,
+      "paymentPlan": "10% Down Payment",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2025",
@@ -2046,7 +2005,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
@@ -2055,19 +2014,13 @@
             "sourceId": "red:30963"
           },
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/2025-makadina",
-            "observedPrice": 8000000,
-            "sourceId": "nawy:2025"
-          },
-          {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/travco-properties/makadina",
             "observedPrice": 8000000,
             "sourceId": "property-finder:6f94f94b-9809-4220-9620-aa5688b81f76"
           }
         ],
-        "updatedAt": "2026-11-18T12:30:07.639Z"
+        "updatedAt": "2026-11-19T02:51:02.097Z"
       }
     },
     {
@@ -2097,18 +2050,11 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Apartment",
-        "Townhouse",
-        "Chalet",
-        "Villa",
-        "Penthouse",
-        "Duplex",
-        "Twinhouse",
-        "Loft"
+        "townhouse"
       ],
-      "downPayment": 10,
-      "installmentYears": 7,
-      "paymentPlan": "10% Down Payment, 7 Years Installments",
+      "downPayment": 35,
+      "installmentYears": 0,
+      "paymentPlan": "35% Down Payment",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:2747",
@@ -2129,13 +2075,13 @@
             "sourceId": "red:52"
           },
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/454-makadi-heights",
-            "observedPrice": 11270000,
-            "sourceId": "nawy:454"
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/orascom-development/ria",
+            "observedPrice": 26325000,
+            "sourceId": "property-finder:d03ed370-4198-4390-a0ac-e5052478eaac"
           }
         ],
-        "updatedAt": "2026-11-18T12:30:07.639Z"
+        "updatedAt": "2026-11-19T02:51:02.097Z"
       }
     }
   ],

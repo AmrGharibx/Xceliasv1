@@ -1383,15 +1383,15 @@
       "zone": "Hurghada",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 12000000,
+      "priceMin": 12500000,
       "unitTypes": [
         "Apartment",
         "Villa",
+        "Twinhouse",
         "Townhouse",
         "Duplex",
-        "Chalet",
-        "Twinhouse",
         "Penthouse",
+        "Chalet",
         "Studio"
       ],
       "areaMin": 60,
@@ -1417,11 +1417,11 @@
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/941-ras-soma",
-            "observedPrice": 12000000,
+            "observedPrice": 12500000,
             "sourceId": "nawy:941"
           }
         ],
-        "updatedAt": "2026-11-11T02:51:13.555Z"
+        "updatedAt": "2026-11-20T02:51:10.667Z"
       }
     },
     {
@@ -1942,9 +1942,11 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Town House"
+        "apartment",
+        "townhouse",
+        "villa"
       ],
-      "downPayment": 0,
+      "downPayment": 10,
       "installmentYears": 0,
       "paymentPlan": "10% Down Payment",
       "catalogMeta": {
@@ -1958,16 +1960,22 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30949-siyal",
             "observedPrice": 22000000,
             "sourceId": "red:30949"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/orascom-development/siyal-makadi-heights",
+            "observedPrice": 22695000,
+            "sourceId": "property-finder:e5e8e6a6-eb17-4a83-a28d-8ad5ea97f773"
           }
         ],
-        "updatedAt": "2026-11-19T18:28:46.779Z"
+        "updatedAt": "2026-11-20T02:51:10.667Z"
       }
     },
     {
@@ -2047,19 +2055,19 @@
             "sourceId": "red:30963"
           },
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/2025-makadina",
-            "observedPrice": 8000000,
-            "sourceId": "nawy:2025"
-          },
-          {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/travco-properties/makadina",
             "observedPrice": 8000000,
             "sourceId": "property-finder:6f94f94b-9809-4220-9620-aa5688b81f76"
+          },
+          {
+            "name": "Nawy",
+            "url": "https://www.nawy.com/compound/2025-makadina",
+            "observedPrice": 8700000,
+            "sourceId": "nawy:2025"
           }
         ],
-        "updatedAt": "2026-11-19T06:35:00.406Z"
+        "updatedAt": "2026-11-20T02:51:10.667Z"
       }
     },
     {
@@ -2112,7 +2120,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "RED",
@@ -2125,15 +2133,9 @@
             "url": "https://www.nawy.com/compound/454-makadi-heights",
             "observedPrice": 11270000,
             "sourceId": "nawy:454"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/orascom-development/ria",
-            "observedPrice": 26325000,
-            "sourceId": "property-finder:d03ed370-4198-4390-a0ac-e5052478eaac"
           }
         ],
-        "updatedAt": "2026-11-19T06:35:00.406Z"
+        "updatedAt": "2026-11-20T02:51:10.667Z"
       }
     }
   ],

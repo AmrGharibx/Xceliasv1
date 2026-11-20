@@ -641,11 +641,10 @@
       "zone": "Galala",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 8537760,
+      "priceMin": 6403320,
       "unitTypes": [
-        "Apartment",
-        "Duplex",
-        "Studio"
+        "apartment",
+        "duplex"
       ],
       "areaMin": 73,
       "areaMax": 321,
@@ -658,15 +657,21 @@
         6
       ],
       "paymentPlan": "10% Down Payment",
-      "downPayment": 0,
+      "downPayment": 10,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/orbit-alliance/marina-hills",
+            "observedPrice": 6403320,
+            "sourceId": "property-finder:c2620092-5abe-4bd1-aaf0-59dc4deac587"
+          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30844-marina-hills",
@@ -674,7 +679,7 @@
             "sourceId": "red:30844"
           }
         ],
-        "updatedAt": "2026-11-19T18:28:46.779Z"
+        "updatedAt": "2026-11-20T02:51:10.667Z"
       }
     },
     {
@@ -1542,16 +1547,22 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/728-lasirena-palm-beach",
             "observedPrice": 7730000,
             "sourceId": "nawy:728"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/lasirena-group/lasirena-palm-beach",
+            "observedPrice": 7730000,
+            "sourceId": "property-finder:2d810769-f1f9-4eaf-acc6-56d081602cb1"
           }
         ],
-        "updatedAt": "2026-11-19T06:35:00.406Z"
+        "updatedAt": "2026-11-20T02:51:10.667Z"
       }
     },
     {
@@ -1928,9 +1939,10 @@
       "zone": "Sokhna",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 8980000,
+      "priceMin": 5112250,
       "unitTypes": [
-        "Chalet"
+        "townhouse",
+        "apartment"
       ],
       "areaMin": 60,
       "areaMax": 248,
@@ -1943,15 +1955,21 @@
         6
       ],
       "paymentPlan": "10% Down Payment",
-      "downPayment": 0,
+      "downPayment": 10,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/pioneers-real-estate/jebal-el-sokhna",
+            "observedPrice": 5112250,
+            "sourceId": "property-finder:dd56861f-b819-410b-be0c-f7a33bc19e87"
+          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19064-jebal-el-sokhna",
@@ -1959,7 +1977,7 @@
             "sourceId": "red:19064"
           }
         ],
-        "updatedAt": "2026-11-20T00:41:38.987Z"
+        "updatedAt": "2026-11-20T02:51:10.667Z"
       }
     },
     {
@@ -2092,16 +2110,22 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 1,
+        "sourceCount": 2,
         "sources": [
           {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/728-lasirena-palm-beach",
             "observedPrice": 7730000,
             "sourceId": "nawy:728"
+          },
+          {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/lasirena-group/lasirena-palm-beach",
+            "observedPrice": 7730000,
+            "sourceId": "property-finder:2d810769-f1f9-4eaf-acc6-56d081602cb1"
           }
         ],
-        "updatedAt": "2026-11-19T06:35:00.406Z"
+        "updatedAt": "2026-11-20T02:51:10.667Z"
       }
     },
     {
@@ -3577,7 +3601,7 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 3,
         "sources": [
           {
             "name": "RED",
@@ -3586,13 +3610,19 @@
             "sourceId": "red:28"
           },
           {
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/tatweer-misr/maesta",
+            "observedPrice": 7392000,
+            "sourceId": "property-finder:1fb1d027-148e-45db-848f-379b55305325"
+          },
+          {
             "name": "Nawy",
             "url": "https://www.nawy.com/compound/90-il-monte-galala",
             "observedPrice": 7705000,
             "sourceId": "nawy:90"
           }
         ],
-        "updatedAt": "2026-11-19T06:35:00.406Z"
+        "updatedAt": "2026-11-20T02:51:10.667Z"
       }
     },
     {

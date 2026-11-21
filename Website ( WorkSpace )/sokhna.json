@@ -36,13 +36,12 @@
       "zone": "Zaafarana",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 9500000,
+      "priceMin": 11265766,
       "unitTypes": [
-        "Apartment",
         "Chalet",
-        "Villa",
-        "Studio",
-        "Loft"
+        "Loft",
+        "Penthouse",
+        "Studio"
       ],
       "areaMin": 73,
       "areaMax": 317,
@@ -55,21 +54,15 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 8 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/191-kai-sokhna",
-            "observedPrice": 9500000,
-            "sourceId": "nawy:191"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/50-kai-sokhna",
@@ -77,7 +70,7 @@
             "sourceId": "red:50"
           }
         ],
-        "updatedAt": "2026-11-19T06:35:00.406Z"
+        "updatedAt": "2026-11-21T00:42:03.254Z"
       }
     },
     {
@@ -303,11 +296,10 @@
       "type": "residential",
       "priceMin": 5280500,
       "unitTypes": [
-        "Villa",
         "Chalet",
-        "Studio",
-        "Duplex",
-        "Apartment"
+        "Town House",
+        "Villa",
+        "Duplex"
       ],
       "areaMin": 81,
       "areaMax": 354,
@@ -320,35 +312,23 @@
         6
       ],
       "paymentPlan": "10% Down Payment, 6 Years Installments",
-      "downPayment": 10,
-      "installmentYears": 6,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/30849-boho",
             "observedPrice": 5280500,
             "sourceId": "red:30849"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/864-boho-el-sokhna",
-            "observedPrice": 9103200,
-            "sourceId": "nawy:864"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/atric-developments/boho-el-sokhna",
-            "observedPrice": 9103200,
-            "sourceId": "property-finder:47db6ec4-5fbc-475e-96a2-0ad7bd0a62f8"
           }
         ],
-        "updatedAt": "2026-11-19T06:35:00.406Z"
+        "updatedAt": "2026-11-21T00:42:03.254Z"
       }
     },
     {
@@ -387,10 +367,9 @@
       "zone": "Zaafarana",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 11520000,
+      "priceMin": 16000000,
       "unitTypes": [
-        "Chalet",
-        "Twinhouse"
+        "Chalet"
       ],
       "areaMin": 73,
       "areaMax": 321,
@@ -403,27 +382,15 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 7 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 7,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/16-la-vista-gardens",
-            "observedPrice": 11520000,
-            "sourceId": "nawy:16"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/la-vista-developments/la-vista-gardens",
-            "observedPrice": 11520000,
-            "sourceId": "property-finder:554807a6-0456-467e-ac17-92967e27397a"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19046-la-vista-gardens",
@@ -431,7 +398,7 @@
             "sourceId": "red:19046"
           }
         ],
-        "updatedAt": "2026-11-19T06:35:00.406Z"
+        "updatedAt": "2026-11-21T00:42:03.254Z"
       }
     },
     {
@@ -1182,16 +1149,16 @@
       "type": "residential",
       "priceMin": 6642000,
       "unitTypes": [
-        "Apartment",
-        "Chalet",
         "Villa",
-        "Penthouse",
+        "Twin House",
+        "Town House",
+        "Chalet",
         "Studio",
+        "Cabin",
         "Loft",
-        "Townhouse",
-        "Duplex",
-        "Twinhouse",
-        "Cabin"
+        "Apartment",
+        "Service Apartment",
+        "Duplex"
       ],
       "areaMin": 83,
       "areaMax": 364,
@@ -1204,29 +1171,23 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 10 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/28-il-monte-galala",
             "observedPrice": 6642000,
             "sourceId": "red:28"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/90-il-monte-galala",
-            "observedPrice": 7705000,
-            "sourceId": "nawy:90"
           }
         ],
-        "updatedAt": "2026-11-19T06:35:00.406Z"
+        "updatedAt": "2026-11-21T00:42:03.254Z"
       }
     },
     {
@@ -1311,11 +1272,7 @@
       "priceMin": 17724000,
       "unitTypes": [
         "Chalet",
-        "Townhouse",
-        "Villa",
-        "Apartment",
-        "Penthouse",
-        "Twinhouse"
+        "Villa"
       ],
       "areaMin": 64,
       "areaMax": 267,
@@ -1326,29 +1283,23 @@
         4
       ],
       "paymentPlan": "10% Down Payment, 7 Years Installments",
-      "downPayment": 10,
-      "installmentYears": 7,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19032-azha",
             "observedPrice": 17724000,
             "sourceId": "red:19032"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/88-azha",
-            "observedPrice": 25533900,
-            "sourceId": "nawy:88"
           }
         ],
-        "updatedAt": "2026-11-19T06:35:00.406Z"
+        "updatedAt": "2026-11-21T00:42:03.254Z"
       }
     },
     {
@@ -1852,13 +1803,12 @@
       "zone": "Sokhna",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 9500000,
+      "priceMin": 11265766,
       "unitTypes": [
-        "Apartment",
         "Chalet",
-        "Villa",
-        "Studio",
-        "Loft"
+        "Loft",
+        "Penthouse",
+        "Studio"
       ],
       "areaMin": 55,
       "areaMax": 229,
@@ -1871,21 +1821,15 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 8 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/191-kai-sokhna",
-            "observedPrice": 9500000,
-            "sourceId": "nawy:191"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/50-kai-sokhna",
@@ -1893,7 +1837,7 @@
             "sourceId": "red:50"
           }
         ],
-        "updatedAt": "2026-11-19T06:35:00.406Z"
+        "updatedAt": "2026-11-21T00:42:03.254Z"
       }
     },
     {
@@ -2363,13 +2307,11 @@
       "zone": "Sokhna",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 11320000,
+      "priceMin": 13910000,
       "unitTypes": [
-        "Chalet",
-        "Townhouse",
-        "Twinhouse",
         "Penthouse",
-        "Apartment"
+        "Town House",
+        "Twin House"
       ],
       "areaMin": 57,
       "areaMax": 237,
@@ -2382,27 +2324,15 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 6 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 6,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 3,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/220-la-vista-ray",
-            "observedPrice": 11320000,
-            "sourceId": "nawy:220"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/la-vista-developments/la-vista-ray",
-            "observedPrice": 11320000,
-            "sourceId": "property-finder:23e00920-92f3-4bc2-ae95-9753636142c1"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19047-la-vista-ray",
@@ -2410,7 +2340,7 @@
             "sourceId": "red:19047"
           }
         ],
-        "updatedAt": "2026-11-19T06:35:00.406Z"
+        "updatedAt": "2026-11-21T00:42:03.254Z"
       }
     },
     {
@@ -2593,18 +2523,18 @@
       "zone": "Sokhna",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 6575000,
+      "priceMin": 6642000,
       "unitTypes": [
-        "Apartment",
-        "Chalet",
         "Villa",
-        "Penthouse",
+        "Twin House",
+        "Town House",
+        "Chalet",
         "Studio",
+        "Cabin",
         "Loft",
-        "Townhouse",
-        "Duplex",
-        "Twinhouse",
-        "Cabin"
+        "Apartment",
+        "Service Apartment",
+        "Duplex"
       ],
       "areaMin": 58,
       "areaMax": 243,
@@ -2617,35 +2547,23 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 10 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/tatweer-misr/phia-il-monte-galala",
-            "observedPrice": 6575000,
-            "sourceId": "property-finder:16785ace-641e-497b-ab02-76b2a194b70b"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/28-il-monte-galala",
             "observedPrice": 6642000,
             "sourceId": "red:28"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/90-il-monte-galala",
-            "observedPrice": 7705000,
-            "sourceId": "nawy:90"
           }
         ],
-        "updatedAt": "2026-11-19T06:35:00.406Z"
+        "updatedAt": "2026-11-21T00:42:03.254Z"
       }
     },
     {
@@ -2686,16 +2604,16 @@
       "type": "residential",
       "priceMin": 6642000,
       "unitTypes": [
-        "Apartment",
-        "Chalet",
         "Villa",
-        "Penthouse",
+        "Twin House",
+        "Town House",
+        "Chalet",
         "Studio",
+        "Cabin",
         "Loft",
-        "Townhouse",
-        "Duplex",
-        "Twinhouse",
-        "Cabin"
+        "Apartment",
+        "Service Apartment",
+        "Duplex"
       ],
       "areaMin": 65,
       "areaMax": 269,
@@ -2708,29 +2626,23 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 10 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/28-il-monte-galala",
             "observedPrice": 6642000,
             "sourceId": "red:28"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/90-il-monte-galala",
-            "observedPrice": 7705000,
-            "sourceId": "nawy:90"
           }
         ],
-        "updatedAt": "2026-11-19T06:35:00.406Z"
+        "updatedAt": "2026-11-21T00:42:03.254Z"
       }
     },
     {
@@ -3401,19 +3313,19 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Apartment",
-        "Chalet",
         "Villa",
-        "Penthouse",
+        "Twin House",
+        "Town House",
+        "Chalet",
         "Studio",
+        "Cabin",
         "Loft",
-        "Townhouse",
-        "Duplex",
-        "Twinhouse",
-        "Cabin"
+        "Apartment",
+        "Service Apartment",
+        "Duplex"
       ],
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
@@ -3426,28 +3338,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/28-il-monte-galala",
             "observedPrice": 6642000,
             "sourceId": "red:28"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/90-il-monte-galala",
-            "observedPrice": 7705000,
-            "sourceId": "nawy:90"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/tatweer-misr/marina-towers",
-            "observedPrice": 10970700,
-            "sourceId": "property-finder:d2483468-f1c9-4bbb-937b-132ed4db9e2e"
           }
         ],
-        "updatedAt": "2026-11-19T06:35:00.406Z"
+        "updatedAt": "2026-11-21T00:42:03.254Z"
       }
     },
     {
@@ -3459,19 +3359,19 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Apartment",
-        "Chalet",
         "Villa",
-        "Penthouse",
+        "Twin House",
+        "Town House",
+        "Chalet",
         "Studio",
+        "Cabin",
         "Loft",
-        "Townhouse",
-        "Duplex",
-        "Twinhouse",
-        "Cabin"
+        "Apartment",
+        "Service Apartment",
+        "Duplex"
       ],
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
@@ -3484,28 +3384,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/28-il-monte-galala",
             "observedPrice": 6642000,
             "sourceId": "red:28"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/90-il-monte-galala",
-            "observedPrice": 7705000,
-            "sourceId": "nawy:90"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/tatweer-misr/marina-towers",
-            "observedPrice": 10970700,
-            "sourceId": "property-finder:d2483468-f1c9-4bbb-937b-132ed4db9e2e"
           }
         ],
-        "updatedAt": "2026-11-19T06:35:00.406Z"
+        "updatedAt": "2026-11-21T00:42:03.254Z"
       }
     },
     {
@@ -3517,19 +3405,19 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Apartment",
-        "Chalet",
         "Villa",
-        "Penthouse",
+        "Twin House",
+        "Town House",
+        "Chalet",
         "Studio",
+        "Cabin",
         "Loft",
-        "Townhouse",
-        "Duplex",
-        "Twinhouse",
-        "Cabin"
+        "Apartment",
+        "Service Apartment",
+        "Duplex"
       ],
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 10 Years Installments",
       "catalogMeta": {
         "status": "observed",
@@ -3542,22 +3430,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/28-il-monte-galala",
             "observedPrice": 6642000,
             "sourceId": "red:28"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/90-il-monte-galala",
-            "observedPrice": 7705000,
-            "sourceId": "nawy:90"
           }
         ],
-        "updatedAt": "2026-11-19T06:35:00.406Z"
+        "updatedAt": "2026-11-21T00:42:03.254Z"
       }
     },
     {
@@ -3627,34 +3509,27 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Apartment",
         "Chalet",
-        "Villa",
-        "Studio",
-        "Loft"
+        "Loft",
+        "Penthouse",
+        "Studio"
       ],
-      "downPayment": 5,
-      "installmentYears": 8,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "5% Down Payment, 8 Years Installments",
       "catalogMeta": {
         "status": "observed",
         "sourceId": "nawy-inventory:1968",
         "observedAt": "2026-09-22T10:02:00.468Z"
       },
-      "priceMin": 9500000,
+      "priceMin": 11265766,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/191-kai-sokhna",
-            "observedPrice": 9500000,
-            "sourceId": "nawy:191"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/50-kai-sokhna",
@@ -3662,7 +3537,7 @@
             "sourceId": "red:50"
           }
         ],
-        "updatedAt": "2026-11-19T06:35:00.406Z"
+        "updatedAt": "2026-11-21T00:42:03.254Z"
       }
     },
     {

@@ -1019,14 +1019,12 @@
       "type": "residential",
       "priceMin": 8020000,
       "unitTypes": [
-        "Apartment",
-        "Townhouse",
-        "Chalet",
         "Villa",
-        "Penthouse",
+        "Twin House",
         "Duplex",
-        "Twinhouse",
-        "Loft"
+        "Penthouse",
+        "Chalet",
+        "Town House"
       ],
       "areaMin": 65,
       "areaMax": 273,
@@ -1039,29 +1037,23 @@
         6
       ],
       "paymentPlan": "10% Down Payment, 7 Years Installments",
-      "downPayment": 10,
-      "installmentYears": 7,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/52-makadi-heights",
             "observedPrice": 8020000,
             "sourceId": "red:52"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/454-makadi-heights",
-            "observedPrice": 11270000,
-            "sourceId": "nawy:454"
           }
         ],
-        "updatedAt": "2026-11-19T06:35:00.406Z"
+        "updatedAt": "2026-11-21T00:42:03.254Z"
       }
     },
     {
@@ -1892,17 +1884,15 @@
       "status": "Available",
       "type": "residential",
       "unitTypes": [
-        "Apartment",
-        "Townhouse",
-        "Chalet",
         "Villa",
-        "Penthouse",
+        "Twin House",
         "Duplex",
-        "Twinhouse",
-        "Loft"
+        "Penthouse",
+        "Chalet",
+        "Town House"
       ],
-      "downPayment": 10,
-      "installmentYears": 7,
+      "downPayment": 0,
+      "installmentYears": 0,
       "paymentPlan": "10% Down Payment, 7 Years Installments",
       "catalogMeta": {
         "status": "observed",
@@ -1915,22 +1905,16 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/52-makadi-heights",
             "observedPrice": 8020000,
             "sourceId": "red:52"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/454-makadi-heights",
-            "observedPrice": 11270000,
-            "sourceId": "nawy:454"
           }
         ],
-        "updatedAt": "2026-11-19T06:35:00.406Z"
+        "updatedAt": "2026-11-21T00:42:03.254Z"
       }
     },
     {

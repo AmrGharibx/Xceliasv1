@@ -657,9 +657,10 @@
       "priceMin": 8964000,
       "unitTypes": [
         "Apartment",
-        "Townhouse",
+        "Town House",
+        "Twin House",
         "Villa",
-        "Twinhouse"
+        "Penthouse"
       ],
       "areaMin": 77,
       "areaMax": 338,
@@ -672,35 +673,23 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 10 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 1,
         "sources": [
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19101-palm-hills-alexandria",
             "observedPrice": 8964000,
             "sourceId": "red:19101"
-          },
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/201-palm-hills-alexandria",
-            "observedPrice": 11317000,
-            "sourceId": "nawy:201"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/palm-hills/palm-hills-alexandria",
-            "observedPrice": 11317000,
-            "sourceId": "property-finder:32791fee-4182-4ae1-8a60-39c97256919c"
           }
         ],
-        "updatedAt": "2026-11-19T06:35:00.406Z"
+        "updatedAt": "2026-11-21T00:42:03.254Z"
       }
     },
     {

@@ -15233,13 +15233,11 @@
       "zone": "Port Zone",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 7427460,
+      "priceMin": 15759090,
       "unitTypes": [
         "Chalet",
-        "Townhouse",
-        "Villa",
         "Duplex",
-        "Penthouse"
+        "Apartment"
       ],
       "areaMin": 86,
       "areaMax": 375,
@@ -15252,27 +15250,15 @@
         6
       ],
       "paymentPlan": "5% Down Payment, 10 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 10,
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 3,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1051-murano-wadi-degla",
-            "observedPrice": 7427460,
-            "sourceId": "nawy:1051"
-          },
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/wadi-degla/waterside-in-murano",
-            "observedPrice": 9037717,
-            "sourceId": "property-finder:21df4da3-7f93-4f32-9790-db4a2c6b08c8"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19029-murano",
@@ -15280,7 +15266,7 @@
             "sourceId": "red:19029"
           }
         ],
-        "updatedAt": "2026-11-20T02:51:10.667Z"
+        "updatedAt": "2026-11-22T00:45:14.059Z"
       }
     },
     {
@@ -22525,7 +22511,7 @@
       "zone": "October",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 4900000,
+      "priceMin": 17784000,
       "unitTypes": [
         "Twin House",
         "Town House"
@@ -22541,21 +22527,15 @@
         6
       ],
       "paymentPlan": "30% Down Payment",
-      "downPayment": 30,
+      "downPayment": 0,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/al-rabwa-group/zayed-dunes",
-            "observedPrice": 4900000,
-            "sourceId": "property-finder:84a3a0a9-76e4-4d8b-9508-28e9cd1d6111"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19231-zayed-dunes",
@@ -22563,7 +22543,7 @@
             "sourceId": "red:19231"
           }
         ],
-        "updatedAt": "2026-11-20T02:51:10.667Z"
+        "updatedAt": "2026-11-22T00:45:14.059Z"
       }
     },
     {
@@ -28818,10 +28798,9 @@
       "zone": "Sokhna",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 5112250,
+      "priceMin": 8980000,
       "unitTypes": [
-        "townhouse",
-        "apartment"
+        "Chalet"
       ],
       "areaMin": 60,
       "areaMax": 248,
@@ -28834,21 +28813,15 @@
         6
       ],
       "paymentPlan": "10% Down Payment",
-      "downPayment": 10,
+      "downPayment": 0,
       "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "Property Finder",
-            "url": "https://www.propertyfinder.eg/en/new-projects/pioneers-real-estate/jebal-el-sokhna",
-            "observedPrice": 5112250,
-            "sourceId": "property-finder:dd56861f-b819-410b-be0c-f7a33bc19e87"
-          },
           {
             "name": "RED",
             "url": "https://redww.com/en/projects/19064-jebal-el-sokhna",
@@ -28856,7 +28829,7 @@
             "sourceId": "red:19064"
           }
         ],
-        "updatedAt": "2026-11-20T02:51:10.667Z"
+        "updatedAt": "2026-11-22T00:45:14.059Z"
       }
     },
     {

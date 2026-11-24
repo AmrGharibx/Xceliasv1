@@ -61,7 +61,7 @@
       "layouts": [
         "https://mountainviewegypt.com/projects/plage"
       ],
-      "priceMin": 11467036,
+      "priceMin": 12000000,
       "unitTypes": [
         "villa",
         "townhouse",
@@ -86,14 +86,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "verified",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/19238-plage",
-            "observedPrice": 11467036,
-            "sourceId": "red:19238"
-          },
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/mountain-view/plage",
@@ -101,7 +95,7 @@
             "sourceId": "property-finder:123a2956-56dd-4204-b48a-c5bd80d4bf09"
           }
         ],
-        "updatedAt": "2026-11-22T02:51:13.962Z"
+        "updatedAt": "2026-11-24T02:51:13.980Z"
       }
     },
     {
@@ -272,13 +266,11 @@
       "zone": "Port Zone",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 7427460,
+      "priceMin": 9037717,
       "unitTypes": [
-        "Chalet",
-        "Townhouse",
-        "Villa",
-        "Duplex",
-        "Penthouse"
+        "townhouse",
+        "apartment",
+        "penthouse"
       ],
       "areaMin": 86,
       "areaMax": 375,
@@ -290,30 +282,24 @@
         5,
         6
       ],
-      "paymentPlan": "5% Down Payment, 10 Years Installments",
-      "downPayment": 5,
-      "installmentYears": 10,
+      "paymentPlan": "0% Down Payment",
+      "downPayment": 0,
+      "installmentYears": 0,
       "priceMeta": {
         "status": "verified",
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
           {
-            "name": "Nawy",
-            "url": "https://www.nawy.com/compound/1051-murano-wadi-degla",
-            "observedPrice": 7427460,
-            "sourceId": "nawy:1051"
-          },
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/19029-murano",
-            "observedPrice": 15759090,
-            "sourceId": "red:19029"
+            "name": "Property Finder",
+            "url": "https://www.propertyfinder.eg/en/new-projects/wadi-degla/waterside-in-murano",
+            "observedPrice": 9037717,
+            "sourceId": "property-finder:21df4da3-7f93-4f32-9790-db4a2c6b08c8"
           }
         ],
-        "updatedAt": "2026-11-22T06:31:50.274Z"
+        "updatedAt": "2026-11-24T02:51:13.980Z"
       }
     },
     {
@@ -635,7 +621,7 @@
       "zone": "Alexandria",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 8964000,
+      "priceMin": 11317000,
       "unitTypes": [
         "Apartment",
         "Townhouse",
@@ -660,14 +646,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/19101-palm-hills-alexandria",
-            "observedPrice": 8964000,
-            "sourceId": "red:19101"
-          },
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/palm-hills/palm-hills-alexandria",
@@ -675,7 +655,7 @@
             "sourceId": "property-finder:32791fee-4182-4ae1-8a60-39c97256919c"
           }
         ],
-        "updatedAt": "2026-11-23T02:51:06.312Z"
+        "updatedAt": "2026-11-24T02:51:13.980Z"
       }
     },
     {
@@ -1272,7 +1252,7 @@
       "zone": "Ras Sudr",
       "status": "Under Construction",
       "type": "residential",
-      "priceMin": 4976000,
+      "priceMin": 5073000,
       "unitTypes": [
         "apartment"
       ],
@@ -1294,14 +1274,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/30821-bayside",
-            "observedPrice": 4976000,
-            "sourceId": "red:30821"
-          },
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/elattal-holding-company/bayside",
@@ -1309,7 +1283,7 @@
             "sourceId": "property-finder:3a44d3a3-8bbd-4545-afd6-a4fd298e2fd2"
           }
         ],
-        "updatedAt": "2026-11-22T02:51:13.962Z"
+        "updatedAt": "2026-11-24T02:51:13.980Z"
       }
     },
     {

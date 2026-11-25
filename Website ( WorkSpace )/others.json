@@ -1350,7 +1350,7 @@
       "zone": "Port Said",
       "status": "Delivered",
       "type": "residential",
-      "priceMin": 2274000,
+      "priceMin": 8000000,
       "unitTypes": [
         "apartment",
         "duplex"
@@ -1373,14 +1373,8 @@
         "kind": "starting-price",
         "currency": "EGP",
         "confidence": "high",
-        "sourceCount": 2,
+        "sourceCount": 1,
         "sources": [
-          {
-            "name": "RED",
-            "url": "https://redww.com/en/projects/30856-eclat",
-            "observedPrice": 2274000,
-            "sourceId": "red:30856"
-          },
           {
             "name": "Property Finder",
             "url": "https://www.propertyfinder.eg/en/new-projects/new-plan-developments/eclat",
@@ -1388,7 +1382,7 @@
             "sourceId": "property-finder:4ddc1713-e037-44e4-acfc-900c033b6731"
           }
         ],
-        "updatedAt": "2026-11-23T02:51:06.312Z"
+        "updatedAt": "2026-11-25T02:51:09.186Z"
       }
     },
     {
